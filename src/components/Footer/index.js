@@ -1,10 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import * as palette from '../../config/Style';
-
 const Wrapper = styled.div`
-    height: ${palette.CONTENT_HEIGHT};;
+    height: 90vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,7 +13,7 @@ const Wrapper = styled.div`
 `;
 
 const Content = styled.p`
-    color: ${palette.SECONDARY_COLOR};
+    color: #999999;
     padding: 1rem;
     text-align: center;
     font-size: 10px;
