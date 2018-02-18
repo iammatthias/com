@@ -2,6 +2,8 @@ const config = require('./config/SiteConfig');
 
 const pathPrefix = config.pathPrefix === '/' ? '' : config.pathPrefix;
 
+require('dotenv').config()
+
 module.exports = {
   pathPrefix: config.pathPrefix,
   siteMetadata: {
@@ -17,6 +19,13 @@ module.exports = {
         path: `${__dirname}/content/projects`,
       },
     },
+    {
+            resolve: `gatsby-source-contentful`,
+            options: {
+              spaceId: process.env.CONTENTFUL_SPACE_ID || '',
+              accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || '',
+            },
+        },
     {
       resolve: 'gatsby-transformer-remark',
       options: {
