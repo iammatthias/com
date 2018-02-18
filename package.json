@@ -9,7 +9,7 @@
   "dependencies": {
     "date-fns": "^1.29.0",
     "gatsby": "^1.9.165",
-    "gatsby-image": "^1.0.37",
+    "gatsby-image": "^1.0.34",
     "gatsby-link": "^1.6.34",
     "gatsby-plugin-google-analytics": "^1.0.15",
     "gatsby-plugin-lodash": "^1.0.7",
@@ -23,9 +23,8 @@
     "gatsby-plugin-typography": "^1.7.10",
     "gatsby-remark-external-links": "^0.0.4",
     "gatsby-remark-images": "^1.5.39",
-    "gatsby-source-contentful": "^1.3.38",
     "gatsby-source-filesystem": "^1.5.14",
-    "gatsby-transformer-remark": "^1.7.32",
+    "gatsby-transformer-remark": "^1.7.29",
     "gatsby-transformer-sharp": "^1.6.16",
     "lodash": "^4.17.4",
     "react-helmet": "^5.2.0",
@@ -35,7 +34,6 @@
   "devDependencies": {
     "babel-eslint": "^8.2.1",
     "babel-preset-env": "^1.6.1",
-    "dotenv": "^5.0.0",
     "eslint": "^4.16.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.8.0",
