@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import { injectGlobal } from 'styled-components';
 
-import Header from '../components/Header';
+import * as palette from '../utils/styles';
+
+import Nav from '../components/Nav';
 import Footer from '../components/Footer';
 
 /* eslint no-unused-expressions: off */
@@ -11,23 +13,23 @@ injectGlobal`
   :root {
     font-size: 16px;
     padding: .5rem;
-    background: #dddddd;
+    background: ${palette.HTML_COLOR };
   }
   body {
-    background: #efefef;
+    background: ${palette.BG_COLOR };
     padding: 1rem;
-    color: #999999;
+    color: ${palette.COLOR };
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   a {
-    color: #999999;
-    transition: color .5s;
+    color: ${palette.COLOR };
+    transition: color 10s;
     text-decoration: none;
   }
   a:hover {
     text-decoration: none;
-    color: #457457;
+    color: ${palette.SECONDARY_COLOR };
   }
   .gatsby-resp-image-wrapper {
     margin: 2.75rem 0;
@@ -43,7 +45,7 @@ const TemplateWrapper = ({ children }) => (
         { name: 'keywords', content: 'sample, something' },
       ]}
     />
-    <Header />
+      <Nav />
       {children()}
       <Footer />
   </div>

@@ -3,6 +3,15 @@ import Link from 'gatsby-link'
 import Img from "gatsby-image"
 import styled from 'styled-components';
 
+import * as palette from '../utils/styles';
+
+import Header from '../components/Header';
+import MiniBio from '../components/MiniBio';
+
+const Wrapper = styled.div`
+
+`;
+
 const Grid = styled.div`
   margin: 1rem 0;
   display: grid;
@@ -28,7 +37,8 @@ const Card = styled(Link)`
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    color: #999999;
+    color: ${palette.BG_COLOR };
+    text-shadow: 0px 0px 2px ${palette.COLOR };
 `;
 
 const Cover = styled.div`
@@ -78,9 +88,13 @@ const IndexPage = (props) => {
 
     console.log(props)
     return (
+      <wrapper>
+      <Header />
+      <MiniBio />
         <Grid>
             {props.data.allContentfulBlog.edges.map((edge) => <Post key={edge.node.id} node={edge.node} />)}
         </Grid>
+      </wrapper>
     )
 }
 
