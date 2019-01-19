@@ -87,6 +87,7 @@ const ArticleHead = props => {
   return (
     <Headroom
       style={{
+        position: 'fixed',
         zIndex: '899',
         transition: 'all .5s ease-in-out',
       }}
