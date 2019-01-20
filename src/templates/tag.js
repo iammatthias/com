@@ -17,7 +17,7 @@ const TagTemplate = ({ data, location }) => {
 
   return (
     <Layout location={location}>
-      <Flex width={1} flexWrap="wrap" flexDirection="row">
+      <Flex width={1} p={4} flexWrap="wrap" flexDirection="row">
         <Box width={1}>
           <Heading>Tag: {title}</Heading>
         </Box>
