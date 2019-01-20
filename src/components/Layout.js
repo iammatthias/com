@@ -59,6 +59,10 @@ svg {
 .bm-burger-bars {
   background: var(--color-tertiary);
 }
+
+#outer-container {
+  overflow: visible !important;
+}
 `
 
 const Layout = ({ children, location }) => {
