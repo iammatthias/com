@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'react-emotion'
+import styled from 'styled-components'
 import Img from 'gatsby-image'
 
 const Hero = styled.div`

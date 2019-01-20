@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'react-emotion'
+import styled from 'styled-components'
 import { Link } from 'gatsby'
 import Img from 'gatsby-image'
 
@@ -7,6 +7,7 @@ import { Flex as Base, Text, Heading } from 'rebass'
 
 const StyledLink = styled(Link)`
   flex: 0 0 100%;
+  text-decoration: none;
 `
 
 export const Flex = styled(Base)`
@@ -39,7 +40,7 @@ const Cover = styled.div`
 const BlogList = props => {
   return (
     <StyledLink key={props.id} to={`/blog/${props.slug}/`}>
-      <Flex width={1} mb={4} flexWrap="wrap" flexDirection="row">
+      <Flex width={1} mb={4} flexWrap="wrap" flexDirection="column">
         <Cover>
           <Img fluid={props.image.fluid} />
         </Cover>

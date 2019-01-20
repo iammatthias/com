@@ -38,9 +38,9 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-plugin-emotion`,
+      resolve: `gatsby-plugin-styled-components`,
       options: {
-        // Accepts all options defined by `babel-plugin-emotion` plugin.
+        // Add any options here
       },
     },
     {

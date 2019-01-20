@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'react-emotion'
+import styled from 'styled-components'
 import { Link } from 'gatsby'
 import Img from 'gatsby-image'
 
@@ -7,6 +7,7 @@ import { Flex as Base, Text, Heading } from 'rebass'
 
 const StyledLink = styled(Link)`
   flex: 0 0 100%;
+  text-decoration: none;
 `
 
 export const Flex = styled(Base)`
