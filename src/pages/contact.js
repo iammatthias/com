@@ -1,33 +1,36 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Helmet from 'react-helmet'
-import config from '../utils/siteConfig'
 import Layout from '../components/Layout'
-import WrapperGrid from '../components/WrapperGrid'
 import Hero from '../components/Hero'
-import ContactBody from '../components/Contact/ContactBody'
-import ContactBodyTop from '../components/Contact/ContactBodyTop'
-import ContactBodyBottom from '../components/Contact/ContactBodyBottom'
 import ContactForm from '../components/Contact/ContactForm'
 import SEO from '../components/SEO'
 
+import { Flex, Box, Text } from 'rebass'
+
 const Contact = ({ data, location }) => {
-  const info = data.contentfulAbout
+  const contact = data.contentfulAbout
   return (
     <Layout location={location}>
-      <Helmet>
-        <title>{`${config.siteTitle} - Contact`}</title>
-      </Helmet>
-      <SEO postNode={info} pagePath="contact" customTitle pageSEO />
-      <WrapperGrid>
-        <Hero image={info.heroImage} />
-        <ContactBody>
-          <ContactBodyTop body={info.body} />
-          <ContactBodyBottom>
-            <ContactForm />
-          </ContactBodyBottom>
-        </ContactBody>
-      </WrapperGrid>
+      <SEO />
+      <>
+        <Flex flexWrap="wrap" flexDirection="row">
+          <Box p={3} width={[1, 1, 1 / 2]}>
+            <Box p={3} width={[1]}>
+              <Text
+                dangerouslySetInnerHTML={{
+                  __html: contact.body.childMarkdownRemark.html,
+                }}
+              />
+            </Box>
+            <Flex p={3} width={[1]} flexWrap="wrap" flexDirection="row">
+              <ContactForm />
+            </Flex>
+          </Box>
+          <Box p={0} width={[1, 1, 1 / 2]}>
+            <Hero image={contact.heroImage} />
+          </Box>
+        </Flex>
+      </>
     </Layout>
   )
 }

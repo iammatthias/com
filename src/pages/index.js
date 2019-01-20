@@ -1,12 +1,10 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from '../components/Layout'
-import WrapperGrid from '../components/WrapperGrid'
 import Hero from '../components/Hero'
-import HomeBody from '../components/Home/HomeBody'
-import HomeBodyTop from '../components/Home/HomeBodyTop'
-import HomeBodyBottom from '../components/Home/HomeBodyBottom'
 import HomeList from '../components/Home/HomeList'
+
+import { Flex, Box, Text } from 'rebass'
 
 import SEO from '../components/SEO'
 
@@ -16,24 +14,34 @@ const Index = ({ data, location }) => {
   return (
     <Layout location={location}>
       <SEO />
-      <WrapperGrid>
-        <Hero image={home.heroImage} />
-        <HomeBody>
-          <HomeBodyTop body={home.body} />
-          <HomeBodyBottom>
-            {galleries.map(({ node: gallery }) => (
-              <HomeList
-                key={gallery.id}
-                slug={gallery.slug}
-                image={gallery.heroImage}
-                title={gallery.title}
-                date={gallery.publishDate}
-                excerpt={gallery.body}
+      <>
+        <Flex flexWrap="wrap" flexDirection="row">
+          <Box p={3} width={[1, 1, 1 / 2]}>
+            <Box p={3} width={[1]}>
+              <Text
+                dangerouslySetInnerHTML={{
+                  __html: home.body.childMarkdownRemark.html,
+                }}
               />
-            ))}
-          </HomeBodyBottom>
-        </HomeBody>
-      </WrapperGrid>
+            </Box>
+            <Flex p={3} width={[1]} flexWrap="wrap" flexDirection="row">
+              {galleries.map(({ node: gallery }) => (
+                <HomeList
+                  key={gallery.id}
+                  slug={gallery.slug}
+                  image={gallery.heroImage}
+                  title={gallery.title}
+                  date={gallery.publishDate}
+                  excerpt={gallery.body}
+                />
+              ))}
+            </Flex>
+          </Box>
+          <Box p={0} width={[1, 1, 1 / 2]}>
+            <Hero image={home.heroImage} />
+          </Box>
+        </Flex>
+      </>
     </Layout>
   )
 }

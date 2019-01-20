@@ -1,74 +1,53 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Img from 'gatsby-image'
-import Lightbox from 'react-images'
-import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
+import { chunk, sum } from 'lodash'
+import { Box, Link, Heading } from 'rebass'
 
-class GalleryComposition extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      shareOpen: false,
-      anchorEl: null,
-      lightbox: false,
-      currentImage: 0,
-      photos: props.photos.map(photo =>
-        Object.assign({ srcSet: photo.fluid.srcSet })
-      ),
-    }
-  }
+const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
+  const aspectRatios = images.map(image => image.fluid.aspectRatio)
+  const rowAspectRatioSumsByBreakpoints = itemsPerRowByBreakpoints.map(
+    itemsPerRow =>
+      chunk(aspectRatios, itemsPerRow).map(rowAspectRatios =>
+        sum(rowAspectRatios)
+      )
+  )
 
-  gotoPrevLightboxImage() {
-    const { photo } = this.state
-    this.setState({ photo: photo - 1 })
-  }
+  return (
+    <Box p={4}>
+      <Heading>{title}</Heading>
+      {images.map((image, i) => (
+        <Link
+          key={image.id}
+          href={image.originalImg}
+          onClick={e => openModal(i, e)}
+        >
+          <Box
+            as={Img}
+            fluid={image.fluid}
+            title={image.title}
+            width={rowAspectRatioSumsByBreakpoints.map(
+              (rowAspectRatioSums, j) => {
+                const rowIndex = Math.floor(i / itemsPerRowByBreakpoints[j])
+                const rowAspectRatioSum = rowAspectRatioSums[rowIndex]
 
-  gotoNextLightboxImage() {
-    const { photo } = this.state
-    this.setState({ photo: photo + 1 })
-  }
-
-  openLightbox(photo, event) {
-    event.preventDefault()
-    this.setState({ lightbox: true, photo })
-  }
-
-  closeLightbox() {
-    this.setState({ lightbox: false, currentImage: 0 })
-  }
-
-  render() {
-    const { photos } = this.props
-    return (
-      <>
-        <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 3, 900: 5 }}>
-          <Masonry gutter="1rem">
-            {photos.map((photo, i) => (
-              <a
-                key={i}
-                href={photo.fluid.srcSet}
-                onClick={e => this.openLightbox(i, e)}
-              >
-                <Img fluid={photo.fluid} />
-              </a>
-            ))}
-          </Masonry>
-        </ResponsiveMasonry>
-        <Lightbox
-          backdropClosesModal
-          enableKeyboardInput
-          showImageCount
-          imageCountSeparator={'/'}
-          images={this.state.photos}
-          preloadNextImage
-          currentImage={this.state.photo}
-          isOpen={this.state.lightbox}
-          onClickPrev={() => this.gotoPrevLightboxImage()}
-          onClickNext={() => this.gotoNextLightboxImage()}
-          onClose={() => this.closeLightbox()}
-        />
-      </>
-    )
-  }
+                return `${(image.fluid.aspectRatio / rowAspectRatioSum) * 100}%`
+              }
+            )}
+            css={`
+            display: inline-block;
+            vertical-align: middle;
+            transition: filter 0.3s;
+            :hover {
+              filter: brightness(87.5%);
+            }
+            objectFit: 'cover !important',
+            height: '100%',
+          `}
+          />
+        </Link>
+      ))}
+    </Box>
+  )
 }
 
-export default GalleryComposition
+export default Gallery
