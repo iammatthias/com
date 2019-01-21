@@ -21,7 +21,7 @@ const GalleryHead = props => {
         bg="var(--color-secondary)"
       >
         <Box>
-          <Link to={`/blog/`}>
+          <Link to={`/blog/`} className="noUnderline">
             <Heading color="var(--color-accent)">⬅ Back</Heading>
           </Link>
         </Box>

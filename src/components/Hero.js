@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Img from 'gatsby-image'
 
 const Hero = styled.div`
-  display: none;
+  position: relative;
   @media screen and (min-width: 52em) {
     display: block;
     position: fixed;

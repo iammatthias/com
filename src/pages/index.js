@@ -15,7 +15,7 @@ const Index = ({ data, location }) => {
     <Layout location={location}>
       <SEO />
       <>
-        <Flex flexWrap="wrap" flexDirection="row">
+        <Flex flexWrap="wrap" className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
             <Box p={[3, 4]} width={[1]}>
               <Text

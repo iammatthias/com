@@ -66,6 +66,21 @@ const Reset = createGlobalStyle`
   outline-color: transparent;
   outline-style: none;
 }
+  .noUnderline {
+    text-decoration: none;
+  }
+  .hide {
+    display: none;
+    @media screen and (min-width: 52em) {
+      display: block;
+    }
+  }
+  .changeDirection {
+    flex-direction: column-reverse;
+    @media screen and (min-width: 52em) {
+    flex-direction: row;
+    }
+  }
 `
 const ColorMode = createGlobalStyle`
   :root {

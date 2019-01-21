@@ -15,7 +15,7 @@ const Blog2 = ({ data, location }) => {
     <Layout location={location}>
       <SEO />
       <>
-        <Flex flexWrap="wrap" flexDirection="row">
+        <Flex flexWrap="wrap" className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
             <Box p={[3, 4]} width={[1]}>
               <Text
@@ -38,7 +38,7 @@ const Blog2 = ({ data, location }) => {
               ))}
             </Flex>
           </Box>
-          <Box p={0} width={[1, 1, 1 / 2]}>
+          <Box p={0} width={[1, 1, 1 / 2]} className="hide">
             <Hero image={blog.heroImage} />
           </Box>
         </Flex>
