@@ -9,7 +9,11 @@ const GalleryTemplate = ({ data, location }) => {
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (
     <Layout location={location}>
-      <GalleryHead title={gallery.title} tags={gallery.tags} />
+      <GalleryHead
+        title={gallery.title}
+        body={gallery.body}
+        tags={gallery.tags}
+      />
       {subGalleries.map((subGallery, index) => (
         <div key={index}>
           {subGallery.__typename === 'ContentfulSubGallery' && (

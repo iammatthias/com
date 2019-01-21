@@ -73,7 +73,7 @@ const ColorMode = createGlobalStyle`
     --color-secondary: #100B00 ;
     --color-tertiary: #223843 ;
     --color-highlight: #FE5F55 ;
-    --color-accent: #FBF2F0 ;
+    --color-accent: #F4DAD3 ;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -81,7 +81,7 @@ const ColorMode = createGlobalStyle`
     --color-secondary: #E6E3E1;
     --color-tertiary: #F4DAD3;
     --color-highlight: #FE5F55;
-    --color-accent: #FCFCFC; 
+    --color-accent: #FBF2F0; 
  }
 }
 `
@@ -214,6 +214,7 @@ const MenuStyle = createGlobalStyle`
       span span {
         background: var(--color-secondary);
         position: fixed;
+        border: .5px solid var(--color-base);
       }
 `
 

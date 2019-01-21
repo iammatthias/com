@@ -14,15 +14,15 @@ const Contact = ({ data, location }) => {
       <SEO />
       <>
         <Flex flexWrap="wrap" flexDirection="row">
-          <Box p={4} width={[1, 1, 1 / 2]}>
-            <Box p={4} width={[1]}>
+          <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
+            <Box p={[3, 4]} width={[1]}>
               <Text
                 dangerouslySetInnerHTML={{
                   __html: contact.body.childMarkdownRemark.html,
                 }}
               />
             </Box>
-            <Flex px={4} width={[1]} flexWrap="wrap" flexDirection="row">
+            <Flex px={[3, 4]} width={[1]} flexWrap="wrap" flexDirection="row">
               <ContactForm />
             </Flex>
           </Box>

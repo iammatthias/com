@@ -13,7 +13,7 @@ const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
   )
 
   return (
-    <Box p={4}>
+    <Box p={[4, 5]}>
       <Heading>{title}</Heading>
       {images.map((image, i) => (
         <Link
@@ -36,10 +36,6 @@ const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
             css={`
             display: inline-block;
             vertical-align: middle;
-            transition: filter 0.3s;
-            :hover {
-              filter: brightness(87.5%);
-            }
             objectFit: 'cover !important',
             height: '100%',
           `}

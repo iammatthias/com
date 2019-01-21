@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'gatsby'
 import Headroom from 'react-headroom'
 
-import { Flex, Box, Heading } from 'rebass'
+import { Flex, Box, Heading, Text } from 'rebass'
 
 const GalleryHead = props => {
   return (
@@ -14,18 +14,27 @@ const GalleryHead = props => {
       }}
     >
       <Flex
-        p={4}
+        p={[4, 5]}
         width={[1]}
         flexWrap="wrap"
         flexDirection="column"
-        bg="var(--color-base)"
+        bg="var(--color-secondary)"
       >
         <Box>
           <Link to={`/`}>
-            <Heading>⬅ Back</Heading>
+            <Heading color="var(--color-accent)">⬅ Back</Heading>
           </Link>
         </Box>
-        <Heading>{props.title}</Heading>
+        <Heading color="var(--color-accent)" fontSize={5}>
+          {props.title}
+        </Heading>
+        <Heading
+          fontSize={2}
+          color="var(--color-accent)"
+          dangerouslySetInnerHTML={{
+            __html: props.body.childMarkdownRemark.html,
+          }}
+        />
         <Flex
           width={[1]}
           flexWrap="wrap"
@@ -34,7 +43,9 @@ const GalleryHead = props => {
         >
           {props.tags.map(tag => (
             <Box key={tag.id} pr={4}>
-              <Link to={`/tag/${tag.slug}/`}>{tag.title}</Link>
+              <Link to={`/tag/${tag.slug}/`}>
+                <Text color="var(--color-accent)">{tag.title}</Text>
+              </Link>
             </Box>
           ))}
         </Flex>

@@ -16,15 +16,20 @@ const Index = ({ data, location }) => {
       <SEO />
       <>
         <Flex flexWrap="wrap" flexDirection="row">
-          <Box p={4} width={[1, 1, 1 / 2]}>
-            <Box p={4} width={[1]}>
+          <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
+            <Box p={[3, 4]} width={[1]}>
               <Text
                 dangerouslySetInnerHTML={{
                   __html: home.body.childMarkdownRemark.html,
                 }}
               />
             </Box>
-            <Flex px={4} width={[1]} flexWrap="wrap" flexDirection="column">
+            <Flex
+              px={[3, 4]}
+              width={[1]}
+              flexWrap="wrap"
+              flexDirection="column"
+            >
               {galleries.map(({ node: gallery }) => (
                 <HomeList
                   key={gallery.id}

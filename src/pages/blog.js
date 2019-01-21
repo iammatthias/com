@@ -16,15 +16,15 @@ const Blog2 = ({ data, location }) => {
       <SEO />
       <>
         <Flex flexWrap="wrap" flexDirection="row">
-          <Box p={4} width={[1, 1, 1 / 2]}>
-            <Box p={4} width={[1]}>
+          <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
+            <Box p={[3, 4]} width={[1]}>
               <Text
                 dangerouslySetInnerHTML={{
                   __html: blog.body.childMarkdownRemark.html,
                 }}
               />
             </Box>
-            <Flex px={4} width={[1]} flexWrap="wrap" flexDirection="row">
+            <Flex px={[3, 4]} width={[1]} flexWrap="wrap" flexDirection="row">
               {posts.map(({ node: post }) => (
                 <BlogList
                   key={post.id}
