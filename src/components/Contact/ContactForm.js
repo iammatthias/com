@@ -16,6 +16,7 @@ const Form = styled.form`
     border-radius: 2px;
     padding: 1rem;
     border: 2px black solid;
+    background: var(--color-base);
   }
   &::before {
     content: '';
