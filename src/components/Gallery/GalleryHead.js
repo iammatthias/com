@@ -13,7 +13,13 @@ const GalleryHead = props => {
         transition: 'all .5s ease-in-out',
       }}
     >
-      <Flex p={4} width={[1]} flexWrap="wrap" flexDirection="column" bg="white">
+      <Flex
+        p={4}
+        width={[1]}
+        flexWrap="wrap"
+        flexDirection="column"
+        bg="var(--color-base)"
+      >
         <Box>
           <Link to={`/`}>
             <Heading>⬅ Back</Heading>
@@ -27,7 +33,7 @@ const GalleryHead = props => {
           flexDirection="row"
         >
           {props.tags.map(tag => (
-            <Box key={tag.id} pr={4} border="1px solid black">
+            <Box key={tag.id} pr={4}>
               <Link to={`/tag/${tag.slug}/`}>{tag.title}</Link>
             </Box>
           ))}

@@ -10,7 +10,7 @@ const Hero = styled.div`
     pointer-events: none;
     width: 50%;
     height: 100vh;
-    z-index: -1;
+    z-index: 1;
     div {
       height: 100% !important;
       object-fit: cover !important;

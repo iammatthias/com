@@ -53,7 +53,6 @@ const Reset = createGlobalStyle`
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-shadow: rgba(0, 0, 0, .01) 0 0 1px;
   }
   img {
     display: block;
@@ -68,22 +67,39 @@ const Reset = createGlobalStyle`
   outline-style: none;
 }
 `
-
-const Typography = createGlobalStyle`
+const ColorMode = createGlobalStyle`
+  :root {
+    --color-base: #E6E3E1 ;
+    --color-secondary: #100B00 ;
+    --color-tertiary: #223843 ;
+    --color-highlight: #FE5F55 ;
+    --color-accent: #FBF2F0 ;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-base: #100B00;
+    --color-secondary: #E6E3E1;
+    --color-tertiary: #F4DAD3;
+    --color-highlight: #FE5F55;
+    --color-accent: #FCFCFC; 
+ }
+}
+`
+const Paint = createGlobalStyle`
 html,
 body {
   margin: 0;
   width: 100%;
   font-size: 16px;
+  background: var(--color-base);
+  color: var(--color-secondary);
 }
-
 h1,
 h2,
 p,
 i,
 a,
 .first-letter {
-  color: rgba(0, 0, 0, 0.84);
   text-rendering: optimizeLegibility;
 }
 
@@ -98,15 +114,13 @@ h2 {
   font-weight: 900;
   padding: 0;
   margin: 3.5em 0 0 0;
-  line-height: 34.5px;
-  letter-spacing: -0.45px;
+  line-height: 2em;
 }
 
 h3 {
   padding: 0;
   margin: 3.5em 0 0 0;
-  line-height: 34.5px;
-  letter-spacing: -0.45px;
+  line-height: 2rem;
 }
 
 h1, h2 {
@@ -116,53 +130,55 @@ p, i, a {
   margin: .5em 0;
   font-family: "Lato";
   font-size: 1.25em;
-  letter-spacing: -0.03px;
   line-height: 1.58;
 }
 
 a {
   text-decoration: underline;
+  color: var(--color-tertiary);
+  transition: all 0.3s;
+  &:hover {
+    color: var(--color-highlight);
+  }
 }
 
 blockquote {
   font-family: "Montserrat", sans-serif;
-  font-size: 30px;
+  font-size: 1em;
   font-style: italic;
-  letter-spacing: -0.36px;
-  line-height: 44.4px;
+  line-height: 2.25em;
   overflow-wrap: break-word;
-  margin: 55px 0 33px 0;
-  color: rgba(0, 0, 0, 0.68);
-  padding: 0 0 0 50px;
-  border-left: 10px solid #ccc;
+  margin: 2em 0 2em 0;
+  padding: 0 0 0 3em;
+  border-left: .75em solid var(--color-tertiary);
 }
 
-code {
-  font-size: 18px;
-  background: rgba(0,0,0,.05);
-  border-radius: 2px;
-  padding: 3px 5px;
+code, pre {
+  font-size: 1em;
+  border-radius: .25em;
+  padding: .5em;
+  line-height: 1.5em;
 }
 
 mark, .highlighted {
-  background: #7DFFB3;
+  background: var(--color-highlight);
 }
 
 .first-letter {
   overflow-wrap: break-word;
   font-family: "Montserrat", sans-serif;
-  font-size: 60px;
-  line-height: 60px;
+  font-size: 3.75em;
+  line-height: 3.75em;
   display: block;
   position: relative;
   float: left;
-  margin: 0px 7px 0 -5px;
+  margin: 0 .5em 0 -.5em;
 }
 
 .subtitle {
   font-family: "Lato", sans-serif;
-  color: rgba(0, 0, 0, 0.54);
-  margin: 0 0 24px 0;
+  color: var(--color-secondary);
+  margin: 0 0 1.5em 0;
 }
 
 ::selection{background-color: lavender}
@@ -170,7 +186,7 @@ mark, .highlighted {
 
 const MenuStyle = createGlobalStyle`
   .bm-menu {
-  background: white;
+  background: var(--color-base);
   padding: 2em;
   font-size: 1.15em;
 }
@@ -191,12 +207,12 @@ const MenuStyle = createGlobalStyle`
     }
     .bm-burger-button {
       position: fixed;
-      width: 1.5rem;
-      height: 1.5rem;
+      width: 2rem;
+      height: 2rem;
       top: 2em;
       right: 2em;
       span span {
-        background: black;
+        background: var(--color-secondary);
         position: fixed;
       }
 `
@@ -205,7 +221,8 @@ const Layout = ({ children }) => {
   return (
     <div className="siteRoot">
       <Reset />
-      <Typography />
+      <ColorMode />
+      <Paint />
       <MenuStyle />
       <ThemeProvider theme={theme}>
         <>

@@ -6,8 +6,6 @@
 code[class*='language-'],
 pre[class*='language-'] {
   font-family: IBM Plex Mono, monospace;
-  font-size: 14px;
-  line-height: 1.375;
   direction: ltr;
   text-align: left;
   white-space: pre-wrap;
