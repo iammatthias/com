@@ -30,8 +30,7 @@ const NavBar = styled.nav`
 
 export const MenuTabBar = styled(Base)`
   background: var(--color-secondary);
-  border-top: 2px solid var(--color-base);
-  box-shadow: 0 -2px 0px 0px var(--color-secondary);
+  border-top: 3px solid var(--color-accent);
   overflow: hidden;
   position: fixed;
   bottom: 0;
@@ -42,9 +41,9 @@ export const MenuTabBar = styled(Base)`
     display: none;
   }
   div {
-    border-right: 2px solid var(--color-base);
+    border-right: 2px solid var(--color-accent);
     &:last-child {
-      border-right: 0px solid var(--color-base);
+      border-right: 0px solid var(--color-accent);
     }
   }
 `
@@ -104,7 +103,7 @@ const Navigation = () => {
           <StyledLink
             to="/"
             activeStyle={{
-              boxShadow: 'inset 0 -8px 0px 0px var(--color-accent)',
+              boxShadow: 'inset 0 8px 0px 0px var(--color-accent)',
             }}
           >
             <Heading>Home</Heading>
@@ -114,7 +113,7 @@ const Navigation = () => {
           <StyledLink
             to="/blog"
             activeStyle={{
-              boxShadow: 'inset 0 -8px 0px 0px var(--color-accent)',
+              boxShadow: 'inset 0 8px 0px 0px var(--color-accent)',
             }}
           >
             <Heading>Blog</Heading>
@@ -124,7 +123,7 @@ const Navigation = () => {
           <StyledLink
             to="/contact"
             activeStyle={{
-              boxShadow: 'inset 0 -8px 0px 0px var(--color-accent)',
+              boxShadow: 'inset 0 8px 0px 0px var(--color-accent)',
             }}
           >
             <Heading>Bio</Heading>
