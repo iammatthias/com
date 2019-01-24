@@ -204,14 +204,24 @@ mark, .highlighted {
 
 const MenuStyle = createGlobalStyle`
   .bm-menu {
-  background: var(--color-base);
+  background: var(--color-secondary);
   padding: 2em;
   font-size: 1.15em;
+  a {
+    color: var(--color-base);
+  }
+  svg {
+  transition: all 0.5s;
+  fill: var(--color-base);
+  &:hover {
+    fill: var(--color-highlight);
+  }
+}
 }
     .bm-cross {
       height: 2rem !important;
       width: 0.35rem !important;
-      background: black;
+      background: var(--color-base);
     }
     .bm-cross-button {
       height: 2em !important;

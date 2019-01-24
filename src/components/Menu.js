@@ -59,14 +59,18 @@ const Navigation = () => {
           outerContainerId={'outer-container'}
           noOverlay
         >
-          <StyledLink to="/">
+          <StyledLink to="/" activeStyle={{ color: 'var(--color-accent)' }}>
             <Heading>Portfolio</Heading>
           </StyledLink>
-          <StyledLink to="/blog">
+          <StyledLink to="/blog" activeStyle={{ color: 'var(--color-accent)' }}>
             <Heading>Blog</Heading>
           </StyledLink>
-
-          <StyledLink to="/contact">
+          <StyledLink
+            to="/contact"
+            activeStyle={{
+              color: 'var(--color-accent)',
+            }}
+          >
             <Heading>Contact</Heading>
           </StyledLink>
 
