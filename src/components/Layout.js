@@ -213,9 +213,6 @@ const MenuStyle = createGlobalStyle`
   svg {
   transition: all 0.5s;
   fill: var(--color-base);
-  &:hover {
-    fill: var(--color-highlight);
-  }
 }
 }
     .bm-cross {
