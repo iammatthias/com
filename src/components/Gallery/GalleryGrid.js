@@ -13,18 +13,6 @@ const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
       )
   )
 
-  // const modalIsOpen = useState(false)
-  // const setModalIsOpen = useState(false)
-
-  // const modalCurrentIndex = useState(0)
-  // const setModalCurrentIndex = useState(0)
-
-  // const closeModal = () => setModalIsOpen(false)
-  // const openModal = imageIndex => {
-  //   setModalCurrentIndex(imageIndex)
-  //   setModalIsOpen(true)
-  // }
-
   return (
     <Box p={[4, 5]}>
       <Heading>{title}</Heading>
@@ -51,23 +39,6 @@ const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
           />
         </Link>
       ))}
-
-      {/* {ModalGateway && (
-        <ModalGateway>
-          {modalIsOpen && (
-            <Modal onClose={closeModal}>
-              <Carousel
-                views={images.map(({ originalImg, caption }) => ({
-                  source: originalImg,
-                  caption,
-                }))}
-                currentIndex={modalCurrentIndex}
-                components={{ FooterCount: () => null }}
-              />
-            </Modal>
-          )}
-        </ModalGateway>
-      )} */}
     </Box>
   )
 }
