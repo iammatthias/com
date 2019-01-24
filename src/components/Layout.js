@@ -236,7 +236,7 @@ const MenuStyle = createGlobalStyle`
       }
 `
 const transitionDuration = 300
-const transitionDelay = 350
+const transitionDelay = 50
 
 const Transition = posed.div({
   enter: {
