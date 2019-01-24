@@ -235,7 +235,7 @@ const MenuStyle = createGlobalStyle`
         border: .5px solid var(--color-base);
       }
 `
-const transitionDuration = 300
+const transitionDuration = 150
 const transitionDelay = 50
 
 const Transition = posed.div({
