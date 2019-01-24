@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Img from 'gatsby-image'
 import { chunk, sum } from 'lodash'
-import Carousel, { Modal, ModalGateway } from 'react-images'
 import { Box, Link, Heading } from 'rebass'
 
 const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
