@@ -1,10 +1,10 @@
-# [IAMMATTHIAS](https://iammatthias.com)
-
-![](https://thumbs.gfycat.com/JovialDopeyErmine-size_restricted.gif)
+# [IAMMATTHIAS v3](https://iammatthias.com)
 
 ## Overview
 
-Codebase for [https://iammatthias.com](https://iammatthias.com) — my photography portfolio. Current iteration is built using Contentful, Netlify, and Gatsby V2; and was launched in September 2018. This site makes heavy use of the [`gatsby-image`](https://next.gatsbyjs.org/packages/gatsby-image/) plugin, pulling optimized fluid assets from Contentful.
+Codebase for [https://iammatthias.com](https://iammatthias.com)
+
+Photography portfolio built using Gatsby + Contentful + Netlify. Features React-Images v1, performant masonry grid for galleries, sub galleries, and a blog. 
 
 ### Features
 
@@ -19,4 +19,4 @@ Codebase for [https://iammatthias.com](https://iammatthias.com) — my photogra
 
 > Code can be used as a reference for other Gatsby projects, but this repo will not work out-of-the-box without replicating the Contentful data structure. If you would like to quickly bootstrap a Gatsby + Contentful + Netlify project, I recommend checking out the fantastic [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn) starter.
 
-> This repo uses Yarn, over NPM.
+This repo uses Yarn, over NPM.

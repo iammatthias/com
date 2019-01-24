@@ -15,8 +15,9 @@ const Form = styled.form`
     outline: none;
     border-radius: 2px;
     padding: 1rem;
-    border: 2px black solid;
+    border: 2px var(--color-secondary) solid;
     background: var(--color-base);
+    color: var(--color-secondary);
   }
   &::before {
     content: '';
@@ -29,6 +30,15 @@ const Form = styled.form`
     transition: 0.2s all;
     opacity: ${props => (props.overlay ? '.8' : '0')};
     visibility: ${props => (props.overlay ? 'visible' : 'hidden')};
+  }
+  &::invalid {
+    box-shadow: none;
+  }
+  &::required {
+    box-shadow: none;
+  }
+  &::optional {
+    box-shadow: none;
   }
 `
 
