@@ -1,5 +1,7 @@
 import React from 'react'
 import { graphql } from 'gatsby'
+import Helmet from 'react-helmet'
+import config from '../utils/siteConfig'
 import Layout from '../components/Layout'
 import Hero from '../components/Hero'
 import BlogList from '../components/Blog/BlogList'
@@ -13,7 +15,10 @@ const Blog2 = ({ data, location }) => {
   const blog = data.contentfulBlog
   return (
     <Layout location={location}>
-      <SEO />
+      <Helmet>
+        <title>{`${config.siteTitle} - Blog`}</title>
+      </Helmet>
+      <SEO postNode={blog} pagePath="contact" customTitle pageSEO />
       <>
         <Flex flexWrap="wrap" className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>

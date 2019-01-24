@@ -1,14 +1,21 @@
 import React from 'react'
 import { graphql } from 'gatsby'
+import Helmet from 'react-helmet'
+import config from '../utils/siteConfig'
 import Layout from '../components/Layout'
 import GalleryGrid from '../components/Gallery/GalleryGrid'
 import GalleryHead from '../components/Gallery/GalleryHead'
+import SEO from '../components/SEO'
 
 const GalleryTemplate = ({ data, location }) => {
   const gallery = data.contentfulExtendedGallery
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (
     <Layout location={location}>
+      <Helmet>
+        <title>{`${config.siteTitle} - ${gallery.title} `}</title>
+      </Helmet>
+      <SEO pagePath={gallery.slug} postNode={gallery} gallerySEO />
       <GalleryHead
         title={gallery.title}
         body={gallery.body}

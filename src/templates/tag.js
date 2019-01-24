@@ -3,11 +3,13 @@ import { graphql } from 'gatsby'
 import sortBy from 'lodash/sortBy'
 import Layout from '../components/Layout'
 import TagList from '../components/Tag/TagList'
+import Helmet from 'react-helmet'
+import config from '../utils/siteConfig'
 
 import { Flex, Box, Heading } from 'rebass'
 
 const TagTemplate = ({ data, location }) => {
-  const { title } = data.contentfulTag
+  const { title, slug } = data.contentfulTag
 
   const posts = sortBy(data.contentfulTag.post, 'publishDate').reverse()
   const galleries = sortBy(
@@ -17,6 +19,14 @@ const TagTemplate = ({ data, location }) => {
 
   return (
     <Layout location={location}>
+      <Helmet>
+        <title>{`Tag: ${title} - ${config.siteTitle}`}</title>
+        <meta
+          property="og:title"
+          content={`Tag: ${title} - ${config.siteTitle}`}
+        />
+        <meta property="og:url" content={`${config.siteUrl}/tag/${slug}/`} />
+      </Helmet>
       <Flex width={1} p={4} flexWrap="wrap" flexDirection="row">
         <Box width={1}>
           <Heading>Tag: {title}</Heading>

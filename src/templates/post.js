@@ -1,13 +1,25 @@
 import React from 'react'
 import { graphql } from 'gatsby'
+import Helmet from 'react-helmet'
+import config from '../utils/siteConfig'
 import find from 'lodash/find'
 import Layout from '../components/Layout'
 import PostHead from '../components/Post/PostHead'
 import PostHero from '../components/Post/PostHero'
 import PostArticle from '../components/Post/PostArticle'
+import SEO from '../components/SEO'
 
 const PostTemplate = ({ data, location }) => {
-  const { title, id, heroImage, body, publishDate, tags } = data.contentfulPost
+  const {
+    title,
+    slug,
+    id,
+    heroImage,
+    body,
+    publishDate,
+    tags,
+  } = data.contentfulPost
+  const postNode = data.contentfulPost
 
   const postIndex = find(
     data.allContentfulPost.edges,
@@ -15,6 +27,10 @@ const PostTemplate = ({ data, location }) => {
   )
   return (
     <Layout location={location}>
+      <Helmet>
+        <title>{`${config.siteTitle} - ${title}`}</title>
+      </Helmet>
+      <SEO pagePath={slug} postNode={postNode} postSEO />
       <PostHead
         title={title}
         date={publishDate}

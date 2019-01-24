@@ -11,7 +11,7 @@ const Contact = ({ data, location }) => {
   const contact = data.contentfulAbout
   return (
     <Layout location={location}>
-      <SEO />
+      <SEO postNode={contact} pagePath="contact" customTitle pageSEO />
       <>
         <Flex flexWrap="wrap" className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
