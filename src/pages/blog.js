@@ -6,7 +6,7 @@ import Layout from '../components/Layout'
 import Hero from '../components/Hero'
 import BlogList from '../components/Blog/BlogList'
 
-import { Flex, Box, Text } from 'rebass'
+import { Flex, Box } from 'rebass'
 
 import SEO from '../components/SEO'
 
@@ -23,7 +23,7 @@ const Blog2 = ({ data, location }) => {
         <Flex flexWrap="wrap" className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
             <Box p={[3, 4]} width={[1]}>
-              <Text
+              <article
                 dangerouslySetInnerHTML={{
                   __html: blog.body.childMarkdownRemark.html,
                 }}

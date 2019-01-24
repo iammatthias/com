@@ -4,7 +4,7 @@ import Layout from '../components/Layout'
 import Hero from '../components/Hero'
 import HomeList from '../components/Home/HomeList'
 
-import { Flex, Box, Text } from 'rebass'
+import { Flex, Box } from 'rebass'
 
 import SEO from '../components/SEO'
 
@@ -18,7 +18,7 @@ const Index = ({ data, location }) => {
         <Flex flexWrap="wrap" className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
             <Box p={[3, 4]} width={[1]}>
-              <Text
+              <article
                 dangerouslySetInnerHTML={{
                   __html: home.body.childMarkdownRemark.html,
                 }}

@@ -5,7 +5,7 @@ import Hero from '../components/Hero'
 import ContactForm from '../components/Contact/ContactForm'
 import SEO from '../components/SEO'
 
-import { Flex, Box, Text } from 'rebass'
+import { Flex, Box } from 'rebass'
 
 const Contact = ({ data, location }) => {
   const contact = data.contentfulAbout
@@ -16,7 +16,7 @@ const Contact = ({ data, location }) => {
         <Flex flexWrap="wrap" className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
             <Box p={[3, 4]} width={[1]}>
-              <Text
+              <article
                 dangerouslySetInnerHTML={{
                   __html: contact.body.childMarkdownRemark.html,
                 }}
