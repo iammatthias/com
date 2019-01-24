@@ -11,6 +11,7 @@ Photography portfolio built using Gatsby + Contentful + Netlify. Features React-
 - Netlify integration
 - Styled components
 - Page Transitions
+- Performant Masonry
 - Google Analytics
 - Progressive Web app
 - Offline Support
