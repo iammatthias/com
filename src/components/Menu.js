@@ -9,7 +9,7 @@ import { Flex as Base, Heading, Box } from 'rebass'
 const StyledLink = styled(Link)`
   text-decoration: none;
   text-align: center;
-  color: var(--color-base);
+  color: var(--color-accent);
   text-transform: uppercase;
   position: relative;
   display: block;
@@ -104,7 +104,7 @@ const Navigation = () => {
           <StyledLink
             to="/"
             activeStyle={{
-              boxShadow: 'inset 0 -8px 0px 0px var(--color-highlight)',
+              boxShadow: 'inset 0 -8px 0px 0px var(--color-accent)',
             }}
           >
             <Heading>Home</Heading>
@@ -114,7 +114,7 @@ const Navigation = () => {
           <StyledLink
             to="/blog"
             activeStyle={{
-              boxShadow: 'inset 0 -8px 0px 0px var(--color-highlight)',
+              boxShadow: 'inset 0 -8px 0px 0px var(--color-accent)',
             }}
           >
             <Heading>Blog</Heading>
@@ -124,7 +124,7 @@ const Navigation = () => {
           <StyledLink
             to="/contact"
             activeStyle={{
-              boxShadow: 'inset 0 -8px 0px 0px var(--color-highlight)',
+              boxShadow: 'inset 0 -8px 0px 0px var(--color-accent)',
             }}
           >
             <Heading>Bio</Heading>

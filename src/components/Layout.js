@@ -1,5 +1,6 @@
 import React from 'react'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
+import posed, { PoseGroup } from 'react-pose'
 import Helmet from 'react-helmet'
 import theme from '../styles/theme'
 import config from '../utils/siteConfig'
@@ -234,8 +235,20 @@ const MenuStyle = createGlobalStyle`
         border: .5px solid var(--color-base);
       }
 `
+const transitionDuration = 300
+const transitionDelay = 350
 
-const Layout = ({ children }) => {
+const Transition = posed.div({
+  enter: {
+    opacity: 1,
+    transition: { duration: transitionDuration },
+    delay: transitionDelay,
+    beforeChildren: true,
+  },
+  exit: { opacity: 0, transition: { duration: transitionDuration } },
+})
+
+const Layout = ({ children, ...props }) => {
   return (
     <div className="siteRoot">
       <Helmet>
@@ -259,7 +272,9 @@ const Layout = ({ children }) => {
       <ThemeProvider theme={theme}>
         <>
           <Menu />
-          {children}
+          <PoseGroup>
+            <Transition key={props.location.pathname}>{children}</Transition>
+          </PoseGroup>
         </>
       </ThemeProvider>
     </div>
