@@ -3,6 +3,7 @@ import Link from 'gatsby-link'
 import styled from 'styled-components'
 import { slide as Menu } from 'react-burger-menu'
 import Social from './Social'
+import Logo from '../components/Logo'
 
 import { Flex as Base, Heading, Box } from 'rebass'
 
@@ -51,6 +52,7 @@ export const MenuTabBar = styled(Base)`
 const Navigation = () => {
   return (
     <>
+      <Logo />
       <NavBar>
         <Menu
           right

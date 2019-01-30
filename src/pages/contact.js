@@ -4,7 +4,6 @@ import Layout from '../components/Layout'
 import Hero from '../components/Hero'
 import ContactForm from '../components/Contact/ContactForm'
 import SEO from '../components/SEO'
-import Logo from '../components/Logo'
 
 import { Flex, Box } from 'rebass'
 
@@ -16,7 +15,6 @@ const Contact = ({ data, location }) => {
       <>
         <Flex flexWrap="wrap" className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
-            <Logo />
             <Box p={[3, 4]} width={[1]}>
               <article
                 dangerouslySetInnerHTML={{

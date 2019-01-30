@@ -205,9 +205,16 @@ mark, .highlighted {
 const MenuStyle = createGlobalStyle`
   .logo {
     img {
-      height: 4rem;
-    width: auto;
+      height: 3em;
+      width: 3em;
+      width: auto;
+      margin: 1em;
    }
+  }
+  .menuHeadroom {
+    z-index: 910;
+    position: fixed;
+    top: 0;
   }
   .bm-menu {
   background: var(--color-secondary);
