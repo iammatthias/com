@@ -203,6 +203,12 @@ mark, .highlighted {
 `
 
 const MenuStyle = createGlobalStyle`
+  .logo {
+    img {
+      height: 4rem;
+    width: auto;
+   }
+  }
   .bm-menu {
   background: var(--color-secondary);
   padding: 2em;
@@ -237,9 +243,10 @@ const MenuStyle = createGlobalStyle`
       top: 2em;
       right: 2em;
       span span {
-        background: var(--color-secondary);
+        background: var(--color-base);
         position: fixed;
-        border: .5px solid var(--color-base);
+        border: .5px solid var(--color-secondary);
+        mix-blend-mode: luminosity;
       }
 `
 const transitionDuration = 150

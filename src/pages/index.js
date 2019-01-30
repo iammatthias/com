@@ -3,6 +3,7 @@ import { graphql } from 'gatsby'
 import Layout from '../components/Layout'
 import Hero from '../components/Hero'
 import HomeList from '../components/Home/HomeList'
+import Logo from '../components/Logo'
 
 import { Flex, Box, Text } from 'rebass'
 
@@ -17,6 +18,7 @@ const Index = ({ data, location }) => {
       <>
         <Flex flexWrap="wrap" className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
+            <Logo />
             <Box p={[3, 4]} width={[1]}>
               <Text
                 dangerouslySetInnerHTML={{

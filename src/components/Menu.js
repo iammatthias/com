@@ -67,9 +67,7 @@ const Navigation = () => {
           </StyledLink>
           <StyledLink
             to="/contact"
-            activeStyle={{
-              color: 'var(--color-accent)',
-            }}
+            activeStyle={{ color: 'var(--color-accent)' }}
           >
             <Heading>Contact</Heading>
           </StyledLink>

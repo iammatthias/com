@@ -26,6 +26,7 @@ const GalleryTemplate = ({ data, location }) => {
           {subGallery.__typename === 'ContentfulSubGallery' && (
             <GalleryGrid
               key={subGallery.id}
+              slug={subGallery.slug}
               images={subGallery.images}
               title={subGallery.title}
               itemsPerRow={[1, 2, 3, 4]}

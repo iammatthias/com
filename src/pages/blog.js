@@ -5,6 +5,7 @@ import config from '../utils/siteConfig'
 import Layout from '../components/Layout'
 import Hero from '../components/Hero'
 import BlogList from '../components/Blog/BlogList'
+import Logo from '../components/Logo'
 
 import { Flex, Box, Text } from 'rebass'
 
@@ -22,6 +23,7 @@ const Blog2 = ({ data, location }) => {
       <>
         <Flex flexWrap="wrap" className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
+            <Logo />
             <Box p={[3, 4]} width={[1]}>
               <Text
                 dangerouslySetInnerHTML={{
@@ -43,7 +45,7 @@ const Blog2 = ({ data, location }) => {
               ))}
             </Flex>
           </Box>
-          <Box p={0} width={[1, 1, 1 / 2]} className="hide">
+          <Box p={0} width={[1, 1, 1 / 2]}>
             <Hero image={blog.heroImage} />
           </Box>
         </Flex>

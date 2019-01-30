@@ -40,7 +40,7 @@ const Cover = styled.div`
 const BlogList = props => {
   return (
     <StyledLink key={props.id} to={`/blog/${props.slug}/`}>
-      <Flex width={1} mb={4} flexWrap="wrap" flexDirection="column">
+      <Flex width={1} mb={3} flexWrap="wrap" flexDirection="column">
         <Cover>
           <Img fluid={props.image.fluid} />
         </Cover>
