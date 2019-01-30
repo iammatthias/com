@@ -18,24 +18,12 @@ const Gallery = ({
       )
   )
 
-  const [modalIsOpen, setModalIsOpen] = () => useState(false)
-  const modalCurrentIndex = () => useState(0)
-
-  const closeModal = () => setModalIsOpen(false)
-  const openModal = () => {
-    useState(state => ({ setModalIsOpen: !state.modalIsOpen }))
-  }
-
   return (
     <>
       <Box key={slug} p={[4, 5]}>
         <Heading key={title}>{title}</Heading>
         {images.map((image, i) => (
-          <Link
-            key={image.id}
-            href={image.originalImg}
-            onClick={e => openModal(i)}
-          >
+          <Link key={image.id} href={image.originalImg}>
             <Box
               as={Img}
               key={image}
@@ -59,22 +47,6 @@ const Gallery = ({
             />
           </Link>
         ))}
-        {ModalGateway && (
-          <ModalGateway>
-            {modalIsOpen && (
-              <Modal onClose={closeModal}>
-                <Carousel
-                  views={images.map(({ originalImg, caption }) => ({
-                    source: originalImg,
-                    caption,
-                  }))}
-                  currentIndex={modalCurrentIndex}
-                  components={{ FooterCount: () => null }}
-                />
-              </Modal>
-            )}
-          </ModalGateway>
-        )}
       </Box>
     </>
   )
