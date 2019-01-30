@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Img from 'gatsby-image'
 import { chunk, sum } from 'lodash'
 import { Box, Link, Heading } from 'rebass'
-import Carousel, { Modal, ModalGateway } from 'react-images'
 
 const Gallery = ({
   title,
