@@ -5,7 +5,7 @@ import Hero from '../components/Hero'
 import HomeList from '../components/Home/HomeList'
 import Logo from '../components/Logo'
 
-import { Flex, Box, Text } from 'rebass'
+import { Flex, Box } from 'rebass'
 
 import SEO from '../components/SEO'
 
@@ -20,7 +20,7 @@ const Index = ({ data, location }) => {
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
             <Logo />
             <Box p={[3, 4]} width={[1]}>
-              <Text
+              <article
                 dangerouslySetInnerHTML={{
                   __html: home.body.childMarkdownRemark.html,
                 }}

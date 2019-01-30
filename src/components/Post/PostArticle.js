@@ -1,12 +1,12 @@
 import React from 'react'
 import { Link } from 'gatsby'
-import { Flex, Box, Text } from 'rebass'
+import { Flex, Box } from 'rebass'
 require('../../styles/prism.css')
 
 const Article = props => {
   return (
     <Box mx="auto" width={[1, 3 / 4, 2 / 3, 1 / 2]} px={[4, 0]} py={4}>
-      <Text
+      <article
         dangerouslySetInnerHTML={{
           __html: props.body.childMarkdownRemark.html,
         }}

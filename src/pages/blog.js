@@ -7,7 +7,7 @@ import Hero from '../components/Hero'
 import BlogList from '../components/Blog/BlogList'
 import Logo from '../components/Logo'
 
-import { Flex, Box, Text } from 'rebass'
+import { Flex, Box } from 'rebass'
 
 import SEO from '../components/SEO'
 
@@ -25,7 +25,7 @@ const Blog2 = ({ data, location }) => {
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
             <Logo />
             <Box p={[3, 4]} width={[1]}>
-              <Text
+              <article
                 dangerouslySetInnerHTML={{
                   __html: blog.body.childMarkdownRemark.html,
                 }}
