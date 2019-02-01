@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'gatsby-link'
 import styled from 'styled-components'
 import { slide as Menu } from 'react-burger-menu'
-import Social from './Social'
+
 import Logo from '../components/Logo'
 
 import { Flex as Base, Heading, Box } from 'rebass'
@@ -73,8 +73,6 @@ const Navigation = () => {
           >
             <Heading>Contact</Heading>
           </StyledLink>
-
-          <Social />
 
           <Box>
             <a
