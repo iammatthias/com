@@ -3,38 +3,51 @@ import { graphql } from 'gatsby'
 import Helmet from 'react-helmet'
 import config from '../utils/siteConfig'
 import Layout from '../components/Layout'
-import WrapperGrid from '../components/WrapperGrid'
 import Hero from '../components/Hero'
-import BlogBody from '../components/Blog/BlogBody'
 import BlogList from '../components/Blog/BlogList'
+
+import { Flex, Box } from 'rebass'
+
 import SEO from '../components/SEO'
 
-const Blog = ({ data, location }) => {
+const Blog2 = ({ data, location }) => {
   const posts = data.allContentfulPost.edges
   const blog = data.contentfulBlog
-
   return (
     <Layout location={location}>
       <Helmet>
         <title>{`${config.siteTitle} - Blog`}</title>
       </Helmet>
       <SEO postNode={blog} pagePath="contact" customTitle pageSEO />
-      <WrapperGrid>
-        <Hero image={blog.heroImage} />
-        <BlogBody>
-          {posts.map(({ node: post }) => (
-            <BlogList
-              key={post.id}
-              slug={post.slug}
-              image={post.heroImage}
-              title={post.title}
-              date={post.publishDate}
-              time={post.body.childMarkdownRemark.timeToRead}
-              excerpt={post.body}
-            />
-          ))}
-        </BlogBody>
-      </WrapperGrid>
+      <>
+        <Flex flexWrap="wrap" className="changeDirection">
+          <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
+            <Box p={[3, 4]} width={[1]}>
+              <article
+                dangerouslySetInnerHTML={{
+                  __html: blog.body.childMarkdownRemark.html,
+                }}
+              />
+            </Box>
+            <Flex px={[3, 4]} width={[1]} flexWrap="wrap" flexDirection="row">
+              {posts.map(({ node: post }) => (
+                <BlogList
+                  key={post.id}
+                  slug={post.slug}
+                  image={post.heroImage}
+                  title={post.title}
+                  date={post.publishDate}
+                  time={post.body.childMarkdownRemark.timeToRead}
+                  excerpt={post.body}
+                />
+              ))}
+            </Flex>
+          </Box>
+          <Box p={0} width={[1, 1, 1 / 2]}>
+            <Hero image={blog.heroImage} />
+          </Box>
+        </Flex>
+      </>
     </Layout>
   )
 }
@@ -90,4 +103,4 @@ export const query = graphql`
   }
 `
 
-export default Blog
+export default Blog2

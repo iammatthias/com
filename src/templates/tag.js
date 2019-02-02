@@ -1,12 +1,12 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import sortBy from 'lodash/sortBy'
+import Layout from '../components/Layout'
+import TagList from '../components/Tag/TagList'
 import Helmet from 'react-helmet'
 import config from '../utils/siteConfig'
-import Layout from '../components/Layout'
-import WrapperTag from '../components/Tag/WrapperTag'
-import TagList from '../components/Tag/TagList'
-import TagTitle from '../components/Tag/TagTitle'
+
+import { Flex, Box, Heading } from 'rebass'
 
 const TagTemplate = ({ data, location }) => {
   const { title, slug } = data.contentfulTag
@@ -27,13 +27,11 @@ const TagTemplate = ({ data, location }) => {
         />
         <meta property="og:url" content={`${config.siteUrl}/tag/${slug}/`} />
       </Helmet>
-      <WrapperTag>
-        <TagTitle small>
-          Tag: &ldquo;
-          {title}
-          &rdquo;
-        </TagTitle>
-        <>
+      <Flex width={1} p={4} flexWrap="wrap" flexDirection="row">
+        <Box width={1}>
+          <Heading>Tag: {title}</Heading>
+        </Box>
+        <Flex width={[1, 1 / 2, 1 / 4]} flexWrap="wrap" flexDirection="column">
           {posts.map(post => (
             <TagList
               key={post.id}
@@ -52,8 +50,8 @@ const TagTemplate = ({ data, location }) => {
               date={gallery.publishDate}
             />
           ))}
-        </>
-      </WrapperTag>
+        </Flex>
+      </Flex>
     </Layout>
   )
 }

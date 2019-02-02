@@ -1,81 +1,63 @@
 import React from 'react'
-import styled from 'react-emotion'
+import styled from 'styled-components'
 import { Link } from 'gatsby'
 import Img from 'gatsby-image'
 
-const ProjectLink = styled(Link)`
+import { Box as Base, Text, Heading } from 'rebass'
+
+const StyledLink = styled(Link)`
   text-decoration: none;
-  margin: 0;
-  padding: 2rem;
-  @media screen and (min-width: ${props => props.theme.responsive.medium}) {
-    transition: all 0.5s;
-    display: inline-block;
-    &:hover div {
-      @supports (object-fit: cover) {
-        opacity: 1;
-        visibility: visible;
-      }
-    }
-    &:hover h1 {
-      color: var(--color-highlight) !important;
+  width: 100%;
+  @media screen and (min-width: 52em) {
+    width: 50%;
+  }
+`
+
+export const Box = styled(Base)`
+  &:hover div {
+    @supports (object-fit: cover) {
+      opacity: 1;
+      visibility: visible;
     }
   }
 `
 const Cover = styled.div`
+  width: 100%;
   div {
     height: 100% !important;
-    width: 100%;
     object-fit: cover !important;
-    display: block;
   }
-  @media screen and (min-width: ${props => props.theme.responsive.medium}) {
+  @media screen and (min-width: 52em) {
     position: fixed !important;
     pointer-events: none;
     transition: opacity 0.3s, visibility 0.3s;
-    width: calc(50% - 3rem);
-    height: calc(100vh - 5.5rem);
-    top: 3.5rem;
-    left: 2rem;
+    width: 50%;
+    height: 100vh;
+    top: 0;
+    right: 0;
     z-index: 2;
     opacity: 0;
     visibility: hidden;
-    div {
-      height: 100% !important;
-      object-fit: cover !important;
-    }
-  }
-`
-const Title = styled.h2`
-  text-transform: uppercase;
-  margin: 0;
-  padding: 1rem 1rem 0;
-  @media screen and (min-width: ${props => props.theme.responsive.medium}) {
-    padding: 0;
-    z-index: 3;
-  }
-`
-const Excerpt = styled.p`
-  margin-bottom: 0;
-  font-weight: normal;
-  text-transform: none;
-  padding: 1rem 1rem 0;
-  @media screen and (min-width: ${props => props.theme.responsive.medium}) {
-    padding: 0;
   }
 `
 const HomeContent = props => {
   return (
-    <ProjectLink key={props.id} to={`/${props.slug}/`}>
-      <Cover>
-        <Img fluid={props.image.fluid} />
-      </Cover>
-      <Title>{props.title}</Title>
-      <Excerpt
-        dangerouslySetInnerHTML={{
-          __html: props.excerpt.childMarkdownRemark.excerpt,
-        }}
-      />
-    </ProjectLink>
+    <StyledLink key={props.id} to={`/${props.slug}/`}>
+      <Box width={[1]} p={[3, 4]} flexWrap="wrap" flexDirection="column">
+        <Cover>
+          <Img fluid={props.image.fluid} />
+        </Cover>
+        <Heading width={1} fontSize={3}>
+          {props.title}
+        </Heading>
+        <Text
+          width={1}
+          dangerouslySetInnerHTML={{
+            __html: props.excerpt.childMarkdownRemark.excerpt,
+          }}
+        />
+      </Box>
+    </StyledLink>
   )
 }
 

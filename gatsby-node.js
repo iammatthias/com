@@ -95,3 +95,18 @@ exports.createPages = ({ graphql, actions }) => {
 
   return Promise.all([loadPosts, loadGalleries, loadTags])
 }
+
+exports.onCreateWebpackConfig = ({ stage, loaders, actions }) => {
+  if (stage === 'build-html') {
+    actions.setWebpackConfig({
+      module: {
+        rules: [
+          {
+            test: /react-images/,
+            use: loaders.null(),
+          },
+        ],
+      },
+    })
+  }
+}

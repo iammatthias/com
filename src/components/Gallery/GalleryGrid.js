@@ -1,74 +1,132 @@
-import React, { Component } from 'react'
+// @flow
+
+import React, { useState } from 'react'
 import Img from 'gatsby-image'
-import Lightbox from 'react-images'
-import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
+import { chunk, sum } from 'lodash'
+import { Box, Link, Heading } from 'rebass'
+import Carousel, { Modal, ModalGateway } from 'react-images'
 
-class GalleryComposition extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      shareOpen: false,
-      anchorEl: null,
-      lightbox: false,
-      currentImage: 0,
-      photos: props.photos.map(photo =>
-        Object.assign({ srcSet: photo.fluid.srcSet })
-      ),
-    }
-  }
-
-  gotoPrevLightboxImage() {
-    const { photo } = this.state
-    this.setState({ photo: photo - 1 })
-  }
-
-  gotoNextLightboxImage() {
-    const { photo } = this.state
-    this.setState({ photo: photo + 1 })
-  }
-
-  openLightbox(photo, event) {
-    event.preventDefault()
-    this.setState({ lightbox: true, photo })
-  }
-
-  closeLightbox() {
-    this.setState({ lightbox: false, currentImage: 0 })
-  }
-
-  render() {
-    const { photos } = this.props
-    return (
-      <>
-        <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 3, 900: 5 }}>
-          <Masonry gutter="1rem">
-            {photos.map((photo, i) => (
-              <a
-                key={i}
-                href={photo.fluid.srcSet}
-                onClick={e => this.openLightbox(i, e)}
-              >
-                <Img fluid={photo.fluid} />
-              </a>
-            ))}
-          </Masonry>
-        </ResponsiveMasonry>
-        <Lightbox
-          backdropClosesModal
-          enableKeyboardInput
-          showImageCount
-          imageCountSeparator={'/'}
-          images={this.state.photos}
-          preloadNextImage
-          currentImage={this.state.photo}
-          isOpen={this.state.lightbox}
-          onClickPrev={() => this.gotoPrevLightboxImage()}
-          onClickNext={() => this.gotoNextLightboxImage()}
-          onClose={() => this.closeLightbox()}
-        />
-      </>
-    )
-  }
+type Props = {
+  images: {
+    id: string,
+    src: string,
+    srcSet: string,
+    fluid: string,
+    title: string,
+  }[],
+  itemsPerRow?: number[],
+  title: string,
+  slug: string,
 }
 
-export default GalleryComposition
+const Gallery = ({
+  title,
+  images,
+  itemsPerRow: itemsPerRowByBreakpoints,
+}: Props) => {
+  const aspectRatios = images.map(image => image.fluid.aspectRatio)
+  const rowAspectRatioSumsByBreakpoints = itemsPerRowByBreakpoints.map(
+    itemsPerRow =>
+      chunk(aspectRatios, itemsPerRow).map(rowAspectRatios =>
+        sum(rowAspectRatios)
+      )
+  )
+
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [modalCurrentIndex, setModalCurrentIndex] = useState(0)
+
+  const closeModal = () => setModalIsOpen(false)
+  const openModal = (imageIndex: number) => {
+    setModalCurrentIndex(imageIndex)
+    setModalIsOpen(true)
+  }
+
+  return (
+    <Box p={[4, 5]}>
+      <Heading key={title}>{title}</Heading>
+      {images.map((image, i) => (
+        <Link key={image.src} onClick={() => openModal(i)}>
+          <Box
+            as={Img}
+            key={image.id}
+            fluid={image.fluid}
+            title={image.title}
+            width={rowAspectRatioSumsByBreakpoints.map(
+              (rowAspectRatioSums, j) => {
+                const rowIndex = Math.floor(i / itemsPerRowByBreakpoints[j])
+                const rowAspectRatioSum = rowAspectRatioSums[rowIndex]
+                return `${(image.fluid.aspectRatio / rowAspectRatioSum) * 100}%`
+              }
+            )}
+            css={`
+              display: inline-block;
+              vertical-align: middle;
+            `}
+          />
+        </Link>
+      ))}
+      {ModalGateway && (
+        <ModalGateway>
+          {modalIsOpen && (
+            <Modal
+              onClose={closeModal}
+              styles={{
+                blanket: base => ({
+                  ...base,
+                  backgroundColor: 'rgba(16,11,0,0.95)',
+                  zIndex: 900,
+                }),
+                dialog: base => ({ ...base, width: '100%' }),
+                positioner: base => ({ ...base, zIndex: 901 }),
+              }}
+            >
+              <Carousel
+                views={images.map(({ fluid }) => ({
+                  source: fluid.src,
+                }))}
+                frameProps={{ autoSize: 'height' }}
+                currentIndex={modalCurrentIndex}
+                components={{ FooterCount: () => null }}
+                styles={{
+                  footer: base => ({
+                    ...base,
+                    background: 'none !important',
+                    color: '#666',
+                    padding: 0,
+                    paddingTop: 20,
+                    position: 'static',
+                    '& a': { color: 'black' },
+                  }),
+                  header: base => ({
+                    ...base,
+                    background: 'none !important',
+                    padding: 0,
+                    paddingBottom: 10,
+                    position: 'static',
+                  }),
+                  headerClose: base => ({
+                    ...base,
+                    color: '#666',
+                    ':hover': { color: '#DE350B' },
+                  }),
+                  view: base => ({
+                    ...base,
+                    overflow: 'hidden',
+                    objectFit: 'contain',
+                    '& > img': {
+                      maxHeight: '75vh',
+                      height: 'auto',
+                      width: 'auto',
+                      margin: '0 auto',
+                    },
+                  }),
+                }}
+              />
+            </Modal>
+          )}
+        </ModalGateway>
+      )}
+    </Box>
+  )
+}
+export default Gallery

@@ -1,10 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import styled from 'react-emotion'
+import styled from 'styled-components'
 import 'whatwg-fetch'
 
 const Form = styled.form`
-  margin: 0 2rem;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
@@ -13,37 +12,15 @@ const Form = styled.form`
   textarea {
     font-family: inherit;
     font-size: inherit;
-    border: 2px solid var(--color-tertiary);
     outline: none;
-    background: var(--color-base);
-    color: var(--color-secondary);
     border-radius: 2px;
     padding: 1rem;
-    &::-webkit-input-placeholder {
-      color: gray;
-    }
-    &::-moz-placeholder {
-      color: gray;
-    }
-    &:-ms-input-placeholder {
-      color: gray;
-    }
-    &:-moz-placeholder {
-      color: gray;
-    }
-    &:required {
-      box-shadow: none;
-    }
-    &:focus {
-      outline: none;
-    }
-    &:-webkit-autofill {
-      box-shadow: inset 0 0 0 9999px var(--color-base);
-    }
+    border: 2px var(--color-secondary) solid;
+    background: var(--color-base);
+    color: var(--color-secondary);
   }
   &::before {
     content: '';
-    background: var(--color-secondary);
     height: 100%;
     width: 100%;
     position: fixed;
@@ -54,12 +31,21 @@ const Form = styled.form`
     opacity: ${props => (props.overlay ? '.8' : '0')};
     visibility: ${props => (props.overlay ? 'visible' : 'hidden')};
   }
+  &::invalid {
+    box-shadow: none;
+  }
+  &::required {
+    box-shadow: none;
+  }
+  &::optional {
+    box-shadow: none;
+  }
 `
 
 const Name = styled.input`
   margin: 0 0 2rem 0;
   width: 100%;
-  @media (min-width: ${props => props.theme.responsive.small}) {
+  @media (min-width: 40em) {
     width: 48%;
   }
 `
@@ -67,7 +53,7 @@ const Name = styled.input`
 const Email = styled.input`
   margin: 0 0 2rem 0;
   width: 100%;
-  @media (min-width: ${props => props.theme.responsive.small}) {
+  @media (min-width: 40em) {
     width: 48%;
   }
 `
@@ -86,37 +72,26 @@ const Submit = styled.input`
   cursor: pointer;
   transition: 0.2s;
   width: 100%;
-  &:hover {
-    border: 2px solid var(--color-highlight) !important;
-    background: var(--color-highlight) !important;
-  }
-  @media (min-width: ${props => props.theme.responsive.medium}) {
-    width: 48%;
-  }
 `
 
 const Modal = styled.div`
-  background: var(--color-base);
+  background: white;
   padding: 2em;
   border-radius: 2px;
+  width: 50%;
   position: fixed;
-  min-width: 75%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  margin: 0 auto;
   z-index: 99;
   display: flex;
   flex-flow: column;
+  height: 25vh;
   align-items: center;
   text-align: center;
   transition: 0.2s all;
   opacity: ${props => (props.visible ? '1' : '0')};
   visibility: ${props => (props.visible ? 'visible' : 'hidden')};
-  @media screen and (min-width: ${props => props.theme.responsive.small}) {
-    min-width: inherit;
-    max-width: 400px;
-  }
   p {
     line-height: 1.6;
     margin: 0 0 2em 0;
@@ -124,7 +99,7 @@ const Modal = styled.div`
 `
 
 const Button = styled.div`
-  background: var(--color-tertiary) !important;
+  background: grey;
   font-size: 1em;
   display: inline-block;
   margin: 0 auto;
@@ -138,9 +113,6 @@ const Button = styled.div`
   z-index: 99;
   &:focus {
     outline: none;
-  }
-  &:hover {
-    background: var(--color-tertiary) !important;
   }
 `
 
