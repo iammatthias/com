@@ -206,9 +206,9 @@ const MenuStyle = createGlobalStyle`
   .logo {
     img {
       height: 3em;
-      width: 3em;
       width: auto;
       margin: 1em;
+      transition: all 1s;
    }
   }
   .menuHeadroom {
@@ -250,11 +250,17 @@ const MenuStyle = createGlobalStyle`
       height: 2rem;
       top: 2em;
       right: 2em;
+      
       span span {
         background: var(--color-base);
         position: fixed;
-        border: .5px solid var(--color-secondary);
-        mix-blend-mode: luminosity;
+        mix-blend-mode: difference;
+        transition: all 0.3s;
+      }
+      &:hover {
+        span span {
+          background: var(--color-highlight) !important;
+        }
       }
 `
 const transitionDuration = 150
