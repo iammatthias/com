@@ -13,7 +13,7 @@ const Contact = ({ data, location }) => {
     <Layout location={location}>
       <SEO postNode={contact} pagePath="contact" customTitle pageSEO />
       <>
-        <Flex flexWrap="wrap" className="changeDirection">
+        <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
           <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
             <Box p={[3, 4]} width={[1]}>
               <article

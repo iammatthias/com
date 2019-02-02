@@ -212,7 +212,7 @@ const MenuStyle = createGlobalStyle`
    }
   }
   .menuHeadroom {
-    z-index: 301;
+    z-index: 299;
     position: fixed;
     top: 0;
   }
