@@ -3,6 +3,8 @@ import Link from 'gatsby-link'
 import styled from 'styled-components'
 import { slide as Menu } from 'react-burger-menu'
 
+import { FiHome, FiBook, FiUser } from 'react-icons/fi'
+
 import Logo from '../components/Logo'
 
 import { Flex as Base, Heading, Box } from 'rebass'
@@ -10,13 +12,15 @@ import { Flex as Base, Heading, Box } from 'rebass'
 const StyledLink = styled(Link)`
   text-decoration: none;
   text-align: center;
-  color: var(--color-accent);
+  color: var(--color-secondary);
   text-transform: uppercase;
   position: relative;
   display: block;
   margin: 0;
-  padding: 0.5em 0;
+  padding: 0.6em 0 0.5em;
   @media screen and (min-width: 52em) {
+    padding: 0.5em 0;
+    color: var(--color-accent);
     text-align: left;
   }
 `
@@ -29,7 +33,7 @@ const Icon = styled(Box)`
   width: 3.5em;
   height: 3.5em;
   background: url(/menu.svg);
-  mix-blend-mode: screen;
+  mix-blend-mode: overlay;
 `
 
 const NavBar = styled.nav`
@@ -40,8 +44,8 @@ const NavBar = styled.nav`
 `
 
 export const MenuTabBar = styled(Base)`
-  background: var(--color-secondary);
-  border-top: 3px solid var(--color-accent);
+  background: var(--color-base);
+  border-top: 3px solid var(--color-tertiary);
   overflow: hidden;
   position: fixed;
   bottom: 0;
@@ -52,9 +56,9 @@ export const MenuTabBar = styled(Base)`
     display: none;
   }
   div {
-    border-right: 2px solid var(--color-accent);
+    border-right: 2px solid var(--color-tertiary);
     &:last-child {
-      border-right: 0px solid var(--color-accent);
+      border-right: 0px solid var(--color-tertiary);
     }
   }
 `
@@ -90,19 +94,13 @@ class Navigation extends React.Component {
             noOverlay
             customBurgerIcon={false}
           >
-            <StyledLink to="/" activeStyle={{ color: 'var(--color-accent)' }}>
+            <StyledLink to="/">
               <Heading>Portfolio</Heading>
             </StyledLink>
-            <StyledLink
-              to="/blog"
-              activeStyle={{ color: 'var(--color-accent)' }}
-            >
+            <StyledLink to="/blog">
               <Heading>Blog</Heading>
             </StyledLink>
-            <StyledLink
-              to="/contact"
-              activeStyle={{ color: 'var(--color-accent)' }}
-            >
+            <StyledLink to="/contact">
               <Heading>Contact</Heading>
             </StyledLink>
 
@@ -137,30 +135,30 @@ class Navigation extends React.Component {
             <StyledLink
               to="/"
               activeStyle={{
-                boxShadow: 'inset 0 8px 0px 0px var(--color-accent)',
+                boxShadow: 'inset 0 4px 0px 0px var(--color-highlight)',
               }}
             >
-              <Heading>Home</Heading>
+              <FiHome size={'2em'} color={'var(--color-tertiary)'} />
             </StyledLink>
           </Box>
           <Box width={1 / 3}>
             <StyledLink
               to="/blog"
               activeStyle={{
-                boxShadow: 'inset 0 8px 0px 0px var(--color-accent)',
+                boxShadow: 'inset 0 4px 0px 0px var(--color-highlight)',
               }}
             >
-              <Heading>Blog</Heading>
+              <FiBook size={'2em'} color={'var(--color-tertiary)'} />
             </StyledLink>
           </Box>
           <Box width={1 / 3}>
             <StyledLink
               to="/contact"
               activeStyle={{
-                boxShadow: 'inset 0 8px 0px 0px var(--color-accent)',
+                boxShadow: 'inset 0 4px 0px 0px var(--color-highlight)',
               }}
             >
-              <Heading>Bio</Heading>
+              <FiUser size={'2em'} color={'var(--color-tertiary)'} />
             </StyledLink>
           </Box>
         </MenuTabBar>
