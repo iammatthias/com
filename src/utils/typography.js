@@ -9,7 +9,7 @@ const typography = new Typography({
     },
     {
       name: 'Lato',
-      styles: ['300', '900'],
+      styles: ['400', '900'],
     },
     {
       name: 'Source Code Pro',

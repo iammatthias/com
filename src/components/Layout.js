@@ -85,7 +85,8 @@ const Reset = createGlobalStyle`
     }
   }
 `
-const ColorMode = createGlobalStyle`
+
+const Paint = createGlobalStyle`
   :root {
     --color-base: #E6E3E1 ;
     --color-secondary: #100B00 ;
@@ -102,8 +103,7 @@ const ColorMode = createGlobalStyle`
     --color-accent: #FBF2F0; 
  }
 }
-`
-const Paint = createGlobalStyle`
+
 html,
 body {
   margin: 0;
@@ -299,7 +299,7 @@ const Layout = ({ children, ...props }) => {
         <meta property="og:site_name" content={config.siteTitle} />
       </Helmet>
       <Reset />
-      <ColorMode />
+      
       <Paint />
       <MenuStyle />
       <ThemeProvider theme={theme}>
