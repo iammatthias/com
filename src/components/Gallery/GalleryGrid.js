@@ -42,7 +42,7 @@ const Gallery = ({
   }
 
   return (
-    <Box p={[4, 5]}>
+    <Box p={[4, 5]} mb={[5, 0]}>
       <Heading key={title}>{title}</Heading>
       {images.map((image, i) => (
         <Link key={image.src} onClick={() => openModal(i)}>

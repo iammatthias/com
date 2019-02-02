@@ -150,6 +150,11 @@ p, i, a {
   font-size: 1.25em;
   line-height: 1.58;
 }
+p {
+  .gatsby-resp-image-wrapper {
+    max-width: 100% !important;
+  }
+}
 
 a {
   text-decoration: underline;
@@ -212,7 +217,7 @@ const MenuStyle = createGlobalStyle`
    }
   }
   .menuHeadroom {
-    z-index: 301;
+    z-index: 299;
     position: fixed;
     top: 0;
   }
