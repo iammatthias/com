@@ -28,7 +28,8 @@ const Icon = styled(Box)`
   right: 0;
   width: 3.5em;
   height: 3.5em;
-  mix-blend-mode: soft-light;
+  background: url(/menu.svg);
+  mix-blend-mode: screen;
 `
 
 const NavBar = styled.nav`
@@ -80,9 +81,7 @@ class Navigation extends React.Component {
       <>
         <Logo />
         <NavBar>
-          <Icon onClick={() => this.toggleMenu()}>
-            <img src="/menu.svg" />
-          </Icon>
+          <Icon onClick={() => this.toggleMenu()} />
           <Menu
             right
             isOpen={this.state.menuOpen}
