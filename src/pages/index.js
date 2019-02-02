@@ -24,12 +24,7 @@ const Index = ({ data, location }) => {
                 }}
               />
             </Box>
-            <Flex
-              px={[3, 4]}
-              width={[1]}
-              flexWrap="wrap"
-              flexDirection="column"
-            >
+            <Flex width={[1]} flexWrap="wrap" flexDirection="row">
               {galleries.map(({ node: gallery }) => (
                 <HomeList
                   key={gallery.id}
