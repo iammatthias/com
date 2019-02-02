@@ -73,9 +73,11 @@ const Gallery = ({
               styles={{
                 blanket: base => ({
                   ...base,
-                  backgroundColor: 'rgba(255,255,255,0.85)',
+                  backgroundColor: 'rgba(16,11,0,0.95)',
+                  zIndex: 900,
                 }),
-                dialog: base => ({ ...base, maxWidth: 640 }),
+                dialog: base => ({ ...base, width: '100%' }),
+                positioner: base => ({ ...base, zIndex: 901 }),
               }}
             >
               <Carousel
@@ -109,8 +111,14 @@ const Gallery = ({
                   }),
                   view: base => ({
                     ...base,
-                    maxHeight: 480,
                     overflow: 'hidden',
+                    objectFit: 'contain',
+                    '& > img': {
+                      maxHeight: '75vh',
+                      height: 'auto',
+                      width: 'auto',
+                      margin: '0 auto',
+                    },
                   }),
                 }}
               />

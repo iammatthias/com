@@ -212,7 +212,7 @@ const MenuStyle = createGlobalStyle`
    }
   }
   .menuHeadroom {
-    z-index: 910;
+    z-index: 301;
     position: fixed;
     top: 0;
   }
@@ -244,6 +244,7 @@ const MenuStyle = createGlobalStyle`
       position: fixed;
     }
     .bm-burger-button {
+      z-index: 301 !important;
       position: fixed;
       width: 2rem;
       height: 2rem;

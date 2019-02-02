@@ -9,7 +9,7 @@ const GalleryHead = props => {
     <Headroom
       style={{
         position: 'fixed',
-        zIndex: '899',
+        zIndex: '300',
         transition: 'all .5s ease-in-out',
       }}
     >
