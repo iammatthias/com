@@ -40,6 +40,7 @@
     "react-dom": "next",
     "react-headroom": "^2.2.2",
     "react-helmet": "^5.2.0",
+    "react-icons": "^3.3.0",
     "react-images": "next",
     "react-pose": "^4.0.6",
     "react-typography": "^0.16.13",
