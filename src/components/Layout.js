@@ -154,6 +154,11 @@ p {
   .gatsby-resp-image-wrapper {
     max-width: 100% !important;
   }
+  a {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 1em;
+  }
 }
 
 a {
@@ -211,8 +216,8 @@ const MenuStyle = createGlobalStyle`
   .logo {
     img {
       height: 3em;
-      width: auto;
-      margin: 1em;
+      width: 3em;
+      margin: .25em;
       transition: all 1s;
    }
   }
