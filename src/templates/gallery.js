@@ -3,7 +3,7 @@ import { graphql } from 'gatsby'
 import Helmet from 'react-helmet'
 import config from '../utils/siteConfig'
 import Layout from '../components/Layout'
-import GalleryGrid from '../components/Gallery/GalleryGrid1'
+import GalleryGrid from '../components/Gallery/GalleryGrid'
 import GalleryHead from '../components/Gallery/GalleryHead'
 import SEO from '../components/SEO'
 
