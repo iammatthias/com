@@ -31,6 +31,7 @@ module.exports = {
     },
   },
   plugins: [
+    `gatsby-plugin-flow`,
     {
       resolve: 'gatsby-plugin-canonical-urls',
       options: {

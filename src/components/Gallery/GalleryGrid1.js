@@ -1,3 +1,5 @@
+// @flow
+
 import React, { useState } from 'react'
 import Img from 'gatsby-image'
 import { chunk, sum } from 'lodash'
@@ -7,7 +9,6 @@ import Carousel, { Modal, ModalGateway } from 'react-images'
 type Props = {
   images: {
     id: string,
-    aspectRatio: number,
     src: string,
     srcSet: string,
     fluid: string,
