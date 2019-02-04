@@ -1,6 +1,6 @@
 # [IAMMATTHIAS v3](https://iammatthias.com)
 
-![](https://user-images.githubusercontent.com/5431737/52232039-4e807380-2870-11e9-8d6d-ef002387999c.png)
+![](https://user-images.githubusercontent.com/5431737/52232080-7243b980-2870-11e9-8432-a41881f8e5d0.png)
 
 ## Overview
 Codebase for [https://iammatthias.com](https://iammatthias.com)
