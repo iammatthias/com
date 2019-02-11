@@ -8,7 +8,7 @@ import { Box as Base, Text, Heading } from 'rebass'
 const StyledLink = styled(Link)`
   text-decoration: none;
   width: 100%;
-  @media screen and (min-width: 52em) {
+  @media screen and (min-width: 64em) {
     width: 50%;
   }
 `
