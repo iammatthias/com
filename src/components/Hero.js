@@ -16,6 +16,18 @@ const Hero = styled.div`
       object-fit: cover !important;
     }
   }
+  @media screen and (min-width: 64em) {
+    display: block;
+    position: fixed;
+    pointer-events: none;
+    width: 66.6666%;
+    height: 100vh;
+    z-index: 1;
+    div {
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+  }
 `
 
 const HomeHero = props => {

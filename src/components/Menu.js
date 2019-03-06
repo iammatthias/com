@@ -25,7 +25,7 @@ const StyledLink = styled(Link)`
   }
 `
 const Icon = styled(Box)`
-  z-index: 100 !important;
+  z-index: 900 !important;
   position: fixed;
   margin: 0.75rem;
   top: 0;
@@ -33,7 +33,8 @@ const Icon = styled(Box)`
   width: 3.5em;
   height: 3.5em;
   background: url(/menu.svg);
-  mix-blend-mode: overlay;
+  mix-blend-mode: soft-light;
+  filter: invert(100%);
 `
 
 const NavBar = styled.nav`

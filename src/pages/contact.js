@@ -14,7 +14,7 @@ const Contact = ({ data, location }) => {
       <SEO postNode={contact} pagePath="contact" customTitle pageSEO />
       <>
         <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
-          <Box p={[3, 4]} width={[1, 1, 1 / 2]}>
+          <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
             <Box p={[3, 4]} width={[1]}>
               <article
                 dangerouslySetInnerHTML={{
@@ -26,7 +26,7 @@ const Contact = ({ data, location }) => {
               <ContactForm />
             </Flex>
           </Box>
-          <Box p={0} width={[1, 1, 1 / 2]}>
+          <Box p={0} width={[1, 1, 1 / 2, 2 / 3]}>
             <Hero image={contact.heroImage} />
           </Box>
         </Flex>
