@@ -29,7 +29,7 @@ const Blog2 = ({ data, location }) => {
                 }}
               />
             </Box>
-            <Flex px={[3, 4]} width={[1]} flexWrap="wrap" flexDirection="row">
+            <Flex width={[1]} flexWrap="wrap" flexDirection="row">
               {posts.map(({ node: post }) => (
                 <BlogList
                   key={post.id}
