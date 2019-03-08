@@ -22,7 +22,7 @@ const Contact = ({ data, location }) => {
                 }}
               />
             </Box>
-            <Flex px={[3, 4]} width={[1]} flexWrap="wrap" flexDirection="row">
+            <Flex px={[3, 4]} pb={[3, 4]} width={[1]} flexWrap="wrap" flexDirection="row">
               <ContactForm />
             </Flex>
           </Box>
