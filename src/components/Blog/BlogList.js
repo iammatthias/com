@@ -3,14 +3,14 @@ import styled from 'styled-components'
 import { Link } from 'gatsby'
 import Img from 'gatsby-image'
 
-import { Flex as Base, Text, Heading } from 'rebass'
+import { Box as Base, Text, Heading } from 'rebass'
 
 const StyledLink = styled(Link)`
   text-decoration: none;
   width: 100%;
 `
 
-export const Flex = styled(Base)`
+export const Box = styled(Base)`
   &:hover div {
     @supports (object-fit: cover) {
       opacity: 1;
@@ -52,21 +52,24 @@ const Cover = styled.div`
 `
 const BlogList = props => {
   return (
-    <StyledLink key={props.id} to={`/blog/${props.slug}/`}>
-      <Flex width={1} mb={3} flexWrap="wrap" flexDirection="column">
+    <StyledLink key={props.id} to={`/${props.slug}/`}>
+      <Box width={[1]} p={[3, 4]} pt={0} flexWrap="wrap" flexDirection="column">
         <Cover>
           <Img fluid={props.image.fluid} />
         </Cover>
-        <Heading>{props.title}</Heading>
+        <Heading width={1} fontSize={3}>
+          {props.title}
+        </Heading>
         <Text>
           Published: {props.date} | Reading time: {props.time} min
         </Text>
         <Text
+          width={1}
           dangerouslySetInnerHTML={{
             __html: props.excerpt.childMarkdownRemark.excerpt,
           }}
         />
-      </Flex>
+      </Box>
     </StyledLink>
   )
 }
