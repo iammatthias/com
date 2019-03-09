@@ -1,8 +1,8 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import sortBy from 'lodash/sortBy'
-import Layout from '../components/Layout'
-import TagList from '../components/Tag/TagList'
+import Layout from '../components/general/Layout'
+import TagList from '../components/tag/TagList'
 import Helmet from 'react-helmet'
 import config from '../utils/siteConfig'
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import Layout from './src/components/Layout'
+import Layout from './src/components/general/Layout'
 
 const transitionDelay = 350
 

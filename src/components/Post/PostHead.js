@@ -18,7 +18,7 @@ const GalleryHead = props => {
         width={[1]}
         flexWrap="wrap"
         flexDirection="column"
-        bg="var(--color-secondary)"
+        bg="var(--color-secondary-90)"
       >
         <Box>
           <Link to={`/blog/`} className="noUnderline">

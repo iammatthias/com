@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Helmet from 'react-helmet'
-import Layout from '../components/Layout'
+import Layout from '../components/general/Layout'
 
 const Box = styled.div`
   margin: 0 auto;

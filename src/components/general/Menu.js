@@ -5,7 +5,7 @@ import { slide as Menu } from 'react-burger-menu'
 
 import { FiHome, FiBook, FiUser } from 'react-icons/fi'
 
-import Logo from '../components/Logo'
+import Logo from '../general/Logo'
 
 import { Flex as Base, Heading, Box } from 'rebass'
 

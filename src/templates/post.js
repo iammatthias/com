@@ -3,23 +3,15 @@ import { graphql } from 'gatsby'
 import Helmet from 'react-helmet'
 import config from '../utils/siteConfig'
 import find from 'lodash/find'
-import Layout from '../components/Layout'
-import PostHead from '../components/Post/PostHead'
-import PostHero from '../components/Post/PostHero'
-import PostArticle from '../components/Post/PostArticle'
-import SEO from '../components/SEO'
+import Layout from '../components/general/Layout'
+import PostHead from '../components/post/PostHead'
+import PostHero from '../components/post/PostHero'
+import PostArticle from '../components/post/PostArticle'
+import SEO from '../components/general/SEO'
 
 const PostTemplate = ({ data, location }) => {
-  const {
-    title,
-    slug,
-    id,
-    heroImage,
-    body,
-    publishDate,
-    tags,
-  } = data.contentfulPost
-  const postNode = data.contentfulPost
+  const { title, id, heroImage, body, publishDate, tags } = data.contentfulPost
+  const blog = data.contentfulBlog
 
   const postIndex = find(
     data.allContentfulPost.edges,
@@ -27,10 +19,7 @@ const PostTemplate = ({ data, location }) => {
   )
   return (
     <Layout location={location}>
-      <Helmet>
-        <title>{`${config.siteTitle} - ${title}`}</title>
-      </Helmet>
-      <SEO pagePath={slug} postNode={postNode} postSEO />
+      <SEO title={title} image={blog.shareImage} />
       <PostHead
         title={title}
         date={publishDate}
@@ -38,6 +27,7 @@ const PostTemplate = ({ data, location }) => {
         time={body.childMarkdownRemark.timeToRead}
       />
       <PostHero image={heroImage} />
+
       <PostArticle
         body={body}
         previous={postIndex.previous}
@@ -97,6 +87,15 @@ export const query = graphql`
         }
         next {
           slug
+        }
+      }
+    }
+    contentfulBlog {
+      shareImage {
+        ogimg: resize(width: 1200) {
+          src
+          width
+          height
         }
       }
     }
