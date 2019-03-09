@@ -229,21 +229,21 @@ const GlobalStyle = createGlobalStyle`
      top: 0;
 }
  .bm-menu {
-     background: var (--color-secondary);
+     background: var(--color-secondary);
      padding: 2em;
      font-size: 1.15em;
      a {
-         color: var (--color-base);
+         color: var(--color-base);
     }
      svg {
          transition: all 0.5 s;
-         fill: var (--color-base);
+         fill: var(--color-base);
     }
 }
  .bm-cross {
      height: 2em !important;
      width: 0.35em !important;
-     background: var (--color-base);
+     background: var(--color-base);
 }
  .bm-cross-button {
      height: 2em !important;
@@ -263,14 +263,14 @@ const GlobalStyle = createGlobalStyle`
      top: 2em;
      right: 2em;
      span span {
-         background: var (--color-base);
+         background: var(--color-base);
          position: fixed;
          mix-blend-mode: difference;
          transition: all 0.3s;
     }
      & : hover {
          span span {
-             background: var (--color-highlight) !important;
+             background: var(--color-highlight) !important;
         }
     }
   }
