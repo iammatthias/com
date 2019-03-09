@@ -2,9 +2,9 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import find from 'lodash/find'
 import Layout from '../components/general/Layout'
-import PostHead from '../components/post/PostHead'
-import PostHero from '../components/post/PostHero'
-import PostArticle from '../components/post/PostArticle'
+import PostHead from '../components/post/postHead'
+import PostHero from '../components/post/postHero'
+import PostArticle from '../components/post/postArticle'
 import SEO from '../components/general/SEO'
 
 const PostTemplate = ({ data, location }) => {

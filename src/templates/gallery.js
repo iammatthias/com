@@ -1,8 +1,8 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from '../components/general/Layout'
-import GalleryGrid from '../components/gallery/GalleryGrid'
-import GalleryHead from '../components/gallery/GalleryHead'
+import GalleryGrid from '../components/gallery/galleryGrid'
+import GalleryHead from '../components/gallery/galleryHead'
 import SEO from '../components/general/SEO'
 
 const GalleryTemplate = ({ data, location }) => {

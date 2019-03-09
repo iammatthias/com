@@ -2,7 +2,7 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import sortBy from 'lodash/sortBy'
 import Layout from '../components/general/Layout'
-import TagList from '../components/tag/TagList'
+import TagList from '../components/tag/tagList'
 import Helmet from 'react-helmet'
 import config from '../utils/siteConfig'
 

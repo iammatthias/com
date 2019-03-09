@@ -2,7 +2,7 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from '../components/general/Layout'
 import Hero from '../components/general/Hero'
-import HomeList from '../components/home/HomeList'
+import HomeList from '../components/home/homeList'
 
 import { Flex, Box } from 'rebass'
 
