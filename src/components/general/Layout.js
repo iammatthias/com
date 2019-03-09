@@ -4,8 +4,6 @@ import posed, { PoseGroup } from 'react-pose'
 import Helmet from 'react-helmet'
 import theme from '../../styles/theme'
 import GlobalStyle from '../../styles/global'
-import MenuStyle from '../../styles/menuStyle'
-import config from '../../utils/siteConfig'
 import Menu from '../general/Menu'
 
 const transitionDuration = 150
@@ -39,7 +37,6 @@ const Layout = ({ children, ...props }) => {
           <link rel="apple-touch-icon" href="/logos/logo-512.png" />
         </Helmet>
         <GlobalStyle />
-        <MenuStyle />
         <Menu />
         <PoseGroup>
           <Transition key={props.location.pathname}> {children} </Transition>
