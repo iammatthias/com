@@ -11,10 +11,7 @@ const Contact = ({ data, location }) => {
   const contact = data.contentfulAbout
   return (
     <Layout location={location}>
-      <SEO
-        title="CONTACT"
-        description="A sporadic collection of thoughts mostly about the web"
-      />
+      <SEO title="CONTACT" image={contact.shareImage} />
 
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
@@ -53,7 +50,9 @@ export const query = graphql`
         fluid(maxWidth: 1000) {
           ...GatsbyContentfulFluid_withWebp
         }
-        ogimg: resize(width: 900) {
+      }
+      shareImage {
+        ogimg: resize(width: 1200) {
           src
           width
           height

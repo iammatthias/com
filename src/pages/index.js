@@ -13,7 +13,7 @@ const Index = ({ data, location }) => {
   const galleries = data.allContentfulExtendedGallery.edges
   return (
     <Layout location={location}>
-      <SEO />
+      <SEO image={home.shareImage} />
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
           <Box p={[3, 4]} width={[1]}>
@@ -78,7 +78,9 @@ export const query = graphql`
         fluid(maxWidth: 1000) {
           ...GatsbyContentfulFluid_withWebp
         }
-        ogimg: resize(width: 900) {
+      }
+      shareImage {
+        ogimg: resize(width: 1200) {
           src
           width
           height
