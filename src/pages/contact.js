@@ -2,7 +2,7 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from '../components/general/Layout'
 import Hero from '../components/general/Hero'
-import ContactForm from '../components/contact/ContactForm'
+import Form from '../components/contact/ContactForm'
 import SEO from '../components/general/SEO'
 
 import { Flex, Box } from 'rebass'
@@ -32,7 +32,7 @@ const Contact = ({ data, location }) => {
             flexWrap="wrap"
             flexDirection="row"
           >
-            <ContactForm />
+            <Form />
           </Flex>
         </Box>
         <Box p={0} width={[1, 1, 1 / 2, 2 / 3]}>

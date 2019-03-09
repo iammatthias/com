@@ -2,13 +2,13 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from '../components/general/Layout'
 import Hero from '../components/general/Hero'
-import BlogList from '../components/blog/BlogList'
+import BlogPosts from '../components/blog/BlogList'
 
 import { Flex, Box } from 'rebass'
 
 import SEO from '../components/general/SEO'
 
-const Blog2 = ({ data, location }) => {
+const MainBlog = ({ data, location }) => {
   const posts = data.allContentfulPost.edges
   const blog = data.contentfulBlog
   return (
@@ -29,7 +29,7 @@ const Blog2 = ({ data, location }) => {
           </Box>
           <Flex width={[1]} flexWrap="wrap" flexDirection="row">
             {posts.map(({ node: post }) => (
-              <BlogList
+              <BlogPosts
                 key={post.id}
                 slug={post.slug}
                 image={post.heroImage}
@@ -102,4 +102,4 @@ export const query = graphql`
   }
 `
 
-export default Blog2
+export default MainBlog

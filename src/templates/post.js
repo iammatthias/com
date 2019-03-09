@@ -1,7 +1,5 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Helmet from 'react-helmet'
-import config from '../utils/siteConfig'
 import find from 'lodash/find'
 import Layout from '../components/general/Layout'
 import PostHead from '../components/post/PostHead'
