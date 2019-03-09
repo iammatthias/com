@@ -1,53 +1,50 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Helmet from 'react-helmet'
-import config from '../utils/siteConfig'
-import Layout from '../components/Layout'
-import Hero from '../components/Hero'
-import BlogList from '../components/Blog/BlogList'
+import Layout from './../components/general/Layout'
+import Hero from './../components/general/Hero'
+import BlogPosts from './../components/blog/blogList'
 
 import { Flex, Box } from 'rebass'
 
-import SEO from '../components/SEO'
+import SEO from './../components/general/SEO'
 
-const Blog2 = ({ data, location }) => {
+const MainBlog = ({ data, location }) => {
   const posts = data.allContentfulPost.edges
   const blog = data.contentfulBlog
   return (
     <Layout location={location}>
-      <Helmet>
-        <title>{`${config.siteTitle} - Blog`}</title>
-      </Helmet>
-      <SEO postNode={blog} pagePath="contact" customTitle pageSEO />
-      <>
-        <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
-          <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
-            <Box p={[3, 4]} width={[1]}>
-              <article
-                dangerouslySetInnerHTML={{
-                  __html: blog.body.childMarkdownRemark.html,
-                }}
+      <SEO
+        title="BLOG"
+        image={blog.shareImage}
+        description="A sporadic collection of thoughts mostly about the web"
+      />
+      <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
+        <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
+          <Box p={[3, 4]} width={[1]}>
+            <article
+              dangerouslySetInnerHTML={{
+                __html: blog.body.childMarkdownRemark.html,
+              }}
+            />
+          </Box>
+          <Flex width={[1]} flexWrap="wrap" flexDirection="row">
+            {posts.map(({ node: post }) => (
+              <BlogPosts
+                key={post.id}
+                slug={post.slug}
+                image={post.heroImage}
+                title={post.title}
+                date={post.publishDate}
+                time={post.body.childMarkdownRemark.timeToRead}
+                excerpt={post.body}
               />
-            </Box>
-            <Flex width={[1]} flexWrap="wrap" flexDirection="row">
-              {posts.map(({ node: post }) => (
-                <BlogList
-                  key={post.id}
-                  slug={post.slug}
-                  image={post.heroImage}
-                  title={post.title}
-                  date={post.publishDate}
-                  time={post.body.childMarkdownRemark.timeToRead}
-                  excerpt={post.body}
-                />
-              ))}
-            </Flex>
-          </Box>
-          <Box p={0} width={[1, 1, 1 / 2, 2 / 3]}>
-            <Hero image={blog.heroImage} />
-          </Box>
-        </Flex>
-      </>
+            ))}
+          </Flex>
+        </Box>
+        <Box p={0} width={[1, 1, 1 / 2, 2 / 3]}>
+          <Hero image={blog.heroImage} />
+        </Box>
+      </Flex>
     </Layout>
   )
 }
@@ -88,7 +85,9 @@ export const query = graphql`
         fluid(maxWidth: 1000) {
           ...GatsbyContentfulFluid_withWebp
         }
-        ogimg: resize(width: 900) {
+      }
+      shareImage {
+        ogimg: resize(width: 1200) {
           src
           width
           height
@@ -103,4 +102,4 @@ export const query = graphql`
   }
 `
 
-export default Blog2
+export default MainBlog
