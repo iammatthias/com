@@ -42,7 +42,7 @@ const SEO = props => (
       <meta property="og:image:height" content={props.image.ogimg.height} />
     ) : null}
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:creator" content="@ryanwiemer" />
+    <meta name="twitter:creator" content="@iammatthias" />
     <meta
       name="twitter:title"
       content={props.title ? `${props.title} - ${defaultTitle}` : defaultTitle}
