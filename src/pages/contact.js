@@ -1,9 +1,9 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Layout from '../components/general/Layout'
-import Hero from '../components/general/Hero'
-import Form from '../components/contact/contactForm'
-import SEO from '../components/general/SEO'
+import Layout from './../components/general/Layout'
+import Hero from './../components/general/Hero'
+import Form from './../components/contact/contactForm'
+import SEO from './../components/general/SEO'
 
 import { Flex, Box } from 'rebass'
 

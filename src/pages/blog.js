@@ -1,12 +1,12 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Layout from '../components/general/Layout'
-import Hero from '../components/general/Hero'
-import BlogPosts from '../components/blog/blogList'
+import Layout from './../components/general/Layout'
+import Hero from './../components/general/Hero'
+import BlogPosts from './../components/blog/blogList'
 
 import { Flex, Box } from 'rebass'
 
-import SEO from '../components/general/SEO'
+import SEO from './../components/general/SEO'
 
 const MainBlog = ({ data, location }) => {
   const posts = data.allContentfulPost.edges
