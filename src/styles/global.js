@@ -213,7 +213,16 @@ const GlobalStyle = createGlobalStyle`
 }
 /* Etc */
  .headroom-wrapper {
-     position: fixed;
+     position: relative;
+     z-index: 300;
+}
+@media screen and (min-width: 52em) {
+    .headroom-wrapper {
+        position: fixed;
+    }
+}
+ .relativeHeadroom {
+     position: relative;
      z-index: 300;
 }
 /* Menu */
