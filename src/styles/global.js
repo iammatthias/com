@@ -1,26 +1,29 @@
 import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
- 
 /* Colors */
  :root {
-     --color-base: #E6E3E1 ;
-     --color-secondary: #100B00 ;
-     --color-tertiary: #223843 ;
-     --color-highlight: #FE5F55 ;
-     --color-accent: #F4DAD3 ;
-     --color-secondary-25: rgba(16, 11, 0, .25) ;
-     --color-secondary-50: rgba(16, 11, 0, .50) ;
-     --color-secondary-75: rgba(16, 11, 0, .75) ;
-     --color-secondary-90: rgba(16, 11, 0, .90) ;
+     --color-base: #F9F4ED;
+     --color-secondary: #140D00;
+     --color-tertiary: #131F26;
+     --color-highlight: #FE5F55;
+     --color-accent: #F4DAD3;
+     --color-secondary-25: rgba(20, 13, 0, .25);
+     --color-secondary-50: rgba(20, 13, 0, .50);
+     --color-secondary-75: rgba(20, 13, 0, .75);
+     --color-secondary-90: rgba(20, 13, 0, .90);
 }
  @media (prefers-color-scheme: dark) {
      :root {
-         --color-base: #100B00;
-         --color-secondary: #E6E3E1;
-         --color-tertiary: #F4DAD3;
-         --color-highlight: #FE5F55;
-         --color-accent: #FBF2F0;
+     --color-base: #140D00;
+     --color-secondary: #F9F4ED;
+     --color-tertiary: #F4DAD3;
+     --color-highlight: #FE5F55;
+     --color-accent:  #131F26;
+     --color-secondary-25: rgba(20, 13, 0, .25);
+     --color-secondary-50: rgba(20, 13, 0, .50);
+     --color-secondary-75: rgba(20, 13, 0, .75);
+     --color-secondary-90: rgba(20, 13, 0, .90);
     }
 }
  html, body, div, span, applet, object, iframe, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn,em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details,embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
@@ -54,7 +57,7 @@ const GlobalStyle = createGlobalStyle`
      background: var(--color-base);
      color: var(--color-secondary);
      margin: 0;
-     width: 100% ;
+     width: 100%;
      font-size: 16px;
      line-height: 1;
      font-variant-ligatures: none;
@@ -89,27 +92,28 @@ const GlobalStyle = createGlobalStyle`
          margin: 0;
     }
 }
- p, i, a {
+ p {
      margin: .5em 0;
      font-family: "Lato";
      font-size: 1.25em;
      line-height: 1.58;
-}
- p {
-     .gatsby-resp-image-wrapper {
-         max-width: 100% !important;
-    }
-     a {
+    a {
          font-weight: bold;
          font-style: italic;
          font-size: 1em;
     }
+     .gatsby-resp-image-wrapper {
+         max-width: 100% !important;
+    }
 }
  a {
+     font-family: "Lato";
+     font-size: 1.25em;
+     line-height: 1.58;
      text-decoration: underline;
      color: var(--color-tertiary);
-     transition: all 0.3 s;
-     & :hover{
+     transition: all 0.3s;
+     &:hover{
          color: var(--color-highlight);
     }
 }
@@ -148,7 +152,7 @@ const GlobalStyle = createGlobalStyle`
      margin: 0 0 1.5em 0;
 }
  ::selection {
-     background-color: lavender 
+     background-color: var(--color-highlight);
 }
  img {
      display: block;
@@ -203,14 +207,7 @@ const GlobalStyle = createGlobalStyle`
  a:focus {
      outline: 3px solid #497ecb;
 }
-/*emoji Styling */
- img.emoji {
-     display: inline-block;
-     height: 1em;
-     width: 1em;
-     margin: 0 .05em 0 .1em;
-     vertical-align: -0.1em;
-}
+
 /* Etc */
  .headroom-wrapper {
      position: relative;
@@ -225,12 +222,14 @@ const GlobalStyle = createGlobalStyle`
      position: relative;
      z-index: 300;
 }
+
 /* Menu */
-     img.logo {
+ img.logo {
      height: 3em;
      width: 3em;
      margin: .25em;
      transition: all 1s;
+     font-size: 1.25em;
 }
  .menuHeadroom {
      z-index: 299;
@@ -244,10 +243,6 @@ const GlobalStyle = createGlobalStyle`
      a {
          color: var(--color-base);
     }
-     svg {
-         transition: all 0.5 s;
-         fill: var(--color-base);
-    }
 }
  .bm-cross {
      height: 2em !important;
@@ -260,32 +255,6 @@ const GlobalStyle = createGlobalStyle`
      top: 1.5em !important;
      right: 2em !important;
 }
- .bm-burger-bars {
-     height: 0.35em;
-     position: fixed;
-}
- .bm-burger-button {
-     z-index: 301 !important;
-     position: fixed;
-     width: 2em;
-     height: 2em;
-     top: 2em;
-     right: 2em;
-     span span {
-         background: var(--color-base);
-         position: fixed;
-         mix-blend-mode: difference;
-         transition: all 0.3s;
-    }
-     & : hover {
-         span span {
-             background: var(--color-highlight) !important;
-        }
-    }
-  }
-     
-
-
 `
 
 export default GlobalStyle

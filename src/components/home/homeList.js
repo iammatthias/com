@@ -53,11 +53,19 @@ const Cover = styled.div`
 const HomeContent = props => {
   return (
     <StyledLink key={props.id} to={`/${props.slug}/`}>
-      <Box width={[1]} px={[3, 4]} pb={[3, 4]} pt={0} pt={0} flexWrap="wrap" flexDirection="column">
+      <Box
+        width={[1]}
+        px={[3, 4]}
+        pb={[3, 4]}
+        pt={0}
+        pt={0}
+        flexWrap="wrap"
+        flexDirection="column"
+      >
         <Cover>
           <Img fluid={props.image.fluid} />
         </Cover>
-        <Heading width={1} fontSize={3}>
+        <Heading width={1} fontSize={[3, 4]}>
           {props.title}
         </Heading>
         <Text

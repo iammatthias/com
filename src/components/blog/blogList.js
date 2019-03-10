@@ -64,12 +64,12 @@ const BlogList = props => {
         <Cover>
           <Img fluid={props.image.fluid} />
         </Cover>
-        <Heading width={1} fontSize={3}>
+        <Heading width={1} fontSize={[3, 4]}>
           {props.title}
         </Heading>
-        <Text>
+        <Heading width={1} fontSize={1}>
           Published: {props.date} | Reading time: {props.time} min
-        </Text>
+        </Heading>
         <Text
           width={1}
           dangerouslySetInnerHTML={{

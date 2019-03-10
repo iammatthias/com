@@ -40,7 +40,7 @@ const GalleryHead = props => {
           {props.tags.map(tag => (
             <Box key={tag.id} pr={4}>
               <Link to={`/tag/${tag.slug}/`}>
-                <Text color="var(--color-accent)">{tag.title}</Text>
+                <Text color="var(--color-accent)">🏷️ {tag.title}</Text>
               </Link>
             </Box>
           ))}
