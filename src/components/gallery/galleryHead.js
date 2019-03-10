@@ -7,6 +7,7 @@ import { Flex, Box, Heading, Text } from 'rebass'
 const GalleryHead = props => {
   return (
     <Headroom
+      className="relativeHeadroom"
       style={{
         position: 'fixed',
         zIndex: '300',
