@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/33c746c0-e9c5-4853-ae92-f721211dd417/deploy-status)](https://app.netlify.com/sites/iamnet/deploys)
+
 # [IAMMATTHIAS v3](https://iammatthias.com)
 
 ![](https://user-images.githubusercontent.com/5431737/52232080-7243b980-2870-11e9-8432-a41881f8e5d0.png)
