@@ -94,7 +94,7 @@ const GlobalStyle = createGlobalStyle`
 }
  p {
      margin: .5em 0;
-     font-family: "Lato";
+     font-family: "Playfair Display";
      font-size: 1.25em;
      line-height: 1.58;
     a {
@@ -107,7 +107,7 @@ const GlobalStyle = createGlobalStyle`
     }
 }
  a {
-     font-family: "Lato";
+     font-family: "Playfair Display";
      font-size: 1.25em;
      line-height: 1.58;
      text-decoration: underline;
@@ -147,7 +147,7 @@ const GlobalStyle = createGlobalStyle`
      margin: 0 .5em 0-.5em;
 }
  .subtitle {
-     font-family: "Lato", sans-serif;
+     font-family: "Playfair Display", sans-serif;
      color: var(--color-secondary);
      margin: 0 0 1.5em 0;
 }
@@ -225,8 +225,8 @@ const GlobalStyle = createGlobalStyle`
 
 /* Menu */
  img.logo {
-     height: 3em;
-     width: 3em;
+     height: 2.25em;
+     width: 2.25em;
      margin: .25em;
      transition: all 1s;
      font-size: 1.25em;
