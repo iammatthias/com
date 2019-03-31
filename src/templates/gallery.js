@@ -24,7 +24,7 @@ const GalleryTemplate = ({ data, location }) => {
               slug={subGallery.slug}
               images={subGallery.images}
               title={subGallery.title}
-              itemsPerRow={[2, 3, 4, 5]}
+              itemsPerRow={[2, 3, 5, 7]}
             />
           )}
         </div>
@@ -76,7 +76,7 @@ export const query = graphql`
               src
               aspectRatio
             }
-            thumbnail: fluid(maxWidth: 500, quality: 50) {
+            thumbnail: fluid(maxWidth: 400, quality: 50) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio
