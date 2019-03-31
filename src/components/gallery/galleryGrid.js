@@ -13,6 +13,8 @@ type Props = {
     srcSet: string,
     fluid: string,
     title: string,
+    aspectRatio: string,
+    thumbnail: string,
   }[],
   itemsPerRow?: number[],
   title: string,
@@ -49,7 +51,7 @@ const Gallery = ({
           <Box
             as={Img}
             key={image.id}
-            fluid={image.fluid}
+            fluid={image.thumbnail}
             title={image.title}
             width={rowAspectRatioSumsByBreakpoints.map(
               (rowAspectRatioSums, j) => {
