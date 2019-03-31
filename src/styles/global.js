@@ -159,6 +159,14 @@ const GlobalStyle = createGlobalStyle`
      width: 100%;
      height: auto;
 }
+.tag {
+    border: 2px solid var(--color-accent);
+    padding: .25em 2em;
+}
+
+.tag:hover {
+    border: 2px solid var(--color-highlight);
+}
 /* Utilities */
  .noUnderline {
      text-decoration: none;

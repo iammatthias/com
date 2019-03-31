@@ -29,7 +29,7 @@ const GalleryHead = props => {
         <Heading color="var(--color-accent)" fontSize={5}>
           {props.title}
         </Heading>
-        <Heading
+        <Text
           fontSize={2}
           color="var(--color-accent)"
           dangerouslySetInnerHTML={{
@@ -43,9 +43,9 @@ const GalleryHead = props => {
           flexDirection="row"
         >
           {props.tags.map(tag => (
-            <Box key={tag.id} pr={4}>
+            <Box key={tag.id} mr={4} className="tag">
               <Link to={`/tag/${tag.slug}/`}>
-                <Text color="var(--color-accent)">{tag.title}</Text>
+                <Text color="var(--color-accent)">🏷️ {tag.title}</Text>
               </Link>
             </Box>
           ))}

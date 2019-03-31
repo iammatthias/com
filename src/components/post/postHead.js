@@ -38,7 +38,7 @@ const GalleryHead = props => {
           flexDirection="row"
         >
           {props.tags.map(tag => (
-            <Box key={tag.id} pr={4}>
+            <Box key={tag.id} mr={4} className="tag">
               <Link to={`/tag/${tag.slug}/`}>
                 <Text color="var(--color-accent)">🏷️ {tag.title}</Text>
               </Link>
