@@ -71,7 +71,7 @@ export const query = graphql`
           title
           images {
             title
-            fluid(maxWidth: 1000, quality: 75) {
+            fluid(maxWidth: 1000, quality: 65) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio

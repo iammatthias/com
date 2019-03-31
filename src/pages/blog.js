@@ -63,7 +63,7 @@ export const query = graphql`
           publishDate(formatString: "DD MMM YYYY")
           heroImage {
             title
-            fluid(maxWidth: 1000) {
+            fluid(maxWidth: 1000, quality: 65) {
               ...GatsbyContentfulFluid_withWebp
             }
           }
@@ -82,12 +82,12 @@ export const query = graphql`
       id
       heroImage {
         title
-        fluid(maxWidth: 1000) {
+        fluid(maxWidth: 1000, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
       }
       shareImage {
-        ogimg: resize(width: 1200) {
+        ogimg: resize(width: 1200, quality: 65) {
           src
           width
           height
