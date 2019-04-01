@@ -8,15 +8,15 @@ import Carousel, { Modal, ModalGateway } from 'react-images'
 
 type Props = {
   images: {
+    map: string,
     id: string,
     src: string,
     srcSet: string,
     fluid: string,
     title: string,
-    aspectRatio: string,
     thumbnail: string,
-  }[],
-  itemsPerRow?: number[],
+  },
+  itemsPerRow?: number,
   title: string,
   slug: string,
 }

@@ -20,10 +20,10 @@ const GlobalStyle = createGlobalStyle`
      --color-tertiary: #F4DAD3;
      --color-highlight: #FE5F55;
      --color-accent:  #131F26;
-     --color-secondary-25: rgba(20, 13, 0, .25);
-     --color-secondary-50: rgba(20, 13, 0, .50);
-     --color-secondary-75: rgba(20, 13, 0, .75);
-     --color-secondary-90: rgba(20, 13, 0, .90);
+     --color-secondary-25: rgba(249, 244, 237, .25);
+     --color-secondary-50: rgba(249, 244, 237, .50);
+     --color-secondary-75: rgba(249, 244, 237, .75);
+     --color-secondary-90: rgba(249, 244, 237, .90);
     }
 }
  html, body, div, span, applet, object, iframe, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn,em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details,embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
@@ -160,8 +160,8 @@ const GlobalStyle = createGlobalStyle`
      height: auto;
 }
 .tag {
-    border: 2px solid var(--color-accent);
-    padding: .25em 2em;
+    border: .125em solid var(--color-accent);
+    padding: .25em 1em;
 }
 
 .tag:hover {
@@ -240,7 +240,7 @@ const GlobalStyle = createGlobalStyle`
      font-size: 1.25em;
 }
  .menuHeadroom {
-     z-index: 299;
+     z-index: 999;
      position: fixed;
      top: 0;
 }
