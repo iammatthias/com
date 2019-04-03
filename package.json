@@ -50,7 +50,8 @@
     "typography": "^0.16.19",
     "typography-breakpoint-constants": "^0.16.19",
     "whatwg-fetch": "^2.0.4",
-    "intersection-observer: "^0.5.1"
+"intersection-observer": "^0.5.1"
+
   },
   "keywords": [
     "gatsby"
