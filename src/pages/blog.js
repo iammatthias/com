@@ -2,7 +2,7 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from './../components/general/Layout'
 import Hero from './../components/general/Hero'
-import BlogPosts from './../components/blog/blogList'
+import BlogLists from './../components/blog/blogList'
 
 import { Flex, Box } from 'rebass'
 
@@ -29,7 +29,7 @@ const MainBlog = ({ data, location }) => {
           </Box>
           <Flex width={[1]} flexWrap="wrap" flexDirection="row">
             {posts.map(({ node: post }) => (
-              <BlogPosts
+              <BlogLists
                 key={post.id}
                 slug={post.slug}
                 image={post.heroImage}

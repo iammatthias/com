@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import 'whatwg-fetch'
+import { Link as Button } from 'rebass'
 
 const Form = styled.form`
   display: flex;
@@ -86,7 +87,6 @@ const Modal = styled.div`
   z-index: 99;
   display: flex;
   flex-flow: column;
-  height: 25vh;
   align-items: center;
   text-align: center;
   transition: 0.2s all;
@@ -95,24 +95,6 @@ const Modal = styled.div`
   p {
     line-height: 1.6;
     margin: 0 0 2em 0;
-  }
-`
-
-const Button = styled.div`
-  background: grey;
-  font-size: 1em;
-  display: inline-block;
-  margin: 0 auto;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  color: white;
-  padding: 1em;
-  text-decoration: none;
-  transition: 0.2s;
-  z-index: 99;
-  &:focus {
-    outline: none;
   }
 `
 
@@ -208,14 +190,16 @@ class ContactForm extends React.Component {
           onChange={this.handleInputChange}
           required
         />
-        <Submit name="submit" type="submit" value="Send" />
+        <Submit className="button" name="submit" type="submit" value="Send" />
 
         <Modal visible={this.state.showModal}>
           <p>
             Thank you for reaching out. I will get back to you as soon as
             possible.
           </p>
-          <Button onClick={this.closeModal}>Okay</Button>
+          <Button className="button" color="" onClick={this.closeModal}>
+            Okay
+          </Button>
         </Modal>
       </Form>
     )

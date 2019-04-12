@@ -25,7 +25,7 @@ const Cover = styled.div`
     object-fit: cover !important;
   }
   @media screen and (min-width: 52em) {
-        position: fixed !important;
+    position: fixed !important;
     pointer-events: none;
     transition: opacity 0.3s, visibility 0.3s;
     width: 50%;
@@ -36,7 +36,7 @@ const Cover = styled.div`
     opacity: 0;
     visibility: hidden;
   }
-  }
+
   @media screen and (min-width: 64em) {
     position: fixed !important;
     pointer-events: none;
@@ -57,7 +57,6 @@ const HomeContent = props => {
         width={[1]}
         px={[3, 4]}
         pb={[3, 4]}
-        pt={0}
         pt={0}
         flexWrap="wrap"
         flexDirection="column"

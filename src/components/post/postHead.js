@@ -7,6 +7,7 @@ import { Flex, Box, Heading, Text } from 'rebass'
 const GalleryHead = props => {
   return (
     <Headroom
+      className="relativeHeadroom"
       style={{
         position: 'fixed',
         zIndex: '300',
@@ -18,7 +19,7 @@ const GalleryHead = props => {
         width={[1]}
         flexWrap="wrap"
         flexDirection="column"
-        bg="var(--color-secondary-90)"
+        bg="var(--color-secondary)"
       >
         <Box>
           <Link to={`/blog/`} className="noUnderline">

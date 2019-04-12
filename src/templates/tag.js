@@ -3,12 +3,14 @@ import { graphql } from 'gatsby'
 import sortBy from 'lodash/sortBy'
 import Layout from './../components/general/Layout'
 import TagList from './../components/tag/tagList'
+import Hero from './../components/general/Hero'
 import Helmet from 'react-helmet'
 import config from './../utils/siteConfig'
 
 import { Flex, Box, Heading } from 'rebass'
 
 const TagTemplate = ({ data, location }) => {
+  const { tagHero } = data.contentfulHome
   const { title, slug } = data.contentfulTag
 
   const posts = sortBy(data.contentfulTag.post, 'publishDate').reverse()
@@ -27,30 +29,36 @@ const TagTemplate = ({ data, location }) => {
         />
         <meta property="og:url" content={`${config.siteUrl}/tag/${slug}/`} />
       </Helmet>
-      <Flex width={1} p={4} flexWrap="wrap" flexDirection="row">
-        <Box width={1}>
-          <Heading>Tag: {title}</Heading>
+
+      <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
+        <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
+          <Box p={[3, 4]} width={[1]}>
+            <Heading fontSize={[4, 5]}>Tag: {title}</Heading>
+          </Box>
+          <Flex width={[1]} flexWrap="wrap" flexDirection="row">
+            {posts.map(post => (
+              <TagList
+                key={post.id}
+                slug={`/blog/${post.slug}/`}
+                image={post.heroImage}
+                title={post.title}
+                date={post.publishDate}
+              />
+            ))}
+            {galleries.map(gallery => (
+              <TagList
+                key={gallery.id}
+                slug={gallery.slug}
+                image={gallery.heroImage}
+                title={gallery.title}
+                date={gallery.publishDate}
+              />
+            ))}
+          </Flex>
         </Box>
-        <Flex width={[1, 1 / 2, 1 / 4]} flexWrap="wrap" flexDirection="column">
-          {posts.map(post => (
-            <TagList
-              key={post.id}
-              slug={`/blog/${post.slug}/`}
-              image={post.heroImage}
-              title={post.title}
-              date={post.publishDate}
-            />
-          ))}
-          {galleries.map(gallery => (
-            <TagList
-              key={gallery.id}
-              slug={gallery.slug}
-              image={gallery.heroImage}
-              title={gallery.title}
-              date={gallery.publishDate}
-            />
-          ))}
-        </Flex>
+        <Box p={0} width={[1, 1, 1 / 2, 2 / 3]}>
+          <Hero image={tagHero} />
+        </Box>
       </Flex>
     </Layout>
   )
@@ -58,6 +66,14 @@ const TagTemplate = ({ data, location }) => {
 
 export const query = graphql`
   query($slug: String!) {
+    contentfulHome {
+      tagHero {
+        title
+        fluid(maxWidth: 1000, quality: 65) {
+          ...GatsbyContentfulFluid_withWebp
+        }
+      }
+    }
     contentfulTag(slug: { eq: $slug }) {
       title
       id
@@ -67,12 +83,24 @@ export const query = graphql`
         title
         slug
         publishDate(formatString: "MMMM DD, YYYY")
+        heroImage {
+          title
+          fluid(maxWidth: 1000, quality: 65) {
+            ...GatsbyContentfulFluid_withWebp
+          }
+        }
       }
       post {
         id
         title
         slug
         publishDate(formatString: "MMMM DD, YYYY")
+        heroImage {
+          title
+          fluid(maxWidth: 1000, quality: 65) {
+            ...GatsbyContentfulFluid_withWebp
+          }
+        }
       }
     }
   }
