@@ -99,7 +99,7 @@ const GlobalStyle = createGlobalStyle`
      line-height: 1.58;
     a {
          font-weight: bold;
-         font-style: italic;
+        
          font-size: 1em;
     }
      .gatsby-resp-image-wrapper {
@@ -217,9 +217,30 @@ const GlobalStyle = createGlobalStyle`
 }
 
 /* Etc */
+article {
+    margin: 0 0 3em;
+}
  .headroom-wrapper {
      position: relative;
      z-index: 300;
+}
+
+.button {
+  background: var(--color-tertiary);
+  font-size: 1.25em;
+  margin: 0 2em 0 0;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: var(--color-base);
+  padding: 1em;
+  text-decoration: none;
+  text-align: center;
+  transition: 0.2s;
+  z-index: 99;
+  &:focus {
+    outline: none;
+  }
 }
 @media screen and (min-width: 52em) {
     .headroom-wrapper {

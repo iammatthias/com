@@ -8,8 +8,20 @@ import PostArticle from './../components/post/postArticle'
 import SEO from './../components/general/SEO'
 
 const PostTemplate = ({ data, location }) => {
-  const { title, id, heroImage, body, publishDate, tags } = data.contentfulPost
+  const {
+    title,
+    id,
+    heroImage,
+    body,
+    publishDate,
+    tags,
+    slug,
+  } = data.contentfulPost
   const blog = data.contentfulBlog
+
+  const discussUrl = `https://mobile.twitter.com/search?q=${encodeURIComponent(
+    `https:/iammatthias.com/blog/${slug}/`
+  )}`
 
   const postIndex = find(
     data.allContentfulPost.edges,
@@ -30,6 +42,7 @@ const PostTemplate = ({ data, location }) => {
         body={body}
         previous={postIndex.previous}
         next={postIndex.next}
+        discussUrl={discussUrl}
       />
     </Layout>
   )
