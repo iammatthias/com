@@ -58,7 +58,6 @@ const HomeContent = props => {
         px={[3, 4]}
         pb={[3, 4]}
         pt={0}
-        pt={0}
         flexWrap="wrap"
         flexDirection="column"
       >
