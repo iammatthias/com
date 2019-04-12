@@ -13,16 +13,26 @@ const Article = props => {
       />
       <Flex>
         {props.previous && (
-          <Pagination className="button" to={`/blog/${props.previous.slug}/`}>
+          <Pagination
+            className="button marginRight"
+            to={`/blog/${props.previous.slug}/`}
+          >
             <Box>Prev Post</Box>
           </Pagination>
         )}
         {props.next && (
-          <Pagination className="button" to={`/blog/${props.next.slug}/`}>
+          <Pagination
+            className="button marginRight"
+            to={`/blog/${props.next.slug}/`}
+          >
             <Box>Next Post</Box>
           </Pagination>
         )}
-        <Discussion className="button" color="" href={props.discussUrl}>
+        <Discussion
+          className="button marginRight"
+          color=""
+          href={props.discussUrl}
+        >
           <Box>Discuss on Twitter</Box>
         </Discussion>
       </Flex>

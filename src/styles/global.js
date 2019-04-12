@@ -226,9 +226,9 @@ article {
 }
 
 .button {
-  background: var(--color-tertiary);
+  background: var(--color-secondary);
   font-size: 1.25em;
-  margin: 0 2em 0 0;
+  font-weight: bold;
   border: none;
   outline: none;
   cursor: pointer;
@@ -250,6 +250,10 @@ article {
  .relativeHeadroom {
      position: relative;
      z-index: 300;
+}
+
+.marginRight {
+    margin: 0 2em 0 0;
 }
 
 /* Menu */
