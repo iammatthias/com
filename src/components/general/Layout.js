@@ -9,7 +9,7 @@ import { pageFade } from '../../styles/pose'
 
 const Main = posed('main')(pageFade)
 
-const Layout = ({ children, ...props }) => {
+const Layout = ({ children, location, ...props }) => {
   return (
     <ThemeProvider theme={theme}>
       <div className="siteRoot">
