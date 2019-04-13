@@ -3,11 +3,11 @@ import { createGlobalStyle } from 'styled-components'
 const GlobalStyle = createGlobalStyle`
 /* Colors */
  :root {
-     --color-base: #F9F4ED;
+     --color-base: #E1DCDC;
      --color-secondary: #140D00;
-     --color-tertiary: #131F26;
-     --color-highlight: #FE5F55;
-     --color-accent: #F4DAD3;
+     --color-tertiary: #62BBC1;
+     --color-highlight: #FE4A49;
+     --color-accent: #FCBA04;
      --color-secondary-25: rgba(20, 13, 0, .25);
      --color-secondary-50: rgba(20, 13, 0, .50);
      --color-secondary-75: rgba(20, 13, 0, .75);
@@ -25,6 +25,9 @@ const GlobalStyle = createGlobalStyle`
      --color-secondary-75: rgba(249, 244, 237, .75);
      --color-secondary-90: rgba(249, 244, 237, .90);
     }
+}
+* {
+    transition: all 0.3s;
 }
  html, body, div, span, applet, object, iframe, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn,em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details,embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
      margin: 0;
@@ -64,7 +67,7 @@ const GlobalStyle = createGlobalStyle`
      -moz-osx-font-smoothing: grayscale;
      -webkit-font-smoothing: antialiased;
      text-rendering: optimizeLegibility;
-     text-shadow: rgba(0, 0, 0, .01) 0 0 1px;
+     text-shadow: var(--color-secondary-25) 0 0 1px;
      font-weight: 400;
 }
  h1, h2, p, i, a, .first-letter {
@@ -93,10 +96,10 @@ const GlobalStyle = createGlobalStyle`
     }
 }
  p {
-     margin: .5em 0;
-     font-family: "Playfair Display";
+     margin: .5em 0 1.25em;
+     font-family: "Lato";
      font-size: 1.25em;
-     line-height: 1.58;
+     line-height: 1.6;
     a {
          font-weight: bold;
         
@@ -105,18 +108,38 @@ const GlobalStyle = createGlobalStyle`
      .gatsby-resp-image-wrapper {
          max-width: 100% !important;
     }
-}
- a {
-     font-family: "Playfair Display";
-     font-size: 1.25em;
-     line-height: 1.58;
-     text-decoration: underline;
-     color: var(--color-tertiary);
-     transition: all 0.3s;
-     &:hover{
-         color: var(--color-highlight);
+    &:last-child {
+        margin-bottom: 0;
     }
 }
+ a {
+     font-family: "Lato";
+     font-size: 1.25em;
+     line-height: 1.6;
+     text-decoration: none;
+     color: var(--color-secondary);
+     text-shadow: .125em .125em var(--color-tertiary);
+     &:hover{
+         text-shadow: .125em .125em var(--color-tertiary), .25em .25em var(--color-highlight), .375em .375em var(--color-accent);
+    }
+}
+.noLinkAccent {
+      text-shadow: none !important;
+  &:hover {
+    text-shadow: none !important;
+  }
+}
+.scopedLinkAccent {
+    h1, h2, h3, h4, h5 {
+        text-shadow: .125em .125em var(--color-tertiary) !important;
+    }
+    &:hover {
+        h1, h2, h3, h4, h5 {
+            text-shadow: .125em .125em var(--color-tertiary), .25em .25em var(--color-highlight), .375em .375em var(--color-accent) !important;
+        }
+    }
+}
+
  blockquote {
      font-family: "Montserrat", sans-serif;
      font-size: 1em;
@@ -147,7 +170,7 @@ const GlobalStyle = createGlobalStyle`
      margin: 0 .5em 0-.5em;
 }
  .subtitle {
-     font-family: "Playfair Display", sans-serif;
+     font-family: "Lato", sans-serif;
      color: var(--color-secondary);
      margin: 0 0 1.5em 0;
 }
@@ -216,10 +239,15 @@ const GlobalStyle = createGlobalStyle`
      outline: 3px solid #497ecb;
 }
 
-/* Etc */
+/* Article Styles */
+
+
 .postArticle {
     margin: 0 0 3em;
 }
+
+/* Etc */
+
  .headroom-wrapper {
      position: relative;
      z-index: 300;
@@ -236,7 +264,6 @@ const GlobalStyle = createGlobalStyle`
   padding: 1em;
   text-decoration: none;
   text-align: center;
-  transition: 0.2s;
   z-index: 99;
   &:focus {
     outline: none;
@@ -261,7 +288,7 @@ const GlobalStyle = createGlobalStyle`
      height: 2.25em;
      width: 2.25em;
      margin: .25em;
-     transition: all 1s;
+
      font-size: 1.25em;
 }
  .menuHeadroom {
@@ -287,6 +314,12 @@ const GlobalStyle = createGlobalStyle`
      width: 2em !important;
      top: 1.5em !important;
      right: 2em !important;
+}
+
+.MenuTabBarHover {
+    &:hover {
+        box-shadow: inset 0 4px 0px 0px var(--color-highlight), inset 0 8px 0px 0px var(--color-accent) !important
+    }
 }
 `
 

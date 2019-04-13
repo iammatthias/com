@@ -20,6 +20,7 @@ export const Box = styled(Base)`
     }
   }
 `
+
 const Cover = styled.div`
   position: relative;
   transition: none;
@@ -93,8 +94,23 @@ const Overflow = styled.div`
   bottom: 1em;
   padding: 1em;
   z-index: 2;
-  color: var(--color-base);
+  div,
+  h1,
+  h2,
+  h3 {
+    color: var(--color-base);
+    &:hover {
+      color: var(--color-base) !import;
+    }
+  }
   @media screen and (min-width: 52em) {
+    div,
+    h1,
+    h2,
+    h3 {
+      color: var(--color-secondary);
+    }
+    bottom: 0;
     display: block;
     position: relative;
     padding: 0.25rem 0;
@@ -107,12 +123,15 @@ const Overflow = styled.div`
 
 const HomeContent = props => {
   return (
-    <StyledLink key={props.id} to={`/${props.slug}/`}>
+    <StyledLink
+      className="noLinkAccent scopedLinkAccent"
+      key={props.id}
+      to={`/${props.slug}/`}
+    >
       <Box
         width={[1]}
         px={[3, 4]}
-        pb={[3, 4]}
-        pt={0}
+        py={[1]}
         flexWrap="wrap"
         flexDirection="column"
       >
@@ -124,6 +143,7 @@ const HomeContent = props => {
             {props.title}
           </Heading>
           <Text
+            className="noAccent"
             width={1}
             dangerouslySetInnerHTML={{
               __html: props.excerpt.childMarkdownRemark.excerpt,

@@ -23,15 +23,16 @@ const GalleryHead = props => {
       >
         <Box>
           <Link to={`/`} className="noUnderline">
-            <Heading color="var(--color-accent)">⬅ Back</Heading>
+            <Heading color="var(--color-base)">⬅ Back</Heading>
           </Link>
         </Box>
-        <Heading color="var(--color-accent)" fontSize={5}>
+        <Heading color="var(--color-base)" fontSize={5}>
           {props.title}
         </Heading>
         <Text
           fontSize={2}
-          color="var(--color-accent)"
+          pb={4}
+          color="var(--color-base)"
           dangerouslySetInnerHTML={{
             __html: props.body.childMarkdownRemark.html,
           }}
@@ -43,11 +44,9 @@ const GalleryHead = props => {
           flexDirection="row"
         >
           {props.tags.map(tag => (
-            <Box key={tag.id} mr={2} mb={2}>
+            <Box key={tag.id} mr={2} mb={2} className="tag noLinkAccent">
               <Link to={`/tag/${tag.slug}/`}>
-                <Text className="tag" color="var(--color-accent)">
-                  🏷️ {tag.title}
-                </Text>
+                <Text color="var(--color-accent)">🏷️ {tag.title}</Text>
               </Link>
             </Box>
           ))}

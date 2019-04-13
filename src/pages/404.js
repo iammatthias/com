@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Helmet from 'react-helmet'
 import Layout from './../components/general/Layout'
 
-import { Flex, Box } from 'rebass'
+import { Flex } from 'rebass'
 
 const Text = styled.p`
   text-align: center;
