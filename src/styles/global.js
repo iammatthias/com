@@ -281,11 +281,8 @@ img {
 	height: auto;
 }
 .tag {
-	border: .125em solid var(--color-accent);
-    padding: .25em 1em;
+    padding: .25em 1em .25em 0;
     transition: all 0.3s;
-    &:hover {
-	border: 2px solid var(--color-highlight);
 }
 }
 /* Utilities */
@@ -387,16 +384,29 @@ a:focus {
 }
 /* Menu */
 
-img.logo {
+.logo {
 	height: 2.25em;
 	width: 2.25em;
 	margin: .25em;
 	font-size: 1.25em;
 }
 .menuHeadroom {
-	z-index: 999;
 	position: fixed;
 	top: 0;
+	right: 0;
+	.headroom, .headroom--pinned {
+		top: 0 !important;
+		right: 0 !important;
+		left:  auto !important;
+	}
+	@media screen and (min-width: 52em) {
+		left: 0;
+		.headroom, .headroom--pinned {
+			top: 0 !important;
+			right: auto !important;
+			left:  0 !important;
+		}
+	}
 }
 .bm-menu {
 	background: var(--color-secondary);

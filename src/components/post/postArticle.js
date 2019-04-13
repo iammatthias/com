@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link as Pagination } from 'gatsby'
 import { Flex, Box, Link as Discussion } from 'rebass'
+
 require('../../styles/prism.css')
 
 const Article = props => {
@@ -12,6 +13,7 @@ const Article = props => {
           __html: props.body.childMarkdownRemark.html,
         }}
       />
+
       <Flex>
         {props.previous && (
           <Pagination

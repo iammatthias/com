@@ -41,6 +41,7 @@
     "prismjs": "^1.16.0",
     "react": "^16.8.6",
     "react-burger-menu": "^2.6.5",
+    "react-color": "^2.17.0",
     "react-dom": "^16.8.6",
     "react-headroom": "^2.2.8",
     "react-helmet": "^5.2.0",
@@ -71,9 +72,12 @@
     "format": "prettier --write \"src/**/*.js\""
   },
   "devDependencies": {
+    "@mdx-js/loader": "^1.0.4",
+    "@mdx-js/mdx": "^1.0.4",
     "eslint": "^5.16.0",
     "eslint-config-gatsby-standard": "^2.1.0",
     "flow-bin": "^0.95.1",
+    "loader-utils": "^1.2.3",
     "prettier": "^1.16.4",
     "stylelint": "9.10.1",
     "stylelint-config-prettier": "^5.0.0",

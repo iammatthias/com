@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'gatsby'
 import Headroom from 'react-headroom'
 
-import { Flex, Box, Heading, Text } from 'rebass'
+import { Flex, Box, Heading } from 'rebass'
 
 const PostHead = props => {
   return (
@@ -14,7 +14,7 @@ const PostHead = props => {
         transition: 'all .5s ease-in-out',
       }}
     >
-      <Flex
+      <Box
         p={[4, 5]}
         width={[1]}
         flexWrap="wrap"
@@ -23,7 +23,12 @@ const PostHead = props => {
       >
         <Box>
           <Link to={`/blog/`} className="noUnderline">
-            <Heading color="var(--color-base)">⬅ Back</Heading>
+            <Heading
+              color="var(--color-base)"
+              css={{ display: 'inline-block' }}
+            >
+              ⬅ Back
+            </Heading>
           </Link>
         </Box>
         <Heading color="var(--color-base)" fontSize={5}>
@@ -48,7 +53,7 @@ const PostHead = props => {
             </Box>
           ))}
         </Flex>
-      </Flex>
+      </Box>
     </Headroom>
   )
 }

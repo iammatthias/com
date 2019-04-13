@@ -14,7 +14,7 @@ const Index = ({ data, location }) => {
   return (
     <Layout location={location}>
       <SEO image={home.shareImage} />
-      <Flex flexWrap="wrap" mb={[5, 0]} pt={[4, 0]} className="changeDirection">
+      <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
           <Box p={[3, 4]} width={[1]}>
             <article
