@@ -1,14 +1,14 @@
 import Typography from 'typography'
 
 const typography = new Typography({
-  title: 'Montserrat + Playfair Display + Source Code',
+  title: 'Montserrat + Lato + Source Code',
   googleFonts: [
     {
       name: 'Montserrat',
       styles: ['900', '900i'],
     },
     {
-      name: 'Playfair Display',
+      name: 'Lato',
       styles: ['400', '900'],
     },
     {
@@ -17,7 +17,7 @@ const typography = new Typography({
     },
   ],
   headerFontFamily: ['Montserrat', 'Helvetica', 'sans-serif'],
-  bodyFontFamily: ['Playfair Display', 'Helvetica', 'sans-serif'],
+  bodyFontFamily: ['Lato', 'Helvetica', 'sans-serif'],
 
   headerWeight: 900,
   bodyWeight: 400,

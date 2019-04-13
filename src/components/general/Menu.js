@@ -24,17 +24,17 @@ const StyledLink = styled(Link)`
     text-align: left;
   }
 `
-const Icon = styled(Box)`
+const MenuToggle = styled(Heading)`
   z-index: 900 !important;
   position: fixed;
-  margin: 0.75rem;
+  margin: 0.75em !important;
   top: 0;
   right: 0;
   width: 3.5em;
   height: 3.5em;
-  background: url(/menu.svg);
-  mix-blend-mode: soft-light;
-  filter: invert(100%);
+  color: var(--color-base);
+  text-shadow: 0px 0px 5px var(--color-secondary-50);
+  cursor: pointer;
 `
 
 const NavBar = styled.nav`
@@ -45,7 +45,7 @@ const NavBar = styled.nav`
 `
 
 export const MenuTabBar = styled(Base)`
-  background: var(--color-base);
+  background: var(--color-secondary-75);
   border-top: 3px solid var(--color-tertiary);
   overflow: hidden;
   position: fixed;
@@ -86,7 +86,7 @@ class Navigation extends React.Component {
       <>
         <Logo />
         <NavBar>
-          <Icon onClick={() => this.toggleMenu()} />
+          <MenuToggle onClick={() => this.toggleMenu()}>MENU</MenuToggle>
           <Menu
             right
             isOpen={this.state.menuOpen}
@@ -135,6 +135,7 @@ class Navigation extends React.Component {
           <Box width={1 / 3}>
             <StyledLink
               to="/"
+              className="MenuTabBarHover"
               activeStyle={{
                 boxShadow: 'inset 0 4px 0px 0px var(--color-highlight)',
               }}
@@ -145,6 +146,7 @@ class Navigation extends React.Component {
           <Box width={1 / 3}>
             <StyledLink
               to="/blog"
+              className="MenuTabBarHover"
               activeStyle={{
                 boxShadow: 'inset 0 4px 0px 0px var(--color-highlight)',
               }}
@@ -155,6 +157,7 @@ class Navigation extends React.Component {
           <Box width={1 / 3}>
             <StyledLink
               to="/contact"
+              className="MenuTabBarHover"
               activeStyle={{
                 boxShadow: 'inset 0 4px 0px 0px var(--color-highlight)',
               }}

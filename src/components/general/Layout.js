@@ -5,26 +5,9 @@ import Helmet from 'react-helmet'
 import theme from '../../styles/theme'
 import GlobalStyle from '../../styles/global'
 import Menu from '../general/Menu'
+import { pageFade } from '../../styles/pose'
 
-const transitionDuration = 150
-const transitionDelay = 50
-
-const Transition = posed.div({
-  enter: {
-    opacity: 1,
-    transition: {
-      duration: transitionDuration,
-    },
-    delay: transitionDelay,
-    beforeChildren: true,
-  },
-  exit: {
-    opacity: 0,
-    transition: {
-      duration: transitionDuration,
-    },
-  },
-})
+const Main = posed('main')(pageFade)
 
 const Layout = ({ children, ...props }) => {
   return (
@@ -38,8 +21,10 @@ const Layout = ({ children, ...props }) => {
         </Helmet>
         <GlobalStyle />
         <Menu />
-        <PoseGroup>
-          <Transition key={props.location.pathname}> {children} </Transition>
+        <PoseGroup animateOnMount preEnterPose="initial">
+          <Main key={props.location.pathname} id="content" role="main">
+            {children}
+          </Main>
         </PoseGroup>
       </div>
     </ThemeProvider>

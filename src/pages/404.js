@@ -3,11 +3,7 @@ import styled from 'styled-components'
 import Helmet from 'react-helmet'
 import Layout from './../components/general/Layout'
 
-const Box = styled.div`
-  margin: 0 auto;
-  padding: 3em 1.5em 2em;
-  text-align: center;
-`
+import { Flex } from 'rebass'
 
 const Text = styled.p`
   text-align: center;
@@ -30,10 +26,17 @@ const NotFoundPage = ({ location }) => (
       <meta name="description" content="Page not found" />
     </Helmet>
 
-    <Box>
+    <Flex
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+      css={{
+        height: '100vh',
+      }}
+    >
       <Title>Error 404</Title>
       <Text>Sorry, that page can't be found</Text>
-    </Box>
+    </Flex>
   </Layout>
 )
 

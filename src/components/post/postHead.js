@@ -4,7 +4,7 @@ import Headroom from 'react-headroom'
 
 import { Flex, Box, Heading, Text } from 'rebass'
 
-const GalleryHead = props => {
+const PostHead = props => {
   return (
     <Headroom
       className="relativeHeadroom"
@@ -23,13 +23,13 @@ const GalleryHead = props => {
       >
         <Box>
           <Link to={`/blog/`} className="noUnderline">
-            <Heading color="var(--color-accent)">⬅ Back</Heading>
+            <Heading color="var(--color-base)">⬅ Back</Heading>
           </Link>
         </Box>
-        <Heading color="var(--color-accent)" fontSize={5}>
+        <Heading color="var(--color-base)" fontSize={5}>
           {props.title}
         </Heading>
-        <Heading color="var(--color-accent)" fontSize={3}>
+        <Heading color="var(--color-base)" fontSize={3}>
           Published: {props.date} <br /> Reading time: {props.time} min
         </Heading>
         <Flex
@@ -39,9 +39,11 @@ const GalleryHead = props => {
           flexDirection="row"
         >
           {props.tags.map(tag => (
-            <Box key={tag.id} mr={4} className="tag">
+            <Box key={tag.id} mr={2} mb={2} className="tag noLinkAccent">
               <Link to={`/tag/${tag.slug}/`}>
-                <Text color="var(--color-accent)">🏷️ {tag.title}</Text>
+                <Heading fontSize={3} color="var(--color-base)">
+                  🏷️ {tag.title}
+                </Heading>
               </Link>
             </Box>
           ))}
@@ -51,4 +53,4 @@ const GalleryHead = props => {
   )
 }
 
-export default GalleryHead
+export default PostHead
