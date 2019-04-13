@@ -22,7 +22,7 @@ const Layout = ({ children, ...props }) => {
         <GlobalStyle />
         <Menu />
         <PoseGroup animateOnMount preEnterPose="initial">
-          <Main key={location} id="content" role="main">
+          <Main key={props.location.pathname} id="content" role="main">
             {children}
           </Main>
         </PoseGroup>
