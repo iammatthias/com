@@ -27,9 +27,7 @@ const GlobalStyle = createGlobalStyle`
 		--color-secondary-90: rgba(225, 220, 220, .90);
 	}
 }
-* {
-	transition: all 0.3s;
-}
+
 html,
 body,
 div,
@@ -214,13 +212,15 @@ a {
 	line-height: 1.6;
 	text-decoration: none;
 	color: var(--color-secondary);
-	text-shadow: .125em .125em var(--color-tertiary);
+    text-shadow: .125em .125em var(--color-tertiary);
+    transition: all 0.3s;
 	&: hover {
 		text-shadow: .125em .125em var(--color-tertiary), .25em .25em var(--color-highlight), .375em .375em var(--color-accent);
 	}
 }
 .noLinkAccent {
-	text-shadow: none !important;
+    text-shadow: none !important;
+    transition: all 0.3s;
 	&: hover {
 		text-shadow: none !important;
 	}
@@ -228,7 +228,8 @@ a {
 .scopedLinkAccent {
 	h1, h2, h3, h4, h5 {
 		text-shadow: .125em .125em var(--color-tertiary) !important;
-	}
+    }
+    transition: all 0.3s;
 	&:hover {
 		h1, h2, h3, h4, h5 {
 			text-shadow: .125em .125em var(--color-tertiary), .25em .25em var(--color-highlight), .375em .375em var(--color-accent) !important;
@@ -281,10 +282,11 @@ img {
 }
 .tag {
 	border: .125em solid var(--color-accent);
-	padding: .25em 1em;
-}
-.tag:hover {
+    padding: .25em 1em;
+    transition: all 0.3s;
+    &:hover {
 	border: 2px solid var(--color-highlight);
+}
 }
 /* Utilities */
 
@@ -416,6 +418,7 @@ img.logo {
 	right: 2em !important;
 }
 .MenuTabBarHover {
+    transition: all 0.3s;
 	&: hover {
 		box-shadow: inset 0 4px 0px 0px var(--color-highlight), inset 0 8px 0px 0px var(--color-accent) !important
 	}
