@@ -14,7 +14,6 @@ const Form = styled.form`
     font-family: inherit;
     font-size: inherit;
     outline: none;
-    border-radius: 2px;
     padding: 1rem;
     border: 2px var(--color-secondary) solid;
     background: var(--color-base);
@@ -68,11 +67,16 @@ const Message = styled.textarea`
 `
 
 const Submit = styled.input`
-  background: var(--color-tertiary) !important;
+  background: var(--color-secondary) !important;
   color: var(--color-base) !important;
   cursor: pointer;
   transition: 0.2s;
   width: 100%;
+  font-size: 1.25em !important;
+  &:hover {
+    text-shadow: 0.125em 0.125em var(--color-tertiary),
+      0.25em 0.25em var(--color-highlight), 0.375em 0.375em var(--color-accent) !important;
+  }
 `
 
 const Modal = styled.div`

@@ -29,12 +29,17 @@ const MenuToggle = styled(Heading)`
   position: fixed;
   margin: 0.75em !important;
   top: 0;
-  right: 0;
+  right: 0.5em;
   width: 3.5em;
   height: 3.5em;
-  color: var(--color-base);
-  text-shadow: 0px 0px 5px var(--color-secondary-50);
+  color: var(--color-secondary);
   cursor: pointer;
+  text-shadow: 0.125em 0.125em var(--color-tertiary);
+  transition: all 0.3s;
+  &: hover {
+    text-shadow: 0.125em 0.125em var(--color-tertiary),
+      0.25em 0.25em var(--color-highlight), 0.375em 0.375em var(--color-accent);
+  }
 `
 
 const NavBar = styled.nav`
@@ -45,7 +50,7 @@ const NavBar = styled.nav`
 `
 
 export const MenuTabBar = styled(Base)`
-  background: var(--color-secondary-75);
+  background: var(--color-secondary);
   border-top: 3px solid var(--color-tertiary);
   overflow: hidden;
   position: fixed;
