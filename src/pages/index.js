@@ -8,13 +8,13 @@ import { Flex, Box } from 'rebass'
 
 import SEO from './../components/general/SEO'
 
-const Index = ({ data, location }) => {
+const Index = ({ data }) => {
   const home = data.contentfulHome
   const galleries = data.allContentfulExtendedGallery.edges
   return (
-    <Layout location={location}>
+    <Layout>
       <SEO image={home.shareImage} />
-      <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
+      <Flex flexWrap="wrap" mb={[5, 0]} pt={[4, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
           <Box p={[3, 4]} width={[1]}>
             <article
@@ -36,7 +36,7 @@ const Index = ({ data, location }) => {
             ))}
           </Flex>
         </Box>
-        <Box p={0} width={[1, 1, 1 / 2, 2 / 3]}>
+        <Box className="hide" p={0} width={[1, 1, 1 / 2, 2 / 3]}>
           <Hero image={home.heroImage} />
         </Box>
       </Flex>

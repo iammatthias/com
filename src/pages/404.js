@@ -23,8 +23,8 @@ const Title = styled.h1`
   line-height: 1.2;
 `
 
-const NotFoundPage = ({ location }) => (
-  <Layout location={location}>
+const NotFoundPage = () => (
+  <Layout>
     <Helmet>
       <title>404 - Page Not Found</title>
       <meta name="description" content="Page not found" />

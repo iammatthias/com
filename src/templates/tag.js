@@ -9,7 +9,7 @@ import config from './../utils/siteConfig'
 
 import { Flex, Box, Heading } from 'rebass'
 
-const TagTemplate = ({ data, location }) => {
+const TagTemplate = ({ data }) => {
   const { tagHero } = data.contentfulHome
   const { title, slug } = data.contentfulTag
 
@@ -20,7 +20,7 @@ const TagTemplate = ({ data, location }) => {
   ).reverse()
 
   return (
-    <Layout location={location}>
+    <Layout>
       <Helmet>
         <title>{`Tag: ${title} - ${config.siteTitle}`}</title>
         <meta

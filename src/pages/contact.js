@@ -7,10 +7,10 @@ import SEO from './../components/general/SEO'
 
 import { Flex, Box } from 'rebass'
 
-const Contact = ({ data, location }) => {
+const Contact = ({ data }) => {
   const contact = data.contentfulAbout
   return (
-    <Layout location={location}>
+    <Layout>
       <SEO title="CONTACT" image={contact.shareImage} />
 
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">

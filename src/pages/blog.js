@@ -8,17 +8,17 @@ import { Flex, Box } from 'rebass'
 
 import SEO from './../components/general/SEO'
 
-const MainBlog = ({ data, location }) => {
+const MainBlog = ({ data }) => {
   const posts = data.allContentfulPost.edges
   const blog = data.contentfulBlog
   return (
-    <Layout location={location}>
+    <Layout>
       <SEO
         title="BLOG"
         image={blog.shareImage}
         description="A sporadic collection of thoughts mostly about the web"
       />
-      <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
+      <Flex flexWrap="wrap" mb={[5, 0]} pt={[4, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
           <Box p={[3, 4]} width={[1]}>
             <article
@@ -41,7 +41,7 @@ const MainBlog = ({ data, location }) => {
             ))}
           </Flex>
         </Box>
-        <Box p={0} width={[1, 1, 1 / 2, 2 / 3]}>
+        <Box p={0} className="hide" width={[1, 1, 1 / 2, 2 / 3]}>
           <Hero image={blog.heroImage} />
         </Box>
       </Flex>

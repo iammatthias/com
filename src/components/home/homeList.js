@@ -6,8 +6,10 @@ import Img from 'gatsby-image'
 import { Box as Base, Text, Heading } from 'rebass'
 
 const StyledLink = styled(Link)`
-  text-decoration: none;
+  position: relative;
   width: 100%;
+  margin: 0 0 1rem 0;
+  text-decoration: none;
 `
 
 export const Box = styled(Base)`
@@ -19,10 +21,20 @@ export const Box = styled(Base)`
   }
 `
 const Cover = styled.div`
-  width: 100%;
-  div {
-    height: 100% !important;
-    object-fit: cover !important;
+  position: relative;
+  transition: none;
+  &::before {
+    transition: all 0.3s;
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background: var(--color-secondary-50);
   }
   @media screen and (min-width: 52em) {
     position: fixed !important;
@@ -35,6 +47,18 @@ const Cover = styled.div`
     z-index: 2;
     opacity: 0;
     visibility: hidden;
+    div {
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+    .gatsby-image-wrapper {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    &::before {
+      display: none;
+    }
   }
 
   @media screen and (min-width: 64em) {
@@ -48,8 +72,39 @@ const Cover = styled.div`
     z-index: 2;
     opacity: 0;
     visibility: hidden;
+    div {
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+    .gatsby-image-wrapper {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    &::before {
+      display: none;
+    }
   }
 `
+const Overflow = styled.div`
+  display: inline-block;
+  overflow: hidden;
+  position: absolute;
+  bottom: 1em;
+  padding: 1em;
+  z-index: 2;
+  color: var(--color-base);
+  @media screen and (min-width: 52em) {
+    display: block;
+    position: relative;
+    padding: 0.25rem 0;
+    color: var(--color-secondary);
+  }
+  &:hover {
+    color: var(--color-hilight);
+  }
+`
+
 const HomeContent = props => {
   return (
     <StyledLink key={props.id} to={`/${props.slug}/`}>
@@ -64,15 +119,17 @@ const HomeContent = props => {
         <Cover>
           <Img fluid={props.image.fluid} />
         </Cover>
-        <Heading width={1} fontSize={[3, 4]}>
-          {props.title}
-        </Heading>
-        <Text
-          width={1}
-          dangerouslySetInnerHTML={{
-            __html: props.excerpt.childMarkdownRemark.excerpt,
-          }}
-        />
+        <Overflow>
+          <Heading width={1} fontSize={[3, 4]}>
+            {props.title}
+          </Heading>
+          <Text
+            width={1}
+            dangerouslySetInnerHTML={{
+              __html: props.excerpt.childMarkdownRemark.excerpt,
+            }}
+          />
+        </Overflow>
       </Box>
     </StyledLink>
   )

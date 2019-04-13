@@ -7,7 +7,7 @@ import PostHero from './../components/post/postHero'
 import PostArticle from './../components/post/postArticle'
 import SEO from './../components/general/SEO'
 
-const PostTemplate = ({ data, location }) => {
+const PostTemplate = ({ data }) => {
   const {
     title,
     id,
@@ -28,7 +28,7 @@ const PostTemplate = ({ data, location }) => {
     ({ node: post }) => post.id === id
   )
   return (
-    <Layout location={location}>
+    <Layout>
       <SEO title={title} image={blog.shareImage} />
       <PostHead
         title={title}

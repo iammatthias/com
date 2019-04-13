@@ -22,7 +22,6 @@ module.exports = {
     siteUrl: config.siteUrl,
     rssMetadata: {
       site_url: config.siteUrl,
-      feed_url: `${config.siteUrl}/rss.xml`,
       title: config.siteTitle,
       description: config.siteDescription,
       image_url: `${config.siteUrl}${config.siteLogo}`,
@@ -32,25 +31,8 @@ module.exports = {
   },
   plugins: [
     `gatsby-plugin-flow`,
-    {
-      resolve: 'gatsby-plugin-canonical-urls',
-      options: {
-        siteUrl: config.siteUrl,
-      },
-    },
-    {
-      resolve: `gatsby-plugin-styled-components`,
-      options: {
-        // Add any options here
-      },
-    },
-    {
-      resolve: `gatsby-plugin-typography`,
-      options: {
-        pathToConfigModule: `src/utils/typography`,
-      },
-    },
     'gatsby-plugin-react-helmet',
+    'gatsby-plugin-styled-components',
     {
       resolve: `gatsby-transformer-remark`,
       options: {
@@ -63,32 +45,33 @@ module.exports = {
             },
           },
           {
-            resolve: `gatsby-remark-images-contentful`,
+            resolve: `@raae/gatsby-remark-oembed`,
             options: {
-              maxWidth: 650,
-              backgroundColor: 'white',
+              providers: {
+                exclude: ['Reddit', 'Flickr', 'Instagram', 'Twitter'],
+              },
+            },
+          },
+          `gatsby-remark-responsive-iframe`,
+          {
+            resolve: 'gatsby-remark-images-contentful',
+            options: {
+              maxWidth: 750,
+              backgroundColor: 'transparent',
               linkImagesToOriginal: false,
+              withWebp: true,
             },
           },
         ],
       },
     },
     {
-      resolve: 'gatsby-source-contentful',
-      options:
-        process.env.NODE_ENV === 'development'
-          ? contentfulConfig.development
-          : contentfulConfig.production,
-    },
-    {
-      resolve: 'gatsby-plugin-google-analytics',
+      resolve: `gatsby-plugin-typography`,
       options: {
-        trackingId: process.env.GOOGLE_ANALYTICS,
-        head: true,
+        pathToConfigModule: `src/utils/typography`,
       },
     },
-    'gatsby-plugin-catch-links',
-    'gatsby-plugin-sitemap',
+
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
@@ -104,71 +87,16 @@ module.exports = {
     },
     'gatsby-plugin-offline',
     {
-      resolve: 'gatsby-plugin-feed',
+      resolve: 'gatsby-plugin-canonical-urls',
       options: {
-        setup(ref) {
-          const ret = ref.query.site.siteMetadata.rssMetadata
-          ret.allMarkdownRemark = ref.query.allMarkdownRemark
-          ret.generator = 'I Am Matthias'
-          return ret
-        },
-        query: `
+        siteUrl: config.siteUrl,
+      },
+    },
     {
-      site {
-        siteMetadata {
-          rssMetadata {
-            site_url
-            feed_url
-            title
-            description
-            image_url
-            author
-            copyright
-          }
-        }
-      }
-    }
-  `,
-        feeds: [
-          {
-            serialize(ctx) {
-              const rssMetadata = ctx.query.site.siteMetadata.rssMetadata
-              return ctx.query.allContentfulPost.edges.map(edge => ({
-                date: edge.node.publishDate,
-                title: edge.node.title,
-                description: edge.node.body.childMarkdownRemark.excerpt,
-
-                url: rssMetadata.site_url + '/' + edge.node.slug,
-                guid: rssMetadata.site_url + '/' + edge.node.slug,
-                custom_elements: [
-                  {
-                    'content:encoded': edge.node.body.childMarkdownRemark.html,
-                  },
-                ],
-              }))
-            },
-            query: `
-              {
-            allContentfulPost(limit: 1000, sort: {fields: [publishDate], order: DESC}) {
-               edges {
-                 node {
-                   title
-                   slug
-                   publishDate(formatString: "MMMM DD, YYYY")
-                   body {
-                     childMarkdownRemark {
-                       html
-                       excerpt(pruneLength: 80)
-                     }
-                   }
-                 }
-               }
-             }
-           }
-      `,
-            output: '/rss.xml',
-          },
-        ],
+      resolve: 'gatsby-plugin-google-analytics',
+      options: {
+        trackingId: process.env.GOOGLE_ANALYTICS,
+        head: true,
       },
     },
     {
@@ -177,6 +105,16 @@ module.exports = {
         color: config.themeColor,
       },
     },
+    {
+      resolve: 'gatsby-source-contentful',
+      options:
+        process.env.NODE_ENV === 'development'
+          ? contentfulConfig.development
+          : contentfulConfig.production,
+    },
+
+    'gatsby-plugin-catch-links',
+    'gatsby-plugin-sitemap',
     'gatsby-plugin-netlify',
   ],
 }

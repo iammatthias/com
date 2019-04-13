@@ -5,11 +5,11 @@ import GalleryGrid from './../components/gallery/galleryGrid'
 import GalleryHead from './../components/gallery/galleryHead'
 import SEO from './../components/general/SEO'
 
-const GalleryTemplate = ({ data, location }) => {
+const GalleryTemplate = ({ data }) => {
   const gallery = data.contentfulExtendedGallery
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (
-    <Layout location={location}>
+    <Layout>
       <SEO title={gallery.title} image={gallery.shareImage} />
       <GalleryHead
         title={gallery.title}

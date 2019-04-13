@@ -217,7 +217,7 @@ const GlobalStyle = createGlobalStyle`
 }
 
 /* Etc */
-article {
+.postArticle {
     margin: 0 0 3em;
 }
  .headroom-wrapper {
