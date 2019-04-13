@@ -8,11 +8,11 @@ import { Flex, Box } from 'rebass'
 
 import SEO from './../components/general/SEO'
 
-const Index = ({ data }) => {
+const Index = ({ data, location }) => {
   const home = data.contentfulHome
   const galleries = data.allContentfulExtendedGallery.edges
   return (
-    <Layout>
+    <Layout location={location}>
       <SEO image={home.shareImage} />
       <Flex flexWrap="wrap" mb={[5, 0]} pt={[4, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>

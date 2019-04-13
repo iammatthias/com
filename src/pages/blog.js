@@ -8,11 +8,11 @@ import { Flex, Box } from 'rebass'
 
 import SEO from './../components/general/SEO'
 
-const MainBlog = ({ data }) => {
+const MainBlog = ({ data, location }) => {
   const posts = data.allContentfulPost.edges
   const blog = data.contentfulBlog
   return (
-    <Layout>
+    <Layout location={location}>
       <SEO
         title="BLOG"
         image={blog.shareImage}
