@@ -20,7 +20,7 @@ const PostTemplate = ({ data, location }) => {
   const blog = data.contentfulBlog
 
   const discussUrl = `https://mobile.twitter.com/search?q=${encodeURIComponent(
-    `https:/iammatthias.com/blog/${slug}/`
+    `https://iammatthias.com/blog/${slug}/`
   )}`
 
   const postIndex = find(
