@@ -23,7 +23,12 @@ const GalleryHead = props => {
       >
         <Box>
           <Link to={`/`} className="noUnderline">
-            <Heading color="var(--color-base)">⬅ Back</Heading>
+            <Heading
+              color="var(--color-base)"
+              css={{ display: 'inline-block' }}
+            >
+              ⬅ Back
+            </Heading>
           </Link>
         </Box>
         <Heading color="var(--color-base)" fontSize={5}>
@@ -46,7 +51,9 @@ const GalleryHead = props => {
           {props.tags.map(tag => (
             <Box key={tag.id} mr={2} mb={2} className="tag noLinkAccent">
               <Link to={`/tag/${tag.slug}/`}>
-                <Text color="var(--color-accent)">🏷️ {tag.title}</Text>
+                <Heading fontSize={3} color="var(--color-base)">
+                  🏷️ {tag.title}
+                </Heading>
               </Link>
             </Box>
           ))}
