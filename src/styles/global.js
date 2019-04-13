@@ -227,9 +227,9 @@ a {
 }
 .scopedLinkAccent {
 	h1, h2, h3, h4, h5 {
-		text-shadow: .125em .125em var(--color-tertiary) !important;
+        text-shadow: .125em .125em var(--color-tertiary) !important;
+        transition: all 0.3s;
     }
-    transition: all 0.3s;
 	&:hover {
 		h1, h2, h3, h4, h5 {
 			text-shadow: .125em .125em var(--color-tertiary), .25em .25em var(--color-highlight), .375em .375em var(--color-accent) !important;
