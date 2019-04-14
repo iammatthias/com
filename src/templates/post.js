@@ -17,7 +17,6 @@ const PostTemplate = ({ data, location }) => {
     tags,
     slug,
   } = data.contentfulPost
-  const blog = data.contentfulBlog
 
   const discussUrl = `https://mobile.twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/blog/${slug}/`
@@ -29,7 +28,11 @@ const PostTemplate = ({ data, location }) => {
   )
   return (
     <Layout location={location}>
-      <SEO title={title} image={blog.shareImage} />
+      <SEO
+        title={title}
+        image={heroImage}
+        description={body.childMarkdownRemark.metaExcerpt}
+      />
       <PostHead
         title={title}
         date={publishDate}
@@ -71,16 +74,16 @@ export const query = graphql`
         fluid(maxWidth: 1000, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
-        ogimg: resize(width: 900) {
+        ogimg: fluid(maxWidth: 900, quality: 65) {
+          ...GatsbyContentfulFluid_withWebp
           src
-          width
-          height
         }
       }
       body {
         childMarkdownRemark {
           html
           excerpt(pruneLength: 320)
+          metaExcerpt: excerpt(pruneLength: 120)
           timeToRead
         }
       }
@@ -98,15 +101,6 @@ export const query = graphql`
         }
         next {
           slug
-        }
-      }
-    }
-    contentfulBlog {
-      shareImage {
-        ogimg: resize(width: 1200) {
-          src
-          width
-          height
         }
       }
     }
