@@ -13,6 +13,7 @@ const PostHead = props => {
         zIndex: '300',
         transition: 'all .5s ease-in-out',
       }}
+      downTolerance="300px"
     >
       <Box
         p={[4, 5]}
@@ -22,10 +23,11 @@ const PostHead = props => {
         bg="var(--color-secondary)"
       >
         <Box>
-          <Link to={`/blog/`} className="noUnderline">
+          <Link to={`/blog/`} className="invert noUnderline">
             <Heading
-              color="var(--color-base)"
-              css={{ display: 'inline-block' }}
+              css={{
+                display: 'inline-block',
+              }}
             >
               ⬅ Back
             </Heading>
@@ -45,10 +47,8 @@ const PostHead = props => {
         >
           {props.tags.map(tag => (
             <Box key={tag.id} mr={2} mb={2} className="tag noLinkAccent">
-              <Link to={`/tag/${tag.slug}/`}>
-                <Heading fontSize={3} color="var(--color-base)">
-                  🏷️ {tag.title}
-                </Heading>
+              <Link to={`/tag/${tag.slug}/`} className="invert">
+                <Heading fontSize={3}>🏷️ {tag.title}</Heading>
               </Link>
             </Box>
           ))}

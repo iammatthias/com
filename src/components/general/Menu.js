@@ -12,12 +12,18 @@ import { Flex as Base, Heading, Box } from 'rebass'
 const StyledLink = styled(Link)`
   text-decoration: none;
   text-align: center;
-  color: var(--color-secondary);
   text-transform: uppercase;
   position: relative;
   display: block;
   margin: 0;
   padding: 0.6em 0 0.5em;
+  color: var(--color-base) !important;
+  text-shadow: 0.125em 0.125em var(--color-secondary) !important;
+  &:hover {
+    text-shadow: 0.125em 0.125em var(--color-secondary),
+      0.25em 0.25em var(--color-tertiary),
+      0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent) !important;
+  }
   @media screen and (min-width: 52em) {
     padding: 0.5em 0;
     color: var(--color-accent);
@@ -32,13 +38,14 @@ const MenuToggle = styled(Heading)`
   right: 0.5em;
   width: 3.5em;
   height: 3.5em;
-  color: var(--color-secondary);
+  color: var(--color-base);
   cursor: pointer;
-  text-shadow: 0.125em 0.125em var(--color-tertiary);
+  text-shadow: 0.125em 0.125em var(--color-secondary);
   transition: all 0.3s;
   &: hover {
-    text-shadow: 0.125em 0.125em var(--color-tertiary),
-      0.25em 0.25em var(--color-highlight), 0.375em 0.375em var(--color-accent);
+    text-shadow: 0.125em 0.125em var(--color-secondary),
+      0.25em 0.25em var(--color-tertiary),
+      0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent);
   }
 `
 
