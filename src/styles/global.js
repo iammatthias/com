@@ -212,10 +212,19 @@ a {
 	line-height: 1.6;
 	text-decoration: none;
 	color: var(--color-secondary);
-    text-shadow: .125em .125em var(--color-tertiary);
+    text-shadow: .125em .125em var(--color-base);
     transition: all 0.3s;
 	&: hover {
-		text-shadow: .125em .125em var(--color-tertiary), .25em .25em var(--color-highlight), .375em .375em var(--color-accent);
+		text-shadow: .125em .125em var(--color-base), .25em .25em var(--color-tertiary), .375em .375em var(--color-highlight), .5em .5em var(--color-accent);
+	}
+}
+
+a.invert {
+	color: var(--color-base);
+    text-shadow: .125em .125em var(--color-secondary);
+    transition: all 0.3s;
+	&: hover {
+		text-shadow: .125em .125em var(--color-secondary), .25em .25em var(--color-tertiary), .375em .375em var(--color-highlight), .5em .5em var(--color-accent);
 	}
 }
 .noLinkAccent {
@@ -227,12 +236,12 @@ a {
 }
 .scopedLinkAccent {
 	h1, h2, h3, h4, h5 {
-        text-shadow: .125em .125em var(--color-tertiary) !important;
+        text-shadow: .125em .125em var(--color-base) !important;
         transition: all 0.3s;
     }
 	&:hover {
 		h1, h2, h3, h4, h5 {
-			text-shadow: .125em .125em var(--color-tertiary), .25em .25em var(--color-highlight), .375em .375em var(--color-accent) !important;
+			text-shadow: .125em .125em var(--color-base), .25em .25em var(--color-tertiary), .375em .375em var(--color-highlight), .5em .5em var(--color-accent) !important;
 		}
 	}
 }
@@ -355,7 +364,6 @@ a:focus {
 	z-index: 300;
 }
 .button {
-	background: var(--color-secondary);
 	font-size: 1.25em;
 	font-weight: bold;
 	border: none;
@@ -365,6 +373,14 @@ a:focus {
 	padding: 1em;
 	text-decoration: none;
 	text-align: center;
+	  background: var(--color-secondary) !important;
+  color: var(--color-base) !important;
+  text-shadow: 0.125em 0.125em var(--color-secondary) !important;
+  &:hover {
+    text-shadow: 0.125em 0.125em var(--color-secondary),
+      0.25em 0.25em var(--color-tertiary),
+      0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent) !important;
+  }
 	z-index: 99;
 	&: focus {
 		outline: none;
