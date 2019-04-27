@@ -8,7 +8,7 @@ const Article = props => {
   return (
     <Box mx="auto" width={[1, 3 / 4, 2 / 3, 1 / 2]} px={[4, 0]} py={4} mb={[5]}>
       <article
-        className="postArticle"
+        className="postArticle drop-cap"
         dangerouslySetInnerHTML={{
           __html: props.body.childMarkdownRemark.html,
         }}

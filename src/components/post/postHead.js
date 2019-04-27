@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'gatsby'
 import Headroom from 'react-headroom'
 
-import { Flex, Box, Heading } from 'rebass'
+import { Flex, Box, Heading, Text } from 'rebass'
 
 const PostHead = props => {
   return (
@@ -13,32 +13,26 @@ const PostHead = props => {
         zIndex: '300',
         transition: 'all .5s ease-in-out',
       }}
-      downTolerance="300px"
     >
-      <Box
+      <Flex
         p={[4, 5]}
         width={[1]}
         flexWrap="wrap"
         flexDirection="column"
-        bg="var(--color-secondary)"
+        bg="var(--color-base-95)"
       >
         <Box>
-          <Link to={`/blog/`} className="invert noUnderline">
-            <Heading
-              css={{
-                display: 'inline-block',
-              }}
-            >
-              ⬅ Back
-            </Heading>
+          <Link
+            to={`/`}
+            className="noUnderline linkAccentReset scopedLinkAccent"
+          >
+            <Heading css={{ display: 'inline-block' }}>⬅ Back</Heading>
           </Link>
         </Box>
-        <Heading color="var(--color-base)" fontSize={5}>
+        <Heading pt={3} pb={1} fontSize={5}>
           {props.title}
         </Heading>
-        <Heading color="var(--color-base)" fontSize={3}>
-          Published: {props.date} <br /> Reading time: {props.time} min
-        </Heading>
+
         <Flex
           width={[1]}
           flexWrap="wrap"
@@ -46,14 +40,19 @@ const PostHead = props => {
           flexDirection="row"
         >
           {props.tags.map(tag => (
-            <Box key={tag.id} mr={2} mb={2} className="tag noLinkAccent">
-              <Link to={`/tag/${tag.slug}/`} className="invert">
+            <Box
+              key={tag.id}
+              mr={2}
+              mb={2}
+              className="tag linkAccentReset scopedLinkAccent"
+            >
+              <Link to={`/tag/${tag.slug}/`}>
                 <Heading fontSize={3}>🏷️ {tag.title}</Heading>
               </Link>
             </Box>
           ))}
         </Flex>
-      </Box>
+      </Flex>
     </Headroom>
   )
 }

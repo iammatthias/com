@@ -1,8 +1,15 @@
+// @flow
 import Typography from 'typography'
 
 const typography = new Typography({
   title: 'Montserrat + Lato + Source Code',
+  baseFontSize: '18px',
+  baseLineHeight: 1.4,
   googleFonts: [
+    {
+      name: 'Playfair Display',
+      styles: ['900', '900i'],
+    },
     {
       name: 'Montserrat',
       styles: ['900', '900i'],
@@ -16,17 +23,6 @@ const typography = new Typography({
       styles: ['400'],
     },
   ],
-  headerFontFamily: ['Montserrat', 'Helvetica', 'sans-serif'],
-  bodyFontFamily: ['Lato', 'Helvetica', 'sans-serif'],
-
-  headerWeight: 900,
-  bodyWeight: 400,
-  boldWeight: 900,
-  overrideStyles: () => ({
-    'pre[class*="language-"],code[class*="language-"]': {
-      fontFamily: ['Source Code Pro', 'monospace'].join(','),
-    },
-  }),
 })
 
 const { rhythm, scale } = typography

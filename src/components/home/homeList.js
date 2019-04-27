@@ -35,7 +35,7 @@ const Cover = styled.div`
     height: 100%;
     width: 100%;
     z-index: 1;
-    background: var(--color-secondary-50);
+    background: var(--color-base-75);
   }
   @media screen and (min-width: 52em) {
     position: fixed !important;
@@ -89,42 +89,23 @@ const Cover = styled.div`
 `
 const Overflow = styled.div`
   display: inline-block;
-  overflow: hidden;
+  overflow: none;
   position: absolute;
   bottom: 1em;
-  padding: 1em;
+  padding: 2em 3em 2em 2em;
   z-index: 2;
-  div,
-  h1,
-  h2,
-  h3 {
-    color: var(--color-base);
-    &:hover {
-      color: var(--color-base) !import;
-    }
-  }
   @media screen and (min-width: 52em) {
-    div,
-    h1,
-    h2,
-    h3 {
-      color: var(--color-secondary);
-    }
     bottom: 0;
     display: block;
     position: relative;
     padding: 0.25rem 0;
-    color: var(--color-secondary);
-  }
-  &:hover {
-    color: var(--color-hilight);
   }
 `
 
 const HomeContent = props => {
   return (
     <StyledLink
-      className="noLinkAccent scopedLinkAccent"
+      className="linkAccentReset scopedLinkAccent"
       key={props.id}
       to={`/${props.slug}/`}
     >
@@ -143,7 +124,7 @@ const HomeContent = props => {
             {props.title}
           </Heading>
           <Text
-            className="noAccent"
+            className="linkAccentReset"
             width={1}
             dangerouslySetInnerHTML={{
               __html: props.excerpt.childMarkdownRemark.excerpt,
