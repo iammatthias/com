@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'gatsby'
 import Headroom from 'react-headroom'
 
-import { Flex, Box, Heading, Text } from 'rebass'
+import { Flex, Box, Heading } from 'rebass'
 
 const PostHead = props => {
   return (
@@ -23,7 +23,7 @@ const PostHead = props => {
       >
         <Box>
           <Link
-            to={`/`}
+            to={`/blog/`}
             className="noUnderline linkAccentReset scopedLinkAccent"
           >
             <Heading css={{ display: 'inline-block' }}>⬅ Back</Heading>
