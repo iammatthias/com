@@ -53,7 +53,7 @@ const Cover = styled.div`
 const BlogList = props => {
   return (
     <StyledLink
-      className="noLinkAccent scopedLinkAccent"
+      className="linkAccentReset scopedLinkAccent"
       key={props.id}
       to={`/blog/${props.slug}/`}
     >
@@ -75,7 +75,7 @@ const BlogList = props => {
           Published: {props.date} | Reading time: {props.time} min
         </Heading>
         <Text
-          className="noAccent"
+          className="linkAccentReset"
           width={1}
           dangerouslySetInnerHTML={{
             __html: props.excerpt.childMarkdownRemark.excerpt,

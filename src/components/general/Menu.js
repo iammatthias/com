@@ -42,7 +42,7 @@ const MenuToggle = styled(Heading)`
   cursor: pointer;
   text-shadow: 0.125em 0.125em var(--color-secondary);
   transition: all 0.3s;
-  &: hover {
+  &:hover {
     text-shadow: 0.125em 0.125em var(--color-secondary),
       0.25em 0.25em var(--color-tertiary),
       0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent);
@@ -57,8 +57,8 @@ const NavBar = styled.nav`
 `
 
 export const MenuTabBar = styled(Base)`
-  background: var(--color-secondary);
-  border-top: 3px solid var(--color-tertiary);
+  background: var(--color-base);
+  border-top: 3px solid var(--color-secondary);
   overflow: hidden;
   position: fixed;
   bottom: 0;
@@ -69,9 +69,9 @@ export const MenuTabBar = styled(Base)`
     display: none;
   }
   div {
-    border-right: 2px solid var(--color-tertiary);
+    border-right: 2px solid var(--color-secondary);
     &:last-child {
-      border-right: 0px solid var(--color-tertiary);
+      border-right: 0px solid var(--color-secondary);
     }
   }
 `
@@ -107,13 +107,16 @@ class Navigation extends React.Component {
             noOverlay
             customBurgerIcon={false}
           >
-            <StyledLink to="/">
+            <StyledLink to="/" className="linkAccentReset scopedLinkAccent">
               <Heading>Portfolio</Heading>
             </StyledLink>
-            <StyledLink to="/blog">
+            <StyledLink to="/blog" className="linkAccentReset scopedLinkAccent">
               <Heading>Blog</Heading>
             </StyledLink>
-            <StyledLink to="/contact">
+            <StyledLink
+              to="/contact"
+              className="linkAccentReset scopedLinkAccent"
+            >
               <Heading>Contact</Heading>
             </StyledLink>
 
@@ -149,10 +152,10 @@ class Navigation extends React.Component {
               to="/"
               className="MenuTabBarHover"
               activeStyle={{
-                boxShadow: 'inset 0 4px 0px 0px var(--color-highlight)',
+                boxShadow: 'inset 0 4px 0px 0px var(--color-tertiary)',
               }}
             >
-              <FiHome size={'2em'} color={'var(--color-tertiary)'} />
+              <FiHome size={'2em'} color={'var(--color-secondary)'} />
             </StyledLink>
           </Box>
           <Box width={1 / 3}>
@@ -160,10 +163,10 @@ class Navigation extends React.Component {
               to="/blog"
               className="MenuTabBarHover"
               activeStyle={{
-                boxShadow: 'inset 0 4px 0px 0px var(--color-highlight)',
+                boxShadow: 'inset 0 4px 0px 0px var(--color-tertiary)',
               }}
             >
-              <FiBook size={'2em'} color={'var(--color-tertiary)'} />
+              <FiBook size={'2em'} color={'var(--color-secondary)'} />
             </StyledLink>
           </Box>
           <Box width={1 / 3}>
@@ -171,10 +174,10 @@ class Navigation extends React.Component {
               to="/contact"
               className="MenuTabBarHover"
               activeStyle={{
-                boxShadow: 'inset 0 4px 0px 0px var(--color-highlight)',
+                boxShadow: 'inset 0 4px 0px 0px var(--color-tertiary)',
               }}
             >
-              <FiUser size={'2em'} color={'var(--color-tertiary)'} />
+              <FiUser size={'2em'} color={'var(--color-secondary)'} />
             </StyledLink>
           </Box>
         </MenuTabBar>

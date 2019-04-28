@@ -19,25 +19,22 @@ const GalleryHead = props => {
         width={[1]}
         flexWrap="wrap"
         flexDirection="column"
-        bg="var(--color-secondary)"
+        bg="var(--color-base-95)"
       >
         <Box>
-          <Link to={`/`} className="noUnderline">
-            <Heading
-              color="var(--color-base)"
-              css={{ display: 'inline-block' }}
-            >
-              ⬅ Back
-            </Heading>
+          <Link
+            to={`/`}
+            className="noUnderline linkAccentReset scopedLinkAccent"
+          >
+            <Heading css={{ display: 'inline-block' }}>⬅ Back</Heading>
           </Link>
         </Box>
-        <Heading color="var(--color-base)" fontSize={5}>
+        <Heading pt={3} pb={1} fontSize={5}>
           {props.title}
         </Heading>
         <Text
           fontSize={2}
-          pb={4}
-          color="var(--color-base)"
+          py={1}
           dangerouslySetInnerHTML={{
             __html: props.body.childMarkdownRemark.html,
           }}
@@ -49,11 +46,14 @@ const GalleryHead = props => {
           flexDirection="row"
         >
           {props.tags.map(tag => (
-            <Box key={tag.id} mr={2} mb={2} className="tag noLinkAccent">
+            <Box
+              key={tag.id}
+              mr={2}
+              mb={2}
+              className="tag linkAccentReset scopedLinkAccent"
+            >
               <Link to={`/tag/${tag.slug}/`}>
-                <Heading fontSize={3} color="var(--color-base)">
-                  🏷️ {tag.title}
-                </Heading>
+                <Heading fontSize={3}>🏷️ {tag.title}</Heading>
               </Link>
             </Box>
           ))}
