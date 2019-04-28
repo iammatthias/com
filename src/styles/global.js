@@ -201,7 +201,7 @@ h2 {
 
 p,
 i,
-a {
+a, ul, li {
   margin-top: 1.3125em;
   font-family: 'Lato';
   font-size: 1.125em;
@@ -212,7 +212,6 @@ p {
     max-width: 100% !important;
   }
 }
-
 a {
   font-weight: 900;
   text-decoration: none;
@@ -224,6 +223,11 @@ a {
       0.25em 0.25em var(--color-tertiary),
       0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent);
   }
+}
+ul, li {
+  margin: 1.3125em 2em;
+  line-height: 1.382;
+  list-style: circle outside;
 }
 
 @media screen and (min-width: 52em) {
