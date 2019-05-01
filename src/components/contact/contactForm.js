@@ -11,8 +11,6 @@ const Form = styled.form`
   align-items: flex-start;
   input,
   textarea {
-    font-family: inherit;
-    font-size: inherit;
     outline: none;
     padding: 1rem;
     border: 2px var(--color-secondary) solid;
