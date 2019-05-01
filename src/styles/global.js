@@ -473,7 +473,7 @@ a:focus {
 }
 .bm-menu {
   background: var(--color-base);
-  padding: 2em;
+  padding: 3em 2em;
   font-size: 1.15em;
   a {
     color: var(--color-base);
@@ -482,7 +482,7 @@ a:focus {
 .bm-cross {
   height: 2em !important;
   width: 0.35em !important;
-  background: var(--color-base);
+  background: var(--color-secondary);
 }
 .bm-cross-button {
   height: 2em !important;
