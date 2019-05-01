@@ -201,7 +201,12 @@ h2 {
 
 p,
 i,
-a, ul, li {
+a, 
+ul, 
+li,
+form, 
+textarea,
+input {
   margin-top: 1.3125em;
   font-family: 'Lato';
   font-size: 1.125em;
@@ -431,6 +436,13 @@ a:focus {
 .marginRight {
   margin: 0 2em 0 0;
 }
+
+.gatsby-resp-image-wrapper  {
+  float: right!important;
+   width: 150px !important;
+}
+
+
 /* Menu */
 
 .logo {
