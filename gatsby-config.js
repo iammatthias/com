@@ -81,7 +81,7 @@ module.exports = {
         background_color: config.backgroundColor,
         theme_color: config.themeColor,
         display: 'fullscreen',
-        icon: config.siteLogo,
+        icon: `static${config.siteLogo}`,
       },
     },
     'gatsby-plugin-offline',
