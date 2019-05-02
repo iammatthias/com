@@ -152,7 +152,7 @@ class Navigation extends React.Component {
               to="/"
               className="MenuTabBarHover"
               activeStyle={{
-                boxShadow: 'inset 0 4px 0px 0px var(--color-tertiary)',
+                boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
               }}
             >
               <FiHome size={'2em'} color={'var(--color-secondary)'} />
@@ -163,7 +163,7 @@ class Navigation extends React.Component {
               to="/blog"
               className="MenuTabBarHover"
               activeStyle={{
-                boxShadow: 'inset 0 4px 0px 0px var(--color-tertiary)',
+                boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
               }}
             >
               <FiBook size={'2em'} color={'var(--color-secondary)'} />
@@ -174,7 +174,7 @@ class Navigation extends React.Component {
               to="/contact"
               className="MenuTabBarHover"
               activeStyle={{
-                boxShadow: 'inset 0 4px 0px 0px var(--color-tertiary)',
+                boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
               }}
             >
               <FiUser size={'2em'} color={'var(--color-secondary)'} />

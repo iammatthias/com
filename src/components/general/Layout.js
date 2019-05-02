@@ -12,7 +12,7 @@ const Main = posed('main')(pageFade)
 const Layout = ({ children, ...props }) => {
   return (
     <ThemeProvider theme={theme}>
-      <div className="siteRoot" ontouchstart="">
+      <div className="siteRoot">
         <Helmet>
           <html lang="en" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
