@@ -499,8 +499,8 @@ a:focus {
 .MenuTabBarHover {
   transition: all 0.3s;
   &:hover {
-    box-shadow: inset 0 4px 0px 0px var(--color-highlight),
-      inset 0 8px 0px 0px var(--color-accent) !important;
+    box-shadow: inset 0 0.125em 0px 0px var(--color-tertiary),
+      inset 0 0.25em 0px 0px var(--color-highlight), inset 0 0.375em 0px 0px var(--color-accent) !important;
   }
 }
 
