@@ -40,6 +40,12 @@ const GlobalStyle = createGlobalStyle`
   }
 }
 
+body {
+   -webkit-touch-callout: none;
+   -webkit-tap-highlight-color: transparent;
+   -webkit-user-select: none;
+}
+
 /* Reset */
 html,
 body,
