@@ -2,7 +2,7 @@
 
 # [IAMMATTHIAS v3](https://iammatthias.com)
 
-![](https://user-images.githubusercontent.com/5431737/52232080-7243b980-2870-11e9-8432-a41881f8e5d0.png)
+![](https://user-images.githubusercontent.com/5431737/52232080-7243b980-2870-11e9-8432-a41881f8e5d0.png) [![Maintainability](https://api.codeclimate.com/v1/badges/cfe289e436dbeed2598a/maintainability)](https://codeclimate.com/github/iammatthias/.com/maintainability) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9403cc5b92e74a1f9f3608221b1d76c1)](https://www.codacy.com/app/iammatthias/.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iammatthias/.com&amp;utm_campaign=Badge_Grade)
 
 ## Overview
 Codebase for [https://iammatthias.com](https://iammatthias.com)
