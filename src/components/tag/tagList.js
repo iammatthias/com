@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Link } from 'gatsby'
 import Img from 'gatsby-image'
 
-import { Box as Base, Text, Heading } from 'rebass'
+import { Box as Base, Heading } from 'rebass'
 
 const StyledLink = styled(Link)`
   text-decoration: none;
