@@ -2,6 +2,7 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from './../components/general/Layout'
 import Hero from './../components/general/Hero'
+import Blurb from './../components/general/Blurb'
 import Form from './../components/contact/contactForm'
 import SEO from './../components/general/SEO'
 
@@ -15,13 +16,7 @@ const Contact = ({ data, location }) => {
 
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
-          <Box p={[3, 4]} width={[1]}>
-            <article
-              dangerouslySetInnerHTML={{
-                __html: contact.body.childMarkdownRemark.html,
-              }}
-            />
-          </Box>
+          <Blurb content={contact.body} />
           <Flex
             px={[3, 4]}
             pb={[3, 4]}

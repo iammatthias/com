@@ -2,6 +2,7 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from './../components/general/Layout'
 import Hero from './../components/general/Hero'
+import Blurb from './../components/general/Blurb'
 import BlogLists from './../components/blog/blogList'
 
 import { Flex, Box } from 'rebass'
@@ -20,13 +21,7 @@ const MainBlog = ({ data, location }) => {
       />
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
-          <Box p={[3, 4]} width={[1]}>
-            <article
-              dangerouslySetInnerHTML={{
-                __html: blog.body.childMarkdownRemark.html,
-              }}
-            />
-          </Box>
+          <Blurb content={blog.body} />
           <Flex width={[1]} flexWrap="wrap" flexDirection="row">
             {posts.map(({ node: post }) => (
               <BlogLists

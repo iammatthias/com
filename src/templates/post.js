@@ -2,7 +2,7 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import find from 'lodash/find'
 import Layout from './../components/general/Layout'
-import PostHead from './../components/post/postHead'
+import ContentHead from './../components/general/contentHead'
 import PostHero from './../components/post/postHero'
 import PostArticle from './../components/post/postArticle'
 import SEO from './../components/general/SEO'
@@ -33,7 +33,8 @@ const PostTemplate = ({ data, location }) => {
         image={heroImage}
         description={body.childMarkdownRemark.metaExcerpt}
       />
-      <PostHead
+      <ContentHead
+        displayExcerpt={false}
         title={title}
         date={publishDate}
         tags={tags}

@@ -4,7 +4,7 @@ import Headroom from 'react-headroom'
 
 import { Flex, Box, Heading, Text } from 'rebass'
 
-const GalleryHead = props => {
+const ContentHead = props => {
   return (
     <Headroom
       className="relativeHeadroom"
@@ -23,7 +23,7 @@ const GalleryHead = props => {
       >
         <Box>
           <Link
-            to={`/`}
+            to={props.displayExcerpt ? '/' : '/blog/'}
             className="noUnderline linkAccentReset scopedLinkAccent"
           >
             <Heading css={{ display: 'inline-block' }}>⬅ Back</Heading>
@@ -32,13 +32,16 @@ const GalleryHead = props => {
         <Heading pt={3} pb={1} fontSize={5}>
           {props.title}
         </Heading>
-        <Text
-          fontSize={2}
-          py={1}
-          dangerouslySetInnerHTML={{
-            __html: props.body.childMarkdownRemark.html,
-          }}
-        />
+        {props.displayExcerpt ? (
+          <Text
+            fontSize={2}
+            py={1}
+            dangerouslySetInnerHTML={{
+              __html: props.body.childMarkdownRemark.html,
+            }}
+          />
+        ) : null}
+
         <Flex
           width={[1]}
           flexWrap="wrap"
@@ -63,4 +66,4 @@ const GalleryHead = props => {
   )
 }
 
-export default GalleryHead
+export default ContentHead
