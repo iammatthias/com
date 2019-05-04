@@ -2,6 +2,7 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from './../components/general/Layout'
 import Hero from './../components/general/Hero'
+import Blurb from './../components/general/Blurb'
 import HomeList from './../components/home/homeList'
 
 import { Flex, Box } from 'rebass'
@@ -16,13 +17,7 @@ const Index = ({ data, location }) => {
       <SEO image={home.shareImage} />
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
-          <Box p={[3, 4]} width={[1]}>
-            <article
-              dangerouslySetInnerHTML={{
-                __html: home.body.childMarkdownRemark.html,
-              }}
-            />
-          </Box>
+          <Blurb content={home.body} />
           <Flex width={[1]} flexWrap="wrap" flexDirection="row">
             {galleries.map(({ node: gallery }) => (
               <HomeList

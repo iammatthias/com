@@ -38,12 +38,12 @@ const MenuToggle = styled(Heading)`
   right: 0.5em;
   width: 3.5em;
   height: 3.5em;
-  color: var(--color-base);
+  color: var(--color-secondary);
   cursor: pointer;
-  text-shadow: 0.125em 0.125em var(--color-secondary);
+  text-shadow: 0.125em 0.125em var(--color-base);
   transition: all 0.3s;
   &:hover {
-    text-shadow: 0.125em 0.125em var(--color-secondary),
+    text-shadow: 0.125em 0.125em var(--color-base),
       0.25em 0.25em var(--color-tertiary),
       0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent);
   }

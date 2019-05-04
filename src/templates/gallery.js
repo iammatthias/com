@@ -2,7 +2,7 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from './../components/general/Layout'
 import GalleryGrid from './../components/gallery/galleryGrid'
-import GalleryHead from './../components/gallery/galleryHead'
+import ContentHead from './../components/general/contentHead'
 import SEO from './../components/general/SEO'
 
 const GalleryTemplate = ({ data, location }) => {
@@ -11,7 +11,8 @@ const GalleryTemplate = ({ data, location }) => {
   return (
     <Layout location={location}>
       <SEO title={gallery.title} image={gallery.shareImage} />
-      <GalleryHead
+      <ContentHead
+        displayExcerpt
         title={gallery.title}
         body={gallery.body}
         tags={gallery.tags}
