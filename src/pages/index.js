@@ -3,7 +3,7 @@ import { graphql } from 'gatsby'
 import Layout from './../components/general/Layout'
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
-import HomeList from './../components/home/homeList'
+import ContentList from './../components/general/contentList'
 
 import { Flex, Box } from 'rebass'
 
@@ -20,7 +20,8 @@ const Index = ({ data, location }) => {
           <Blurb content={home.body} />
           <Flex width={[1]} flexWrap="wrap" flexDirection="row">
             {galleries.map(({ node: gallery }) => (
-              <HomeList
+              <ContentList
+                galleryList
                 key={gallery.id}
                 slug={gallery.slug}
                 image={gallery.heroImage}

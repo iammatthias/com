@@ -355,9 +355,6 @@ mark,
     flex-direction: row;
   }
 }
-.postArticle {
-  margin: 0 0 3em;
-}
 
 /* NProgress stles */
 

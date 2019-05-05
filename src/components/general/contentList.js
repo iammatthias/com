@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Link } from 'gatsby'
 import Img from 'gatsby-image'
 
-import { Box as Base, Text, Heading } from 'rebass'
+import { Box as Base, Heading, Text } from 'rebass'
 
 const StyledLink = styled(Link)`
   position: relative;
@@ -102,38 +102,61 @@ const Overflow = styled.div`
   }
 `
 
-const HomeContent = props => {
+const ContentList = props => {
   return (
     <StyledLink
-      className="linkAccentReset scopedLinkAccent"
       key={props.id}
-      to={`/${props.slug}/`}
+      to={props.blogList ? `/blog/${props.slug}/` : `${props.slug}/`}
     >
       <Box
         width={[1]}
         px={[3, 4]}
-        py={[1]}
+        pb={[3, 4]}
+        pt={0}
         flexWrap="wrap"
         flexDirection="column"
       >
         <Cover>
           <Img fluid={props.image.fluid} />
         </Cover>
-        <Overflow>
+        {props.galleryList ? (
+          <Overflow>
+            <Heading width={1} fontSize={[3, 4]}>
+              {props.title}
+            </Heading>
+            <Text
+              className="linkAccentReset"
+              width={1}
+              dangerouslySetInnerHTML={{
+                __html: props.excerpt.childMarkdownRemark.excerpt,
+              }}
+            />
+          </Overflow>
+        ) : props.blogList ? (
+          <>
+            <Heading pt={3} width={1} fontSize={[3, 4]}>
+              {props.title}
+            </Heading>
+            <Heading width={1} fontSize={1}>
+              Published: {props.date} | Reading time: {props.time} min
+            </Heading>
+
+            <Text
+              className="linkAccentReset"
+              width={1}
+              dangerouslySetInnerHTML={{
+                __html: props.excerpt.childMarkdownRemark.excerpt,
+              }}
+            />
+          </>
+        ) : (
           <Heading width={1} fontSize={[3, 4]}>
             {props.title}
           </Heading>
-          <Text
-            className="linkAccentReset"
-            width={1}
-            dangerouslySetInnerHTML={{
-              __html: props.excerpt.childMarkdownRemark.excerpt,
-            }}
-          />
-        </Overflow>
+        )}
       </Box>
     </StyledLink>
   )
 }
 
-export default HomeContent
+export default ContentList

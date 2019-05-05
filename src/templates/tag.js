@@ -2,7 +2,7 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import sortBy from 'lodash/sortBy'
 import Layout from './../components/general/Layout'
-import TagList from './../components/tag/tagList'
+import ContentList from './../components/general/contentList'
 import Hero from './../components/general/Hero'
 import Helmet from 'react-helmet'
 import config from './../utils/siteConfig'
@@ -37,7 +37,7 @@ const TagTemplate = ({ data, location }) => {
           </Box>
           <Flex width={[1]} flexWrap="wrap" flexDirection="row">
             {posts.map(post => (
-              <TagList
+              <ContentList
                 key={post.id}
                 slug={`/blog/${post.slug}/`}
                 image={post.heroImage}
@@ -46,7 +46,7 @@ const TagTemplate = ({ data, location }) => {
               />
             ))}
             {galleries.map(gallery => (
-              <TagList
+              <ContentList
                 key={gallery.id}
                 slug={gallery.slug}
                 image={gallery.heroImage}
