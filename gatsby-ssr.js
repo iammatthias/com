@@ -1,6 +1,6 @@
 import React from 'react'
 
-exports.onRenderBody = ({ setHeadComponents }) => {
+export const onRenderBody = ({ setHeadComponents }) => {
   setHeadComponents([
     <link
       rel="dns-prefetch"
