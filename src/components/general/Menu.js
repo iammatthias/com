@@ -107,15 +107,24 @@ class Navigation extends React.Component {
             noOverlay
             customBurgerIcon={false}
           >
-            <StyledLink to="/" className="linkAccentReset scopedLinkAccent">
+            <StyledLink
+              to="/"
+              className="linkAccentReset scopedLinkAccent"
+              alt="Portfolio"
+            >
               <Heading>Portfolio</Heading>
             </StyledLink>
-            <StyledLink to="/blog" className="linkAccentReset scopedLinkAccent">
+            <StyledLink
+              to="/blog"
+              className="linkAccentReset scopedLinkAccent"
+              alt="blog"
+            >
               <Heading>Blog</Heading>
             </StyledLink>
             <StyledLink
               to="/contact"
               className="linkAccentReset scopedLinkAccent"
+              alt="Contact"
             >
               <Heading>Contact</Heading>
             </StyledLink>
@@ -125,6 +134,7 @@ class Navigation extends React.Component {
                 href="https://www.contentful.com/"
                 rel="nofollow noopener noreferrer"
                 target="_blank"
+                alt="Powered by Contentful"
               >
                 <img
                   src="https://images.ctfassets.net/fo9twyrwpveg/7Htleo27dKYua8gio8UEUy/0797152a2d2f8e41db49ecbf1ccffdaa/PoweredByContentful_DarkBackground_MonochromeLogo.svg"
@@ -136,6 +146,7 @@ class Navigation extends React.Component {
                 href="https://www.netlify.com"
                 rel="nofollow noopener noreferrer"
                 target="_blank"
+                alt="Netlify"
               >
                 <img
                   src="https://cdn.netlify.com/1ed63b33731af09d707f4ecad8e805df905104ec/9f1a1/img/press/logos/full-logo-dark-simple.svg"
@@ -151,6 +162,7 @@ class Navigation extends React.Component {
             <StyledLink
               to="/"
               className="MenuTabBarHover"
+              alt="Home"
               activeStyle={{
                 boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
               }}
@@ -162,6 +174,7 @@ class Navigation extends React.Component {
             <StyledLink
               to="/blog"
               className="MenuTabBarHover"
+              alt="Blog"
               activeStyle={{
                 boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
               }}
@@ -173,6 +186,7 @@ class Navigation extends React.Component {
             <StyledLink
               to="/contact"
               className="MenuTabBarHover"
+              alt="Contact"
               activeStyle={{
                 boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
               }}
