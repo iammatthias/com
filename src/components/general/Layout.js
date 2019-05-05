@@ -3,6 +3,7 @@ import { ThemeProvider } from 'styled-components'
 import posed, { PoseGroup } from 'react-pose'
 import Helmet from 'react-helmet'
 import theme from '../../styles/theme'
+import Reset from '../../styles/reset'
 import GlobalStyle from '../../styles/global'
 import Menu from '../general/Menu'
 import { pageFade } from '../../styles/pose'
@@ -74,6 +75,7 @@ const Layout = ({ children, ...props }) => {
             href="/splash/launch-1536x2048.png"
           />
         </Helmet>
+        <Reset />
         <GlobalStyle />
         <Menu />
         <PoseGroup animateOnMount preEnterPose="initial">
