@@ -3,7 +3,7 @@ import { graphql } from 'gatsby'
 import Layout from './../components/general/Layout'
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
-import Form from './../components/contact/contactForm'
+import Form from './../components/general/contactForm'
 import SEO from './../components/general/SEO'
 
 import { Flex, Box } from 'rebass'
