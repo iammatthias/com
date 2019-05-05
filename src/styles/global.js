@@ -40,129 +40,6 @@ const GlobalStyle = createGlobalStyle`
   }
 }
 
-body {
-   -webkit-touch-callout: none;
-   -webkit-tap-highlight-color: transparent;
-   -webkit-user-select: none;
-}
-
-/* Reset */
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-embed,
-figure,
-figcaption,
-footer,
-header,
-hgroup,
-menu,
-nav,
-output,
-ruby,
-section,
-summary,
-time,
-mark,
-audio,
-video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  vertical-align: baseline;
-}
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section {
-  display: block;
-}
-ol,
-ul {
-  list-style: none;
-}
-blockquote,
-q {
-  quotes: none;
-}
-blockquote::before,
-blockquote::after,
-q::before,
-q::after {
-  content: '';
-  content: none;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-* {
-  box-sizing: border-box;
-  text-rendering: optimizeLegibility;
-}
-
 /* Site Specific Globals */
 html,
 body {
@@ -214,7 +91,7 @@ form,
 textarea,
 input {
   margin-top: 1.3125em;
-  font-family: 'Lato';
+  font-family: 'Lato', sans-serif;
   font-size: 1.125em;
   line-height: 1.618;
 }
@@ -271,7 +148,7 @@ blockquote {
 
 code,
 pre {
-  font-family: 'Source Code Pro';
+  font-family: 'Source Code Pro', monospace;
   font-size: 18px;
   background: rgba(0, 0, 0, 0.05);
   border-radius: 2px;

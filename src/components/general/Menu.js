@@ -107,15 +107,24 @@ class Navigation extends React.Component {
             noOverlay
             customBurgerIcon={false}
           >
-            <StyledLink to="/" className="linkAccentReset scopedLinkAccent">
+            <StyledLink
+              to="/"
+              className="linkAccentReset scopedLinkAccent"
+              alt="IAM - Portfolio"
+            >
               <Heading>Portfolio</Heading>
             </StyledLink>
-            <StyledLink to="/blog" className="linkAccentReset scopedLinkAccent">
+            <StyledLink
+              to="/blog"
+              className="linkAccentReset scopedLinkAccent"
+              alt="Blog Posts"
+            >
               <Heading>Blog</Heading>
             </StyledLink>
             <StyledLink
               to="/contact"
               className="linkAccentReset scopedLinkAccent"
+              alt="Contact Page"
             >
               <Heading>Contact</Heading>
             </StyledLink>
@@ -125,6 +134,7 @@ class Navigation extends React.Component {
                 href="https://www.contentful.com/"
                 rel="nofollow noopener noreferrer"
                 target="_blank"
+                alt="Powered by Contentful"
               >
                 <img
                   src="https://images.ctfassets.net/fo9twyrwpveg/7Htleo27dKYua8gio8UEUy/0797152a2d2f8e41db49ecbf1ccffdaa/PoweredByContentful_DarkBackground_MonochromeLogo.svg"
@@ -136,6 +146,7 @@ class Navigation extends React.Component {
                 href="https://www.netlify.com"
                 rel="nofollow noopener noreferrer"
                 target="_blank"
+                alt="Netlify"
               >
                 <img
                   src="https://cdn.netlify.com/1ed63b33731af09d707f4ecad8e805df905104ec/9f1a1/img/press/logos/full-logo-dark-simple.svg"
@@ -149,6 +160,7 @@ class Navigation extends React.Component {
         <MenuTabBar justifyContent="space-evenly">
           <Box width={1 / 3}>
             <StyledLink
+              alt="IAM - Home"
               to="/"
               className="MenuTabBarHover"
               activeStyle={{
@@ -160,6 +172,7 @@ class Navigation extends React.Component {
           </Box>
           <Box width={1 / 3}>
             <StyledLink
+              alt="Blog Posts"
               to="/blog"
               className="MenuTabBarHover"
               activeStyle={{
@@ -171,6 +184,7 @@ class Navigation extends React.Component {
           </Box>
           <Box width={1 / 3}>
             <StyledLink
+              alt="Contact Page"
               to="/contact"
               className="MenuTabBarHover"
               activeStyle={{
