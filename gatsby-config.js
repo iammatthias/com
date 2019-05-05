@@ -107,7 +107,6 @@ module.exports = {
         head: false,
         // Prevents loading Amplitude and logging events if visitors have "Do Not Track" enabled (optional)
         respectDNT: true,
-        // Override the default event types (optional)
         eventTypes: {
           outboundLinkClick: 'OUTBOUND_LINK_CLICK',
           pageView: 'PAGE_VIEW',

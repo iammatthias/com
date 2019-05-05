@@ -11,8 +11,8 @@ const Logo = props => {
       }}
       className="menuHeadroom"
     >
-      <Link to={`/`} className="noUnderline">
-        <img src="/logos/logo_40pt.svg" className="logo" />
+      <Link to={`/`} className="noUnderline" alt="I Am Matthias">
+        <img src="/logos/logo_40pt.svg" className="logo" alt="I Am Matthias" />
       </Link>
     </Headroom>
   )
