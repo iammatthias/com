@@ -1,5 +1,4 @@
 import React from 'react'
-import Layout from './src/components/general/Layout'
 
 exports.onRenderBody = ({ setHeadComponents }) => {
   setHeadComponents([
@@ -9,8 +8,4 @@ exports.onRenderBody = ({ setHeadComponents }) => {
       href="https://www.google-analytics.com"
     />,
   ])
-}
-
-export const wrapPageElement = ({ element, props }) => {
-  return <Layout {...props}>{element}</Layout>
 }
