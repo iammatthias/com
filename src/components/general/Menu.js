@@ -110,21 +110,21 @@ class Navigation extends React.Component {
             <StyledLink
               to="/"
               className="linkAccentReset scopedLinkAccent"
-              alt="Portfolio"
+              alt="IAM - Portfolio"
             >
               <Heading>Portfolio</Heading>
             </StyledLink>
             <StyledLink
               to="/blog"
               className="linkAccentReset scopedLinkAccent"
-              alt="blog"
+              alt="IAM - Blog"
             >
               <Heading>Blog</Heading>
             </StyledLink>
             <StyledLink
               to="/contact"
               className="linkAccentReset scopedLinkAccent"
-              alt="Contact"
+              alt="IAM - Contact"
             >
               <Heading>Contact</Heading>
             </StyledLink>
@@ -162,7 +162,7 @@ class Navigation extends React.Component {
             <StyledLink
               to="/"
               className="MenuTabBarHover"
-              alt="Home"
+              alt="IAM - Home"
               activeStyle={{
                 boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
               }}
@@ -174,7 +174,7 @@ class Navigation extends React.Component {
             <StyledLink
               to="/blog"
               className="MenuTabBarHover"
-              alt="Blog"
+              alt="IAM - Blog"
               activeStyle={{
                 boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
               }}
@@ -186,7 +186,7 @@ class Navigation extends React.Component {
             <StyledLink
               to="/contact"
               className="MenuTabBarHover"
-              alt="Contact"
+              alt="IAM - Contact"
               activeStyle={{
                 boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
               }}
