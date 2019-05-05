@@ -39,7 +39,9 @@ const GlobalStyle = createGlobalStyle`
     --color-secondary-95: rgba(246, 245, 245, .95);
   }
 }
-
+* {
+  font-display: auto;
+}
 body {
    -webkit-touch-callout: none;
    -webkit-tap-highlight-color: transparent;
@@ -214,7 +216,7 @@ form,
 textarea,
 input {
   margin-top: 1.3125em;
-  font-family: 'Lato';
+  font-family: 'Lato', sans-serif;
   font-size: 1.125em;
   line-height: 1.618;
 }
@@ -271,7 +273,7 @@ blockquote {
 
 code,
 pre {
-  font-family: 'Source Code Pro';
+  font-family: 'Source Code Pro', monospace;
   font-size: 18px;
   background: rgba(0, 0, 0, 0.05);
   border-radius: 2px;
