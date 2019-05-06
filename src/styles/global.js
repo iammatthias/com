@@ -317,11 +317,6 @@ a:focus {
   margin: 0 2em 0 0;
 }
 
-.gatsby-resp-image-wrapper  {
-  float: right!important;
-   width: 150px !important;
-}
-
 
 /* Menu */
 
