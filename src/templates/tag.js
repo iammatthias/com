@@ -1,7 +1,7 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import sortBy from 'lodash/sortBy'
-import Layout from './../components/general/Layout'
+
 import ContentList from './../components/general/contentList'
 import Hero from './../components/general/Hero'
 import Helmet from 'react-helmet'
@@ -20,7 +20,7 @@ const TagTemplate = ({ data, location }) => {
   ).reverse()
 
   return (
-    <Layout location={location}>
+    <div location={location}>
       <Helmet>
         <title>{`Tag: ${title} - ${config.siteTitle}`}</title>
         <meta
@@ -60,7 +60,7 @@ const TagTemplate = ({ data, location }) => {
           <Hero image={tagHero} />
         </Box>
       </Flex>
-    </Layout>
+    </div>
   )
 }
 

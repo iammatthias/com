@@ -1,6 +1,6 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Layout from './../components/general/Layout'
+
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
 import ContentList from './../components/general/contentList'
@@ -13,7 +13,7 @@ const Index = ({ data, location }) => {
   const home = data.contentfulHome
   const galleries = data.allContentfulExtendedGallery.edges
   return (
-    <Layout location={location}>
+    <div location={location}>
       <SEO image={home.shareImage} />
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
@@ -36,7 +36,7 @@ const Index = ({ data, location }) => {
           <Hero image={home.heroImage} />
         </Box>
       </Flex>
-    </Layout>
+    </div>
   )
 }
 

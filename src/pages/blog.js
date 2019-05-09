@@ -1,6 +1,6 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Layout from './../components/general/Layout'
+
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
 import ContentList from './../components/general/contentList'
@@ -13,7 +13,7 @@ const MainBlog = ({ data, location }) => {
   const posts = data.allContentfulPost.edges
   const blog = data.contentfulBlog
   return (
-    <Layout location={location}>
+    <div location={location}>
       <SEO
         title="BLOG"
         image={blog.shareImage}
@@ -41,7 +41,7 @@ const MainBlog = ({ data, location }) => {
           <Hero image={blog.heroImage} />
         </Box>
       </Flex>
-    </Layout>
+    </div>
   )
 }
 

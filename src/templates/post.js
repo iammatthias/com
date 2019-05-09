@@ -1,7 +1,7 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import find from 'lodash/find'
-import Layout from './../components/general/Layout'
+
 import ContentHead from './../components/general/contentHead'
 import PostHero from './../components/post/postHero'
 import PostArticle from './../components/post/postArticle'
@@ -27,7 +27,7 @@ const PostTemplate = ({ data, location }) => {
     ({ node: post }) => post.id === id
   )
   return (
-    <Layout location={location}>
+    <div location={location}>
       <SEO
         title={title}
         image={heroImage}
@@ -48,7 +48,7 @@ const PostTemplate = ({ data, location }) => {
         next={postIndex.next}
         discussUrl={discussUrl}
       />
-    </Layout>
+    </div>
   )
 }
 

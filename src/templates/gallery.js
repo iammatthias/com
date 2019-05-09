@@ -1,6 +1,6 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Layout from './../components/general/Layout'
+
 import GalleryGrid from './../components/gallery/galleryGrid'
 import ContentHead from './../components/general/contentHead'
 import SEO from './../components/general/SEO'
@@ -9,7 +9,7 @@ const GalleryTemplate = ({ data, location }) => {
   const gallery = data.contentfulExtendedGallery
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (
-    <Layout location={location}>
+    <div location={location}>
       <SEO title={gallery.title} image={gallery.shareImage} />
       <ContentHead
         displayExcerpt
@@ -30,7 +30,7 @@ const GalleryTemplate = ({ data, location }) => {
           )}
         </div>
       ))}
-    </Layout>
+    </div>
   )
 }
 

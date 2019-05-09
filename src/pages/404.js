@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Helmet from 'react-helmet'
-import Layout from './../components/general/Layout'
+
 
 import { Flex } from 'rebass'
 
@@ -20,7 +20,7 @@ const Title = styled.h1`
 `
 
 const NotFoundPage = ({ location }) => (
-  <Layout location={location}>
+  <div location={location}>
     <Helmet>
       <title>404 - Page Not Found</title>
       <meta name="description" content="Page not found" />
@@ -37,7 +37,7 @@ const NotFoundPage = ({ location }) => (
       <Title>Error 404</Title>
       <Text>Sorry, that page can't be found</Text>
     </Flex>
-  </Layout>
+  </div>
 )
 
 export default NotFoundPage

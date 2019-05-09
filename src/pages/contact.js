@@ -1,6 +1,6 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Layout from './../components/general/Layout'
+
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
 import Form from './../components/general/contactForm'
@@ -11,7 +11,7 @@ import { Flex, Box } from 'rebass'
 const Contact = ({ data, location }) => {
   const contact = data.contentfulAbout
   return (
-    <Layout location={location}>
+    <div location={location}>
       <SEO title="CONTACT" image={contact.shareImage} />
 
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
@@ -31,7 +31,7 @@ const Contact = ({ data, location }) => {
           <Hero image={contact.heroImage} />
         </Box>
       </Flex>
-    </Layout>
+    </div>
   )
 }
 
