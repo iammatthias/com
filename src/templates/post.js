@@ -27,7 +27,7 @@ const PostTemplate = ({ data, location }) => {
     ({ node: post }) => post.id === id
   )
   return (
-    <div location={location}>
+    <>
       <SEO
         title={title}
         image={heroImage}
@@ -48,7 +48,7 @@ const PostTemplate = ({ data, location }) => {
         next={postIndex.next}
         discussUrl={discussUrl}
       />
-    </div>
+    </>
   )
 }
 
@@ -72,7 +72,7 @@ export const query = graphql`
       }
       heroImage {
         title
-        fluid(maxWidth: 1200, quality: 65) {
+        fluid(maxWidth: 1600, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
         ogimg: fluid(maxWidth: 900, quality: 65) {

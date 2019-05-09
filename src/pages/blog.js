@@ -13,7 +13,7 @@ const MainBlog = ({ data, location }) => {
   const posts = data.allContentfulPost.edges
   const blog = data.contentfulBlog
   return (
-    <div location={location}>
+    <>
       <SEO
         title="BLOG"
         image={blog.shareImage}
@@ -41,7 +41,7 @@ const MainBlog = ({ data, location }) => {
           <Hero image={blog.heroImage} />
         </Box>
       </Flex>
-    </div>
+    </>
   )
 }
 
@@ -59,7 +59,7 @@ export const query = graphql`
           publishDate(formatString: "DD MMM YYYY")
           heroImage {
             title
-            fluid(maxWidth: 1000, quality: 65) {
+            fluid(quality: 65) {
               ...GatsbyContentfulFluid_withWebp
             }
           }
@@ -78,7 +78,7 @@ export const query = graphql`
       id
       heroImage {
         title
-        fluid(maxWidth: 1000, quality: 65) {
+        fluid(maxWidth: 1600, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
       }

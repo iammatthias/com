@@ -20,7 +20,7 @@ const TagTemplate = ({ data, location }) => {
   ).reverse()
 
   return (
-    <div location={location}>
+    <>
       <Helmet>
         <title>{`Tag: ${title} - ${config.siteTitle}`}</title>
         <meta
@@ -60,7 +60,7 @@ const TagTemplate = ({ data, location }) => {
           <Hero image={tagHero} />
         </Box>
       </Flex>
-    </div>
+    </>
   )
 }
 
@@ -69,7 +69,7 @@ export const query = graphql`
     contentfulHome {
       tagHero {
         title
-        fluid(maxWidth: 1000, quality: 65) {
+        fluid(maxWidth: 1600, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
       }

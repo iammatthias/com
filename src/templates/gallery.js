@@ -9,7 +9,7 @@ const GalleryTemplate = ({ data, location }) => {
   const gallery = data.contentfulExtendedGallery
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (
-    <div location={location}>
+    <>
       <SEO title={gallery.title} image={gallery.shareImage} />
       <ContentHead
         displayExcerpt
@@ -30,7 +30,7 @@ const GalleryTemplate = ({ data, location }) => {
           )}
         </div>
       ))}
-    </div>
+    </>
   )
 }
 
@@ -72,12 +72,12 @@ export const query = graphql`
           title
           images {
             title
-            fluid(maxWidth: 1200, quality: 80) {
+            fluid(maxWidth: 1600, quality: 75) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio
             }
-            thumbnail: fluid(maxWidth: 300, quality: 40) {
+            thumbnail: fluid(maxWidth: 300, quality: 25) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio

@@ -13,7 +13,7 @@ const Index = ({ data, location }) => {
   const home = data.contentfulHome
   const galleries = data.allContentfulExtendedGallery.edges
   return (
-    <div location={location}>
+    <>
       <SEO image={home.shareImage} />
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
@@ -36,7 +36,7 @@ const Index = ({ data, location }) => {
           <Hero image={home.heroImage} />
         </Box>
       </Flex>
-    </div>
+    </>
   )
 }
 
@@ -54,7 +54,7 @@ export const query = graphql`
           publishDate(formatString: "DD MMM YYYY h:mm a")
           heroImage {
             title
-            fluid(maxWidth: 1000, quality: 65) {
+            fluid(quality: 65) {
               ...GatsbyContentfulFluid_withWebp
             }
           }
@@ -71,7 +71,7 @@ export const query = graphql`
       id
       heroImage {
         title
-        fluid(maxWidth: 1000, quality: 65) {
+        fluid(maxWidth: 1600, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
       }

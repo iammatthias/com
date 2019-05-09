@@ -11,7 +11,7 @@ import { Flex, Box } from 'rebass'
 const Contact = ({ data, location }) => {
   const contact = data.contentfulAbout
   return (
-    <div location={location}>
+    <>
       <SEO title="CONTACT" image={contact.shareImage} />
 
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
@@ -31,7 +31,7 @@ const Contact = ({ data, location }) => {
           <Hero image={contact.heroImage} />
         </Box>
       </Flex>
-    </div>
+    </>
   )
 }
 
@@ -42,7 +42,7 @@ export const query = graphql`
       id
       heroImage {
         title
-        fluid(maxWidth: 1000, quality: 65) {
+        fluid(maxWidth: 1600, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
       }
