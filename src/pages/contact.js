@@ -1,6 +1,6 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Layout from './../components/general/Layout'
+
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
 import Form from './../components/general/contactForm'
@@ -8,10 +8,10 @@ import SEO from './../components/general/SEO'
 
 import { Flex, Box } from 'rebass'
 
-const Contact = ({ data, location }) => {
+const Contact = ({ data }) => {
   const contact = data.contentfulAbout
   return (
-    <Layout location={location}>
+    <>
       <SEO title="CONTACT" image={contact.shareImage} />
 
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
@@ -31,7 +31,7 @@ const Contact = ({ data, location }) => {
           <Hero image={contact.heroImage} />
         </Box>
       </Flex>
-    </Layout>
+    </>
   )
 }
 
@@ -42,7 +42,7 @@ export const query = graphql`
       id
       heroImage {
         title
-        fluid(maxWidth: 1000, quality: 65) {
+        fluid(maxWidth: 1600, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
       }

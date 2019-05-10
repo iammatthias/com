@@ -1,6 +1,6 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Layout from './../components/general/Layout'
+
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
 import ContentList from './../components/general/contentList'
@@ -9,11 +9,11 @@ import { Flex, Box } from 'rebass'
 
 import SEO from './../components/general/SEO'
 
-const Index = ({ data, location }) => {
+const Index = ({ data }) => {
   const home = data.contentfulHome
   const galleries = data.allContentfulExtendedGallery.edges
   return (
-    <Layout location={location}>
+    <>
       <SEO image={home.shareImage} />
       <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
         <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
@@ -36,7 +36,7 @@ const Index = ({ data, location }) => {
           <Hero image={home.heroImage} />
         </Box>
       </Flex>
-    </Layout>
+    </>
   )
 }
 
@@ -54,7 +54,7 @@ export const query = graphql`
           publishDate(formatString: "DD MMM YYYY h:mm a")
           heroImage {
             title
-            fluid(maxWidth: 1000, quality: 65) {
+            fluid(quality: 65) {
               ...GatsbyContentfulFluid_withWebp
             }
           }
@@ -71,7 +71,7 @@ export const query = graphql`
       id
       heroImage {
         title
-        fluid(maxWidth: 1000, quality: 65) {
+        fluid(maxWidth: 1600, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
       }

@@ -1,13 +1,13 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import find from 'lodash/find'
-import Layout from './../components/general/Layout'
+
 import ContentHead from './../components/general/contentHead'
 import PostHero from './../components/post/postHero'
 import PostArticle from './../components/post/postArticle'
 import SEO from './../components/general/SEO'
 
-const PostTemplate = ({ data, location }) => {
+const PostTemplate = ({ data }) => {
   const {
     title,
     id,
@@ -27,7 +27,7 @@ const PostTemplate = ({ data, location }) => {
     ({ node: post }) => post.id === id
   )
   return (
-    <Layout location={location}>
+    <>
       <SEO
         title={title}
         image={heroImage}
@@ -48,7 +48,7 @@ const PostTemplate = ({ data, location }) => {
         next={postIndex.next}
         discussUrl={discussUrl}
       />
-    </Layout>
+    </>
   )
 }
 
@@ -72,7 +72,7 @@ export const query = graphql`
       }
       heroImage {
         title
-        fluid(maxWidth: 1200, quality: 65) {
+        fluid(maxWidth: 1600, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
         ogimg: fluid(maxWidth: 900, quality: 65) {

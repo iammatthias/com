@@ -1,26 +1,19 @@
 import React from 'react'
 import styled from 'styled-components'
 import Helmet from 'react-helmet'
-import Layout from './../components/general/Layout'
 
 import { Flex } from 'rebass'
 
-const Text = styled.p`
-  text-align: center;
-  line-height: 1.6;
-  margin: 0 0 1em 0;
-`
-
 const Title = styled.h1`
-  font-size: 3em;
+  font-size: 40vw;
   text-transform: capitalize;
   font-weight: 600;
   margin: 0 0 3rem 0;
   line-height: 1.2;
 `
 
-const NotFoundPage = ({ location }) => (
-  <Layout location={location}>
+const NotFoundPage = () => (
+  <>
     <Helmet>
       <title>404 - Page Not Found</title>
       <meta name="description" content="Page not found" />
@@ -30,14 +23,15 @@ const NotFoundPage = ({ location }) => (
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
+      p={[3, 4]}
+      mb={[5, 0]}
       css={{
         height: '100vh',
       }}
     >
-      <Title>Error 404</Title>
-      <Text>Sorry, that page can't be found</Text>
+      <Title>404</Title>
     </Flex>
-  </Layout>
+  </>
 )
 
 export default NotFoundPage

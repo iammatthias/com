@@ -95,11 +95,10 @@ input {
   font-size: 1.125em;
   line-height: 1.618;
 }
-p {
-  .gatsby-resp-image-wrapper {
+p  .gatsby-resp-image-wrapper {
     max-width: 100% !important;
   }
-}
+
 a {
   font-weight: 900;
   text-decoration: none;
@@ -119,7 +118,7 @@ ul, li {
 }
 
 @media screen and (min-width: 52em) {
-	a {
+a {
   font-weight: 900;
   text-decoration: none;
   transition: all 0.3s;
@@ -186,7 +185,7 @@ mark,
   text-shadow: none !important;
   transition: all 0.3s;
   font-weight: 400 !important;
-  &: hover {
+  &:hover {
     text-shadow: none !important;
   }
 }
@@ -265,7 +264,7 @@ select {
   appearance: none;
   border-radius: 0;
   resize: none;
-  &: invalid {
+  &:invalid {
     box-shadow: none;
   }
   &:focus {
@@ -300,7 +299,7 @@ a:focus {
       0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent) !important;
   }
   z-index: 99;
-  &: focus {
+  &:focus {
     outline: none;
   }
 }

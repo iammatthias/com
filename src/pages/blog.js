@@ -1,6 +1,6 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Layout from './../components/general/Layout'
+
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
 import ContentList from './../components/general/contentList'
@@ -9,11 +9,11 @@ import { Flex, Box } from 'rebass'
 
 import SEO from './../components/general/SEO'
 
-const MainBlog = ({ data, location }) => {
+const MainBlog = ({ data }) => {
   const posts = data.allContentfulPost.edges
   const blog = data.contentfulBlog
   return (
-    <Layout location={location}>
+    <>
       <SEO
         title="BLOG"
         image={blog.shareImage}
@@ -41,7 +41,7 @@ const MainBlog = ({ data, location }) => {
           <Hero image={blog.heroImage} />
         </Box>
       </Flex>
-    </Layout>
+    </>
   )
 }
 
@@ -59,7 +59,7 @@ export const query = graphql`
           publishDate(formatString: "DD MMM YYYY")
           heroImage {
             title
-            fluid(maxWidth: 1000, quality: 65) {
+            fluid(quality: 65) {
               ...GatsbyContentfulFluid_withWebp
             }
           }
@@ -78,7 +78,7 @@ export const query = graphql`
       id
       heroImage {
         title
-        fluid(maxWidth: 1000, quality: 65) {
+        fluid(maxWidth: 1600, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
       }

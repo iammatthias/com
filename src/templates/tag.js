@@ -1,7 +1,7 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import sortBy from 'lodash/sortBy'
-import Layout from './../components/general/Layout'
+
 import ContentList from './../components/general/contentList'
 import Hero from './../components/general/Hero'
 import Helmet from 'react-helmet'
@@ -9,7 +9,7 @@ import config from './../utils/siteConfig'
 
 import { Flex, Box, Heading } from 'rebass'
 
-const TagTemplate = ({ data, location }) => {
+const TagTemplate = ({ data }) => {
   const { tagHero } = data.contentfulHome
   const { title, slug } = data.contentfulTag
 
@@ -20,7 +20,7 @@ const TagTemplate = ({ data, location }) => {
   ).reverse()
 
   return (
-    <Layout location={location}>
+    <>
       <Helmet>
         <title>{`Tag: ${title} - ${config.siteTitle}`}</title>
         <meta
@@ -60,7 +60,7 @@ const TagTemplate = ({ data, location }) => {
           <Hero image={tagHero} />
         </Box>
       </Flex>
-    </Layout>
+    </>
   )
 }
 
@@ -69,7 +69,7 @@ export const query = graphql`
     contentfulHome {
       tagHero {
         title
-        fluid(maxWidth: 1000, quality: 65) {
+        fluid(maxWidth: 1600, quality: 65) {
           ...GatsbyContentfulFluid_withWebp
         }
       }

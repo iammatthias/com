@@ -106,7 +106,7 @@ const ContentList = props => {
   return (
     <StyledLink
       key={props.id}
-      to={props.blogList ? `/blog/${props.slug}/` : `${props.slug}/`}
+      to={props.blogList ? `/blog/${props.slug}/` : `/${props.slug}/`}
     >
       <Box
         width={[1]}

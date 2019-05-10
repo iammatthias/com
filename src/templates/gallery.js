@@ -1,15 +1,15 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import Layout from './../components/general/Layout'
+
 import GalleryGrid from './../components/gallery/galleryGrid'
 import ContentHead from './../components/general/contentHead'
 import SEO from './../components/general/SEO'
 
-const GalleryTemplate = ({ data, location }) => {
+const GalleryTemplate = ({ data }) => {
   const gallery = data.contentfulExtendedGallery
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (
-    <Layout location={location}>
+    <>
       <SEO title={gallery.title} image={gallery.shareImage} />
       <ContentHead
         displayExcerpt
@@ -30,7 +30,7 @@ const GalleryTemplate = ({ data, location }) => {
           )}
         </div>
       ))}
-    </Layout>
+    </>
   )
 }
 
@@ -72,12 +72,12 @@ export const query = graphql`
           title
           images {
             title
-            fluid(maxWidth: 1200, quality: 80) {
+            fluid(maxWidth: 1600, quality: 75) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio
             }
-            thumbnail: fluid(maxWidth: 300, quality: 40) {
+            thumbnail: fluid(maxWidth: 300, quality: 25) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio
