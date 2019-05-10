@@ -9,7 +9,7 @@ import { Flex, Box } from 'rebass'
 
 import SEO from './../components/general/SEO'
 
-const MainBlog = ({ data, location }) => {
+const MainBlog = ({ data }) => {
   const posts = data.allContentfulPost.edges
   const blog = data.contentfulBlog
   return (

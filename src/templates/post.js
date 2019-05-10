@@ -7,7 +7,7 @@ import PostHero from './../components/post/postHero'
 import PostArticle from './../components/post/postArticle'
 import SEO from './../components/general/SEO'
 
-const PostTemplate = ({ data, location }) => {
+const PostTemplate = ({ data }) => {
   const {
     title,
     id,

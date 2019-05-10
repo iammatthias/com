@@ -8,7 +8,7 @@ import SEO from './../components/general/SEO'
 
 import { Flex, Box } from 'rebass'
 
-const Contact = ({ data, location }) => {
+const Contact = ({ data }) => {
   const contact = data.contentfulAbout
   return (
     <>

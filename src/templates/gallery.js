@@ -5,7 +5,7 @@ import GalleryGrid from './../components/gallery/galleryGrid'
 import ContentHead from './../components/general/contentHead'
 import SEO from './../components/general/SEO'
 
-const GalleryTemplate = ({ data, location }) => {
+const GalleryTemplate = ({ data }) => {
   const gallery = data.contentfulExtendedGallery
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (

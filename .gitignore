@@ -7,3 +7,4 @@ contentful-import-error-log*
 .env*
 .contentful.json
 package-lock.json
+css.scss
