@@ -2,10 +2,10 @@ import React from 'react'
 import styled from 'styled-components'
 import Helmet from 'react-helmet'
 
-import { Flex, Box } from 'rebass'
+import { Flex } from 'rebass'
 
 const Title = styled.h1`
-  font-size: 75vh;
+  font-size: 40vw;
   text-transform: capitalize;
   font-weight: 600;
   margin: 0 0 3rem 0;
@@ -23,14 +23,13 @@ const NotFoundPage = () => (
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
+      p={[3, 4]}
       mb={[5, 0]}
-      className="changeDirection"
+      css={{
+        height: '100vh',
+      }}
     >
-      <Box p={[3, 4]} width={[1]}>
-        <Box p={[3, 4]} width={[1]}>
-          <Title>404</Title>
-        </Box>
-      </Box>
+      <Title>404</Title>
     </Flex>
   </>
 )
