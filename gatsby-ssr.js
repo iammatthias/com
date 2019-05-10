@@ -1,5 +1,11 @@
 import React from 'react'
 
+import Layout from './src/components/general/Layout'
+
+export const wrapPageElement = ({ element, props }) => {
+  return <Layout {...props}>{element}</Layout>
+}
+
 export const onRenderBody = ({ setHeadComponents }) => {
   setHeadComponents([
     <link
