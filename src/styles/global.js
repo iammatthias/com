@@ -95,9 +95,9 @@ input {
   font-size: 1.125em;
   line-height: 1.618;
 }
-p  .gatsby-resp-image-wrapper {
+p .gatsby-resp-image-wrapper {
     max-width: 100% !important;
-  }
+}
 
 a {
   font-weight: 900;
@@ -175,7 +175,8 @@ mark,
   color: var(--color-secondary);
   margin: 0 0 1.5em 0;
 }
-::selection {
+
+&::selection {
   background-color: var(--color-highlight);
 }
 
@@ -281,6 +282,7 @@ a:focus {
   z-index: 300;
 }
 .button {
+  z-index: 99;
   font-size: 1.25em;
   font-weight: bold;
   border: none;
@@ -298,7 +300,6 @@ a:focus {
       0.25em 0.25em var(--color-tertiary),
       0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent) !important;
   }
-  z-index: 99;
   &:focus {
     outline: none;
   }

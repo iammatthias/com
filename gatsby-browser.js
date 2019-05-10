@@ -1,14 +1,10 @@
 import React from 'react'
 import Layout from './src/components/general/Layout'
 
-const transitionDelay = 300
+const transitionDelay = 350
 
-export const wrapPageElement = ({ element, props, location }) => {
-  return (
-    <Layout location={location} {...props}>
-      {element}
-    </Layout>
-  )
+export const wrapPageElement = ({ element, props }) => {
+  return <Layout {...props}>{element}</Layout>
 }
 
 export const shouldUpdateScroll = ({
@@ -26,7 +22,6 @@ export const shouldUpdateScroll = ({
   }
   return false
 }
-
 export const onClientEntry = async () => {
   if (typeof IntersectionObserver === 'undefined') {
     await import('intersection-observer')
