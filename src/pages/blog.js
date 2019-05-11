@@ -3,11 +3,42 @@ import { graphql } from 'gatsby'
 
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
-import ContentList from './../components/general/contentList'
+import List from './../components/general/contentList'
+
+import styled from 'styled-components'
 
 import { Flex, Box } from 'rebass'
 
 import SEO from './../components/general/SEO'
+
+const Content = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: 'ContentCover' 'ContentStart';
+  @media screen and (min-width: 52em) {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'ContentStart ContentCover';
+  }
+  @media screen and (min-width: 64em) {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: 'ContentStart ContentCover ContentCover';
+  }
+`
+const ContentStart = styled.div`
+  grid-area: ContentStart;
+  display: grid;
+  grid-template-areas: 'ContentCopy' 'ContentList';
+  padding: 3.5rem;
+`
+const ContentCopy = styled(Blurb)`
+  grid-area: ContentCopy;
+`
+const ContentList = styled.div`
+  grid-area: ContentList;
+`
+const ContentCover = styled.div`
+  grid-area: ContentCover;
+`
 
 const MainBlog = ({ data }) => {
   const posts = data.allContentfulPost.edges
@@ -19,12 +50,12 @@ const MainBlog = ({ data }) => {
         image={blog.shareImage}
         description="A sporadic collection of thoughts mostly about the web"
       />
-      <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
-        <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
-          <Blurb content={blog.body} />
-          <Flex width={[1]} flexWrap="wrap" flexDirection="row">
+      <Content>
+        <ContentStart>
+          <ContentCopy content={blog.body} />
+          <ContentList>
             {posts.map(({ node: post }) => (
-              <ContentList
+              <List
                 blogList
                 key={post.id}
                 slug={post.slug}
@@ -35,12 +66,12 @@ const MainBlog = ({ data }) => {
                 excerpt={post.body}
               />
             ))}
-          </Flex>
-        </Box>
-        <Box p={0} className="hide" width={[1, 1, 1 / 2, 2 / 3]}>
+          </ContentList>
+        </ContentStart>
+        <ContentCover className="hide">
           <Hero image={blog.heroImage} />
-        </Box>
-      </Flex>
+        </ContentCover>
+      </Content>
     </>
   )
 }

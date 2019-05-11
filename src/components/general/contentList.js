@@ -108,14 +108,7 @@ const ContentList = props => {
       key={props.id}
       to={props.blogList ? `/blog/${props.slug}/` : `/${props.slug}/`}
     >
-      <Box
-        width={[1]}
-        px={[3, 4]}
-        pb={[3, 4]}
-        pt={0}
-        flexWrap="wrap"
-        flexDirection="column"
-      >
+      <Box width={[1]} pt={0} flexWrap="wrap" flexDirection="column">
         <Cover>
           <Img fluid={props.image.fluid} />
         </Cover>
