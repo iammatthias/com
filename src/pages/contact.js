@@ -1,14 +1,10 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
 import Form from './../components/general/contactForm'
 import SEO from './../components/general/SEO'
-
 import styled from 'styled-components'
-
-import { Flex, Box } from 'rebass'
 
 const Content = styled.div`
   display: grid;
@@ -26,14 +22,21 @@ const Content = styled.div`
 const ContentStart = styled.div`
   grid-area: ContentStart;
   display: grid;
-  grid-template-areas: 'ContentCopy' 'ContentList';
-  padding: 3.5rem;
+  grid-template-areas: 'ContentCopy' 'ContentSecondary';
+  padding: 1.5rem;
+  margin-bottom: 5rem;
+  @media screen and (min-width: 52em) {
+    padding: 2.5rem;
+  }
+  @media screen and (min-width: 64em) {
+    padding: 3.5rem;
+  }
 `
 const ContentCopy = styled(Blurb)`
   grid-area: ContentCopy;
 `
-const ContentList = styled.div`
-  grid-area: ContentList;
+const ContentSecondary = styled.div`
+  grid-area: ContentSecondary;
 `
 const ContentCover = styled.div`
   grid-area: ContentCover;
@@ -48,7 +51,9 @@ const Contact = ({ data }) => {
       <Content>
         <ContentStart>
           <ContentCopy content={contact.body} />
-          <Form />
+          <ContentSecondary>
+            <Form />
+          </ContentSecondary>
         </ContentStart>
         <ContentCover>
           <Hero image={contact.heroImage} />

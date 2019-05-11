@@ -3,8 +3,24 @@
 import React, { useState } from 'react'
 import Img from 'gatsby-image'
 import { chunk, sum } from 'lodash'
-import { Box, Link, Heading } from 'rebass'
+import { Box } from 'rebass'
 import Carousel, { Modal, ModalGateway } from 'react-images'
+
+import styled from 'styled-components'
+
+const GalleryContent = styled.div`
+  padding: 1.5rem;
+  margin-bottom: 5rem;
+  @media screen and (min-width: 52em) {
+    padding: 2.5rem;
+  }
+  @media screen and (min-width: 64em) {
+    padding: 3.5rem;
+  }
+  h2 {
+    margin: 0;
+  }
+`
 
 type Props = {
   images: {
@@ -44,10 +60,10 @@ const Gallery = ({
   }
 
   return (
-    <Box p={[4, 5]} mb={[5, 0]}>
-      <Heading key={title}>{title}</Heading>
+    <GalleryContent>
+      <h2 key={title}>{title}</h2>
       {images.map((image, i) => (
-        <Link key={image.src} onClick={() => openModal(i)}>
+        <a key={image.src} onClick={() => openModal(i)}>
           <Box
             as={Img}
             key={image.id}
@@ -65,7 +81,7 @@ const Gallery = ({
               vertical-align: middle;
             `}
           />
-        </Link>
+        </a>
       ))}
       {ModalGateway && (
         <ModalGateway>
@@ -128,7 +144,7 @@ const Gallery = ({
           )}
         </ModalGateway>
       )}
-    </Box>
+    </GalleryContent>
   )
 }
 export default Gallery

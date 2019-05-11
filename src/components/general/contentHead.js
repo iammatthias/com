@@ -2,7 +2,17 @@ import React from 'react'
 import { Link } from 'gatsby'
 import Headroom from 'react-headroom'
 
-import { Flex, Box, Heading, Text } from 'rebass'
+import styled from 'styled-components'
+
+const HeadRoomContent = styled.div`
+  padding: 1.5rem;
+  @media screen and (min-width: 52em) {
+    padding: 2.5rem;
+  }
+  @media screen and (min-width: 64em) {
+    padding: 3.5rem;
+  }
+`
 
 const ContentHead = props => {
   return (
@@ -12,56 +22,31 @@ const ContentHead = props => {
         position: 'fixed',
         zIndex: '300',
         transition: 'all .5s ease-in-out',
+        background: 'var(--color-base-90)',
       }}
     >
-      <Flex
-        p={[4, 5]}
-        width={[1]}
-        flexWrap="wrap"
-        flexDirection="column"
-        bg="var(--color-base-95)"
-      >
-        <Box>
-          <Link
-            to={props.displayExcerpt ? '/' : '/blog/'}
-            className="noUnderline linkAccentReset scopedLinkAccent"
-          >
-            <Heading css={{ display: 'inline-block' }}>⬅ Back</Heading>
-          </Link>
-        </Box>
-        <Heading pt={3} pb={1} fontSize={5}>
-          {props.title}
-        </Heading>
+      <HeadRoomContent>
+        <Link
+          to={props.displayExcerpt ? '/' : '/blog/'}
+          className="noUnderline "
+        >
+          ⬅ Back
+        </Link>
+        <h1>{props.title}</h1>
+
         {props.displayExcerpt ? (
-          <Text
-            fontSize={2}
-            py={1}
+          <p
             dangerouslySetInnerHTML={{
               __html: props.body.childMarkdownRemark.html,
             }}
           />
         ) : null}
-
-        <Flex
-          width={[1]}
-          flexWrap="wrap"
-          alignContent="center"
-          flexDirection="row"
-        >
-          {props.tags.map(tag => (
-            <Box
-              key={tag.id}
-              mr={2}
-              mb={2}
-              className="tag linkAccentReset scopedLinkAccent"
-            >
-              <Link to={`/tag/${tag.slug}/`}>
-                <Heading fontSize={3}>🏷️ {tag.title}</Heading>
-              </Link>
-            </Box>
-          ))}
-        </Flex>
-      </Flex>
+        {props.tags.map(tag => (
+          <Link key={`${tag.slug}`} to={`/tag/${tag.slug}`}>
+            <span className="linkAccentReset">🏷️</span> {tag.title}
+          </Link>
+        ))}
+      </HeadRoomContent>
     </Headroom>
   )
 }

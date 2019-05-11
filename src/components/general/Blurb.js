@@ -1,5 +1,4 @@
 import React from 'react'
-import { Box } from 'rebass'
 
 const Blurb = props => {
   return (

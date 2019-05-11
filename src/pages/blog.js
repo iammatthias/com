@@ -7,8 +7,6 @@ import List from './../components/general/contentList'
 
 import styled from 'styled-components'
 
-import { Flex, Box } from 'rebass'
-
 import SEO from './../components/general/SEO'
 
 const Content = styled.div`
@@ -27,14 +25,21 @@ const Content = styled.div`
 const ContentStart = styled.div`
   grid-area: ContentStart;
   display: grid;
-  grid-template-areas: 'ContentCopy' 'ContentList';
-  padding: 3.5rem;
+  grid-template-areas: 'ContentCopy' 'ContentSecondary';
+  padding: 1.5rem;
+  margin-bottom: 5rem;
+  @media screen and (min-width: 52em) {
+    padding: 2.5rem;
+  }
+  @media screen and (min-width: 64em) {
+    padding: 3.5rem;
+  }
 `
 const ContentCopy = styled(Blurb)`
   grid-area: ContentCopy;
 `
-const ContentList = styled.div`
-  grid-area: ContentList;
+const ContentSecondary = styled.div`
+  grid-area: ContentSecondary;
 `
 const ContentCover = styled.div`
   grid-area: ContentCover;
@@ -53,7 +58,7 @@ const MainBlog = ({ data }) => {
       <Content>
         <ContentStart>
           <ContentCopy content={blog.body} />
-          <ContentList>
+          <ContentSecondary>
             {posts.map(({ node: post }) => (
               <List
                 blogList
@@ -66,7 +71,7 @@ const MainBlog = ({ data }) => {
                 excerpt={post.body}
               />
             ))}
-          </ContentList>
+          </ContentSecondary>
         </ContentStart>
         <ContentCover className="hide">
           <Hero image={blog.heroImage} />
