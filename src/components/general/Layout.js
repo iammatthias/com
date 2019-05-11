@@ -78,17 +78,17 @@ const Layout = ({ children, ...props }) => {
             href="/splash/launch-1536x2048.png"
           />
         </Helmet>
-
+        <Reset />
+        <ColorStyle />
+        <TextStyle />
+        <GlobalStyle />
+        <ArticleStyle />
         <Menu />
         <PoseGroup animateOnMount preEnterPose="initial">
           <Main key={props.location.pathname} role="main">
             {children}
           </Main>
         </PoseGroup>
-        <Reset />
-        <ColorStyle />
-        <TextStyle />
-        <GlobalStyle />
       </div>
     </ThemeProvider>
   )

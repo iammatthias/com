@@ -112,7 +112,7 @@ const ContentList = props => {
         ) : props.blogList ? (
           <>
             <h2>{props.title}</h2>
-            <h3>
+            <h3 className="linkAccentReset-bold">
               Published: {props.date} | Reading time: {props.time} min
             </h3>
 

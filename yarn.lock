@@ -5669,6 +5669,13 @@ gatsby-remark-figure-caption@^2.0.0:
     array.prototype.flatmap "^1.2.1"
     unist-util-visit "^1.4.0"
 
+gatsby-remark-figure@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/gatsby-remark-figure/-/gatsby-remark-figure-1.0.0.tgz#ab9e23facc6d449c50656846f689205fa0b7c4d3"
+  integrity sha512-9vwLmhqbhLGxsRHjMUjAfM2lee5ZF44vm42vIYHBNK5axRKQXkjWnnjj1IkIR0aR3KBRqjtor78HPzaddT/pYw==
+  dependencies:
+    unist-util-visit "^1.1.3"
+
 gatsby-remark-images-contentful@^2.0.11:
   version "2.0.11"
   resolved "https://registry.yarnpkg.com/gatsby-remark-images-contentful/-/gatsby-remark-images-contentful-2.0.11.tgz#b3255f2cce8d13304f440935217ffa6b7465c657"
@@ -13469,7 +13476,7 @@ unist-util-visit-parents@^2.0.0:
   dependencies:
     unist-util-is "^2.1.2"
 
-unist-util-visit@^1.0.0, unist-util-visit@^1.1.0, unist-util-visit@^1.3.0, unist-util-visit@^1.4.0:
+unist-util-visit@^1.0.0, unist-util-visit@^1.1.0, unist-util-visit@^1.1.3, unist-util-visit@^1.3.0, unist-util-visit@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/unist-util-visit/-/unist-util-visit-1.4.0.tgz#1cb763647186dc26f5e1df5db6bd1e48b3cc2fb1"
   integrity sha512-FiGu34ziNsZA3ZUteZxSFaczIjGmksfSgdKqBfOejrrfzyUy5b7YrlzT1Bcvi+djkYDituJDy2XB7tGTeBieKw==

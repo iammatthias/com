@@ -9,7 +9,15 @@ const GlobalStyle = createGlobalStyle`
 .linkAccentReset {
   text-shadow: none !important;
   transition: all 0.3s;
-  font-weight: 400 !important;
+  font-weight: 400;
+  &:hover {
+    text-shadow: none !important;
+  }
+}
+.linkAccentReset-bold {
+  text-shadow: none !important;
+  transition: all 0.3s;
+  font-weight: 800;
   &:hover {
     text-shadow: none !important;
   }
@@ -106,15 +114,12 @@ a:focus {
   z-index: 300;
 }
 .button {
-  z-index: 99;
-  font-size: 1.25em;
-  font-weight: bold;
-  border: none;
-  outline: none;
+  margin-right: 1rem;
+  padding: 1rem;
   cursor: pointer;
-  color: var(--color-base);
-  padding: 1em;
-  text-decoration: none;
+  transition: 0.2s;
+  width: 100%;
+  font-size: 1.25em !important;
   text-align: center;
   background: var(--color-secondary) !important;
   color: var(--color-base) !important;
@@ -123,9 +128,6 @@ a:focus {
     text-shadow: 0.125em 0.125em var(--color-secondary),
       0.25em 0.25em var(--color-tertiary),
       0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent) !important;
-  }
-  &:focus {
-    outline: none;
   }
 }
 @media screen and (min-width: 52em) {
