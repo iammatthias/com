@@ -102,7 +102,7 @@ export const query = graphql`
           body {
             childMarkdownRemark {
               html
-              excerpt(pruneLength: 140, format: HTML)
+              excerpt(pruneLength: 140)
               timeToRead
             }
           }

@@ -4,6 +4,7 @@ const articleStyle = createGlobalStyle`
 
 .article {
     display: grid;
+    margin: 1rem 0 0;
     grid-template-columns: 1.2rem minmax(1.2rem, 1fr) minmax(auto, 57ch) minmax(1.2rem, 1fr) 1.2rem;
     div,
     p,
@@ -17,6 +18,7 @@ const articleStyle = createGlobalStyle`
     h4,
     h5, .buttonColumn {
         grid-column: 3;
+        max-width: 80vw;
     }
 
     figure {
