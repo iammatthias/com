@@ -42,6 +42,7 @@ const ContentSecondary = styled.div`
   grid-area: ContentSecondary;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
   @media screen and (min-width: 52em) {
     grid-template-columns: 1fr;
   }

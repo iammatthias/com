@@ -7,7 +7,6 @@ const StyledLink = styled(Link)`
   position: relative;
   width: 100%;
   height: 100%;
-  padding: 0.5rem;
   text-decoration: none;
   &:hover div {
     @supports (object-fit: cover) {
