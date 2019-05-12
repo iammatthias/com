@@ -16,7 +16,8 @@ const articleStyle = createGlobalStyle`
     h2,
     h3,
     h4,
-    h5, .buttonColumn {
+    h5, 
+    .buttonColumn {
         grid-column: 3;
         max-width: 80vw;
     }

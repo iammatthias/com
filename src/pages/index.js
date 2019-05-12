@@ -40,6 +40,11 @@ const ContentCopy = styled(Blurb)`
 `
 const ContentSecondary = styled.div`
   grid-area: ContentSecondary;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  @media screen and (min-width: 52em) {
+    grid-template-columns: 1fr;
+  }
 `
 const ContentCover = styled.div`
   grid-area: ContentCover;

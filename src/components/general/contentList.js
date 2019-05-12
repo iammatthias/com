@@ -6,6 +6,8 @@ import Img from 'gatsby-image'
 const StyledLink = styled(Link)`
   position: relative;
   width: 100%;
+  height: 100%;
+  padding: 0.5rem;
   text-decoration: none;
   &:hover div {
     @supports (object-fit: cover) {
@@ -23,6 +25,11 @@ const Cover = styled.div`
   position: relative;
   transition: none;
   margin-bottom: 1rem;
+  height: 100%;
+  div {
+    height: 100% !important;
+    object-fit: cover !important;
+  }
   &::before {
     transition: all 0.3s;
     content: '';
@@ -76,10 +83,10 @@ const Overflow = styled.div`
   display: inline-block;
   overflow: none;
   position: absolute;
-  bottom: 1.5em;
-  padding: 1.5rem;
+  bottom: 0.5em;
+  padding: 0.75rem;
   z-index: 2;
-  font-size: 61.8%;
+  font-size: 38.2%;
   @media screen and (min-width: 52em) {
     font-size: 100%;
     bottom: 0;
