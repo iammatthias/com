@@ -108,7 +108,7 @@ const ContentList = props => {
         {props.galleryList ? (
           <Overflow>
             <h2>{props.title}</h2>
-            <p
+            <div
               className="hide linkAccentReset"
               dangerouslySetInnerHTML={{
                 __html: props.excerpt.childMarkdownRemark.excerpt,
@@ -121,8 +121,7 @@ const ContentList = props => {
             <h3 className="linkAccentReset-bold">
               Published: {props.date} | Reading time: {props.time} min
             </h3>
-
-            <p
+            <div
               className="linkAccentReset"
               dangerouslySetInnerHTML={{
                 __html: props.excerpt.childMarkdownRemark.excerpt,
