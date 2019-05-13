@@ -85,7 +85,7 @@ const Overflow = styled.div`
   bottom: 0.5em;
   padding: 0.75rem;
   z-index: 2;
-  font-size: 38.2%;
+  font-size: 61.8%;
   @media screen and (min-width: 52em) {
     font-size: 100%;
     bottom: 0;
