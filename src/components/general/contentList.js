@@ -14,9 +14,8 @@ const StyledLink = styled(Link)`
       visibility: visible;
     }
   }
-  h2,
-  h3 {
-    margin: 0;
+  h2 {
+    margin: 0 0 1rem;
   }
 `
 
@@ -82,8 +81,8 @@ const Overflow = styled.div`
   display: inline-block;
   overflow: none;
   position: absolute;
-  bottom: 0.5em;
-  padding: 0.75rem;
+  bottom: 0;
+  padding: 0 0 0 1rem;
   z-index: 2;
   font-size: 61.8%;
   @media screen and (min-width: 52em) {
@@ -94,6 +93,19 @@ const Overflow = styled.div`
     padding: 0.25rem 0;
   }
 `
+const ListGrid = styled.div`
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-gap: 1rem;
+  margin: 0 0 1rem;
+  font-size: 61.8%;
+  @media screen and (min-width: 52em) {
+    font-size: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 0 0 2rem;
+  }
+`
 
 const ContentList = props => {
   return (
@@ -102,34 +114,45 @@ const ContentList = props => {
       to={props.blogList ? `/blog/${props.slug}/` : `/${props.slug}/`}
     >
       <>
-        <Cover>
-          <Img fluid={props.image.fluid} />
-        </Cover>
         {props.galleryList ? (
-          <Overflow>
-            <h2>{props.title}</h2>
-            <div
-              className="hide linkAccentReset"
-              dangerouslySetInnerHTML={{
-                __html: props.excerpt.childMarkdownRemark.excerpt,
-              }}
-            />
-          </Overflow>
-        ) : props.blogList ? (
           <>
-            <h2>{props.title}</h2>
-            <h3 className="linkAccentReset-bold">
-              Published: {props.date} | Reading time: {props.time} min
-            </h3>
-            <div
-              className="linkAccentReset"
-              dangerouslySetInnerHTML={{
-                __html: props.excerpt.childMarkdownRemark.excerpt,
-              }}
-            />
+            <Cover>
+              <Img fluid={props.image.fluid} />
+            </Cover>
+            <Overflow>
+              <h2>{props.title}</h2>
+              <div
+                className="hide linkAccentReset"
+                dangerouslySetInnerHTML={{
+                  __html: props.excerpt.childMarkdownRemark.excerpt,
+                }}
+              />
+            </Overflow>
           </>
+        ) : props.blogList ? (
+          <ListGrid>
+            <Cover>
+              <Img fluid={props.image.fluid} />
+            </Cover>
+            <div>
+              <h2>{props.title}</h2>
+              <h4 className="linkAccentReset-bold"> {props.date}</h4>
+              <h4 className="linkAccentReset-bold">{props.time} min to read</h4>
+              <div
+                className="hide linkAccentReset"
+                dangerouslySetInnerHTML={{
+                  __html: props.excerpt.childMarkdownRemark.excerpt,
+                }}
+              />
+            </div>
+          </ListGrid>
         ) : (
-          <h2>{props.title}</h2>
+          <ListGrid>
+            <Cover>
+              <Img fluid={props.image.fluid} />
+            </Cover>
+            <h2>{props.title}</h2>
+          </ListGrid>
         )}
       </>
     </StyledLink>
