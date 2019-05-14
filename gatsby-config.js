@@ -34,6 +34,7 @@ module.exports = {
     `gatsby-plugin-flow`,
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-styled-components',
+    `gatsby-plugin-sharp`,
     {
       resolve: `gatsby-transformer-remark`,
       options: {
@@ -54,15 +55,7 @@ module.exports = {
             },
           },
           `gatsby-remark-responsive-iframe`,
-          {
-            resolve: 'gatsby-remark-images-contentful',
-            options: {
-              maxWidth: 750,
-              backgroundColor: 'transparent',
-              linkImagesToOriginal: false,
-              withWebp: true,
-            },
-          },
+          'gatsby-remark-figure',
         ],
       },
     },

@@ -4,7 +4,10 @@ import posed, { PoseGroup } from 'react-pose'
 import Helmet from 'react-helmet'
 import theme from '../../styles/theme'
 import Reset from '../../styles/reset'
+import ColorStyle from '../../styles/colors'
 import GlobalStyle from '../../styles/global'
+import ArticleStyle from '../../styles/article'
+import TextStyle from '../../styles/text'
 import Menu from '../general/Menu'
 import { pageFade } from '../../styles/pose'
 
@@ -75,16 +78,17 @@ const Layout = ({ children, ...props }) => {
             href="/splash/launch-1536x2048.png"
           />
         </Helmet>
-      
-       
+        <Reset />
+        <ColorStyle />
+        <TextStyle />
+        <GlobalStyle />
+        <ArticleStyle />
         <Menu />
         <PoseGroup animateOnMount preEnterPose="initial">
           <Main key={props.location.pathname} role="main">
             {children}
           </Main>
         </PoseGroup>
-<Reset />
-<GlobalStyle />
       </div>
     </ThemeProvider>
   )

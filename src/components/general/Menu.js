@@ -7,9 +7,14 @@ import { FiHome, FiBook, FiUser } from 'react-icons/fi'
 
 import Logo from '../general/Logo'
 
-import { Flex as Base, Heading, Box } from 'rebass'
+const SideMenu = styled.nav`
+  display: none;
+  @media screen and (min-width: 52em) {
+    display: block;
+  }
+`
 
-const StyledLink = styled(Link)`
+const SideMenuLink = styled(Link)`
   text-decoration: none;
   text-align: center;
   text-transform: uppercase;
@@ -30,7 +35,7 @@ const StyledLink = styled(Link)`
     text-align: left;
   }
 `
-const MenuToggle = styled(Heading)`
+const MenuToggle = styled.h2`
   z-index: 900 !important;
   position: fixed;
   margin: 0.75em !important;
@@ -49,14 +54,9 @@ const MenuToggle = styled(Heading)`
   }
 `
 
-const NavBar = styled.nav`
-  display: none;
-  @media screen and (min-width: 52em) {
-    display: block;
-  }
-`
-
-export const MenuTabBar = styled(Base)`
+export const BottomNavBar = styled.nav`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   background: var(--color-base);
   border-top: 3px solid var(--color-secondary);
   overflow: hidden;
@@ -64,15 +64,17 @@ export const MenuTabBar = styled(Base)`
   bottom: 0;
   width: 100%;
   z-index: 100;
-  display: flex;
-  @media screen and (min-width: 52em) {
-    display: none;
-  }
-  div {
-    border-right: 2px solid var(--color-secondary);
+  a {
+    margin: 0;
+    text-align: center;
+    padding: 0.618rem 0 0;
+    border-right: 3px solid var(--color-secondary);
     &:last-child {
       border-right: 0px solid var(--color-secondary);
     }
+  }
+  @media screen and (min-width: 52em) {
+    display: none;
   }
 `
 
@@ -97,7 +99,7 @@ class Navigation extends React.Component {
     return (
       <>
         <Logo />
-        <NavBar>
+        <SideMenu>
           <MenuToggle onClick={() => this.toggleMenu()}>MENU</MenuToggle>
           <Menu
             right
@@ -107,94 +109,88 @@ class Navigation extends React.Component {
             noOverlay
             customBurgerIcon={false}
           >
-            <StyledLink
+            <SideMenuLink
               to="/"
               className="linkAccentReset scopedLinkAccent"
               alt="IAM - Portfolio"
             >
-              <Heading>Portfolio</Heading>
-            </StyledLink>
-            <StyledLink
+              <h2>Portfolio</h2>
+            </SideMenuLink>
+            <SideMenuLink
               to="/blog"
               className="linkAccentReset scopedLinkAccent"
               alt="Blog Posts"
             >
-              <Heading>Blog</Heading>
-            </StyledLink>
-            <StyledLink
+              <h2>Blog</h2>
+            </SideMenuLink>
+            <SideMenuLink
               to="/contact"
               className="linkAccentReset scopedLinkAccent"
               alt="Contact Page"
             >
-              <Heading>Contact</Heading>
-            </StyledLink>
+              <h2>Contact</h2>
+            </SideMenuLink>
 
-            <Box>
-              <a
-                href="https://www.contentful.com/"
-                rel="nofollow noopener noreferrer"
-                target="_blank"
+            <a
+              href="https://www.contentful.com/"
+              rel="nofollow noopener noreferrer"
+              target="_blank"
+              alt="Powered by Contentful"
+            >
+              <img
+                src="https://images.ctfassets.net/fo9twyrwpveg/7Htleo27dKYua8gio8UEUy/0797152a2d2f8e41db49ecbf1ccffdaa/PoweredByContentful_DarkBackground_MonochromeLogo.svg"
+                style={{ width: '100px' }}
                 alt="Powered by Contentful"
-              >
-                <img
-                  src="https://images.ctfassets.net/fo9twyrwpveg/7Htleo27dKYua8gio8UEUy/0797152a2d2f8e41db49ecbf1ccffdaa/PoweredByContentful_DarkBackground_MonochromeLogo.svg"
-                  style={{ width: '100px' }}
-                  alt="Powered by Contentful"
-                />
-              </a>
-              <a
-                href="https://www.netlify.com"
-                rel="nofollow noopener noreferrer"
-                target="_blank"
+              />
+            </a>
+            <a
+              href="https://www.netlify.com"
+              rel="nofollow noopener noreferrer"
+              target="_blank"
+              alt="Netlify"
+            >
+              <img
+                src="https://cdn.netlify.com/1ed63b33731af09d707f4ecad8e805df905104ec/9f1a1/img/press/logos/full-logo-dark-simple.svg"
+                style={{ width: '100px' }}
                 alt="Netlify"
-              >
-                <img
-                  src="https://cdn.netlify.com/1ed63b33731af09d707f4ecad8e805df905104ec/9f1a1/img/press/logos/full-logo-dark-simple.svg"
-                  style={{ width: '100px' }}
-                  alt="Netlify"
-                />
-              </a>
-            </Box>
+              />
+            </a>
           </Menu>
-        </NavBar>
-        <MenuTabBar justifyContent="space-evenly">
-          <Box width={1 / 3}>
-            <StyledLink
-              alt="IAM - Home"
-              to="/"
-              className="MenuTabBarHover"
-              activeStyle={{
-                boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
-              }}
-            >
-              <FiHome size={'2em'} color={'var(--color-secondary)'} />
-            </StyledLink>
-          </Box>
-          <Box width={1 / 3}>
-            <StyledLink
-              alt="Blog Posts"
-              to="/blog"
-              className="MenuTabBarHover"
-              activeStyle={{
-                boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
-              }}
-            >
-              <FiBook size={'2em'} color={'var(--color-secondary)'} />
-            </StyledLink>
-          </Box>
-          <Box width={1 / 3}>
-            <StyledLink
-              alt="Contact Page"
-              to="/contact"
-              className="MenuTabBarHover"
-              activeStyle={{
-                boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
-              }}
-            >
-              <FiUser size={'2em'} color={'var(--color-secondary)'} />
-            </StyledLink>
-          </Box>
-        </MenuTabBar>
+        </SideMenu>
+        <BottomNavBar justifyContent="space-evenly">
+          <Link
+            alt="IAM - Home"
+            to="/"
+            className="MenuTabBarHover"
+            activeStyle={{
+              boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
+            }}
+          >
+            <FiHome size={'2em'} color={'var(--color-secondary)'} />
+          </Link>
+
+          <Link
+            alt="Blog Posts"
+            to="/blog"
+            className="MenuTabBarHover"
+            activeStyle={{
+              boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
+            }}
+          >
+            <FiBook size={'2em'} color={'var(--color-secondary)'} />
+          </Link>
+
+          <Link
+            alt="Contact Page"
+            to="/contact"
+            className="MenuTabBarHover"
+            activeStyle={{
+              boxShadow: 'inset 0 0.125em 0px 0px var(--color-tertiary)',
+            }}
+          >
+            <FiUser size={'2em'} color={'var(--color-secondary)'} />
+          </Link>
+        </BottomNavBar>
       </>
     )
   }

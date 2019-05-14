@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import 'whatwg-fetch'
-import { Link as Button } from 'rebass'
 
 const Form = styled.form`
   display: flex;
@@ -83,7 +82,7 @@ const Modal = styled.div`
   background: white;
   padding: 2em;
   border-radius: 2px;
-  width: 50%;
+  width: 61.8%;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -201,9 +200,9 @@ class ContactForm extends React.Component {
             Thank you for reaching out. I will get back to you as soon as
             possible.
           </p>
-          <Button className="button" color="" onClick={this.closeModal}>
+          <button className="button" color="" onClick={this.closeModal}>
             Okay
-          </Button>
+          </button>
         </Modal>
       </Form>
     )

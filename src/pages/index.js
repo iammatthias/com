@@ -3,11 +3,53 @@ import { graphql } from 'gatsby'
 
 import Hero from './../components/general/Hero'
 import Blurb from './../components/general/Blurb'
-import ContentList from './../components/general/contentList'
+import List from './../components/general/contentList'
 
-import { Flex, Box } from 'rebass'
+import styled from 'styled-components'
 
 import SEO from './../components/general/SEO'
+
+const Content = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: 'ContentCover' 'ContentStart';
+  @media screen and (min-width: 52em) {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'ContentStart ContentCover';
+  }
+  @media screen and (min-width: 64em) {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: 'ContentStart ContentCover ContentCover';
+  }
+`
+const ContentStart = styled.div`
+  grid-area: ContentStart;
+  display: grid;
+  grid-template-areas: 'ContentCopy' 'ContentSecondary';
+  padding: 1.5rem;
+  margin-bottom: 5rem;
+  @media screen and (min-width: 52em) {
+    padding: 2.5rem;
+  }
+  @media screen and (min-width: 64em) {
+    padding: 3.5rem;
+  }
+`
+const ContentCopy = styled(Blurb)`
+  grid-area: ContentCopy;
+`
+const ContentSecondary = styled.div`
+  grid-area: ContentSecondary;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+  @media screen and (min-width: 52em) {
+    grid-template-columns: 1fr;
+  }
+`
+const ContentCover = styled.div`
+  grid-area: ContentCover;
+`
 
 const Index = ({ data }) => {
   const home = data.contentfulHome
@@ -15,12 +57,12 @@ const Index = ({ data }) => {
   return (
     <>
       <SEO image={home.shareImage} />
-      <Flex flexWrap="wrap" mb={[5, 0]} className="changeDirection">
-        <Box p={[3, 4]} width={[1, 1, 1 / 2, 1 / 3]}>
-          <Blurb content={home.body} />
-          <Flex width={[1]} flexWrap="wrap" flexDirection="row">
+      <Content>
+        <ContentStart>
+          <ContentCopy content={home.body} />
+          <ContentSecondary>
             {galleries.map(({ node: gallery }) => (
-              <ContentList
+              <List
                 galleryList
                 key={gallery.id}
                 slug={gallery.slug}
@@ -30,12 +72,12 @@ const Index = ({ data }) => {
                 excerpt={gallery.body}
               />
             ))}
-          </Flex>
-        </Box>
-        <Box className="hide" p={0} width={[1, 1, 1 / 2, 2 / 3]}>
+          </ContentSecondary>
+        </ContentStart>
+        <ContentCover className="hide">
           <Hero image={home.heroImage} />
-        </Box>
-      </Flex>
+        </ContentCover>
+      </Content>
     </>
   )
 }

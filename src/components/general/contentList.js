@@ -3,27 +3,31 @@ import styled from 'styled-components'
 import { Link } from 'gatsby'
 import Img from 'gatsby-image'
 
-import { Box as Base, Heading, Text } from 'rebass'
-
 const StyledLink = styled(Link)`
   position: relative;
   width: 100%;
-  margin: 0 0 1rem 0;
+  height: 100%;
   text-decoration: none;
-`
-
-export const Box = styled(Base)`
   &:hover div {
     @supports (object-fit: cover) {
       opacity: 1;
       visibility: visible;
     }
   }
+  h2 {
+    margin: 0 0 1rem;
+  }
 `
 
 const Cover = styled.div`
   position: relative;
   transition: none;
+  margin-bottom: 1rem;
+  height: 100%;
+  div {
+    height: 100% !important;
+    object-fit: cover !important;
+  }
   &::before {
     transition: all 0.3s;
     content: '';
@@ -34,7 +38,7 @@ const Cover = styled.div`
     top: 0;
     height: 100%;
     width: 100%;
-    z-index: 1;
+    z-index: 2;
     background: var(--color-base-75);
   }
   @media screen and (min-width: 52em) {
@@ -52,16 +56,10 @@ const Cover = styled.div`
       height: 100% !important;
       object-fit: cover !important;
     }
-    .gatsby-image-wrapper {
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s, visibility 0.3s;
-    }
     &::before {
       display: none;
     }
   }
-
   @media screen and (min-width: 64em) {
     position: fixed !important;
     pointer-events: none;
@@ -77,28 +75,35 @@ const Cover = styled.div`
       height: 100% !important;
       object-fit: cover !important;
     }
-    .gatsby-image-wrapper {
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s, visibility 0.3s;
-    }
-    &::before {
-      display: none;
-    }
   }
 `
 const Overflow = styled.div`
   display: inline-block;
   overflow: none;
   position: absolute;
-  bottom: 1em;
-  padding: 2em 3em 2em 2em;
+  bottom: 0;
+  padding: 0 0 0 1rem;
   z-index: 2;
+  font-size: 61.8%;
   @media screen and (min-width: 52em) {
+    font-size: 100%;
     bottom: 0;
     display: block;
     position: relative;
     padding: 0.25rem 0;
+  }
+`
+const ListGrid = styled.div`
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-gap: 1rem;
+  margin: 0 0 1rem;
+  font-size: 61.8%;
+  @media screen and (min-width: 52em) {
+    font-size: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 0 0 2rem;
   }
 `
 
@@ -108,53 +113,48 @@ const ContentList = props => {
       key={props.id}
       to={props.blogList ? `/blog/${props.slug}/` : `/${props.slug}/`}
     >
-      <Box
-        width={[1]}
-        px={[3, 4]}
-        pb={[3, 4]}
-        pt={0}
-        flexWrap="wrap"
-        flexDirection="column"
-      >
-        <Cover>
-          <Img fluid={props.image.fluid} />
-        </Cover>
+      <>
         {props.galleryList ? (
-          <Overflow>
-            <Heading width={1} fontSize={[3, 4]}>
-              {props.title}
-            </Heading>
-            <Text
-              className="linkAccentReset"
-              width={1}
-              dangerouslySetInnerHTML={{
-                __html: props.excerpt.childMarkdownRemark.excerpt,
-              }}
-            />
-          </Overflow>
-        ) : props.blogList ? (
           <>
-            <Heading pt={3} width={1} fontSize={[3, 4]}>
-              {props.title}
-            </Heading>
-            <Heading width={1} fontSize={1}>
-              Published: {props.date} | Reading time: {props.time} min
-            </Heading>
-
-            <Text
-              className="linkAccentReset"
-              width={1}
-              dangerouslySetInnerHTML={{
-                __html: props.excerpt.childMarkdownRemark.excerpt,
-              }}
-            />
+            <Cover>
+              <Img fluid={props.image.fluid} />
+            </Cover>
+            <Overflow>
+              <h2>{props.title}</h2>
+              <div
+                className="hide linkAccentReset"
+                dangerouslySetInnerHTML={{
+                  __html: props.excerpt.childMarkdownRemark.excerpt,
+                }}
+              />
+            </Overflow>
           </>
+        ) : props.blogList ? (
+          <ListGrid>
+            <Cover>
+              <Img fluid={props.image.fluid} />
+            </Cover>
+            <div>
+              <h2>{props.title}</h2>
+              <h4 className="linkAccentReset-bold"> {props.date}</h4>
+              <h4 className="linkAccentReset-bold">{props.time} min to read</h4>
+              <div
+                className="hide linkAccentReset"
+                dangerouslySetInnerHTML={{
+                  __html: props.excerpt.childMarkdownRemark.excerpt,
+                }}
+              />
+            </div>
+          </ListGrid>
         ) : (
-          <Heading width={1} fontSize={[3, 4]}>
-            {props.title}
-          </Heading>
+          <ListGrid>
+            <Cover>
+              <Img fluid={props.image.fluid} />
+            </Cover>
+            <h2>{props.title}</h2>
+          </ListGrid>
         )}
-      </Box>
+      </>
     </StyledLink>
   )
 }

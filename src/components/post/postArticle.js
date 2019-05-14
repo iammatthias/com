@@ -1,34 +1,39 @@
 import React from 'react'
 import { Link } from 'gatsby'
-import { Flex, Box, Link as LinkExternal } from 'rebass'
+import styled from 'styled-components'
 
 require('../../styles/prism.css')
 
+const Buttons = styled.div`
+  grid-column: 3;
+  margin-bottom: 5rem;
+`
+
 const Article = props => {
   return (
-    <Box mx="auto" width={[1, 3 / 4, 2 / 3, 1 / 2]} px={[4, 0]} py={4} mb={[5]}>
+    <>
       <article
+        className="article"
         dangerouslySetInnerHTML={{
           __html: props.body.childMarkdownRemark.html,
         }}
       />
-
-      <Flex flexDirection={'column'}>
+      <Buttons className="article buttonColumn">
         {props.previous && (
           <Link className="button" to={`/blog/${props.previous.slug}/`}>
-            <Box>Prev Post</Box>
+            Prev Post
           </Link>
         )}
         {props.next && (
           <Link className="button" to={`/blog/${props.next.slug}/`}>
-            <Box>Next Post</Box>
+            Next Post
           </Link>
         )}
-        <LinkExternal className="button" color="" href={props.discussUrl}>
-          <Box>Discuss on Twitter</Box>
-        </LinkExternal>
-      </Flex>
-    </Box>
+        <a className="button" color="" href={props.discussUrl}>
+          Discuss on Twitter
+        </a>
+      </Buttons>
+    </>
   )
 }
 
