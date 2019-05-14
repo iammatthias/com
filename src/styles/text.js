@@ -51,7 +51,6 @@ li,
 form, 
 textarea,
 input {
-  margin-top: 1.3125em;
   font-family: 'Lato', sans-serif;
   font-size: 1.25rem;
   line-height: 1.618;
