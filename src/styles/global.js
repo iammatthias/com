@@ -129,6 +129,9 @@ a:focus {
       0.25em 0.25em var(--color-tertiary),
       0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent) !important;
   }
+  &:only-of-type {
+    margin-right: 0;
+  } 
 }
 @media screen and (min-width: 52em) {
   .headroom-wrapper {
