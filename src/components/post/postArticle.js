@@ -5,7 +5,7 @@ import mediumZoom from 'medium-zoom'
 
 require('../../styles/prism.css')
 
-const zoom = mediumZoom(document.querySelectorAll('img'))
+const zoom = mediumZoom('img')
 
 zoom.update({ margin: 80 })
 
