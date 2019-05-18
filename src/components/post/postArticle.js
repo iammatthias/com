@@ -14,7 +14,7 @@ class Article extends Component {
 
   componentDidMount() {
     import('medium-zoom').then(mediumZoom => {
-      this.zoom = mediumZoom.default('.zoomable img')
+      this.zoom = mediumZoom.default('img')
     })
   }
 
