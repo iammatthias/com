@@ -1,8 +1,13 @@
 import React from 'react'
 import { Link } from 'gatsby'
 import styled from 'styled-components'
+import mediumZoom from 'medium-zoom'
 
 require('../../styles/prism.css')
+
+const zoom = mediumZoom(document.querySelectorAll('img'))
+
+zoom.update({ margin: 80 })
 
 const Buttons = styled.div`
   grid-column: 3;
