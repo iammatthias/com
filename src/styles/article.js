@@ -9,14 +9,14 @@ const articleStyle = createGlobalStyle`
     div,
     p,
     i,
-    a, 
-    ul, 
+    a,
+    ul,
     li,
     h1,
     h2,
     h3,
     h4,
-    h5, 
+    h5,
     .buttonColumn {
         grid-column: 3;
         max-width: 80vw;
@@ -31,6 +31,9 @@ const articleStyle = createGlobalStyle`
         figcaption {
             text-align: center;
         }
+    }
+    .gatsbyRemarkImagesGrid-grid {
+        margin: 0 auto;
     }
 }
 

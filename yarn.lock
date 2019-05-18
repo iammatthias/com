@@ -5690,6 +5690,31 @@ gatsby-remark-images-contentful@^2.0.11:
     sharp "^0.22.1"
     unist-util-select "^1.5.0"
 
+gatsby-remark-images-grid@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/gatsby-remark-images-grid/-/gatsby-remark-images-grid-1.0.2.tgz#10416a6f5a9d11d4ce7779eb4adfbef967627e4d"
+  integrity sha512-M8n2CHgWKK3VjDAPGgbTFUk3EV1718VfK5C4Rfi6Nkv06tQyLrZ1bWN+wem5n2csdEywmyK8uLZkkUAGBAzD4g==
+  dependencies:
+    remark-parse "^5.0.0"
+    unified "^7.0.0"
+    unist-util-visit "^1.4.0"
+
+gatsby-remark-images@^3.0.11:
+  version "3.0.11"
+  resolved "https://registry.yarnpkg.com/gatsby-remark-images/-/gatsby-remark-images-3.0.11.tgz#248d3575720802df67f4320feb4dceb42188ac57"
+  integrity sha512-EWcxWXyBYsHaAmFAT4Icxz7OFcurhVqRfSrHf/CeJ2Olk8rmBIIrrUnDW/mSOAdO1fPB7RHA1HHGBjanhGYL4w==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    cheerio "^1.0.0-rc.2"
+    is-relative-url "^2.0.0"
+    lodash "^4.17.10"
+    mdast-util-definitions "^1.2.0"
+    potrace "^2.1.1"
+    query-string "^6.1.0"
+    slash "^1.0.0"
+    unist-util-select "^1.5.0"
+    unist-util-visit-parents "^2.0.1"
+
 gatsby-remark-prismjs@3.2.6:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/gatsby-remark-prismjs/-/gatsby-remark-prismjs-3.2.6.tgz#30f0ad27c910e4f5df49b8235dffd86d60709fc2"
@@ -10750,6 +10775,15 @@ query-string@^5.0.1:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
+query-string@^6.1.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.5.0.tgz#2e1a70125af01f6f04573692d02c09302a1d8bfc"
+  integrity sha512-TYC4hDjZSvVxLMEucDMySkuAS9UIzSbAiYGyA9GWCjLKB8fQpviFbjd20fD7uejCDxZS+ftSdBKE6DS+xucJFg==
+  dependencies:
+    decode-uri-component "^0.2.0"
+    split-on-first "^1.0.0"
+    strict-uri-encode "^2.0.0"
+
 querystring-es3@^0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/querystring-es3/-/querystring-es3-0.2.1.tgz#9ec61f79049875707d69414596fd907a4d711e73"
@@ -12312,6 +12346,11 @@ specificity@^0.4.1:
   resolved "https://registry.yarnpkg.com/specificity/-/specificity-0.4.1.tgz#aab5e645012db08ba182e151165738d00887b019"
   integrity sha512-1klA3Gi5PD1Wv9Q0wUoOQN1IWAuPu0D1U03ThXTr0cJ20+/iq2tHSDnK7Kk/0LXJ1ztUB2/1Os0wKmfyNgUQfg==
 
+split-on-first@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/split-on-first/-/split-on-first-1.1.0.tgz#f610afeee3b12bce1d0c30425e76398b78249a5f"
+  integrity sha512-43ZssAJaMusuKWL8sKUBQXHWOpq8d6CfN/u1p4gUzfJkM05C8rxTmYrkIPTXapZpORA6LkkzcUulJ8FqA7Uudw==
+
 split-string@^3.0.1, split-string@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/split-string/-/split-string-3.1.0.tgz#7cb09dda3a86585705c64b39a6466038682e8fe2"
@@ -12466,6 +12505,11 @@ strict-uri-encode@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
   integrity sha1-J5siXfHVgrH1TmWt3UNS4Y+qBxM=
+
+strict-uri-encode@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-2.0.0.tgz#b9c7330c7042862f6b142dc274bbcc5866ce3546"
+  integrity sha1-ucczDHBChi9rFC3CdLvMWGbONUY=
 
 string-similarity@^1.2.0:
   version "1.2.2"
@@ -13473,6 +13517,13 @@ unist-util-visit-parents@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/unist-util-visit-parents/-/unist-util-visit-parents-2.0.1.tgz#63fffc8929027bee04bfef7d2cce474f71cb6217"
   integrity sha512-6B0UTiMfdWql4cQ03gDTCSns+64Zkfo2OCbK31Ov0uMizEz+CJeAp0cgZVb5Fhmcd7Bct2iRNywejT0orpbqUA==
+  dependencies:
+    unist-util-is "^2.1.2"
+
+unist-util-visit-parents@^2.0.1:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/unist-util-visit-parents/-/unist-util-visit-parents-2.1.0.tgz#e45cad0d7e5ac683362088b329bc80abd1cfc5fb"
+  integrity sha512-j0XZY3063E6v7qhx4+Q2Z0r8SMrLX7Mr6DabiCy67zMEcFQYtpNOplLlEK1KKEBEs9S+xB5U+yloQxbSwF9P/g==
   dependencies:
     unist-util-is "^2.1.2"
 
