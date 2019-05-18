@@ -14,7 +14,7 @@ class Article extends Component {
 
   componentDidMount() {
     import('medium-zoom').then(mediumZoom => {
-      this.zoom = mediumZoom.default('img')
+      this.zoom = mediumZoom.default('img', { margin: 48 })
     })
   }
 
