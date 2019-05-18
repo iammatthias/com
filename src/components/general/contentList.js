@@ -99,11 +99,23 @@ const ListGrid = styled.div`
   grid-gap: 1rem;
   margin: 0 0 1rem;
   font-size: 61.8%;
+  div {
+    h4 {
+      display: block;
+      margin-right: 1rem;
+    }
+  }
   @media screen and (min-width: 52em) {
     font-size: 100%;
     display: grid;
     grid-template-columns: 1fr;
     margin: 0 0 2rem;
+    div {
+      h4 {
+        display: inline-block;
+        margin-right: 1rem;
+      }
+    }
   }
 `
 
@@ -137,7 +149,7 @@ const ContentList = props => {
             <div>
               <h2>{props.title}</h2>
               <h4 className="linkAccentReset-bold"> {props.date}</h4>
-              <h4 className="linkAccentReset-bold">{props.time} min to read</h4>
+              <h4 className="linkAccentReset">{props.time} min to read</h4>
               <div
                 className="hide linkAccentReset"
                 dangerouslySetInnerHTML={{

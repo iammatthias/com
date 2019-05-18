@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { Link } from 'gatsby'
 import styled from 'styled-components'
 
@@ -9,32 +9,47 @@ const Buttons = styled.div`
   margin-bottom: 5rem;
 `
 
-const Article = props => {
-  return (
-    <>
-      <article
-        className="article"
-        dangerouslySetInnerHTML={{
-          __html: props.body.childMarkdownRemark.html,
-        }}
-      />
-      <Buttons className="article buttonColumn">
-        {props.previous && (
-          <Link className="button" to={`/blog/${props.previous.slug}/`}>
-            Prev Post
-          </Link>
-        )}
-        {props.next && (
-          <Link className="button" to={`/blog/${props.next.slug}/`}>
-            Next Post
-          </Link>
-        )}
-        <a className="button" color="" href={props.discussUrl}>
-          Discuss on Twitter
-        </a>
-      </Buttons>
-    </>
-  )
+class Article extends Component {
+  zoom = null
+
+  componentDidMount() {
+    import('medium-zoom').then(mediumZoom => {
+      this.zoom = mediumZoom.default('img', { margin: 48 })
+    })
+  }
+
+  componentWillUnmount() {
+    if (this.zoom) {
+      this.zoom.detach()
+    }
+  }
+  render() {
+    return (
+      <>
+        <article
+          className="article"
+          dangerouslySetInnerHTML={{
+            __html: this.props.body.childMarkdownRemark.html,
+          }}
+        />
+        <Buttons className="article buttonColumn">
+          {this.props.previous && (
+            <Link className="button" to={`/blog/${this.props.previous.slug}/`}>
+              Prev Post
+            </Link>
+          )}
+          {this.props.next && (
+            <Link className="button" to={`/blog/${this.props.next.slug}/`}>
+              Next Post
+            </Link>
+          )}
+          <a className="button" color="" href={this.props.discussUrl}>
+            Discuss on Twitter
+          </a>
+        </Buttons>
+      </>
+    )
+  }
 }
 
 export default Article
