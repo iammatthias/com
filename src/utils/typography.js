@@ -20,7 +20,7 @@ const typography = new Typography({
     },
     {
       name: 'Source Code Pro',
-      styles: ['400'],
+      styles: ['400&display=swap'],
     },
   ],
 })
