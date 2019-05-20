@@ -1,7 +1,11 @@
 import React from 'react'
 import Layout from './src/components/general/Layout'
 
-const transitionDelay = 350
+import wrapRootElementWithAuth from './src/components/auth/wrapRootElementWithAuth'
+
+export const wrapRootElement = wrapRootElementWithAuth
+
+const transitionDelay = 50
 
 export const wrapPageElement = ({ element, props }) => {
   return <Layout {...props}>{element}</Layout>

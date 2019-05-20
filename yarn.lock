@@ -5511,6 +5511,11 @@ gatsby-plugin-catch-links@^2.0.13:
     "@babel/runtime" "^7.0.0"
     escape-string-regexp "^1.0.5"
 
+gatsby-plugin-env-variables@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-env-variables/-/gatsby-plugin-env-variables-1.0.1.tgz#89cdf43b03d46105521bb7d0f09d0d5b92ad83c8"
+  integrity sha512-TnXU+IjvM3iHcaNOa+alqP3Wk19+pmxvXwMyoPaUZIDKNwvpXRz8klsag2AwNlsqD17949/m8I80z8plZRyE1w==
+
 gatsby-plugin-feed@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/gatsby-plugin-feed/-/gatsby-plugin-feed-2.1.0.tgz#5d0d201dbf0a25cc57106fa7a0ffed60564a6cad"
@@ -8425,6 +8430,11 @@ ltcdr@^2.2.1:
   resolved "https://registry.yarnpkg.com/ltcdr/-/ltcdr-2.2.1.tgz#5ab87ad1d4c1dab8e8c08bbf037ee0c1902287cf"
   integrity sha1-Wrh60dTB2rjowIu/A37gwZAih88=
 
+magic-grid@^3.2.4:
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/magic-grid/-/magic-grid-3.2.4.tgz#3770740fa46b6c6da25b551ac77fca4754068d23"
+  integrity sha512-zdV8b4q3YpmWZKLcbbfKisxAWlYF9S2dguCi3LR9pq59yq2pl140td4ViwDqYkZGZ6TP+B7YaExaVE3YNqN7/g==
+
 make-dir@^1.0.0, make-dir@^1.2.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/make-dir/-/make-dir-1.3.0.tgz#79c1033b80515bd6d24ec9933e860ca75ee27f0c"
@@ -9021,6 +9031,11 @@ neo-async@^2.5.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.0.tgz#b9d15e4d71c6762908654b5183ed38b753340835"
   integrity sha512-MFh0d/Wa7vkKO3Y3LlacqAEeHK0mckVqzDieUKTT+KGxi+zIpeVsFxymkIiRpbpDziHc290Xr9A1O4Om7otoRA==
+
+netlify-identity-widget@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/netlify-identity-widget/-/netlify-identity-widget-1.5.2.tgz#c3bc18e275ebb4e8030bba31dfc38c9f2a540346"
+  integrity sha512-A1Pwnk+Bun+Xb0hO8w9g8plrhJah3jNomqWLFnd6GvGQ4jfhUS5jCzh/Cn6uHhuGNnriSUV0lFCKb3VJBsiZeQ==
 
 next-tick@^1.0.0:
   version "1.0.0"

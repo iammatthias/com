@@ -25,7 +25,7 @@ const GalleryTemplate = ({ data }) => {
               slug={subGallery.slug}
               images={subGallery.images}
               title={subGallery.title}
-              itemsPerRow={[2, 3, 5, 7]}
+              itemsPerRow={[2, 3, 5]}
             />
           )}
         </div>
@@ -71,6 +71,7 @@ export const query = graphql`
           slug
           title
           images {
+            id
             title
             fluid(maxWidth: 1600, quality: 75) {
               ...GatsbyContentfulFluid_withWebp

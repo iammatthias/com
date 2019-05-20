@@ -79,6 +79,7 @@ const Gallery = ({
             css={`
               display: inline-block;
               vertical-align: middle;
+              width: auto;
             `}
           />
         </a>

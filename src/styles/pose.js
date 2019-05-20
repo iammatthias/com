@@ -1,5 +1,5 @@
-const transitionDuration = 400
-const transitionDelay = 350
+const transitionDuration = 500
+const transitionDelay = 50
 
 export const pageFade = {
   initial: {
