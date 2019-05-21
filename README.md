@@ -2,7 +2,7 @@
 
 # [IAMMATTHIAS v3](https://iammatthias.com)
 
-(c) 2019 Matthias Jordan
+© 2019 Matthias Jordan
 All Rights Reserved
 
 Open a ticket (preferred) or 👉 me@iammatthias.com if you have questions
@@ -29,6 +29,6 @@ Portfolio site built using Gatsby + Contentful + Netlify. Features photography g
 
 ### Notes
 
-> (c) 2019 Matthias Jordan. This repo is left public to serve as a resource.
+> © 2019 Matthias Jordan. This repo is left public to serve as a resource.
 
 #### If you would like to quickly bootstrap a Gatsby + Contentful + Netlify project, I recommend the fantastic [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn) starter.
