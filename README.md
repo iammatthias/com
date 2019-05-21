@@ -2,6 +2,11 @@
 
 # [IAMMATTHIAS v3](https://iammatthias.com)
 
+(c) 2019 Matthias Jordan
+All Rights Reserved
+
+Open a ticket (preferred) or 👉 me@iammatthias.com if you have questions
+
 ![](https://user-images.githubusercontent.com/5431737/52232080-7243b980-2870-11e9-8432-a41881f8e5d0.png) 
 
 ## Overview
@@ -14,9 +19,9 @@ Portfolio site built using Gatsby + Contentful + Netlify. Features photography g
 - Gatsby JS
 - Contentful
 - Styled components
-- Rebass
 - Page Transitions
 - Performant masonry using Rebass
+- Amplitude 
 - Google Analytics
 - Progressive Web app with custom app icon
 - Offline support
@@ -24,6 +29,6 @@ Portfolio site built using Gatsby + Contentful + Netlify. Features photography g
 
 ### Notes
 
-> This code can be used as a reference for other Gatsby projects, but will not work out-of-the-box without replicating the data structure in Contentful. A brief overview is available here: [#18](https://github.com/iammatthias/.com/issues/18)
+> (c) 2019 Matthias Jordan. This repo is left public to serve as a resource.
 
 #### If you would like to quickly bootstrap a Gatsby + Contentful + Netlify project, I recommend the fantastic [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn) starter.
