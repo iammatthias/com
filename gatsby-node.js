@@ -1,5 +1,9 @@
 const path = require(`path`)
 
+import wrapRootElementWithAuth from './src/components/auth/wrapRootElementWithAuth'
+
+export const wrapRootElement = wrapRootElementWithAuth
+
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions
 
