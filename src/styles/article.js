@@ -5,7 +5,7 @@ const articleStyle = createGlobalStyle`
 .article {
     display: grid;
     margin: 1rem 0 0;
-    grid-template-columns: 1.2rem minmax(1.2rem, 1fr) minmax(auto, 57ch) minmax(1.2rem, 1fr) 1.2rem;
+    grid-template-columns: 1.2rem minmax(1.2rem, 1fr) minmax(auto, 75ch) minmax(1.2rem, 1fr) 1.2rem;
     div,
     p,
     i,
@@ -17,9 +17,14 @@ const articleStyle = createGlobalStyle`
     h3,
     h4,
     h5,
+    blockquote,
     .buttonColumn {
         grid-column: 3;
         max-width: 80vw;
+    }
+
+    blockquote {
+        border-left: 4px solid var(--color-secondary);
     }
 
     figure {
@@ -30,6 +35,9 @@ const articleStyle = createGlobalStyle`
         margin: 1.5rem 0;
         figcaption {
             text-align: center;
+            padding: 1rem;
+            font-style: italic;
+            font-family: 'Playfair Display';
         }
     }
     .gatsbyRemarkImagesGrid-grid {
