@@ -52,7 +52,7 @@ form,
 textarea,
 input {
   font-family: 'Lato', sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1.618;
 }
 p .gatsby-resp-image-wrapper {
