@@ -29,6 +29,7 @@ const ContentStart = styled.div`
   padding: 1.5rem;
   margin-bottom: 5rem;
   @media screen and (min-width: 52em) {
+    margin-bottom: 0rem;
     padding: 2.5rem;
   }
   @media screen and (min-width: 64em) {

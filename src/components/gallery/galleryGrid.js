@@ -13,6 +13,7 @@ const GalleryContent = styled.div`
   margin-bottom: 5rem;
   @media screen and (min-width: 52em) {
     padding: 2.5rem;
+    margin-bottom: 0rem;
   }
   @media screen and (min-width: 64em) {
     padding: 3.5rem;

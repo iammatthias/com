@@ -7,6 +7,9 @@ require('../../styles/prism.css')
 const Buttons = styled.div`
   grid-column: 3;
   margin-bottom: 5rem;
+  @media screen and (min-width: 52em) {
+    margin-bottom: 0rem;
+  }
 `
 
 class Article extends Component {
