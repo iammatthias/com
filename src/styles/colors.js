@@ -39,6 +39,8 @@ const ColorStyle = createGlobalStyle`
         --color-secondary-90: rgba(246, 245, 245, .90);
         --color-secondary-95: rgba(246, 245, 245, .95);
     }
+.logo {
+filter: invert(100%);
 }
 
 `
