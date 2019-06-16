@@ -17,15 +17,6 @@ try {
   }
 }
 
-const {
-  NODE_ENV,
-  URL: NETLIFY_SITE_URL = 'https://iammatthias.com',
-  DEPLOY_PRIME_URL: NETLIFY_DEPLOY_URL = NETLIFY_SITE_URL,
-  CONTEXT: NETLIFY_ENV = NODE_ENV,
-} = process.env
-const isNetlifyProduction = NETLIFY_ENV === 'production'
-const siteUrl = isNetlifyProduction ? NETLIFY_SITE_URL : NETLIFY_DEPLOY_URL
-
 module.exports = {
   siteMetadata: {
     siteUrl: config.siteUrl,
@@ -39,48 +30,48 @@ module.exports = {
         whitelist: ['ENABLE_NETLIFY_AUTH'],
       },
     },
-    `gatsby-plugin-flow`,
+    'gatsby-plugin-flow',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-styled-components',
-    `gatsby-plugin-sharp`,
+    'gatsby-plugin-sharp',
     {
-      resolve: `gatsby-transformer-remark`,
+      resolve: 'gatsby-transformer-remark',
       options: {
         plugins: [
           {
-            resolve: `gatsby-remark-images-contentful`,
+            resolve: 'gatsby-remark-images-contentful',
             options: {
               maxWidth: 960,
               linkImagesToOriginal: false,
             },
           },
           {
-            resolve: `gatsby-remark-images-grid`,
+            resolve: 'gatsby-remark-images-grid',
           },
 
           {
-            resolve: `gatsby-remark-prismjs`,
+            resolve: 'gatsby-remark-prismjs',
             options: {
               classPrefix: 'language-',
               showLineNumbers: true,
             },
           },
           {
-            resolve: `@raae/gatsby-remark-oembed`,
+            resolve: '@raae/gatsby-remark-oembed',
             options: {
               providers: {
                 exclude: ['Reddit', 'Flickr', 'Instagram', 'Twitter'],
               },
             },
           },
-          `gatsby-remark-responsive-iframe`,
+          'gatsby-remark-responsive-iframe',
         ],
       },
     },
     {
-      resolve: `gatsby-plugin-typography`,
+      resolve: 'gatsby-plugin-typography',
       options: {
-        pathToConfigModule: `src/utils/typography`,
+        pathToConfigModule: 'src/utils/typography',
       },
     },
     {
@@ -111,7 +102,7 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-plugin-amplitude-analytics`,
+      resolve: 'gatsby-plugin-amplitude-analytics',
       options: {
         // Specify the API key for your Amplitude Project (required)
         apiKey: process.env.AMPLITUDE,
@@ -147,24 +138,6 @@ module.exports = {
 
     {
       resolve: 'gatsby-plugin-robots-txt',
-      options: {
-        resolveEnv: () => NETLIFY_ENV,
-        env: {
-          production: {
-            policy: [{ userAgent: '*' }],
-          },
-          'branch-deploy': {
-            policy: [{ userAgent: '*', disallow: ['/'] }],
-            sitemap: null,
-            host: null,
-          },
-          'deploy-preview': {
-            policy: [{ userAgent: '*', disallow: ['/'] }],
-            sitemap: null,
-            host: null,
-          },
-        },
-      },
     },
 
     'gatsby-plugin-catch-links',
