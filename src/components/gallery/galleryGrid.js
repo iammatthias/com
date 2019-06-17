@@ -104,7 +104,7 @@ const Gallery = ({
                 views={images.map(({ fluid }) => ({
                   source: fluid.src,
                 }))}
-                frameProps={{ autoSize: 'height' }}
+          
                 currentIndex={modalCurrentIndex}
                 components={{ FooterCount: () => null }}
                 styles={{
