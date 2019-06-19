@@ -115,12 +115,12 @@ export const query = graphql`
       id
       heroImage {
         title
-        fluid(maxWidth: 1600, quality: 65) {
+        fluid(maxWidth: 1600, quality: 50) {
           ...GatsbyContentfulFluid_withWebp
         }
       }
       shareImage {
-        ogimg: resize(width: 1200, quality: 65) {
+        ogimg: resize(width: 1200, quality: 50) {
           src
           width
           height
