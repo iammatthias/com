@@ -25,7 +25,7 @@ const GalleryTemplate = ({ data }) => {
               slug={subGallery.slug}
               images={subGallery.images}
               title={subGallery.title}
-              itemsPerRow={[3, 5, 7]}
+              itemsPerRow={[3, 3, 5, 7]}
             />
           )}
         </div>
