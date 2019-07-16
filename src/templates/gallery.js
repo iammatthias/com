@@ -10,7 +10,7 @@ const GalleryTemplate = ({ data }) => {
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (
     <>
-      <SEO title={gallery.title} image={gallery.shareImage} />
+      <SEO title={gallery.title} image={gallery.shareImage} description={gallery.body} />
       <ContentHead
         displayExcerpt
         title={gallery.title}
