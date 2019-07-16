@@ -10,11 +10,11 @@ const GalleryTemplate = ({ data }) => {
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (
     <>
-      <SEO title={gallery.title} image={gallery.shareImage} description={gallery.body} />
+      <SEO title={gallery.title} image={gallery.shareImage} description={gallery.body.childMarkdownRemark} />
       <ContentHead
         displayExcerpt
         title={gallery.title}
-        body={gallery.body.childMarkdownRemark.metaExcerpt}
+        body={gallery.body}
         tags={gallery.tags}
       />
       {subGalleries.map((subGallery, index) => (
