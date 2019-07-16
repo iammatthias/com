@@ -3,7 +3,7 @@ import Helmet from 'react-helmet'
 
 const defaultTitle = 'I AM MATTHIAS'
 const defaultDescription =
-  'Photographer and digital marketing expert based in Santa Monica, California'
+  'Photographer and digital marketer based in Southern California'
 const defaultImage = 'https://iammatthias.com/share/shareIndex.jpg'
 
 const SEO = props => (
