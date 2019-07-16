@@ -14,7 +14,7 @@ const GalleryTemplate = ({ data }) => {
       <ContentHead
         displayExcerpt
         title={gallery.title}
-        body={gallery.body}
+        body={gallery.body.childMarkdownRemark.metaExcerpt}
         tags={gallery.tags}
       />
       {subGalleries.map((subGallery, index) => (
