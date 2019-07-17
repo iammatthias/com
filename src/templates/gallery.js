@@ -10,7 +10,7 @@ const GalleryTemplate = ({ data }) => {
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (
     <>
-      <SEO title={gallery.title} image={gallery.shareImage} description={gallery.body.childMarkdownRemark} />
+      <SEO title={gallery.title} image={gallery.shareImage} description={gallery.body.childMarkdownRemark.text} />
       <ContentHead
         displayExcerpt
         title={gallery.title}
@@ -62,6 +62,7 @@ export const query = graphql`
       body {
         childMarkdownRemark {
           html
+          text
         }
       }
       galleries {
