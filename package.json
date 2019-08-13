@@ -60,7 +60,7 @@
     "react-pose": "^4.0.8",
     "react-typography": "^0.16.19",
     "rebass": "^3.1.0",
-    "styled-components": "^4.2.0",
+    "styled-components": "^4.3.2",
     "typography": "^0.16.19",
     "typography-breakpoint-constants": "^0.16.19",
     "whatwg-fetch": "2.0.4"
