@@ -49,7 +49,7 @@
     "path": "^0.12.7",
     "prismjs": "^1.16.0",
     "react": "^16.8.6",
-    "react-burger-menu": "^2.6.5",
+    "react-burger-menu": "^2.6.11",
     "react-color": "^2.17.0",
     "react-dom": "^16.8.6",
     "react-headroom": "^2.2.8",
