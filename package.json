@@ -32,7 +32,7 @@
     "gatsby-remark-figure": "^1.0.0",
     "gatsby-remark-figure-caption": "^2.0.0",
     "gatsby-remark-images": "^3.0.11",
-    "gatsby-remark-images-contentful": "^2.0.11",
+    "gatsby-remark-images-contentful": "^2.1.4",
     "gatsby-remark-images-grid": "^1.0.2",
     "gatsby-remark-prismjs": "3.3.5",
     "gatsby-remark-responsive-iframe": "^2.1.1",
