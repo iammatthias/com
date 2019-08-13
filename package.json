@@ -26,7 +26,7 @@
     "gatsby-plugin-offline": "^2.0.25",
     "gatsby-plugin-react-helmet": "3.0.12",
     "gatsby-plugin-robots-txt": "^1.4.0",
-    "gatsby-plugin-sitemap": "^2.0.11",
+    "gatsby-plugin-sitemap": "^2.2.6",
     "gatsby-plugin-styled-components": "^3.0.7",
     "gatsby-plugin-typography": "2.2.13",
     "gatsby-remark-figure": "^1.0.0",
