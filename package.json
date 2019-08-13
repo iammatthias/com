@@ -42,7 +42,7 @@
     "history": "^4.9.0",
     "inquirer": "^6.2.2",
     "intersection-observer": "^0.7.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "magic-grid": "^3.2.4",
     "medium-zoom": "^1.0.4",
     "netlify-identity-widget": "^1.5.2",
