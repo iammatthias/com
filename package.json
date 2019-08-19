@@ -5,7 +5,7 @@
   "repository": "https://github.com/iammatthias/net/tree/v2",
   "author": "Matthias Jordan <me@iammatthias.com>",
   "dependencies": {
-    "@raae/gatsby-remark-oembed": "^0.0.7",
+    "@raae/gatsby-remark-oembed": "^0.1.1",
     "@rebass/form": "^1.0.0-2",
     "babel-plugin-emotion": "^10.0.16",
     "babel-plugin-styled-components": "^1.10.6",
