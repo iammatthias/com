@@ -5895,10 +5895,10 @@ gatsby-plugin-netlify@^2.1.5:
     lodash "^4.17.14"
     webpack-assets-manifest "^3.0.2"
 
-gatsby-plugin-nprogress@2.0.10:
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-nprogress/-/gatsby-plugin-nprogress-2.0.10.tgz#4d60e09515270c86b956497e4cc66cede5565db7"
-  integrity sha512-+zDHYeSVaR01rFUXd4H2rSUvDV1yR9/uCKSJ97VIV0IZAIguf8SVxdY3nJIq5umIw1hi37JV0ICAHy91SGCMRQ==
+gatsby-plugin-nprogress@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-nprogress/-/gatsby-plugin-nprogress-2.1.2.tgz#dd973e428e43ee1a8fbf336967e31dfe835d4777"
+  integrity sha512-nWnA4O1XUChf25j8H05lLPdVB6MF+BEQiuSL/K9TI8LVZRQxjRIsijCDGzvtR02dvp/bAi9ftJE1LRP/yS/qpQ==
   dependencies:
     "@babel/runtime" "^7.0.0"
     nprogress "^0.2.0"
