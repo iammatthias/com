@@ -2,7 +2,7 @@
 
 # [IAMMATTHIAS v3](https://iammatthias.com)
 
-© Copyright 2019 Matthias Jordan
+© All images and content Copyright 2019 Matthias Jordan
 All Rights Reserved
 
 #### If you would like to quickly bootstrap a Gatsby + Contentful + Netlify project, I recommend the fantastic [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn) starter.
