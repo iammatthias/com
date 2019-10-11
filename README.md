@@ -7,9 +7,7 @@ All Rights Reserved
 
 #### If you would like to quickly bootstrap a Gatsby + Contentful + Netlify project, I recommend the fantastic [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn) starter.
 
-##### This repo is left public to serve as an educational resource. Feel free to take a look at how things work, so you can build your own. 
-
-Open a ticket (preferred) or 👉 me@iammatthias.com if you have questions
+##### This repo is left public to serve as an educational resource. Feel free to take a look at how things work, so you can build your own.
 
 ![](https://user-images.githubusercontent.com/5431737/52232080-7243b980-2870-11e9-8432-a41881f8e5d0.png) 
 
