@@ -1,20 +1,25 @@
 import React from 'react'
 import { Link } from 'gatsby'
-import Headroom from 'react-headroom'
+
+import styled from 'styled-components'
+
+const A = styled(Link)`
+  padding: 0;
+  img {
+    width: 3.5em;
+  }
+`
 
 const Logo = props => {
   return (
-    <Headroom
-      style={{
-        zIndex: '899',
-        transition: 'all .5s ease-in-out',
-      }}
-      className="menuHeadroom"
-    >
-      <Link to={`/`} className="noUnderline" alt="I Am Matthias">
-        <img src="/logos/logo_40pt.svg" className="logo" alt="I Am Matthias" />
-      </Link>
-    </Headroom>
+    <A to={`/`} className="noUnderline" alt="I Am Matthias">
+      <img
+        src="/logos/logo_40pt.svg"
+        className="logo"
+        alt="I Am Matthias"
+        width="auto"
+      />
+    </A>
   )
 }
 

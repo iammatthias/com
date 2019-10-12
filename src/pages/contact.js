@@ -1,46 +1,72 @@
 import React from 'react'
 import { graphql } from 'gatsby'
+import styled from 'styled-components'
+import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
 import Hero from './../components/general/Hero'
-import Blurb from './../components/general/Blurb'
 import Form from './../components/general/contactForm'
 import SEO from './../components/general/SEO'
-import styled from 'styled-components'
+import Arrow from './../components/general/Arrow'
 
-const Content = styled.div`
+configureAnchors({
+  offset: -32,
+  scrollDuration: 1000,
+})
+
+const Wrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-areas: 'ContentCover' 'ContentStart';
+  grid-template-rows: 1fr;
+  grid-template-areas: 'Content';
+  max-width: 100%;
+`
+const Content = styled.div`
+  grid-area: Content;
+  display: flex;
+  height: calc(100vh - 9rem);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem;
+  div {
+  }
+
   @media screen and (min-width: 52em) {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: 'ContentStart ContentCover';
+    height: calc(100vh - 7rem);
+    margin: 1rem;
+    section {
+      width: 76.4%;
+    }
   }
   @media screen and (min-width: 64em) {
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas: 'ContentStart ContentCover ContentCover';
+    height: calc(100vh);
+    margin: 0;
+    section {
+      width: 61.8%;
+    }
   }
 `
-const ContentStart = styled.div`
-  grid-area: ContentStart;
-  display: grid;
-  grid-template-areas: 'ContentCopy' 'ContentSecondary';
-  padding: 1.5rem;
-  margin-bottom: 5rem;
+const About = styled.div`
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem;
+  section {
+    width: 100%;
+  }
   @media screen and (min-width: 52em) {
-    padding: 2.5rem;
-    margin-bottom: 0rem;
+    margin: 1rem;
+    section {
+      width: 61.8%;
+    }
   }
   @media screen and (min-width: 64em) {
-    padding: 3.5rem;
+    margin: 0;
+    section {
+      width: 61.8%;
+    }
   }
-`
-const ContentCopy = styled(Blurb)`
-  grid-area: ContentCopy;
-`
-const ContentSecondary = styled.div`
-  grid-area: ContentSecondary;
-`
-const ContentCover = styled.div`
-  grid-area: ContentCover;
 `
 
 const Contact = ({ data }) => {
@@ -48,18 +74,29 @@ const Contact = ({ data }) => {
   return (
     <>
       <SEO title="CONTACT" image={contact.shareImage} />
+      <Wrapper>
+        <Content>
+          <ScrollableAnchor id="top">
+            <section>
+              <Hero image={contact.heroImage} />
+            </section>
+          </ScrollableAnchor>
+          <Arrow anchor="#bottom" />
+        </Content>
+        <About>
+          <ScrollableAnchor id="bottom">
+            <section>
+              <article
+                dangerouslySetInnerHTML={{
+                  __html: contact.body.childMarkdownRemark.html,
+                }}
+              />
 
-      <Content>
-        <ContentStart>
-          <ContentCopy content={contact.body} />
-          <ContentSecondary>
-            <Form />
-          </ContentSecondary>
-        </ContentStart>
-        <ContentCover>
-          <Hero image={contact.heroImage} />
-        </ContentCover>
-      </Content>
+              <Form />
+            </section>
+          </ScrollableAnchor>
+        </About>
+      </Wrapper>
     </>
   )
 }
@@ -68,6 +105,7 @@ export const query = graphql`
   query {
     contentfulAbout {
       title
+      headline
       id
       heroImage {
         title

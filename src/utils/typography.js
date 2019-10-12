@@ -2,20 +2,17 @@
 import Typography from 'typography'
 
 const typography = new Typography({
-  title: 'Montserrat + Lato + Source Code',
+  title: 'Montserrat + Lora + Source Code',
   baseFontSize: '18px',
   baseLineHeight: 1.4,
   googleFonts: [
     {
-      name: 'Playfair Display',
-      styles: ['900', '900i'],
+      name: 'Lora',
+      styles: ['400', '700'],
     },
+
     {
       name: 'Montserrat',
-      styles: ['900', '900i'],
-    },
-    {
-      name: 'Lato',
       styles: ['400', '900'],
     },
     {

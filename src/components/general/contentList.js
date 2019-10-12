@@ -5,28 +5,20 @@ import Img from 'gatsby-image'
 
 const StyledLink = styled(Link)`
   position: relative;
-  width: 100%;
-  height: 100%;
   text-decoration: none;
-  &:hover div {
-    @supports (object-fit: cover) {
-      opacity: 1;
-      visibility: visible;
+  div {
+    object-fit: cover !important;
+    height: 100% !important;
+    @media screen and (min-width: 52em) {
+      height: 33vh !important;
     }
   }
-  h2 {
-    margin: 0 0 1rem;
-  }
-`
 
-const Cover = styled.div`
-  position: relative;
-  transition: none;
-  margin-bottom: 1rem;
-  height: 100%;
-  div {
-    height: 100% !important;
-    object-fit: cover !important;
+  h5 {
+    position: absolute;
+    bottom: 2.5%;
+    left: 5%;
+    z-index: 3;
   }
   &::before {
     transition: all 0.3s;
@@ -39,83 +31,26 @@ const Cover = styled.div`
     height: 100%;
     width: 100%;
     z-index: 2;
-    background: var(--color-base-75);
-  }
-  @media screen and (min-width: 52em) {
-    position: fixed !important;
-    pointer-events: none;
-    transition: opacity 0.3s, visibility 0.3s;
-    width: 50%;
-    height: 100vh;
-    top: 0;
-    right: 0;
-    z-index: 2;
-    opacity: 0;
-    visibility: hidden;
-    div {
-      height: 100% !important;
-      object-fit: cover !important;
-    }
-    &::before {
-      display: none;
-    }
-  }
-  @media screen and (min-width: 64em) {
-    position: fixed !important;
-    pointer-events: none;
-    transition: opacity 0.3s, visibility 0.3s;
-    width: 66.666%;
-    height: 100vh;
-    top: 0;
-    right: 0;
-    z-index: 2;
-    opacity: 0;
-    visibility: hidden;
-    div {
-      height: 100% !important;
-      object-fit: cover !important;
-    }
+    background: var(--color-base-50);
   }
 `
-const Overflow = styled.div`
-  display: inline-block;
-  overflow: none;
-  position: absolute;
-  bottom: 0;
-  padding: 0 0 0 1rem;
-  z-index: 2;
-  font-size: 61.8%;
-  @media screen and (min-width: 52em) {
-    font-size: 100%;
-    bottom: 0;
-    display: block;
-    position: relative;
-    padding: 0.25rem 0;
-  }
-`
-const ListGrid = styled.div`
+
+const BlogPosts = styled.div`
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 1fr;
   grid-gap: 1rem;
-  margin: 0 0 1rem;
-  font-size: 61.8%;
-  div {
-    h4 {
-      display: block;
-      margin-right: 1rem;
-    }
-  }
   @media screen and (min-width: 52em) {
-    font-size: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    margin: 0 0 2rem;
-    div {
-      h4 {
-        display: inline-block;
-        margin-right: 1rem;
-      }
-    }
+    grid-template-columns: repeat(2, 1fr);
+  }
+  h5 {
+    margin: 1rem 0;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+  }
+  div {
+    z-index: 3;
   }
 `
 
@@ -128,43 +63,28 @@ const ContentList = props => {
       <>
         {props.galleryList ? (
           <>
-            <Cover>
-              <Img fluid={props.image.fluid} />
-            </Cover>
-            <Overflow>
-              <h2>{props.title}</h2>
-              <div
-                className="hide linkAccentReset"
-                dangerouslySetInnerHTML={{
-                  __html: props.excerpt.childMarkdownRemark.excerpt,
-                }}
-              />
-            </Overflow>
+            <Img fluid={props.image.fluid} />
+            <h5>{props.title}</h5>
           </>
         ) : props.blogList ? (
-          <ListGrid>
-            <Cover>
-              <Img fluid={props.image.fluid} />
-            </Cover>
+          <BlogPosts>
+            <Img fluid={props.image.fluid} />
             <div>
-              <h2>{props.title}</h2>
-              <h4 className="linkAccentReset-bold"> {props.date}</h4>
-              <h4 className="linkAccentReset">{props.time} min to read</h4>
+              <h5>{props.title}</h5>
+              <h5 className="linkAccentReset">{props.time} min to read</h5>
               <div
-                className="hide linkAccentReset"
+                className="linkAccentReset"
                 dangerouslySetInnerHTML={{
                   __html: props.excerpt.childMarkdownRemark.excerpt,
                 }}
               />
             </div>
-          </ListGrid>
+          </BlogPosts>
         ) : (
-          <ListGrid>
-            <Cover>
-              <Img fluid={props.image.fluid} />
-            </Cover>
-            <h2>{props.title}</h2>
-          </ListGrid>
+          <>
+            <Img fluid={props.image.fluid} />
+            <h5>{props.title}</h5>
+          </>
         )}
       </>
     </StyledLink>
