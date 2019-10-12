@@ -1,6 +1,5 @@
 import React from 'react'
-import { Link, graphql } from 'gatsby'
-import find from 'lodash/find'
+import { graphql, Link } from 'gatsby'
 import styled from 'styled-components'
 import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
 import SEO from './../components/general/SEO'
@@ -49,8 +48,12 @@ const BlogContent = styled.div`
   align-items: center;
   justify-content: center;
   margin: 2rem;
+
   section {
     width: 100%;
+    article {
+      margin: 2rem 0;
+    }
   }
   @media screen and (min-width: 52em) {
     margin: 1rem;
@@ -74,15 +77,13 @@ const Buttons = styled.div`
   }
 `
 
-const BlogPost = ({ data }) => {
+const BlogPost = ({ data, pageContext }) => {
   const post = data.contentfulPost
-  const discussUrl = `https://mobile.twitter.com/search?q=${encodeURIComponent(
+  const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/blog/${post.slug}/`
   )}`
-  const postIndex = find(
-    data.allContentfulPost.edges,
-    ({ node: post }) => post.id
-  )
+  const previous = pageContext.prev
+  const next = pageContext.next
   return (
     <>
       <SEO
@@ -105,33 +106,28 @@ const BlogPost = ({ data }) => {
         </Content>
         <BlogContent>
           <ScrollableAnchor id="blogPost">
-            <section>
-              <Hero image={post.heroImage} />
-              <article
-                dangerouslySetInnerHTML={{
-                  __html: post.body.childMarkdownRemark.html,
-                }}
-              />
+            <>
+              <section>
+                <Hero image={post.heroImage} />
+                <article
+                  dangerouslySetInnerHTML={{
+                    __html: post.body.childMarkdownRemark.html,
+                  }}
+                />
+              </section>
+              <Buttons>
+                <Link className="button" to={`/${previous.slug}/`}>
+                  &#8592; Prev Post
+                </Link>
 
-              <Buttons className="article buttonColumn">
-                {postIndex && (
-                  <Link
-                    className="button"
-                    to={`/blog/${postIndex.previous.slug}/`}
-                  >
-                    Prev Post
-                  </Link>
-                )}
-                {postIndex && (
-                  <Link className="button" to={`/blog/${postIndex.next.slug}/`}>
-                    Next Post
-                  </Link>
-                )}
-                <a className="button" color="" href={discussUrl}>
+                <Link className="button" to={`/${next.slug}/`}>
+                  Next Post &#8594;
+                </Link>
+                <a className="button" color="" href={comments}>
                   Discuss on Twitter
                 </a>
               </Buttons>
-            </section>
+            </>
           </ScrollableAnchor>
         </BlogContent>
       </Wrapper>
@@ -174,22 +170,6 @@ export const query = graphql`
           excerpt(pruneLength: 320)
           metaExcerpt: excerpt(pruneLength: 120)
           timeToRead
-        }
-      }
-    }
-    allContentfulPost(
-      limit: 1000
-      sort: { fields: [publishDate], order: DESC }
-    ) {
-      edges {
-        node {
-          id
-        }
-        previous {
-          slug
-        }
-        next {
-          slug
         }
       }
     }
