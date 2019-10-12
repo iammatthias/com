@@ -116,13 +116,16 @@ const BlogPost = ({ data, pageContext }) => {
                 />
               </section>
               <Buttons>
-                <Link className="button" to={`/${previous.slug}/`}>
-                  &#8592; Prev Post
-                </Link>
-
-                <Link className="button" to={`/${next.slug}/`}>
-                  Next Post &#8594;
-                </Link>
+                {previous && (
+                  <Link className="button" to={`/${previous.slug}/`}>
+                    &#8592; Prev Post
+                  </Link>
+                )}
+                {next && (
+                  <Link className="button" to={`/${next.slug}/`}>
+                    Next Post &#8594;
+                  </Link>
+                )}
                 <a className="button" color="" href={comments}>
                   Discuss on Twitter
                 </a>
