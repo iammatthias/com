@@ -1,35 +1,103 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-
+import styled from 'styled-components'
+import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
 import GalleryGrid from './../components/gallery/galleryGrid'
-import ContentHead from './../components/general/contentHead'
 import SEO from './../components/general/SEO'
+import Arrow from './../components/general/Arrow'
+
+configureAnchors({
+  offset: -32,
+  scrollDuration: 1000,
+})
+
+const Wrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: 'Content';
+  max-width: 100%;
+`
+const Content = styled.div`
+  grid-area: Content;
+  display: flex;
+  height: calc(100vh - 9rem);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem;
+  @media screen and (min-width: 52em) {
+    height: calc(100vh - 7rem);
+    margin: 1rem;
+    section {
+      width: 76.4%;
+    }
+  }
+  @media screen and (min-width: 64em) {
+    height: calc(100vh);
+    margin: 0;
+    section {
+      width: 61.8%;
+    }
+  }
+`
+const Galleries = styled.div`
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem;
+  section {
+    display: grid;
+    grid-template-rows: repeat(1fr);
+    grid-gap: 1rem;
+    width: 100%;
+  }
+`
 
 const GalleryTemplate = ({ data }) => {
   const gallery = data.contentfulExtendedGallery
   const subGalleries = data.contentfulExtendedGallery.galleries
   return (
     <>
-      <SEO title={gallery.title} image={gallery.shareImage} description={gallery.body.childMarkdownRemark.metaExcerpt} />
-      <ContentHead
-        displayExcerpt
+      <SEO
         title={gallery.title}
-        body={gallery.body}
-        tags={gallery.tags}
+        image={gallery.shareImage}
+        description={gallery.body.childMarkdownRemark.metaExcerpt}
       />
-      {subGalleries.map((subGallery, index) => (
-        <div key={index}>
-          {subGallery.__typename === 'ContentfulSubGallery' && (
-            <GalleryGrid
-              key={subGallery.id}
-              slug={subGallery.slug}
-              images={subGallery.images}
-              title={subGallery.title}
-              itemsPerRow={[3, 3, 5, 7]}
-            />
-          )}
-        </div>
-      ))}
+      <Wrapper>
+        <Content>
+          <ScrollableAnchor id="content">
+            <section>
+              <h1>{gallery.title}</h1>
+              <article
+                dangerouslySetInnerHTML={{
+                  __html: gallery.body.childMarkdownRemark.html,
+                }}
+              />
+            </section>
+          </ScrollableAnchor>
+          <Arrow anchor="#galleries" />
+        </Content>
+        <Galleries id="galleries">
+          <section>
+            {subGalleries.map((subGallery, index) => (
+              <div key={index}>
+                {subGallery.__typename === 'ContentfulSubGallery' && (
+                  <GalleryGrid
+                    key={subGallery.id}
+                    slug={subGallery.slug}
+                    images={subGallery.images}
+                    title={subGallery.title}
+                    itemsPerRow={[3, 3, 5, 7]}
+                  />
+                )}
+              </div>
+            ))}
+          </section>
+        </Galleries>
+      </Wrapper>
     </>
   )
 }
@@ -79,7 +147,7 @@ export const query = graphql`
               src
               aspectRatio
             }
-            thumbnail: fluid(maxWidth: 300, quality: 20) {
+            thumbnail: fluid(maxWidth: 500, quality: 20) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio

@@ -15,6 +15,8 @@ const ColorStyle = createGlobalStyle`
     --color-base-75: rgba(246, 245, 245, .75);
     --color-base-90: rgba(246, 245, 245, .90);
     --color-base-95: rgba(246, 245, 245, .95);
+    --color-secondary-5: rgba(20, 13, 0, 0.05);
+    --color-secondary-15: rgba(20, 13, 0, 0.15);
     --color-secondary-25: rgba(20, 13, 0, 0.25);
     --color-secondary-50: rgba(20, 13, 0, 0.5);
     --color-secondary-75: rgba(20, 13, 0, 0.75);

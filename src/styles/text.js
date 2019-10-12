@@ -26,22 +26,25 @@ a,
   color: var(--color-secondary);
 }
 
-h1 {
-  font-family: 'Montserrat', serif;
-  font-size: 3rem;
-  text-align: left;
-  margin-bottom: 0.5rem;
+h1, h2, h3, h4, h5 {
+  margin: 2.75rem 0 1rem;
+  font-family: 'Lora', serif;
+  font-weight: 700;
+  line-height: 1.15;
 }
 
-h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.625em;
-  font-weight: 700;
-  padding: 0;
-  margin: 3.5rem 0 -0.875rem -0.125em;
-  text-align: left;
-  line-height: 2rem;
+h1 {
+  margin-top: 0;
+  font-size: 4em;
 }
+
+h2 {font-size: 3.157em;}
+
+h3 {font-size: 2.369em;}
+
+h4 {font-size: 1.777em;}
+
+h5 {font-size: 1.333em;}
 
 p,
 i,
@@ -51,7 +54,7 @@ li,
 form, 
 textarea,
 input {
-  font-family: 'Lato', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 1.125rem;
   line-height: 1.618;
 }
@@ -60,6 +63,7 @@ p .gatsby-resp-image-wrapper {
 }
 
 a {
+  font-family: 'Lora', sans-serif;
   font-weight: 900;
   text-decoration: none;
   transition: all 0.3s;
@@ -78,6 +82,19 @@ ul, li {
 }
 
 @media screen and (min-width: 52em) {
+h1 {
+  margin-top: 0;
+  font-size: 5.653em;
+}
+
+h2 {font-size: 3.998em;}
+
+h3 {font-size: 2.827em;}
+
+h4 {font-size: 1.999em;}
+
+h5 {font-size: 1.414em;}
+
 a {
   font-weight: 900;
   text-decoration: none;
@@ -93,7 +110,7 @@ a {
 }
 
 blockquote {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Lora', serif;
   font-size: 30px;
   font-style: italic;
   letter-spacing: -0.36px;
@@ -121,7 +138,7 @@ mark,
 
 .first-letter {
   overflow-wrap: break-word;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Lora', serif;
   font-size: 60px;
   line-height: 60px;
   display: block;
@@ -131,7 +148,7 @@ mark,
 }
 
 .subtitle {
-  font-family: 'Lato', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: var(--color-secondary);
   margin: 0 0 1.5em 0;
 }
