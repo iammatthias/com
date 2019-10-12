@@ -6,21 +6,31 @@ exports.createPages = ({ graphql, actions }) => {
   const loadPosts = new Promise((resolve, reject) => {
     graphql(`
       {
-        allContentfulPost {
+        allContentfulPost(
+          sort: { fields: [publishDate], order: DESC }
+          limit: 10000
+        ) {
           edges {
             node {
               slug
+              publishDate
             }
           }
         }
       }
     `).then(result => {
-      result.data.allContentfulPost.edges.map(({ node }) => {
+      const posts = result.data.allContentfulPost.edges
+      // Create each individual post
+      posts.forEach((edge, i) => {
+        const prev = i === 0 ? null : posts[i - 1].node
+        const next = i === posts.length - 1 ? null : posts[i + 1].node
         createPage({
-          path: `blog/${node.slug}/`,
+          path: `/blog/${edge.node.slug}/`,
           component: path.resolve(`./src/templates/post.js`),
           context: {
-            slug: node.slug,
+            slug: edge.node.slug,
+            prev,
+            next,
           },
         })
       })
@@ -40,7 +50,8 @@ exports.createPages = ({ graphql, actions }) => {
         }
       }
     `).then(result => {
-      result.data.allContentfulExtendedGallery.edges.map(({ node }) => {
+      const pages = result.data.allContentfulExtendedGallery.edges
+      pages.map(({ node }) => {
         createPage({
           path: `${node.slug}/`,
           component: path.resolve(`./src/templates/gallery.js`),
@@ -53,45 +64,5 @@ exports.createPages = ({ graphql, actions }) => {
     })
   })
 
-  const loadTags = new Promise((resolve, reject) => {
-    graphql(`
-      {
-        allContentfulTag {
-          edges {
-            node {
-              slug
-            }
-          }
-        }
-      }
-    `).then(result => {
-      result.data.allContentfulTag.edges.map(({ node }) => {
-        createPage({
-          path: `tag/${node.slug}/`,
-          component: path.resolve(`./src/templates/tag.js`),
-          context: {
-            slug: node.slug,
-          },
-        })
-      })
-      resolve()
-    })
-  })
-
-  return Promise.all([loadPosts, loadGalleries, loadTags])
-}
-
-exports.onCreateWebpackConfig = ({ stage, loaders, actions }) => {
-  if (stage === 'build-html') {
-    actions.setWebpackConfig({
-      module: {
-        rules: [
-          {
-            test: /react-images/,
-            use: loaders.null(),
-          },
-        ],
-      },
-    })
-  }
+  return Promise.all([loadPosts, loadGalleries])
 }

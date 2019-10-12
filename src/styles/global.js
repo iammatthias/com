@@ -148,12 +148,6 @@ a:focus {
 
 /* Menu */
 
-.logo {
-  height: 2.25em;
-  width: 2.25em;
-  margin: 0.25em;
-  font-size: 1.25em;
-}
 .menuHeadroom {
   position: fixed;
   top: 0;

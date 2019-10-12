@@ -4,30 +4,14 @@ import Img from 'gatsby-image'
 
 const Hero = styled.div`
   position: relative;
-  @media screen and (min-width: 52em) {
-    display: block;
-    position: fixed;
-    pointer-events: none;
-    width: 50%;
-    height: 100vh;
-    z-index: 1;
-    div {
-      height: 100% !important;
-      object-fit: cover !important;
-    }
+  div {
+    height: 61.8vh !important;
+    width: 100%;
+    object-fit: cover !important;
   }
-  @media screen and (min-width: 64em) {
-    display: block;
-    position: fixed;
-    pointer-events: none;
-    width: 66.6666%;
-    height: 100vh;
-    z-index: 1;
-    div {
-      height: 100% !important;
-      object-fit: cover !important;
-    }
-  }
+  box-shadow: 0px 5px 15px var(--color-secondary-50),
+    0px 10px 25px var(--color-secondary-25),
+    0px 15px 30px var(--color-secondary-15);
 `
 
 const HomeHero = props => {

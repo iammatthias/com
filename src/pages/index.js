@@ -1,84 +1,115 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-
-import Hero from './../components/general/Hero'
-import Blurb from './../components/general/Blurb'
-import List from './../components/general/contentList'
-
 import styled from 'styled-components'
-
+import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
+import List from './../components/general/contentList'
 import SEO from './../components/general/SEO'
+import Arrow from './../components/general/Arrow'
 
-const Content = styled.div`
+configureAnchors({
+  offset: -32,
+  scrollDuration: 1000,
+})
+
+const Wrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-areas: 'ContentCover' 'ContentStart';
+  grid-template-rows: 1fr;
+  grid-template-areas: 'Content';
+  max-width: 100%;
+`
+const Content = styled.div`
+  grid-area: Content;
+  display: flex;
+  height: calc(100vh - 9rem);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem;
   @media screen and (min-width: 52em) {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: 'ContentStart ContentCover';
+    height: calc(100vh - 7rem);
+    margin: 1rem;
+    section {
+      width: 76.4%;
+    }
   }
   @media screen and (min-width: 64em) {
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas: 'ContentStart ContentCover ContentCover';
+    height: calc(100vh);
+    margin: 0;
+    section {
+      width: 61.8%;
+    }
   }
 `
-const ContentStart = styled.div`
-  grid-area: ContentStart;
-  display: grid;
-  grid-template-areas: 'ContentCopy' 'ContentSecondary';
-  padding: 1.5rem;
-  margin-bottom: 5rem;
+const Galleries = styled.div`
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem;
+  section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1rem;
+    width: 100%;
+  }
   @media screen and (min-width: 52em) {
-    padding: 2.5rem;
-    margin-bottom: 0rem;
+    margin: 1rem;
+    section {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 1rem;
+      width: 61.8%;
+    }
   }
   @media screen and (min-width: 64em) {
-    padding: 3.5rem;
+    margin: 0;
+    section {
+      width: 61.8%;
+    }
   }
-`
-const ContentCopy = styled(Blurb)`
-  grid-area: ContentCopy;
-`
-const ContentSecondary = styled.div`
-  grid-area: ContentSecondary;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 1rem;
-  @media screen and (min-width: 52em) {
-    grid-template-columns: 1fr;
-  }
-`
-const ContentCover = styled.div`
-  grid-area: ContentCover;
 `
 
 const Index = ({ data }) => {
   const home = data.contentfulHome
-  const galleries = data.allContentfulExtendedGallery.edges
+
+  const contentfulGalleries = data.allContentfulExtendedGallery.edges
   return (
     <>
       <SEO image={home.shareImage} />
-      <Content>
-        <ContentStart>
-          <ContentCopy content={home.body} />
-          <ContentSecondary>
-            {galleries.map(({ node: gallery }) => (
-              <List
-                galleryList
-                key={gallery.id}
-                slug={gallery.slug}
-                image={gallery.heroImage}
-                title={gallery.title}
-                date={gallery.publishDate}
-                excerpt={gallery.body}
+      <Wrapper>
+        <Content>
+          <ScrollableAnchor id="top">
+            <section>
+              <h1>{home.headline}</h1>
+              <article
+                dangerouslySetInnerHTML={{
+                  __html: home.body.childMarkdownRemark.html,
+                }}
               />
-            ))}
-          </ContentSecondary>
-        </ContentStart>
-        <ContentCover className="hide">
-          <Hero image={home.heroImage} />
-        </ContentCover>
-      </Content>
+            </section>
+          </ScrollableAnchor>
+          <Arrow anchor="#bottom" />
+        </Content>
+        <Galleries>
+          <ScrollableAnchor id="bottom">
+            <section>
+              {contentfulGalleries.map(({ node: gallery }) => (
+                <List
+                  galleryList
+                  key={gallery.id}
+                  slug={gallery.slug}
+                  image={gallery.heroImage}
+                  title={gallery.title}
+                  date={gallery.publishDate}
+                  excerpt={gallery.body}
+                />
+              ))}
+            </section>
+          </ScrollableAnchor>
+        </Galleries>
+      </Wrapper>
     </>
   )
 }
@@ -112,6 +143,7 @@ export const query = graphql`
     contentfulHome {
       title
       id
+      headline
       heroImage {
         title
         fluid(maxWidth: 1600, quality: 50) {
