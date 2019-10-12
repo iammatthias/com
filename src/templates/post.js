@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, graphql } from 'gatsby'
+import find from 'lodash/find'
 import styled from 'styled-components'
 import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
 import SEO from './../components/general/SEO'
