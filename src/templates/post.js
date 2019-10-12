@@ -102,10 +102,10 @@ const BlogPost = ({ data, pageContext }) => {
               </h5>
             </section>
           </ScrollableAnchor>
-          <Arrow anchor="#blogPost" />
+          <Arrow anchor="#post" />
         </Content>
         <BlogContent>
-          <ScrollableAnchor id="blogPost">
+          <ScrollableAnchor id="post">
             <>
               <section>
                 <Hero image={post.heroImage} />

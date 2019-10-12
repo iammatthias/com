@@ -80,7 +80,7 @@ const Index = ({ data }) => {
       <SEO image={home.shareImage} />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="content">
+          <ScrollableAnchor id="top">
             <section>
               <h1>{home.headline}</h1>
               <article
@@ -90,10 +90,10 @@ const Index = ({ data }) => {
               />
             </section>
           </ScrollableAnchor>
-          <Arrow anchor="#galleries" />
+          <Arrow anchor="#bottom" />
         </Content>
         <Galleries>
-          <ScrollableAnchor id="galleries">
+          <ScrollableAnchor id="bottom">
             <section>
               {contentfulGalleries.map(({ node: gallery }) => (
                 <List

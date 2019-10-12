@@ -68,7 +68,7 @@ const GalleryTemplate = ({ data }) => {
       />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="content">
+          <ScrollableAnchor id="top">
             <section>
               <h1>{gallery.title}</h1>
               <article
@@ -78,24 +78,26 @@ const GalleryTemplate = ({ data }) => {
               />
             </section>
           </ScrollableAnchor>
-          <Arrow anchor="#galleries" />
+          <Arrow anchor="#bottom" />
         </Content>
-        <Galleries id="galleries">
-          <section>
-            {subGalleries.map((subGallery, index) => (
-              <div key={index}>
-                {subGallery.__typename === 'ContentfulSubGallery' && (
-                  <GalleryGrid
-                    key={subGallery.id}
-                    slug={subGallery.slug}
-                    images={subGallery.images}
-                    title={subGallery.title}
-                    itemsPerRow={[3, 3, 5, 7]}
-                  />
-                )}
-              </div>
-            ))}
-          </section>
+        <Galleries>
+          <ScrollableAnchor id="bottom">
+            <section>
+              {subGalleries.map((subGallery, index) => (
+                <div key={index}>
+                  {subGallery.__typename === 'ContentfulSubGallery' && (
+                    <GalleryGrid
+                      key={subGallery.id}
+                      slug={subGallery.slug}
+                      images={subGallery.images}
+                      title={subGallery.title}
+                      itemsPerRow={[3, 3, 5, 7]}
+                    />
+                  )}
+                </div>
+              ))}
+            </section>
+          </ScrollableAnchor>
         </Galleries>
       </Wrapper>
     </>

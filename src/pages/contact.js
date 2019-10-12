@@ -76,15 +76,15 @@ const Contact = ({ data }) => {
       <SEO title="CONTACT" image={contact.shareImage} />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="content">
+          <ScrollableAnchor id="top">
             <section>
               <Hero image={contact.heroImage} />
             </section>
           </ScrollableAnchor>
-          <Arrow anchor="#galleries" />
+          <Arrow anchor="#bottom" />
         </Content>
         <About>
-          <ScrollableAnchor id="about">
+          <ScrollableAnchor id="bottom">
             <section>
               <article
                 dangerouslySetInnerHTML={{

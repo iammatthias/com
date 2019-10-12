@@ -80,7 +80,7 @@ const Blog = ({ data }) => {
       <SEO image={blog.shareImage} />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="content">
+          <ScrollableAnchor id="top">
             <section>
               <h1>The blog</h1>
               <article
@@ -90,10 +90,10 @@ const Blog = ({ data }) => {
               />
             </section>
           </ScrollableAnchor>
-          <Arrow anchor="#postList" />
+          <Arrow anchor="#bottom" />
         </Content>
         <BlogPosts>
-          <ScrollableAnchor id="postList">
+          <ScrollableAnchor id="bottom">
             <section>
               {posts.map(({ node: post }) => (
                 <List
