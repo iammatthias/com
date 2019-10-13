@@ -16,8 +16,14 @@ const ColorStyle = createGlobalStyle`
     --color-base-90: rgba(246, 245, 245, .90);
     --color-base-95: rgba(246, 245, 245, .95);
     --color-secondary-5: rgba(20, 13, 0, 0.05);
+    --color-secondary-10: rgba(20, 13, 0, 0.10);
     --color-secondary-15: rgba(20, 13, 0, 0.15);
+    --color-secondary-20: rgba(20, 13, 0, 0.20);
     --color-secondary-25: rgba(20, 13, 0, 0.25);
+    --color-secondary-30: rgba(20, 13, 0, 0.30);
+    --color-secondary-35: rgba(20, 13, 0, 0.35);
+     --color-secondary-40: rgba(20, 13, 0, 0.40);
+    --color-secondary-45: rgba(20, 13, 0, 0.45);
     --color-secondary-50: rgba(20, 13, 0, 0.5);
     --color-secondary-75: rgba(20, 13, 0, 0.75);
     --color-secondary-90: rgba(20, 13, 0, 0.9);

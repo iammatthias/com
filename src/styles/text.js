@@ -4,7 +4,8 @@ const TextStyle = createGlobalStyle`
 /* Site Specific Globals */
 html,
 body {
-  background: var(--color-base);
+  background: var(--color-base); 
+
   color: var(--color-secondary);
   margin: 0;
   width: 100%;
@@ -77,7 +78,7 @@ a {
   text-decoration: none;
   transition: all 0.3s;
   color: var(--color-secondary);
-  text-shadow: 0.125em 0.125em var(--color-base);
+
   &:hover {
     text-shadow: 0.125em 0.125em var(--color-base),
       0.25em 0.25em var(--color-tertiary),
@@ -105,19 +106,7 @@ h4 {font-size: 1.999em;}
 
 h5 {font-size: 1.414em;}
 
-a {
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.3s;
-  color: var(--color-secondary);
-  text-shadow: 0.125em 0.125em var(--color-base);
-  &:hover {
-    text-shadow: 0.125em 0.125em var(--color-base),
-      0.25em 0.25em var(--color-tertiary),
-      0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent);
-  }
-}
-}
+
 
 blockquote {
   font-family: 'Lora', serif;

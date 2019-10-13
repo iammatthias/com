@@ -16,13 +16,22 @@ const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
         sum(rowAspectRatios)
       )
   )
+
   const [toggler, setToggler] = useState(false)
+  const [imageIndex, setImageIndex] = useState(0)
+
+  const closeLightbox = () => setToggler(false)
+  const openLightbox = (imageIndex: number) => {
+    setImageIndex(imageIndex + 1)
+    setToggler(!toggler)
+  }
+
   return (
     <GalleryContent>
       <h3 key={title}>{title}</h3>
       {images.map((image, i) => (
         <Box
-          onClick={() => setToggler(!toggler)}
+          onClick={() => openLightbox(i)}
           as={Img}
           key={image.id}
           fluid={image.thumbnail}
@@ -41,7 +50,11 @@ const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
           `}
         />
       ))}
-      <FsLightbox toggler={toggler} sources={lightboxImages} />
+      <FsLightbox
+        toggler={toggler}
+        sources={lightboxImages}
+        slide={imageIndex}
+      />
     </GalleryContent>
   )
 }
