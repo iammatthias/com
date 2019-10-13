@@ -131,6 +131,13 @@ pre {
   padding: 3px 5px;
 }
 
+pre code {
+  white-space: pre;
+  overflow-x: auto;
+  display: inline-block;
+  min-width: 100%;
+}
+
 mark,
 .highlighted {
   background: var(--color-highlight);
