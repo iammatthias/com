@@ -117,12 +117,12 @@ const BlogPost = ({ data, pageContext }) => {
               </section>
               <Buttons>
                 {previous && (
-                  <Link className="button" to={`/${previous.slug}/`}>
+                  <Link className="button" to={`/blog/${previous.slug}/`}>
                     &#8592; Prev Post
                   </Link>
                 )}
                 {next && (
-                  <Link className="button" to={`/${next.slug}/`}>
+                  <Link className="button" to={`/blog/${next.slug}/`}>
                     Next Post &#8594;
                   </Link>
                 )}
