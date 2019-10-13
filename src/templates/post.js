@@ -48,9 +48,8 @@ const BlogContent = styled.div`
   align-items: center;
   justify-content: center;
   margin: 2rem;
-
+  width: 100%;
   section {
-    width: 100%;
     article {
       margin: 2rem 0;
     }
