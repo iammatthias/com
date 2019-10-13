@@ -1,15 +1,9 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import styled from 'styled-components'
-import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
 import List from './../components/general/contentList'
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
-
-configureAnchors({
-  offset: -32,
-  scrollDuration: 1000,
-})
 
 const Wrapper = styled.div`
   display: grid;
@@ -51,7 +45,7 @@ const Galleries = styled.div`
   section {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-gap: 1rem;
+    grid-gap: 2rem;
     width: 100%;
   }
   @media screen and (min-width: 52em) {
@@ -59,7 +53,7 @@ const Galleries = styled.div`
     section {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      grid-gap: 1rem;
+
       width: 61.8%;
     }
   }
@@ -80,34 +74,31 @@ const Index = ({ data }) => {
       <SEO image={home.shareImage} />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="top">
-            <section>
-              <h1>{home.headline}</h1>
-              <article
-                dangerouslySetInnerHTML={{
-                  __html: home.body.childMarkdownRemark.html,
-                }}
-              />
-            </section>
-          </ScrollableAnchor>
+          <section>
+            <h1>{home.headline}</h1>
+            <article
+              dangerouslySetInnerHTML={{
+                __html: home.body.childMarkdownRemark.html,
+              }}
+            />
+          </section>
+
           <Arrow anchor="#bottom" />
         </Content>
         <Galleries>
-          <ScrollableAnchor id="bottom">
-            <section>
-              {contentfulGalleries.map(({ node: gallery }) => (
-                <List
-                  galleryList
-                  key={gallery.id}
-                  slug={gallery.slug}
-                  image={gallery.heroImage}
-                  title={gallery.title}
-                  date={gallery.publishDate}
-                  excerpt={gallery.body}
-                />
-              ))}
-            </section>
-          </ScrollableAnchor>
+          <section id="bottom">
+            {contentfulGalleries.map(({ node: gallery }) => (
+              <List
+                galleryList
+                key={gallery.id}
+                slug={gallery.slug}
+                image={gallery.heroImage}
+                title={gallery.title}
+                date={gallery.publishDate}
+                excerpt={gallery.body}
+              />
+            ))}
+          </section>
         </Galleries>
       </Wrapper>
     </>

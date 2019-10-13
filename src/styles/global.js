@@ -114,7 +114,6 @@ a:focus {
   z-index: 300;
 }
 .button {
-  margin-right: 1rem;
   padding: 1rem;
   cursor: pointer;
   transition: 0.2s;

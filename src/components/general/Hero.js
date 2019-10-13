@@ -4,9 +4,8 @@ import Img from 'gatsby-image'
 
 const Hero = styled.div`
   position: relative;
- 
+  width: calc(100%);
   div {
-    width: 100%;
     max-height: 61.8vh !important;
     object-fit: cover !important;
   }

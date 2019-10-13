@@ -1,15 +1,9 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import styled from 'styled-components'
-import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
 import List from './../components/general/contentList'
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
-
-configureAnchors({
-  offset: -32,
-  scrollDuration: 1000,
-})
 
 const Wrapper = styled.div`
   display: grid;
@@ -47,25 +41,22 @@ const BlogPosts = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
   section {
+    padding: 2rem;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
-    grid-gap: 1rem;
+    grid-gap: 2rem;
     width: 100%;
   }
   @media screen and (min-width: 52em) {
-    margin: 1rem;
     section {
       display: grid;
       grid-template-columns: 1fr;
-      grid-gap: 1rem;
       width: 61.8%;
     }
   }
   @media screen and (min-width: 64em) {
-    margin: 0;
     section {
       width: 61.8%;
     }
@@ -80,35 +71,32 @@ const Blog = ({ data }) => {
       <SEO image={blog.shareImage} />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="top">
-            <section>
-              <h1>The blog</h1>
-              <article
-                dangerouslySetInnerHTML={{
-                  __html: blog.body.childMarkdownRemark.html,
-                }}
-              />
-            </section>
-          </ScrollableAnchor>
-          <Arrow anchor="#bottom" />
+          <section id="top">
+            <h1>The blog</h1>
+            <article
+              dangerouslySetInnerHTML={{
+                __html: blog.body.childMarkdownRemark.html,
+              }}
+            />
+          </section>
+
+          <Arrow anchor={location.pathname + '#bottom'} />
         </Content>
         <BlogPosts>
-          <ScrollableAnchor id="bottom">
-            <section>
-              {posts.map(({ node: post }) => (
-                <List
-                  blogList
-                  key={post.id}
-                  slug={post.slug}
-                  image={post.heroImage}
-                  title={post.title}
-                  date={post.publishDate}
-                  time={post.body.childMarkdownRemark.timeToRead}
-                  excerpt={post.body}
-                />
-              ))}
-            </section>
-          </ScrollableAnchor>
+          <section id="bottom">
+            {posts.map(({ node: post }) => (
+              <List
+                blogList
+                key={post.id}
+                slug={post.slug}
+                image={post.heroImage}
+                title={post.title}
+                date={post.publishDate}
+                time={post.body.childMarkdownRemark.timeToRead}
+                excerpt={post.body}
+              />
+            ))}
+          </section>
         </BlogPosts>
       </Wrapper>
     </>

@@ -33,17 +33,20 @@ const StyledLink = styled(Link)`
     z-index: 2;
     background: var(--color-base-50);
   }
+  box-shadow: 0px 5px 15px var(--color-secondary-50),
+    0px 10px 25px var(--color-secondary-25),
+    0px 15px 30px var(--color-secondary-15);
 `
 
 const BlogPosts = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  grid-gap: 1rem;
+
   @media screen and (min-width: 52em) {
     grid-template-columns: repeat(2, 1fr);
   }
   h5 {
-    margin: 1rem 0;
+    margin: 0 0 1rem;
     position: relative;
     bottom: 0;
     left: 0;
@@ -51,6 +54,9 @@ const BlogPosts = styled.div`
   }
   div {
     z-index: 3;
+  }
+  .copy {
+    padding: 1rem;
   }
 `
 
@@ -69,10 +75,10 @@ const ContentList = props => {
         ) : props.blogList ? (
           <BlogPosts>
             <Img fluid={props.image.fluid} />
-            <div>
+            <div className="copy">
               <h5>{props.title}</h5>
-              <h5 className="linkAccentReset">{props.time} min to read</h5>
-              <div
+              <p className="linkAccentReset">{props.time} min to read</p>
+              <p
                 className="linkAccentReset"
                 dangerouslySetInnerHTML={{
                   __html: props.excerpt.childMarkdownRemark.excerpt,

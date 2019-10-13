@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Link } from 'gatsby'
 import styled, { keyframes } from 'styled-components'
 
 const arrow = keyframes`
@@ -47,9 +47,9 @@ const DownArrow = styled.div`
 
 const Arrow = props => {
   return (
-    <a href={props.anchor}>
+    <Link to={props.anchor}>
       <DownArrow />
-    </a>
+    </Link>
   )
 }
 

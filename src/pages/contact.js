@@ -1,16 +1,11 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import styled from 'styled-components'
-import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
+
 import Hero from './../components/general/Hero'
 import Form from './../components/general/contactForm'
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
-
-configureAnchors({
-  offset: -32,
-  scrollDuration: 1000,
-})
 
 const Wrapper = styled.div`
   display: grid;
@@ -76,25 +71,22 @@ const Contact = ({ data }) => {
       <SEO title="CONTACT" image={contact.shareImage} />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="top">
-            <section>
-              <Hero image={contact.heroImage} />
-            </section>
-          </ScrollableAnchor>
-          <Arrow anchor="#bottom" />
+          <section id="top">
+            <Hero image={contact.heroImage} />
+          </section>
+
+          <Arrow anchor={location.pathname + '#bottom'} />
         </Content>
         <About>
-          <ScrollableAnchor id="bottom">
-            <section>
-              <article
-                dangerouslySetInnerHTML={{
-                  __html: contact.body.childMarkdownRemark.html,
-                }}
-              />
+          <section id="bottom">
+            <article
+              dangerouslySetInnerHTML={{
+                __html: contact.body.childMarkdownRemark.html,
+              }}
+            />
 
-              <Form />
-            </section>
-          </ScrollableAnchor>
+            <Form />
+          </section>
         </About>
       </Wrapper>
     </>
