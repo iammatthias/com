@@ -22,7 +22,6 @@ const Content = styled.div`
   grid-area: Content;
   display: flex;
   height: calc(100vh - 9rem);
-  width: calc(100vw);
   flex-direction: column;
   align-items: center;
   justify-content: center;
