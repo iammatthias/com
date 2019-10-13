@@ -63,7 +63,7 @@ const BlogPosts = styled.div`
   }
 `
 
-const Blog = ({ data }) => {
+const Blog = ({ data, location }) => {
   const posts = data.allContentfulPost.edges
   const blog = data.contentfulBlog
   return (

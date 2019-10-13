@@ -76,7 +76,7 @@ const Buttons = styled.div`
   }
 `
 
-const BlogPost = ({ data, pageContext }) => {
+const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
   const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/blog/${post.slug}/`

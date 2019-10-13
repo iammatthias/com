@@ -61,7 +61,7 @@ const Galleries = styled.div`
   }
 `
 
-const GalleryTemplate = ({ data }) => {
+const GalleryTemplate = ({ data, location }) => {
   const gallery = data.contentfulExtendedGallery
   const subGalleries = data.contentfulExtendedGallery.galleries
 

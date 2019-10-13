@@ -64,7 +64,7 @@ const About = styled.div`
   }
 `
 
-const Contact = ({ data }) => {
+const Contact = ({ data, location }) => {
   const contact = data.contentfulAbout
   return (
     <>
