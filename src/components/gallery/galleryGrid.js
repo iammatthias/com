@@ -20,8 +20,7 @@ const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
   const [toggler, setToggler] = useState(false)
   const [imageIndex, setImageIndex] = useState(0)
 
-  const closeLightbox = () => setToggler(false)
-  const openLightbox = (imageIndex: number) => {
+  const openLightbox = imageIndex => {
     setImageIndex(imageIndex + 1)
     setToggler(!toggler)
   }
