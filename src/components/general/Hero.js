@@ -4,9 +4,9 @@ import Img from 'gatsby-image'
 
 const Hero = styled.div`
   position: relative;
+  width: 100%;
   div {
     max-height: 61.8vh !important;
-    width: 100%;
     object-fit: cover !important;
   }
   box-shadow: 0px 5px 15px var(--color-secondary-50),
