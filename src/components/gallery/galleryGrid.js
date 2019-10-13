@@ -62,7 +62,7 @@ const Gallery = ({
 
   return (
     <GalleryContent>
-      <h2 key={title}>{title}</h2>
+      <h3 key={title}>{title}</h3>
       {images.map((image, i) => (
         <a key={image.src} onClick={() => openModal(i)}>
           <Box
