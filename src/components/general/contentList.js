@@ -6,9 +6,9 @@ import Img from 'gatsby-image'
 const StyledLink = styled(Link)`
   position: relative;
   text-decoration: none;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   div {
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     object-fit: cover !important;
     height: 100% !important;
     @media screen and (min-width: 52em) {
@@ -24,7 +24,7 @@ const StyledLink = styled(Link)`
     z-index: 3;
   }
   &::before {
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     transition: all 0.3s;
     content: '';
     position: absolute;
@@ -35,7 +35,11 @@ const StyledLink = styled(Link)`
     height: 100%;
     width: 100%;
     z-index: 2;
-    background: var(--color-base-50);
+    background: linear-gradient(
+      var(--color-base-5) 38.2%,
+      var(--color-base-35) 61.8%,
+      var(--color-base-75) 100%
+    );
   }
 
   box-shadow: 0px 5px 15px var(--color-secondary-50),
@@ -46,13 +50,13 @@ const StyledLink = styled(Link)`
 const BlogPosts = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   div {
-    border-radius: 1rem 1rem 0 0;
+    border-radius: 0.5rem 0.5rem 0 0;
   }
   @media screen and (min-width: 52em) {
     div {
-      border-radius: 1rem 0 0 1rem;
+      border-radius: 0.5rem 0 0 0.5rem;
     }
     grid-template-columns: repeat(2, 1fr);
   }
@@ -67,7 +71,7 @@ const BlogPosts = styled.div`
     z-index: 3;
   }
   .copy {
-    padding: 1rem;
+    padding: 2rem;
   }
 `
 

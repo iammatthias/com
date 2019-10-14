@@ -19,7 +19,9 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
+  section {
+    padding: 2rem;
+  }
   @media screen and (min-width: 52em) {
     height: calc(100vh - 7rem);
     margin: 1rem;
