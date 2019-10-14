@@ -42,7 +42,6 @@ const BlogContent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   section {
     width: 100%;
     padding: 2rem;

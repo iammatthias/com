@@ -15,9 +15,10 @@ const StyledLink = styled(Link)`
   }
 
   h5 {
+    margin: 0;
     position: absolute;
-    bottom: 2.5%;
-    left: 5%;
+    bottom: 1rem;
+    left: 1rem;
     z-index: 3;
   }
   &::before {

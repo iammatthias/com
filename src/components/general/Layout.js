@@ -86,10 +86,8 @@ const Layout = ({ children }) => {
             />
           </Helmet>
 
-          <>
-            <Menu />
-            {children}
-          </>
+          <Menu />
+          {children}
         </div>
       </ThemeProvider>
     </>

@@ -19,17 +19,19 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
+  section {
+    padding: 2rem;
+  }
   @media screen and (min-width: 52em) {
     height: calc(100vh - 7rem);
-    margin: 1rem;
+
     section {
       width: 76.4%;
     }
   }
   @media screen and (min-width: 64em) {
     height: calc(100vh);
-    margin: 0;
+
     section {
       width: 61.8%;
     }
@@ -41,24 +43,50 @@ const Galleries = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
+
   section {
+    padding: 2rem;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 2rem;
     width: 100%;
   }
   @media screen and (min-width: 52em) {
-    margin: 1rem;
     section {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeate(1fr);
 
       width: 61.8%;
+      a {
+        &:nth-child(1n + 1) {
+          grid-column-end: span 3;
+        }
+        &:nth-child(1n + 2) {
+          grid-column-end: span 2;
+        }
+        &:nth-child(1n + 3) {
+          grid-column-end: span 2;
+        }
+        &:nth-child(1n + 4) {
+          grid-column-end: span 3;
+        }
+        &:nth-child(1n + 5) {
+          grid-column-end: span 3;
+        }
+        &:nth-child(1n + 6) {
+          grid-column-end: span 2;
+        }
+        &:nth-child(1n + 7) {
+          grid-column-end: span 2;
+        }
+        &:nth-child(1n + 8) {
+          grid-column-end: span 3;
+        }
+      }
     }
   }
   @media screen and (min-width: 64em) {
-    margin: 0;
     section {
       width: 61.8%;
     }
