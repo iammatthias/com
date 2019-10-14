@@ -9,7 +9,7 @@ All Rights Reserved
 
 ##### This repo is left public to serve as an educational resource. Feel free to take a look at how things work, so you can build your own.
 
-![](https://user-images.githubusercontent.com/5431737/52232080-7243b980-2870-11e9-8432-a41881f8e5d0.png) 
+![](https://raw.githubusercontent.com/iammatthias/.com/master/static/share/share.png) 
 
 ## Overview
 Codebase for [https://iammatthias.com](https://iammatthias.com)
