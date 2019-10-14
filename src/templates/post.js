@@ -1,15 +1,10 @@
 import React from 'react'
 import { graphql, Link } from 'gatsby'
 import styled from 'styled-components'
-import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
+
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
 import Hero from './../components/general/Hero'
-
-configureAnchors({
-  offset: -32,
-  scrollDuration: 1000,
-})
 
 const Wrapper = styled.div`
   display: grid;
@@ -47,23 +42,19 @@ const BlogContent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
   section {
-
-   width: 100%;
-
+    width: 100%;
+    padding: 2rem;
     article {
       margin: 2rem 0;
     }
   }
   @media screen and (min-width: 52em) {
-    margin: 1rem;
     section {
       width: 61.8%;
     }
   }
   @media screen and (min-width: 64em) {
-    margin: 0;
     section {
       width: 61.8%;
     }
@@ -71,14 +62,20 @@ const BlogContent = styled.div`
 `
 
 const Buttons = styled.div`
-  grid-column: 3;
   margin-bottom: 5rem;
+  .button {
+    display: block;
+    margin: 0 0 1rem;
+  }
   @media screen and (min-width: 52em) {
-    margin-bottom: 2rem;
+    .button {
+      display: inline;
+      margin: 0 1rem 0 0;
+    }
   }
 `
 
-const BlogPost = ({ data, pageContext }) => {
+const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
   const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/blog/${post.slug}/`
@@ -94,45 +91,40 @@ const BlogPost = ({ data, pageContext }) => {
       />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="content">
-            <section>
-              <h1>{post.title}</h1>
-              <h5>
-                Published: {post.publishDate} {'// '}
-                Est. {post.body.childMarkdownRemark.timeToRead} minutes to read
-              </h5>
-            </section>
-          </ScrollableAnchor>
-          <Arrow anchor="#post" />
+          <section id="top">
+            <h1>{post.title}</h1>
+            <h5>
+              Published: {post.publishDate} {'// '}
+              Est. {post.body.childMarkdownRemark.timeToRead} minutes to read
+            </h5>
+          </section>
+
+          <Arrow anchor={location.pathname + '#bottom'} />
         </Content>
         <BlogContent>
-          <ScrollableAnchor id="post">
-            <>
-              <section>
-                <Hero image={post.heroImage} />
-                <article
-                  dangerouslySetInnerHTML={{
-                    __html: post.body.childMarkdownRemark.html,
-                  }}
-                />
-              </section>
-              <Buttons>
-                {previous && (
-                  <Link className="button" to={`/blog/${previous.slug}/`}>
-                    &#8592; Prev Post
-                  </Link>
-                )}
-                {next && (
-                  <Link className="button" to={`/blog/${next.slug}/`}>
-                    Next Post &#8594;
-                  </Link>
-                )}
-                <a className="button" color="" href={comments}>
-                  Discuss on Twitter
-                </a>
-              </Buttons>
-            </>
-          </ScrollableAnchor>
+          <section id="bottom">
+            <Hero image={post.heroImage} />
+            <article
+              dangerouslySetInnerHTML={{
+                __html: post.body.childMarkdownRemark.html,
+              }}
+            />
+            <Buttons>
+              {previous && (
+                <Link className="button" to={`/blog/${previous.slug}/`}>
+                  &#8592; Prev Post
+                </Link>
+              )}
+              {next && (
+                <Link className="button" to={`/blog/${next.slug}/`}>
+                  Next Post &#8594;
+                </Link>
+              )}
+              <a className="button" color="" href={comments}>
+                Discuss on Twitter
+              </a>
+            </Buttons>
+          </section>
         </BlogContent>
       </Wrapper>
     </>

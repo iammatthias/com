@@ -1,15 +1,10 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import styled from 'styled-components'
-import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
+
 import GalleryGrid from './../components/gallery/galleryGrid'
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
-
-configureAnchors({
-  offset: -32,
-  scrollDuration: 1000,
-})
 
 const Wrapper = styled.div`
   display: grid;
@@ -47,18 +42,29 @@ const Galleries = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
   section {
-    display: grid;
-    grid-template-rows: repeat(1fr);
-    grid-gap: 1rem;
     width: 100%;
+    padding: 2rem;
+    article {
+      margin: 2rem 0;
+    }
+  }
+  @media screen and (min-width: 52em) {
+    section {
+      width: 61.8%;
+    }
+  }
+  @media screen and (min-width: 64em) {
+    section {
+      width: 61.8%;
+    }
   }
 `
 
-const GalleryTemplate = ({ data }) => {
+const GalleryTemplate = ({ data, location }) => {
   const gallery = data.contentfulExtendedGallery
   const subGalleries = data.contentfulExtendedGallery.galleries
+
   return (
     <>
       <SEO
@@ -68,36 +74,33 @@ const GalleryTemplate = ({ data }) => {
       />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="top">
-            <section>
-              <h1>{gallery.title}</h1>
-              <article
-                dangerouslySetInnerHTML={{
-                  __html: gallery.body.childMarkdownRemark.html,
-                }}
-              />
-            </section>
-          </ScrollableAnchor>
-          <Arrow anchor="#bottom" />
+          <section id="top">
+            <h1>{gallery.title}</h1>
+            <article
+              dangerouslySetInnerHTML={{
+                __html: gallery.body.childMarkdownRemark.html,
+              }}
+            />
+          </section>
+
+          <Arrow anchor={location.pathname + '#bottom'} />
         </Content>
         <Galleries>
-          <ScrollableAnchor id="bottom">
-            <section>
-              {subGalleries.map((subGallery, index) => (
-                <div key={index}>
-                  {subGallery.__typename === 'ContentfulSubGallery' && (
-                    <GalleryGrid
-                      key={subGallery.id}
-                      slug={subGallery.slug}
-                      images={subGallery.images}
-                      title={subGallery.title}
-                      itemsPerRow={[3, 3, 5, 7]}
-                    />
-                  )}
-                </div>
-              ))}
-            </section>
-          </ScrollableAnchor>
+          <section id="bottom">
+            {subGalleries.map((subGallery, index) => (
+              <div key={index}>
+                {subGallery.__typename === 'ContentfulSubGallery' && (
+                  <GalleryGrid
+                    key={subGallery.id}
+                    slug={subGallery.slug}
+                    images={subGallery.images}
+                    title={subGallery.title}
+                    itemsPerRow={[2, 2, 3, 5]}
+                  />
+                )}
+              </div>
+            ))}
+          </section>
         </Galleries>
       </Wrapper>
     </>
@@ -147,6 +150,7 @@ export const query = graphql`
             fluid(maxWidth: 1600, quality: 50) {
               ...GatsbyContentfulFluid_withWebp
               src
+              srcSet
               aspectRatio
             }
             thumbnail: fluid(maxWidth: 500, quality: 20) {

@@ -1,15 +1,9 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import styled from 'styled-components'
-import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
 import List from './../components/general/contentList'
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
-
-configureAnchors({
-  offset: -32,
-  scrollDuration: 1000,
-})
 
 const Wrapper = styled.div`
   display: grid;
@@ -25,17 +19,19 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
+  section {
+    padding: 2rem;
+  }
   @media screen and (min-width: 52em) {
     height: calc(100vh - 7rem);
-    margin: 1rem;
+
     section {
       width: 76.4%;
     }
   }
   @media screen and (min-width: 64em) {
     height: calc(100vh);
-    margin: 0;
+
     section {
       width: 61.8%;
     }
@@ -47,24 +43,50 @@ const Galleries = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
+
   section {
+    padding: 2rem;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-gap: 1rem;
+    grid-gap: 2rem;
     width: 100%;
   }
   @media screen and (min-width: 52em) {
-    margin: 1rem;
     section {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-gap: 1rem;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeate(1fr);
+
       width: 61.8%;
+      a {
+        &:nth-child(1n + 1) {
+          grid-column-end: span 3;
+        }
+        &:nth-child(1n + 2) {
+          grid-column-end: span 2;
+        }
+        &:nth-child(1n + 3) {
+          grid-column-end: span 2;
+        }
+        &:nth-child(1n + 4) {
+          grid-column-end: span 3;
+        }
+        &:nth-child(1n + 5) {
+          grid-column-end: span 3;
+        }
+        &:nth-child(1n + 6) {
+          grid-column-end: span 2;
+        }
+        &:nth-child(1n + 7) {
+          grid-column-end: span 2;
+        }
+        &:nth-child(1n + 8) {
+          grid-column-end: span 3;
+        }
+      }
     }
   }
   @media screen and (min-width: 64em) {
-    margin: 0;
     section {
       width: 61.8%;
     }
@@ -80,34 +102,31 @@ const Index = ({ data }) => {
       <SEO image={home.shareImage} />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="top">
-            <section>
-              <h1>{home.headline}</h1>
-              <article
-                dangerouslySetInnerHTML={{
-                  __html: home.body.childMarkdownRemark.html,
-                }}
-              />
-            </section>
-          </ScrollableAnchor>
+          <section>
+            <h1>{home.headline}</h1>
+            <article
+              dangerouslySetInnerHTML={{
+                __html: home.body.childMarkdownRemark.html,
+              }}
+            />
+          </section>
+
           <Arrow anchor="#bottom" />
         </Content>
         <Galleries>
-          <ScrollableAnchor id="bottom">
-            <section>
-              {contentfulGalleries.map(({ node: gallery }) => (
-                <List
-                  galleryList
-                  key={gallery.id}
-                  slug={gallery.slug}
-                  image={gallery.heroImage}
-                  title={gallery.title}
-                  date={gallery.publishDate}
-                  excerpt={gallery.body}
-                />
-              ))}
-            </section>
-          </ScrollableAnchor>
+          <section id="bottom">
+            {contentfulGalleries.map(({ node: gallery }) => (
+              <List
+                galleryList
+                key={gallery.id}
+                slug={gallery.slug}
+                image={gallery.heroImage}
+                title={gallery.title}
+                date={gallery.publishDate}
+                excerpt={gallery.body}
+              />
+            ))}
+          </section>
         </Galleries>
       </Wrapper>
     </>

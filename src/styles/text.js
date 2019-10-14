@@ -4,7 +4,8 @@ const TextStyle = createGlobalStyle`
 /* Site Specific Globals */
 html,
 body {
-  background: var(--color-base);
+  background: var(--color-base); 
+
   color: var(--color-secondary);
   margin: 0;
   width: 100%;
@@ -57,18 +58,27 @@ input {
   font-family: 'Montserrat', sans-serif;
   font-size: 1.125rem;
   line-height: 1.618;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
 }
+
 p .gatsby-resp-image-wrapper {
     max-width: 100% !important;
 }
 
+b, strong {
+  font-weight: 700;
+}
+
 a {
   font-family: 'Lora', sans-serif;
-  font-weight: 900;
+  font-weight: 700;
   text-decoration: none;
   transition: all 0.3s;
   color: var(--color-secondary);
-  text-shadow: 0.125em 0.125em var(--color-base);
+
   &:hover {
     text-shadow: 0.125em 0.125em var(--color-base),
       0.25em 0.25em var(--color-tertiary),
@@ -80,6 +90,7 @@ ul, li {
   line-height: 1.382;
   list-style: circle outside;
 }
+
 
 @media screen and (min-width: 52em) {
 h1 {
@@ -95,19 +106,7 @@ h4 {font-size: 1.999em;}
 
 h5 {font-size: 1.414em;}
 
-a {
-  font-weight: 900;
-  text-decoration: none;
-  transition: all 0.3s;
-  color: var(--color-secondary);
-  text-shadow: 0.125em 0.125em var(--color-base);
-  &:hover {
-    text-shadow: 0.125em 0.125em var(--color-base),
-      0.25em 0.25em var(--color-tertiary),
-      0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent);
-  }
-}
-}
+
 
 blockquote {
   font-family: 'Lora', serif;
@@ -122,21 +121,29 @@ blockquote {
   padding: 0 0 0 50px;
 }
 
-code,
 pre {
-  font-family: 'Source Code Pro', monospace;
-  font-size: 18px;
+  border-radius: .5rem;
+  padding: .5rem;
   background: rgba(0, 0, 0, 0.05);
-  border-radius: 2px;
-  padding: 3px 5px;
+  font-size: 18px;
+  font-family: 'Source Code Pro', monospace;
+  
+  margin-bottom: 1rem;
+  white-space:pre-wrap
+}
+code {
+  background: rgba(0, 0, 0, 0.05);
+  padding: .5rem;
 }
 
 pre code {
-  white-space: pre;
-  overflow-x: auto;
-  display: inline-block;
-  min-width: 100%;
+  overflow-x: scroll;
+  background: rgba(0, 0, 0, 0);
+  padding: 0;
+
 }
+
+
 
 mark,
 .highlighted {

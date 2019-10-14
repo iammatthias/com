@@ -6,7 +6,9 @@ import Img from 'gatsby-image'
 const StyledLink = styled(Link)`
   position: relative;
   text-decoration: none;
+  border-radius: 1rem;
   div {
+    border-radius: 1rem;
     object-fit: cover !important;
     height: 100% !important;
     @media screen and (min-width: 52em) {
@@ -15,12 +17,14 @@ const StyledLink = styled(Link)`
   }
 
   h5 {
+    margin: 0;
     position: absolute;
-    bottom: 2.5%;
-    left: 5%;
+    bottom: 1rem;
+    left: 1rem;
     z-index: 3;
   }
   &::before {
+    border-radius: 1rem;
     transition: all 0.3s;
     content: '';
     position: absolute;
@@ -33,17 +37,27 @@ const StyledLink = styled(Link)`
     z-index: 2;
     background: var(--color-base-50);
   }
+
+  box-shadow: 0px 5px 15px var(--color-secondary-50),
+    0px 10px 25px var(--color-secondary-25),
+    0px 15px 30px var(--color-secondary-15);
 `
 
 const BlogPosts = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  grid-gap: 1rem;
+  border-radius: 1rem;
+  div {
+    border-radius: 1rem 1rem 0 0;
+  }
   @media screen and (min-width: 52em) {
+    div {
+      border-radius: 1rem 0 0 1rem;
+    }
     grid-template-columns: repeat(2, 1fr);
   }
   h5 {
-    margin: 1rem 0;
+    margin: 0 0 1rem;
     position: relative;
     bottom: 0;
     left: 0;
@@ -51,6 +65,9 @@ const BlogPosts = styled.div`
   }
   div {
     z-index: 3;
+  }
+  .copy {
+    padding: 1rem;
   }
 `
 
@@ -60,7 +77,7 @@ const ContentList = props => {
       key={props.id}
       to={props.blogList ? `/blog/${props.slug}/` : `/${props.slug}/`}
     >
-      <>
+      <div>
         {props.galleryList ? (
           <>
             <Img fluid={props.image.fluid} />
@@ -69,10 +86,10 @@ const ContentList = props => {
         ) : props.blogList ? (
           <BlogPosts>
             <Img fluid={props.image.fluid} />
-            <div>
+            <div className="copy">
               <h5>{props.title}</h5>
-              <h5 className="linkAccentReset">{props.time} min to read</h5>
-              <div
+              <p className="linkAccentReset">{props.time} min to read</p>
+              <p
                 className="linkAccentReset"
                 dangerouslySetInnerHTML={{
                   __html: props.excerpt.childMarkdownRemark.excerpt,
@@ -86,7 +103,7 @@ const ContentList = props => {
             <h5>{props.title}</h5>
           </>
         )}
-      </>
+      </div>
     </StyledLink>
   )
 }

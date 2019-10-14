@@ -1,16 +1,11 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import styled from 'styled-components'
-import ScrollableAnchor, { configureAnchors } from 'react-scrollable-anchor'
+
 import Hero from './../components/general/Hero'
 import Form from './../components/general/contactForm'
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
-
-configureAnchors({
-  offset: -32,
-  scrollDuration: 1000,
-})
 
 const Wrapper = styled.div`
   display: grid;
@@ -26,20 +21,20 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
-  div {
+  section {
+    width: 100%;
+    padding: 2rem;
   }
-
   @media screen and (min-width: 52em) {
     height: calc(100vh - 7rem);
-    margin: 1rem;
+
     section {
       width: 76.4%;
     }
   }
   @media screen and (min-width: 64em) {
     height: calc(100vh);
-    margin: 0;
+
     section {
       width: 61.8%;
     }
@@ -51,50 +46,44 @@ const About = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
   section {
-    width: 100%;
+    padding: 2rem;
   }
   @media screen and (min-width: 52em) {
-    margin: 1rem;
     section {
       width: 61.8%;
     }
   }
   @media screen and (min-width: 64em) {
-    margin: 0;
     section {
       width: 61.8%;
     }
   }
 `
 
-const Contact = ({ data }) => {
+const Contact = ({ data, location }) => {
   const contact = data.contentfulAbout
   return (
     <>
       <SEO title="CONTACT" image={contact.shareImage} />
       <Wrapper>
         <Content>
-          <ScrollableAnchor id="top">
-            <section>
-              <Hero image={contact.heroImage} />
-            </section>
-          </ScrollableAnchor>
-          <Arrow anchor="#bottom" />
+          <section id="top">
+            <Hero image={contact.heroImage} />
+          </section>
+
+          <Arrow anchor={location.pathname + '#bottom'} />
         </Content>
         <About>
-          <ScrollableAnchor id="bottom">
-            <section>
-              <article
-                dangerouslySetInnerHTML={{
-                  __html: contact.body.childMarkdownRemark.html,
-                }}
-              />
+          <section id="bottom">
+            <article
+              dangerouslySetInnerHTML={{
+                __html: contact.body.childMarkdownRemark.html,
+              }}
+            />
 
-              <Form />
-            </section>
-          </ScrollableAnchor>
+            <Form />
+          </section>
         </About>
       </Wrapper>
     </>

@@ -9,7 +9,12 @@ import ArticleStyle from '../../styles/article'
 import TextStyle from '../../styles/text'
 import Menu from '../general/Menu'
 
-const Layout = ({ children, ...props }) => {
+if (typeof window !== 'undefined') {
+  // eslint-disable-next-line global-require
+  require('smooth-scroll')('a[href*="#"]')
+}
+
+const Layout = ({ children }) => {
   return (
     <>
       <Reset />
@@ -81,10 +86,8 @@ const Layout = ({ children, ...props }) => {
             />
           </Helmet>
 
-          <>
-            <Menu />
-            {children}
-          </>
+          <Menu />
+          {children}
         </div>
       </ThemeProvider>
     </>
