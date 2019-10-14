@@ -11,6 +11,7 @@ const ColorStyle = createGlobalStyle`
     --color-highlight: #fe4a49;
     --color-accent: #fcba04;
     --color-base-5: rgba(246, 245, 245, .05);
+     --color-base-15: rgba(246, 245, 245, .15);
     --color-base-25: rgba(246, 245, 245, .25);
     --color-base-35: rgba(246, 245, 245, .35);
     --color-base-50: rgba(246, 245, 245, .50);
@@ -18,6 +19,7 @@ const ColorStyle = createGlobalStyle`
     --color-base-90: rgba(246, 245, 245, .90);
     --color-base-95: rgba(246, 245, 245, .95);
     --color-secondary-5: rgba(20, 13, 0, 0.05);
+    --color-secondary-15: rgba(20, 13, 0, 0.15);
     --color-secondary-25: rgba(20, 13, 0, 0.25);
     --color-secondary-35: rgba(20, 13, 0, 0.35);
     --color-secondary-50: rgba(20, 13, 0, 0.5);
@@ -33,6 +35,7 @@ const ColorStyle = createGlobalStyle`
         --color-highlight: #fe4a49;
         --color-accent: #fcba04;
         --color-base-5: rgba(20, 13, 0, 0.05);
+        --color-base-15: rgba(20, 13, 0, 0.15);
         --color-base-25: rgba(20, 13, 0, 0.25);
         --color-base-35: rgba(20, 13, 0, 0.35);
         --color-base-50: rgba(20, 13, 0, 0.5);
@@ -40,6 +43,7 @@ const ColorStyle = createGlobalStyle`
         --color-base-90: rgba(20, 13, 0, 0.9);
         --color-base-95: rgba(20, 13, 0, 0.95);
         --color-secondary-5: rgba(246, 245, 245, .05);
+        --color-secondary-15: rgba(246, 245, 245, .15);
         --color-secondary-25: rgba(246, 245, 245, .25);
         --color-secondary-35: rgba(246, 245, 245, .35);
         --color-secondary-50: rgba(246, 245, 245, .50);
