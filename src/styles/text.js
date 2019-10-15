@@ -114,6 +114,11 @@ h5 {font-size: 1.414em;}
 pre {
     width: 100%;
     overflow: auto;
+    background: rgba(var(--grey-800), 0.15);
+    color: var(--color-secondary);
+    box-shadow: var(--shadow);
+    padding: .5rem;
+    border-radius: .5rem;
 }
 
 blockquote {

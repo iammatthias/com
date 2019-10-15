@@ -15,7 +15,6 @@ const Form = styled.form`
     border: 2px var(--color-secondary) solid;
     background: rgba(var(--grey-800), 0.15);
     color: var(--color-secondary);
-    box-shadow: var(--shadow);
   }
   &::before {
     content: '';

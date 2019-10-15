@@ -95,11 +95,10 @@ select {
   background: none;
   border: none;
   appearance: none;
-  border-radius: 0;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow);
   resize: none;
-  &:invalid {
-    box-shadow: none;
-  }
+
   &:focus {
     outline: 3px solid #497ecb;
   }
@@ -114,7 +113,7 @@ a:focus {
   z-index: 300;
 }
 .button {
-  padding: 1rem;
+  padding: 1.25rem 2rem;
   cursor: pointer;
   transition: 0.2s;
   width: 100%;
@@ -123,6 +122,8 @@ a:focus {
   background: var(--color-secondary) !important;
   color: var(--color-base) !important;
   text-shadow: 0.125em 0.125em var(--color-secondary) !important;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow);
   &:hover {
     text-shadow: 0.125em 0.125em var(--color-secondary),
       0.25em 0.25em var(--color-tertiary),

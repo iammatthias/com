@@ -24,15 +24,13 @@ const Content = styled.div`
     padding: 2rem;
   }
   @media screen and (min-width: 52em) {
-    height: calc(100vh - 7rem);
+    height: calc(100vh);
 
     section {
       width: 76.4%;
     }
   }
   @media screen and (min-width: 64em) {
-    height: calc(100vh);
-
     section {
       width: 61.8%;
     }
