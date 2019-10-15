@@ -94,13 +94,6 @@ module.exports = {
         siteUrl: config.siteUrl,
       },
     },
-    {
-      resolve: 'gatsby-plugin-google-analytics',
-      options: {
-        trackingId: process.env.GOOGLE_ANALYTICS,
-        head: true,
-      },
-    },
 
     {
       resolve: `gatsby-plugin-segment-js`,
