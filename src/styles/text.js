@@ -64,6 +64,11 @@ input {
   hyphens: auto;
 }
 
+pre {
+    width: calc(100vw - 4rem);
+    overflow-x: scroll;
+}
+
 p .gatsby-resp-image-wrapper {
     max-width: 100% !important;
 }
@@ -106,7 +111,10 @@ h4 {font-size: 1.999em;}
 
 h5 {font-size: 1.414em;}
 
-
+pre {
+    width: 100%;
+    overflow: auto;
+}
 
 blockquote {
   font-family: 'Lora', serif;
@@ -120,30 +128,6 @@ blockquote {
   color: rgba(0, 0, 0, 0.68);
   padding: 0 0 0 50px;
 }
-
-pre {
-  border-radius: .5rem;
-  padding: .5rem;
-  background: rgba(0, 0, 0, 0.05);
-  font-size: 18px;
-  font-family: 'Source Code Pro', monospace;
-  
-  margin-bottom: 1rem;
-  white-space:pre-wrap
-}
-code {
-  background: rgba(0, 0, 0, 0.05);
-  padding: .5rem;
-}
-
-pre code {
-  overflow-x: scroll;
-  background: rgba(0, 0, 0, 0);
-  padding: 0;
-
-}
-
-
 
 mark,
 .highlighted {
