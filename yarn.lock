@@ -6008,13 +6008,6 @@ gatsby-page-utils@^0.0.25:
     micromatch "^3.1.10"
     slash "^3.0.0"
 
-gatsby-plugin-amplitude-analytics@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-amplitude-analytics/-/gatsby-plugin-amplitude-analytics-1.5.0.tgz#868a1a410187bcb92e4ca943569b45a4fbea9f78"
-  integrity sha512-dhE5MNs10O7LLai4ShafvaHTMcLBOYjJm3qQPrkNT6KyX7WXpWy3OBzLtArZmdAe6M2SZCYA6tcAj3ORM7hCeg==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-
 gatsby-plugin-canonical-urls@^2.1.4:
   version "2.1.11"
   resolved "https://registry.yarnpkg.com/gatsby-plugin-canonical-urls/-/gatsby-plugin-canonical-urls-2.1.11.tgz#338bec25523d948d70ecc1690bffa6b621742454"
@@ -6129,6 +6122,11 @@ gatsby-plugin-robots-txt@^1.5.0:
   dependencies:
     "@babel/runtime" "^7.5.1"
     generate-robotstxt "^7.1.0"
+
+gatsby-plugin-segment-js@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-segment-js/-/gatsby-plugin-segment-js-3.0.1.tgz#a31380515c97af2f7e7bf4be7aea071b6222f9a5"
+  integrity sha512-pDGx0kE36FDd2aQAwMr4mrY93CedlIuotprvdRQKBuBrWfvQ7DMCQxwpDYPWrwatVJhdf5idnl4Xct0I4WkKRg==
 
 gatsby-plugin-sharp@^2.2.29:
   version "2.2.29"

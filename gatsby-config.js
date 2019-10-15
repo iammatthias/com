@@ -1,6 +1,10 @@
 const config = require('./src/utils/siteConfig')
 let contentfulConfig
 
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 try {
   contentfulConfig = require('./.contentful')
 } catch (e) {
@@ -102,24 +106,17 @@ module.exports = {
       },
     },
     {
-      resolve: 'gatsby-plugin-amplitude-analytics',
+      resolve: `gatsby-plugin-segment-js`,
       options: {
-        // Specify the API key for your Amplitude Project (required)
-        apiKey: process.env.AMPLITUDE,
-        // Puts tracking script in the head instead of the body (optional)
-        head: false,
-        // Prevents loading Amplitude and logging events if visitors have "Do Not Track" enabled (optional)
-        respectDNT: true,
-        eventTypes: {
-          outboundLinkClick: 'OUTBOUND_LINK_CLICK',
-          pageView: 'PAGE_VIEW',
-        },
-        // Amplitude JS SDK configuration options (optional)
-        amplitudeConfig: {
-          saveEvents: true,
-          includeUtm: true,
-          includeReferrer: true,
-        },
+        // your segment write key for your production environment
+        // when process.env.NODE_ENV === 'production'
+        // required; non-empty string
+        prodKey: `SEGMENT_PRODUCTION`,
+
+        // boolean (defaults to false) on whether you want
+        // to include analytics.page() automatically
+        // if false, see below on how to track pageviews manually
+        trackPage: true,
       },
     },
     {
