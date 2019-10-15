@@ -8,7 +8,6 @@
     "@raae/gatsby-remark-oembed": "^0.1.1",
     "babel-plugin-styled-components": "^1.10.6",
     "contentful-import": "^7.5.1",
-    "dotenv": "^8.1.0",
     "fslightbox-react": "^1.4.2",
     "gatsby": "^2.13.67",
     "gatsby-image": "^2.2.10",

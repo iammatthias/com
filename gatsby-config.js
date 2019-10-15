@@ -1,10 +1,6 @@
 const config = require('./src/utils/siteConfig')
 let contentfulConfig
 
-require('dotenv').config({
-  path: `.env.${process.env.NODE_ENV}`,
-})
-
 try {
   contentfulConfig = require('./.contentful')
 } catch (e) {
@@ -105,17 +101,11 @@ module.exports = {
         head: true,
       },
     },
+
     {
       resolve: `gatsby-plugin-segment-js`,
       options: {
-        // your segment write key for your production environment
-        // when process.env.NODE_ENV === 'production'
-        // required; non-empty string
-        prodKey: `SEGMENT_PRODUCTION`,
-
-        // boolean (defaults to false) on whether you want
-        // to include analytics.page() automatically
-        // if false, see below on how to track pageviews manually
+        prodKey: process.env.SEGMENT,
         trackPage: true,
       },
     },
