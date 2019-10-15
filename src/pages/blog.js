@@ -23,14 +23,13 @@ const Content = styled.div`
     padding: 2rem;
   }
   @media screen and (min-width: 52em) {
-    height: calc(100vh - 7rem);
+    height: calc(100vh);
     margin: 1rem;
     section {
       width: 76.4%;
     }
   }
   @media screen and (min-width: 64em) {
-    height: calc(100vh);
     margin: 0;
     section {
       width: 61.8%;
@@ -55,7 +54,7 @@ const BlogPosts = styled.div`
     section {
       display: grid;
       grid-template-columns: 1fr;
-      width: 61.8%;
+      width: 76.4%;
     }
   }
   @media screen and (min-width: 64em) {

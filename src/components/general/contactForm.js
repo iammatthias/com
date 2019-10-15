@@ -13,11 +13,9 @@ const Form = styled.form`
     outline: none;
     padding: 1rem;
     border: 2px var(--color-secondary) solid;
-    background: var(--color-base);
+    background: rgba(var(--grey-800), 0.15);
     color: var(--color-secondary);
-    box-shadow: 0px 5px 15px var(--color-secondary-50),
-      0px 10px 25px var(--color-secondary-25),
-      0px 15px 30px var(--color-secondary-15);
+    box-shadow: var(--shadow);
   }
   &::before {
     content: '';

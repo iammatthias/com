@@ -6,7 +6,7 @@ const GlobalStyle = createGlobalStyle`
 
 /* Helper Classes */
 
-.linkAccentReset {
+.linkAccentReset { 
   text-shadow: none !important;
   transition: all 0.3s;
   font-weight: 400;

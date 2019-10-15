@@ -7,15 +7,15 @@ const StyledLink = styled(Link)`
   position: relative;
   text-decoration: none;
   border-radius: 0.5rem;
+  background: rgba(var(--grey-800), 0.15);
   div {
     border-radius: 0.5rem;
     object-fit: cover !important;
     height: 100% !important;
     @media screen and (min-width: 52em) {
-      height: 33vh !important;
+      height: 50vh !important;
     }
   }
-
   h5 {
     margin: 0;
     position: absolute;
@@ -42,9 +42,7 @@ const StyledLink = styled(Link)`
     );
   }
 
-  box-shadow: 0px 5px 15px var(--color-secondary-50),
-    0px 10px 25px var(--color-secondary-25),
-    0px 15px 30px var(--color-secondary-15);
+  box-shadow: var(--shadow);
 `
 
 const BlogPosts = styled.div`
@@ -71,7 +69,7 @@ const BlogPosts = styled.div`
     z-index: 3;
   }
   .copy {
-    padding: 2rem;
+    margin: 2rem;
   }
 `
 

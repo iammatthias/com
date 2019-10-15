@@ -53,7 +53,7 @@ const BlogContent = styled.div`
   }
   @media screen and (min-width: 52em) {
     section {
-      width: 61.8%;
+      width: 76.4%;
     }
   }
   @media screen and (min-width: 64em) {

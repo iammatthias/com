@@ -23,15 +23,12 @@ const Content = styled.div`
     padding: 2rem;
   }
   @media screen and (min-width: 52em) {
-    height: calc(100vh - 7rem);
-
+    height: calc(100vh);
     section {
       width: 76.4%;
     }
   }
   @media screen and (min-width: 64em) {
-    height: calc(100vh);
-
     section {
       width: 61.8%;
     }
@@ -57,7 +54,7 @@ const Galleries = styled.div`
       grid-template-columns: repeat(5, 1fr);
       grid-template-rows: repeate(1fr);
 
-      width: 61.8%;
+      width: 76.4%;
       a {
         &:nth-child(1n + 1) {
           grid-column-end: span 3;
