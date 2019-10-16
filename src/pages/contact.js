@@ -25,13 +25,13 @@ const Content = styled.div`
     width: 100%;
     padding: 2rem;
   }
-  @media screen and (min-width: 52em) {
+  @media screen and (min-width: 52rem) {
     height: calc(100vh);
     section {
       width: 76.4%;
     }
   }
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: 64rem) {
     section {
       width: 61.8%;
     }
@@ -46,12 +46,12 @@ const About = styled.div`
   section {
     padding: 2rem;
   }
-  @media screen and (min-width: 52em) {
+  @media screen and (min-width: 52rem) {
     section {
       width: 76.4%;
     }
   }
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: 64rem) {
     section {
       width: 61.8%;
     }
@@ -67,9 +67,8 @@ const Contact = ({ data, location }) => {
         <Content>
           <section id="top">
             <Hero image={contact.heroImage} />
+            <Arrow anchor={location.pathname + '#bottom'} />
           </section>
-
-          <Arrow anchor={location.pathname + '#bottom'} />
         </Content>
         <About>
           <section id="bottom">

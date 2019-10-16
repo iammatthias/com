@@ -23,13 +23,13 @@ const Content = styled.div`
   section {
     padding: 2rem;
   }
-  @media screen and (min-width: 52em) {
+  @media screen and (min-width: 52rem) {
     height: calc(100vh);
     section {
       width: 76.4%;
     }
   }
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: 64rem) {
     section {
       width: 61.8%;
     }
@@ -48,12 +48,12 @@ const Galleries = styled.div`
       margin: 2rem 0;
     }
   }
-  @media screen and (min-width: 52em) {
+  @media screen and (min-width: 52rem) {
     section {
       width: 76.4%;
     }
   }
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: 64rem) {
     section {
       width: 61.8%;
     }
@@ -80,9 +80,8 @@ const GalleryTemplate = ({ data, location }) => {
                 __html: gallery.body.childMarkdownRemark.html,
               }}
             />
+            <Arrow anchor={location.pathname + '#bottom'} />
           </section>
-
-          <Arrow anchor={location.pathname + '#bottom'} />
         </Content>
         <Galleries>
           <section id="bottom">

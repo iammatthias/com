@@ -22,13 +22,13 @@ const Content = styled.div`
   section {
     padding: 2rem;
   }
-  @media screen and (min-width: 52em) {
+  @media screen and (min-width: 52rem) {
     section {
       height: calc(100vh);
       width: 76.4%;
     }
   }
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: 64rem) {
     section {
       width: 61.8%;
     }
@@ -48,14 +48,14 @@ const BlogPosts = styled.div`
     grid-gap: 2rem;
     width: 100%;
   }
-  @media screen and (min-width: 52em) {
+  @media screen and (min-width: 52rem) {
     section {
       display: grid;
       grid-template-columns: 1fr;
       width: 76.4%;
     }
   }
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: 64rem) {
     section {
       width: 61.8%;
     }
@@ -77,9 +77,8 @@ const Blog = ({ data, location }) => {
                 __html: blog.body.childMarkdownRemark.html,
               }}
             />
+            <Arrow anchor={location.pathname + '#bottom'} />
           </section>
-
-          <Arrow anchor={location.pathname + '#bottom'} />
         </Content>
         <BlogPosts>
           <section id="bottom">

@@ -23,13 +23,13 @@ const Content = styled.div`
     margin: auto 0;
     padding: 2rem;
   }
-  @media screen and (min-width: 52em) {
+  @media screen and (min-width: 52rem) {
     height: calc(100vh);
     section {
       width: 76.4%;
     }
   }
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: 64rem) {
     section {
       width: 61.8%;
     }
@@ -49,7 +49,7 @@ const Galleries = styled.div`
     grid-gap: 2rem;
     width: 100%;
   }
-  @media screen and (min-width: 52em) {
+  @media screen and (min-width: 52rem) {
     section {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -84,7 +84,7 @@ const Galleries = styled.div`
       }
     }
   }
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: 64rem) {
     section {
       width: 61.8%;
     }
@@ -106,9 +106,8 @@ const Index = ({ data }) => {
                 __html: home.body.childMarkdownRemark.html,
               }}
             />
+            <Arrow anchor="#bottom" />
           </section>
-
-          <Arrow anchor="#bottom" />
         </Content>
         <Galleries>
           <section id="bottom">
