@@ -36,16 +36,16 @@ h1, h2, h3, h4, h5 {
 
 h1 {
   margin-top: 0;
-  font-size: 4em;
+  font-size: 3rem;
 }
 
-h2 {font-size: 3.157em;}
+h2 {font-size: 2.5rem;}
 
-h3 {font-size: 2.369em;}
+h3 {font-size: 20rem;}
 
-h4 {font-size: 1.777em;}
+h4 {font-size: 1.5rem;}
 
-h5 {font-size: 1.333em;}
+h5 {font-size: 1.25rem;}
 
 p,
 i,
@@ -62,6 +62,9 @@ input {
   word-wrap: break-word;
   word-break: break-word;
   hyphens: auto;
+}
+.small {
+  font-size: .75rem;
 }
 
 pre {
@@ -98,6 +101,7 @@ ul, li {
 
 
 @media screen and (min-width: 52em) {
+
 h1 {
   margin-top: 0;
   font-size: 5.653em;

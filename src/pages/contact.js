@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 const Content = styled.div`
   grid-area: Content;
   display: flex;
-  height: calc(100vh);
+  height: calc(100vh - 7rem);
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -26,6 +26,7 @@ const Content = styled.div`
     padding: 2rem;
   }
   @media screen and (min-width: 52em) {
+    height: calc(100vh);
     section {
       width: 76.4%;
     }
