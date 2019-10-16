@@ -17,7 +17,8 @@ const Logo = props => {
         src="/logos/logo_40pt.svg"
         className="logo"
         alt="I Am Matthias"
-        width="auto"
+        width="3.5em"
+        height="auto"
       />
     </A>
   )

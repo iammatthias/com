@@ -13,7 +13,9 @@ const arrow = keyframes`
 `
 
 const DownArrow = styled.div`
-  position: relative;
+  position: absolute;
+  bottom: 5rem;
+  left: calc(50% - 1rem);
   margin: 0 auto;
   width: 32px;
   height: 32px;
@@ -22,11 +24,7 @@ const DownArrow = styled.div`
   border-top: none;
   border-right: 2px var(--color-secondary) solid;
   border-bottom: 2px var(--color-secondary) solid;
-  @media screen and (min-width: 52em) {
-    position: absolute;
-    bottom: 5rem;
-    left: calc(50% - 1rem);
-  }
+
   &::before {
     content: '';
     width: 20px;

@@ -92,7 +92,6 @@ const Galleries = styled.div`
 
 const Index = ({ data }) => {
   const home = data.contentfulHome
-
   const contentfulGalleries = data.allContentfulExtendedGallery.edges
   return (
     <>

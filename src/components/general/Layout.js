@@ -8,6 +8,7 @@ import GlobalStyle from '../../styles/global'
 import ArticleStyle from '../../styles/article'
 import TextStyle from '../../styles/text'
 import Menu from '../general/Menu'
+import Footer from '../general/Footer'
 
 if (typeof window !== 'undefined') {
   // eslint-disable-next-line global-require
@@ -88,6 +89,7 @@ const Layout = ({ children }) => {
 
           <Menu />
           {children}
+          <Footer />
         </div>
       </ThemeProvider>
     </>
