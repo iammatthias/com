@@ -87,12 +87,15 @@ const ContentList = props => {
           </>
         ) : props.blogList ? (
           <BlogPosts>
-            <Img fluid={props.image.fluid} />
+            <Img className="hide" fluid={props.image.fluid} />
             <div className="copy">
               <h5>{props.title}</h5>
+
+ <p className="linkAccentReset">Published {props. publishDate }</p>
+
               <p className="linkAccentReset">{props.time} min to read</p>
               <p
-                className="linkAccentReset"
+                className="small linkAccentReset"
                 dangerouslySetInnerHTML={{
                   __html: props.excerpt.childMarkdownRemark.excerpt,
                 }}
