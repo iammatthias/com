@@ -13,7 +13,7 @@ const StyledLink = styled(Link)`
     object-fit: cover !important;
     height: 100% !important;
     @media screen and (min-width: 52em) {
-      height: 50vh !important;
+      height: 33vh !important;
     }
   }
   h5 {
@@ -91,7 +91,7 @@ const ContentList = props => {
             <div className="copy">
               <h5>{props.title}</h5>
 
- <p className="linkAccentReset">Published {props. publishDate }</p>
+              <p className="linkAccentReset">Published {props.publishDate}</p>
 
               <p className="linkAccentReset">{props.time} min to read</p>
               <p

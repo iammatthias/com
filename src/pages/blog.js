@@ -20,11 +20,12 @@ const Content = styled.div`
   align-items: center;
   justify-content: center;
   section {
+    margin: auto 0;
     padding: 2rem;
   }
   @media screen and (min-width: 52rem) {
+    height: calc(100vh);
     section {
-      height: calc(100vh);
       width: 76.4%;
     }
   }
