@@ -2,8 +2,7 @@
 
 # [IAMMATTHIAS v3](https://iammatthias.com)
 
-© All images and content Copyright 2019 Matthias Jordan
-All Rights Reserved
+© All images and content Copyright 2019 Matthias Jordan, All Rights Reserved
 
 #### If you would like to quickly bootstrap a Gatsby + Contentful + Netlify project, I recommend the fantastic [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn) starter.
 
@@ -14,7 +13,7 @@ All Rights Reserved
 ## Overview
 Codebase for [https://iammatthias.com](https://iammatthias.com)
 
-Portfolio site built using Gatsby + Contentful + Netlify. Features photography galleries + subgalleries, a blog, and Netlify forms. Features React-Images v1, performant masonry grid, sub galleries, and a blog. 
+Portfolio site built using Gatsby + Contentful + Netlify. Features photography galleries + subgalleries, a blog, and Netlify forms.
 
 ### Tooling
 - Netlify
@@ -23,9 +22,8 @@ Portfolio site built using Gatsby + Contentful + Netlify. Features photography g
 - Styled components
 - Page Transitions
 - Performant masonry using Rebass
-- Amplitude 
-- Google Analytics
-- Progressive Web app with custom app icon
+- Segment
+- PWA
 - Offline support
 - Dark mode
 
