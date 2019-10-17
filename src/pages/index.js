@@ -106,7 +106,7 @@ const Index = ({ data }) => {
                 __html: home.body.childMarkdownRemark.html,
               }}
             />
-            <Arrow anchor="#bottom" />
+            <Arrow anchor="/#bottom" />
           </section>
         </Content>
         <Galleries>
