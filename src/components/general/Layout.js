@@ -32,7 +32,7 @@ const variants = {
   },
 }
 
-const Layout = ({ children }) => {
+const Layout = ({ children, location }) => {
   return (
     <>
       <_Helmet />

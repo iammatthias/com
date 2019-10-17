@@ -58,6 +58,13 @@ const GlobalStyle = createGlobalStyle`
     display: block;
   }
 }
+
+.hide-inline {
+  display: none;
+  @media screen and (min-width: 52em) {
+    display: inline-block;
+  }
+}
 .changeDirection {
   flex-direction: column-reverse;
   @media screen and (min-width: 52em) {
