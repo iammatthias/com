@@ -1,78 +1,15 @@
 import React from 'react'
 import { graphql, Link } from 'gatsby'
-import styled from 'styled-components'
+import {
+  Wrapper,
+  Content,
+  BlogContent,
+  Buttons,
+} from '../components/general/Utils'
 
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
 import Hero from './../components/general/Hero'
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  grid-template-areas: 'Content';
-  max-width: 100%;
-`
-const Content = styled.div`
-  grid-area: Content;
-  display: flex;
-  height: calc(100vh - 7rem);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    padding: 2rem;
-  }
-  @media screen and (min-width: 52rem) {
-    height: calc(100vh);
-    section {
-      width: 76.4%;
-    }
-  }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
-    }
-  }
-`
-const BlogContent = styled.div`
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    width: 100%;
-    padding: 2rem;
-    article {
-      margin: 2rem 0;
-    }
-  }
-  @media screen and (min-width: 52rem) {
-    section {
-      width: 76.4%;
-    }
-  }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
-    }
-  }
-`
-
-const Buttons = styled.div`
-  margin-bottom: 5rem;
-  .button {
-    display: block;
-    margin: 0 0 1rem;
-  }
-  @media screen and (min-width: 52rem) {
-    .button {
-      display: inline;
-      margin: 0 1rem 0 0;
-    }
-  }
-`
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost

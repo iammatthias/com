@@ -1,67 +1,9 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import styled from 'styled-components'
+import { Wrapper, Content, BlogPosts } from './../components/general/Utils'
 import List from './../components/general/contentList'
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  grid-template-areas: 'Content';
-  max-width: 100%;
-`
-const Content = styled.div`
-  grid-area: Content;
-  display: flex;
-  height: calc(100vh - 7rem);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    margin: auto 0;
-    padding: 2rem;
-  }
-  @media screen and (min-width: 52rem) {
-    height: calc(100vh);
-    section {
-      width: 76.4%;
-    }
-  }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
-    }
-  }
-`
-const BlogPosts = styled.div`
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    padding: 2rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    grid-gap: 2rem;
-    width: 100%;
-  }
-  @media screen and (min-width: 52rem) {
-    section {
-      display: grid;
-      grid-template-columns: 1fr;
-      width: 76.4%;
-    }
-  }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
-    }
-  }
-`
 
 const Blog = ({ data, location }) => {
   const posts = data.allContentfulPost.edges

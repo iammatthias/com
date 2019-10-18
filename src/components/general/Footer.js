@@ -1,41 +1,7 @@
 import React from 'react'
 import { Link } from 'gatsby'
-import styled from 'styled-components'
+import { Wrapper, Content } from '..//general/Utils'
 import { FiTwitter, FiInstagram } from 'react-icons/fi'
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  grid-template-areas: 'Content';
-  max-width: 100%;
-`
-const Content = styled.div`
-  grid-area: Content;
-  display: flex;
-  height: calc(100vh);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    padding: 2rem;
-    p {
-      svg {
-        vertical-align: middle;
-      }
-    }
-  }
-  @media screen and (min-width: 52em) {
-    section {
-      width: 76.4%;
-    }
-  }
-  @media screen and (min-width: 64em) {
-    section {
-      width: 61.8%;
-    }
-  }
-`
 
 const Footer = props => {
   return (

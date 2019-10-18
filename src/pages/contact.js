@@ -1,62 +1,11 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import styled from 'styled-components'
+import { Wrapper, Content, About } from './../components/general/Utils'
 
 import Hero from './../components/general/Hero'
 import Form from './../components/general/contactForm'
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  grid-template-areas: 'Content';
-  max-width: 100%;
-`
-const Content = styled.div`
-  grid-area: Content;
-  display: flex;
-  height: calc(100vh - 7rem);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    width: 100%;
-    padding: 2rem;
-  }
-  @media screen and (min-width: 52rem) {
-    height: calc(100vh);
-    section {
-      width: 76.4%;
-    }
-  }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
-    }
-  }
-`
-const About = styled.div`
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    padding: 2rem;
-  }
-  @media screen and (min-width: 52rem) {
-    section {
-      width: 76.4%;
-    }
-  }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
-    }
-  }
-`
 
 const Contact = ({ data, location }) => {
   const contact = data.contentfulAbout
