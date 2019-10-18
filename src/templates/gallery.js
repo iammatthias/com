@@ -40,6 +40,7 @@ const GalleryTemplate = ({ data, location }) => {
                     images={subGallery.images}
                     title={subGallery.title}
                     itemsPerRow={[2, 2, 3, 5]}
+                    parent={gallery.title}
                   />
                 )}
               </div>

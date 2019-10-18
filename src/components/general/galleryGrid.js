@@ -7,9 +7,16 @@ import styled from 'styled-components'
 
 const GalleryContent = styled.div``
 
-const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
+const Gallery = ({
+  title,
+  parent,
+  images,
+  itemsPerRow: itemsPerRowByBreakpoints,
+}) => {
   const aspectRatios = images.map(image => image.fluid.aspectRatio)
   const lightboxImages = images.map(image => image.fluid.src)
+  const eventImageTitle = images.map(image => image.title)
+  const eventImageSrc = images.map(image => image.thumbnail.src)
   const rowAspectRatioSumsByBreakpoints = itemsPerRowByBreakpoints.map(
     itemsPerRow =>
       chunk(aspectRatios, itemsPerRow).map(rowAspectRatios =>
@@ -23,6 +30,12 @@ const Gallery = ({ title, images, itemsPerRow: itemsPerRowByBreakpoints }) => {
   const openLightbox = imageIndex => {
     setImageIndex(imageIndex + 1)
     setToggler(!toggler)
+
+    window.analytics.track('Image Viewed', {
+      image: eventImageTitle[imageIndex],
+      src: eventImageSrc[imageIndex],
+      gallery: parent + ' — ' + title,
+    })
   }
 
   return (
