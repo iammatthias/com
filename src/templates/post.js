@@ -12,7 +12,7 @@ import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
 import Hero from './../components/general/Hero'
 
-const zoom = mediumZoom('figure div img')
+const zoom = mediumZoom('figure div img', { margin: 64 })
 
 zoom.toggle()
 
