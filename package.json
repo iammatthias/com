@@ -42,6 +42,7 @@
     "inquirer": "^6.5.1",
     "intersection-observer": "^0.7.0",
     "lodash": "^4.17.15",
+    "medium-zoom": "^1.0.4",
     "path": "^0.12.7",
     "prismjs": "^1.17.1",
     "react": "^16.9.0",

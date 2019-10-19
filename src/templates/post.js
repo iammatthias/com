@@ -1,5 +1,6 @@
 import React from 'react'
 import { graphql, Link } from 'gatsby'
+import mediumZoom from 'medium-zoom'
 import {
   Wrapper,
   Content,
@@ -10,6 +11,10 @@ import {
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
 import Hero from './../components/general/Hero'
+
+const zoom = mediumZoom('figure div img')
+
+zoom.toggle()
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
@@ -40,6 +45,8 @@ const BlogPost = ({ data, pageContext, location }) => {
           <section id="bottom">
             <Hero image={post.heroImage} />
             <article
+              className="article"
+              id="zoom-container"
               dangerouslySetInnerHTML={{
                 __html: post.body.childMarkdownRemark.html,
               }}

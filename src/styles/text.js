@@ -155,7 +155,7 @@ pre {
 }
 }
 
-article {
+.article {
     display: grid;
     grid-template-columns: 1.2rem minmax(1.2rem, 1fr) minmax(auto, 75ch) minmax(1.2rem, 1fr) 1.2rem;
     div,
