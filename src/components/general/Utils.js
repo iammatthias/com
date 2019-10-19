@@ -10,18 +10,17 @@ export const Wrapper = styled.div`
 
 export const Content = styled.div`
   grid-area: Content;
-
   height: calc(100vh - 7rem);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   section {
+    width: 100%;
     margin: auto 0;
     padding: 2rem;
   }
   @media screen and (min-width: 52rem) {
-    height: calc(100vh);
     section {
       width: 76.4%;
     }
@@ -167,26 +166,39 @@ export const BlogContent = styled.div`
   align-items: center;
   justify-content: center;
   section {
+    display: grid;
     width: 100%;
     padding: 2rem;
-    article {
-      margin: 5rem 0;
-    }
   }
   @media screen and (min-width: 52rem) {
     section {
-      width: 76.4%;
+      grid-template-columns:
+        1.2rem minmax(1.2rem, 1fr) minmax(auto, 1fr) minmax(
+          auto,
+          calc(76.4vw - 2rem)
+        )
+        minmax(auto, 1fr)
+        minmax(1.2rem, 1fr)
+        1.2rem;
     }
   }
   @media screen and (min-width: 64rem) {
     section {
-      width: 61.8%;
+      grid-template-columns:
+        1.2rem minmax(1.2rem, 1fr) minmax(auto, 1fr) minmax(
+          auto,
+          calc(61.8vw - 2rem)
+        )
+        minmax(auto, 1fr)
+        minmax(1.2rem, 1fr)
+        1.2rem;
     }
   }
 `
 
 export const Buttons = styled.div`
   margin: 3rem auto 0;
+  text-align: center;
   .button {
     display: block;
     margin: 0 0 1rem;

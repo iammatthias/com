@@ -24,11 +24,11 @@ const DownArrow = styled.div`
   border-top: none;
   border-right: 2px var(--color-secondary) solid;
   border-bottom: 2px var(--color-secondary) solid;
-  @media screen and (max-width: 25rem) {
+  @media screen and (max-width: 23rem) {
     display: none;
   }
   @media screen and (min-width: 52rem) {
-    bottom: 5rem;
+    bottom: 3rem;
   }
 
   &::before {
