@@ -47,6 +47,7 @@ module.exports = {
               linkImagesToOriginal: false,
             },
           },
+
           {
             resolve: 'gatsby-remark-images-grid',
           },
@@ -101,6 +102,7 @@ module.exports = {
       resolve: `gatsby-plugin-segment-js`,
       options: {
         prodKey: process.env.SEGMENT,
+        devKey: 'h9OTk5FWbRbQadJLqGIAVMYfkIbmNEBE',
         trackPage: true,
       },
     },

@@ -1,11 +1,9 @@
 import { createGlobalStyle } from 'styled-components'
 
 const TextStyle = createGlobalStyle`
-/* Site Specific Globals */
 html,
 body {
   background: var(--color-base); 
-
   color: var(--color-secondary);
   margin: 0;
   width: 100%;
@@ -61,7 +59,7 @@ input {
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
-  hyphens: auto;
+  hyphens: none;
 }
 .small {
   font-size: .75rem;
@@ -99,6 +97,32 @@ ul, li {
   list-style: circle outside;
 }
 
+blockquote {
+  font-family: 'Lora', serif;
+  font-size: 30px;
+  font-style: italic;
+  letter-spacing: -0.36px;
+  line-height: 44.4px;
+  overflow-wrap: break-word;
+  color: rgba(0, 0, 0, 0.68);
+  margin: 2rem 0 ;
+  padding: 0 0 0 1rem;
+}
+
+button, .button {
+  font-family: 'Lora', sans-serif;
+  font-weight: bold;
+}
+
+mark,
+.highlighted {
+  background: var(--color-highlight);
+}
+
+&::selection {
+  background-color: var(--color-highlight);
+}
+
 
 @media screen and (min-width: 52em) {
 
@@ -115,6 +139,11 @@ h4 {font-size: 1.999em;}
 
 h5 {font-size: 1.414em;}
 
+blockquote {
+  margin: 2rem 0 ;
+  padding: 0 0 0 2rem;
+}
+
 pre {
     width: 100%;
     overflow: auto;
@@ -124,44 +153,64 @@ pre {
     padding: .5rem;
     border-radius: .5rem;
 }
-
-blockquote {
-  font-family: 'Lora', serif;
-  font-size: 30px;
-  font-style: italic;
-  letter-spacing: -0.36px;
-  line-height: 44.4px;
-  overflow-wrap: break-word;
-  margin: 55px 0 33px 0;
-  /* text-align: center; */
-  color: rgba(0, 0, 0, 0.68);
-  padding: 0 0 0 50px;
 }
 
-mark,
-.highlighted {
-  background: var(--color-highlight);
-}
+article {
+    display: grid;
+    grid-template-columns: 1.2rem minmax(1.2rem, 1fr) minmax(auto, 75ch) minmax(1.2rem, 1fr) 1.2rem;
+    div,
+    p,
+    i,
+    a,
+    ul,
+    li,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    blockquote, .buttons {
+        grid-column: 1 / 6;
+        
+    }
+    @media screen and (min-width: 52em) {
+      div,
+    p,
+    i,
+    a,
+    ul,
+    li,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    blockquote, .buttons {
+        grid-column: 3;
+        
+    }
+    }
 
-.first-letter {
-  overflow-wrap: break-word;
-  font-family: 'Lora', serif;
-  font-size: 60px;
-  line-height: 60px;
-  display: block;
-  position: relative;
-  float: left;
-  margin: 0px 7px 0 -5px;
-}
+    blockquote {
+        border-left: 4px solid var(--color-secondary);
+    }
 
-.subtitle {
-  font-family: 'Montserrat', sans-serif;
-  color: var(--color-secondary);
-  margin: 0 0 1.5em 0;
-}
-
-&::selection {
-  background-color: var(--color-highlight);
+    figure {
+        grid-column: 1 / 6;
+        width: 100%;
+        max-width: 150ch;
+        justify-self: center;
+        margin: 1.5rem 0;
+        figcaption {
+            text-align: center;
+            padding: 1rem;
+            font-style: italic;
+            font-family: 'Playfair Display';
+        }
+    }
+    .gatsbyRemarkImagesGrid-grid {
+        margin: 0 auto;
+    }
 }
 
 `

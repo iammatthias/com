@@ -30,12 +30,6 @@ const Gallery = ({
   const openLightbox = imageIndex => {
     setImageIndex(imageIndex + 1)
     setToggler(!toggler)
-
-    window.analytics.track('Image Viewed', {
-      image: eventImageTitle[imageIndex],
-      src: eventImageSrc[imageIndex],
-      gallery: parent + ' — ' + title,
-    })
   }
 
   return (
@@ -66,6 +60,16 @@ const Gallery = ({
         toggler={toggler}
         sources={lightboxImages}
         slide={imageIndex}
+        onClick={() => {
+          console.log(imageIndex)
+        }}
+        onOpen={() => {
+          window.analytics.track('Image Viewed', {
+            image: eventImageTitle[imageIndex],
+            src: eventImageSrc[imageIndex],
+            gallery: parent + ' — ' + title,
+          })
+        }}
       />
     </GalleryContent>
   )

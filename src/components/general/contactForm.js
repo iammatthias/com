@@ -67,7 +67,7 @@ const Submit = styled.input`
   cursor: pointer;
   transition: 0.2s;
   width: 100%;
-  font-size: 1.25em !important;
+  font-weight: bold;
   background: var(--color-secondary) !important;
   color: var(--color-base) !important;
   text-shadow: 0.125em 0.125em var(--color-secondary) !important;
@@ -82,22 +82,38 @@ const Modal = styled.div`
   background: white;
   padding: 2em;
   border-radius: 2px;
-  width: 61.8%;
+  width: 100vw;
+  height: 100vh;
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
   z-index: 99;
   display: flex;
-  flex-flow: column;
+  flex-direction: column;
   align-items: center;
-  text-align: center;
+  justify-content: center;
   transition: 0.2s all;
   opacity: ${props => (props.visible ? '1' : '0')};
   visibility: ${props => (props.visible ? 'visible' : 'hidden')};
-  p {
-    line-height: 1.6;
-    margin: 0 0 2em 0;
+  section {
+    margin: auto 0;
+    padding: 2rem;
+    p {
+      line-height: 1.6;
+      margin: 0 0 2em 0;
+      text-align: center;
+    }
+  }
+  @media screen and (min-width: 52rem) {
+    height: calc(100vh);
+    section {
+      width: 76.4%;
+    }
+  }
+  @media screen and (min-width: 64rem) {
+    section {
+      width: 61.8%;
+    }
   }
 `
 
@@ -193,16 +209,29 @@ class ContactForm extends React.Component {
           onChange={this.handleInputChange}
           required
         />
-        <Submit className="button" name="submit" type="submit" value="Send" />
+        <Submit
+          className="button"
+          name="submit"
+          type="submit"
+          value="Send"
+          onClick={() => {
+            window.analytics.identify('Contact Form Submitted', {
+              email: this.state.email,
+              name: this.state.name,
+            })
+          }}
+        />
 
         <Modal visible={this.state.showModal}>
-          <p>
-            Thank you for reaching out. I will get back to you as soon as
-            possible.
-          </p>
-          <button className="button" color="" onClick={this.closeModal}>
-            Okay
-          </button>
+          <section>
+            <p>
+              Thank you for reaching out. I will get back to you as soon as
+              possible.
+            </p>
+            <button className="button" color="" onClick={this.closeModal}>
+              Okay
+            </button>
+          </section>
         </Modal>
       </Form>
     )
