@@ -1,8 +1,8 @@
 import React from 'react'
 import { graphql, Link } from 'gatsby'
+import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 
 import {
-  Zoom,
   Wrapper,
   Content,
   BlogContent,
@@ -15,6 +15,7 @@ import Hero from './../components/general/Hero'
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
+
   const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/blog/${post.slug}/`
   )}`
@@ -40,17 +41,11 @@ const BlogPost = ({ data, pageContext, location }) => {
           </section>
         </Content>
         <BlogContent>
-          <section id="bottom">
+          <section className="article" id="bottom">
             <Hero image={post.heroImage} />
-            <Zoom>
-              <article
-                className="article"
-                id="zoom-container"
-                dangerouslySetInnerHTML={{
-                  __html: post.body.childMarkdownRemark.html,
-                }}
-              />
-            </Zoom>
+
+            <MDXRenderer>{post.body.childMdx.body}</MDXRenderer>
+
             <Buttons>
               {previous && (
                 <Link className="button" to={`/blog/${previous.slug}/`}>
@@ -102,7 +97,12 @@ export const query = graphql`
           src
         }
       }
+
       body {
+        childMdx {
+          body
+          id
+        }
         childMarkdownRemark {
           html
           excerpt(pruneLength: 320)

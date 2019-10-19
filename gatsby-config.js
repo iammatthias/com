@@ -35,7 +35,40 @@ module.exports = {
     'gatsby-plugin-styled-components',
     'gatsby-plugin-sharp',
     'gatsby-plugin-catch-links',
+    {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        gatsbyRemarkPlugins: [
+          {
+            resolve: 'gatsby-remark-images',
+            options: {
+              maxWidth: 960,
+              linkImagesToOriginal: false,
+            },
+          },
+          {
+            resolve: 'gatsby-remark-images-grid',
+          },
 
+          {
+            resolve: 'gatsby-remark-prismjs',
+            options: {
+              classPrefix: 'language-',
+              showLineNumbers: true,
+            },
+          },
+          {
+            resolve: '@raae/gatsby-remark-oembed',
+            options: {
+              providers: {
+                exclude: ['Reddit', 'Flickr', 'Instagram', 'Twitter'],
+              },
+            },
+          },
+          'gatsby-remark-responsive-iframe',
+        ],
+      },
+    },
     {
       resolve: 'gatsby-transformer-remark',
       options: {
