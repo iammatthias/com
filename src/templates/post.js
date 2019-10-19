@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { graphql, Link } from 'gatsby'
 import mediumZoom from 'medium-zoom'
 import {
@@ -12,9 +12,10 @@ import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
 import Hero from './../components/general/Hero'
 
-const zoom = mediumZoom('figure div img', { margin: 64 })
-
-zoom.toggle()
+export function Zoom({ children }) {
+  useEffect(() => mediumZoom('img', { margin: 64 }))
+  return <>{children}</>
+}
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
@@ -23,6 +24,7 @@ const BlogPost = ({ data, pageContext, location }) => {
   )}`
   const previous = pageContext.prev
   const next = pageContext.next
+
   return (
     <>
       <SEO
@@ -44,13 +46,15 @@ const BlogPost = ({ data, pageContext, location }) => {
         <BlogContent>
           <section id="bottom">
             <Hero image={post.heroImage} />
-            <article
-              className="article"
-              id="zoom-container"
-              dangerouslySetInnerHTML={{
-                __html: post.body.childMarkdownRemark.html,
-              }}
-            />
+            <Zoom>
+              <article
+                className="article"
+                id="zoom-container"
+                dangerouslySetInnerHTML={{
+                  __html: post.body.childMarkdownRemark.html,
+                }}
+              />
+            </Zoom>
             <Buttons>
               {previous && (
                 <Link className="button" to={`/blog/${previous.slug}/`}>
