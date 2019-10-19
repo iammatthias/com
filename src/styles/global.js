@@ -109,12 +109,16 @@ a:focus {
 }
 
 .button, button {
-  padding: 1.25rem 2rem;
+  padding: 1.382rem 1.618rem;
   cursor: pointer;
   transition: 0.2s;
   width: 100%;
   font-size: 1.25em !important;
   text-align: center;
+  white-space: nowrap;
+  @media screen and (min-width: 52em) {
+    line-height: 6rem;
+  }
   background: var(--color-secondary) !important;
   color: var(--color-base) !important;
   text-shadow: 0.125em 0.125em var(--color-secondary) !important;
@@ -128,6 +132,7 @@ a:focus {
   &:only-of-type {
     margin-right: 0;
   } 
+  
 }
 
 

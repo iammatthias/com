@@ -1,4 +1,11 @@
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
+import mediumZoom from 'medium-zoom'
+
+export function Zoom({ children }) {
+  useEffect(() => mediumZoom('img', { margin: 64 }))
+  return <>{children}</>
+}
 
 export const Wrapper = styled.div`
   display: grid;
@@ -170,7 +177,7 @@ export const BlogContent = styled.div`
     width: 100%;
     padding: 2rem;
     article {
-      margin: 5rem 0;
+      margin: 5rem 0 3rem;
     }
   }
   @media screen and (min-width: 52rem) {
@@ -187,6 +194,7 @@ export const BlogContent = styled.div`
 
 export const Buttons = styled.div`
   margin: 3rem auto 0;
+  text-align: center;
   .button {
     display: block;
     margin: 0 0 1rem;

@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { graphql, Link } from 'gatsby'
-import mediumZoom from 'medium-zoom'
+
 import {
+  Zoom,
   Wrapper,
   Content,
   BlogContent,
@@ -11,11 +12,6 @@ import {
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
 import Hero from './../components/general/Hero'
-
-export function Zoom({ children }) {
-  useEffect(() => mediumZoom('img', { margin: 64 }))
-  return <>{children}</>
-}
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
