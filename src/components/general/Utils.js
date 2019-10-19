@@ -10,8 +10,9 @@ export const Wrapper = styled.div`
 
 export const Content = styled.div`
   grid-area: Content;
-  display: flex;
+
   height: calc(100vh - 7rem);
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -146,9 +147,6 @@ export const ExtendedGallery = styled.div`
   section {
     width: 100%;
     padding: 2rem;
-    article {
-      margin: 2rem 0;
-    }
   }
   @media screen and (min-width: 52rem) {
     section {
@@ -172,7 +170,7 @@ export const BlogContent = styled.div`
     width: 100%;
     padding: 2rem;
     article {
-      margin: 2rem 0;
+      margin: 5rem 0;
     }
   }
   @media screen and (min-width: 52rem) {
@@ -188,7 +186,7 @@ export const BlogContent = styled.div`
 `
 
 export const Buttons = styled.div`
-  margin-bottom: 5rem;
+  margin: 3rem auto 0;
   .button {
     display: block;
     margin: 0 0 1rem;
