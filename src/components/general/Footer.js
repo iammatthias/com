@@ -62,6 +62,7 @@ const Footer = props => {
               </picture>
             </a>
           </p>
+          <p className="small">© 2019 Matthias Jordan. All rights reserved.</p>
           <p className="small">Made with ♡ in California, USA</p>
         </section>
       </Content>
