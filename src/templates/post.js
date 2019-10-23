@@ -27,7 +27,7 @@ const BlogPost = ({ data, pageContext, location }) => {
   useEffect(() => {
     ;(async function() {
       try {
-        mediumZoom('figure div img', { margin: 64 })
+        mediumZoom('figure img', { margin: 64 })
       } catch (e) {
         console.error(e)
       }

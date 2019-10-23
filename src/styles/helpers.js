@@ -25,14 +25,16 @@ const Helpers = createGlobalStyle`
   }
 }
 
+
+
 .article {
 
   p, blockquote, figure { 
     margin: 2rem 0 0;
   }
   blockquote p {
-      margin: 0;
-    }
+    margin: 0;
+  }
   
   article,
   div,
@@ -75,17 +77,34 @@ const Helpers = createGlobalStyle`
   img {margin: 0}
 
   figure {
-    grid-column: 2 / 6;
+    grid-column: 4;
     width: 100%;
     justify-self: center;
 
+    div {
+      display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
+    }
+
     figcaption {
-      text-align: right;
+      grid-area: caption;
+     
+      text-align: center;
       padding: 1rem 1rem 0;
       font-style: italic;
       font-family: 'Playfair Display';
     }
   }
+  .figure-sm {
+  grid-column: 3 / 6 !important;
+}
+
+.figure-md {
+   grid-column: 2 / 7 !important;
+}
+.figure-lg {
+  grid-column: 1 / 8 !important;
+}
 }
 
 `

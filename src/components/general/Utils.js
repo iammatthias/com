@@ -162,13 +162,13 @@ export const ContentBottom = styled.div`
     @media screen and (min-width: 64rem) {
       section {
         grid-template-columns:
-          1.2rem minmax(1.2rem, 1fr) minmax(auto, 1fr) minmax(
+          2rem minmax(2rem, 2fr) minmax(4rem, 2fr) minmax(
             auto,
             calc(61.8vw - 2rem)
           )
-          minmax(auto, 1fr)
-          minmax(1.2rem, 1fr)
-          1.2rem;
+          minmax(4rem, 2fr)
+          minmax(2rem, 2fr)
+          2rem;
       }
     }
   }
