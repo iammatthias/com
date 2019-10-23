@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { graphql, Link } from 'gatsby'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
+
+import mediumZoom from 'medium-zoom'
 
 import {
   Wrapper,
@@ -12,6 +14,11 @@ import {
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
 import Hero from './../components/general/Hero'
+
+export function Zoom({ children }) {
+  useEffect(() => mediumZoom('figure div img', { margin: 64 }))
+  return <>{children}</>
+}
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
@@ -41,27 +48,29 @@ const BlogPost = ({ data, pageContext, location }) => {
           </section>
         </Content>
         <BlogContent>
-          <section className="article" id="bottom">
-            <Hero image={post.heroImage} />
+          <Zoom>
+            <section className="article" id="bottom">
+              <Hero image={post.heroImage} />
 
-            <MDXRenderer>{post.body.childMdx.body}</MDXRenderer>
+              <MDXRenderer>{post.body.childMdx.body}</MDXRenderer>
 
-            <Buttons>
-              {previous && (
-                <Link className="button" to={`/blog/${previous.slug}/`}>
-                  &#8592; Prev Post
-                </Link>
-              )}
-              {next && (
-                <Link className="button" to={`/blog/${next.slug}/`}>
-                  Next Post &#8594;
-                </Link>
-              )}
-              <a className="button" color="" href={comments}>
-                Discuss on Twitter
-              </a>
-            </Buttons>
-          </section>
+              <Buttons>
+                {previous && (
+                  <Link className="button" to={`/blog/${previous.slug}/`}>
+                    &#8592; Prev Post
+                  </Link>
+                )}
+                {next && (
+                  <Link className="button" to={`/blog/${next.slug}/`}>
+                    Next Post &#8594;
+                  </Link>
+                )}
+                <a className="button" color="" href={comments}>
+                  Discuss on Twitter
+                </a>
+              </Buttons>
+            </section>
+          </Zoom>
         </BlogContent>
       </Wrapper>
     </>
