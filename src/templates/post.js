@@ -2,6 +2,8 @@ import React from 'react'
 import { graphql, Link } from 'gatsby'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 
+import mediumZoom from 'medium-zoom'
+
 import {
   Wrapper,
   Content,
@@ -12,6 +14,8 @@ import {
 import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
 import Hero from './../components/general/Hero'
+
+mediumZoom('figure div img ')
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
