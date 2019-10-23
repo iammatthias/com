@@ -1,6 +1,6 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import { Wrapper, Content, Galleries } from '../components/general/Utils'
+import { Wrapper, Content, ContentBottom } from '../components/general/Utils'
 import List from '../components/general/contentList'
 import SEO from '../components/general/SEO'
 import Arrow from '../components/general/Arrow'
@@ -23,7 +23,7 @@ const Index = ({ data }) => {
             <Arrow anchor="/#bottom" />
           </section>
         </Content>
-        <Galleries>
+        <ContentBottom className="galleries">
           <section id="bottom">
             {contentfulGalleries.map(({ node: gallery }) => (
               <List
@@ -37,7 +37,7 @@ const Index = ({ data }) => {
               />
             ))}
           </section>
-        </Galleries>
+        </ContentBottom>
       </Wrapper>
     </>
   )

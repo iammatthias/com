@@ -31,8 +31,7 @@ export const Content = styled.div`
     }
   }
 `
-
-export const Galleries = styled.div`
+export const ContentBottom = styled.div`
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -40,158 +39,137 @@ export const Galleries = styled.div`
   justify-content: center;
 
   section {
-    padding: 2rem;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 2rem;
     width: 100%;
+    padding: 2rem;
   }
   @media screen and (min-width: 52rem) {
     section {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeate(1fr);
-
       width: 76.4%;
-      a {
-        &:nth-child(1n + 1) {
-          grid-column-end: span 3;
-        }
-        &:nth-child(1n + 2) {
-          grid-column-end: span 2;
-        }
-        &:nth-child(1n + 3) {
-          grid-column-end: span 2;
-        }
-        &:nth-child(1n + 4) {
-          grid-column-end: span 3;
-        }
-        &:nth-child(1n + 5) {
-          grid-column-end: span 3;
-        }
-        &:nth-child(1n + 6) {
-          grid-column-end: span 2;
-        }
-        &:nth-child(1n + 7) {
-          grid-column-end: span 2;
-        }
-        &:nth-child(1n + 8) {
-          grid-column-end: span 3;
+    }
+  }
+  @media screen and (min-width: 64rem) {
+    section {
+      width: 61.8%;
+    }
+  }
+
+  &.galleries {
+    section {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 2rem;
+      width: 100%;
+    }
+    @media screen and (min-width: 52rem) {
+      section {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeate(1fr);
+        width: 76.4%;
+        a {
+          &:nth-child(1n + 1) {
+            grid-column-end: span 3;
+          }
+          &:nth-child(1n + 2) {
+            grid-column-end: span 2;
+          }
+          &:nth-child(1n + 3) {
+            grid-column-end: span 2;
+          }
+          &:nth-child(1n + 4) {
+            grid-column-end: span 3;
+          }
+          &:nth-child(1n + 5) {
+            grid-column-end: span 3;
+          }
+          &:nth-child(1n + 6) {
+            grid-column-end: span 2;
+          }
+          &:nth-child(1n + 7) {
+            grid-column-end: span 2;
+          }
+          &:nth-child(1n + 8) {
+            grid-column-end: span 3;
+          }
         }
       }
     }
-  }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
+    @media screen and (min-width: 64rem) {
+      section {
+        width: 61.8%;
+      }
     }
   }
-`
 
-export const About = styled.div`
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    padding: 2rem;
-  }
-  @media screen and (min-width: 52rem) {
+  &.about {
     section {
-      width: 76.4%;
+      padding: 2rem;
+    }
+    @media screen and (min-width: 52rem) {
+      section {
+        width: 76.4%;
+      }
+    }
+    @media screen and (min-width: 64rem) {
+      section {
+        width: 61.8%;
+      }
     }
   }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
-    }
-  }
-`
 
-export const BlogPosts = styled.div`
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    padding: 2rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    grid-gap: 2rem;
-    width: 100%;
-  }
-  @media screen and (min-width: 52rem) {
+  &.blogposts {
     section {
+      padding: 2rem;
       display: grid;
       grid-template-columns: 1fr;
-      width: 76.4%;
+      grid-template-rows: 1fr;
+      grid-gap: 2rem;
+      width: 100%;
+    }
+    @media screen and (min-width: 52rem) {
+      section {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 76.4%;
+      }
+    }
+    @media screen and (min-width: 64rem) {
+      section {
+        width: 61.8%;
+      }
     }
   }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
-    }
-  }
-`
 
-export const ExtendedGallery = styled.div`
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    width: 100%;
-    padding: 2rem;
-  }
-  @media screen and (min-width: 52rem) {
+  &.blogpost {
     section {
-      width: 76.4%;
+      display: grid;
+      width: 100%;
+      padding: 2rem;
     }
-  }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
+    @media screen and (min-width: 52rem) {
+      section {
+        grid-template-columns:
+          1.2rem minmax(1.2rem, 1fr) minmax(auto, 1fr) minmax(
+            auto,
+            calc(76.4vw - 2rem)
+          )
+          minmax(auto, 1fr)
+          minmax(1.2rem, 1fr)
+          1.2rem;
+      }
     }
-  }
-`
-
-export const BlogContent = styled.div`
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  section {
-    display: grid;
-    width: 100%;
-    padding: 2rem;
-  }
-  @media screen and (min-width: 52rem) {
-    section {
-      grid-template-columns:
-        1.2rem minmax(1.2rem, 1fr) minmax(auto, 1fr) minmax(
-          auto,
-          calc(76.4vw - 2rem)
-        )
-        minmax(auto, 1fr)
-        minmax(1.2rem, 1fr)
-        1.2rem;
-    }
-  }
-  @media screen and (min-width: 64rem) {
-    section {
-      grid-template-columns:
-        1.2rem minmax(1.2rem, 1fr) minmax(auto, 1fr) minmax(
-          auto,
-          calc(61.8vw - 2rem)
-        )
-        minmax(auto, 1fr)
-        minmax(1.2rem, 1fr)
-        1.2rem;
+    @media screen and (min-width: 64rem) {
+      section {
+        grid-template-columns:
+          1.2rem minmax(1.2rem, 1fr) minmax(auto, 1fr) minmax(
+            auto,
+            calc(61.8vw - 2rem)
+          )
+          minmax(auto, 1fr)
+          minmax(1.2rem, 1fr)
+          1.2rem;
+      }
     }
   }
 `

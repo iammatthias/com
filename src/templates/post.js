@@ -7,7 +7,7 @@ import mediumZoom from 'medium-zoom'
 import {
   Wrapper,
   Content,
-  BlogContent,
+  ContentBottom,
   Buttons,
 } from '../components/general/Utils'
 
@@ -52,7 +52,7 @@ const BlogPost = ({ data, pageContext, location }) => {
             <Arrow anchor={location.pathname + '#bottom'} />
           </section>
         </Content>
-        <BlogContent>
+        <ContentBottom className="blogpost">
           <section className="article" id="bottom">
             <Hero image={post.heroImage} />
 
@@ -74,7 +74,7 @@ const BlogPost = ({ data, pageContext, location }) => {
               </a>
             </Buttons>
           </section>
-        </BlogContent>
+        </ContentBottom>
       </Wrapper>
     </>
   )

@@ -1,6 +1,6 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import { Wrapper, Content, About } from './../components/general/Utils'
+import { Wrapper, Content, ContentBottom } from './../components/general/Utils'
 
 import Hero from './../components/general/Hero'
 import Form from './../components/general/contactForm'
@@ -19,7 +19,7 @@ const Contact = ({ data, location }) => {
             <Arrow anchor={location.pathname + '#bottom'} />
           </section>
         </Content>
-        <About>
+        <ContentBottom className="about">
           <section id="bottom">
             <article
               dangerouslySetInnerHTML={{
@@ -29,7 +29,7 @@ const Contact = ({ data, location }) => {
 
             <Form />
           </section>
-        </About>
+        </ContentBottom>
       </Wrapper>
     </>
   )
