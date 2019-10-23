@@ -15,11 +15,6 @@ import SEO from './../components/general/SEO'
 import Arrow from './../components/general/Arrow'
 import Hero from './../components/general/Hero'
 
-export function Zoom({ children }) {
-  useEffect(() => mediumZoom('figure div img', { margin: 64 }))
-  return <>{children}</>
-}
-
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
 
@@ -28,6 +23,16 @@ const BlogPost = ({ data, pageContext, location }) => {
   )}`
   const previous = pageContext.prev
   const next = pageContext.next
+
+  useEffect(() => {
+    ;(async function() {
+      try {
+        mediumZoom('figure div img', { margin: 64 })
+      } catch (e) {
+        console.error(e)
+      }
+    })()
+  })
 
   return (
     <>
@@ -48,29 +53,27 @@ const BlogPost = ({ data, pageContext, location }) => {
           </section>
         </Content>
         <BlogContent>
-          <Zoom>
-            <section className="article" id="bottom">
-              <Hero image={post.heroImage} />
+          <section className="article" id="bottom">
+            <Hero image={post.heroImage} />
 
-              <MDXRenderer>{post.body.childMdx.body}</MDXRenderer>
+            <MDXRenderer>{post.body.childMdx.body}</MDXRenderer>
 
-              <Buttons>
-                {previous && (
-                  <Link className="button" to={`/blog/${previous.slug}/`}>
-                    &#8592; Prev Post
-                  </Link>
-                )}
-                {next && (
-                  <Link className="button" to={`/blog/${next.slug}/`}>
-                    Next Post &#8594;
-                  </Link>
-                )}
-                <a className="button" color="" href={comments}>
-                  Discuss on Twitter
-                </a>
-              </Buttons>
-            </section>
-          </Zoom>
+            <Buttons>
+              {previous && (
+                <Link className="button" to={`/blog/${previous.slug}/`}>
+                  &#8592; Prev Post
+                </Link>
+              )}
+              {next && (
+                <Link className="button" to={`/blog/${next.slug}/`}>
+                  Next Post &#8594;
+                </Link>
+              )}
+              <a className="button" color="" href={comments}>
+                Discuss on Twitter
+              </a>
+            </Buttons>
+          </section>
         </BlogContent>
       </Wrapper>
     </>
