@@ -1,11 +1,11 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import { Wrapper, Content, ContentBottom } from './../components/general/Utils'
+import { Wrapper, Content, ContentBottom } from '../components/Utils'
 
-import Hero from './../components/general/Hero'
-import Form from './../components/general/contactForm'
-import SEO from './../components/general/SEO'
-import Arrow from './../components/general/Arrow'
+import Hero from '../components/Hero'
+import Form from '../components/contactForm'
+import SEO from '../components/SEO'
+import Arrow from '../components/Arrow'
 
 const Contact = ({ data, location }) => {
   const contact = data.contentfulAbout

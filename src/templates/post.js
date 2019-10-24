@@ -4,16 +4,11 @@ import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 
 import mediumZoom from 'medium-zoom'
 
-import {
-  Wrapper,
-  Content,
-  ContentBottom,
-  Buttons,
-} from '../components/general/Utils'
+import { Wrapper, Content, ContentBottom, Buttons } from '../components/Utils'
 
-import SEO from './../components/general/SEO'
-import Arrow from './../components/general/Arrow'
-import Hero from './../components/general/Hero'
+import SEO from '../components/SEO'
+import Arrow from '../components/Arrow'
+import Hero from '../components/Hero'
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost

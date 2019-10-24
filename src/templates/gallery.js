@@ -1,10 +1,10 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import { Wrapper, Content, ContentBottom } from '../components/general/Utils'
+import { Wrapper, Content, ContentBottom } from '../components/Utils'
 
-import GalleryGrid from './../components/general/galleryGrid'
-import SEO from './../components/general/SEO'
-import Arrow from './../components/general/Arrow'
+import GalleryGrid from '../components/galleryGrid'
+import SEO from '../components/SEO'
+import Arrow from '../components/Arrow'
 
 const GalleryTemplate = ({ data, location }) => {
   const gallery = data.contentfulExtendedGallery

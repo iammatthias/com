@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'gatsby'
-import Logo from '../general/Logo'
+import Logo from './Logo'
 import styled from 'styled-components'
 import Headroom from 'react-headroom'
 

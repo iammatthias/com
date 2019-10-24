@@ -1,11 +1,11 @@
 import React from 'react'
 import { ThemeProvider } from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
-import theme from '../../styles/theme'
-import _Helmet from '../general/Helmet'
-import Styles from '../general/Styles'
-import Menu from '../general/Menu'
-import Footer from '../general/Footer'
+import theme from '../styles/theme'
+import _Helmet from './Helmet'
+import Styles from './Styles'
+import Menu from './Menu'
+import Footer from './Footer'
 
 if (typeof window !== 'undefined') {
   // eslint-disable-next-line global-require

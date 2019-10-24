@@ -1,9 +1,9 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import { Wrapper, Content, ContentBottom } from './../components/general/Utils'
-import List from './../components/general/contentList'
-import SEO from './../components/general/SEO'
-import Arrow from './../components/general/Arrow'
+import { Wrapper, Content, ContentBottom } from '../components/Utils'
+import List from '../components/contentList'
+import SEO from '../components/SEO'
+import Arrow from '../components/Arrow'
 
 const Blog = ({ data, location }) => {
   const posts = data.allContentfulPost.edges
