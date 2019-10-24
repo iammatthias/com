@@ -29,7 +29,7 @@ const Helpers = createGlobalStyle`
 
 .article {
 
-  p, blockquote, figure { 
+  p, blockquote, figure, pre { 
     margin: 2rem 0 0;
   }
   blockquote p {
@@ -52,6 +52,17 @@ const Helpers = createGlobalStyle`
   .buttons {
     grid-column: 2 / 6;
   }
+
+  pre {
+    overflow-x: scroll !important;
+    background: rgba(var(--grey-800), 0.05);
+    padding: 1rem;
+    width: calc(100vw - 4rem);
+    word-wrap: normal;
+    box-shadow: var(--shadow);
+    border-radius: 0.5rem;
+  }
+
   @media screen and (min-width: 52em) {
     div,
     p,
@@ -67,6 +78,10 @@ const Helpers = createGlobalStyle`
     blockquote,
     .buttons {
       grid-column: 4;
+    }
+
+    pre {
+      width: 100%;
     }
   }
 
