@@ -6,7 +6,7 @@ import { FiTwitter, FiInstagram } from 'react-icons/fi'
 const Footer = props => {
   return (
     <Wrapper>
-      <Content>
+      <Content className="footer">
         <section>
           <h2>Colophone</h2>
           <p>

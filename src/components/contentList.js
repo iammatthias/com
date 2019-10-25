@@ -13,7 +13,7 @@ const StyledLink = styled(Link)`
     object-fit: cover !important;
     height: 100% !important;
     @media screen and (min-width: 52em) {
-      height: 33vh !important;
+      height: 38.2vh !important;
     }
   }
   h5 {
@@ -49,6 +49,7 @@ const BlogPosts = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   border-radius: 0.5rem;
+  overflow: hidden;
   div {
     border-radius: 0.5rem 0.5rem 0 0;
   }
@@ -70,6 +71,7 @@ const BlogPosts = styled.div`
   }
   .copy {
     margin: 2rem;
+    height: 100%;
   }
 `
 
