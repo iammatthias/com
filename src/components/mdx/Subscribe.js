@@ -5,13 +5,18 @@ import styled from 'styled-components'
 const Subscribe = styled.div`
   grid-column: 4;
   display: flex;
-  flex-flow: row wrap;
+  justify-content: center;
+  flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
+  margin: 2rem 0 0;
   padding: 2rem;
   border-radius: 0.5rem;
   box-shadow: var(--shadow);
   border: 2px var(--color-secondary) solid;
+  @media screen and (min-width: 52rem) {
+    flex-direction: row;
+  }
 `
 
 const Copy = styled.div`
@@ -81,13 +86,10 @@ const Form = styled.form`
 `
 
 const Email = styled.input`
-  margin: 0 0 2rem 0;
+  margin: 0;
   width: 100%;
   height: 100%;
   border-radius: 0.5rem 0.5rem 0 0;
-  @media screen and (min-width: 52rem) {
-    margin: 0;
-  }
 `
 
 const Submit = styled.input`
@@ -114,7 +116,6 @@ class ContactForm extends React.Component {
       email: '',
       message: '',
       showModal: false,
-      title: props.title,
     }
   }
 
@@ -133,7 +134,6 @@ class ContactForm extends React.Component {
       this.handleSuccess()
       window.analytics.identify('Subscribed', {
         email: this.state.email,
-        page: this.props.title,
       })
     }
   }
@@ -155,8 +155,8 @@ class ContactForm extends React.Component {
         <Copy>
           <h4>Enjoying the content?</h4>
           <p>
-            Sign up to recieve the occaisonal handcrafted newsletter or
-            announcement. We promise to never sell or share your email address.
+            Stay up to date on the latest in updates. Your email will never be
+            used for spam. Ever.
           </p>
           <Modal visible={this.state.showModal}>
             <h4>Thanks for subscribing! </h4>

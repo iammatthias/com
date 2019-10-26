@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { graphql, Link } from 'gatsby'
+import { MDXProvider } from '@mdx-js/react'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 
 import mediumZoom from 'medium-zoom'
@@ -10,7 +11,7 @@ import SEO from '../components/SEO'
 import Arrow from '../components/Arrow'
 import Hero from '../components/Hero'
 
-import Subscribe from '../components/mdx/Subscribe'
+import { MDXLayoutComponents, MDXGlobalComponents } from '../components/mdx'
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
@@ -53,8 +54,14 @@ const BlogPost = ({ data, pageContext, location }) => {
           <section className="article" id="bottom">
             <Hero image={post.heroImage} />
 
-            <MDXRenderer>{post.body.childMdx.body}</MDXRenderer>
-
+            <MDXProvider
+              components={{
+                ...MDXLayoutComponents,
+                ...MDXGlobalComponents,
+              }}
+            >
+              <MDXRenderer>{post.body.childMdx.body}</MDXRenderer>
+            </MDXProvider>
             <Buttons>
               {previous && (
                 <Link className="button" to={`/blog/${previous.slug}/`}>
@@ -70,7 +77,6 @@ const BlogPost = ({ data, pageContext, location }) => {
                 Discuss on Twitter
               </a>
             </Buttons>
-            <Subscribe title={post.title} />
           </section>
         </ContentBottom>
       </Wrapper>

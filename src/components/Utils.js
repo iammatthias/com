@@ -178,17 +178,18 @@ export const ContentBottom = styled.div`
 `
 
 export const Buttons = styled.div`
-  margin: 3rem auto;
+  margin: 2rem auto;
   text-align: center;
   width: 100%;
   .button {
     display: block;
-    margin: 0 0 1rem;
+    margin: 0 0 2rem;
   }
   @media screen and (min-width: 52rem) {
+    margin: 3rem auto;
     .button {
       display: inline;
-      margin: 0 1rem 0 0;
+      margin: 0 2rem 0 0;
     }
   }
 `
