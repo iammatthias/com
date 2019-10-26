@@ -178,8 +178,9 @@ export const ContentBottom = styled.div`
 `
 
 export const Buttons = styled.div`
-  margin: 3rem auto 0;
+  margin: 3rem auto;
   text-align: center;
+  width: 100%;
   .button {
     display: block;
     margin: 0 0 1rem;

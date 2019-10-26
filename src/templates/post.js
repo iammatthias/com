@@ -10,6 +10,8 @@ import SEO from '../components/SEO'
 import Arrow from '../components/Arrow'
 import Hero from '../components/Hero'
 
+import Subscribe from '../components/mdx/Subscribe'
+
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
 
@@ -68,6 +70,7 @@ const BlogPost = ({ data, pageContext, location }) => {
                 Discuss on Twitter
               </a>
             </Buttons>
+            <Subscribe title={post.title} />
           </section>
         </ContentBottom>
       </Wrapper>

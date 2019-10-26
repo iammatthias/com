@@ -132,7 +132,6 @@ button,
   width: 100%;
   text-align: center;
   white-space: nowrap;
-  
   background: var(--color-secondary) !important;
   color: var(--color-base) !important;
   text-shadow: 0.125em 0.125em var(--color-secondary) !important;
@@ -146,9 +145,7 @@ button,
   &:only-of-type {
     margin-right: 0;
   }
-  @media screen and (min-width: 52em) {
-    line-height: 6rem;
-  }
+
 }
 
 mark,
