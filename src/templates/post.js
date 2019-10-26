@@ -11,7 +11,7 @@ import SEO from '../components/SEO'
 import Arrow from '../components/Arrow'
 import Hero from '../components/Hero'
 
-import { MDXLayoutComponents, MDXGlobalComponents } from '../components/mdx'
+import { MDXGlobalComponents } from '../components/mdx'
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
@@ -56,7 +56,6 @@ const BlogPost = ({ data, pageContext, location }) => {
 
             <MDXProvider
               components={{
-                ...MDXLayoutComponents,
                 ...MDXGlobalComponents,
               }}
             >
