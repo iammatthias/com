@@ -1,11 +1,11 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import { Wrapper, Content, About } from './../components/general/Utils'
+import { Wrapper, Content, ContentBottom } from '../components/Utils'
 
-import Hero from './../components/general/Hero'
-import Form from './../components/general/contactForm'
-import SEO from './../components/general/SEO'
-import Arrow from './../components/general/Arrow'
+import Hero from '../components/Hero'
+import Form from '../components/contactForm'
+import SEO from '../components/SEO'
+import Arrow from '../components/Arrow'
 
 const Contact = ({ data, location }) => {
   const contact = data.contentfulAbout
@@ -19,7 +19,7 @@ const Contact = ({ data, location }) => {
             <Arrow anchor={location.pathname + '#bottom'} />
           </section>
         </Content>
-        <About>
+        <ContentBottom className="about">
           <section id="bottom">
             <article
               dangerouslySetInnerHTML={{
@@ -29,7 +29,7 @@ const Contact = ({ data, location }) => {
 
             <Form />
           </section>
-        </About>
+        </ContentBottom>
       </Wrapper>
     </>
   )

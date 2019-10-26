@@ -1,10 +1,10 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import { Wrapper, Content, ExtendedGallery } from '../components/general/Utils'
+import { Wrapper, Content, ContentBottom } from '../components/Utils'
 
-import GalleryGrid from './../components/general/galleryGrid'
-import SEO from './../components/general/SEO'
-import Arrow from './../components/general/Arrow'
+import GalleryGrid from '../components/galleryGrid'
+import SEO from '../components/SEO'
+import Arrow from '../components/Arrow'
 
 const GalleryTemplate = ({ data, location }) => {
   const gallery = data.contentfulExtendedGallery
@@ -29,7 +29,7 @@ const GalleryTemplate = ({ data, location }) => {
             <Arrow anchor={location.pathname + '#bottom'} />
           </section>
         </Content>
-        <ExtendedGallery>
+        <ContentBottom>
           <section id="bottom">
             {subGalleries.map((subGallery, index) => (
               <div key={index}>
@@ -46,7 +46,7 @@ const GalleryTemplate = ({ data, location }) => {
               </div>
             ))}
           </section>
-        </ExtendedGallery>
+        </ContentBottom>
       </Wrapper>
     </>
   )

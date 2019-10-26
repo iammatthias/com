@@ -1,3 +1,3 @@
-[context.staging.environment]
-  CONTENTFUL_USE_PREVIEW = "true"
-  ENABLE_NETLIFY_AUTH = "true"
+[build.environment]
+  YARN_VERSION = "1.19.1"
+  NODE_VERSION = "12.13.0"

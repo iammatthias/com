@@ -1,24 +1,17 @@
 import React, { useEffect } from 'react'
 import { graphql, Link } from 'gatsby'
+import { MDXProvider } from '@mdx-js/react'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 
 import mediumZoom from 'medium-zoom'
 
-import {
-  Wrapper,
-  Content,
-  BlogContent,
-  Buttons,
-} from '../components/general/Utils'
+import { Wrapper, Content, ContentBottom, Buttons } from '../components/Utils'
 
-import SEO from './../components/general/SEO'
-import Arrow from './../components/general/Arrow'
-import Hero from './../components/general/Hero'
+import SEO from '../components/SEO'
+import Arrow from '../components/Arrow'
+import Hero from '../components/Hero'
 
-export function Zoom({ children }) {
-  useEffect(() => mediumZoom('figure div img', { margin: 64 }))
-  return <>{children}</>
-}
+import { MDXGlobalComponents } from '../components/mdx'
 
 const BlogPost = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
@@ -28,6 +21,16 @@ const BlogPost = ({ data, pageContext, location }) => {
   )}`
   const previous = pageContext.prev
   const next = pageContext.next
+
+  useEffect(() => {
+    ;(async function() {
+      try {
+        mediumZoom('figure img', { margin: 64 })
+      } catch (e) {
+        console.error(e)
+      }
+    })()
+  })
 
   return (
     <>
@@ -47,31 +50,34 @@ const BlogPost = ({ data, pageContext, location }) => {
             <Arrow anchor={location.pathname + '#bottom'} />
           </section>
         </Content>
-        <BlogContent>
-          <Zoom>
-            <section className="article" id="bottom">
-              <Hero image={post.heroImage} />
+        <ContentBottom className="blogpost">
+          <section className="article" id="bottom">
+            <Hero image={post.heroImage} />
 
+            <MDXProvider
+              components={{
+                ...MDXGlobalComponents,
+              }}
+            >
               <MDXRenderer>{post.body.childMdx.body}</MDXRenderer>
-
-              <Buttons>
-                {previous && (
-                  <Link className="button" to={`/blog/${previous.slug}/`}>
-                    &#8592; Prev Post
-                  </Link>
-                )}
-                {next && (
-                  <Link className="button" to={`/blog/${next.slug}/`}>
-                    Next Post &#8594;
-                  </Link>
-                )}
-                <a className="button" color="" href={comments}>
-                  Discuss on Twitter
-                </a>
-              </Buttons>
-            </section>
-          </Zoom>
-        </BlogContent>
+            </MDXProvider>
+            <Buttons>
+              {previous && (
+                <Link className="button" to={`/blog/${previous.slug}/`}>
+                  &#8592; Prev Post
+                </Link>
+              )}
+              {next && (
+                <Link className="button" to={`/blog/${next.slug}/`}>
+                  Next Post &#8594;
+                </Link>
+              )}
+              <a className="button" color="" href={comments}>
+                Discuss on Twitter
+              </a>
+            </Buttons>
+          </section>
+        </ContentBottom>
       </Wrapper>
     </>
   )

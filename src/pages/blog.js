@@ -1,9 +1,9 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import { Wrapper, Content, BlogPosts } from './../components/general/Utils'
-import List from './../components/general/contentList'
-import SEO from './../components/general/SEO'
-import Arrow from './../components/general/Arrow'
+import { Wrapper, Content, ContentBottom } from '../components/Utils'
+import List from '../components/contentList'
+import SEO from '../components/SEO'
+import Arrow from '../components/Arrow'
 
 const Blog = ({ data, location }) => {
   const posts = data.allContentfulPost.edges
@@ -23,7 +23,7 @@ const Blog = ({ data, location }) => {
             <Arrow anchor={location.pathname + '#bottom'} />
           </section>
         </Content>
-        <BlogPosts>
+        <ContentBottom className="blogposts">
           <section id="bottom">
             {posts.map(({ node: post }) => (
               <List
@@ -38,7 +38,7 @@ const Blog = ({ data, location }) => {
               />
             ))}
           </section>
-        </BlogPosts>
+        </ContentBottom>
       </Wrapper>
     </>
   )

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import 'whatwg-fetch'
 
 const Form = styled.form`
+  position: relative;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
@@ -79,12 +80,12 @@ const Submit = styled.input`
 `
 
 const Modal = styled.div`
-  background: white;
+  background: rgba(var(--grey-900), 0.9);
   padding: 2em;
-  border-radius: 2px;
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
+  border-radius: 0.5rem;
+  width: 100%;
+  height: 100%;
+  position: absolute;
   top: 0;
   left: 0;
   z-index: 99;
@@ -98,21 +99,10 @@ const Modal = styled.div`
   section {
     margin: auto 0;
     padding: 2rem;
-    p {
-      line-height: 1.6;
-      margin: 0 0 2em 0;
+    p,
+    h4 {
+      margin: 0 0 2rem 0;
       text-align: center;
-    }
-  }
-  @media screen and (min-width: 52rem) {
-    height: calc(100vh);
-    section {
-      width: 76.4%;
-    }
-  }
-  @media screen and (min-width: 64rem) {
-    section {
-      width: 61.8%;
     }
   }
 `
@@ -144,14 +134,20 @@ class ContactForm extends React.Component {
   }
 
   handleSubmit = event => {
-    fetch('/contact/', {
+    fetch('/contact/?no-cache=1', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: encode({ 'form-name': 'contact', ...this.state }),
     })
       .then(this.handleSuccess)
       .catch(error => alert(error))
+
     event.preventDefault()
+
+    window.analytics.identify('Contact Form Submitted', {
+      email: this.state.email,
+      name: this.state.name,
+    })
   }
 
   handleSuccess = () => {
@@ -209,25 +205,12 @@ class ContactForm extends React.Component {
           onChange={this.handleInputChange}
           required
         />
-        <Submit
-          className="button"
-          name="submit"
-          type="submit"
-          value="Send"
-          onClick={() => {
-            window.analytics.identify('Contact Form Submitted', {
-              email: this.state.email,
-              name: this.state.name,
-            })
-          }}
-        />
+        <Submit className="button" name="submit" type="submit" value="Send" />
 
         <Modal visible={this.state.showModal}>
           <section>
-            <p>
-              Thank you for reaching out. I will get back to you as soon as
-              possible.
-            </p>
+            <h4>Thank you for reaching out.</h4>
+            <p>I'll be in touch soon.</p>
             <button className="button" color="" onClick={this.closeModal}>
               Okay
             </button>
