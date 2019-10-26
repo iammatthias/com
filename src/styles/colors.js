@@ -41,8 +41,8 @@ const ColorStyle = createGlobalStyle`
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --base: 246, 245, 245; /* #F6F5F5 */
-    --secondary: 20, 13, 0; /* #140D00 */
+    --base: 20, 13, 0; /* #140D00 */
+    --secondary: 246, 245, 245; /* #F6F5F5 */
 
     --shadow: 0px 5px 15px rgba(var(--secondary), 0.5),
       0px 10px 25px rgba(var(--secondary), 0.25),
