@@ -63,6 +63,12 @@ export const ContentBottom = styled.div`
       grid-template-columns: repeat(2, 1fr);
       grid-gap: 2rem;
       width: 100%;
+      div {
+        height: 100% !important;
+        @media screen and (min-width: 52em) {
+          height: 38.2vh !important;
+        }
+      }
     }
     @media screen and (min-width: 52rem) {
       section {
@@ -133,7 +139,7 @@ export const ContentBottom = styled.div`
     @media screen and (min-width: 52rem) {
       section {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
         width: 76.4%;
       }
     }
