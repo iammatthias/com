@@ -26,7 +26,6 @@ const Helpers = createGlobalStyle`
 }
 
 
-
 .article {
 
   p, blockquote, figure, pre { 
@@ -55,14 +54,35 @@ const Helpers = createGlobalStyle`
 
   pre {
     overflow-x: scroll !important;
-    background: rgba(var(--grey-800), 0.05);
+    background: rgba(var(--secondary), .05);
     padding: 2rem;
     width: calc(100vw - 4rem);
     word-wrap: normal;
     box-shadow: var(--shadow);
     border-radius: 0.5rem;
-    border: 2px var(--color-secondary) solid;
+    border: 2px rgba(var(--secondary), 1) solid;
   }
+
+ .alert { 
+   margin: 2rem 0 0;
+   box-shadow: var(--shadow);
+   border-radius: 0.5rem;
+   border: 1px rgba(var(--secondary), 1) solid;
+   padding: 2rem;
+   h1, h2, h3, h4, h5 {
+     margin: 0;
+  }
+   p {
+     margin: 1rem 0 0;
+  }
+
+  &.alert-danger {
+    background:  linear-gradient(var(--red-500), var(--red-200), transparent);
+  }
+  &.alert-info {
+    background:  linear-gradient(var(--blue-500), var(--blue-200), transparent);
+  }
+}
 
   @media screen and (min-width: 52em) {
     div,
@@ -87,7 +107,7 @@ const Helpers = createGlobalStyle`
   }
 
   blockquote {
-    border-left: 4px solid var(--color-secondary);
+    border-left: 4px solid rgba(var(--secondary), 1);
   }
 
   img {margin: 0}

@@ -13,9 +13,9 @@ const Form = styled.form`
   textarea {
     outline: none;
     padding: 1rem;
-    border: 2px var(--color-secondary) solid;
-    background: rgba(var(--grey-800), 0.15);
-    color: var(--color-secondary);
+    border: 2px rgba(var(--secondary), 1) solid;
+    background: rgba(var(--secondary), 0.15);
+    color: rgba(var(--secondary), 1);
   }
   &::before {
     content: '';
@@ -69,20 +69,21 @@ const Submit = styled.input`
   transition: 0.2s;
   width: 100%;
   font-weight: bold;
-  background: var(--color-secondary) !important;
-  color: var(--color-base) !important;
-  text-shadow: 0.125em 0.125em var(--color-secondary) !important;
+  background: rgba(var(--secondary), 1) !important;
+  color: rgba(var(--base), 1) !important;
+  text-shadow: 0.125em 0.125em rgba(var(--secondary), 1) !important;
   &:hover {
-    text-shadow: 0.125em 0.125em var(--color-secondary),
+    text-shadow: 0.125em 0.125em rgba(var(--secondary), 1),
       0.25em 0.25em var(--color-tertiary),
       0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent) !important;
   }
 `
 
 const Modal = styled.div`
-  background: rgba(var(--grey-900), 0.9);
+  background: rgba(var(--base), 1);
   padding: 2em;
   border-radius: 0.5rem;
+  box-shadow: var(--shadow);
   width: 100%;
   height: 100%;
   position: absolute;

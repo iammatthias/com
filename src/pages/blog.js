@@ -14,7 +14,7 @@ const Blog = ({ data, location }) => {
       <Wrapper>
         <Content>
           <section id="top">
-            <h1>The blog</h1>
+            <h1>{blog.title}</h1>
             <article
               dangerouslySetInnerHTML={{
                 __html: blog.body.childMarkdownRemark.html,
@@ -55,7 +55,7 @@ export const query = graphql`
           title
           id
           slug
-          publishDate(formatString: "DD MMM YYYY")
+          publishDate(formatString: "d/M/YYYY")
           heroImage {
             title
             fluid(quality: 65) {

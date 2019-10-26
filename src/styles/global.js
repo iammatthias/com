@@ -5,11 +5,11 @@ html,
 body {
   margin: 0;
   width: 100%;
-  background: var(--color-base);
-  color: var(--color-secondary);
+  background: rgba(var(--base), 1);
+  color: rgba(var(--secondary), 1);
   font-size: 16px;
   line-height: 1;
-  text-shadow: var(--color-secondary-25) 0 0 1px;
+  text-shadow: rgba(var(--base), .25) 0 0 1px;
   font-variant-ligatures: none;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -20,7 +20,7 @@ h2,
 p,
 i,
 a {
-  color: var(--color-secondary);
+  color: rgba(var(--secondary), 1);
 }
 
 h1,
@@ -80,12 +80,12 @@ a {
   font-weight: 700;
   text-decoration: none;
   transition: all 0.3s;
-  color: var(--color-secondary);
+  color: rgba(var(--secondary), 1);
 
   &:hover {
-    text-shadow: 0.125em 0.125em var(--color-base),
-      0.25em 0.25em var(--color-tertiary),
-      0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent);
+    text-shadow: 0.125em 0.125em rgba(var(--base), 1),
+      0.25em 0.25em var(--blue-500),
+      0.375em 0.375em var(--red-400), 0.5em 0.5em var(--yellow-500);
   }
 }
 ul,
@@ -117,7 +117,7 @@ select {
   box-shadow: var(--shadow);
   resize: none;
   &:focus {
-    outline: 1px solid var(--color-highlight);
+    outline: 1px solid rgba(var(--red-400), 1);
   }
 }
 
@@ -132,15 +132,15 @@ button,
   width: 100%;
   text-align: center;
   white-space: nowrap;
-  background: var(--color-secondary) !important;
-  color: var(--color-base) !important;
-  text-shadow: 0.125em 0.125em var(--color-secondary) !important;
+  background: rgba(var(--secondary), 1) !important;
+  color: rgba(var(--base), 1) !important;
+  text-shadow: 0.125em 0.125em rgba(var(--secondary), 1) !important;
   border-radius: 0.5rem;
   box-shadow: var(--shadow);
   &:hover {
-    text-shadow: 0.125em 0.125em var(--color-secondary),
-      0.25em 0.25em var(--color-tertiary),
-      0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent) !important;
+    text-shadow: 0.125em 0.125em rgba(var(--secondary), 1),
+      0.25em 0.25em var(--blue-500),
+      0.375em 0.375em var(--red-400), 0.5em 0.5em var(--yellow-500) !important;
   }
   &:only-of-type {
     margin-right: 0;
@@ -150,11 +150,11 @@ button,
 
 mark,
 .highlighted {
-  background: var(--color-highlight);
+  background: rgba(var(--red-400), 1);
 }
 
 &::selection {
-  background-color: var(--color-highlight);
+  background-color: rgba(var(--red-400), 1);
 }
 `
 

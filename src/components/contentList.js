@@ -7,14 +7,10 @@ const StyledLink = styled(Link)`
   position: relative;
   text-decoration: none;
   border-radius: 0.5rem;
-  background: rgba(var(--grey-800), 0.15);
+  background: rgba(var(--secondary), 0.05);
   div {
     border-radius: 0.5rem;
     object-fit: cover !important;
-    height: 100% !important;
-    @media screen and (min-width: 52em) {
-      height: 38.2vh !important;
-    }
   }
   h5 {
     margin: 0;
@@ -36,9 +32,10 @@ const StyledLink = styled(Link)`
     width: 100%;
     z-index: 2;
     background: linear-gradient(
-      var(--color-base-5) 38.2%,
-      var(--color-base-35) 61.8%,
-      var(--color-base-75) 100%
+      rgba(var(--base), 0) 0%,
+      rgba(var(--base), 0.05) 38.2%,
+      rgba(var(--base), 0.15) 61.8%,
+      rgba(var(--base), 0.35) 100%
     );
   }
 
@@ -52,13 +49,15 @@ const BlogPosts = styled.div`
   overflow: hidden;
   div {
     border-radius: 0.5rem 0.5rem 0 0;
-  }
-  @media screen and (min-width: 52em) {
-    div {
-      border-radius: 0.5rem 0 0 0.5rem;
+    height: 100% !important;
+    @media screen and (min-width: 52em) {
+      height: 33vh !important;
+      &.copy {
+        height: 100% !important;
+      }
     }
-    grid-template-columns: repeat(2, 1fr);
   }
+
   h5 {
     margin: 0 0 1rem;
     position: relative;
@@ -93,9 +92,12 @@ const ContentList = props => {
             <div className="copy">
               <h5>{props.title}</h5>
 
-              <p className="linkAccentReset">Published {props.publishDate}</p>
+              <p className="linkAccentReset">
+                Published {props.date},&nbsp;&nbsp;&nbsp;
+                {props.time > 1 && <span>{props.time} minutes</span>}
+                {props.time === 1 && <span>{props.time} minute</span>} to read
+              </p>
 
-              <p className="linkAccentReset">{props.time} min to read</p>
               <p
                 className="small linkAccentReset"
                 dangerouslySetInnerHTML={{
