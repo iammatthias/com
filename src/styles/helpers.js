@@ -56,11 +56,12 @@ const Helpers = createGlobalStyle`
   pre {
     overflow-x: scroll !important;
     background: rgba(var(--grey-800), 0.05);
-    padding: 1rem;
+    padding: 2rem;
     width: calc(100vw - 4rem);
     word-wrap: normal;
     box-shadow: var(--shadow);
     border-radius: 0.5rem;
+    border: 2px var(--color-secondary) solid;
   }
 
   @media screen and (min-width: 52em) {
