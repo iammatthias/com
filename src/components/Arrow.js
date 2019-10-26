@@ -22,8 +22,8 @@ const DownArrow = styled.div`
   -webkit-transform: rotate(45deg);
   border-left: none;
   border-top: none;
-  border-right: 2px var(--color-secondary) solid;
-  border-bottom: 2px var(--color-secondary) solid;
+  border-right: 2px rgba(var(--secondary), 1) solid;
+  border-bottom: 2px rgba(var(--secondary), 1) solid;
   @media screen and (max-width: 23rem) {
     display: none;
   }
@@ -41,8 +41,8 @@ const DownArrow = styled.div`
     margin: -10px 0 0 -10px;
     border-left: none;
     border-top: none;
-    border-right: 1px var(--color-secondary) solid;
-    border-bottom: 1px var(--color-secondary) solid;
+    border-right: 1px rgba(var(--secondary), 1) solid;
+    border-bottom: 1px rgba(var(--secondary), 1) solid;
     animation-duration: 3s;
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;

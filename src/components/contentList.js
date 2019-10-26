@@ -7,7 +7,7 @@ const StyledLink = styled(Link)`
   position: relative;
   text-decoration: none;
   border-radius: 0.5rem;
-  background: rgba(var(--grey-800), 0.15);
+  background: rgba(var(--secondary), 0.15);
   div {
     border-radius: 0.5rem;
     object-fit: cover !important;
@@ -36,9 +36,10 @@ const StyledLink = styled(Link)`
     width: 100%;
     z-index: 2;
     background: linear-gradient(
-      var(--color-base-5) 38.2%,
-      var(--color-base-35) 61.8%,
-      var(--color-base-75) 100%
+      rgba(var(--base), 0) 0%,
+      rgba(var(--base), 0.05) 38.2%,
+      rgba(var(--base), 0.15) 61.8%,
+      rgba(var(--base), 0.35) 100%
     );
   }
 

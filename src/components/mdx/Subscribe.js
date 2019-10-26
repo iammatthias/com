@@ -13,7 +13,7 @@ const Subscribe = styled.div`
   padding: 2rem;
   border-radius: 0.5rem;
   box-shadow: var(--shadow);
-  border: 2px var(--color-secondary) solid;
+  border: 2px rgba(var(--secondary), 1) solid;
   @media screen and (min-width: 52rem) {
     flex-direction: row;
   }
@@ -47,7 +47,7 @@ const Modal = styled.div`
   justify-content: center;
   flex-direction: column;
   z-index: 2;
-  background: var(--color-base);
+  background: rgba(var(--base), 1);
   opacity: ${props => (props.visible ? '1' : '0')};
   visibility: ${props => (props.visible ? 'visible' : 'hidden')};
   section {
@@ -65,9 +65,9 @@ const Form = styled.form`
   input {
     outline: none;
     padding: 1rem;
-    border: 2px var(--color-secondary) solid;
-    background: rgba(var(--grey-800), 0.15);
-    color: var(--color-secondary);
+    border: 2px rgba(var(--secondary), 1) solid;
+    background: rgba(var(--secondary), 0.15);
+    color: rgba(var(--secondary), 1);
   }
 
   &::invalid {
@@ -98,14 +98,6 @@ const Submit = styled.input`
   transition: 0.2s;
   width: 100%;
   font-weight: bold;
-  background: var(--color-secondary) !important;
-  color: var(--color-base) !important;
-  text-shadow: 0.125em 0.125em var(--color-secondary) !important;
-  &:hover {
-    text-shadow: 0.125em 0.125em var(--color-secondary),
-      0.25em 0.25em var(--color-tertiary),
-      0.375em 0.375em var(--color-highlight), 0.5em 0.5em var(--color-accent) !important;
-  }
 `
 
 class ContactForm extends React.Component {
