@@ -55,7 +55,7 @@ export const query = graphql`
           title
           id
           slug
-          publishDate(formatString: "DD MMM YYYY")
+          publishDate(formatString: "d/M/YYYY")
           heroImage {
             title
             fluid(quality: 65) {

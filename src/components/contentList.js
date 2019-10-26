@@ -92,9 +92,12 @@ const ContentList = props => {
             <div className="copy">
               <h5>{props.title}</h5>
 
-              <p className="linkAccentReset">Published {props.publishDate}</p>
+              <p className="linkAccentReset">
+                Published {props.date},&nbsp;&nbsp;&nbsp;
+                {props.time > 1 && <span>{props.time} minutes</span>}
+                {props.time === 1 && <span>{props.time} minute</span>} to read
+              </p>
 
-              <p className="linkAccentReset">{props.time} min to read</p>
               <p
                 className="small linkAccentReset"
                 dangerouslySetInnerHTML={{

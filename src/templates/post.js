@@ -43,10 +43,16 @@ const BlogPost = ({ data, pageContext, location }) => {
         <Content>
           <section id="top">
             <h1>{post.title}</h1>
-            <h5>
-              Published: {post.publishDate} {'// '}
-              Est. {post.body.childMarkdownRemark.timeToRead} minutes to read
-            </h5>
+            <p>
+              Published: {post.publishDate}&nbsp;&nbsp;&nbsp;Est.{' '}
+              {post.body.childMarkdownRemark.timeToRead > 1 && (
+                <span>{post.body.childMarkdownRemark.timeToRead} minutes</span>
+              )}
+              {post.body.childMarkdownRemark.timeToRead === 1 && (
+                <span>{post.body.childMarkdownRemark.timeToRead} minute</span>
+              )}{' '}
+              to read
+            </p>
             <Arrow anchor={location.pathname + '#bottom'} />
           </section>
         </Content>
@@ -94,7 +100,7 @@ export const query = graphql`
           content
         }
       }
-      publishDate(formatString: "DD MMM YYYY")
+      publishDate(formatString: "d/M/YYYY")
       publishDateISO: publishDate(formatString: "YYYY-MM-DD")
       tags {
         title
