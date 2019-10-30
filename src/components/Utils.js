@@ -138,13 +138,13 @@ export const ContentBottom = styled.div`
     }
     @media screen and (min-width: 52rem) {
       section {
-        display: grid;
         grid-template-columns: 1fr 1fr;
         width: 76.4%;
       }
     }
     @media screen and (min-width: 64rem) {
       section {
+        grid-template-columns: 1fr 1fr 1fr;
         width: 61.8%;
       }
     }

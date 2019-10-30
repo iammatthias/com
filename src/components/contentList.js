@@ -7,7 +7,7 @@ const StyledLink = styled(Link)`
   position: relative;
   text-decoration: none;
   border-radius: 0.5rem;
-  background: rgba(var(--secondary), 0.05);
+  background: rgba(var(--secondary), 0.1);
   div {
     border-radius: 0.5rem;
     object-fit: cover !important;
@@ -46,15 +46,15 @@ const BlogPosts = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   border-radius: 0.5rem;
-  overflow: hidden;
+
   div {
     border-radius: 0.5rem 0.5rem 0 0;
     height: 100% !important;
     @media screen and (min-width: 52em) {
-      height: 33vh !important;
-      &.copy {
-        height: 100% !important;
+      &.gatsby-image-wrapper {
+height: 25vh !important;
       }
+
     }
   }
 
@@ -75,46 +75,47 @@ const BlogPosts = styled.div`
 `
 
 const ContentList = props => {
-  return (
-    <StyledLink
-      key={props.id}
-      to={props.blogList ? `/blog/${props.slug}/` : `/${props.slug}/`}
-    >
-      <div>
-        {props.galleryList ? (
-          <>
-            <Img fluid={props.image.fluid} />
-            <h5>{props.title}</h5>
-          </>
-        ) : props.blogList ? (
-          <BlogPosts>
-            <Img className="hide" fluid={props.image.fluid} />
-            <div className="copy">
-              <h5>{props.title}</h5>
+    return (
+        <StyledLink
+            key={props.id}
+            to={props.blogList ? `/blog/${props.slug}/` : `/${props.slug}/`}
+        >
+            <div>
+                {props.galleryList ? (
+                    <>
+                        <Img fluid={props.image.fluid} />
+                        <h5>{props.title}</h5>
+                    </>
+                ) : props.blogList ? (
+                    <BlogPosts>
+                        <Img fluid={props.image.fluid} />
+                        <div className="copy">
+                            <h5>{props.title}</h5>
 
-              <p className="linkAccentReset">
-                Published {props.date},&nbsp;&nbsp;&nbsp;
+                            <h5 className=" linkAccentReset">
+                                Published {props.date},&nbsp;&nbsp;&nbsp;
                 {props.time > 1 && <span>{props.time} minutes</span>}
-                {props.time === 1 && <span>{props.time} minute</span>} to read
-              </p>
+                                {props.time === 1 && <span>{props.time} minute</span>} to read
+              </h5>
+                            <p
+                                className="linkAccentReset"
+                                dangerouslySetInnerHTML={{
+                                    __html: props.excerpt.childMarkdownRemark.excerpt,
+                                }}
+                            />
 
-              <p
-                className="small linkAccentReset"
-                dangerouslySetInnerHTML={{
-                  __html: props.excerpt.childMarkdownRemark.excerpt,
-                }}
-              />
+
+                        </div>
+                    </BlogPosts>
+                ) : (
+                            <>
+                                <Img fluid={props.image.fluid} />
+                                <h5>{props.title}</h5>
+                            </>
+                        )}
             </div>
-          </BlogPosts>
-        ) : (
-          <>
-            <Img fluid={props.image.fluid} />
-            <h5>{props.title}</h5>
-          </>
-        )}
-      </div>
-    </StyledLink>
-  )
+        </StyledLink>
+    )
 }
 
 export default ContentList
