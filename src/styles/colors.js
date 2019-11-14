@@ -3,7 +3,15 @@ import { createGlobalStyle } from 'styled-components'
 const ColorStyle = createGlobalStyle`
 :root {
 
-  --base: 251, 248, 238; /* #f5f3ea */
+  --base: 251, 248, 238; /* #FFF8E7 */
+
+  --base200: 196, 189, 174; /* #c4bdae */
+  --base300: 168, 161, 147; /* #a8a193 */
+  --base400: 140, 134, 121; /* #8c8679 */
+  --base500: 113, 107, 96; /* #716b60 */
+  --base600: 88, 82, 72; /* #585248 */
+  --base700: 64, 58, 49; /* #403a31 */
+  --base800: 41, 36, 28; /* #29241c */
 
   --secondary: 20, 13, 0; /* #140D00 */
 
