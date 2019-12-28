@@ -4,7 +4,7 @@
 
 ## © All images and content Copyright 2019 Matthias Jordan, All Rights Reserved
 
-## THIS IS NOT A TEMPLATE. 
+## THIS IS NOT A TEMPLATE, STARTER, OR THEME.
 
 ### This repo is left public so you can see how it's built, but this is not an invitation to rip it off.
 
