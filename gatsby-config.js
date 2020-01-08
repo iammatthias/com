@@ -22,15 +22,6 @@ module.exports = {
     siteUrl: config.siteUrl,
   },
   plugins: [
-    {
-      resolve: 'gatsby-plugin-env-variables',
-      options: {
-        // Variables in the whitelist will be available to builds as process.env.<NAME>, just
-        // like Node processes
-        whitelist: ['ENABLE_NETLIFY_AUTH'],
-      },
-    },
-    'gatsby-plugin-flow',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-styled-components',
     'gatsby-plugin-sharp',
