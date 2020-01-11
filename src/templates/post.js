@@ -1,26 +1,30 @@
-import React, { useEffect } from 'react'
+/** @jsx jsx */
+
+import React, { useEffect } from 'react' //eslint-disable-line
+
+import { jsx } from 'theme-ui'
 import { graphql, Link } from 'gatsby'
+import Img from 'gatsby-image'
 import { MDXProvider } from '@mdx-js/react'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 
 import mediumZoom from 'medium-zoom'
 
-import { Wrapper, Content, ContentBottom, Buttons } from '../components/Utils'
-
 import SEO from '../components/SEO'
-import Arrow from '../components/Arrow'
-import Hero from '../components/Hero'
 
-import { MDXGlobalComponents } from '../components/mdx'
+import { Wrapper, Content, ContentLink } from '../utils/Styled'
+import { useSiteMetadata } from '../utils/Metadata'
 
-const BlogPost = ({ data, pageContext, location }) => {
-  const post = data.contentfulPost
+const BlogPost = ({ props, pageContext, data }) => {
+  const { metaImage } = useSiteMetadata()
+  const contentfulPost = data.contentfulPost
 
-  const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
-    `https://iammatthias.com/blog/${post.slug}/`
-  )}`
   const previous = pageContext.prev
   const next = pageContext.next
+
+  const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
+    `https://iammatthias.com/blog/${contentfulPost.slug}/`
+  )}`
 
   useEffect(() => {
     ;(async function() {
@@ -34,56 +38,69 @@ const BlogPost = ({ data, pageContext, location }) => {
 
   return (
     <>
-      <SEO
-        title={post.title}
-        image={post.heroImage}
-        description={post.body.childMarkdownRemark.metaExcerpt}
-      />
+      <SEO image={metaImage} />
       <Wrapper>
-        <Content>
-          <section id="top">
-            <h1>{post.title}</h1>
-            <p>
-              Published: {post.publishDate}&nbsp;&nbsp;&nbsp;Est.{' '}
-              {post.body.childMarkdownRemark.timeToRead > 1 && (
-                <span>{post.body.childMarkdownRemark.timeToRead} minutes</span>
-              )}
-              {post.body.childMarkdownRemark.timeToRead === 1 && (
-                <span>{post.body.childMarkdownRemark.timeToRead} minute</span>
-              )}{' '}
-              to read
-            </p>
-            <Arrow anchor={location.pathname + '#bottom'} />
-          </section>
-        </Content>
-        <ContentBottom className="blogpost">
-          <section className="article" id="bottom">
-            <Hero image={post.heroImage} />
-
-            <MDXProvider
-              components={{
-                ...MDXGlobalComponents,
-              }}
-            >
-              <MDXRenderer>{post.body.childMdx.body}</MDXRenderer>
+        <Content className="blog">
+          <article key={contentfulPost.id}>
+            <ContentLink to={contentfulPost.slug}>
+              <p
+                sx={{
+                  variant: 'styles.h1',
+                }}
+              >
+                {contentfulPost.title}
+              </p>
+            </ContentLink>
+            <MDXProvider>
+              <MDXRenderer>{contentfulPost.body.childMdx.body}</MDXRenderer>
             </MDXProvider>
-            <Buttons>
+            <div className="buttons">
               {previous && (
-                <Link className="button" to={`/blog/${previous.slug}/`}>
-                  &#8592; Prev Post
-                </Link>
+                <>
+                  <Link
+                    sx={{
+                      variant: 'styles.a',
+                    }}
+                    className="button"
+                    to={`/blog/${previous.slug}/`}
+                  >
+                    &#8592; Prev Post
+                  </Link>
+                  &nbsp;&nbsp;&nbsp;
+                </>
               )}
+
               {next && (
-                <Link className="button" to={`/blog/${next.slug}/`}>
-                  Next Post &#8594;
-                </Link>
+                <>
+                  <Link
+                    sx={{
+                      variant: 'styles.a',
+                    }}
+                    className="button"
+                    to={`/blog/${next.slug}/`}
+                  >
+                    Next Post &#8594;
+                  </Link>
+                  &nbsp;&nbsp;&nbsp;
+                </>
               )}
-              <a className="button" color="" href={comments}>
+              <a
+                sx={{
+                  variant: 'styles.a',
+                }}
+                href={comments}
+              >
                 Discuss on Twitter
               </a>
-            </Buttons>
-          </section>
-        </ContentBottom>
+            </div>
+            <hr />
+          </article>
+          <Img
+            key={contentfulPost.heroImage.id}
+            className="hero"
+            fluid={{ ...contentfulPost.heroImage.fluid, aspectRatio: 4 / 3 }}
+          />
+        </Content>
       </Wrapper>
     </>
   )
@@ -95,13 +112,12 @@ export const query = graphql`
       title
       id
       slug
+      publishDate(formatString: "d/M/YYYY")
       metaDescription {
         internal {
           content
         }
       }
-      publishDate(formatString: "d/M/YYYY")
-      publishDateISO: publishDate(formatString: "YYYY-MM-DD")
       tags {
         title
         id
@@ -118,17 +134,10 @@ export const query = graphql`
           src
         }
       }
-
       body {
         childMdx {
           body
           id
-        }
-        childMarkdownRemark {
-          html
-          excerpt(pruneLength: 320)
-          metaExcerpt: excerpt(pruneLength: 120)
-          timeToRead
         }
       }
     }
