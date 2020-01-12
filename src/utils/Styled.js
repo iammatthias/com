@@ -59,13 +59,21 @@ export const Content = styled.section`
           color: ${props => props.theme.colors.text};
           @media screen and (min-width: ${props =>
               props.theme.responsive.medium}) {
+            width: 75%;
+          }
+          @media screen and (min-width: ${props =>
+              props.theme.responsive.large}) {
             width: 50%;
+          }
+          &::placeholder {
+            color: ${props => props.theme.colors.text} !important;
           }
         }
         button {
           background: ${props => props.theme.colors.text};
           color: ${props => props.theme.colors.background};
           font-weight: ${props => props.theme.fontWeights.heading};
+          border: 0;
           padding: 0.5rem 1rem;
         }
       }
