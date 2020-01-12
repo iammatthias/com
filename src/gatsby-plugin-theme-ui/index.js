@@ -7,18 +7,22 @@ export default {
   colors: {
     text: '#fff8e7',
     background: '#140D00',
+    muted: '#716b60',
     modes: {
       light: {
         text: '#140D00',
         background: '#fff8e7',
+        muted: '#716b60',
       },
       dark: {
         text: '#fff8e7',
         background: '#140D00',
+        muted: '#716b60',
       },
       random: {
         text: paletteColor,
         background: paletteBackground,
+        muted: paletteColor,
       },
     },
   },

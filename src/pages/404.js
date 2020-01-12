@@ -19,6 +19,7 @@ const NotFoundPage = () => (
             sx={{
               variant: 'styles.h1',
             }}
+            className="knockout"
           >
             404
           </p>

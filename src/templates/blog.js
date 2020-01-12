@@ -88,7 +88,6 @@ const Blog = ({ data, pageContext }) => {
                     Discuss on Twitter
                   </a>
                 </div>
-                <hr />
               </article>
             </Content>
           ))}

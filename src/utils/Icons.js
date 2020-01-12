@@ -6,7 +6,7 @@ export const Sun = props => (
     width="24px"
     fill="currentcolor"
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 22 22"
+    viewBox="0 0 20 20"
     version="1.1"
     x="0px"
     y="0px"
@@ -26,7 +26,7 @@ export const Moon = props => (
     width="24px"
     fill="currentcolor"
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 30 30"
+    viewBox="0 0 28 28"
     version="1.1"
     x="0px"
     y="0px"
@@ -45,7 +45,7 @@ export const Random = props => (
   <svg
     height="24px"
     width="24px"
-    viewBox="0 0 512 512"
+    viewBox="0 0 510 510"
     xmlns="http://www.w3.org/2000/svg"
     fill="currentcolor"
   >

@@ -38,6 +38,7 @@ const Index = ({ props, data }) => {
                     sx={{
                       variant: 'styles.h1',
                     }}
+                    className="knockout"
                   >
                     {gallery.title}
                   </p>

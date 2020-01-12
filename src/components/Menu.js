@@ -4,6 +4,8 @@ import React from 'react' //eslint-disable-line
 
 import { jsx, useColorMode } from 'theme-ui'
 
+import { Link } from 'gatsby'
+
 import Headroom from 'react-headroom'
 
 import { Wrapper, Content, Button } from '../utils/Styled'
@@ -28,6 +30,41 @@ const Menu = props => {
         <Content className="menu">
           <Logo />
           <div>
+            <p className="mobileBlock">
+              <Link
+                sx={{
+                  variant: 'styles.a',
+                  verticalAlign: 'top',
+                  textDecoration: 'none',
+                }}
+                to="/"
+              >
+                Galleries
+              </Link>
+              &nbsp;&nbsp;&nbsp;
+              <Link
+                sx={{
+                  variant: 'styles.a',
+                  verticalAlign: 'top',
+                  textDecoration: 'none',
+                }}
+                to="/blog"
+              >
+                Blog
+              </Link>
+              &nbsp;&nbsp;&nbsp;
+              <Link
+                sx={{
+                  variant: 'styles.a',
+                  verticalAlign: 'top',
+                  textDecoration: 'none',
+                }}
+                to="/contact"
+                className="hide-inline"
+              >
+                Contact
+              </Link>
+            </p>
             <Button
               className="colorToggle"
               onClick={e => {

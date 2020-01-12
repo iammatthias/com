@@ -10,8 +10,9 @@ export const Wrapper = styled.main`
 `
 
 export const Content = styled.section`
+position: relative;
   margin: 2rem auto;
-  height: calc(100vh - 4rem);
+  height: 80vh;
   width: calc(100vw - 4rem);
   max-width: 2000px !important;
   display: flex;
@@ -23,8 +24,6 @@ export const Content = styled.section`
     padding-right: 1rem;
   }
   &.lost {
-    position: relative;
-    height: calc(85vh - 4rem);
     div {
       height: 100%;
       width: 100%;
@@ -33,30 +32,9 @@ export const Content = styled.section`
       align-items: center;
       justify-content: center;
     }
-    p {
-      line-height: 1;
-      font-size: inherit;
-      color: ${props => props.theme.colors.text};
-      padding: 0;
-      margin: 0;
-      -webkit-text-stroke: 2px ${props => props.theme.colors.text};
-      -webkit-text-fill-color: transparent;
-    }
+    
   }
-  &.introduction,
-  &.footer {
-    height: calc(85vh - 4rem);
-    margin: 2rem 2rem 2rem 6.18vw;
-    width: 80vw;
-    @media screen and (min-width: ${props => props.theme.responsive.small}) {
-      width: 70vw;
-    }
-    @media screen and (min-width: ${props => props.theme.responsive.medium}) {
-      width: 60vw;
-    }
-    @media screen and (min-width: ${props => props.theme.responsive.large}) {
-      width: 50vw;
-    }
+  
   }
   &.biography {
     height: 100%;
@@ -83,7 +61,7 @@ export const Content = styled.section`
           background: ${props => props.theme.colors.background};
           color: ${props => props.theme.colors.text};
           @media screen and (min-width: ${props =>
-              props.theme.responsive.medium}) {
+            props.theme.responsive.medium}) {
             width: 50%;
           }
         }
@@ -111,10 +89,12 @@ export const Content = styled.section`
     height: 100%;
     width: calc(100vw - 4rem);
     margin: 2rem 2rem 10rem;
+    padding-bottom: 2rem;
     display: grid;
     grid-template-columns: 50vw 1fr 1fr 1fr 1fr 1fr;
     grid-gap: 2rem;
     grid-auto-flow: dense;
+    border-bottom: 2px solid ${props => props.theme.colors.text};
     article {
       position: relative;
       height: 100%;
@@ -123,6 +103,9 @@ export const Content = styled.section`
         grid-column: 1;
       }
       figure {
+        text-align: center;
+        font-style: italic;
+        color: ${props => props.theme.colors.muted};
         div {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
@@ -132,11 +115,7 @@ export const Content = styled.section`
       .buttons {
         margin: 2rem 0;
       }
-      hr {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-      }
+    
     }
     .hero {
       grid-column: 1 /7;
@@ -153,6 +132,14 @@ export const Content = styled.section`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    text-align: right;
+    .mobileBlock {
+      
+      display: block;
+      @media screen and (min-width: ${props => props.theme.responsive.medium}) {
+        display: inline-block;
+      }
+    }
   }
   &.gallery {
     height: 100%;
@@ -180,20 +167,13 @@ export const ContentLink = styled(Link)`
     left: 0;
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: center;
     justify-content: center;
     z-index: 3;
     text-align: center;
-    margin: 0 2rem;
-    width: calc(100% - 4rem);
     p {
-      line-height: 1;
-      font-size: inherit;
       color: ${props => props.theme.colors.background};
-      padding: 0;
-      margin: 0;
       -webkit-text-stroke: 2px ${props => props.theme.colors.background};
-      -webkit-text-fill-color: transparent;
       opacity: 0;
     }
   }
@@ -213,7 +193,7 @@ export const ContentLink = styled(Link)`
       opacity: 1;
     }
     &:before {
-      opacity: 0.75;
+      opacity: 0.8;
     }
   }
 `

@@ -89,6 +89,16 @@ export const GlobalStyles = css`
     background: currentColor;
     width: 100%;
   }
+
+  .knockout {
+    line-height: 1;
+    font-size: inherit !important;
+    color: currentColor;
+    padding: 0;
+    margin: 0;
+    -webkit-text-stroke: 2px currentColor;
+    -webkit-text-fill-color: transparent;
+  }
 `
 
 export default GlobalStyles
