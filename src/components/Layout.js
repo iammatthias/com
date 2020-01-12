@@ -1,11 +1,11 @@
 import React from 'react'
-import { ThemeProvider } from 'styled-components'
+import { Global } from '@emotion/core'
+import { GlobalStyles } from '../styles/globalStyles.js'
 import { motion, AnimatePresence } from 'framer-motion'
-import theme from '../styles/theme'
-import _Helmet from './Helmet'
-import Styles from './Styles'
-import Menu from './Menu'
-import Footer from './Footer'
+
+import Helmet from './Helmet'
+import Menu from '../components/Menu'
+import Footer from '../components/Footer'
 
 if (typeof window !== 'undefined') {
   // eslint-disable-next-line global-require
@@ -32,28 +32,27 @@ const variants = {
   },
 }
 
-const Layout = ({ children, location }) => {
+const Layout = ({ children }) => {
   return (
     <>
-      <_Helmet />
-      <Styles />
-      <ThemeProvider theme={theme}>
-        <div className="siteRoot">
-          <Menu />
-          <AnimatePresence>
-            <motion.main
-              key={location.pathname}
-              variants={variants}
-              initial="initial"
-              animate="enter"
-              exit="exit"
-            >
-              {children}
-            </motion.main>
-          </AnimatePresence>
-          <Footer />
-        </div>
-      </ThemeProvider>
+      <Helmet />
+      <Global styles={GlobalStyles} />
+
+      <div className="siteRoot">
+        <Menu />
+        <AnimatePresence>
+          <motion.main
+            key={location.pathname}
+            variants={variants}
+            initial="initial"
+            animate="enter"
+            exit="exit"
+          >
+            {children}
+          </motion.main>
+        </AnimatePresence>
+        <Footer />
+      </div>
     </>
   )
 }

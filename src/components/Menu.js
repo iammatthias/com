@@ -1,34 +1,21 @@
-import React from 'react'
-import { Link } from 'gatsby'
-import Logo from './Logo'
-import styled from 'styled-components'
+/** @jsx jsx */
+
+import React from 'react' //eslint-disable-line
+
+import { jsx, useColorMode } from 'theme-ui'
+
 import Headroom from 'react-headroom'
 
-const Content = styled.div`
-  grid-area: Content;
+import { Wrapper, Content, Button } from '../utils/Styled'
 
-  margin: 2rem 2rem 0;
-  height: 5rem;
-  section {
-    display: flex;
+import { Sun, Moon, Random } from '../utils/Icons'
 
-    align-items: center;
-    justify-content: space-between;
-    margin: 1rem auto;
-  }
-  @media screen and (min-width: 52em) {
-    section {
-      width: 76.4%;
-    }
-  }
-  @media screen and (min-width: 64em) {
-    section {
-      width: 61.8%;
-    }
-  }
-`
+import Logo from '../components/Logo'
 
 const Menu = props => {
+  const modes = ['light', 'dark', 'random']
+
+  const [mode, setMode] = useColorMode() //eslint-disable-line
   return (
     <Headroom
       style={{
@@ -37,18 +24,40 @@ const Menu = props => {
         transition: 'all .5s ease-in-out',
       }}
     >
-      <Content>
-        <section>
+      <Wrapper>
+        <Content className="menu">
           <Logo />
-          <p>
-            <Link to="/">Galleries</Link>&nbsp;&nbsp;&nbsp;
-            <Link to="/blog">Blog</Link>&nbsp;&nbsp;&nbsp;
-            <Link to="/contact" className="hide-inline">
-              Contact
-            </Link>
-          </p>
-        </section>
-      </Content>
+          <div>
+            <Button
+              className="colorToggle"
+              onClick={e => {
+                const light = modes[0]
+                setMode(light)
+              }}
+            >
+              <Sun />
+            </Button>
+            <Button
+              className="colorToggle"
+              onClick={e => {
+                const dark = modes[1]
+                setMode(dark)
+              }}
+            >
+              <Moon />
+            </Button>
+            <Button
+              className="colorToggle"
+              onClick={e => {
+                const random = modes[2]
+                setMode(random)
+              }}
+            >
+              <Random />
+            </Button>
+          </div>
+        </Content>
+      </Wrapper>
     </Headroom>
   )
 }

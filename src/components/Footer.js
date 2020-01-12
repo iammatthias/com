@@ -1,26 +1,19 @@
 import React from 'react'
-import { Link } from 'gatsby'
-import { Wrapper, Content } from './Utils'
-import { FiTwitter, FiInstagram } from 'react-icons/fi'
+import { Wrapper, Content } from '../utils/Styled'
+import { MDXProvider } from '@mdx-js/react'
+import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 
-const Footer = props => {
+import { useSiteMetadata } from '../utils/Metadata'
+
+const Footer = () => {
+  const { colophon } = useSiteMetadata()
   return (
     <Wrapper>
       <Content className="footer">
         <section>
-          <h2>Colophone</h2>
-          <p>
-            <Link to="/">Home</Link>&nbsp;&nbsp;&nbsp;
-            <Link to="/blog">Blog</Link>&nbsp;&nbsp;&nbsp;
-            <Link to="/contact">Contact</Link>
-          </p>
-          <p>
-            <FiTwitter />{' '}
-            <a href="https://twitter.com/iammatthias">@iammatthias</a>
-            &nbsp;&nbsp;&nbsp;
-            <FiInstagram />{' '}
-            <a href="https://instagram.com/iammatthias">@iammatthias</a>
-          </p>
+          <MDXProvider>
+            <MDXRenderer>{colophon.childMdx.body}</MDXRenderer>
+          </MDXProvider>
           <p>
             <a
               href="https://www.contentful.com/"
@@ -62,8 +55,6 @@ const Footer = props => {
               </picture>
             </a>
           </p>
-          <p className="small">© 2019 Matthias Jordan. All rights reserved.</p>
-          <p className="small">Made with ♡ in California, USA</p>
         </section>
       </Content>
     </Wrapper>

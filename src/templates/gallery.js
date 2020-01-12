@@ -1,52 +1,51 @@
-import React from 'react'
+/** @jsx jsx */
+
+import React from 'react' //eslint-disable-line
+
+import { jsx } from 'theme-ui'
 import { graphql } from 'gatsby'
-import { Wrapper, Content, ContentBottom } from '../components/Utils'
 
-import GalleryGrid from '../components/galleryGrid'
 import SEO from '../components/SEO'
-import Arrow from '../components/Arrow'
+import GalleryGrid from '../components/galleryGrid'
 
-const GalleryTemplate = ({ data, location }) => {
-  const gallery = data.contentfulExtendedGallery
-  const subGalleries = data.contentfulExtendedGallery.galleries
+import { Wrapper, Content } from '../utils/Styled'
+import { useSiteMetadata } from '../utils/Metadata'
+
+const Gallery = ({ data, location }) => {
+  const { metaImage } = useSiteMetadata()
+  const contentfulGallery = data.contentfulExtendedGallery
+  const contentfulSubGalleries = data.contentfulExtendedGallery.galleries
 
   return (
     <>
-      <SEO
-        title={gallery.title}
-        image={gallery.shareImage}
-        description={gallery.body.childMarkdownRemark.metaExcerpt}
-      />
+      <SEO image={metaImage} />
       <Wrapper>
-        <Content>
-          <section id="top">
-            <h1>{gallery.title}</h1>
-            <article
-              dangerouslySetInnerHTML={{
-                __html: gallery.body.childMarkdownRemark.html,
-              }}
-            />
-            <Arrow anchor={location.pathname + '#bottom'} />
-          </section>
-        </Content>
-        <ContentBottom>
-          <section id="bottom">
-            {subGalleries.map((subGallery, index) => (
-              <div key={index}>
+        <Content className="gallery">
+          <p
+            sx={{
+              variant: 'styles.h1',
+            }}
+            key={contentfulGallery.title}
+          >
+            {contentfulGallery.title}
+          </p>
+          <>
+            {contentfulSubGalleries.map((subGallery, index) => (
+              <div className="subGallery" key={index}>
                 {subGallery.__typename === 'ContentfulSubGallery' && (
                   <GalleryGrid
                     key={subGallery.id}
                     slug={subGallery.slug}
                     images={subGallery.images}
                     title={subGallery.title}
-                    itemsPerRow={[2, 2, 3, 5]}
-                    parent={gallery.title}
+                    itemsPerRow={[2, 3, 5]}
+                    parent={contentfulGallery.title}
                   />
                 )}
               </div>
             ))}
-          </section>
-        </ContentBottom>
+          </>
+        </Content>
       </Wrapper>
     </>
   )
@@ -77,12 +76,7 @@ export const query = graphql`
           height
         }
       }
-      body {
-        childMarkdownRemark {
-          html
-          metaExcerpt: excerpt
-        }
-      }
+
       galleries {
         __typename
         ... on ContentfulSubGallery {
@@ -109,4 +103,5 @@ export const query = graphql`
     }
   }
 `
-export default GalleryTemplate
+
+export default Gallery

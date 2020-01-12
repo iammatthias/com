@@ -2,11 +2,13 @@
 
 # [IAMMATTHIAS v3](https://iammatthias.com)
 
-© All images and content Copyright 2019 Matthias Jordan, All Rights Reserved
+## © All images and content Copyright 2019 Matthias Jordan, All Rights Reserved
+
+## THIS IS NOT A TEMPLATE, STARTER, OR THEME.
+
+### This repo is left public so you can see how it's built, but this is not an invitation to rip it off.
 
 #### If you would like to quickly bootstrap a Gatsby + Contentful + Netlify project, I recommend the fantastic [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn) starter.
-
-##### This repo is left public to serve as an educational resource. Feel free to take a look at how things work, so you can build your own.
 
 ![](https://raw.githubusercontent.com/iammatthias/.com/master/static/share/share.png) 
 

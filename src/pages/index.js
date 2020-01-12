@@ -1,43 +1,51 @@
-import React from 'react'
-import { graphql } from 'gatsby'
-import { Wrapper, Content, ContentBottom } from '../components/Utils'
-import List from '../components/contentList'
-import SEO from '../components/SEO'
-import Arrow from '../components/Arrow'
+/** @jsx jsx */
 
-const Index = ({ data }) => {
-  const home = data.contentfulHome
+import React from 'react' //eslint-disable-line
+
+import { jsx } from 'theme-ui'
+import { graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { MDXProvider } from '@mdx-js/react'
+import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
+
+import FitText from '@kennethormandy/react-fittext'
+
+import SEO from '../components/SEO'
+
+import { Wrapper, Content, ContentLink, GalleryList } from '../utils/Styled'
+import { useSiteMetadata } from '../utils/Metadata'
+
+const Index = ({ props, data }) => {
+  const { introduction, metaImage } = useSiteMetadata()
   const contentfulGalleries = data.allContentfulExtendedGallery.edges
+
   return (
     <>
-      <SEO image={home.shareImage} />
+      <SEO title="MATTHIAS" image={metaImage} />
       <Wrapper>
-        <Content>
-          <section>
-            <h1>{home.headline}</h1>
-            <article
-              dangerouslySetInnerHTML={{
-                __html: home.body.childMarkdownRemark.html,
-              }}
-            />
-            <Arrow anchor="/#bottom" />
-          </section>
+        <Content className="introduction">
+          <MDXProvider>
+            <MDXRenderer>{introduction.childMdx.body}</MDXRenderer>
+          </MDXProvider>
         </Content>
-        <ContentBottom className="galleries">
-          <section id="bottom">
-            {contentfulGalleries.map(({ node: gallery }) => (
-              <List
-                galleryList
-                key={gallery.id}
-                slug={gallery.slug}
-                image={gallery.heroImage}
-                title={gallery.title}
-                date={gallery.publishDate}
-                excerpt={gallery.body}
-              />
-            ))}
-          </section>
-        </ContentBottom>
+        <GalleryList className="galleries" id="bottom">
+          {contentfulGalleries.map(({ node: gallery }) => (
+            <ContentLink key={gallery.id} to={gallery.slug}>
+              <Img fluid={{ ...gallery.heroImage.fluid, aspectRatio: 1 / 1 }} />
+              <div className="fit">
+                <FitText compressor={0.5}>
+                  <p
+                    sx={{
+                      variant: 'styles.h1',
+                    }}
+                  >
+                    {gallery.title}
+                  </p>
+                </FitText>
+              </div>
+            </ContentLink>
+          ))}
+        </GalleryList>
       </Wrapper>
     </>
   )
@@ -61,34 +69,6 @@ export const query = graphql`
               ...GatsbyContentfulFluid_withWebp
             }
           }
-          body {
-            childMarkdownRemark {
-              excerpt(pruneLength: 140, format: HTML)
-            }
-          }
-        }
-      }
-    }
-    contentfulHome {
-      title
-      id
-      headline
-      heroImage {
-        title
-        fluid(maxWidth: 1600, quality: 50) {
-          ...GatsbyContentfulFluid_withWebp
-        }
-      }
-      shareImage {
-        ogimg: resize(width: 1200, quality: 50) {
-          src
-          width
-          height
-        }
-      }
-      body {
-        childMarkdownRemark {
-          html
         }
       }
     }

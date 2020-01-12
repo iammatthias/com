@@ -17,4 +17,6 @@ module.exports = {
   backgroundColor: '#140d00', // Used for Offline Manifest
   themeColor: '#f6f5f5', // Used for Offline Manifest
   copyright: 'Copyright © 2018 Matthias Jordan', // Copyright string for the RSS feed
+  postsPerPage: 4,
+  postsPerHomePage: 4,
 }
