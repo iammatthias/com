@@ -2,6 +2,8 @@
 
 ### [IAMMATTHIAS v3.1](https://iammatthias.com)
 
+![](https://raw.githubusercontent.com/iammatthias/.com/master/static/share/share.png) 
+
 © All images and content Copyright 2019 Matthias Jordan, All Rights Reserved
 
 #### This repo is left public as an educational resource, but please don't rip it off. It is not intended to be a starter or theme. No support is provided. 
