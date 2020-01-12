@@ -1,12 +1,12 @@
 /** @jsx jsx */
 
-import React from 'react'
+import React from 'react' //eslint-disable-line
 
 import { jsx } from 'theme-ui'
 
 import { Link } from 'gatsby'
 
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 import { Glyph } from '../utils/Icons'
 

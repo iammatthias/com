@@ -23,7 +23,6 @@ module.exports = {
   },
   plugins: [
     'gatsby-plugin-react-helmet',
-    'gatsby-plugin-styled-components',
     'gatsby-plugin-theme-ui',
     'gatsby-plugin-sharp',
     'gatsby-plugin-catch-links',
