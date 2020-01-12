@@ -5,14 +5,15 @@ import styled from '@emotion/styled'
 export const Wrapper = styled.main`
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: center;
   justify-content: center;
 `
 
 export const Content = styled.section`
-  margin: 2rem;
+  margin: 2rem auto;
   height: calc(100vh - 4rem);
   width: calc(100vw - 4rem);
+  max-width: 2000px !important;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -105,17 +106,6 @@ export const Content = styled.section`
   &.blogIntroduction,
   &.pagination {
     height: 100%;
-    width: 80vw;
-    margin: 2rem 2rem 5rem 6.18vw;
-    @media screen and (min-width: ${props => props.theme.responsive.small}) {
-      width: 70vw;
-    }
-    @media screen and (min-width: ${props => props.theme.responsive.medium}) {
-      width: 60vw;
-    }
-    @media screen and (min-width: ${props => props.theme.responsive.large}) {
-      width: 50vw;
-    }
   }
   &.blog {
     height: 100%;

@@ -45,7 +45,6 @@ const Blog = ({ data, pageContext }) => {
           <MDXProvider>
             <MDXRenderer>{blog.childMdx.body}</MDXRenderer>
           </MDXProvider>
-          <hr />
         </Content>
 
         <>
