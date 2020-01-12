@@ -18,6 +18,8 @@ const GalleryGrid = ({
   itemsPerRow: itemsPerRowByBreakpoints,
 }) => {
   const lightboxImages = images.map(image => image.fluid.src)
+  const eventImageTitle = images.map(image => image.title)
+  const eventImageSrc = images.map(image => image.thumbnail.src)
   const aspectRatios = images.map(image => image.fluid.aspectRatio)
   const rowAspectRatioSumsByBreakpoints = itemsPerRowByBreakpoints.map(
     itemsPerRow =>
@@ -69,6 +71,7 @@ const GalleryGrid = ({
           />
         </Link>
       ))}
+
       <FsLightbox
         toggler={toggler}
         sources={lightboxImages}
@@ -76,13 +79,20 @@ const GalleryGrid = ({
         onClick={() => {
           console.log(imageIndex)
         }}
-        // onOpen={() => {
-        //   window.analytics.track('Image Viewed', {
-        //     image: eventImageTitle[imageIndex],
-        //     src: eventImageSrc[imageIndex],
-        //     gallery: parent + ' — ' + title,
-        //   })
-        // }}
+        onOpen={() => {
+          window.analytics.track('Image Viewed', {
+            image: eventImageTitle[imageIndex],
+            src: eventImageSrc[imageIndex],
+            gallery: parent + ' — ' + title,
+          })
+        }}
+        onSlideChange={() => {
+          window.analytics.track('Image Viewed', {
+            image: eventImageTitle[imageIndex],
+            src: eventImageSrc[imageIndex],
+            gallery: parent + ' — ' + title,
+          })
+        }}
       />
     </>
   )

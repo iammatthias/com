@@ -26,6 +26,7 @@
     "gatsby-plugin-offline": "^3.0.31",
     "gatsby-plugin-react-helmet": "^3.1.21",
     "gatsby-plugin-robots-txt": "^1.5.0",
+    "gatsby-plugin-segment-js": "^3.1.0",
     "gatsby-plugin-sharp": "^2.3.13",
     "gatsby-plugin-sitemap": "^2.2.25",
     "gatsby-plugin-theme-ui": "^0.2.53",

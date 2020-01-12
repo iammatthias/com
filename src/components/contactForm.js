@@ -21,7 +21,17 @@ export default class MyForm extends React.Component {
         <input type="email" name="email" placeholder="Email" />
         <label>Message:</label>
         <input type="text" name="message" placeholder="Message" />
-        {status === 'SUCCESS' ? <p>Thanks!</p> : <button>Submit</button>}
+        {status === 'SUCCESS' ? (
+          <p>Thanks!</p>
+        ) : (
+          <button
+            onClick={() => {
+              window.analytics.track('Contact Form Submitted', {})
+            }}
+          >
+            Submit
+          </button>
+        )}
         {status === 'ERROR' && <p>Ooops! There was an error.</p>}
       </form>
     )

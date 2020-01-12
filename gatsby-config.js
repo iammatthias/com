@@ -80,6 +80,15 @@ module.exports = {
     },
 
     {
+      resolve: `gatsby-plugin-segment-js`,
+      options: {
+        prodKey: process.env.SEGMENT,
+        devKey: 'h9OTk5FWbRbQadJLqGIAVMYfkIbmNEBE',
+        trackPage: true,
+      },
+    },
+
+    {
       resolve: 'gatsby-source-contentful',
       options:
         process.env.NODE_ENV === 'development'
