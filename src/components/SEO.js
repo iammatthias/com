@@ -1,7 +1,7 @@
 import React from 'react'
 import Helmet from 'react-helmet'
 
-const defaultTitle = 'I AM MATTHIAS'
+const defaultTitle = 'IAM'
 const defaultDescription =
   'Photographer and digital marketer based in Southern California'
 const defaultImage = 'https://iammatthias.com/share/shareIndex.jpg'
@@ -9,7 +9,7 @@ const defaultImage = 'https://iammatthias.com/share/shareIndex.jpg'
 const SEO = props => (
   <Helmet>
     <title>
-      {props.title ? `${props.title} - ${defaultTitle}` : defaultTitle}
+      {props.title ? `${defaultTitle}.${props.title}` : defaultTitle}
     </title>
     <meta
       name="description"

@@ -50,6 +50,17 @@ const BlogPost = ({ props, pageContext, data }) => {
               >
                 {contentfulPost.title}
               </p>
+              <p
+                sx={{
+                  variant: 'styles.h4',
+                  borderLeft: '4px solid currentColor',
+                  pl: 3,
+                }}
+              >
+                Published: {contentfulPost.publishDate}&nbsp;&nbsp;&nbsp;{'//'}
+                &nbsp;&nbsp;&nbsp;
+                {contentfulPost.body.childMdx.timeToRead} min read
+              </p>
             </ContentLink>
             <MDXProvider>
               <MDXRenderer>{contentfulPost.body.childMdx.body}</MDXRenderer>
@@ -136,6 +147,7 @@ export const query = graphql`
       }
       body {
         childMdx {
+          timeToRead
           body
           id
         }

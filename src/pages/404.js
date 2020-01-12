@@ -1,36 +1,30 @@
-import React from 'react'
-import styled from '@emotion/styled'
-import Helmet from 'react-helmet'
+/** @jsx jsx */
 
-import { Flex } from 'rebass'
+import React from 'react' //eslint-disable-line
 
-const Title = styled.h1`
-  font-size: 40vw;
-  text-transform: capitalize;
-  font-weight: 600;
-  margin: 0 0 3rem 0;
-  line-height: 1.2;
-`
+import { jsx } from 'theme-ui'
+
+import FitText from '@kennethormandy/react-fittext'
+
+import SEO from '../components/SEO'
+import { Wrapper, Content } from '../utils/Styled'
 
 const NotFoundPage = () => (
   <>
-    <Helmet>
-      <title>404 - Page Not Found</title>
-      <meta name="description" content="Page not found" />
-    </Helmet>
-
-    <Flex
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
-      p={[3, 4]}
-      mb={[5, 0]}
-      css={{
-        height: '100vh',
-      }}
-    >
-      <Title>404</Title>
-    </Flex>
+    <SEO title="404" />
+    <Wrapper>
+      <Content className="lost">
+        <FitText compressor={0.2}>
+          <p
+            sx={{
+              variant: 'styles.h1',
+            }}
+          >
+            404
+          </p>
+        </FitText>
+      </Content>
+    </Wrapper>
   </>
 )
 

@@ -1,8 +1,6 @@
 import React from 'react'
 import Layout from './src/components/Layout'
 
-const transitionDelay = 600
-
 export const wrapPageElement = ({ element, props }) => {
   return <Layout {...props}>{element}</Layout>
 }
@@ -18,13 +16,10 @@ export const shouldUpdateScroll = ({
   getSavedScrollPosition,
 }) => {
   if (location.action === 'PUSH') {
-    window.setTimeout(() => window.scrollTo(0, 0), transitionDelay)
+    window.setTimeout(() => window.scrollTo(0, 0))
   } else {
     const savedPosition = getSavedScrollPosition(location)
-    window.setTimeout(
-      () => window.scrollTo(...(savedPosition || [0, 0])),
-      transitionDelay
-    )
+    window.setTimeout(() => window.scrollTo(...(savedPosition || [0, 0])))
   }
   return false
 }

@@ -15,9 +15,13 @@ import SEO from '../components/SEO'
 import { Wrapper, Content, ContentLink } from '../utils/Styled'
 import { useSiteMetadata } from '../utils/Metadata'
 
-const Blog = ({ props, data }) => {
+import Pagination from '../components/Pagination'
+
+const Blog = ({ data, pageContext }) => {
   const { blog, metaImage } = useSiteMetadata()
   const contentfulPosts = data.allContentfulPost.edges
+
+  const { currentPage } = pageContext
 
   const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/blog/${contentfulPosts.slug}/`
@@ -35,22 +39,23 @@ const Blog = ({ props, data }) => {
 
   return (
     <>
-      <SEO image={metaImage} />
+      <SEO title={'BLOG Pg. ' + currentPage} image={metaImage} />
       <Wrapper>
-        <Content className="introduction">
+        <Content className="blogIntroduction">
           <MDXProvider>
             <MDXRenderer>{blog.childMdx.body}</MDXRenderer>
           </MDXProvider>
+          <hr />
         </Content>
-        <Content className="blog">
+
+        <>
           {contentfulPosts.map(({ node: post }) => (
-            <>
+            <Content className="blog" key={post.id}>
               <Img
-                key={post.heroImage.id}
                 className="hero"
                 fluid={{ ...post.heroImage.fluid, aspectRatio: 4 / 3 }}
               />
-              <article key={post.id}>
+              <article>
                 <ContentLink to={`/blog/${post.slug}`}>
                   <p
                     sx={{
@@ -58,6 +63,17 @@ const Blog = ({ props, data }) => {
                     }}
                   >
                     {post.title}
+                  </p>
+                  <p
+                    sx={{
+                      variant: 'styles.h4',
+                      borderLeft: '4px solid currentColor',
+                      pl: 3,
+                    }}
+                  >
+                    Published: {post.publishDate}&nbsp;&nbsp;&nbsp;{'//'}
+                    &nbsp;&nbsp;&nbsp;
+                    {post.body.childMdx.timeToRead} min read
                   </p>
                 </ContentLink>
                 <MDXProvider>
@@ -75,8 +91,11 @@ const Blog = ({ props, data }) => {
                 </div>
                 <hr />
               </article>
-            </>
+            </Content>
           ))}
+        </>
+        <Content className="pagination">
+          <Pagination context={pageContext} />
         </Content>
       </Wrapper>
     </>
@@ -84,10 +103,11 @@ const Blog = ({ props, data }) => {
 }
 
 export const query = graphql`
-  query Blog {
+  query($skip: Int!, $limit: Int!) {
     allContentfulPost(
-      limit: 1000
       sort: { fields: [publishDate], order: DESC }
+      limit: $limit
+      skip: $skip
     ) {
       edges {
         node {
@@ -104,6 +124,7 @@ export const query = graphql`
           }
           body {
             childMdx {
+              timeToRead
               body
               id
             }

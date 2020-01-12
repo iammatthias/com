@@ -12,6 +12,12 @@ export const useSiteMetadata = () => {
               id
             }
           }
+          portrait {
+            title
+            fluid(quality: 50) {
+              ...GatsbyContentfulFluid_withWebp
+            }
+          }
           blog {
             childMdx {
               body

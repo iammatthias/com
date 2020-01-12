@@ -21,7 +21,7 @@ const Index = ({ props, data }) => {
 
   return (
     <>
-      <SEO image={metaImage} />
+      <SEO title="MATTHIAS" image={metaImage} />
       <Wrapper>
         <Content className="introduction">
           <MDXProvider>

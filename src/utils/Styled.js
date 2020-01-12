@@ -21,6 +21,27 @@ export const Content = styled.section`
     display: inline-block;
     padding-right: 1rem;
   }
+  &.lost {
+    position: relative;
+    height: calc(85vh - 4rem);
+    div {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    p {
+      line-height: 1;
+      font-size: inherit;
+      color: ${props => props.theme.colors.text};
+      padding: 0;
+      margin: 0;
+      -webkit-text-stroke: 2px ${props => props.theme.colors.text};
+      -webkit-text-fill-color: transparent;
+    }
+  }
   &.introduction,
   &.footer {
     height: calc(85vh - 4rem);
@@ -36,11 +57,70 @@ export const Content = styled.section`
       width: 50vw;
     }
   }
-  &.blog {
-    min-height: calc(100vh - 4rem);
+  &.biography {
     height: 100%;
-    width: calc(100vw - 12.36vw)
-    margin: 2rem 6.18vw;
+    width: calc(100vw - 4rem);
+    margin: 2rem 2rem 10rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas: 'portrait' 'copy';
+    grid-gap: 2rem;
+    .copy {
+      grid-area: copy;
+      form {
+        font-family: ${props => props.theme.fonts.body};
+        width: 100%;
+        label {
+          display: none;
+        }
+        input {
+          width: 100%;
+          border: 2px solid ${props => props.theme.colors.text};
+          display: block;
+          margin: 0 0 1rem;
+          padding: 0.5rem;
+          background: ${props => props.theme.colors.background};
+          color: ${props => props.theme.colors.text};
+          @media screen and (min-width: ${props =>
+              props.theme.responsive.medium}) {
+            width: 50%;
+          }
+        }
+        button {
+          background: ${props => props.theme.colors.text};
+          color: ${props => props.theme.colors.background};
+          font-weight: ${props => props.theme.fontWeights.heading};
+          padding: 0.5rem 1rem;
+        }
+      }
+    }
+    .portrait {
+      grid-area: portrait;
+    }
+    @media screen and (min-width: ${props => props.theme.responsive.medium}) {
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas: 'copy portrait';
+    }
+  }
+  &.blogIntroduction,
+  &.pagination {
+    height: 100%;
+    width: 80vw;
+    margin: 2rem 2rem 5rem 6.18vw;
+    @media screen and (min-width: ${props => props.theme.responsive.small}) {
+      width: 70vw;
+    }
+    @media screen and (min-width: ${props => props.theme.responsive.medium}) {
+      width: 60vw;
+    }
+    @media screen and (min-width: ${props => props.theme.responsive.large}) {
+      width: 50vw;
+    }
+  }
+  &.blog {
+    height: 100%;
+    width: calc(100vw - 4rem);
+    margin: 2rem 2rem 10rem;
     display: grid;
     grid-template-columns: 50vw 1fr 1fr 1fr 1fr 1fr;
     grid-gap: 2rem;
@@ -63,14 +143,9 @@ export const Content = styled.section`
         margin: 2rem 0;
       }
       hr {
-        margin:0;
-        border: 0;
-        height: 2px;
-        background: ${props => props.theme.colors.text};
         position: absolute;
         left: 0;
         bottom: 0;
-        width: 100%;
       }
     }
     .hero {
@@ -79,7 +154,6 @@ export const Content = styled.section`
         grid-column: 2 / 7;
       }
     }
-   
   }
   &.menu {
     height: 5vh;
@@ -91,7 +165,15 @@ export const Content = styled.section`
     justify-content: space-between;
   }
   &.gallery {
-  justify-content: start;
+    height: 100%;
+    justify-content: start;
+    .subGallery {
+      width: 100%;
+      margin: 0 0 5rem;
+      p {
+        display: block;
+      }
+    }
   }
 `
 

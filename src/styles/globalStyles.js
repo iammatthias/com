@@ -82,8 +82,12 @@ export const GlobalStyles = css`
 
   /* END RESET */
 
-  * {
-    transition: all 0.5s ease !important;
+  hr {
+    margin: 0;
+    border: 0;
+    height: 2px;
+    background: currentColor;
+    width: 100%;
   }
 `
 
