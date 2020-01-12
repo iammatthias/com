@@ -13,10 +13,8 @@ import mediumZoom from 'medium-zoom'
 import SEO from '../components/SEO'
 
 import { Wrapper, Content, ContentLink } from '../utils/Styled'
-import { useSiteMetadata } from '../utils/Metadata'
 
-const BlogPost = ({ props, pageContext, data }) => {
-  const { metaImage } = useSiteMetadata()
+const BlogPost = ({ pageContext, data }) => {
   const contentfulPost = data.contentfulPost
 
   const previous = pageContext.prev
@@ -38,7 +36,10 @@ const BlogPost = ({ props, pageContext, data }) => {
 
   return (
     <>
-      <SEO image={metaImage} />
+      <SEO
+        image={contentfulPost.heroImage}
+        description={contentfulPost.metaDescription.internal.content}
+      />
       <Wrapper>
         <Content className="blog">
           <article key={contentfulPost.id}>

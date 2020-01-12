@@ -9,16 +9,17 @@ import SEO from '../components/SEO'
 import GalleryGrid from '../components/galleryGrid'
 
 import { Wrapper, Content } from '../utils/Styled'
-import { useSiteMetadata } from '../utils/Metadata'
 
 const Gallery = ({ data, location }) => {
-  const { metaImage } = useSiteMetadata()
   const contentfulGallery = data.contentfulExtendedGallery
   const contentfulSubGalleries = data.contentfulExtendedGallery.galleries
 
   return (
     <>
-      <SEO image={metaImage} />
+      <SEO
+        image={contentfulGallery.heroImage}
+        description={contentfulGallery.metaDescription.internal.content}
+      />
       <Wrapper>
         <Content className="gallery">
           <p

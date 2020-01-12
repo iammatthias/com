@@ -20,7 +20,7 @@ const SEO = props => (
     <meta property="og:site_name" content={defaultTitle} />
     <meta
       property="og:title"
-      content={props.title ? `${props.title} - ${defaultTitle}` : defaultTitle}
+      content={props.title ? `${defaultTitle}.${props.title}` : defaultTitle}
     />
     <meta
       property="og:description"
@@ -45,7 +45,7 @@ const SEO = props => (
     <meta name="twitter:creator" content="@iammatthias" />
     <meta
       name="twitter:title"
-      content={props.title ? `${props.title} - ${defaultTitle}` : defaultTitle}
+      content={props.title ? `${defaultTitle}.${props.title}` : defaultTitle}
     />
     <meta
       name="twitter:description"
