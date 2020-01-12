@@ -10,7 +10,7 @@ export const Wrapper = styled.main`
 `
 
 export const Content = styled.section`
-position: relative;
+  position: relative;
   margin: 2rem auto;
   height: 80vh;
   width: calc(100vw - 4rem);
@@ -32,9 +32,6 @@ position: relative;
       align-items: center;
       justify-content: center;
     }
-    
-  }
-  
   }
   &.biography {
     height: 100%;
@@ -61,7 +58,7 @@ position: relative;
           background: ${props => props.theme.colors.background};
           color: ${props => props.theme.colors.text};
           @media screen and (min-width: ${props =>
-            props.theme.responsive.medium}) {
+              props.theme.responsive.medium}) {
             width: 50%;
           }
         }
@@ -88,20 +85,24 @@ position: relative;
   &.blog {
     height: 100%;
     width: calc(100vw - 4rem);
-    margin: 2rem 2rem 10rem;
+    margin: 2rem 2rem 5rem;
     padding-bottom: 2rem;
     display: grid;
-    grid-template-columns: 50vw 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    grid-template-areas: 'hero' 'article';
     grid-gap: 2rem;
-    grid-auto-flow: dense;
+
     border-bottom: 2px solid ${props => props.theme.colors.text};
+    @media screen and (min-width: ${props => props.theme.responsive.medium}) {
+      margin: 2rem;
+      grid-template-columns: 50vw 1fr 1fr 1fr 1fr 1fr;
+      grid-template-areas: 'article hero hero hero hero hero';
+    }
     article {
+      grid-area: article;
       position: relative;
       height: 100%;
-      grid-column: 1 /7;
-      @media screen and (min-width: ${props => props.theme.responsive.medium}) {
-        grid-column: 1;
-      }
       figure {
         text-align: center;
         font-style: italic;
@@ -112,16 +113,16 @@ position: relative;
           grid-gap: 1rem;
         }
       }
+      pre {
+        max-width: calc(100vw - 4rem);
+      }
       .buttons {
         margin: 2rem 0;
       }
-    
     }
     .hero {
-      grid-column: 1 /7;
-      @media screen and (min-width: ${props => props.theme.responsive.medium}) {
-        grid-column: 2 / 7;
-      }
+      grid-area: hero;
+      overflow: visible !important;
     }
   }
   &.menu {
@@ -134,7 +135,6 @@ position: relative;
     justify-content: space-between;
     text-align: right;
     .mobileBlock {
-      
       display: block;
       @media screen and (min-width: ${props => props.theme.responsive.medium}) {
         display: inline-block;

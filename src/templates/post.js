@@ -105,7 +105,6 @@ const BlogPost = ({ pageContext, data }) => {
                 Discuss on Twitter
               </a>
             </div>
-            <hr />
           </article>
           <Img
             key={contentfulPost.heroImage.id}
