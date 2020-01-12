@@ -1,32 +1,22 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/33c746c0-e9c5-4853-ae92-f721211dd417/deploy-status)](https://app.netlify.com/sites/iamnet/deploys) [![Maintainability](https://api.codeclimate.com/v1/badges/cfe289e436dbeed2598a/maintainability)](https://codeclimate.com/github/iammatthias/.com/maintainability) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9403cc5b92e74a1f9f3608221b1d76c1)](https://www.codacy.com/app/iammatthias/.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iammatthias/.com&amp;utm_campaign=Badge_Grade)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/33c746c0-e9c5-4853-ae92-f721211dd417/deploy-status)](https://app.netlify.com/sites/iamnet/deploys) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9403cc5b92e74a1f9f3608221b1d76c1)](https://www.codacy.com/app/iammatthias/.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iammatthias/.com&amp;utm_campaign=Badge_Grade)
 
-# [IAMMATTHIAS v3](https://iammatthias.com)
+### [IAMMATTHIAS v3.1](https://iammatthias.com)
 
-## © All images and content Copyright 2019 Matthias Jordan, All Rights Reserved
+© All images and content Copyright 2019 Matthias Jordan, All Rights Reserved
 
-## THIS IS NOT A TEMPLATE, STARTER, OR THEME.
+#### This repo is left public as an educational resource, but please don't rip it off. It is not intended to be a starter or theme. No support is provided. 
 
-### This repo is left public so you can see how it's built, but this is not an invitation to rip it off.
+#### If you would like to quickly bootstrap a Gatsby + Contentful + Netlify project, I recommend the [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn) starter or [Novela](https://github.com/narative/gatsby-theme-novela) theme.
 
-#### If you would like to quickly bootstrap a Gatsby + Contentful + Netlify project, I recommend the fantastic [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn) starter.
-
-![](https://raw.githubusercontent.com/iammatthias/.com/master/static/share/share.png) 
-
-## Overview
-Codebase for [https://iammatthias.com](https://iammatthias.com)
-
-Portfolio site built using Gatsby + Contentful + Netlify. Features photography galleries + subgalleries, a blog, and Netlify forms.
-
-### Tooling
-- Netlify
+### Built With
 - Gatsby JS
 - Contentful
-- Styled components
-- Page Transitions
+- Netlify
+- Theme UI
+- Framer Transitions
 - Performant masonry using Rebass
 - Segment
-- PWA
-- Offline support
-- Dark mode
-
-#### If you would like to quickly bootstrap a Gatsby + Contentful + Netlify project, I recommend the fantastic [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn) starter.
+- Color themes 
+-- Dark Mode
+-- Light Mode 
+-- Random A11Y
