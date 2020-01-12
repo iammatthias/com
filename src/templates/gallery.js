@@ -39,7 +39,7 @@ const Gallery = ({ data, location }) => {
                     slug={subGallery.slug}
                     images={subGallery.images}
                     title={subGallery.title}
-                    itemsPerRow={[2, 3, 5]}
+                    itemsPerRow={[3, 6, 8]}
                     parent={contentfulGallery.title}
                   />
                 )}
@@ -87,13 +87,13 @@ export const query = graphql`
           images {
             id
             title
-            fluid(maxWidth: 1600, quality: 50) {
+            fluid(maxWidth: 1200, quality: 60) {
               ...GatsbyContentfulFluid_withWebp
               src
               srcSet
               aspectRatio
             }
-            thumbnail: fluid(maxWidth: 500, quality: 20) {
+            thumbnail: fluid(maxWidth: 300, quality: 60) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio

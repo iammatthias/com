@@ -2,7 +2,7 @@ import { Link } from 'gatsby'
 
 import styled from '@emotion/styled'
 
-export const Wrapper = styled.main`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -44,12 +44,14 @@ export const Content = styled.section`
     .copy {
       grid-area: copy;
       form {
+        margin-top: 2rem;
         font-family: ${props => props.theme.fonts.body};
         width: 100%;
         label {
           display: none;
         }
-        input {
+        input,
+        textarea {
           width: 100%;
           border: 2px solid ${props => props.theme.colors.text};
           display: block;
@@ -182,7 +184,10 @@ export const ContentLink = styled(Link)`
     p {
       color: ${props => props.theme.colors.background};
       -webkit-text-stroke: 2px ${props => props.theme.colors.background};
-      opacity: 0;
+      opacity: 1;
+      @media screen and (min-width: ${props => props.theme.responsive.medium}) {
+        opacity: 0;
+      }
     }
   }
   &:before {
@@ -194,14 +199,20 @@ export const ContentLink = styled(Link)`
     width: 100%;
     z-index: 2;
     background: ${props => props.theme.colors.text};
-    opacity: 0;
-  }
-  &:hover {
-    p {
-      opacity: 1;
+    opacity: 0.8;
+    @media screen and (min-width: ${props => props.theme.responsive.medium}) {
+      opacity: 0;
     }
-    &:before {
-      opacity: 0.8;
+  }
+
+  @media screen and (min-width: ${props => props.theme.responsive.medium}) {
+    &:hover {
+      p {
+        opacity: 1;
+      }
+      &:before {
+        opacity: 0.8;
+      }
     }
   }
 `

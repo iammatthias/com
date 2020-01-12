@@ -32,6 +32,8 @@ const Menu = props => {
           <div>
             <p className="mobileBlock">
               <Link
+                aria-label="Homepage and Galleries"
+                title="Homepage and Galleries"
                 sx={{
                   variant: 'styles.a',
                   verticalAlign: 'top',
@@ -49,6 +51,8 @@ const Menu = props => {
                   textDecoration: 'none',
                 }}
                 to="/blog"
+                aria-label="Blog"
+                title="Blog"
               >
                 Blog
               </Link>
@@ -61,6 +65,8 @@ const Menu = props => {
                 }}
                 to="/contact"
                 className="hide-inline"
+                aria-label="Contact"
+                title="Contact"
               >
                 Contact
               </Link>
@@ -71,6 +77,8 @@ const Menu = props => {
                 const light = modes[0]
                 setMode(light)
               }}
+              aria-label="Light Mode"
+              title="Light Mode"
             >
               <Sun />
             </Button>
@@ -80,6 +88,8 @@ const Menu = props => {
                 const dark = modes[1]
                 setMode(dark)
               }}
+              aria-label="Dark Mode"
+              title="Dark Mode"
             >
               <Moon />
             </Button>
@@ -89,6 +99,8 @@ const Menu = props => {
                 const random = modes[2]
                 setMode(random)
               }}
+              aria-label="Random A11Y Color Pair Mode"
+              title="Random A11Y Color Pair Mode"
             >
               <Random />
             </Button>

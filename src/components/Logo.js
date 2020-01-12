@@ -31,6 +31,8 @@ const Logo = props => {
       to={`/`}
       className="noUnderline"
       alt="I Am Matthias"
+      aria-label="Homepage"
+      title="Homepage and Galleries"
     >
       <Glyph />
     </A>

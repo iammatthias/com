@@ -20,7 +20,8 @@ export default class MyForm extends React.Component {
         <label>Email:</label>
         <input type="email" name="email" placeholder="Email" />
         <label>Message:</label>
-        <input type="text" name="message" placeholder="Message" />
+        <input type="text" name="_gotcha" style={{ display: 'none' }} />
+        <textarea type="text" name="message" placeholder="Message" />
         {status === 'SUCCESS' ? (
           <p>Thanks!</p>
         ) : (

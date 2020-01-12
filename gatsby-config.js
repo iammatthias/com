@@ -83,6 +83,7 @@ module.exports = {
       resolve: `gatsby-plugin-segment-js`,
       options: {
         prodKey: process.env.SEGMENT,
+
         trackPage: true,
       },
     },
