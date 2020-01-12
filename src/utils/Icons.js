@@ -70,7 +70,7 @@ export const Glyph = props => (
     <clipPath id="a">
       <path clipRule="evenodd" d="m677.165 1879.4h2027.26v1283.55h-2027.26z" />
     </clipPath>
-    <path d="m.07-.009h3173.31v4132.69h-3173.31z" fill="none" />
+
     <circle
       cx="1680.87"
       cy="2139.41"
