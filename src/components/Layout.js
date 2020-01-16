@@ -49,9 +49,10 @@ const Layout = ({ children, location }) => {
               exit="exit"
             >
               {children}
+                <Footer />
             </motion.main>
           </AnimatePresence>
-          <Footer />
+        
         </div>
       </ThemeProvider>
     </>
