@@ -38,6 +38,7 @@ const BlogPost = ({ pageContext, data }) => {
     <>
       <SEO
         image={contentfulPost.heroImage}
+        title={'POST.' + contentfulPost.title}
         description={contentfulPost.metaDescription.internal.content}
       />
       <Wrapper>

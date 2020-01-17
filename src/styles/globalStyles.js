@@ -21,8 +21,8 @@ export const GlobalStyles = css`
   h3,
   h4,
   p,
-  ul[class],
-  ol[class],
+  ul,
+  ol,
   li,
   figure,
   figcaption,
@@ -38,12 +38,6 @@ export const GlobalStyles = css`
     scroll-behavior: smooth;
     text-rendering: optimizeSpeed;
     line-height: 1.5;
-  }
-
-  /* Remove list styles on ul, ol elements with a class attribute */
-  ul[class],
-  ol[class] {
-    list-style: none;
   }
 
   /* A elements that don't have a class get default styles */

@@ -18,6 +18,7 @@ const Gallery = ({ data, location }) => {
     <>
       <SEO
         image={contentfulGallery.heroImage}
+        title={'GALLERY.' + contentfulGallery.title}
         description={contentfulGallery.metaDescription.internal.content}
       />
       <Wrapper>

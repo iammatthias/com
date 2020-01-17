@@ -147,5 +147,9 @@ export default {
     img: {
       maxWidth: '100%',
     },
+    ul: {
+      listStyle: 'circle outside none',
+      marginLeft: '1rem',
+    },
   },
 }
