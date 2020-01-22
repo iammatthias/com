@@ -23,8 +23,10 @@ const Blog = ({ data, pageContext }) => {
 
   const { currentPage } = pageContext
 
-  const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
-    `https://iammatthias.com/blog/${contentfulPosts.slug}/`
+  const comments = `https://twitter.com/search?q=${encodeURIComponent(
+    `https://iammatthias.com/blog/${contentfulPosts.map(
+      ({ node: post }) => post.slug
+    )}/`
   )}`
 
   useEffect(() => {

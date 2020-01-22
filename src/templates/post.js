@@ -20,7 +20,7 @@ const BlogPost = ({ pageContext, data }) => {
   const previous = pageContext.prev
   const next = pageContext.next
 
-  const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
+  const comments = `https://twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/blog/${contentfulPost.slug}/`
   )}`
 
