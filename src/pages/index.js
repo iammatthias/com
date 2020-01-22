@@ -33,7 +33,7 @@ const Index = ({ props, data }) => {
             <ContentLink key={gallery.id} to={gallery.slug}>
               <Img fluid={{ ...gallery.heroImage.fluid, aspectRatio: 1 / 1 }} />
               <div className="fit">
-                <FitText compressor={0.5}>
+                <FitText compressor={0.618}>
                   <p
                     sx={{
                       variant: 'styles.h1',
