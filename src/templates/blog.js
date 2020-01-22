@@ -58,7 +58,7 @@ const Blog = ({ data, pageContext }) => {
                 <ContentLink to={`/blog/${post.slug}`}>
                   <p
                     sx={{
-                      variant: 'styles.h1',
+                      variant: 'styles.h2',
                     }}
                   >
                     {post.title}

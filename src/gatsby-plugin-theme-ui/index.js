@@ -32,8 +32,8 @@ export default {
     large: '64em',
   },
   fonts: {
-    body: 'system-ui, sans-serif',
-    heading: 'system-ui, sans-serif',
+    body: 'Crimson Text, system-ui, sans-serif',
+    heading: 'Montserrat, system-ui, sans-serif',
     monospace: 'Menlo, monospace',
   },
   fontWeights: {
@@ -58,7 +58,7 @@ export default {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: 5,
+      fontSize: [5, 6, 7],
       marginBottom: 4,
     },
     h2: {
@@ -66,7 +66,7 @@ export default {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: 4,
+      fontSize: [4, 5, 6],
       marginBottom: 3,
     },
     h3: {
@@ -74,7 +74,7 @@ export default {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: 3,
+      fontSize: [3, 4, 5],
       marginBottom: 3,
     },
     h4: {
@@ -82,7 +82,7 @@ export default {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: 2,
+      fontSize: [2, 3, 4],
       marginBottom: 2,
     },
     h5: {
@@ -90,7 +90,7 @@ export default {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: 1,
+      fontSize: [1, 2, 3],
       marginBottom: 1,
     },
     h6: {
@@ -98,21 +98,22 @@ export default {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: 0,
+      fontSize: [0, 1, 2, 3],
     },
     p: {
       color: 'text',
       fontFamily: 'body',
       fontWeight: 'body',
       lineHeight: 'body',
+      fontSize: 3,
       marginBottom: 2,
     },
     a: {
       color: 'text',
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 2,
+      fontFamily: 'body',
+      fontWeight: 'body',
+      lineHeight: 'body',
+      fontSize: 3,
       ':hover, :focus, :visited': {
         color: 'text',
       },

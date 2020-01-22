@@ -1,6 +1,8 @@
 import { css } from '@emotion/core'
 
 export const GlobalStyles = css`
+  @import url('https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:900&display=swap');
+
   /* Box sizing rules */
   *,
   *::before,
@@ -62,6 +64,8 @@ export const GlobalStyles = css`
   textarea,
   select {
     font: inherit;
+    padding: 1rem;
+    border: 2px solid currentColor;
   }
 
   /* Remove all animations and transitions for people that prefer not to see them */
@@ -92,6 +96,13 @@ export const GlobalStyles = css`
     margin: 0;
     -webkit-text-stroke: 2px currentColor;
     -webkit-text-fill-color: transparent;
+  }
+
+  .buttons {
+    a {
+      padding: 1rem;
+      border: 2px solid currentColor;
+    }
   }
 `
 

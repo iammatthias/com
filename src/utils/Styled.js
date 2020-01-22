@@ -53,10 +53,9 @@ export const Content = styled.section`
         input,
         textarea {
           width: 100%;
-          border: 2px solid ${props => props.theme.colors.text};
           display: block;
           margin: 0 0 1rem;
-          padding: 0.5rem;
+
           background: ${props => props.theme.colors.background};
           color: ${props => props.theme.colors.text};
           @media screen and (min-width: ${props =>
@@ -74,9 +73,9 @@ export const Content = styled.section`
         button {
           background: ${props => props.theme.colors.text};
           color: ${props => props.theme.colors.background};
+          font-family: ${props => props.theme.fonts.heading};
           font-weight: ${props => props.theme.fontWeights.heading};
           border: 0;
-          padding: 0.5rem 1rem;
         }
       }
     }
@@ -146,9 +145,6 @@ export const Content = styled.section`
     text-align: right;
     .mobileBlock {
       display: block;
-      @media screen and (min-width: ${props => props.theme.responsive.medium}) {
-        display: inline-block;
-      }
     }
   }
   &.gallery {
