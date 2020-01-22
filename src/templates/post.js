@@ -12,7 +12,7 @@ import mediumZoom from 'medium-zoom'
 
 import SEO from '../components/SEO'
 
-import { Wrapper, Content, ContentLink } from '../utils/Styled'
+import { Wrapper, Content } from '../utils/Styled'
 
 const BlogPost = ({ pageContext, data }) => {
   const contentfulPost = data.contentfulPost
@@ -44,26 +44,35 @@ const BlogPost = ({ pageContext, data }) => {
       <Wrapper>
         <Content className="blog">
           <article key={contentfulPost.id}>
-            <ContentLink to={contentfulPost.slug}>
-              <p
+            <div className="buttons">
+              <Link
                 sx={{
-                  variant: 'styles.h1',
+                  variant: 'styles.a',
                 }}
+                to="/blog"
               >
-                {contentfulPost.title}
-              </p>
-              <p
-                sx={{
-                  variant: 'styles.h4',
-                  borderLeft: '4px solid currentColor',
-                  pl: 3,
-                }}
-              >
-                Published: {contentfulPost.publishDate}&nbsp;&nbsp;&nbsp;{'//'}
-                &nbsp;&nbsp;&nbsp;
-                {contentfulPost.body.childMdx.timeToRead} min read
-              </p>
-            </ContentLink>
+                Back to posts
+              </Link>
+            </div>
+            <p
+              sx={{
+                variant: 'styles.h1',
+              }}
+            >
+              {contentfulPost.title}
+            </p>
+            <p
+              sx={{
+                variant: 'styles.h4',
+                borderLeft: '4px solid currentColor',
+                pl: 3,
+              }}
+            >
+              Published: {contentfulPost.publishDate}&nbsp;&nbsp;&nbsp;{'//'}
+              &nbsp;&nbsp;&nbsp;
+              {contentfulPost.body.childMdx.timeToRead} min read
+            </p>
+
             <MDXProvider>
               <MDXRenderer>{contentfulPost.body.childMdx.body}</MDXRenderer>
             </MDXProvider>
@@ -82,7 +91,6 @@ const BlogPost = ({ pageContext, data }) => {
                   &nbsp;&nbsp;&nbsp;
                 </>
               )}
-
               {next && (
                 <>
                   <Link

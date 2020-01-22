@@ -35,7 +35,7 @@ const NotFoundPage = () => (
               sx={{
                 variant: 'styles.a',
               }}
-              href="/"
+              to="/"
             >
               home
             </Link>{' '}

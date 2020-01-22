@@ -125,9 +125,6 @@ export const Content = styled.section`
       pre {
         max-width: calc(100vw - 4rem);
       }
-      .buttons {
-        margin: 2rem 0;
-      }
     }
     .hero {
       grid-area: hero;
