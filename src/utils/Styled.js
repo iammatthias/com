@@ -47,8 +47,12 @@ export const Content = styled.section`
         margin-top: 2rem;
         font-family: ${props => props.theme.fonts.body};
         width: 100%;
+        position: relative;
         label {
-          display: none;
+          margin: -1rem 1rem 1rem;
+          padding: 0.25rem;
+          position: absolute;
+          background: ${props => props.theme.colors.background};
         }
         input,
         textarea {
@@ -82,7 +86,7 @@ export const Content = styled.section`
     .portrait {
       grid-area: portrait;
     }
-    @media screen and (min-width: ${props => props.theme.responsive.medium}) {
+    @media screen and (min-width: ${props => props.theme.responsive.large}) {
       grid-template-columns: 1fr 1fr;
       grid-template-areas: 'copy portrait';
     }
@@ -103,7 +107,7 @@ export const Content = styled.section`
     grid-gap: 2rem;
 
     border-bottom: 2px solid ${props => props.theme.colors.text};
-    @media screen and (min-width: ${props => props.theme.responsive.medium}) {
+    @media screen and (min-width: ${props => props.theme.responsive.large}) {
       margin: 2rem;
       grid-template-columns: 50vw 1fr 1fr 1fr 1fr 1fr;
       grid-template-areas: 'article hero hero hero hero hero';

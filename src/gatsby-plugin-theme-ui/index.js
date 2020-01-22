@@ -106,7 +106,7 @@ export default {
       fontWeight: 'body',
       lineHeight: 'body',
       fontSize: 3,
-      my: 4,
+      my: 3,
     },
     a: {
       color: 'text',

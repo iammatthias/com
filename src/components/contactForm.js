@@ -17,11 +17,15 @@ export default class MyForm extends React.Component {
         action="https://formspree.io/xqkpajrn"
         method="POST"
       >
-        <label>Email:</label>
-        <input type="email" name="email" placeholder="Email" />
-        <label>Message:</label>
+        <label>Email</label>
+        <input type="email" name="email" placeholder="you@email.com" />
+        <label>Message</label>
         <input type="text" name="_gotcha" style={{ display: 'none' }} />
-        <textarea type="text" name="message" placeholder="Message" />
+        <textarea
+          type="text"
+          name="message"
+          placeholder="👋 Your message goes here"
+        />
         {status === 'SUCCESS' ? (
           <p>Thanks!</p>
         ) : (

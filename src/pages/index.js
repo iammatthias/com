@@ -30,7 +30,7 @@ const Index = ({ props, data }) => {
         </Content>
         <GalleryList className="galleries" id="bottom">
           {contentfulGalleries.map(({ node: gallery }) => (
-            <ContentLink key={gallery.id} to={gallery.slug}>
+            <ContentLink key={gallery.id} to={`/${gallery.slug}`}>
               <Img fluid={{ ...gallery.heroImage.fluid, aspectRatio: 1 / 1 }} />
               <div className="fit">
                 <FitText compressor={0.618}>
