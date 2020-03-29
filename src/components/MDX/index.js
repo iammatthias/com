@@ -12,7 +12,7 @@ import {
   Card,
 } from 'theme-ui'
 
-import ContactForm from '../../components/contactForm'
+import ContactForm from '../../components/ContactForm'
 
 export const MDXGlobalComponents = {
   // eslint-disable-next-line react/display-name
@@ -33,5 +33,6 @@ export const MDXGlobalComponents = {
   Image: props => <Image {...props} />,
   // eslint-disable-next-line react/display-name
   Card: props => <Card {...props} />,
-  ContactForm,
+  // eslint-disable-next-line react/display-name
+  ContactForm: props => <ContactForm {...props} />,
 }
