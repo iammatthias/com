@@ -53,7 +53,7 @@ location,
             timeToRead={timeToRead}
             tags={tags}
             basePath={basePath}
-location={location}
+            location={location}
           />
           {children}
         </Wrapper>
