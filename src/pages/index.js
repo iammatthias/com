@@ -1,73 +1,137 @@
 /** @jsx jsx */
 
 import React from 'react' //eslint-disable-line
-
-import { jsx } from 'theme-ui'
-import { graphql } from 'gatsby'
-import Img from 'gatsby-image'
-import { MDXProvider } from '@mdx-js/react'
-import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
-
-import FitText from '@kennethormandy/react-fittext'
-
+import { jsx, Styled } from 'theme-ui'
+import { graphql, Link } from 'gatsby'
+import styled from '@emotion/styled'
+import Layout from '../components/Layout'
+import Container from '../components/Container'
+import Pagination from '../components/Pagination'
 import SEO from '../components/SEO'
+import { startCase } from 'lodash'
 
-import { Wrapper, Content, ContentLink, GalleryList } from '../utils/Styled'
-import { useSiteMetadata } from '../utils/Metadata'
+const ContentGrid = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  grid-gap: 1em;
+  @media screen and (min-width: ${props => props.theme.responsive.small}) {
+    grid-template-columns: 6fr 3fr;
+    grid-template-rows: 1fr;
+  }
+`
 
-const Index = ({ props, data }) => {
-  const { introduction, metaImage } = useSiteMetadata()
-  const contentfulGalleries = data.allContentfulExtendedGallery.edges
+const List = styled.ul`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 2em auto;
+  @media screen and (min-width: ${props => props.theme.responsive.small}) {
+    margin: 0 auto;
+  }
+`
+
+const Posts = ({ data, pageContext }) => {
+  const photography = data.allContentfulPhotography.edges
+  const posts = data.allContentfulPost.edges
+  const { basePath } = pageContext
+
+  let ogImage
+
+  try {
+    ogImage = posts[0].node.heroImage.ogimg.src
+  } catch (error) {
+    ogImage = null
+  }
 
   return (
-    <>
-      <SEO title="MATTHIAS" image={metaImage} />
-      <Wrapper>
-        <Content className="introduction">
-          <MDXProvider>
-            <MDXRenderer>{introduction.childMdx.body}</MDXRenderer>
-          </MDXProvider>
-        </Content>
-        <GalleryList className="galleries" id="bottom">
-          {contentfulGalleries.map(({ node: gallery }) => (
-            <ContentLink key={gallery.id} to={`/${gallery.slug}`}>
-              <Img fluid={{ ...gallery.heroImage.fluid, aspectRatio: 1 / 1 }} />
-              <div className="fit">
-                <FitText compressor={0.618}>
-                  <p
-                    sx={{
-                      variant: 'styles.h1',
-                    }}
-                    className="knockout"
-                  >
-                    {gallery.title}
-                  </p>
-                </FitText>
-              </div>
-            </ContentLink>
-          ))}
-        </GalleryList>
-      </Wrapper>
-    </>
+    <Layout>
+      <SEO title={startCase(basePath)} image={ogImage} />
+
+      <Container>
+        <ContentGrid>
+          <div>
+            <Styled.h2 sx={{ margin: '1em 0' }}>Photography</Styled.h2>
+            <List>
+              {photography.map(({ node: photoSet }) => (
+                <Link
+                  key={photoSet.id}
+                  to={`/photography/${photoSet.slug}/`}
+                  sx={{ color: 'text', textDecoration: 'none' }}
+                >
+                  <Styled.h4>{photoSet.title}</Styled.h4>
+                  <Styled.p>Updated: {photoSet.updatedAt}</Styled.p>
+                </Link>
+              ))}
+            </List>
+          </div>
+          <div>
+            <Styled.h2 sx={{ margin: '1em 0' }}>Recent Posts</Styled.h2>
+            <List>
+              {posts.map(({ node: post }) => (
+                <Link
+                  key={post.id}
+                  to={`/blog/${post.slug}/`}
+                  sx={{ color: 'text', textDecoration: 'none' }}
+                >
+                  <Styled.h4>{post.title}</Styled.h4>
+                  <Styled.p>
+                    Published: {post.publishDate} &nbsp;/&nbsp;/&nbsp;
+                    {post.body.childMarkdownRemark.timeToRead} minute read
+                  </Styled.p>
+                </Link>
+              ))}
+            </List>
+          </div>
+        </ContentGrid>
+      </Container>
+      <Pagination context={pageContext} />
+    </Layout>
   )
 }
 
 export const query = graphql`
-  query Index {
-    allContentfulExtendedGallery(
-      limit: 1000
-      sort: { fields: [publishDate], order: DESC }
-    ) {
+  query {
+    allContentfulPost(sort: { fields: [publishDate], order: DESC }, limit: 6) {
       edges {
         node {
           title
           id
           slug
-          publishDate(formatString: "DD MMM YYYY h:mm a")
+          publishDate(formatString: "MMMM DD, YYYY")
           heroImage {
             title
-            fluid(quality: 50) {
+            fluid(maxWidth: 1800) {
+              ...GatsbyContentfulFluid_withWebp_noBase64
+            }
+            ogimg: resize(width: 1800) {
+              src
+            }
+          }
+          body {
+            childMarkdownRemark {
+              timeToRead
+              html
+              excerpt(pruneLength: 80)
+            }
+          }
+        }
+      }
+    }
+    allContentfulPhotography {
+      edges {
+        node {
+          title
+          id
+          slug
+          publishDate(formatString: "MMMM DD, YYYY")
+          updatedAt(formatString: "MMMM DD, YYYY")
+          heroImage {
+            thumbnail: fluid(maxWidth: 900, quality: 50) {
               ...GatsbyContentfulFluid_withWebp
+              src
+              aspectRatio
             }
           }
         }
@@ -76,4 +140,4 @@ export const query = graphql`
   }
 `
 
-export default Index
+export default Posts

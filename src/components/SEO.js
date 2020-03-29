@@ -1,63 +1,54 @@
 import React from 'react'
 import Helmet from 'react-helmet'
+import { useStaticQuery, graphql } from 'gatsby'
 
-const defaultTitle = 'IAM'
-const defaultDescription =
-  'Photographer and digital marketer based in Southern California'
-const defaultImage = 'https://iammatthias.com/share/shareIndex.jpg'
+const SEO = ({ title, description, image }) => {
+  const { site } = useStaticQuery(
+    graphql`
+      query {
+        site {
+          siteMetadata {
+            title
+            description
+            image
+            siteUrl
+          }
+        }
+      }
+    `
+  )
 
-const SEO = props => (
-  <Helmet>
-    <title>
-      {props.title ? `${defaultTitle}.${props.title}` : defaultTitle}
-    </title>
-    <meta
-      name="description"
-      content={props.description ? props.description : defaultDescription}
-    />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={defaultTitle} />
-    <meta
-      property="og:title"
-      content={props.title ? `${defaultTitle}.${props.title}` : defaultTitle}
-    />
-    <meta
-      property="og:description"
-      content={props.description ? props.description : defaultDescription}
-    />
-    {typeof window !== `undefined` && (
-      <meta property="og:url" content={location.href} />
-    )}
-    {props.image ? (
-      <meta
-        property="og:image"
-        content={props.image ? `https:${props.image.ogimg.src}` : defaultImage}
-      />
-    ) : null}
-    {props.image ? (
-      <meta property="og:image:width" content={props.image.ogimg.width} />
-    ) : null}
-    {props.image ? (
-      <meta property="og:image:height" content={props.image.ogimg.height} />
-    ) : null}
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:creator" content="@iammatthias" />
-    <meta
-      name="twitter:title"
-      content={props.title ? `${defaultTitle}.${props.title}` : defaultTitle}
-    />
-    <meta
-      name="twitter:description"
-      content={props.description ? props.description : defaultDescription}
-    />
-    {props.image ? (
-      <meta
-        name="twitter:image"
-        content={props.image ? `https:${props.image.ogimg.src}` : defaultImage}
-      />
-    ) : null}
-  </Helmet>
-)
+  const defaultImage = site.siteMetadata.siteUrl + site.siteMetadata.image
+  const metaDescription = description || site.siteMetadata.description
+  const metaImage = image || defaultImage
+
+  return (
+    <Helmet
+      htmlAttributes={{
+        lang: `en`,
+      }}
+      title={title}
+      defaultTitle={site.siteMetadata.title}
+      titleTemplate={`%s`}
+    >
+      <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      {/* General tags */}
+      <meta name="image" content={image} />
+      <meta name="description" content={metaDescription} />
+
+      {/* OpenGraph tags */}
+      <meta property="og:title" content={title} />
+      <meta property="og:image" content={metaImage} />
+      <meta property="og:description" content={metaDescription} />
+
+      {/* Twitter Card tags */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:image" content={metaImage} />
+      <meta name="twitter:description" content={metaDescription} />
+    </Helmet>
+  )
+}
 
 export default SEO

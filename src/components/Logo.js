@@ -1,42 +1,52 @@
 /** @jsx jsx */
+import React from 'react'
 
-import React from 'react' //eslint-disable-line
+import { jsx, useColorMode } from 'theme-ui'
 
-import { jsx } from 'theme-ui'
-
-import { Link } from 'gatsby'
-
-import styled from '@emotion/styled'
-
-import { Glyph } from '../utils/Icons'
-
-const A = styled(Link)`
-  padding: 0;
-  svg,
-  g,
-  path,
-  stroke,
-  circle,
-  clipPath {
-    transition: all 0s !important;
-  }
-`
-
-const Logo = props => {
+function Icon(props) {
   return (
-    <A
-      sx={{
-        variant: 'styles.a',
-      }}
-      to={`/`}
-      className="noUnderline"
-      alt="I Am Matthias"
-      aria-label="Homepage"
-      title="Homepage and Galleries"
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="50"
+      height="50"
+      fill="none"
+      viewBox="0 0 377 377"
+      strokeWidth="15"
+      sx={{ stroke: 'primary' }}
     >
-      <Glyph />
-    </A>
+      <mask
+        id="mask0"
+        width="377"
+        height="377"
+        x="0"
+        y="0"
+        maskUnits="userSpaceOnUse"
+      >
+        <circle
+          cx="188.5"
+          cy="188.5"
+          r="180.5"
+          stroke="#ffffff"
+          fill="#ffffff"
+        ></circle>
+      </mask>
+      <g mask="url(#mask0)">
+        <circle cx="188.5" cy="188.5" r="180.5"></circle>
+        <path d="M12 169.5L365 169.5"></path>
+        <path d="M155 284H31l36.69-63.5L96.87 170"></path>
+        <path d="M205 284l-61.5-107L82 284h123z"></path>
+        <path
+          sx={{ fill: 'background' }}
+          d="M347.205 284l-86.602-150L174 284h173.205z"
+        ></path>
+        <path d="M297.205 284l-86.602-150L124 284h173.205z"></path>
+        <path
+          sx={{ fill: 'background' }}
+          d="M297.205 284l-86.602-150L124 284h173.205z"
+        ></path>
+      </g>
+    </svg>
   )
 }
 
-export default Logo
+export default Icon

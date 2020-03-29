@@ -1,14 +1,10 @@
 /** @jsx jsx */
 
-import React, { useState } from 'react' //eslint-disable-line
-
-import { jsx, Box } from 'theme-ui'
-
+import React from 'react' //eslint-disable-line
+import { jsx, Image, Box } from 'theme-ui'
 import { Link } from '@theme-ui/components'
-
-import Img from 'gatsby-image'
+// import Img from 'gatsby-image'
 import { chunk, sum } from 'lodash'
-import FsLightbox from 'fslightbox-react'
 
 const GalleryGrid = ({
   title,
@@ -17,9 +13,6 @@ const GalleryGrid = ({
   aspectRatio,
   itemsPerRow: itemsPerRowByBreakpoints,
 }) => {
-  const lightboxImages = images.map(image => image.fluid.src)
-  const eventImageTitle = images.map(image => image.title)
-  const eventImageSrc = images.map(image => image.thumbnail.src)
   const aspectRatios = images.map(image => image.fluid.aspectRatio)
   const rowAspectRatioSumsByBreakpoints = itemsPerRowByBreakpoints.map(
     itemsPerRow =>
@@ -27,15 +20,6 @@ const GalleryGrid = ({
         sum(rowAspectRatios)
       )
   )
-
-  const [toggler, setToggler] = useState(false)
-  const [imageIndex, setImageIndex] = useState(0)
-
-  function openLightbox(imageIndex, e) {
-    e.preventDefault()
-    setImageIndex(imageIndex + 1)
-    setToggler(!toggler)
-  }
 
   return (
     <>
@@ -47,53 +31,33 @@ const GalleryGrid = ({
       >
         {title}
       </p>
-
-      {images.map((image, i) => (
-        <Link key={image.id} onClick={() => openLightbox(i, event)}>
-          <Box
-            as={Img}
-            fluid={image.thumbnail}
-            title={image.title}
-            sx={{
-              width: rowAspectRatioSumsByBreakpoints.map(
-                (rowAspectRatioSums, j) => {
-                  const rowIndex = Math.floor(i / itemsPerRowByBreakpoints[j])
-                  const rowAspectRatioSum = rowAspectRatioSums[rowIndex]
-                  return `${(image.fluid.aspectRatio / rowAspectRatioSum) *
-                    100}%`
-                }
-              ),
-            }}
-            css={{
-              display: 'inline-block',
-              verticalAlign: 'middle',
-            }}
-          />
-        </Link>
-      ))}
-
-      <FsLightbox
-        toggler={toggler}
-        sources={lightboxImages}
-        slide={imageIndex}
-        onClick={() => {
-          console.log(imageIndex)
-        }}
-        onOpen={() => {
-          window.analytics.track('Image Viewed', {
-            image: eventImageTitle[imageIndex],
-            src: eventImageSrc[imageIndex],
-            gallery: parent + ' — ' + title,
-          })
-        }}
-        onSlideChange={() => {
-          window.analytics.track('Image Viewed', {
-            image: eventImageTitle[imageIndex],
-            src: eventImageSrc[imageIndex],
-            gallery: parent + ' — ' + title,
-          })
-        }}
-      />
+      <center>
+        {images.map((image, i) => (
+          <Link key={image.id}>
+            <Box
+              as={Image}
+              src={image.thumbnail.src}
+              title={image.title}
+              sx={{
+                width: rowAspectRatioSumsByBreakpoints.map(
+                  (rowAspectRatioSums, j) => {
+                    const rowIndex = Math.floor(i / itemsPerRowByBreakpoints[j])
+                    const rowAspectRatioSum = rowAspectRatioSums[rowIndex]
+                    return `${(image.fluid.aspectRatio / rowAspectRatioSum) *
+                      100}%`
+                  }
+                ),
+                maxWidth: '65%',
+                p: 2,
+              }}
+              css={{
+                display: 'inline-block',
+                verticalAlign: 'middle',
+              }}
+            />
+          </Link>
+        ))}
+      </center>
     </>
   )
 }

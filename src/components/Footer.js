@@ -1,64 +1,51 @@
-import React from 'react'
-import { Wrapper, Content } from '../utils/Styled'
-import { MDXProvider } from '@mdx-js/react'
-import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
+/** @jsx jsx */
 
-import { useSiteMetadata } from '../utils/Metadata'
+import React from 'react' //eslint-disable-line
+import { jsx, Styled } from 'theme-ui'
+import styled from '@emotion/styled'
 
-const Footer = () => {
-  const { colophon } = useSiteMetadata()
-  return (
-    <Wrapper>
-      <Content className="footer">
-        <section>
-          <MDXProvider>
-            <MDXRenderer>{colophon.childMdx.body}</MDXRenderer>
-          </MDXProvider>
-          <p>
-            <a
-              href="https://www.contentful.com/"
-              rel="nofollow noopener noreferrer"
-              target="_blank"
-              alt="Powered by Contentful"
-            >
-              <picture>
-                <source
-                  srcSet="https://images.ctfassets.net/fo9twyrwpveg/7F5pMEOhJ6Y2WukCa2cYws/398e290725ef2d3b3f0f5a73ae8401d6/PoweredByContentful_DarkBackground.svg"
-                  media="(prefers-color-scheme: dark)"
-                />
-                <img
-                  src="https://images.ctfassets.net/fo9twyrwpveg/44baP9Gtm8qE2Umm8CQwQk/c43325463d1cb5db2ef97fca0788ea55/PoweredByContentful_LightBackground.svg"
-                  rel="contentful"
-                  style={{ width: '100px' }}
-                  alt="Powered by Contentful"
-                />
-              </picture>
-            </a>
-            &nbsp;&nbsp;&nbsp;
-            <a
-              href="https://www.netlify.com"
-              rel="nofollow noopener noreferrer"
-              target="_blank"
-              alt="Netlify"
-            >
-              <picture>
-                <source
-                  srcSet="https://www.netlify.com/img/press/logos/full-logo-dark.svg"
-                  media="(prefers-color-scheme: dark)"
-                />
-                <img
-                  src="https://www.netlify.com/img/press/logos/full-logo-light.svg"
-                  rel="netlify"
-                  style={{ width: '100px' }}
-                  alt="Netlify"
-                />
-              </picture>
-            </a>
-          </p>
-        </section>
-      </Content>
-    </Wrapper>
-  )
-}
+const Wrapper = styled.footer`
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0 auto;
+  max-width: ${props => props.theme.sizes.maxWidth};
+`
+
+const List = styled.ul`
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  padding: 7em 0 5em;
+  margin: 0 1.5em;
+`
+
+const Footer = () => (
+  <Wrapper>
+    <List>
+      <Styled.li>
+        © 2019 Matthias Jordan. All rights reserved.
+        <br />
+        Made with ♡ in California, USA
+      </Styled.li>
+      <Styled.li>
+        <a
+          href="https://www.contentful.com/"
+          rel="nofollow noopener noreferrer"
+          target="_blank"
+        >
+          <img
+            src="https://images.ctfassets.net/fo9twyrwpveg/44baP9Gtm8qE2Umm8CQwQk/c43325463d1cb5db2ef97fca0788ea55/PoweredByContentful_LightBackground.svg"
+            style={{ width: '100px' }}
+            alt="Powered by Contentful"
+          />
+        </a>
+      </Styled.li>
+    </List>
+  </Wrapper>
+)
 
 export default Footer

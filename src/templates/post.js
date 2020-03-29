@@ -1,128 +1,83 @@
 /** @jsx jsx */
 
-import React, { useEffect } from 'react' //eslint-disable-line
-
-import { jsx } from 'theme-ui'
-import { graphql, Link } from 'gatsby'
-import Img from 'gatsby-image'
-import { MDXProvider } from '@mdx-js/react'
-import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
-
-import mediumZoom from 'medium-zoom'
+import React from 'react' //eslint-disable-line
+import { jsx, ThemeProvider } from 'theme-ui'
+import { graphql } from 'gatsby'
+import Layout from '../components/Layout'
+import Hero from '../components/Hero'
+import Container from '../components/Container'
+import PostLinks from '../components/PostLinks'
 
 import SEO from '../components/SEO'
+import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
+import theme from 'gatsby-plugin-theme-ui'
 
-import { Wrapper, Content } from '../utils/Styled'
+import { MDXGlobalComponents } from '../components/MDX'
 
-const BlogPost = ({ pageContext, data }) => {
-  const contentfulPost = data.contentfulPost
+const PostTemplate = ({ data, pageContext }) => {
+  const {
+    title,
+    metaDescription,
+    heroImage,
+    body,
+    publishDate,
+    tags,
+    slug,
+  } = data.contentfulPost
 
   const previous = pageContext.prev
   const next = pageContext.next
+  const { basePath } = pageContext
 
-  const comments = `https://twitter.com/search?q=${encodeURIComponent(
-    `https://iammatthias.com/blog/${contentfulPost.slug}/`
+  const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
+    `https://iammatthias.com/blog/${slug}/`
   )}`
 
-  useEffect(() => {
-    ;(async function() {
-      try {
-        mediumZoom('figure img', { margin: 64 })
-      } catch (e) {
-        console.error(e)
-      }
-    })()
-  })
+  let ogImage
+  try {
+    ogImage = heroImage.ogimg.src
+  } catch (error) {
+    ogImage = null
+  }
 
   return (
-    <>
+    <Layout
+      title={title}
+      blurb={metaDescription.internal.content}
+      date={publishDate}
+      timeToRead={body.childMarkdownRemark.timeToRead}
+      tags={tags}
+      basePath={basePath}
+    >
       <SEO
-        image={contentfulPost.heroImage}
-        title={'POST.' + contentfulPost.title}
-        description={contentfulPost.metaDescription.internal.content}
+        title={title}
+        description={
+          metaDescription
+            ? metaDescription.internal.content
+            : body.childMarkdownRemark.excerpt
+        }
+        image={ogImage}
       />
-      <Wrapper>
-        <Content className="blog">
-          <article key={contentfulPost.id}>
-            <div className="buttons">
-              <Link
-                sx={{
-                  variant: 'styles.a',
-                }}
-                to="/blog"
-              >
-                Back to posts
-              </Link>
-            </div>
-            <p
-              sx={{
-                variant: 'styles.h1',
-              }}
-            >
-              {contentfulPost.title}
-            </p>
-            <p
-              sx={{
-                variant: 'styles.h4',
-                borderLeft: '4px solid currentColor',
-                pl: 3,
-              }}
-            >
-              Published: {contentfulPost.publishDate}&nbsp;&nbsp;&nbsp;{'//'}
-              &nbsp;&nbsp;&nbsp;
-              {contentfulPost.body.childMdx.timeToRead} min read
-            </p>
-
-            <MDXProvider>
-              <MDXRenderer>{contentfulPost.body.childMdx.body}</MDXRenderer>
-            </MDXProvider>
-            <div className="buttons">
-              {previous && (
-                <>
-                  <Link
-                    sx={{
-                      variant: 'styles.a',
-                    }}
-                    className="button"
-                    to={`/blog/${previous.slug}/`}
-                  >
-                    &#8592; Prev Post
-                  </Link>
-                  &nbsp;&nbsp;&nbsp;
-                </>
-              )}
-              {next && (
-                <>
-                  <Link
-                    sx={{
-                      variant: 'styles.a',
-                    }}
-                    className="button"
-                    to={`/blog/${next.slug}/`}
-                  >
-                    Next Post &#8594;
-                  </Link>
-                  &nbsp;&nbsp;&nbsp;
-                </>
-              )}
-              <a
-                sx={{
-                  variant: 'styles.a',
-                }}
-                href={comments}
-              >
-                Discuss on Twitter
-              </a>
-            </div>
-          </article>
-          <Img
-            key={contentfulPost.heroImage.id}
-            className="hero"
-            fluid={{ ...contentfulPost.heroImage.fluid, aspectRatio: 4 / 3 }}
-          />
-        </Content>
-      </Wrapper>
-    </>
+      <Hero title={title} image={heroImage} height={'50vh'} />
+      <Container>
+        <div
+          sx={{
+            maxWidth: theme => `${theme.sizes.maxWidthCentered}`,
+            margin: '0 auto',
+          }}
+        >
+          <ThemeProvider theme={theme} components={MDXGlobalComponents}>
+            <MDXRenderer>{body.childMdx.body}</MDXRenderer>
+          </ThemeProvider>
+        </div>
+      </Container>
+      <PostLinks
+        previous={previous}
+        next={next}
+        basePath={basePath}
+        comments={comments}
+      />
+    </Layout>
   )
 }
 
@@ -130,14 +85,14 @@ export const query = graphql`
   query($slug: String!) {
     contentfulPost(slug: { eq: $slug }) {
       title
-      id
       slug
-      publishDate(formatString: "d/M/YYYY")
       metaDescription {
         internal {
           content
         }
       }
+      publishDate(formatString: "MMMM DD, YYYY")
+      publishDateISO: publishDate(formatString: "YYYY-MM-DD")
       tags {
         title
         id
@@ -145,12 +100,10 @@ export const query = graphql`
       }
       heroImage {
         title
-        fluid(maxWidth: 1600, quality: 50) {
-          ...GatsbyContentfulFluid_withWebp
-          src
+        fluid(maxWidth: 1800) {
+          ...GatsbyContentfulFluid_noBase64
         }
-        ogimg: fluid(maxWidth: 900, quality: 50) {
-          ...GatsbyContentfulFluid_withWebp
+        ogimg: resize(width: 1800) {
           src
         }
       }
@@ -160,9 +113,14 @@ export const query = graphql`
           body
           id
         }
+        childMarkdownRemark {
+          timeToRead
+          html
+          excerpt(pruneLength: 320)
+        }
       }
     }
   }
 `
 
-export default BlogPost
+export default PostTemplate

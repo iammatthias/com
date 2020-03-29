@@ -1,6 +1,4 @@
-const config = require('./src/utils/siteConfig')
 let contentfulConfig
-
 try {
   contentfulConfig = require('./.contentful')
 } catch (e) {
@@ -19,75 +17,59 @@ try {
 
 module.exports = {
   siteMetadata: {
-    siteUrl: config.siteUrl,
+    title: 'I AM MATTHIAS',
+    description:
+      'A starter template to build amazing static websites with Gatsby, Contentful and Netlify',
+    siteUrl: 'https://iammatthias.com',
+    image: '/images/share.jpg',
+    menuLinks: [
+      {
+        name: 'Home',
+        slug: '/',
+      },
+      {
+        name: 'Photography',
+        slug: '/photography/',
+      },
+      {
+        name: 'Blog',
+        slug: '/blog/',
+      },
+      {
+        name: 'About',
+        slug: '/about/',
+      },
+    ],
+    postsPerFirstPage: 6,
+    postsPerPage: 6,
+    basePath: '/',
   },
   plugins: [
-    'gatsby-plugin-react-helmet',
+    `gatsby-plugin-emotion`,
     'gatsby-plugin-theme-ui',
-    'gatsby-plugin-sharp',
-    'gatsby-plugin-catch-links',
+    'gatsby-plugin-mdx',
+    'gatsby-plugin-react-helmet',
+
     {
-      resolve: `gatsby-plugin-mdx`,
+      resolve: `gatsby-transformer-remark`,
       options: {
-        gatsbyRemarkPlugins: [
+        plugins: [
           {
-            resolve: 'gatsby-remark-images',
+            resolve: `gatsby-remark-prismjs`,
+          },
+          `gatsby-remark-autolink-headers`,
+          {
+            resolve: `gatsby-remark-images-contentful`,
             options: {
-              maxWidth: 960,
+              maxWidth: 650,
+              backgroundColor: 'white',
               linkImagesToOriginal: false,
             },
           },
-
-          {
-            resolve: 'gatsby-remark-prismjs',
-            options: {
-              classPrefix: 'language-',
-              showLineNumbers: true,
-            },
-          },
-          {
-            resolve: '@raae/gatsby-remark-oembed',
-            options: {
-              providers: {
-                exclude: ['Reddit', 'Flickr', 'Instagram', 'Twitter'],
-              },
-            },
-          },
-          'gatsby-remark-responsive-iframe',
         ],
       },
     },
-
-    {
-      resolve: 'gatsby-plugin-manifest',
-      options: {
-        name: config.siteTitle,
-        short_name: config.shortTitle,
-        description: config.siteDescription,
-        start_url: '/',
-        background_color: config.backgroundColor,
-        theme_color: config.themeColor,
-        display: 'fullscreen',
-        icon: `static${config.siteLogo}`,
-      },
-    },
-    'gatsby-plugin-offline',
-    {
-      resolve: 'gatsby-plugin-canonical-urls',
-      options: {
-        siteUrl: config.siteUrl,
-      },
-    },
-
-    {
-      resolve: `gatsby-plugin-segment-js`,
-      options: {
-        prodKey: process.env.SEGMENT,
-
-        trackPage: true,
-      },
-    },
-
+    `gatsby-plugin-catch-links`,
     {
       resolve: 'gatsby-source-contentful',
       options:
@@ -95,13 +77,34 @@ module.exports = {
           ? contentfulConfig.development
           : contentfulConfig.production,
     },
-
     {
-      resolve: 'gatsby-plugin-robots-txt',
+      resolve: 'gatsby-plugin-google-analytics',
+      options: {
+        trackingId: process.env.GOOGLE_ANALYTICS,
+        head: true,
+      },
     },
-
-    'gatsby-plugin-catch-links',
     'gatsby-plugin-sitemap',
+    {
+      resolve: 'gatsby-plugin-manifest',
+      options: {
+        name: 'GCN',
+        short_name: 'GCN',
+        start_url: '/',
+        background_color: '#ffffff',
+        theme_color: '#ffffff',
+        display: 'minimal-ui',
+        icon: './static/images/favicon.png',
+      },
+    },
+    'gatsby-plugin-offline',
+    {
+      resolve: `gatsby-plugin-schema-snapshot`,
+      options: {
+        path: `./src/gatsby/schema/schema.gql`,
+        update: process.env.GATSBY_UPDATE_SCHEMA_SNAPSHOT,
+      },
+    },
     'gatsby-plugin-netlify',
   ],
 }

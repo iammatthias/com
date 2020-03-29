@@ -2,130 +2,186 @@ import randomCombo from 'random-a11y-combo'
 
 const [paletteBackground, paletteColor] = randomCombo()
 
+function LightenDarkenColor(col, amt) {
+  var usePound = false
+
+  if (col[0] === '#') {
+    col = col.slice(1)
+    usePound = true
+  }
+
+  var num = parseInt(col, 16)
+
+  var r = (num >> 16) + amt
+
+  if (r > 255) r = 255
+  else if (r < 0) r = 0
+
+  var b = ((num >> 8) & 0x00ff) + amt
+
+  if (b > 255) b = 255
+  else if (b < 0) b = 0
+
+  var g = (num & 0x0000ff) + amt
+
+  if (g > 255) g = 255
+  else if (g < 0) g = 0
+
+  return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16)
+}
+
+var lightHighlight = LightenDarkenColor('#fff8e7', 5)
+var lightShadow = LightenDarkenColor('#fff8e7', -40)
+var darkShadow = LightenDarkenColor('#140D00', 20)
+var randomHighlight = LightenDarkenColor(paletteBackground, 40)
+var randomShadow = LightenDarkenColor(paletteBackground, -40)
+
 export default {
-  useColorSchemeMediaQuery: true,
-  colors: {
-    text: '#fff8e7',
-    background: '#140D00',
-    muted: '#716b60',
-    modes: {
-      light: {
-        text: '#140D00',
-        background: '#fff8e7',
-        muted: '#716b60',
-      },
-      dark: {
-        text: '#fff8e7',
-        background: '#140D00',
-        muted: '#716b60',
-      },
-      random: {
-        text: paletteColor,
-        background: paletteBackground,
-        muted: paletteColor,
-      },
-    },
+  sizes: {
+    maxWidth: '1280px',
+    maxWidthCentered: '650px',
   },
   responsive: {
-    small: '22em',
-    medium: '36em',
-    large: '64em',
+    small: '35em',
+    medium: '50em',
+    large: '70em',
   },
+  space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
-    body: 'Crimson Text, system-ui, sans-serif',
-    heading: 'Montserrat, system-ui, sans-serif',
+    body:
+      'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+    heading: 'inherit',
     monospace: 'Menlo, monospace',
   },
+  fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
   fontWeights: {
     body: 400,
-    heading: 900,
-    bold: 900,
+    heading: 700,
+    bold: 700,
   },
   lineHeights: {
     body: 1.5,
     heading: 1.125,
   },
-  fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 72],
-  space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
+  colors: {
+    background: '#fff8e7',
+    text: '#140D00',
+    primary: '#140D00',
+    secondary: lightHighlight,
+    tertiary: '#f3f3f3',
+    highlight: '#5b8bf7',
+    shadow: lightShadow,
+    modes: {
+      light: {
+        background: '#fff8e7',
+        text: '#140D00',
+        primary: '#140D00',
+        secondary: lightHighlight,
+        tertiary: '#f3f3f3',
+        highlight: '#5b8bf7',
+        shadow: lightShadow,
+      },
+      dark: {
+        background: '#140D00',
+        text: '#fff8e7',
+        primary: '#fff8e7',
+        secondary: darkShadow,
+        tertiary: '#140D00',
+        highlight: '#5b8bf7',
+        shadow: darkShadow,
+      },
+      random: {
+        background: paletteBackground,
+        text: paletteColor,
+        primary: paletteColor,
+        secondary: randomHighlight,
+        muted: paletteColor,
+        shadow: randomShadow,
+      },
+    },
+  },
   styles: {
     root: {
       fontFamily: 'body',
       lineHeight: 'body',
       fontWeight: 'body',
+      color: 'text',
     },
     h1: {
-      color: 'text',
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: [5, 6, 7],
-      marginBottom: 4,
+      fontSize: 5,
     },
     h2: {
-      color: 'text',
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: [4, 5, 6],
-      marginBottom: 3,
+      fontSize: 4,
     },
     h3: {
-      color: 'text',
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: [3, 4, 5],
-      marginBottom: 3,
+      fontSize: 3,
     },
     h4: {
-      color: 'text',
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: [2, 3, 4],
-      marginBottom: 2,
+      fontSize: 2,
     },
     h5: {
-      color: 'text',
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: [1, 2, 3],
-      marginBottom: 1,
+      fontSize: 1,
     },
     h6: {
-      color: 'text',
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
-      fontSize: [0, 1, 2, 3],
+      fontSize: 0,
     },
     p: {
-      color: 'text',
       fontFamily: 'body',
       fontWeight: 'body',
       lineHeight: 'body',
-      fontSize: 3,
-      my: 3,
+      fontSize: 2,
+      mb: 3,
+    },
+    ul: {
+      fontFamily: 'body',
+      fontWeight: 'body',
+      lineHeight: 'body',
+      fontSize: 2,
+      mb: 3,
+    },
+    ol: {
+      fontFamily: 'body',
+      fontWeight: 'body',
+      lineHeight: 'body',
+      fontSize: 2,
+      mb: 3,
+    },
+    li: {
+      fontFamily: 'body',
+      fontWeight: 'body',
+      lineHeight: 'body',
+      fontSize: 2,
+      mb: 3,
     },
     a: {
-      color: 'text',
-      fontFamily: 'body',
-      fontWeight: 'body',
-      lineHeight: 'body',
-      fontSize: 3,
-      ':hover, :focus, :visited': {
-        color: 'text',
-      },
+      color: 'inherit',
+      fontWeight: 'heading',
+      textDecoration: 'none',
     },
+
     pre: {
       fontFamily: 'monospace',
       overflowX: 'auto',
-      border: '2px solid',
-      borderColor: 'text',
-      padding: 3,
       code: {
-        color: 'text',
+        color: 'inherit',
       },
     },
     code: {
@@ -147,10 +203,6 @@ export default {
     },
     img: {
       maxWidth: '100%',
-    },
-    ul: {
-      listStyle: 'circle outside none',
-      marginLeft: '1rem',
     },
   },
 }

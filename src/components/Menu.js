@@ -1,113 +1,145 @@
 /** @jsx jsx */
 
-import React from 'react' //eslint-disable-line
-
-import { jsx, useColorMode } from 'theme-ui'
-
+import React, { useContext } from 'react' //eslint-disable-line
+import { jsx, useColorMode, Styled } from 'theme-ui'
 import { Link } from 'gatsby'
+import styled from '@emotion/styled'
+import { useSiteMetadata } from '../hooks/use-site-metadata'
+import Logo from './Logo'
+import { Sun, Moon, Random } from './Icons'
+import PostDetails from './PostDetails'
+import TagList from '../components/TagList'
 
-import Headroom from 'react-headroom'
+const Header = styled.header`
+  width: 100%;
+  padding: 5em 1.5em;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  grid-gap: 1em;
+  @media screen and (min-width: ${props => props.theme.responsive.small}) {
+    grid-template-columns: 6fr 3fr;
+    grid-template-rows: 1fr;
+  }
+`
+const Nav = styled.nav`
+  width: 100%;
+  max-width: ${props => props.theme.sizes.maxWidth};
+  margin: 0 auto;
+  ul {
+    margin: 2em 0 0;
+  }
 
-import { Wrapper, Content, Button } from '../utils/Styled'
+  li {
+    margin: 0 1em 1em 0;
+    width: auto;
+    display: inline-block;
+    @media screen and (min-width: ${props => props.theme.responsive.small}) {
+      margin: 1em 0;
+      display: block;
+    }
+  }
 
-import { Sun, Moon, Random } from '../utils/Icons'
+  a {
+    text-decoration: none;
+    color: ${props => props.theme.colors.text};
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+`
 
-import Logo from '../components/Logo'
-
-const Menu = props => {
+const Menu = ({ props, blurb, title, date, timeToRead, tags, basePath }) => {
   const modes = ['light', 'dark', 'random']
 
   const [mode, setMode] = useColorMode() //eslint-disable-line
+  const { menuLinks } = useSiteMetadata()
   return (
-    <Headroom
-      style={{
-        position: 'fixed',
-        zIndex: '300',
-        transition: 'all .5s ease-in-out',
-      }}
-    >
-      <Wrapper>
-        <Content className="menu">
-          <Logo />
-          <div>
-            <p className="mobileBlock">
-              <Link
-                aria-label="Homepage and Galleries"
-                title="Homepage and Galleries"
-                sx={{
-                  variant: 'styles.a',
-                  verticalAlign: 'top',
-                  textDecoration: 'none',
-                }}
-                to="/"
-              >
-                Galleries
-              </Link>
-              &nbsp;&nbsp;&nbsp;
-              <Link
-                sx={{
-                  variant: 'styles.a',
-                  verticalAlign: 'top',
-                  textDecoration: 'none',
-                }}
-                to="/blog"
-                aria-label="Blog"
-                title="Blog"
-              >
-                Blog
-              </Link>
-              &nbsp;&nbsp;&nbsp;
-              <Link
-                sx={{
-                  variant: 'styles.a',
-                  verticalAlign: 'top',
-                  textDecoration: 'none',
-                }}
-                to="/contact"
-                className="hide-inline"
-                aria-label="Contact"
-                title="Contact"
-              >
-                Contact
-              </Link>
-            </p>
-            <Button
-              className="colorToggle"
+    <Header>
+      <Nav>
+        <Logo />
+        <Styled.h4 sx={{ margin: '1em 0' }}>I Am Matthias</Styled.h4>
+        <Styled.h5 sx={{ margin: '1em 0', fontWeight: 'normal' }}>
+          📸 & Digital Marketer
+        </Styled.h5>
+        <Styled.ul>
+          {menuLinks.map(link => (
+            <Styled.li key={link.name}>
+              <Link to={link.slug}>{link.name}</Link>
+            </Styled.li>
+          ))}
+
+          <Styled.li>
+            <button
               onClick={e => {
                 const light = modes[0]
                 setMode(light)
               }}
               aria-label="Light Mode"
               title="Light Mode"
+              sx={{ margin: '0 1em 0 0', padding: '0' }}
             >
               <Sun />
-            </Button>
-            <Button
-              className="colorToggle"
+            </button>
+            <button
               onClick={e => {
                 const dark = modes[1]
                 setMode(dark)
               }}
               aria-label="Dark Mode"
               title="Dark Mode"
+              sx={{ margin: '0 1em 0 0', padding: '0' }}
             >
               <Moon />
-            </Button>
-            <Button
-              className="colorToggle"
+            </button>
+            <button
               onClick={e => {
                 const random = modes[2]
                 setMode(random)
               }}
               aria-label="Random A11Y Color Pair Mode"
               title="Random A11Y Color Pair Mode"
+              sx={{ margin: '0 1em 0 0', padding: '0' }}
             >
               <Random />
-            </Button>
-          </div>
-        </Content>
-      </Wrapper>
-    </Headroom>
+            </button>
+          </Styled.li>
+        </Styled.ul>
+      </Nav>
+      <Nav sx={{ marginTop: 'auto', marginBottom: '2em', px: [0, 0, 0, 0, 3] }}>
+        {location.pathname === '/' && (
+          <>
+            <Styled.p sx={{ textAlign: 'right' }}>
+              Based in Long Beach with my wife and daughter. We have a good life
+              together.
+            </Styled.p>
+            <Styled.p sx={{ textAlign: 'right' }}>
+              Currently at Aspiration. Previously at Surf Air and General
+              Assembly.
+            </Styled.p>
+          </>
+        )}
+        {title && location.pathname !== '/' && (
+          <Styled.h1 sx={{ textAlign: 'right', mb: '.5em' }}>{title}</Styled.h1>
+        )}
+        {blurb && location.pathname !== '/' && (
+          <>
+            <Styled.p sx={{ textAlign: 'right' }}>{blurb}</Styled.p>
+          </>
+        )}
+        {date && location.pathname !== '/' && (
+          <PostDetails date={date} timeToRead={timeToRead} />
+        )}
+        {tags && (
+          <TagList
+            tags={tags}
+            basePath={basePath}
+            sx={{ maxWidth: theme => `${theme.sizes.maxWidthCentered}` }}
+          />
+        )}
+
+        {/* {location.pathname !== '/' && <Styled.h1>{location.title}</Styled.h1>} */}
+      </Nav>
+    </Header>
   )
 }
 
