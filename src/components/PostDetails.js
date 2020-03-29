@@ -21,7 +21,7 @@ const PostDetails = props => {
   return (
     <Wrapper {...props}>
       <Date>Updated:&nbsp;&nbsp;&nbsp;📅 {props.date}</Date>
-      {location.pathname.includes('/blog/') && (
+      {props.location.includes('/blog/') && (
         <ReadingTime>
           &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;{' '}
           {`⏱️${props.timeToRead} min read `}

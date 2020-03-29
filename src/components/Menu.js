@@ -137,7 +137,11 @@ const Menu = ({
           </>
         )}
         {date && location !== '/' && (
-          <PostDetails date={date} timeToRead={timeToRead} />
+          <PostDetails
+            date={date}
+            timeToRead={timeToRead}
+            location={location}
+          />
         )}
         {tags && (
           <TagList
@@ -146,8 +150,6 @@ const Menu = ({
             sx={{ maxWidth: theme => `${theme.sizes.maxWidthCentered}` }}
           />
         )}
-
-        {/* {location !== '/' && <Styled.h1>{location.title}</Styled.h1>} */}
       </Nav>
     </Header>
   )
