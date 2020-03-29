@@ -118,22 +118,24 @@ const Menu = ({
       <Nav sx={{ marginTop: 'auto', marginBottom: '2em', px: [0, 0, 0, 0, 3] }}>
         {location === '/' && (
           <>
-            <Styled.p sx={{ textAlign: 'right' }}>
+            <Styled.p sx={{ textAlign: ['left', 'right'] }}>
               Based in Long Beach with my wife and daughter. We have a good life
               together.
             </Styled.p>
-            <Styled.p sx={{ textAlign: 'right' }}>
+            <Styled.p sx={{ textAlign: ['left', 'right'] }}>
               Currently at Aspiration. Previously at Surf Air and General
               Assembly.
             </Styled.p>
           </>
         )}
         {title && location !== '/' && (
-          <Styled.h1 sx={{ textAlign: 'right', mb: '.5em' }}>{title}</Styled.h1>
+          <Styled.h1 sx={{ textAlign: ['left', 'right'], mb: '.5em' }}>
+            {title}
+          </Styled.h1>
         )}
         {blurb && location !== '/' && (
           <>
-            <Styled.p sx={{ textAlign: 'right' }}>{blurb}</Styled.p>
+            <Styled.p sx={{ textAlign: ['left', 'right'] }}>{blurb}</Styled.p>
           </>
         )}
         {date && location !== '/' && (

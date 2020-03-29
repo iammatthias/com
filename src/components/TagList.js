@@ -4,13 +4,16 @@ import { Link } from 'gatsby'
 
 const List = styled.ul`
   width: 100%;
-  margin: 0 auto 1em auto;
-  text-align: right;
+  margin: 1em auto 0 auto;
+  text-align: left;
+  @media screen and (min-width: ${props => props.theme.responsive.small}) {
+    text-align: right;
+  }
 `
 
 const Tag = styled.li`
   display: inline-block !important;
-  margin: 0.5em 0 0.5em 1em !important;
+  margin: 0.5em 1em 0.5em 0 !important;
   a {
     transition: 0.2s;
     background: ${props => props.theme.colors.secondary};
@@ -23,6 +26,9 @@ const Tag = styled.li`
     &:hover {
       background: ${props => props.theme.colors.highlight};
     }
+  }
+  @media screen and (min-width: ${props => props.theme.responsive.small}) {
+    margin: 0.5em 0 1em 1.5em !important;
   }
 `
 

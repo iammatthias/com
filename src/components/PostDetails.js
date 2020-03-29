@@ -3,9 +3,12 @@ import styled from '@emotion/styled'
 
 const Wrapper = styled.div`
   margin: 0 auto 2em;
-  text-align: right;
+  text-align: left;
   span {
     margin: 0 0.5rem;
+  }
+  @media screen and (min-width: ${props => props.theme.responsive.small}) {
+    text-align: right;
   }
 `
 
