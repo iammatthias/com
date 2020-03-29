@@ -32,7 +32,7 @@ const List = styled.ul`
   }
 `
 
-const Posts = ({ data, pageContext }) => {
+const Posts = ({ data, pageContext, location }) => {
   const photography = data.allContentfulPhotography.edges
   const posts = data.allContentfulPost.edges
   const { basePath } = pageContext
@@ -46,7 +46,7 @@ const Posts = ({ data, pageContext }) => {
   }
 
   return (
-    <Layout>
+    <Layout location={location.pathname}>
       <SEO title={startCase(basePath)} image={ogImage} />
 
       <Container>

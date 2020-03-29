@@ -14,7 +14,7 @@ import theme from 'gatsby-plugin-theme-ui'
 
 import { MDXGlobalComponents } from '../components/MDX'
 
-const PostTemplate = ({ data, pageContext }) => {
+const PostTemplate = ({ data, pageContext, location }) => {
   const {
     title,
     metaDescription,
@@ -48,6 +48,7 @@ const PostTemplate = ({ data, pageContext }) => {
       timeToRead={body.childMarkdownRemark.timeToRead}
       tags={tags}
       basePath={basePath}
+      location={location.pathname}
     >
       <SEO
         title={title}

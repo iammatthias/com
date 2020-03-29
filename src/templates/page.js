@@ -11,10 +11,14 @@ import theme from 'gatsby-plugin-theme-ui'
 
 import { MDXGlobalComponents } from '../components/MDX'
 
-const PageTemplate = ({ data }) => {
+const PageTemplate = ({ data, location }) => {
   const { title, metaDescription, body } = data.contentfulPage
   return (
-    <Layout title={title} blurb={metaDescription.internal.content}>
+    <Layout
+      title={title}
+      blurb={metaDescription.internal.content}
+      location={location.pathname}
+    >
       <SEO
         title={title}
         description={

@@ -11,7 +11,7 @@ import GalleryGrid from '../components/GalleryGrid'
 
 import SEO from '../components/SEO'
 
-const PhotoSetTemplate = ({ data, pageContext }) => {
+const PhotoSetTemplate = ({ data, pageContext, location }) => {
   const {
     title,
     metaDescription,
@@ -33,6 +33,7 @@ const PhotoSetTemplate = ({ data, pageContext }) => {
       title={title}
       blurb={metaDescription.internal.content}
       date={publishDate}
+      location={location.pathname}
     >
       <SEO title={title} description={metaDescription} image={ogImage} />
 

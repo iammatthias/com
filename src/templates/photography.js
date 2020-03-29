@@ -6,7 +6,7 @@ import Card from '../components/Card'
 import Container from '../components/Container'
 import SEO from '../components/SEO'
 
-const Posts = ({ data, pageContext }) => {
+const Posts = ({ data, pageContext, location }) => {
   const photoSets = data.allContentfulPhotography.edges
   const { basePath } = pageContext
 
@@ -21,7 +21,11 @@ const Posts = ({ data, pageContext }) => {
   const metaDescription = 'A camera and a dream.'
 
   return (
-    <Layout title="Photography" blurb={metaDescription}>
+    <Layout
+      title="Photography"
+      blurb={metaDescription}
+      location={location.pathname}
+    >
       <SEO title="Photography" image={ogImage} />
       <Container>
         <CardList>

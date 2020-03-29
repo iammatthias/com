@@ -10,7 +10,7 @@ import PageTitle from '../components/PageTitle'
 import Pagination from '../components/Pagination'
 import Container from '../components/Container'
 
-const TagTemplate = ({ data, pageContext }) => {
+const TagTemplate = ({ data, pageContext, location }) => {
   const posts = orderBy(
     data.contentfulTag.post,
     // eslint-disable-next-line
@@ -32,28 +32,26 @@ const TagTemplate = ({ data, pageContext }) => {
   }
 
   return (
-    <>
-      <Layout>
-        <SEO
-          title={`Tag: ${startCase(title)}`}
-          description={`Posts Tagged: ${startCase(title)}`}
-          image={ogImage}
-        />
-        <Container>
-          <PageTitle small>
-            {numberOfPosts} Posts Tagged: &ldquo;
-            {title}
-            &rdquo;
-          </PageTitle>
-          <CardList>
-            {posts.slice(skip, limit * humanPageNumber).map(post => (
-              <Card {...post} key={post.id} basePath={basePath + '/blog/'} />
-            ))}
-          </CardList>
-        </Container>
-        <Pagination context={pageContext} />
-      </Layout>
-    </>
+    <Layout location={location.pathname}>
+      <SEO
+        title={`Tag: ${startCase(title)}`}
+        description={`Posts Tagged: ${startCase(title)}`}
+        image={ogImage}
+      />
+      <Container>
+        <PageTitle small>
+          {numberOfPosts} Posts Tagged: &ldquo;
+          {title}
+          &rdquo;
+        </PageTitle>
+        <CardList>
+          {posts.slice(skip, limit * humanPageNumber).map(post => (
+            <Card {...post} key={post.id} basePath={basePath + '/blog/'} />
+          ))}
+        </CardList>
+      </Container>
+      <Pagination context={pageContext} />
+    </Layout>
   )
 }
 

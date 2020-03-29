@@ -7,7 +7,7 @@ import Container from '../components/Container'
 import Pagination from '../components/Pagination'
 import SEO from '../components/SEO'
 
-const Posts = ({ data, pageContext }) => {
+const Posts = ({ data, pageContext, location }) => {
   const posts = data.allContentfulPost.edges
   const { basePath } = pageContext
 
@@ -23,7 +23,7 @@ const Posts = ({ data, pageContext }) => {
     'Part journal, part project log, part a little bit of everything—touching on photography, art & design, building for the web (and for emails), and life itself.'
 
   return (
-    <Layout title="Blog" blurb={metaDescription}>
+    <Layout title="Blog" blurb={metaDescription} location={location.pathname}>
       <SEO title="Blog" image={ogImage} />
       <Container>
         <CardList>

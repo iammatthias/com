@@ -48,11 +48,21 @@ const Nav = styled.nav`
   }
 `
 
-const Menu = ({ props, blurb, title, date, timeToRead, tags, basePath, location }) => {
+const Menu = ({
+  props,
+  blurb,
+  title,
+  date,
+  timeToRead,
+  tags,
+  basePath,
+  location,
+}) => {
   const modes = ['light', 'dark', 'random']
 
   const [mode, setMode] = useColorMode() //eslint-disable-line
   const { menuLinks } = useSiteMetadata()
+
   return (
     <Header>
       <Nav>
@@ -106,7 +116,7 @@ const Menu = ({ props, blurb, title, date, timeToRead, tags, basePath, location 
         </Styled.ul>
       </Nav>
       <Nav sx={{ marginTop: 'auto', marginBottom: '2em', px: [0, 0, 0, 0, 3] }}>
-        {location.pathname === '/' && (
+        {location === '/' && (
           <>
             <Styled.p sx={{ textAlign: 'right' }}>
               Based in Long Beach with my wife and daughter. We have a good life
@@ -118,15 +128,15 @@ const Menu = ({ props, blurb, title, date, timeToRead, tags, basePath, location 
             </Styled.p>
           </>
         )}
-        {title && location.pathname !== '/' && (
+        {title && location !== '/' && (
           <Styled.h1 sx={{ textAlign: 'right', mb: '.5em' }}>{title}</Styled.h1>
         )}
-        {blurb && location.pathname !== '/' && (
+        {blurb && location !== '/' && (
           <>
             <Styled.p sx={{ textAlign: 'right' }}>{blurb}</Styled.p>
           </>
         )}
-        {date && location.pathname !== '/' && (
+        {date && location !== '/' && (
           <PostDetails date={date} timeToRead={timeToRead} />
         )}
         {tags && (
@@ -137,7 +147,7 @@ const Menu = ({ props, blurb, title, date, timeToRead, tags, basePath, location 
           />
         )}
 
-        {/* {location.pathname !== '/' && <Styled.h1>{location.title}</Styled.h1>} */}
+        {/* {location !== '/' && <Styled.h1>{location.title}</Styled.h1>} */}
       </Nav>
     </Header>
   )

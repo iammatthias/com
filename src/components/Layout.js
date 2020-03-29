@@ -25,13 +25,13 @@ const Wrapper = styled.section`
 
 const Layout = ({
   children,
-location,
   blurb,
   title,
   date,
   timeToRead,
   tags,
   basePath,
+  location,
   ...props
 }) => {
   function handleFirstTab(e) {
@@ -55,6 +55,7 @@ location,
             basePath={basePath}
             location={location}
           />
+
           {children}
         </Wrapper>
       </div>
