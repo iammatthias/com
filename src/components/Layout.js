@@ -25,6 +25,7 @@ const Wrapper = styled.section`
 
 const Layout = ({
   children,
+location,
   blurb,
   title,
   date,
@@ -52,6 +53,7 @@ const Layout = ({
             timeToRead={timeToRead}
             tags={tags}
             basePath={basePath}
+location={location}
           />
           {children}
         </Wrapper>
