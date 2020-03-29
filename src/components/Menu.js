@@ -48,7 +48,7 @@ const Nav = styled.nav`
   }
 `
 
-const Menu = ({ props, blurb, title, date, timeToRead, tags, basePath }) => {
+const Menu = ({ props, blurb, title, date, timeToRead, tags, basePath, location }) => {
   const modes = ['light', 'dark', 'random']
 
   const [mode, setMode] = useColorMode() //eslint-disable-line
