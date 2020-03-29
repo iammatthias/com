@@ -7,7 +7,7 @@ import Layout from '../components/Layout'
 
 import Container from '../components/Container'
 
-import GalleryGrid from '../components/GalleryGrid'
+import GalleryGrid from '../components/galleryGrid'
 
 import PostDetails from '../components/PostDetails'
 import SEO from '../components/SEO'
