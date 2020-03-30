@@ -18,12 +18,18 @@ const Form = styled.form`
   flex-flow: row wrap;
   justify-content: space-between;
   align-items: flex-start;
+  input {
+    margin: 0 0 1em 0;
+    width: 100%;
+    @media (min-width: ${props => props.theme.responsive.small}) {
+      width: 49%;
+    }
+  }
   input,
   textarea {
     font-family: inherit;
     font-size: inherit;
-    background: ${props => props.theme.colors.secondary};
-    color: ${props => props.theme.colors.text};
+
     border-radius: 2px;
     padding: 1em;
     &::-webkit-input-placeholder {
@@ -207,7 +213,7 @@ class ContactForm extends React.Component {
           </label>
         </p>
 
-        <Name
+        <input
           name="name"
           type="text"
           placeholder="Full Name"
@@ -215,7 +221,7 @@ class ContactForm extends React.Component {
           onChange={this.handleInputChange}
           required
         />
-        <Email
+        <input
           name="email"
           type="email"
           placeholder="Email"
@@ -223,7 +229,7 @@ class ContactForm extends React.Component {
           onChange={this.handleInputChange}
           required
         />
-        <Message
+        <textarea
           name="message"
           type="text"
           placeholder="Message"
@@ -231,7 +237,7 @@ class ContactForm extends React.Component {
           onChange={this.handleInputChange}
           required
         />
-        <Submit name="submit" type="submit" value="Send" />
+        <input name="submit" type="submit" value="Send" />
 
         <Modal visible={this.state.showModal}>
           <p>

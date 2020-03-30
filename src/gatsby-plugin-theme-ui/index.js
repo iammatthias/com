@@ -40,6 +40,13 @@ export default {
   useColorSchemeMediaQuery: true,
 
   colors: {
+    background: '#140D00',
+    text: '#fff8e7',
+    primary: '#fff8e7',
+    secondary: darkShadow,
+    tertiary: '#140D00',
+    highlight: '#5b8bf7',
+    shadow: darkShadow,
     modes: {
       light: {
         background: '#fff8e7',
@@ -202,6 +209,15 @@ export default {
     },
     img: {
       maxWidth: '100%',
+    },
+
+    input: {
+      background: 'secondary',
+      color: 'text',
+    },
+    textArea: {
+      background: 'secondary',
+      color: 'background',
     },
   },
 }
