@@ -14,6 +14,8 @@ import {
 
 import ContactForm from '../../components/ContactForm'
 
+import EmailCapture from '../../components/MDX/EmailCapture'
+
 export const MDXGlobalComponents = {
   // eslint-disable-next-line react/display-name
   Box: props => <Box {...props} />,
@@ -35,4 +37,6 @@ export const MDXGlobalComponents = {
   Card: props => <Card {...props} />,
   // eslint-disable-next-line react/display-name
   ContactForm: props => <ContactForm {...props} />,
+  // eslint-disable-next-line react/display-name
+  EmailCapture: props => <EmailCapture {...props} />,
 }

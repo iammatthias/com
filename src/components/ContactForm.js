@@ -213,7 +213,7 @@ class ContactForm extends React.Component {
           </label>
         </p>
 
-        <input
+        <Name
           name="name"
           type="text"
           placeholder="Full Name"
@@ -221,7 +221,7 @@ class ContactForm extends React.Component {
           onChange={this.handleInputChange}
           required
         />
-        <input
+        <Email
           name="email"
           type="email"
           placeholder="Email"
@@ -229,7 +229,7 @@ class ContactForm extends React.Component {
           onChange={this.handleInputChange}
           required
         />
-        <textarea
+        <Message
           name="message"
           type="text"
           placeholder="Message"
@@ -237,7 +237,7 @@ class ContactForm extends React.Component {
           onChange={this.handleInputChange}
           required
         />
-        <input name="submit" type="submit" value="Send" />
+        <Submit name="submit" type="submit" value="Send" />
 
         <Modal visible={this.state.showModal}>
           <p>
