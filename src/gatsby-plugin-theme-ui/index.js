@@ -38,6 +38,7 @@ var randomShadow = LightenDarkenColor(paletteBackground, -40)
 
 export default {
   useColorSchemeMediaQuery: true,
+
   colors: {
     modes: {
       light: {
