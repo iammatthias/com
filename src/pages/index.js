@@ -9,6 +9,9 @@ import Container from '../components/Container'
 import Pagination from '../components/Pagination'
 import SEO from '../components/SEO'
 import { startCase } from 'lodash'
+import Img from 'gatsby-image'
+
+import { Tooltip } from 'react-tippy'
 
 const ContentGrid = styled.div`
   width: 100%;
@@ -60,8 +63,24 @@ const Posts = ({ data, pageContext, location }) => {
                   to={`/photography/${photoSet.slug}/`}
                   sx={{ color: 'text', textDecoration: 'none' }}
                 >
-                  <Styled.h4>{photoSet.title}</Styled.h4>
-                  <Styled.p>Updated: {photoSet.updatedAt}</Styled.p>
+                  <Tooltip
+                    // options
+                    position="right-end"
+                    followCursor="true"
+                    html={
+                      <div style={{ width: '100px' }}>
+                        <Img
+                          fluid={{
+                            ...photoSet.heroImage.thumbnail,
+                            aspectRatio: 4 / 3,
+                          }}
+                        />
+                      </div>
+                    }
+                  >
+                    <Styled.h4>{photoSet.title}</Styled.h4>
+                    <Styled.p>Updated: {photoSet.updatedAt}</Styled.p>
+                  </Tooltip>
                 </Link>
               ))}
             </List>
@@ -75,11 +94,27 @@ const Posts = ({ data, pageContext, location }) => {
                   to={`/blog/${post.slug}/`}
                   sx={{ color: 'text', textDecoration: 'none' }}
                 >
-                  <Styled.h4>{post.title}</Styled.h4>
-                  <Styled.p>
-                    Published: {post.publishDate} &nbsp;/&nbsp;/&nbsp;
-                    {post.body.childMarkdownRemark.timeToRead} minute read
-                  </Styled.p>
+                  <Tooltip
+                    // options
+
+                    followCursor="true"
+                    html={
+                      <div style={{ width: '100px' }}>
+                        <Img
+                          fluid={{
+                            ...post.heroImage.thumbnail,
+                            aspectRatio: 4 / 3,
+                          }}
+                        />
+                      </div>
+                    }
+                  >
+                    <Styled.h4>{post.title}</Styled.h4>
+                    <Styled.p>
+                      Published: {post.publishDate} &nbsp;/&nbsp;/&nbsp;
+                      {post.body.childMarkdownRemark.timeToRead} minute read
+                    </Styled.p>
+                  </Tooltip>
                 </Link>
               ))}
             </List>
@@ -101,12 +136,10 @@ export const query = graphql`
           slug
           publishDate(formatString: "MMMM DD, YYYY")
           heroImage {
-            title
-            fluid(maxWidth: 1800) {
-              ...GatsbyContentfulFluid_withWebp_noBase64
-            }
-            ogimg: resize(width: 1800) {
+            thumbnail: fluid(maxWidth: 900, quality: 50) {
+              ...GatsbyContentfulFluid_withWebp
               src
+              aspectRatio
             }
           }
           body {
@@ -119,7 +152,7 @@ export const query = graphql`
         }
       }
     }
-    allContentfulPhotography {
+    allContentfulPhotography(sort: { fields: [updatedAt], order: DESC }) {
       edges {
         node {
           title
