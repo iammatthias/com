@@ -1,6 +1,9 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+/** @jsx jsx */
+
+import React from 'react' //eslint-disable-line
+import { jsx } from 'theme-ui'
 import styled from '@emotion/styled'
+import PropTypes from 'prop-types'
 
 /*
   ⚠️ This is an example of a contact form powered with Netlify form handling.
@@ -79,12 +82,10 @@ const Message = styled.textarea`
 `
 
 const Submit = styled.input`
-  background: ${props => props.theme.colors.text} !important;
-  color: white !important;
   cursor: pointer;
   transition: 0.2s;
   &:hover {
-    background: ${props => props.theme.colors.highlight} !important;
+    background: ${props => props.theme.colors.highlight};
   }
 `
 
@@ -116,14 +117,15 @@ const Modal = styled.div`
 `
 
 const Button = styled.div`
-  background: ${props => props.theme.colors.text};
+  background: ${props => props.theme.colors.primary};
+  color: ${props => props.theme.colors.background};
   font-size: 1em;
   display: inline-block;
   margin: 0 auto;
   border: none;
   outline: none;
   cursor: pointer;
-  color: white;
+
   padding: 1em;
   border-radius: 2px;
   text-decoration: none;

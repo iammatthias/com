@@ -99,7 +99,7 @@ const Posts = ({ data, pageContext, location }) => {
                     position="right-end"
                     followCursor="true"
                     html={
-                      <div style={{ width: '200px' }}>
+                      <div style={{ width: '150px' }}>
                         <Img
                           fluid={{
                             ...post.heroImage.thumbnail,
