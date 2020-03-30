@@ -77,6 +77,13 @@ module.exports = {
           ? contentfulConfig.development
           : contentfulConfig.production,
     },
+    {
+      resolve: `gatsby-plugin-segment-js`,
+      options: {
+        prodKey: process.env.SEGMENT,
+        trackPage: true,
+      },
+    },
     'gatsby-plugin-sitemap',
     {
       resolve: 'gatsby-plugin-manifest',

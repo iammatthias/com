@@ -23,6 +23,7 @@
     "gatsby-plugin-offline": "^3.0.34",
     "gatsby-plugin-react-helmet": "^3.1.22",
     "gatsby-plugin-schema-snapshot": "^1.0.0",
+    "gatsby-plugin-segment-js": "^3.1.0",
     "gatsby-plugin-sitemap": "^2.2.27",
     "gatsby-plugin-theme-ui": "^0.3.0",
     "gatsby-remark-autolink-headers": "^2.1.24",
