@@ -65,7 +65,7 @@ const Posts = ({ data, pageContext, location }) => {
                 >
                   <Tooltip
                     // options
-                    position="right-end"
+                    position="bottom"
                     followCursor="true"
                     html={
                       <div style={{ width: '200px' }}>
@@ -96,7 +96,7 @@ const Posts = ({ data, pageContext, location }) => {
                 >
                   <Tooltip
                     // options
-                    position="right-end"
+                    position="bottom"
                     followCursor="true"
                     html={
                       <div style={{ width: '150px' }}>

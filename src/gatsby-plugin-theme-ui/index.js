@@ -37,32 +37,7 @@ var randomHighlight = LightenDarkenColor(paletteBackground, 40)
 var randomShadow = LightenDarkenColor(paletteBackground, -40)
 
 export default {
-  sizes: {
-    maxWidth: '1280px',
-    maxWidthCentered: '650px',
-  },
-  responsive: {
-    small: '35em',
-    medium: '50em',
-    large: '70em',
-  },
-  space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
-  fonts: {
-    body:
-      'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-    heading: 'inherit',
-    monospace: 'Menlo, monospace',
-  },
-  fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
-  fontWeights: {
-    body: 400,
-    heading: 700,
-    bold: 700,
-  },
-  lineHeights: {
-    body: 1.5,
-    heading: 1.125,
-  },
+  useColorSchemeMediaQuery: true,
   colors: {
     modes: {
       light: {
@@ -93,6 +68,33 @@ export default {
       },
     },
   },
+  sizes: {
+    maxWidth: '1280px',
+    maxWidthCentered: '650px',
+  },
+  responsive: {
+    small: '35em',
+    medium: '50em',
+    large: '70em',
+  },
+  space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
+  fonts: {
+    body:
+      'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+    heading: 'inherit',
+    monospace: 'Menlo, monospace',
+  },
+  fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
+  fontWeights: {
+    body: 400,
+    heading: 700,
+    bold: 700,
+  },
+  lineHeights: {
+    body: 1.5,
+    heading: 1.125,
+  },
+
   styles: {
     root: {
       fontFamily: 'body',
