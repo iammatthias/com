@@ -103,6 +103,7 @@ export const query = graphql`
             thumbnail: fluid(maxWidth: 900, quality: 50) {
               ...GatsbyContentfulFluid_withWebp
               src
+              srcSet
               aspectRatio
             }
           }

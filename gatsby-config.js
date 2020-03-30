@@ -81,11 +81,11 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
-        name: 'GCN',
-        short_name: 'GCN',
+        name: 'I AM MATTIAS',
+        short_name: 'IAM',
         start_url: '/',
-        background_color: '#ffffff',
-        theme_color: '#ffffff',
+        background_color: '#140D00',
+        theme_color: '#140D00',
         display: 'minimal-ui',
         icon: './static/images/favicon.png',
       },

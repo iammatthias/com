@@ -43,12 +43,8 @@ const Posts = ({ data, pageContext, location }) => {
 }
 
 export const query = graphql`
-  query($skip: Int!, $limit: Int!) {
-    allContentfulPhotography(
-      sort: { fields: [publishDate], order: DESC }
-      limit: $limit
-      skip: $skip
-    ) {
+  query {
+    allContentfulPhotography(sort: { fields: [publishDate], order: DESC }) {
       edges {
         node {
           title

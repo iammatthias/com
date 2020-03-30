@@ -3,8 +3,9 @@
 import React from 'react' //eslint-disable-line
 import { jsx, Image, Box } from 'theme-ui'
 import { Link } from '@theme-ui/components'
-// import Img from 'gatsby-image'
 import { chunk, sum } from 'lodash'
+
+// import Img from 'gatsby-image'
 
 const GalleryGrid = ({
   title,

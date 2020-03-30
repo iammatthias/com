@@ -68,7 +68,7 @@ const Posts = ({ data, pageContext, location }) => {
                     position="right-end"
                     followCursor="true"
                     html={
-                      <div style={{ width: '100px' }}>
+                      <div style={{ width: '200px' }}>
                         <Img
                           fluid={{
                             ...photoSet.heroImage.thumbnail,
@@ -96,10 +96,10 @@ const Posts = ({ data, pageContext, location }) => {
                 >
                   <Tooltip
                     // options
-
+                    position="right-end"
                     followCursor="true"
                     html={
-                      <div style={{ width: '100px' }}>
+                      <div style={{ width: '200px' }}>
                         <Img
                           fluid={{
                             ...post.heroImage.thumbnail,
