@@ -21,8 +21,8 @@ const Box = styled.div`
     margin: 2em 0;
   }
   a {
-    background: ${props => props.theme.colors.primary};
-    color: ${props => props.theme.colors.tertiary};
+    background: ${props => props.theme.colors.secondary};
+    color: ${props => props.theme.colors.text} !important;
     padding: 1em;
     border-radius: 2px;
     text-decoration: none;
@@ -35,11 +35,13 @@ const Box = styled.div`
 
 const PreviousLink = styled(Link)`
   order: 2;
+  font-weight: bold;
 `
 
 const NextLink = styled(Link)`
   order: 3;
   margin: 0 0 0 1rem;
+  font-weight: bold;
 `
 
 const PostLinks = props => {

@@ -22,7 +22,7 @@ const Form = styled.form`
   textarea {
     font-family: inherit;
     font-size: inherit;
-    background: ${props => props.theme.colors.tertiary};
+    background: ${props => props.theme.colors.secondary};
     color: ${props => props.theme.colors.text};
     border-radius: 2px;
     padding: 1em;

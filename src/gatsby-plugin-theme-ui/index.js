@@ -64,13 +64,6 @@ export default {
     heading: 1.125,
   },
   colors: {
-    background: '#fff8e7',
-    text: '#140D00',
-    primary: '#140D00',
-    secondary: lightHighlight,
-    tertiary: '#f3f3f3',
-    highlight: '#5b8bf7',
-    shadow: lightShadow,
     modes: {
       light: {
         background: '#fff8e7',
@@ -180,6 +173,9 @@ export default {
     pre: {
       fontFamily: 'monospace',
       overflowX: 'auto',
+      p: 3,
+      border: '1px solid',
+      borderColor: 'text',
       code: {
         color: 'inherit',
       },
