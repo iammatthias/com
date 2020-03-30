@@ -87,14 +87,13 @@ export default {
   },
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
-    body:
-      'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-    heading: 'inherit',
-    monospace: 'Menlo, monospace',
+    body: '"Open Sans"',
+    heading: '"Abril Fatface"',
+    monospace: 'Inconsolata, monospace',
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
   fontWeights: {
-    body: 400,
+    body: 200,
     heading: 700,
     bold: 700,
   },
@@ -115,36 +114,42 @@ export default {
       lineHeight: 'heading',
       fontWeight: 'heading',
       fontSize: 5,
+      mb: 3,
     },
     h2: {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
       fontSize: 4,
+      mb: 3,
     },
     h3: {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
       fontSize: 3,
+      mb: 3,
     },
     h4: {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
       fontSize: 2,
+      mb: 3,
     },
     h5: {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
       fontSize: 1,
+      mb: 3,
     },
     h6: {
       fontFamily: 'heading',
       lineHeight: 'heading',
       fontWeight: 'heading',
       fontSize: 0,
+      mb: 3,
     },
     p: {
       fontFamily: 'body',
@@ -153,6 +158,7 @@ export default {
       fontSize: 2,
       mb: 3,
     },
+
     ul: {
       fontFamily: 'body',
       fontWeight: 'body',
@@ -184,8 +190,9 @@ export default {
       fontFamily: 'monospace',
       overflowX: 'auto',
       p: 3,
+      mb: 3,
       border: '1px solid',
-      borderColor: 'text',
+      borderColor: 'inherit',
       code: {
         color: 'inherit',
       },

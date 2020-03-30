@@ -49,7 +49,12 @@ module.exports = {
     'gatsby-plugin-theme-ui',
     'gatsby-plugin-mdx',
     'gatsby-plugin-react-helmet',
-
+    {
+      resolve: `gatsby-plugin-google-fonts`,
+      options: {
+        fonts: [`Abril Fatface`, `Open Sans`, `Inconsolata`],
+      },
+    },
     {
       resolve: `gatsby-transformer-remark`,
       options: {
