@@ -12,7 +12,7 @@ import TagList from '../components/TagList'
 
 const Header = styled.header`
   width: 100%;
-  padding: 5em 1.5em;
+  padding: 2em 1.5em;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;

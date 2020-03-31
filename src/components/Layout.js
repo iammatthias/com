@@ -19,7 +19,6 @@ const Root = styled.div`
 `
 
 const Wrapper = styled.section`
-  margin: 0 auto auto;
   width: 100%;
   max-width: ${props => props.theme.sizes.maxWidth};
   flex-grow: 1;
@@ -50,7 +49,10 @@ const Layout = ({
       <Root className="siteRoot">
         <Global styles={(theme => theme.styles.Global(theme), globalStyles)} />
         <div className="siteContent" {...props}>
-          <Wrapper id="main" sx={{ padding: [0, 3, 4, 5] }}>
+          <Wrapper
+            id="main"
+            sx={{ padding: [0, 3, 4, 5], mt: [0, 3, 4, 5], mx: 'auto' }}
+          >
             <Menu
               blurb={blurb}
               title={title}
