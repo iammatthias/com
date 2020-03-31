@@ -85,9 +85,11 @@ class EmailCapture extends React.Component {
   handleInputChange = event => {
     const target = event.target
     const value = target.value
-    const email = target.name
+    const email = target.email
+    const name = target.name
     this.setState({
       [email]: value,
+      [name]: value,
     })
   }
 
@@ -97,6 +99,7 @@ class EmailCapture extends React.Component {
       this.handleSuccess()
       window.analytics.identify('Subscribed', {
         email: this.state.email,
+        name: this.state.name,
       })
     }
   }
@@ -104,6 +107,7 @@ class EmailCapture extends React.Component {
   handleSuccess = () => {
     this.setState({
       email: '',
+      name: '',
       showModal: true,
     })
   }
@@ -160,7 +164,7 @@ class EmailCapture extends React.Component {
             name="name"
             type="name"
             placeholder="Name"
-            value={this.state.email}
+            value={this.state.name}
             onChange={this.handleInputChange}
             required
             sx={{
