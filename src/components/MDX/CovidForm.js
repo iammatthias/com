@@ -81,11 +81,6 @@ class EmailCapture extends React.Component {
       restaurant: '',
       address: '',
       notes: '',
-      tags: [
-        {
-          name: 'Covid',
-        },
-      ],
       showModal: false,
       showPrompt: true,
     }
@@ -99,18 +94,12 @@ class EmailCapture extends React.Component {
     const restaurant = target.restaurant
     const address = target.address
     const notes = target.notes
-    const tags = [
-      {
-        name: 'Covid',
-      },
-    ]
     this.setState({
       [email]: value,
       [name]: value,
       [restaurant]: value,
       [address]: value,
       [notes]: value,
-      [tags]: value,
     })
   }
 
@@ -140,11 +129,6 @@ class EmailCapture extends React.Component {
       restaurant: '',
       address: '',
       notes: '',
-      tags: [
-        {
-          name: 'Covid',
-        },
-      ],
       showModal: true,
       showPrompt: false,
     })
