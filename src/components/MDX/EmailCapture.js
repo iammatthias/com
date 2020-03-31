@@ -35,6 +35,14 @@ const Modal = styled.div`
 const Form = styled.form`
   width: 100%;
   margin: 0;
+  padding: 16px;
+  input {
+    padding: 16px;
+    border: 1px solid;
+    border-color: inherit;
+    color: inherit;
+  }
+
   &::invalid {
     box-shadow: none;
   }
@@ -50,16 +58,12 @@ const Form = styled.form`
 `
 
 const Email = styled.input`
-  margin: 0;
+  margin: 0 0 16px;
   width: 100%;
-  background: ${props => props.theme.colors.secondary};
-  color: ${props => props.theme.colors.text};
 `
 const Name = styled.input`
-  margin: 0;
+  margin: 0 0 16px;
   width: 100%;
-  background: ${props => props.theme.colors.secondary};
-  color: ${props => props.theme.colors.text};
 `
 
 const Submit = styled.input`
@@ -67,8 +71,6 @@ const Submit = styled.input`
   transition: 0.2s;
   width: 100%;
   font-weight: bold;
-  background: ${props => props.theme.colors.secondary};
-  color: ${props => props.theme.colors.text};
 `
 
 class EmailCapture extends React.Component {
@@ -143,7 +145,6 @@ class EmailCapture extends React.Component {
           onSubmit={this.handleSubmit}
           overlay={this.state.visible}
           onClick={this.closeModal}
-          sx={{ p: 3 }}
         >
           <Email
             name="email"
@@ -152,13 +153,6 @@ class EmailCapture extends React.Component {
             value={this.state.email}
             onChange={this.handleInputChange}
             required
-            sx={{
-              background: 'secondary',
-              border: '1px solid',
-              borderColor: 'text',
-              p: 3,
-              mb: 3,
-            }}
           />
           <Name
             name="name"
@@ -167,23 +161,8 @@ class EmailCapture extends React.Component {
             value={this.state.name}
             onChange={this.handleInputChange}
             required
-            sx={{
-              background: 'secondary',
-              border: '1px solid',
-              borderColor: 'text',
-              p: 3,
-              mb: 3,
-            }}
           />
-          <Submit
-            className="button"
-            name="submit"
-            type="submit"
-            value="Send"
-            sx={{
-              p: 3,
-            }}
-          />
+          <Submit className="button" name="submit" type="submit" value="Send" />
         </Form>
       </Flex>
     )
