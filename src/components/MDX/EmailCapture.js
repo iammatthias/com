@@ -55,6 +55,12 @@ const Email = styled.input`
   background: ${props => props.theme.colors.secondary};
   color: ${props => props.theme.colors.text};
 `
+const Name = styled.input`
+  margin: 0;
+  width: 100%;
+  background: ${props => props.theme.colors.secondary};
+  color: ${props => props.theme.colors.text};
+`
 
 const Submit = styled.input`
   cursor: pointer;
@@ -111,7 +117,7 @@ class EmailCapture extends React.Component {
       <Flex
         sx={{
           border: '1px solid',
-          borderColor: 'text',
+          borderColor: 'inherit',
           alignItems: 'center',
           mb: 3,
           flexWrap: ['wrap', 'nowrap'],
@@ -150,7 +156,7 @@ class EmailCapture extends React.Component {
               mb: 3,
             }}
           />
-          <Email
+          <Name
             name="name"
             type="name"
             placeholder="Name"
