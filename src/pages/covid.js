@@ -15,7 +15,7 @@ const Covid = ({ location }) => {
       <Flex sx={{ background: 'black', minHeight: '100vh', height: '100%' }}>
         <Box
           sx={{
-            m: [4, 5],
+            m: [3, 4, 5],
             width: ['100%', '61.8%', '61.8%', '38.2%'],
           }}
         >
