@@ -113,6 +113,11 @@ class EmailCapture extends React.Component {
         restaurant: this.state.restaurant,
         address: this.state.address,
         notes: this.state.notes,
+        tags: [
+          {
+            name: 'Covid',
+          },
+        ],
       })
     }
   }
