@@ -6,21 +6,12 @@ import styled from '@emotion/styled'
 import PropTypes from 'prop-types'
 
 const Modal = styled.div`
-  content: 'butts';
-  border-radius: 0.5rem;
+  content: '';
   transition: all 0.3s;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
+
   z-index: 2;
-  background: rgba(var(--base), 1);
+  background: var(--theme-ui-colors-secondary);
+  color: inherit;
   opacity: ${props => (props.visible ? '1' : '0')};
   visibility: ${props => (props.visible ? 'visible' : 'hidden')};
   section {
@@ -81,6 +72,7 @@ class EmailCapture extends React.Component {
       email: '',
       message: '',
       showModal: false,
+      showPrompt: true,
     }
   }
 
@@ -99,7 +91,7 @@ class EmailCapture extends React.Component {
     this.handleSubmit = event => {
       event.preventDefault()
       this.handleSuccess()
-      window.analytics.identify('Subscribed', {
+      window.analytics.identify({
         email: this.state.email,
         name: this.state.name,
       })
@@ -111,11 +103,12 @@ class EmailCapture extends React.Component {
       email: '',
       name: '',
       showModal: true,
+      showPrompt: false,
     })
   }
 
   closeModal = () => {
-    this.setState({ showModal: false })
+    this.setState({ showModal: false, showPrompt: true })
   }
 
   render(props) {
@@ -129,7 +122,7 @@ class EmailCapture extends React.Component {
           flexWrap: ['wrap', 'nowrap'],
         }}
       >
-        <div sx={{ p: 3 }}>
+        <div sx={{ p: 3, position: 'relative' }}>
           <Styled.h3>Enjoying the content?</Styled.h3>
           <Styled.p>
             Sign up to find out when there is an update. Gallery releases, blog
