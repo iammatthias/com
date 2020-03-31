@@ -118,7 +118,7 @@ class EmailCapture extends React.Component {
         }}
       >
         <div sx={{ p: 3 }}>
-          <Styled.h4>Enjoying the content?</Styled.h4>
+          <Styled.h3>Enjoying the content?</Styled.h3>
           <Styled.p>
             Sign up to find out when there is an update. Gallery releases, blog
             posts, and maybe even the occasional recipe.
