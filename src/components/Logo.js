@@ -13,6 +13,7 @@ function Icon(props) {
       viewBox="0 0 377 377"
       strokeWidth="15"
       sx={{ stroke: 'primary' }}
+      {...props}
     >
       <mask
         id="mask0"
@@ -36,11 +37,13 @@ function Icon(props) {
         <path d="M155 284H31l36.69-63.5L96.87 170"></path>
         <path d="M205 284l-61.5-107L82 284h123z"></path>
         <path
+          {...props}
           sx={{ fill: 'background' }}
           d="M347.205 284l-86.602-150L174 284h173.205z"
         ></path>
         <path d="M297.205 284l-86.602-150L124 284h173.205z"></path>
         <path
+          {...props}
           sx={{ fill: 'background' }}
           d="M297.205 284l-86.602-150L124 284h173.205z"
         ></path>

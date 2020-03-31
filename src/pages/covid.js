@@ -3,7 +3,11 @@
 import React from 'react' //eslint-disable-line
 import { jsx, Styled, Box, Flex, Link } from 'theme-ui'
 
+import { Link as GatsbyLink } from 'gatsby'
+
 import CovidForm from '../components/MDX/CovidForm'
+
+import Logo from '../components/Logo'
 
 const Covid = ({ location }) => {
   return (
@@ -15,6 +19,11 @@ const Covid = ({ location }) => {
             width: ['100%', '61.8%', '61.8%', '38.2%'],
           }}
         >
+          <GatsbyLink to="/">
+            <Logo
+              css={{ stroke: 'white !important', fill: 'black !important' }}
+            />
+          </GatsbyLink>
           <Styled.h1 sx={{ fontFamily: 'monospace', color: 'white' }}>
             Covid-19
           </Styled.h1>
