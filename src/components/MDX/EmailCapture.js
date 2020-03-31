@@ -8,7 +8,6 @@ import PropTypes from 'prop-types'
 const Modal = styled.div`
   content: '';
   transition: all 0.3s;
-
   z-index: 2;
   background: var(--theme-ui-colors-secondary);
   color: inherit;
@@ -25,13 +24,22 @@ const Modal = styled.div`
 
 const Form = styled.form`
   width: 100%;
-  margin: 0;
   padding: 16px;
+  label {
+    padding: 0 16px;
+  }
   input {
     padding: 16px;
-    border: 1px solid;
-    border-color: inherit;
-    color: inherit;
+
+    color: ${props => props.theme.colors.text};
+    background: ${props => props.theme.colors.secondary};
+    &::placeholder {
+      color: ${props => props.theme.colors.shadow};
+    }
+    &:last-child {
+      color: ${props => props.theme.colors.text};
+      background: ${props => props.theme.colors.shadow};
+    }
   }
 
   &::invalid {
@@ -139,14 +147,6 @@ class EmailCapture extends React.Component {
           overlay={this.state.visible}
           onClick={this.closeModal}
         >
-          <Email
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={this.state.email}
-            onChange={this.handleInputChange}
-            required
-          />
           <Name
             name="name"
             type="name"
@@ -155,6 +155,15 @@ class EmailCapture extends React.Component {
             onChange={this.handleInputChange}
             required
           />
+          <Email
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={this.state.email}
+            onChange={this.handleInputChange}
+            required
+          />
+
           <Submit className="button" name="submit" type="submit" value="Send" />
         </Form>
       </Flex>

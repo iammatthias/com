@@ -1,7 +1,7 @@
 /** @jsx jsx */
 
 import React from 'react' //eslint-disable-line
-import { jsx, ThemeProvider } from 'theme-ui'
+import { jsx } from 'theme-ui'
 import { graphql } from 'gatsby'
 import Layout from '../components/Layout'
 import Hero from '../components/Hero'
@@ -10,9 +10,6 @@ import PostLinks from '../components/PostLinks'
 
 import SEO from '../components/SEO'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
-import theme from 'gatsby-plugin-theme-ui'
-
-import { MDXGlobalComponents } from '../components/MDX'
 
 const PostTemplate = ({ data, pageContext, location }) => {
   const {
@@ -67,9 +64,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
             margin: '0 auto',
           }}
         >
-          <ThemeProvider theme={theme} components={MDXGlobalComponents}>
-            <MDXRenderer>{body.childMdx.body}</MDXRenderer>
-          </ThemeProvider>
+          <MDXRenderer>{body.childMdx.body}</MDXRenderer>
         </div>
       </Container>
       <PostLinks

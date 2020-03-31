@@ -30,9 +30,6 @@ function LightenDarkenColor(col, amt) {
   return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16)
 }
 
-var lightHighlight = LightenDarkenColor('#fff8e7', 5)
-var lightShadow = LightenDarkenColor('#fff8e7', -40)
-var darkShadow = LightenDarkenColor('#140D00', 20)
 var randomHighlight = LightenDarkenColor(paletteBackground, 40)
 var randomShadow = LightenDarkenColor(paletteBackground, -40)
 
@@ -40,31 +37,24 @@ export default {
   useColorSchemeMediaQuery: true,
 
   colors: {
-    background: '#140D00',
-    text: '#fff8e7',
-    primary: '#fff8e7',
-    secondary: darkShadow,
-    tertiary: '#140D00',
-    highlight: '#5b8bf7',
-    shadow: darkShadow,
     modes: {
       light: {
         background: '#fff8e7',
-        text: '#140D00',
-        primary: '#140D00',
-        secondary: lightHighlight,
+        text: '#101A1F',
+        primary: '#101A1F',
+        secondary: '#FFFBF4',
         tertiary: '#f3f3f3',
         highlight: '#5b8bf7',
-        shadow: lightShadow,
+        shadow: '#BAB5A9',
       },
       dark: {
-        background: '#140D00',
+        background: '#101A1F',
         text: '#fff8e7',
         primary: '#fff8e7',
-        secondary: darkShadow,
-        tertiary: '#140D00',
+        secondary: '#364A54',
+        tertiary: '#101A1F',
         highlight: '#5b8bf7',
-        shadow: darkShadow,
+        shadow: '#100B00',
       },
       random: {
         background: paletteBackground,

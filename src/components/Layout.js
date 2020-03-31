@@ -1,12 +1,16 @@
 /** @jsx jsx */
 
 import React, { useEffect } from 'react' //eslint-disable-line
-import { jsx } from 'theme-ui'
+import { jsx, ThemeProvider } from 'theme-ui'
 import styled from '@emotion/styled'
 import { Global } from '@emotion/core'
 import Menu from '../components/Menu'
 import Footer from '../components/Footer'
 import { globalStyles } from '../styles/globalStyles.js'
+
+import theme from 'gatsby-plugin-theme-ui'
+
+import { MDXGlobalComponents } from '../components/MDX'
 
 const Root = styled.div`
   background: ${props => props.theme.colors.background};
@@ -42,26 +46,28 @@ const Layout = ({
   useEffect(() => window.addEventListener('keydown', handleFirstTab), [])
 
   return (
-    <Root className="siteRoot">
-      <Global styles={globalStyles} />
-      <div className="siteContent" {...props}>
-        <Wrapper id="main" sx={{ padding: [0, 3, 4, 5] }}>
-          <Menu
-            blurb={blurb}
-            title={title}
-            date={date}
-            timeToRead={timeToRead}
-            tags={tags}
-            basePath={basePath}
-            location={location}
-          />
+    <ThemeProvider theme={theme} components={MDXGlobalComponents}>
+      <Root className="siteRoot">
+        <Global styles={(theme => theme.styles.Global(theme), globalStyles)} />
+        <div className="siteContent" {...props}>
+          <Wrapper id="main" sx={{ padding: [0, 3, 4, 5] }}>
+            <Menu
+              blurb={blurb}
+              title={title}
+              date={date}
+              timeToRead={timeToRead}
+              tags={tags}
+              basePath={basePath}
+              location={location}
+            />
 
-          {children}
-        </Wrapper>
-      </div>
+            {children}
+          </Wrapper>
+        </div>
 
-      <Footer />
-    </Root>
+        <Footer />
+      </Root>
+    </ThemeProvider>
   )
 }
 

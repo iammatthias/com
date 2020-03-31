@@ -1,15 +1,12 @@
 /** @jsx jsx */
 
 import React from 'react' //eslint-disable-line
-import { jsx, ThemeProvider } from 'theme-ui'
+import { jsx } from 'theme-ui'
 import { graphql } from 'gatsby'
 import Layout from '../components/Layout'
 import Container from '../components/Container'
 import SEO from '../components/SEO'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
-import theme from 'gatsby-plugin-theme-ui'
-
-import { MDXGlobalComponents } from '../components/MDX'
 
 const PageTemplate = ({ data, location }) => {
   const { title, metaDescription, body } = data.contentfulPage
@@ -34,9 +31,7 @@ const PageTemplate = ({ data, location }) => {
             margin: '0 auto',
           }}
         >
-          <ThemeProvider theme={theme} components={MDXGlobalComponents}>
-            <MDXRenderer>{body.childMdx.body}</MDXRenderer>
-          </ThemeProvider>
+          <MDXRenderer>{body.childMdx.body}</MDXRenderer>
         </div>
       </Container>
     </Layout>
