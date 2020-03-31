@@ -98,7 +98,6 @@ export default {
       lineHeight: 'body',
       fontWeight: 'body',
       color: 'text',
-      background: 'background',
     },
     h1: {
       fontFamily: 'heading',
