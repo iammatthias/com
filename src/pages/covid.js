@@ -66,7 +66,7 @@ const Covid = ({ location }) => {
             pickup.
           </Styled.p>
           <Styled.p sx={{ fontFamily: 'monospace', color: 'white' }}>
-            No catch, no strings attached. If you need help producing new images for your online presence, I wouls love to help. Just looking to give back to the community that my family and I call home.
+            No catch, no strings attached. If you need help producing new images for your online presence, I would love to help. Just looking to give back to the community that my family and I call home.
           </Styled.p>
           <Styled.p sx={{ fontFamily: 'monospace', color: 'white' }}>
             If this sounds good then add your details below and I'll get back to
