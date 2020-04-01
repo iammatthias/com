@@ -88,7 +88,7 @@ class CovidForm extends React.Component {
       email: '',
       restaurant: '',
       address: '',
-      notes: '',
+      message: '',
       showModal: false,
       showPrompt: true,
     }
@@ -101,13 +101,13 @@ class CovidForm extends React.Component {
     const name = target.name
     const restaurant = target.restaurant
     const address = target.address
-    const notes = target.notes
+    const message = target.message
     this.setState({
       [email]: value,
       [name]: value,
       [restaurant]: value,
       [address]: value,
-      [notes]: value,
+      [message]: value,
     })
   }
 
@@ -128,7 +128,7 @@ class CovidForm extends React.Component {
         name: this.state.name,
         restaurant: this.state.restaurant,
         address: this.state.address,
-        notes: this.state.notes,
+        message: this.state.message,
         tags: [
           {
             name: 'Covid',
@@ -144,7 +144,7 @@ class CovidForm extends React.Component {
       name: '',
       restaurant: '',
       address: '',
-      notes: '',
+      message: '',
       showModal: true,
       showPrompt: false,
     })
@@ -220,10 +220,10 @@ class CovidForm extends React.Component {
             required
           />
           <TextArea
-            name="notes"
-            type="notes"
+            name="message"
+            type="message"
             placeholder="Notes - Number of dishes that need to be photographed, interior / exterior shots, preferred time of day, etc."
-            value={this.state.notes}
+            value={this.state.message}
             onChange={this.handleInputChange}
             required
           />
