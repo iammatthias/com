@@ -37,6 +37,7 @@ const Form = styled.form`
     color: black;
     background: white;
     -webkit-appearance: none;
+    border-radius: 0;
     &::placeholder {
       color: ${props => props.theme.colors.shadow};
     }
