@@ -74,7 +74,13 @@ const Submit = styled.input`
   border: 1px solid white;
 `
 
-class EmailCapture extends React.Component {
+const encode = data => {
+  return Object.keys(data)
+    .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+    .join('&')
+}
+
+class CovidForm extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -107,8 +113,16 @@ class EmailCapture extends React.Component {
 
   componentDidMount() {
     this.handleSubmit = event => {
+      fetch('/?no-cache=1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encode({ 'form-name': 'contact', ...this.state }),
+      })
+        .then(this.handleSuccess)
+        .catch(error => alert(error))
       event.preventDefault()
       this.handleSuccess()
+      window.analytics.track('Covid Lander Form Submitted', {})
       window.analytics.identify({
         email: this.state.email,
         name: this.state.name,
@@ -144,7 +158,7 @@ class EmailCapture extends React.Component {
     return (
       <>
         <Form
-          name="subscribe"
+          name="Covid"
           onSubmit={this.handleSubmit}
           overlay={this.state.visible}
           onClick={this.closeModal}
@@ -225,8 +239,8 @@ class EmailCapture extends React.Component {
   }
 }
 
-EmailCapture.propTypes = {
+CovidForm.propTypes = {
   data: PropTypes.object,
 }
 
-export default EmailCapture
+export default CovidForm
