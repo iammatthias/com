@@ -12,12 +12,12 @@ import Logo from '../components/Logo'
 const Covid = ({ location }) => {
   return (
     <Flex
-      sx={{ background: 'black', minHeight: '100vh', height: '100%', mb: 3 }}
+      sx={{ background: 'black', minHeight: '100vh', height: '100%', pb: 5 }}
     >
       <Box
         sx={{
           m: [3, 4, 5],
-          p: 3,
+          p: 2,
           width: ['100%', '61.8%', '61.8%', '38.2%'],
         }}
       >
