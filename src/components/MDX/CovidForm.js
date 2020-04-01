@@ -34,14 +34,10 @@ const Form = styled.form`
   input,
   textarea {
     padding: 12px;
-    color: ${props => props.theme.colors.text};
-    background: ${props => props.theme.colors.secondary};
+    color: black;
+    background: white;
     &::placeholder {
       color: ${props => props.theme.colors.shadow};
-    }
-    &:last-child {
-      color: ${props => props.theme.colors.text};
-      background: ${props => props.theme.colors.shadow};
     }
   }
 
@@ -70,6 +66,10 @@ const Submit = styled.input`
   transition: 0.2s;
   width: 100%;
   font-weight: bold;
+  padding: 12px;
+  color: white !important;
+  background: black !important;
+  border: 1px solid white;
 `
 
 class EmailCapture extends React.Component {
@@ -161,7 +161,14 @@ class EmailCapture extends React.Component {
               basis.
             </Styled.p>
           </Modal>
-          <Styled.p sx={{ fontFamily: 'monospace', color: 'white' }}>
+          <Styled.p
+            sx={{
+              fontFamily: 'monospace',
+              color: 'white',
+              fontSize: '10px',
+              textAlign: 'right',
+            }}
+          >
             * indicates required field
           </Styled.p>
           <Input
@@ -199,12 +206,17 @@ class EmailCapture extends React.Component {
           <TextArea
             name="notes"
             type="notes"
-            placeholder="Notes"
+            placeholder="Notes - Number of dishes that need to be photographed, interior / exterior shots, preferred time of day, etc."
             value={this.state.notes}
             onChange={this.handleInputChange}
             required
           />
-          <Submit className="button" name="submit" type="submit" value="Send" />
+          <Submit
+            className="button"
+            name="submit"
+            type="submit"
+            value="Submit"
+          />
         </Form>
       </>
     )

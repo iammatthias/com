@@ -52,8 +52,7 @@ const Covid = ({ location }) => {
             </Link>
           </Styled.p>
           <Styled.p sx={{ fontFamily: 'monospace', color: 'white' }}>
-            What is there to say about Covid-19 that hasn't already been said?
-            We are facing a pandemic, and it is affecting life across the
+            We are facing a pandemic, and it is affecting people across the
             country.
           </Styled.p>
           <Styled.p sx={{ fontFamily: 'monospace', color: 'white' }}>
@@ -62,16 +61,22 @@ const Covid = ({ location }) => {
               <i>independent</i>
             </b>{' '}
             businesses in Long Beach and Lakewood that have been impacted by the
-            COVID-19 outbreak, and have had to move to delivery and curb-side
-            pickup.
+            COVID-19 outbreak, and have moved to delivery and curb-side pickup.
           </Styled.p>
           <Styled.p sx={{ fontFamily: 'monospace', color: 'white' }}>
-            No catch, no strings attached. If you need help producing new images for your online presence, I would love to help. Just looking to give back to the community that my family and I call home.
+            No catch, no strings attached. If you need help producing new images
+            for your online presence I would love to help. Just looking to give
+            back to the community that my family and I call home.
+          </Styled.p>
+          <Styled.p sx={{ fontFamily: 'monospace', color: 'white' }}>
+            All I ask is that you treat me, my time (work and family need to
+            come first), and my equipment with respect (and maybe feed me, if
+            you want).
           </Styled.p>
           <Styled.p sx={{ fontFamily: 'monospace', color: 'white' }}>
             If this sounds good then add your details below and I'll get back to
             you as time allows. I'll try my hardest to help as many folks as I
-            can over the next few months
+            can over the next few months.
           </Styled.p>
           <CovidForm />
         </Box>
