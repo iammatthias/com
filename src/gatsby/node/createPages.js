@@ -119,21 +119,24 @@ module.exports = async ({ graphql, actions }) => {
   })
 }
 
-exports.onCreateNode = ({ node, actions, getNode, createNodeField }) => {
+exports.onCreateNode = ({ node, actions, getNode }) => {
   const siteData = graphql(query.data.site)
 
-  createPrinterNode({
-    id: siteData.node.id,
-    fileName: siteData.node.context.title + '-ogImg',
-    outputDir: 'og-images/',
-    data: {
-      title: siteData.node.context.title,
-    },
-    component: path.resolve(`./src/templates/shareImg.js`),
-  })
-  createNodeField({
-    node: siteData.node,
-    name: 'ogFileName',
-    value: siteData.node.context.title + '-ogImg',
+  siteData.forEach(site => {
+    let fileName = site.node.context.slug + '-ogImg'
+    createPrinterNode({
+      id: site.node.id,
+      fileName,
+      outputDir: 'og-images/',
+      data: {
+        title: site.node.context.title,
+      },
+      component: require.resolve(`./src/templates/shareImg.js`),
+    })
+    // actions.createNodeField({
+    //   node,
+    //   name: 'ogFileName',
+    //   value: fileName,
+    // })
   })
 }

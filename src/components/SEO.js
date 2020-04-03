@@ -3,7 +3,7 @@ import Helmet from 'react-helmet'
 import { useStaticQuery, graphql } from 'gatsby'
 
 const SEO = ({ title, description }) => {
-  const { site, allSitePage } = useStaticQuery(
+  const { site } = useStaticQuery(
     graphql`
       query {
         site {
@@ -13,25 +13,11 @@ const SEO = ({ title, description }) => {
             siteUrl
           }
         }
-        allSitePage(filter: { component: { regex: "/^((?!tag|404).)*$/" } }) {
-          edges {
-            node {
-              id
-              context {
-                title
-                slug
-              }
-            }
-          }
-        }
       }
     `
   )
 
-  const shareImage = allSitePage.ogFileName
   const metaDescription = description || site.siteMetadata.description
-
-  console.log({ shareImage })
 
   return (
     <Helmet

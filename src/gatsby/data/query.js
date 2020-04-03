@@ -1,5 +1,5 @@
 module.exports.data = {
-  site: `allSitePage(filter: {component: {regex: "/^((?!tag|404).)*$/"}}) {
+  site: `allSitePage {
     edges {
       node {
         id
