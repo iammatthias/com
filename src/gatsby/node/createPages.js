@@ -2,6 +2,7 @@ const config = require('../../../gatsby-config')
 const query = require('../data/query')
 const path = require(`path`)
 const { paginate } = require(`gatsby-awesome-pagination`)
+const { createPrinterNode } = require(`gatsby-plugin-printer`)
 
 module.exports = async ({ graphql, actions }) => {
   const { createPage } = actions
@@ -19,6 +20,7 @@ module.exports = async ({ graphql, actions }) => {
       component: path.resolve(`./src/templates/photoSet.js`),
       context: {
         slug: photoSet.node.slug,
+        title: photoSet.node.title,
         basePath: `${basePath}photography`,
         paginationPath: `${basePath}photography`,
       },
@@ -36,6 +38,7 @@ module.exports = async ({ graphql, actions }) => {
     context: {
       basePath: basePath === '/' ? '' : `${basePath}photography`,
       paginationPath: basePath === '/' ? '' : `${basePath}photography`,
+      title: 'Photography',
     },
   })
 
@@ -51,6 +54,7 @@ module.exports = async ({ graphql, actions }) => {
       component: path.resolve(`./src/templates/post.js`),
       context: {
         slug: post.node.slug,
+        title: post.node.title,
         basePath: `${basePath}blog`,
         paginationPath: `${basePath}blog`,
         prev,
@@ -71,6 +75,7 @@ module.exports = async ({ graphql, actions }) => {
     context: {
       basePath: basePath === '/' ? '' : `${basePath}blog`,
       paginationPath: basePath === '/' ? '' : `${basePath}blog`,
+      title: 'Blog',
     },
   })
 
@@ -92,6 +97,7 @@ module.exports = async ({ graphql, actions }) => {
       pathPrefix: tagPagination,
       context: {
         slug: tag.node.slug,
+        title: tag.node.title,
         basePath: basePath === '/' ? '' : basePath,
         paginationPath: tagPagination,
       },
@@ -110,5 +116,24 @@ module.exports = async ({ graphql, actions }) => {
         title: page.node.title,
       },
     })
+  })
+}
+
+exports.onCreateNode = ({ node, actions, getNode, createNodeField }) => {
+  const siteData = graphql(query.data.site)
+
+  createPrinterNode({
+    id: siteData.node.id,
+    fileName: siteData.node.context.title + '-ogImg',
+    outputDir: 'og-images/',
+    data: {
+      title: siteData.node.context.title,
+    },
+    component: path.resolve(`./src/templates/shareImg.js`),
+  })
+  createNodeField({
+    node: siteData.node,
+    name: 'ogFileName',
+    value: siteData.node.context.title + '-ogImg',
   })
 }

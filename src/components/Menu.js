@@ -66,7 +66,9 @@ const Menu = ({
   return (
     <Header>
       <Nav>
-        <Logo />
+        <Link to="/">
+          <Logo />
+        </Link>
         <Styled.h4 sx={{ margin: '1em 0' }}>I Am Matthias</Styled.h4>
         <Styled.h5 sx={{ margin: '1em 0', fontWeight: 'normal' }}>
           📸 & Digital Marketer

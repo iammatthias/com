@@ -1,8 +1,21 @@
 module.exports.data = {
+  site: `allSitePage(filter: {component: {regex: "/^((?!tag|404).)*$/"}}) {
+    edges {
+      node {
+        id
+        context {
+          title
+          slug
+        }
+      }
+    }
+  }`,
   photography: `{
     allContentfulPhotography(sort: { fields: [publishDate], order: DESC }) {
       edges {
         node {
+          id
+          title
           slug
           publishDate
         }
@@ -13,6 +26,8 @@ module.exports.data = {
     allContentfulPost(sort: { fields: [publishDate], order: DESC }) {
       edges {
         node {
+          id
+          title
           slug
           publishDate
         }
@@ -23,6 +38,8 @@ module.exports.data = {
     allContentfulPage {
       edges {
         node {
+          id
+          title
           slug
         }
       }
@@ -32,6 +49,8 @@ module.exports.data = {
     allContentfulTag {
       edges {
         node {
+          id
+          title
           slug
           post {
             id

@@ -98,6 +98,7 @@ type MarkdownRemark implements Node @childOf(mimeTypes: [], types: ["contentfulP
   frontmatter: MarkdownRemarkFrontmatter
   excerpt: String
   rawMarkdownBody: String
+  
 }
 
 type MarkdownRemarkFrontmatter {
@@ -106,18 +107,22 @@ type MarkdownRemarkFrontmatter {
 
 type contentfulPostBodyTextNode implements Node @childOf(mimeTypes: [], types: ["ContentfulPost"], many: false) @dontInfer {
   body: String
+  
 }
 
 type contentfulPageMetaDescriptionTextNode implements Node @childOf(mimeTypes: [], types: ["ContentfulPage"], many: false) @dontInfer {
   metaDescription: String
+  
 }
 
 type contentfulPageBodyTextNode implements Node @childOf(mimeTypes: [], types: ["ContentfulPage"], many: false) @dontInfer {
   body: String
+  
 }
 
 type contentfulPostMetaDescriptionTextNode implements Node @childOf(mimeTypes: [], types: ["ContentfulPost"], many: false) @dontInfer {
   metaDescription: String
+  
 }
 
 type ContentfulTag implements Node @derivedTypes @dontInfer {

@@ -18,10 +18,8 @@ try {
 module.exports = {
   siteMetadata: {
     title: 'I AM MATTHIAS',
-    description:
-      'A starter template to build amazing static websites with Gatsby, Contentful and Netlify',
+    description: 'A personal portfolio project',
     siteUrl: 'https://iammatthias.com',
-    image: '/images/share.jpg',
     menuLinks: [
       {
         name: 'Home',
@@ -45,10 +43,18 @@ module.exports = {
     basePath: '/',
   },
   plugins: [
-    `gatsby-plugin-emotion`,
+    'gatsby-plugin-emotion',
     'gatsby-plugin-theme-ui',
     'gatsby-plugin-mdx',
     'gatsby-plugin-react-helmet',
+    {
+      resolve: `gatsby-plugin-printer`,
+      options: {
+        puppeteerLaunchOptions: {
+          headless: true,
+        },
+      },
+    },
     {
       resolve: `gatsby-plugin-google-fonts`,
       options: {
@@ -82,13 +88,13 @@ module.exports = {
           ? contentfulConfig.development
           : contentfulConfig.production,
     },
-    {
-      resolve: `gatsby-plugin-segment-js`,
-      options: {
-        prodKey: process.env.SEGMENT,
-        trackPage: true,
-      },
-    },
+    // {
+    //   resolve: `gatsby-plugin-segment-js`,
+    //   options: {
+    //     prodKey: process.env.SEGMENT,
+    //     trackPage: true,
+    //   },
+    // },
     'gatsby-plugin-sitemap',
     {
       resolve: 'gatsby-plugin-manifest',

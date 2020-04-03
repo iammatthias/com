@@ -15,18 +15,9 @@ const PhotoSetTemplate = ({ data, pageContext, location }) => {
   const {
     title,
     metaDescription,
-    heroImage,
     publishDate,
-
     galleries,
   } = data.contentfulPhotography
-
-  let ogImage
-  try {
-    ogImage = heroImage.ogimg.src
-  } catch (error) {
-    ogImage = null
-  }
 
   return (
     <Layout
@@ -35,7 +26,7 @@ const PhotoSetTemplate = ({ data, pageContext, location }) => {
       date={publishDate}
       location={location.pathname}
     >
-      <SEO title={title} description={metaDescription} image={ogImage} />
+      <SEO title={title} description={metaDescription} />
 
       <Container>
         {galleries.map((gallery, index) => (
