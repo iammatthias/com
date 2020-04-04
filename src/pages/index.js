@@ -99,7 +99,7 @@ const Posts = ({ data, pageContext, location }) => {
                     position="bottom"
                     followCursor="true"
                     html={
-                      <div style={{ width: '150px' }}>
+                      <div style={{ width: '200px' }}>
                         <Img
                           fluid={{
                             ...post.heroImage.thumbnail,
@@ -161,7 +161,7 @@ export const query = graphql`
           publishDate(formatString: "MMMM DD, YYYY")
           updatedAt(formatString: "MMMM DD, YYYY")
           heroImage {
-            thumbnail: fluid(maxWidth: 900, quality: 50) {
+            thumbnail: fluid(maxWidth: 200, quality: 50) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio

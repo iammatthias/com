@@ -136,6 +136,12 @@ class EmailCapture extends React.Component {
             Sign up to find out when there is an update. Gallery releases, blog
             posts, and maybe even the occasional recipe.
           </Styled.p>
+          <Styled.p sx={{ fontSize: 1 }}>
+            <i>
+              <b>Privacy notice:</b> I will never sell or share your personal
+              information. Unsubscribe at any time.
+            </i>
+          </Styled.p>
           <Modal visible={this.state.showModal}>
             <h4>Thanks for subscribing! </h4>
             <p>See you in your inbox sometime soon.</p>

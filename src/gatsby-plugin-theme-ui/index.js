@@ -77,14 +77,14 @@ export default {
   },
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
-    body: '"Open Sans"',
-    heading: '"Abril Fatface"',
+    body: '"Crimson Text"',
+    heading: 'Montserrat',
     monospace: 'Inconsolata, monospace',
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
   fontWeights: {
     body: 200,
-    heading: 700,
+    heading: 900,
     bold: 700,
   },
   lineHeights: {

@@ -1377,6 +1377,11 @@
     "@babel/runtime" "^7.7.2"
     core-js "^3.4.1"
 
+"@jlengstorf/get-share-image@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@jlengstorf/get-share-image/-/get-share-image-0.7.0.tgz#234a97f416e2934aa5301117054b3515e411e22a"
+  integrity sha512-MZAjlaHoBfP0FOhKLhHbDJqeCYQDrfytxk/rmTEH+ZQ2z8NwB4duMwzu45pz6iawTxjzhAdF6HefT/Y4SaAJPQ==
+
 "@mdx-js/mdx@^1.5.7":
   version "1.5.8"
   resolved "https://registry.yarnpkg.com/@mdx-js/mdx/-/mdx-1.5.8.tgz#40740eaf0b0007b461cee8df13a7ae5a1af8064a"

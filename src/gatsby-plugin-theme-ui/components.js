@@ -12,9 +12,9 @@ import {
   Card,
 } from 'theme-ui'
 
-import ContactForm from './../components/ContactForm'
+import ContactForm from '../components/ContactForm'
 
-import EmailCapture from './../components/MDX/EmailCapture'
+import EmailCapture from '../components/MDX/EmailCapture'
 
 export const MDXGlobalComponents = {
   // eslint-disable-next-line react/display-name

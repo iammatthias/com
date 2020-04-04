@@ -7,6 +7,7 @@ import { Global } from '@emotion/core'
 import Menu from '../components/Menu'
 import Footer from '../components/Footer'
 import { globalStyles } from '../styles/globalStyles.js'
+// import getShareImage from '@jlengstorf/get-share-image'
 
 import theme from 'gatsby-plugin-theme-ui'
 
@@ -44,6 +45,19 @@ const Layout = ({
   }
   useEffect(() => window.addEventListener('keydown', handleFirstTab), [])
 
+  // const socialImage = getShareImage({
+  //   title: 'I Am Matthias' || title,
+  //   cloudName: 'iammatthias',
+  //   imagePublicID: 'lwj/blog-post-card',
+  //   titleFont: 'Montserrat',
+  //   titleExtraConfig: '_black',
+  //   textColor: 'FFF8E7',
+  //   titleLeftOffset: '96',
+  //   titleBottomOffset: '96',
+  //   titleFontSize: '72',
+  // })
+  // console.log(socialImage)
+
   return (
     <ThemeProvider theme={theme} components={MDXGlobalComponents}>
       <Root className="siteRoot">
@@ -51,7 +65,13 @@ const Layout = ({
         <div className="siteContent" {...props}>
           <Wrapper
             id="main"
-            sx={{ padding: [0, 3, 4, 5], mt: [0, 3, 4, 5], mx: 'auto' }}
+            sx={{
+              padding: [0, 3, 4, 5],
+              mt: [0, 3, 4, 5],
+              mx: 'auto',
+              border: '1px solid',
+              borderColor: 'text',
+            }}
           >
             <Menu
               blurb={blurb}

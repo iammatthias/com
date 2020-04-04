@@ -2,7 +2,7 @@ const config = require('../../../gatsby-config')
 const query = require('../data/query')
 const path = require(`path`)
 const { paginate } = require(`gatsby-awesome-pagination`)
-const { createPrinterNode } = require(`gatsby-plugin-printer`)
+// const { createPrinterNode } = require(`gatsby-plugin-printer`)
 
 module.exports = async ({ graphql, actions }) => {
   const { createPage } = actions
@@ -119,24 +119,24 @@ module.exports = async ({ graphql, actions }) => {
   })
 }
 
-exports.onCreateNode = ({ node, actions, getNode }) => {
-  const siteData = graphql(query.data.site)
+// exports.onCreateNode = ({ node, actions, getNode }) => {
+//   const siteData = graphql(query.data.site)
 
-  siteData.forEach(site => {
-    let fileName = site.node.context.slug + '-ogImg'
-    createPrinterNode({
-      id: site.node.id,
-      fileName,
-      outputDir: 'og-images/',
-      data: {
-        title: site.node.context.title,
-      },
-      component: require.resolve(`./src/templates/shareImg.js`),
-    })
-    // actions.createNodeField({
-    //   node,
-    //   name: 'ogFileName',
-    //   value: fileName,
-    // })
-  })
-}
+//   siteData.forEach(site => {
+//     let fileName = site.node.context.slug + '-ogImg'
+//     createPrinterNode({
+//       id: site.node.id,
+//       fileName,
+//       outputDir: 'og-images/',
+//       data: {
+//         title: site.node.context.title,
+//       },
+//       component: require.resolve(`./src/templates/shareImg.js`),
+//     })
+//     // actions.createNodeField({
+//     //   node,
+//     //   name: 'ogFileName',
+//     //   value: fileName,
+//     // })
+//   })
+// }

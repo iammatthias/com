@@ -69,13 +69,18 @@ const Menu = ({
         <Link to="/">
           <Logo />
         </Link>
-        <Styled.h4 sx={{ margin: '1em 0' }}>I Am Matthias</Styled.h4>
-        <Styled.h5 sx={{ margin: '1em 0', fontWeight: 'normal' }}>
+        <Styled.h4 sx={{ margin: '1em 0', fontWeight: '400' }}>
+          I Am Matthias
+        </Styled.h4>
+        <Styled.h5 sx={{ margin: '1em 0', fontWeight: '400', font: 'header' }}>
           📸 & Digital Marketer
         </Styled.h5>
         <Styled.ul>
           {menuLinks.map(link => (
-            <Styled.li key={link.name}>
+            <Styled.li
+              key={link.name}
+              sx={{ fontWeight: '400', font: 'header' }}
+            >
               <Link to={link.slug}>{link.name}</Link>
             </Styled.li>
           ))}

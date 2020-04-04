@@ -58,7 +58,8 @@ module.exports = {
     {
       resolve: `gatsby-plugin-google-fonts`,
       options: {
-        fonts: [`Abril Fatface`, `Open Sans`, `Inconsolata`],
+        fonts: [`Montserrat:400,900`, `Crimson Text`, `Inconsolata`],
+        display: 'swap',
       },
     },
     {
