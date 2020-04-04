@@ -7,8 +7,6 @@ import styled from '@emotion/styled'
 import Layout from '../components/Layout'
 import Container from '../components/Container'
 import Pagination from '../components/Pagination'
-import SEO from '../components/SEO'
-import { startCase } from 'lodash'
 import Img from 'gatsby-image'
 
 import { Tooltip } from 'react-tippy'
@@ -38,20 +36,9 @@ const List = styled.ul`
 const Posts = ({ data, pageContext, location }) => {
   const photography = data.allContentfulPhotography.edges
   const posts = data.allContentfulPost.edges
-  const { basePath } = pageContext
-
-  let ogImage
-
-  try {
-    ogImage = posts[0].node.heroImage.ogimg.src
-  } catch (error) {
-    ogImage = null
-  }
 
   return (
     <Layout location={location.pathname}>
-      <SEO title={startCase(basePath)} image={ogImage} />
-
       <Container>
         <ContentGrid>
           <div>
