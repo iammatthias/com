@@ -96,15 +96,17 @@ const Layout = ({
 
             {children}
           </Wrapper>
-          <Hero
-            sx={{
-              top: '-10rem',
-              position: 'relative',
-              zIndex: '0',
-              m: [0, 0, 0, 5],
-              display: ['none', 'none', 'block'],
-            }}
-          />
+          {location === '/' && (
+            <Hero
+              sx={{
+                top: '-10rem',
+                position: 'relative',
+                zIndex: '0',
+                m: [0, 0, 0, 5],
+                display: ['none', 'none', 'block'],
+              }}
+            />
+          )}
         </div>
         <Footer />
       </Root>
