@@ -59,7 +59,7 @@ const Layout = ({
   const socialImage = getShareImage({
     title: title || 'I Am Matthias',
     cloudName: 'iammatthias',
-    imagePublicID: 'iam/shareCardTemplate',
+    imagePublicID: 'iam/shareCardTemplate-v1',
     titleFont: 'Montserrat',
     titleExtraConfig: '_black',
     textColor: 'FFF8E7',
