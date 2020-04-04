@@ -69,7 +69,7 @@ const Layout = ({
               padding: [0, 3, 4, 5],
               mt: [0, 3, 4, 5],
               mx: 'auto',
-              border: '1px solid',
+              border: ['0 solid', '1px solid'],
               borderColor: 'text',
             }}
           >
