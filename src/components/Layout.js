@@ -99,7 +99,7 @@ const Layout = ({
           {location === '/' && (
             <Hero
               sx={{
-                top: '-10rem',
+                top: ['0', '0', '0', '-10rem'],
                 position: 'relative',
                 zIndex: '0',
                 m: [0, 0, 0, 5],
