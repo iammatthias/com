@@ -6,7 +6,6 @@ import { graphql, Link } from 'gatsby'
 import styled from '@emotion/styled'
 import Layout from '../components/Layout'
 import Container from '../components/Container'
-import Pagination from '../components/Pagination'
 import Img from 'gatsby-image'
 
 import { Tooltip } from 'react-tippy'
@@ -108,7 +107,6 @@ const Posts = ({ data, pageContext, location }) => {
           </div>
         </ContentGrid>
       </Container>
-      <Pagination context={pageContext} />
     </Layout>
   )
 }

@@ -6,6 +6,7 @@ import styled from '@emotion/styled'
 import { Global } from '@emotion/core'
 import Menu from '../components/Menu'
 import Footer from '../components/Footer'
+import Hero from '../components/Hero'
 import { globalStyles } from '../styles/globalStyles.js'
 import SEO from '../components/SEO'
 import getShareImage from '@jlengstorf/get-share-image'
@@ -21,6 +22,7 @@ const Root = styled.div`
 `
 
 const Wrapper = styled.section`
+  position: relative;
   width: 100%;
   max-width: ${props => props.theme.sizes.maxWidth};
   flex-grow: 1;
@@ -28,6 +30,8 @@ const Wrapper = styled.section`
     25px 25px 100px ${props => props.theme.colors.shadow};
   border: 0 solid;
   margin-top: 0;
+  z-index: 1;
+  background: ${props => props.theme.colors.background};
   @media screen and (min-width: 1281px) {
     margin-top: 64px;
     border: 1px solid;
@@ -92,8 +96,16 @@ const Layout = ({
 
             {children}
           </Wrapper>
+          <Hero
+            sx={{
+              top: '-10rem',
+              position: 'relative',
+              zIndex: '0',
+              m: [0, 0, 0, 5],
+              display: ['none', 'none', 'block'],
+            }}
+          />
         </div>
-
         <Footer />
       </Root>
     </ThemeProvider>
