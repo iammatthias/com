@@ -26,6 +26,12 @@ const Wrapper = styled.section`
   flex-grow: 1;
   box-shadow: -5px -5px 100px ${props => props.theme.colors.background},
     25px 25px 100px ${props => props.theme.colors.shadow};
+  border: 0 solid;
+  margin-top: 0;
+  @media screen and (min-width: 1281px) {
+    margin-top: 64px;
+    border: 1px solid;
+  }
 `
 
 const Layout = ({
@@ -69,9 +75,8 @@ const Layout = ({
             id="main"
             sx={{
               padding: [0, 3, 4, 5],
-              mt: [0, 3, 4, 5],
               mx: 'auto',
-              border: ['0 solid', '1px solid'],
+
               borderColor: 'text',
             }}
           >
