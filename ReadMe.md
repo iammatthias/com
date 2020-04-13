@@ -1,6 +1,8 @@
 # ReadMe
 ## iammatthias.com 
 
+![Screenshot as a service](https://screenshot-v2.now.sh/iammatthias.com?type=jpeg&quality=75)
+
 When I started building my site years ago it was with the express purpose of being a photography portfolio. 
 
 It grew over time, showcasing breadcrumbs that lead to various projects on GitHub, Exposure, or various short-lived cooking blogs. I came to realize that a codified web presence was not for me—the constant planning and strategic updates, the immaculately manicured blog posts, the galleries set with surgical intent. It felt ridged, and prohibitive; sporadic updates became a chore. 
