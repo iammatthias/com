@@ -6780,6 +6780,11 @@ gatsby-remark-autolink-headers@^2.1.24:
     mdast-util-to-string "^1.1.0"
     unist-util-visit "^1.4.1"
 
+gatsby-remark-emojis@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/gatsby-remark-emojis/-/gatsby-remark-emojis-0.4.2.tgz#58050474395769cb3a4f834e39feebfd5d745bc7"
+  integrity sha512-45YMyYk67uwXuSnjmLpk8SRL+D/5wsw9D/jmsMjnq1Gi9WiHMfhj9OiO6mSzEMKpr2aDJzuqKnxB78K7D+VcUg==
+
 gatsby-remark-images-contentful@^2.1.31:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/gatsby-remark-images-contentful/-/gatsby-remark-images-contentful-2.2.2.tgz#21fdb3f3c38e4c3a01999dcc758d5cc5034eceba"

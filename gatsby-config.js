@@ -45,7 +45,7 @@ module.exports = {
   plugins: [
     'gatsby-plugin-emotion',
     'gatsby-plugin-theme-ui',
-    'gatsby-plugin-mdx',
+
     'gatsby-plugin-react-helmet',
     {
       resolve: `gatsby-plugin-printer`,
@@ -63,12 +63,19 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        remarkPlugins: [`gatsby-remark-emojis`],
+      },
+    },
+    {
       resolve: `gatsby-transformer-remark`,
       options: {
         plugins: [
           {
             resolve: `gatsby-remark-prismjs`,
           },
+          `gatsby-remark-emojis`,
           `gatsby-remark-autolink-headers`,
           {
             resolve: `gatsby-remark-images-contentful`,
