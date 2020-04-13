@@ -13,6 +13,7 @@
     "chrome-aws-lambda": "^2.1.1",
     "contentful-import": "^7.6.2",
     "emotion-theming": "^10.0.27",
+    "framer-motion": "^1.10.3",
     "gatsby": "^2.19.12",
     "gatsby-awesome-pagination": "^0.3.5",
     "gatsby-image": "^2.2.40",
