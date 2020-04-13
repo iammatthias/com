@@ -64,9 +64,6 @@ module.exports = {
     },
     {
       resolve: `gatsby-plugin-mdx`,
-      options: {
-        remarkPlugins: [`gatsby-remark-emojis`],
-      },
     },
     {
       resolve: `gatsby-transformer-remark`,
