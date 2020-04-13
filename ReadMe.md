@@ -12,16 +12,16 @@ A corner of the web that I can cultivate and design in the open. A place for new
 I am really excited about what this means for my portfolio online. Ultimately, I hope that this leads to it feeling more like me, and less like a resume. 
 
 ### Built With 
-- Gatsby, React framework 
-- Netlify, host
-- Contentful, CMS
-- Cloudinary, share card generation
-- Theme UI, primitives 
-- MDX, components in markdown
-- Segment, analytics & more
-- GCN, pagination, tags, base component structure
+- [GatsbyJS](https://www.gatsbyjs.org/)
+- [Netlify](https://www.netlify.com/), host
+- [Contentful](https://www.contentful.com), CMS
+- [Cloudinary](https://cloudinary.com/), share card generation
+- [Theme UI](https://theme-ui.com/), primitives 
+- [MDX](https://mdxjs.com/), components in markdown
+- [Segment](https://segment.com/), analytics & more
+- [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn), pagination, tags, base component structure. Heavily modified for personal use cases. 
 
 
-Things are set up to allow for modular page creation through Contentful using MDX (pages that fit within the design constraints), or through stand-alone custom pages that exist without the standard Layout wrapper. 
+Things are set up to allow for themed modular page creation through Contentful using MDX, or through stand-alone custom pages that exist without the standard Layout wrapper. 
 
 This is fun. 
