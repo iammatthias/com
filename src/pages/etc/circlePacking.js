@@ -31,7 +31,7 @@ class Canvas extends React.Component {
           context.scale(dpr, dpr)
           context.strokeStyle = bodyColor
 
-          context.lineWidth = 2
+          context.lineWidth = 1
 
           var circles = []
           var minRadius = 2

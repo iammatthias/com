@@ -102,7 +102,7 @@ const Layout = ({
                 position: 'relative',
                 zIndex: '0',
                 m: [0, 0, 0, 5],
-                display: ['none', 'none', 'block'],
+                display: ['none', 'none', 'block', 'block'],
               }}
             />
           )}

@@ -1,7 +1,7 @@
 /** @jsx jsx */
 
 import React from 'react' //eslint-disable-line
-import { jsx, Styled } from 'theme-ui'
+import { jsx, Styled, Grid } from 'theme-ui'
 import { graphql, Link } from 'gatsby'
 import styled from '@emotion/styled'
 import Layout from '../components/Layout'
@@ -106,6 +106,71 @@ const Posts = ({ data, pageContext, location }) => {
             </List>
           </div>
         </ContentGrid>
+      </Container>
+      <Container>
+        <div>
+          <Styled.h2 sx={{ margin: '1em 0' }}>Etcetera</Styled.h2>
+
+          <Grid gap={3} columns={[1, 2, 4]}>
+            <Link
+              to={`/etc/circlePacking/`}
+              sx={{ color: 'text', textDecoration: 'none' }}
+            >
+              <Styled.h4>Circle Packing</Styled.h4>
+              <Styled.p>Circles in tight spaces</Styled.p>
+            </Link>
+            <Link
+              to={`/etc/cubicDisaray/`}
+              sx={{ color: 'text', textDecoration: 'none' }}
+            >
+              <Styled.h4>Cubic Disaray</Styled.h4>
+              <Styled.p>Inspired by Georg Nees</Styled.p>
+            </Link>
+            <Link
+              to={`/etc/hypnoticSquares/`}
+              sx={{ color: 'text', textDecoration: 'none' }}
+            >
+              <Styled.h4>Hypnotic Squares</Styled.h4>
+              <Styled.p>Inspired by William Kolomyjec</Styled.p>
+            </Link>
+            <Link
+              to={`/etc/joyDivision/`}
+              sx={{ color: 'text', textDecoration: 'none' }}
+            >
+              <Styled.h4>Joy Division</Styled.h4>
+              <Styled.p>Unknown Pleasures</Styled.p>
+            </Link>
+
+            <Link
+              to={`/etc/mondrian/`}
+              sx={{ color: 'text', textDecoration: 'none' }}
+            >
+              <Styled.h4>Mondrian</Styled.h4>
+              <Styled.p>Inspired by Piet Mondrian</Styled.p>
+            </Link>
+            <Link
+              to={`/etc/tiledLines/`}
+              sx={{ color: 'text', textDecoration: 'none' }}
+            >
+              <Styled.h4>Tiled Lines</Styled.h4>
+              <Styled.p>Simple Beauty</Styled.p>
+            </Link>
+            <Link
+              to={`/etc/triangularMesh/`}
+              sx={{ color: 'text', textDecoration: 'none' }}
+            >
+              <Styled.h4>Triangular Mesh</Styled.h4>
+              <Styled.p>A simple mesh layer</Styled.p>
+            </Link>
+            <Link
+              to={`/etc/unDeuxTrois/`}
+              sx={{ color: 'text', textDecoration: 'none' }}
+            >
+              <Styled.h4>Un Deux Trois</Styled.h4>
+              <Styled.p>Inspired by Vera Molnár</Styled.p>
+            </Link>
+          </Grid>
+        </div>
       </Container>
     </Layout>
   )
