@@ -8,61 +8,64 @@ import Logo from '../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
 
 class Canvas extends React.Component {
-  componentDidMount = (window.onresize = () => {
-    let elem = document.querySelector('body')
-    let bodyColor = window
-      .getComputedStyle(elem, null)
-      .getPropertyValue('color')
-    let bodyBackground = window
-      .getComputedStyle(elem, null)
-      .getPropertyValue('background-color')
-    console.log(bodyBackground)
+  componentDidMount =
+    typeof window !== `undefined`
+      ? (window.onresize = () => {
+          let elem = document.querySelector('body')
+          let bodyColor = window
+            .getComputedStyle(elem, null)
+            .getPropertyValue('color')
+          let bodyBackground = window
+            .getComputedStyle(elem, null)
+            .getPropertyValue('background-color')
+          console.log(bodyBackground)
 
-    var canvas = document.querySelector('canvas')
-    var context = canvas.getContext('2d')
+          var canvas = document.querySelector('canvas')
+          var context = canvas.getContext('2d')
 
-    var dpr = window.devicePixelRatio
-    var sizeW = window.innerWidth / dpr
-    var sizeH = window.innerHeight / dpr
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-    context.scale(dpr, dpr)
-    context.strokeStyle = bodyColor
+          var dpr = window.devicePixelRatio
+          var sizeW = window.innerWidth / dpr
+          var sizeH = window.innerHeight / dpr
+          canvas.width = window.innerWidth
+          canvas.height = window.innerHeight
+          context.scale(dpr, dpr)
+          context.strokeStyle = bodyColor
 
-    context.lineWidth = 4
-    context.lineCap = 'square'
+          context.lineWidth = 4
+          context.lineCap = 'square'
 
-    var step = 20
-    var aThirdOfHeight = sizeH / 3
+          var step = 20
+          var aThirdOfHeight = sizeH / 3
 
-    function draw(x, y, width, height, positions) {
-      context.save()
-      context.translate(x + width / 2, y + height / 2)
-      context.rotate(Math.random() * 5)
-      context.translate(-width / 2, -height / 2)
+          function draw(x, y, width, height, positions) {
+            context.save()
+            context.translate(x + width / 2, y + height / 2)
+            context.rotate(Math.random() * 5)
+            context.translate(-width / 2, -height / 2)
 
-      for (var i = 0; i <= positions.length; i++) {
-        context.beginPath()
-        context.moveTo(positions[i] * width, 0)
-        context.lineTo(positions[i] * width, height)
-        context.stroke()
-      }
+            for (var i = 0; i <= positions.length; i++) {
+              context.beginPath()
+              context.moveTo(positions[i] * width, 0)
+              context.lineTo(positions[i] * width, height)
+              context.stroke()
+            }
 
-      context.restore()
-    }
+            context.restore()
+          }
 
-    for (var y = step; y < sizeH - step * 2; y += step) {
-      for (var x = step; x < sizeW - step; x += step) {
-        if (y < aThirdOfHeight) {
-          draw(x, y, step, step, [0.5])
-        } else if (y < aThirdOfHeight * 2) {
-          draw(x, y, step, step, [0.2, 0.8])
-        } else {
-          draw(x, y, step, step, [0.1, 0.5, 0.9])
-        }
-      }
-    }
-  })
+          for (var y = step; y < sizeH - step * 2; y += step) {
+            for (var x = step; x < sizeW - step; x += step) {
+              if (y < aThirdOfHeight) {
+                draw(x, y, step, step, [0.5])
+              } else if (y < aThirdOfHeight * 2) {
+                draw(x, y, step, step, [0.2, 0.8])
+              } else {
+                draw(x, y, step, step, [0.1, 0.5, 0.9])
+              }
+            }
+          }
+        })
+      : null
   render() {
     return (
       <ThemeProvider theme={theme}>

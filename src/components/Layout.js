@@ -67,7 +67,6 @@ const Layout = ({
     titleBottomOffset: '96',
     titleFontSize: '72',
   })
-  console.log(socialImage)
 
   return (
     <ThemeProvider theme={theme} components={MDXGlobalComponents}>

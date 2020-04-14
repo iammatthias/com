@@ -1382,6 +1382,14 @@
   resolved "https://registry.yarnpkg.com/@jlengstorf/get-share-image/-/get-share-image-0.7.0.tgz#234a97f416e2934aa5301117054b3515e411e22a"
   integrity sha512-MZAjlaHoBfP0FOhKLhHbDJqeCYQDrfytxk/rmTEH+ZQ2z8NwB4duMwzu45pz6iawTxjzhAdF6HefT/Y4SaAJPQ==
 
+"@kennethormandy/react-fittext@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@kennethormandy/react-fittext/-/react-fittext-0.6.0.tgz#8430ccd4dc0c35827a7fe19510fa184948acbebb"
+  integrity sha512-jj4fQ2+krlhI+n+Bexxbdc00S3iL+lS1VwfoabylpaNf2otQzO3hOk/lvVayMRn/8xIhJddpM8aUPjPKxow0FA==
+  dependencies:
+    lodash.debounce "^4.0.8"
+    prop-types "^15.6.1"
+
 "@mdx-js/mdx@^1.5.7":
   version "1.5.8"
   resolved "https://registry.yarnpkg.com/@mdx-js/mdx/-/mdx-1.5.8.tgz#40740eaf0b0007b461cee8df13a7ae5a1af8064a"

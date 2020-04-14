@@ -8,66 +8,69 @@ import Logo from '../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
 
 class Canvas extends React.Component {
-  componentDidMount = (window.onresize = () => {
-    let elem = document.querySelector('body')
-    let bodyColor = window
-      .getComputedStyle(elem, null)
-      .getPropertyValue('color')
-    console.log(bodyColor)
+  componentDidMount =
+    typeof window !== `undefined`
+      ? (window.onresize = () => {
+          let elem = document.querySelector('body')
+          let bodyColor = window
+            .getComputedStyle(elem, null)
+            .getPropertyValue('color')
+          console.log(bodyColor)
 
-    var canvas = document.querySelector('canvas')
-    var context = canvas.getContext('2d')
+          var canvas = document.querySelector('canvas')
+          var context = canvas.getContext('2d')
 
-    var dpr = window.devicePixelRatio
-    var sizeW = window.innerWidth / dpr
-    var sizeH = window.innerHeight / dpr
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+          var dpr = window.devicePixelRatio
+          var sizeW = window.innerWidth / dpr
+          var sizeH = window.innerHeight / dpr
+          canvas.width = window.innerWidth
+          canvas.height = window.innerHeight
 
-    context.scale(dpr, dpr)
-    context.lineWidth = 1
-    context.strokeStyle = bodyColor
+          context.scale(dpr, dpr)
+          context.lineWidth = 1
+          context.strokeStyle = bodyColor
 
-    var step = 10
-    var lines = []
+          var step = 10
+          var lines = []
 
-    // Create the lines
-    for (var i = step; i <= sizeH - step; i += step) {
-      var line = []
-      for (var j = step; j <= sizeW - step; j += step) {
-        var distanceToCenter = Math.abs(j - sizeW / 2)
-        var variance = Math.max(sizeW / 2 - 50 - distanceToCenter, 0)
-        var random = ((Math.random() * variance) / 2) * -1
-        var point = { x: j, y: i + random }
-        line.push(point)
-      }
-      lines.push(line)
-    }
+          // Create the lines
+          for (var i = step; i <= sizeH - step; i += step) {
+            var line = []
+            for (var j = step; j <= sizeW - step; j += step) {
+              var distanceToCenter = Math.abs(j - sizeW / 2)
+              var variance = Math.max(sizeW / 2 - 50 - distanceToCenter, 0)
+              var random = ((Math.random() * variance) / 2) * -1
+              var point = { x: j, y: i + random }
+              line.push(point)
+            }
+            lines.push(line)
+          }
 
-    // Do the drawing
-    for (var i = [20]; i < lines.length; i++) {
-      context.beginPath()
-      context.moveTo(lines[i][0].x, lines[i][0].y)
+          // Do the drawing
+          for (var i = [20]; i < lines.length; i++) {
+            context.beginPath()
+            context.moveTo(lines[i][0].x, lines[i][0].y)
 
-      for (var j = 0; j < lines[i].length - 2; j++) {
-        var xc = (lines[i][j].x + lines[i][j + 1].x) / 2
-        var yc = (lines[i][j].y + lines[i][j + 1].y) / 2
-        context.quadraticCurveTo(lines[i][j].x, lines[i][j].y, xc, yc)
-      }
+            for (var j = 0; j < lines[i].length - 2; j++) {
+              var xc = (lines[i][j].x + lines[i][j + 1].x) / 2
+              var yc = (lines[i][j].y + lines[i][j + 1].y) / 2
+              context.quadraticCurveTo(lines[i][j].x, lines[i][j].y, xc, yc)
+            }
 
-      context.quadraticCurveTo(
-        lines[i][j].x,
-        lines[i][j].y,
-        lines[i][j + 1].x,
-        lines[i][j + 1].y
-      )
-      context.save()
-      context.globalCompositeOperation = 'destination-out'
-      context.fill()
-      context.restore()
-      context.stroke()
-    }
-  })
+            context.quadraticCurveTo(
+              lines[i][j].x,
+              lines[i][j].y,
+              lines[i][j + 1].x,
+              lines[i][j + 1].y
+            )
+            context.save()
+            context.globalCompositeOperation = 'destination-out'
+            context.fill()
+            context.restore()
+            context.stroke()
+          }
+        })
+      : null
   render() {
     return (
       <ThemeProvider theme={theme}>

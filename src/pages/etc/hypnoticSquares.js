@@ -8,61 +8,80 @@ import Logo from '../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
 
 class Canvas extends React.Component {
-  componentDidMount = (window.onresize = () => {
-    let elem = document.querySelector('body')
-    let bodyColor = window
-      .getComputedStyle(elem, null)
-      .getPropertyValue('color')
-    let bodyBackground = window
-      .getComputedStyle(elem, null)
-      .getPropertyValue('background-color')
-    console.log(bodyBackground)
+  componentDidMount =
+    typeof window !== `undefined`
+      ? (window.onresize = () => {
+          let elem = document.querySelector('body')
+          let bodyColor = window
+            .getComputedStyle(elem, null)
+            .getPropertyValue('color')
+          let bodyBackground = window
+            .getComputedStyle(elem, null)
+            .getPropertyValue('background-color')
+          console.log(bodyBackground)
 
-    var canvas = document.querySelector('canvas')
-    var context = canvas.getContext('2d')
+          var canvas = document.querySelector('canvas')
+          var context = canvas.getContext('2d')
 
-    var dpr = window.devicePixelRatio
-    var sizeW = window.innerWidth / dpr
-    var sizeH = window.innerHeight / dpr
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-    context.scale(dpr, dpr)
-    context.strokeStyle = bodyColor
-    context.lineWidth = 1
+          var dpr = window.devicePixelRatio
+          var sizeW = window.innerWidth / dpr
+          var sizeH = window.innerHeight / dpr
+          canvas.width = window.innerWidth
+          canvas.height = window.innerHeight
+          context.scale(dpr, dpr)
+          context.strokeStyle = bodyColor
+          context.lineWidth = 1
 
-    var finalSize = 3
-    var startSteps
-    var offset = 2
-    var tileStep = (sizeW - offset * 2) / 21
-    var startSize = tileStep
-    var directions = [-1, 0, 1]
+          var finalSize = 3
+          var startSteps
+          var offset = 2
+          var tileStep = (sizeW - offset * 2) / 21
+          var startSize = tileStep
+          var directions = [-1, 0, 1]
 
-    function draw(x, y, width, height, xMovement, yMovement, steps) {
-      context.beginPath()
-      context.rect(x, y, width, height)
-      context.stroke()
+          function draw(x, y, width, height, xMovement, yMovement, steps) {
+            context.beginPath()
+            context.rect(x, y, width, height)
+            context.stroke()
 
-      if (steps >= 0) {
-        var newSize = startSize * (steps / startSteps) + finalSize
-        var newX = x + (width - newSize) / 2
-        var newY = y + (height - newSize) / 2
-        newX = newX - ((x - newX) / (steps + 2)) * xMovement
-        newY = newY - ((y - newY) / (steps + 2)) * yMovement
-        draw(newX, newY, newSize, newSize, xMovement, yMovement, steps - 1)
-      }
-    }
+            if (steps >= 0) {
+              var newSize = startSize * (steps / startSteps) + finalSize
+              var newX = x + (width - newSize) / 2
+              var newY = y + (height - newSize) / 2
+              newX = newX - ((x - newX) / (steps + 2)) * xMovement
+              newY = newY - ((y - newY) / (steps + 2)) * yMovement
+              draw(
+                newX,
+                newY,
+                newSize,
+                newSize,
+                xMovement,
+                yMovement,
+                steps - 1
+              )
+            }
+          }
 
-    for (var x = offset; x < sizeW - offset; x += tileStep) {
-      for (var y = offset; y < sizeH - offset; y += tileStep) {
-        startSteps = 2 + Math.ceil(Math.random() * 3)
-        var xDirection =
-          directions[Math.floor(Math.random() * directions.length)]
-        var yDirection =
-          directions[Math.floor(Math.random() * directions.length)]
-        draw(x, y, startSize, startSize, xDirection, yDirection, startSteps - 1)
-      }
-    }
-  })
+          for (var x = offset; x < sizeW - offset; x += tileStep) {
+            for (var y = offset; y < sizeH - offset; y += tileStep) {
+              startSteps = 2 + Math.ceil(Math.random() * 3)
+              var xDirection =
+                directions[Math.floor(Math.random() * directions.length)]
+              var yDirection =
+                directions[Math.floor(Math.random() * directions.length)]
+              draw(
+                x,
+                y,
+                startSize,
+                startSize,
+                xDirection,
+                yDirection,
+                startSteps - 1
+              )
+            }
+          }
+        })
+      : null
   render() {
     return (
       <ThemeProvider theme={theme}>

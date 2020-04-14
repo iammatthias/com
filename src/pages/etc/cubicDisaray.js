@@ -8,60 +8,63 @@ import Logo from '../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
 
 class Canvas extends React.Component {
-  componentDidMount = (window.onresize = () => {
-    let elem = document.querySelector('body')
-    let bodyColor = window
-      .getComputedStyle(elem, null)
-      .getPropertyValue('color')
-    let bodyBackground = window
-      .getComputedStyle(elem, null)
-      .getPropertyValue('background-color')
-    console.log(bodyBackground)
+  componentDidMount =
+    typeof window !== `undefined`
+      ? (window.onresize = () => {
+          let elem = document.querySelector('body')
+          let bodyColor = window
+            .getComputedStyle(elem, null)
+            .getPropertyValue('color')
+          let bodyBackground = window
+            .getComputedStyle(elem, null)
+            .getPropertyValue('background-color')
+          console.log(bodyBackground)
 
-    var canvas = document.querySelector('canvas')
-    var context = canvas.getContext('2d')
+          var canvas = document.querySelector('canvas')
+          var context = canvas.getContext('2d')
 
-    var dpr = window.devicePixelRatio
-    var sizeW = window.innerWidth / dpr
-    var sizeH = window.innerHeight / dpr
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-    context.scale(dpr, dpr)
-    context.lineWidth = 1
-    context.strokeStyle = bodyColor
+          var dpr = window.devicePixelRatio
+          var sizeW = window.innerWidth / dpr
+          var sizeH = window.innerHeight / dpr
+          canvas.width = window.innerWidth
+          canvas.height = window.innerHeight
+          context.scale(dpr, dpr)
+          context.lineWidth = 1
+          context.strokeStyle = bodyColor
 
-    var randomDisplacement = 15
-    var rotateMultiplier = 20
-    var offset = 0
-    var squareSize = 30
+          var randomDisplacement = 15
+          var rotateMultiplier = 20
+          var offset = 0
+          var squareSize = 30
 
-    function draw(width, height) {
-      context.beginPath()
-      context.rect(-width / 2, -height / 2, width, height)
-      context.stroke()
-    }
+          function draw(width, height) {
+            context.beginPath()
+            context.rect(-width / 2, -height / 2, width, height)
+            context.stroke()
+          }
 
-    for (var i = squareSize; i <= sizeW - squareSize; i += squareSize) {
-      for (var j = squareSize; j <= sizeH - squareSize; j += squareSize) {
-        var plusOrMinus = Math.random() < 0.5 ? -1 : 1
-        var rotateAmt =
-          (((j / sizeH) * Math.PI) / 180) *
-          plusOrMinus *
-          Math.random() *
-          rotateMultiplier
+          for (var i = squareSize; i <= sizeW - squareSize; i += squareSize) {
+            for (var j = squareSize; j <= sizeH - squareSize; j += squareSize) {
+              var plusOrMinus = Math.random() < 0.5 ? -1 : 1
+              var rotateAmt =
+                (((j / sizeH) * Math.PI) / 180) *
+                plusOrMinus *
+                Math.random() *
+                rotateMultiplier
 
-        plusOrMinus = Math.random() < 0.5 ? -1 : 1
-        var translateAmt =
-          (j / sizeW) * plusOrMinus * Math.random() * randomDisplacement
+              plusOrMinus = Math.random() < 0.5 ? -1 : 1
+              var translateAmt =
+                (j / sizeW) * plusOrMinus * Math.random() * randomDisplacement
 
-        context.save()
-        context.translate(i + translateAmt + offset, j + offset)
-        context.rotate(rotateAmt)
-        draw(squareSize, squareSize)
-        context.restore()
-      }
-    }
-  })
+              context.save()
+              context.translate(i + translateAmt + offset, j + offset)
+              context.rotate(rotateAmt)
+              draw(squareSize, squareSize)
+              context.restore()
+            }
+          }
+        })
+      : null
   render() {
     return (
       <ThemeProvider theme={theme}>

@@ -7,6 +7,7 @@
   "dependencies": {
     "@emotion/styled": "^10.0.27",
     "@jlengstorf/get-share-image": "^0.7.0",
+    "@kennethormandy/react-fittext": "^0.6.0",
     "@mdx-js/mdx": "^1.5.7",
     "babel-plugin-styled-components": "^1.10.7",
     "chalk": "^3.0.0",

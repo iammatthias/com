@@ -27,7 +27,7 @@ const Gradient = styled(motion.div)`
   height: 400%;
   width: 100%;
   background: linear-gradient(
-    to top,
+    to bottom,
     rgb(61, 52, 139) 0%,
     rgb(125, 122, 188) 25%,
     rgb(255, 165, 165) 50%,
