@@ -263,7 +263,7 @@ export const query = graphql`
           slug
           publishDate(formatString: "MMMM DD, YYYY")
           heroImage {
-            thumbnail: fluid(maxWidth: 400, quality: 50) {
+            thumbnail: fluid(maxWidth: 200, quality: 50) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio
