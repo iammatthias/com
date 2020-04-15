@@ -8,6 +8,7 @@ import Logo from '../../components/Logo'
 
 import styled from '@emotion/styled'
 import { motion, transform } from 'framer-motion'
+import FitText from '@kennethormandy/react-fittext'
 
 const GradientWrapper = styled(motion.div)`
   overflow: hidden;
@@ -55,7 +56,7 @@ const Time = () => {
     minute: '2-digit',
     second: '2-digit',
     hour12: true,
-    timeZoneName: 'short',
+    // timeZoneName: 'short',
   })
 
   const hour24 = date.toLocaleTimeString([], {
@@ -90,7 +91,6 @@ const Time = () => {
             m: [3, 4, 5],
             px: 2,
             py: 3,
-            width: ['100%', '61.8%', '61.8%', '38.2%'],
           }}
         >
           <GatsbyLink to="/">
@@ -98,14 +98,19 @@ const Time = () => {
               css={{ stroke: 'black !important', fill: 'white !important' }}
             />
           </GatsbyLink>
-          <Styled.h1
-            sx={{
-              fontFamily: 'body',
-              color: 'white',
-            }}
-          >
-            It is {time} local time.
-          </Styled.h1>
+          <FitText compressor={1.25}>
+            <h1
+              sx={{
+                fontFamily: 'heading',
+                color: 'white',
+                m: 0,
+              }}
+            >
+              <span sx={{ whiteSpace: 'nowrap' }}>It is</span>{' '}
+              <span sx={{ whiteSpace: 'nowrap' }}>{time}</span>{' '}
+              <span sx={{ whiteSpace: 'nowrap' }}>local time.</span>
+            </h1>
+          </FitText>
         </Box>
       </Flex>
       <GradientWrapper animate={{ opacity: [0, 1] }}>
