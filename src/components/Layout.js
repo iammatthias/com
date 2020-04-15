@@ -6,7 +6,7 @@ import styled from '@emotion/styled'
 import { Global } from '@emotion/core'
 import Menu from '../components/Menu'
 import Footer from '../components/Footer'
-import Hero from '../components/Hero'
+import FooterHero from '../components/FooterHero'
 import { globalStyles } from '../styles/globalStyles.js'
 import SEO from '../components/SEO'
 import getShareImage from '@jlengstorf/get-share-image'
@@ -96,7 +96,7 @@ const Layout = ({
             {children}
           </Wrapper>
           {location === '/' && (
-            <Hero
+            <FooterHero
               sx={{
                 top: ['0', '0', '0', '-10rem'],
                 position: 'relative',

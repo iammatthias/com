@@ -1,48 +1,25 @@
 import React from 'react'
-import Image from 'gatsby-image'
-import { StaticQuery, graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import styled from '@emotion/styled'
 
-const randomGenerator = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
+const Wrapper = styled.section`
+  position: relative;
+  min-height: 300px;
+  height: auto;
+  @media (min-width: ${props => props.theme.responsive.small}) {
+    height: ${props => props.height || 'auto'};
+  }
+`
+const BgImg = styled(Img)`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+`
 
-export default function Hero({ data, ...props }) {
-  return (
-    <StaticQuery
-      query={graphql`
-        {
-          allContentfulPhotography {
-            edges {
-              node {
-                heroImage {
-                  id
-                  fluid(maxWidth: 1280, quality: 60) {
-                    ...GatsbyContentfulFluid_withWebp
-                    src
-                    aspectRatio
-                  }
-                }
-              }
-            }
-          }
-        }
-      `}
-      render={data => {
-        const { allContentfulPhotography } = data
-        const { edges } = allContentfulPhotography
-        const randomPosition = randomGenerator(1, edges.length - 1)
-        const randomizedImage = edges[randomPosition].node
-        return (
-          <div {...props}>
-            <Image
-              fluid={{
-                ...randomizedImage.heroImage.fluid,
-                aspectRatio: 2.2 / 1,
-              }}
-            />
-          </div>
-        )
-      }}
-    />
-  )
-}
+const Hero = props => (
+  <Wrapper height={props.height}>
+    <BgImg fluid={props.image.fluid} />
+  </Wrapper>
+)
+
+export default Hero

@@ -1,7 +1,7 @@
 /** @jsx jsx */
 
 import React from 'react' //eslint-disable-line
-import { jsx, Styled, Grid } from 'theme-ui'
+import { jsx, Styled, Grid, Link as ExternalLink } from 'theme-ui'
 import { graphql, Link } from 'gatsby'
 import styled from '@emotion/styled'
 import Layout from '../components/Layout'
@@ -111,6 +111,18 @@ const Posts = ({ data, pageContext, location }) => {
         <div>
           <Styled.h2 sx={{ margin: '1em 0' }}>Etcetera</Styled.h2>
 
+          <Styled.h3 sx={{ margin: '1em 0' }}>Generative</Styled.h3>
+          <Styled.p sx={{ width: ['100%', '61.8%', '61.8%', '38.2%'], mb: 4 }}>
+            Generative art is a fascinating intersection of code and art. The
+            results are unpredicatble, and no two pieces will be the same. I've
+            been working through some{' '}
+            <ExternalLink src="https://generativeartistry.com/tutorials/">
+              tutorials
+            </ExternalLink>{' '}
+            on the web recently, and my ever-evolving attempts are linked below.
+            These will continue to evolve and develop as I explore more of the
+            field.
+          </Styled.p>
           <Grid gap={3} columns={[1, 2, 4]}>
             <Link
               to={`/etc/circlePacking/`}
