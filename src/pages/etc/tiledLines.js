@@ -23,7 +23,11 @@ class Canvas extends React.Component {
           var canvas = document.querySelector('canvas')
           var context = canvas.getContext('2d')
 
-          var step = 32
+          if (window.innerWidth < 750) {
+            var step = 16
+          } else {
+            var step = 32
+          }
           var dpr = window.devicePixelRatio
           var sizeW = window.innerWidth / dpr
           var sizeH = window.innerHeight / dpr
@@ -32,7 +36,7 @@ class Canvas extends React.Component {
           context.scale(dpr, dpr)
 
           context.lineCap = 'round'
-          context.lineWidth = 2
+          context.lineWidth = 1 / dpr
           context.strokeStyle = bodyColor
 
           function draw(x, y, width, height) {

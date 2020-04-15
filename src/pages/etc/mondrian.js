@@ -27,7 +27,7 @@ class Canvas extends React.Component {
           canvas.width = window.innerWidth
           canvas.height = window.innerHeight
           context.scale(dpr, dpr)
-          context.lineWidth = 1
+          context.lineWidth = 1 / dpr
           var step = sizeW / 7
           var white = '#F2F5F1'
           var colors = ['#D40920', '#1356A2', '#F7D842']

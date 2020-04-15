@@ -30,12 +30,17 @@ class Canvas extends React.Component {
           canvas.height = window.innerHeight
           context.scale(dpr, dpr)
           context.strokeStyle = bodyColor
-          context.lineWidth = 1
+          context.lineWidth = 1 / dpr
 
           var finalSize = 3
           var startSteps
           var offset = 2
-          var tileStep = (sizeW - offset * 2) / 21
+
+          if (window.innerWidth < 750) {
+            var tileStep = (sizeW - offset * 2) / 7
+          } else {
+            var tileStep = (sizeW - offset * 2) / 21
+          }
           var startSize = tileStep
           var directions = [-1, 0, 1]
 

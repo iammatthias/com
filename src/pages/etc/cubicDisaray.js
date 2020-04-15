@@ -29,13 +29,18 @@ class Canvas extends React.Component {
           canvas.width = window.innerWidth
           canvas.height = window.innerHeight
           context.scale(dpr, dpr)
-          context.lineWidth = 1
+          context.lineWidth = 1 / dpr
           context.strokeStyle = bodyColor
 
           var randomDisplacement = 15
           var rotateMultiplier = 20
           var offset = 0
-          var squareSize = 30
+
+          if (window.innerWidth < 750) {
+            var squareSize = 15
+          } else {
+            var squareSize = 30
+          }
 
           function draw(width, height) {
             context.beginPath()

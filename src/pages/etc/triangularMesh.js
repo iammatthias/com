@@ -32,6 +32,7 @@ class Canvas extends React.Component {
           context.scale(dpr, dpr)
           context.lineJoin = 'bevel'
           context.strokeStyle = bodyColor
+          context.lineWidth = 1 / dpr
 
           var line,
             dot,

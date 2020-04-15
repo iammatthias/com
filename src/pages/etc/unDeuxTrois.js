@@ -31,10 +31,14 @@ class Canvas extends React.Component {
           context.scale(dpr, dpr)
           context.strokeStyle = bodyColor
 
-          context.lineWidth = 4
+          context.lineWidth = 1 / dpr
           context.lineCap = 'square'
 
-          var step = 20
+          if (window.innerWidth < 750) {
+            var step = 10
+          } else {
+            var step = 20
+          }
           var aThirdOfHeight = sizeH / 3
 
           function draw(x, y, width, height, positions) {

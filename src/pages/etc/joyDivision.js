@@ -27,7 +27,7 @@ class Canvas extends React.Component {
           canvas.height = window.innerHeight
 
           context.scale(dpr, dpr)
-          context.lineWidth = 1
+          context.lineWidth = 1 / dpr
           context.strokeStyle = bodyColor
 
           var step = 10
@@ -46,8 +46,14 @@ class Canvas extends React.Component {
             lines.push(line)
           }
 
+          if (window.innerWidth < 750) {
+            var skipLines = 5
+          } else {
+            var skipLines = 20
+          }
+
           // Do the drawing
-          for (var i = [20]; i < lines.length; i++) {
+          for (var i = [skipLines]; i < lines.length; i++) {
             context.beginPath()
             context.moveTo(lines[i][0].x, lines[i][0].y)
 
