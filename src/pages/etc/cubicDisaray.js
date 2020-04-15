@@ -6,6 +6,7 @@ import SEO from '../../components/SEO'
 import { Link as GatsbyLink } from 'gatsby'
 import Logo from '../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
+import Pullable from 'react-pullable'
 
 class Canvas extends React.Component {
   componentDidMount =
@@ -72,33 +73,39 @@ class Canvas extends React.Component {
       : null
   render() {
     return (
-      <ThemeProvider theme={theme}>
-        <SEO title="Cubic Disaray" />
-        <Flex
-          sx={{
-            minHeight: '100vh',
-            height: '100%',
-            pb: 5,
-            position: 'relative',
-            flexDirection: 'column',
-          }}
-        >
-          <Box
+      <Pullable
+        onRefresh={() =>
+          typeof window !== `undefined` ? window.location.reload() : null
+        }
+      >
+        <ThemeProvider theme={theme}>
+          <SEO title="Cubic Disaray" />
+          <Flex
             sx={{
-              m: [3, 4, 5],
-              px: 2,
-              py: 3,
-              zIndex: '1',
+              minHeight: '100vh',
+              height: '100%',
+              pb: 5,
+              position: 'relative',
+              flexDirection: 'column',
             }}
           >
-            <GatsbyLink to="/">
-              <Logo sx={{ stroke: 'text', fill: 'background' }} />
-            </GatsbyLink>
-          </Box>
+            <Box
+              sx={{
+                m: [3, 4, 5],
+                px: 2,
+                py: 3,
+                zIndex: '1',
+              }}
+            >
+              <GatsbyLink to="/">
+                <Logo sx={{ stroke: 'text', fill: 'background' }} />
+              </GatsbyLink>
+            </Box>
 
-          <canvas sx={{ position: 'absolute', top: '0', zIndex: '0' }} />
-        </Flex>
-      </ThemeProvider>
+            <canvas sx={{ position: 'absolute', top: '0', zIndex: '0' }} />
+          </Flex>
+        </ThemeProvider>
+      </Pullable>
     )
   }
 }
