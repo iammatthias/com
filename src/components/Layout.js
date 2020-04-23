@@ -47,6 +47,7 @@ const Layout = ({
   tags,
   basePath,
   location,
+  description,
   ...props
 }) => {
   function handleFirstTab(e) {
@@ -71,7 +72,11 @@ const Layout = ({
   return (
     <ThemeProvider theme={theme} components={MDXGlobalComponents}>
       <Root className="siteRoot">
-        <SEO title={title || 'I Am Matthias'} image={socialImage} />
+        <SEO
+          title={title || 'I Am Matthias'}
+          image={socialImage}
+          description={description}
+        />
         <Global styles={(theme => theme.styles.Global(theme), globalStyles)} />
         <div className="siteContent" {...props}>
           <Wrapper

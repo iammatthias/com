@@ -9,8 +9,6 @@ import Container from '../components/Container'
 
 import GalleryGrid from '../components/GalleryGrid'
 
-import SEO from '../components/SEO'
-
 const PhotoSetTemplate = ({ data, pageContext, location }) => {
   const {
     title,
@@ -23,11 +21,10 @@ const PhotoSetTemplate = ({ data, pageContext, location }) => {
     <Layout
       title={title}
       blurb={metaDescription.internal.content}
+      description={metaDescription}
       date={publishDate}
       location={location.pathname}
     >
-      <SEO title={title} description={metaDescription} />
-
       <Container>
         {galleries.map((gallery, index) => (
           <div

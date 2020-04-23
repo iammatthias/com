@@ -8,7 +8,6 @@ import Hero from '../components/Hero'
 import Container from '../components/Container'
 import PostLinks from '../components/PostLinks'
 
-import SEO from '../components/SEO'
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 
 const PostTemplate = ({ data, pageContext, location }) => {
@@ -30,13 +29,6 @@ const PostTemplate = ({ data, pageContext, location }) => {
     `https://iammatthias.com/blog/${slug}/`
   )}`
 
-  let ogImage
-  try {
-    ogImage = heroImage.ogimg.src
-  } catch (error) {
-    ogImage = null
-  }
-
   return (
     <Layout
       title={title}
@@ -46,16 +38,12 @@ const PostTemplate = ({ data, pageContext, location }) => {
       tags={tags}
       basePath={basePath}
       location={location.pathname}
+      description={
+        metaDescription
+          ? metaDescription.internal.content
+          : body.childMarkdownRemark.excerpt
+      }
     >
-      <SEO
-        title={title}
-        description={
-          metaDescription
-            ? metaDescription.internal.content
-            : body.childMarkdownRemark.excerpt
-        }
-        image={ogImage}
-      />
       <Hero title={title} image={heroImage} height={'50vh'} />
       <Container>
         <div

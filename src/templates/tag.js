@@ -1,7 +1,7 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import { startCase, orderBy } from 'lodash'
-import SEO from '../components/SEO'
+
 import moment from 'moment'
 import Layout from '../components/Layout'
 import Card from '../components/Card'
@@ -24,20 +24,12 @@ const TagTemplate = ({ data, pageContext, location }) => {
   const limit = pageContext.limit
   const { humanPageNumber, basePath } = pageContext
 
-  let ogImage
-  try {
-    ogImage = posts[0].heroImage.ogimg.src
-  } catch (error) {
-    ogImage = null
-  }
-
   return (
-    <Layout location={location.pathname}>
-      <SEO
-        title={`Tag: ${startCase(title)}`}
-        description={`Posts Tagged: ${startCase(title)}`}
-        image={ogImage}
-      />
+    <Layout
+      location={location.pathname}
+      title={`Tag: ${startCase(title)}`}
+      description={`Posts Tagged: ${startCase(title)}`}
+    >
       <Container>
         <PageTitle small>
           {numberOfPosts} Posts Tagged: &ldquo;

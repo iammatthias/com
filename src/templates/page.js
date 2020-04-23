@@ -5,7 +5,7 @@ import { jsx } from 'theme-ui'
 import { graphql } from 'gatsby'
 import Layout from '../components/Layout'
 import Container from '../components/Container'
-import SEO from '../components/SEO'
+
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
 
 const PageTemplate = ({ data, location }) => {
@@ -15,15 +15,12 @@ const PageTemplate = ({ data, location }) => {
       title={title}
       blurb={metaDescription.internal.content}
       location={location.pathname}
+      description={
+        metaDescription
+          ? metaDescription.internal.content
+          : body.childMarkdownRemark.excerpt
+      }
     >
-      <SEO
-        title={title}
-        description={
-          metaDescription
-            ? metaDescription.internal.content
-            : body.childMarkdownRemark.excerpt
-        }
-      />
       <Container>
         <div
           sx={{

@@ -5,26 +5,16 @@ import CardList from '../components/CardList'
 import Card from '../components/Card'
 import Container from '../components/Container'
 import Pagination from '../components/Pagination'
-import SEO from '../components/SEO'
 
 const Posts = ({ data, pageContext, location }) => {
   const posts = data.allContentfulPost.edges
   const { basePath } = pageContext
-
-  let ogImage
-
-  try {
-    ogImage = posts[0].node.heroImage.ogimg.src
-  } catch (error) {
-    ogImage = null
-  }
 
   const metaDescription =
     'Part journal, part project log, part a little bit of everything—touching on photography, art & design, building for the web (and for emails), and life itself.'
 
   return (
     <Layout title="Blog" blurb={metaDescription} location={location.pathname}>
-      <SEO title="Blog" image={ogImage} />
       <Container>
         <CardList>
           {posts.map(({ node: post }) => (
