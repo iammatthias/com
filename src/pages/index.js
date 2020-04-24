@@ -69,6 +69,16 @@ const Posts = ({ data, pageContext, location }) => {
                   </Tooltip>
                 </Link>
               ))}
+              <Link
+                to={`/photography/`}
+                sx={{
+                  color: 'text',
+                  textDecoration: 'none',
+                  py: [2, 3],
+                }}
+              >
+                <Styled.p>View more...</Styled.p>
+              </Link>
             </List>
           </div>
           <div>
@@ -103,6 +113,17 @@ const Posts = ({ data, pageContext, location }) => {
                   </Tooltip>
                 </Link>
               ))}
+              <Link
+                to={`/blog/`}
+                sx={{
+                  color: 'text',
+                  textDecoration: 'none',
+
+                  py: [2, 3],
+                }}
+              >
+                <Styled.p>View more...</Styled.p>
+              </Link>
             </List>
           </div>
         </ContentGrid>
@@ -255,7 +276,7 @@ const Posts = ({ data, pageContext, location }) => {
 
 export const query = graphql`
   query {
-    allContentfulPost(sort: { fields: [publishDate], order: DESC }, limit: 6) {
+    allContentfulPost(sort: { fields: [publishDate], order: DESC }, limit: 4) {
       edges {
         node {
           title
@@ -279,7 +300,10 @@ export const query = graphql`
         }
       }
     }
-    allContentfulPhotography(sort: { fields: [updatedAt], order: DESC }) {
+    allContentfulPhotography(
+      sort: { fields: [updatedAt], order: DESC }
+      limit: 4
+    ) {
       edges {
         node {
           title
