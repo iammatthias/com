@@ -10,6 +10,7 @@ import FooterHero from '../components/FooterHero'
 import { globalStyles } from '../styles/globalStyles.js'
 import SEO from '../components/SEO'
 import getShareImage from '@jlengstorf/get-share-image'
+import Pullable from 'react-pullable'
 
 import theme from 'gatsby-plugin-theme-ui'
 
@@ -70,51 +71,59 @@ const Layout = ({
   })
 
   return (
-    <ThemeProvider theme={theme} components={MDXGlobalComponents}>
-      <Root className="siteRoot">
-        <SEO
-          title={title || 'I Am Matthias'}
-          image={socialImage}
-          description={description}
-        />
-        <Global styles={(theme => theme.styles.Global(theme), globalStyles)} />
-        <div className="siteContent" {...props}>
-          <Wrapper
-            id="main"
-            sx={{
-              padding: [0, 3, 4, 5],
-              mx: 'auto',
-
-              borderColor: 'text',
-            }}
-          >
-            <Menu
-              blurb={blurb}
-              title={title}
-              date={date}
-              timeToRead={timeToRead}
-              tags={tags}
-              basePath={basePath}
-              location={location}
-            />
-
-            {children}
-          </Wrapper>
-          {location === '/' && (
-            <FooterHero
+    <Pullable
+      onRefresh={() =>
+        typeof window !== `undefined` ? window.location.reload() : null
+      }
+    >
+      <ThemeProvider theme={theme} components={MDXGlobalComponents}>
+        <Root className="siteRoot">
+          <SEO
+            title={title || 'I Am Matthias'}
+            image={socialImage}
+            description={description}
+          />
+          <Global
+            styles={(theme => theme.styles.Global(theme), globalStyles)}
+          />
+          <div className="siteContent" {...props}>
+            <Wrapper
+              id="main"
               sx={{
-                top: ['0', '0', '0', '-10rem'],
-                position: 'relative',
-                zIndex: '0',
-                m: [0, 0, 0, 5],
-                display: ['block', 'block', 'block'],
+                padding: [0, 3, 4, 5],
+                mx: 'auto',
+
+                borderColor: 'text',
               }}
-            />
-          )}
-        </div>
-        <Footer />
-      </Root>
-    </ThemeProvider>
+            >
+              <Menu
+                blurb={blurb}
+                title={title}
+                date={date}
+                timeToRead={timeToRead}
+                tags={tags}
+                basePath={basePath}
+                location={location}
+              />
+
+              {children}
+            </Wrapper>
+            {location === '/' && (
+              <FooterHero
+                sx={{
+                  top: ['0', '0', '0', '-10rem'],
+                  position: 'relative',
+                  zIndex: '0',
+                  m: [0, 0, 0, 5],
+                  display: ['block', 'block', 'block'],
+                }}
+              />
+            )}
+          </div>
+          <Footer />
+        </Root>
+      </ThemeProvider>
+    </Pullable>
   )
 }
 
