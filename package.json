@@ -17,7 +17,7 @@
     "framer-motion": "^1.10.3",
     "gatsby": "^2.20.4",
     "gatsby-awesome-pagination": "^0.3.5",
-    "gatsby-cli": "^2.11.15",
+    "gatsby-cli": "^2.12.0",
     "gatsby-image": "^2.2.40",
     "gatsby-plugin-catch-links": "^2.1.25",
     "gatsby-plugin-emotion": "^4.1.22",

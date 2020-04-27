@@ -13,7 +13,7 @@ const PhotoSetTemplate = ({ data, pageContext, location }) => {
   const {
     title,
     metaDescription,
-    publishDate,
+    updatedAt,
     galleries,
   } = data.contentfulPhotography
 
@@ -22,7 +22,7 @@ const PhotoSetTemplate = ({ data, pageContext, location }) => {
       title={title}
       blurb={metaDescription.internal.content}
       description={metaDescription}
-      date={publishDate}
+      date={updatedAt}
       location={location.pathname}
     >
       <Container>
@@ -62,8 +62,8 @@ export const query = graphql`
         }
       }
       publishDate(formatString: "MMMM DD, YYYY")
+      updatedAt(formatString: "MMMM DD, YYYY")
       publishDateISO: publishDate(formatString: "YYYY-MM-DD")
-
       heroImage {
         title
         fluid(maxWidth: 1800) {

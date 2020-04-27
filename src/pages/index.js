@@ -107,7 +107,7 @@ const Posts = ({ data, pageContext, location }) => {
                   >
                     <Styled.h4>{post.title}</Styled.h4>
                     <Styled.p>
-                      Published: {post.publishDate} &nbsp;/&nbsp;/&nbsp;
+                      Updated: {post.updatedAt} &nbsp;/&nbsp;/&nbsp;
                       {post.body.childMarkdownRemark.timeToRead} minute read
                     </Styled.p>
                   </Tooltip>
@@ -283,6 +283,7 @@ export const query = graphql`
           id
           slug
           publishDate(formatString: "MMMM DD, YYYY")
+          updatedAt(formatString: "MMMM DD, YYYY")
           heroImage {
             thumbnail: fluid(maxWidth: 200, quality: 50) {
               ...GatsbyContentfulFluid_withWebp

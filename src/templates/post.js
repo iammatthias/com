@@ -16,7 +16,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
     metaDescription,
     heroImage,
     body,
-    publishDate,
+    updatedAt,
     tags,
     slug,
   } = data.contentfulPost
@@ -33,7 +33,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
     <Layout
       title={title}
       blurb={metaDescription.internal.content}
-      date={publishDate}
+      date={updatedAt}
       timeToRead={body.childMarkdownRemark.timeToRead}
       tags={tags}
       basePath={basePath}
@@ -76,6 +76,7 @@ export const query = graphql`
         }
       }
       publishDate(formatString: "MMMM DD, YYYY")
+      updatedAt(formatString: "MMMM DD, YYYY")
       publishDateISO: publishDate(formatString: "YYYY-MM-DD")
       tags {
         title
