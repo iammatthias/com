@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react' //eslint-disable-line
 import { jsx, Box, Flex, ThemeProvider } from 'theme-ui'
-import SEO from '../../components/SEO'
+import SEO from '../../../components/SEO'
 import { Link as GatsbyLink } from 'gatsby'
-import Logo from '../../components/Logo'
+import Logo from '../../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
 import Pullable from 'react-pullable'
 

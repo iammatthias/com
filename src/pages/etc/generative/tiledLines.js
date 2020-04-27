@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react' //eslint-disable-line
 import { jsx, Box, Flex, ThemeProvider } from 'theme-ui'
-import SEO from '../../components/SEO'
+import SEO from '../../../components/SEO'
 import { Link as GatsbyLink } from 'gatsby'
-import Logo from '../../components/Logo'
+import Logo from '../../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
 import Pullable from 'react-pullable'
 
@@ -19,67 +19,44 @@ class Canvas extends React.Component {
           let bodyBackground = window
             .getComputedStyle(elem, null)
             .getPropertyValue('background-color')
-          console.log('background:', bodyBackground)
-          console.log('color:', bodyColor)
+          console.log(bodyBackground)
 
           var canvas = document.querySelector('canvas')
           var context = canvas.getContext('2d')
 
+          if (window.innerWidth < 750) {
+            var step = 16
+          } else {
+            var step = 32
+          }
           var dpr = window.devicePixelRatio
           var sizeW = window.innerWidth / dpr
           var sizeH = window.innerHeight / dpr
           canvas.width = window.innerWidth
           canvas.height = window.innerHeight
           context.scale(dpr, dpr)
-          context.lineJoin = 'bevel'
-          context.strokeStyle = bodyColor
+
+          context.lineCap = 'round'
           context.lineWidth = 1 / dpr
+          context.strokeStyle = bodyColor
 
-          var line,
-            dot,
-            odd = false,
-            lines = [],
-            gap = sizeH / 15
+          function draw(x, y, width, height) {
+            var leftToRight = Math.random() >= 0.5
 
-          for (var y = gap / 2; y <= sizeH; y += gap) {
-            odd = !odd
-            line = []
-            for (var x = gap / 4; x <= sizeW; x += gap) {
-              dot = { x: x + (odd ? gap / 2 : 0), y: y }
-              line.push({
-                x: x + (Math.random() * 0.8 - 0.4) * gap + (odd ? gap / 2 : 0),
-                y: y + (Math.random() * 0.8 - 0.4) * gap,
-              })
-              context.fill()
+            if (leftToRight) {
+              context.moveTo(x, y)
+              context.lineTo(x + width, y + height)
+            } else {
+              context.moveTo(x + width, y)
+              context.lineTo(x, y + height)
             }
-            lines.push(line)
-          }
 
-          function drawTriangle(pointA, pointB, pointC) {
-            context.beginPath()
-            context.moveTo(pointA.x, pointA.y)
-            context.lineTo(pointB.x, pointB.y)
-            context.lineTo(pointC.x, pointC.y)
-            context.lineTo(pointA.x, pointA.y)
-            context.closePath()
-
-            context.fillStyle = bodyBackground
-            context.fill()
             context.stroke()
           }
 
-          var dotLine
-          odd = true
-
-          for (var y = 0; y < lines.length - 1; y++) {
-            odd = !odd
-            dotLine = []
-            for (var i = 0; i < lines[y].length; i++) {
-              dotLine.push(odd ? lines[y][i] : lines[y + 1][i])
-              dotLine.push(odd ? lines[y + 1][i] : lines[y][i])
-            }
-            for (var i = 0; i < dotLine.length - 2; i++) {
-              drawTriangle(dotLine[i], dotLine[i + 1], dotLine[i + 2])
+          for (var x = 0; x < sizeW; x += step) {
+            for (var y = 0; y < sizeH; y += step) {
+              draw(x, y, step, step)
             }
           }
         })
@@ -92,7 +69,7 @@ class Canvas extends React.Component {
         }
       >
         <ThemeProvider theme={theme}>
-          <SEO title="Triangular Mesh" />
+          <SEO title="Tiled Lines" />
           <Flex
             sx={{
               minHeight: '100vh',

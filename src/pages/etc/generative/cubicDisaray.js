@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react' //eslint-disable-line
 import { jsx, Box, Flex, ThemeProvider } from 'theme-ui'
-import SEO from '../../components/SEO'
+import SEO from '../../../components/SEO'
 import { Link as GatsbyLink } from 'gatsby'
-import Logo from '../../components/Logo'
+import Logo from '../../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
 import Pullable from 'react-pullable'
 
@@ -30,43 +30,43 @@ class Canvas extends React.Component {
           canvas.width = window.innerWidth
           canvas.height = window.innerHeight
           context.scale(dpr, dpr)
+          context.lineWidth = 1 / dpr
           context.strokeStyle = bodyColor
 
-          context.lineWidth = 1 / dpr
-          context.lineCap = 'square'
+          var randomDisplacement = 15
+          var rotateMultiplier = 20
+          var offset = 0
 
           if (window.innerWidth < 750) {
-            var step = 10
+            var squareSize = 15
           } else {
-            var step = 20
-          }
-          var aThirdOfHeight = sizeH / 3
-
-          function draw(x, y, width, height, positions) {
-            context.save()
-            context.translate(x + width / 2, y + height / 2)
-            context.rotate(Math.random() * 5)
-            context.translate(-width / 2, -height / 2)
-
-            for (var i = 0; i <= positions.length; i++) {
-              context.beginPath()
-              context.moveTo(positions[i] * width, 0)
-              context.lineTo(positions[i] * width, height)
-              context.stroke()
-            }
-
-            context.restore()
+            var squareSize = 30
           }
 
-          for (var y = step; y < sizeH - step * 2; y += step) {
-            for (var x = step; x < sizeW - step; x += step) {
-              if (y < aThirdOfHeight) {
-                draw(x, y, step, step, [0.5])
-              } else if (y < aThirdOfHeight * 2) {
-                draw(x, y, step, step, [0.2, 0.8])
-              } else {
-                draw(x, y, step, step, [0.1, 0.5, 0.9])
-              }
+          function draw(width, height) {
+            context.beginPath()
+            context.rect(-width / 2, -height / 2, width, height)
+            context.stroke()
+          }
+
+          for (var i = squareSize; i <= sizeW - squareSize; i += squareSize) {
+            for (var j = squareSize; j <= sizeH - squareSize; j += squareSize) {
+              var plusOrMinus = Math.random() < 0.5 ? -1 : 1
+              var rotateAmt =
+                (((j / sizeH) * Math.PI) / 180) *
+                plusOrMinus *
+                Math.random() *
+                rotateMultiplier
+
+              plusOrMinus = Math.random() < 0.5 ? -1 : 1
+              var translateAmt =
+                (j / sizeW) * plusOrMinus * Math.random() * randomDisplacement
+
+              context.save()
+              context.translate(i + translateAmt + offset, j + offset)
+              context.rotate(rotateAmt)
+              draw(squareSize, squareSize)
+              context.restore()
             }
           }
         })
@@ -79,7 +79,7 @@ class Canvas extends React.Component {
         }
       >
         <ThemeProvider theme={theme}>
-          <SEO title="Un Deux Trois" />
+          <SEO title="Cubic Disaray" />
           <Flex
             sx={{
               minHeight: '100vh',

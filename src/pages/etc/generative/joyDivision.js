@@ -1,10 +1,10 @@
 /** @jsx jsx */
 
 import React, { useState, useEffect } from 'react' //eslint-disable-line
-import { jsx, Box, Flex, ThemeProvider } from 'theme-ui'
-import SEO from '../../components/SEO'
+import { jsx, Box, Flex, Styled, ThemeProvider } from 'theme-ui'
+import SEO from '../../../components/SEO'
 import { Link as GatsbyLink } from 'gatsby'
-import Logo from '../../components/Logo'
+import Logo from '../../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
 import Pullable from 'react-pullable'
 
@@ -16,10 +16,7 @@ class Canvas extends React.Component {
           let bodyColor = window
             .getComputedStyle(elem, null)
             .getPropertyValue('color')
-          let bodyBackground = window
-            .getComputedStyle(elem, null)
-            .getPropertyValue('background-color')
-          console.log(bodyBackground)
+          console.log(bodyColor)
 
           var canvas = document.querySelector('canvas')
           var context = canvas.getContext('2d')
@@ -29,45 +26,55 @@ class Canvas extends React.Component {
           var sizeH = window.innerHeight / dpr
           canvas.width = window.innerWidth
           canvas.height = window.innerHeight
+
           context.scale(dpr, dpr)
           context.lineWidth = 1 / dpr
           context.strokeStyle = bodyColor
 
-          var randomDisplacement = 15
-          var rotateMultiplier = 20
-          var offset = 0
+          var step = 10
+          var lines = []
+
+          // Create the lines
+          for (var i = step; i <= sizeH - step; i += step) {
+            var line = []
+            for (var j = step; j <= sizeW - step; j += step) {
+              var distanceToCenter = Math.abs(j - sizeW / 2)
+              var variance = Math.max(sizeW / 2 - 50 - distanceToCenter, 0)
+              var random = ((Math.random() * variance) / 2) * -1
+              var point = { x: j, y: i + random }
+              line.push(point)
+            }
+            lines.push(line)
+          }
 
           if (window.innerWidth < 750) {
-            var squareSize = 15
+            var skipLines = 5
           } else {
-            var squareSize = 30
+            var skipLines = 20
           }
 
-          function draw(width, height) {
+          // Do the drawing
+          for (var i = [skipLines]; i < lines.length; i++) {
             context.beginPath()
-            context.rect(-width / 2, -height / 2, width, height)
-            context.stroke()
-          }
+            context.moveTo(lines[i][0].x, lines[i][0].y)
 
-          for (var i = squareSize; i <= sizeW - squareSize; i += squareSize) {
-            for (var j = squareSize; j <= sizeH - squareSize; j += squareSize) {
-              var plusOrMinus = Math.random() < 0.5 ? -1 : 1
-              var rotateAmt =
-                (((j / sizeH) * Math.PI) / 180) *
-                plusOrMinus *
-                Math.random() *
-                rotateMultiplier
-
-              plusOrMinus = Math.random() < 0.5 ? -1 : 1
-              var translateAmt =
-                (j / sizeW) * plusOrMinus * Math.random() * randomDisplacement
-
-              context.save()
-              context.translate(i + translateAmt + offset, j + offset)
-              context.rotate(rotateAmt)
-              draw(squareSize, squareSize)
-              context.restore()
+            for (var j = 0; j < lines[i].length - 2; j++) {
+              var xc = (lines[i][j].x + lines[i][j + 1].x) / 2
+              var yc = (lines[i][j].y + lines[i][j + 1].y) / 2
+              context.quadraticCurveTo(lines[i][j].x, lines[i][j].y, xc, yc)
             }
+
+            context.quadraticCurveTo(
+              lines[i][j].x,
+              lines[i][j].y,
+              lines[i][j + 1].x,
+              lines[i][j + 1].y
+            )
+            context.save()
+            context.globalCompositeOperation = 'destination-out'
+            context.fill()
+            context.restore()
+            context.stroke()
           }
         })
       : null
@@ -79,7 +86,7 @@ class Canvas extends React.Component {
         }
       >
         <ThemeProvider theme={theme}>
-          <SEO title="Cubic Disaray" />
+          <SEO title="Joy Division" />
           <Flex
             sx={{
               minHeight: '100vh',

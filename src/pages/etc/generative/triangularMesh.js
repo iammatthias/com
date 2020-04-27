@@ -1,10 +1,10 @@
 /** @jsx jsx */
 
 import React, { useState, useEffect } from 'react' //eslint-disable-line
-import { jsx, Box, Flex, Styled, ThemeProvider } from 'theme-ui'
-import SEO from '../../components/SEO'
+import { jsx, Box, Flex, ThemeProvider } from 'theme-ui'
+import SEO from '../../../components/SEO'
 import { Link as GatsbyLink } from 'gatsby'
-import Logo from '../../components/Logo'
+import Logo from '../../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
 import Pullable from 'react-pullable'
 
@@ -16,7 +16,11 @@ class Canvas extends React.Component {
           let bodyColor = window
             .getComputedStyle(elem, null)
             .getPropertyValue('color')
-          console.log(bodyColor)
+          let bodyBackground = window
+            .getComputedStyle(elem, null)
+            .getPropertyValue('background-color')
+          console.log('background:', bodyBackground)
+          console.log('color:', bodyColor)
 
           var canvas = document.querySelector('canvas')
           var context = canvas.getContext('2d')
@@ -26,55 +30,57 @@ class Canvas extends React.Component {
           var sizeH = window.innerHeight / dpr
           canvas.width = window.innerWidth
           canvas.height = window.innerHeight
-
           context.scale(dpr, dpr)
-          context.lineWidth = 1 / dpr
+          context.lineJoin = 'bevel'
           context.strokeStyle = bodyColor
+          context.lineWidth = 1 / dpr
 
-          var step = 10
-          var lines = []
+          var line,
+            dot,
+            odd = false,
+            lines = [],
+            gap = sizeH / 15
 
-          // Create the lines
-          for (var i = step; i <= sizeH - step; i += step) {
-            var line = []
-            for (var j = step; j <= sizeW - step; j += step) {
-              var distanceToCenter = Math.abs(j - sizeW / 2)
-              var variance = Math.max(sizeW / 2 - 50 - distanceToCenter, 0)
-              var random = ((Math.random() * variance) / 2) * -1
-              var point = { x: j, y: i + random }
-              line.push(point)
+          for (var y = gap / 2; y <= sizeH; y += gap) {
+            odd = !odd
+            line = []
+            for (var x = gap / 4; x <= sizeW; x += gap) {
+              dot = { x: x + (odd ? gap / 2 : 0), y: y }
+              line.push({
+                x: x + (Math.random() * 0.8 - 0.4) * gap + (odd ? gap / 2 : 0),
+                y: y + (Math.random() * 0.8 - 0.4) * gap,
+              })
+              context.fill()
             }
             lines.push(line)
           }
 
-          if (window.innerWidth < 750) {
-            var skipLines = 5
-          } else {
-            var skipLines = 20
+          function drawTriangle(pointA, pointB, pointC) {
+            context.beginPath()
+            context.moveTo(pointA.x, pointA.y)
+            context.lineTo(pointB.x, pointB.y)
+            context.lineTo(pointC.x, pointC.y)
+            context.lineTo(pointA.x, pointA.y)
+            context.closePath()
+
+            context.fillStyle = bodyBackground
+            context.fill()
+            context.stroke()
           }
 
-          // Do the drawing
-          for (var i = [skipLines]; i < lines.length; i++) {
-            context.beginPath()
-            context.moveTo(lines[i][0].x, lines[i][0].y)
+          var dotLine
+          odd = true
 
-            for (var j = 0; j < lines[i].length - 2; j++) {
-              var xc = (lines[i][j].x + lines[i][j + 1].x) / 2
-              var yc = (lines[i][j].y + lines[i][j + 1].y) / 2
-              context.quadraticCurveTo(lines[i][j].x, lines[i][j].y, xc, yc)
+          for (var y = 0; y < lines.length - 1; y++) {
+            odd = !odd
+            dotLine = []
+            for (var i = 0; i < lines[y].length; i++) {
+              dotLine.push(odd ? lines[y][i] : lines[y + 1][i])
+              dotLine.push(odd ? lines[y + 1][i] : lines[y][i])
             }
-
-            context.quadraticCurveTo(
-              lines[i][j].x,
-              lines[i][j].y,
-              lines[i][j + 1].x,
-              lines[i][j + 1].y
-            )
-            context.save()
-            context.globalCompositeOperation = 'destination-out'
-            context.fill()
-            context.restore()
-            context.stroke()
+            for (var i = 0; i < dotLine.length - 2; i++) {
+              drawTriangle(dotLine[i], dotLine[i + 1], dotLine[i + 2])
+            }
           }
         })
       : null
@@ -86,7 +92,7 @@ class Canvas extends React.Component {
         }
       >
         <ThemeProvider theme={theme}>
-          <SEO title="Joy Division" />
+          <SEO title="Triangular Mesh" />
           <Flex
             sx={{
               minHeight: '100vh',

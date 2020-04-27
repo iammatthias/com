@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react' //eslint-disable-line
 import { jsx, Box, Flex, ThemeProvider } from 'theme-ui'
-import SEO from '../../components/SEO'
+import SEO from '../../../components/SEO'
 import { Link as GatsbyLink } from 'gatsby'
-import Logo from '../../components/Logo'
+import Logo from '../../../components/Logo'
 import theme from 'gatsby-plugin-theme-ui'
 import Pullable from 'react-pullable'
 
@@ -24,39 +24,49 @@ class Canvas extends React.Component {
           var canvas = document.querySelector('canvas')
           var context = canvas.getContext('2d')
 
-          if (window.innerWidth < 750) {
-            var step = 16
-          } else {
-            var step = 32
-          }
           var dpr = window.devicePixelRatio
           var sizeW = window.innerWidth / dpr
           var sizeH = window.innerHeight / dpr
           canvas.width = window.innerWidth
           canvas.height = window.innerHeight
           context.scale(dpr, dpr)
-
-          context.lineCap = 'round'
-          context.lineWidth = 1 / dpr
           context.strokeStyle = bodyColor
 
-          function draw(x, y, width, height) {
-            var leftToRight = Math.random() >= 0.5
+          context.lineWidth = 1 / dpr
+          context.lineCap = 'square'
 
-            if (leftToRight) {
-              context.moveTo(x, y)
-              context.lineTo(x + width, y + height)
-            } else {
-              context.moveTo(x + width, y)
-              context.lineTo(x, y + height)
+          if (window.innerWidth < 750) {
+            var step = 10
+          } else {
+            var step = 20
+          }
+          var aThirdOfHeight = sizeH / 3
+
+          function draw(x, y, width, height, positions) {
+            context.save()
+            context.translate(x + width / 2, y + height / 2)
+            context.rotate(Math.random() * 5)
+            context.translate(-width / 2, -height / 2)
+
+            for (var i = 0; i <= positions.length; i++) {
+              context.beginPath()
+              context.moveTo(positions[i] * width, 0)
+              context.lineTo(positions[i] * width, height)
+              context.stroke()
             }
 
-            context.stroke()
+            context.restore()
           }
 
-          for (var x = 0; x < sizeW; x += step) {
-            for (var y = 0; y < sizeH; y += step) {
-              draw(x, y, step, step)
+          for (var y = step; y < sizeH - step * 2; y += step) {
+            for (var x = step; x < sizeW - step; x += step) {
+              if (y < aThirdOfHeight) {
+                draw(x, y, step, step, [0.5])
+              } else if (y < aThirdOfHeight * 2) {
+                draw(x, y, step, step, [0.2, 0.8])
+              } else {
+                draw(x, y, step, step, [0.1, 0.5, 0.9])
+              }
             }
           }
         })
@@ -69,7 +79,7 @@ class Canvas extends React.Component {
         }
       >
         <ThemeProvider theme={theme}>
-          <SEO title="Tiled Lines" />
+          <SEO title="Un Deux Trois" />
           <Flex
             sx={{
               minHeight: '100vh',
