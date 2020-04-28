@@ -6,4 +6,4 @@ public/
 contentful-import-error-log*
 .env*
 .contentful.json
-./src/pages/resume.js
+src/pages/resume.js
