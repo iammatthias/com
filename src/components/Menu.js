@@ -144,6 +144,7 @@ const Menu = ({
             </Styled.p>
           </>
         )}
+
         {title && location !== '/' && (
           <Styled.h1 sx={{ textAlign: ['left', 'right'], mb: '.5em' }}>
             {title}

@@ -133,6 +133,19 @@ const Posts = ({ data, pageContext, location }) => {
           <Styled.h2 sx={{ margin: '1em 0' }}>Etcetera</Styled.h2>
 
           <Grid gap={3} columns={[1, 2, 4]}>
+            {/* <Link
+              to={`/resume/`}
+              sx={{
+                color: 'text',
+                textDecoration: 'none',
+                border: '1px solid',
+                bordercolor: 'inherit',
+                padding: [2, 3],
+              }}
+            >
+              <Styled.h4>Resume</Styled.h4>
+              <Styled.p sx={{ m: 0 }}>Interested in working together?</Styled.p>
+            </Link> */}
             <Link
               to={`/etc/generative/`}
               sx={{
@@ -161,6 +174,21 @@ const Posts = ({ data, pageContext, location }) => {
               <Styled.h4>Time</Styled.h4>
               <Styled.p sx={{ m: 0 }}>
                 A real time local clock with a dynamic background gradient.
+              </Styled.p>
+            </Link>
+            <Link
+              to={`/resources/`}
+              sx={{
+                color: 'text',
+                textDecoration: 'none',
+                border: '1px solid',
+                bordercolor: 'inherit',
+                padding: [2, 3],
+              }}
+            >
+              <Styled.h4>Resources</Styled.h4>
+              <Styled.p sx={{ m: 0 }}>
+                Tools and platforms that I've found useful.
               </Styled.p>
             </Link>
           </Grid>

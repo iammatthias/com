@@ -10,6 +10,7 @@ import {
   Link,
   Image,
   Card,
+  Divider,
 } from 'theme-ui'
 
 import ContactForm from '../../components/ContactForm'
@@ -35,6 +36,8 @@ export const MDXGlobalComponents = {
   Image: props => <Image {...props} />,
   // eslint-disable-next-line react/display-name
   Card: props => <Card {...props} />,
+  // eslint-disable-next-line react/display-name
+  Divider: props => <Divider {...props} />,
   // eslint-disable-next-line react/display-name
   ContactForm: props => <ContactForm {...props} />,
   // eslint-disable-next-line react/display-name
