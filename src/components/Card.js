@@ -40,7 +40,7 @@ const Post = styled.li`
   }
 `
 
-const Card = ({ slug, heroImage, title, publishDate, body, ...props }) => {
+const Card = ({ slug, heroImage, title, updatedAt, body, ...props }) => {
   return (
     <>
       {heroImage && (
@@ -53,7 +53,7 @@ const Card = ({ slug, heroImage, title, publishDate, body, ...props }) => {
             />
             <Styled.h3 sx={{ mx: 3 }}>{title}</Styled.h3>
             <Styled.p sx={{ mx: 3 }}>
-              {publishDate}
+              {updatedAt}
               {body &&
                 ' / / ' +
                   `${body.childMarkdownRemark.timeToRead}` +
