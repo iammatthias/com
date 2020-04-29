@@ -1,9 +1,9 @@
 /** @jsx jsx */
 
 import React from 'react' //eslint-disable-line
-import { jsx, Image, Box } from 'theme-ui'
-import { Link } from '@theme-ui/components'
+import { jsx, Image, Box, Link, useThemeUI } from 'theme-ui'
 import { chunk, sum } from 'lodash'
+import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox'
 
 // import Img from 'gatsby-image'
 
@@ -22,42 +22,112 @@ const GalleryGrid = ({
       )
   )
 
+  const { theme } = useThemeUI()
+
+  const options = {
+    overlayColor: 'rgba(0, 0, 0, 0.9)',
+    buttonsBackgroundColor: theme.colors.secondary,
+    buttonsIconColor: theme.colors.text,
+    autoplaySpeed: 0,
+    transitionSpeed: 900,
+    hideControlsAfter: false,
+    showThumbnails: false,
+    showDownloadButton: false,
+    showCaption: false,
+    enablePanzoom: false,
+  }
+
+  const callbacks = {
+    onSlideChange: object => handleSlideChange(object),
+    onLightboxOpened: object => handleLightboxOpen(object),
+    onLightboxClosed: object => handleLightboxClose(object),
+  }
+
+  function handleSlideChange(object) {
+    // if (typeof window !== 'undefined') {
+    //   window.analytics.track('Image Viewed', {
+    //     image: object.slides.current.caption,
+    //     src: object.slides.current.source,
+    //     gallery: parent + ' — ' + title,
+    //   })
+    // }
+    return object
+  }
+
+  function handleLightboxOpen(object) {
+    // if (typeof window !== 'undefined') {
+    //   window.analytics.track('Image Viewed', {
+    //     image: object.slides.current.caption,
+    //     src: object.slides.current.source,
+    //     gallery: parent + ' — ' + title,
+    //   })
+    // }
+
+    return object
+  }
+
+  function handleLightboxClose(object) {
+    // if (typeof window !== 'undefined') {
+    //   window.analytics.track('Image Viewed', {
+    //     image: object.slides.current.caption,
+    //     src: object.slides.current.source,
+    //     gallery: parent + ' — ' + title,
+    //   })
+    // }
+    return object
+  }
+
   return (
     <>
-      <p
-        sx={{
-          variant: 'styles.h2',
-        }}
-        key={title}
-      >
-        {title}
-      </p>
+      {title && (
+        <p
+          sx={{
+            variant: 'styles.h2',
+          }}
+          key={title}
+        >
+          {title}
+        </p>
+      )}
       <center>
-        {images.map((image, i) => (
-          <Link key={image.id}>
-            <Box
-              as={Image}
-              src={image.thumbnail.src}
-              title={image.title}
-              sx={{
-                width: rowAspectRatioSumsByBreakpoints.map(
-                  (rowAspectRatioSums, j) => {
-                    const rowIndex = Math.floor(i / itemsPerRowByBreakpoints[j])
-                    const rowAspectRatioSum = rowAspectRatioSums[rowIndex]
-                    return `${(image.fluid.aspectRatio / rowAspectRatioSum) *
-                      100}%`
-                  }
-                ),
-                maxWidth: '65%',
-                p: 2,
-              }}
-              css={{
-                display: 'inline-block',
-                verticalAlign: 'middle',
-              }}
-            />
-          </Link>
-        ))}
+        <SimpleReactLightbox>
+          <SRLWrapper options={options} callbacks={callbacks}>
+            {images.map((image, i) => (
+              <Link
+                key={image.id}
+                href={image.fluid.src}
+                alt={image.title}
+                data-attribute="SRL"
+              >
+                <Box
+                  as={Image}
+                  src={image.thumbnail.src}
+                  title={image.title}
+                  alt={image.title}
+                  sx={{
+                    width: rowAspectRatioSumsByBreakpoints.map(
+                      (rowAspectRatioSums, j) => {
+                        const rowIndex = Math.floor(
+                          i / itemsPerRowByBreakpoints[j]
+                        )
+                        const rowAspectRatioSum = rowAspectRatioSums[rowIndex]
+                        return `${(image.fluid.aspectRatio /
+                          rowAspectRatioSum) *
+                          100}%`
+                      }
+                    ),
+                    maxWidth: '65%',
+                    p: 2,
+                  }}
+                  css={{
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                  }}
+                />
+              </Link>
+            ))}
+          </SRLWrapper>
+        </SimpleReactLightbox>
       </center>
     </>
   )

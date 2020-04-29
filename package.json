@@ -17,7 +17,7 @@
     "framer-motion": "^1.10.3",
     "gatsby": "^2.20.4",
     "gatsby-awesome-pagination": "^0.3.5",
-    "gatsby-cli": "^2.12.1",
+    "gatsby-cli": "^2.12.5",
     "gatsby-image": "^2.2.40",
     "gatsby-plugin-catch-links": "^2.1.25",
     "gatsby-plugin-emotion": "^4.1.22",
@@ -53,6 +53,7 @@
     "react-pullable": "^1.0.5",
     "react-tippy": "^1.3.4",
     "rollup-plugin-json": "^4.0.0",
+    "simple-react-lightbox": "^2.7.3-2",
     "theme-ui": "^0.3.1"
   },
   "keywords": [

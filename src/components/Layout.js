@@ -14,7 +14,7 @@ import Pullable from 'react-pullable'
 
 import theme from 'gatsby-plugin-theme-ui'
 
-import { MDXGlobalComponents } from '../components/MDX'
+import { MDXGlobalComponents } from '../gatsby-plugin-theme-ui/components'
 
 const Root = styled.div`
   background: ${props => props.theme.colors.background};

@@ -1,7 +1,7 @@
 /** @jsx jsx */
-import React from 'react'
+import React from 'react' //eslint-disable-line
 
-import { jsx, useColorMode } from 'theme-ui'
+import { jsx } from 'theme-ui'
 
 function Icon(props) {
   return (

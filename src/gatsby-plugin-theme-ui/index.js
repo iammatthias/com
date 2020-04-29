@@ -1,6 +1,6 @@
 import randomCombo from 'random-a11y-combo'
 
-const [paletteBackground, paletteColor] = randomCombo()
+const [palettebackground, paletteColor] = randomCombo()
 
 function LightenDarkenColor(col, amt) {
   var usePound = false
@@ -30,8 +30,8 @@ function LightenDarkenColor(col, amt) {
   return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16)
 }
 
-var randomHighlight = LightenDarkenColor(paletteBackground, 40)
-var randomShadow = LightenDarkenColor(paletteBackground, -40)
+var randomHighlight = LightenDarkenColor(palettebackground, 40)
+var randomShadow = LightenDarkenColor(palettebackground, -40)
 
 export default {
   useColorSchemeMediaQuery: true,
@@ -57,7 +57,7 @@ export default {
         shadow: '#100B00',
       },
       random: {
-        background: paletteBackground,
+        background: palettebackground,
         text: paletteColor,
         primary: paletteColor,
         secondary: randomHighlight,
