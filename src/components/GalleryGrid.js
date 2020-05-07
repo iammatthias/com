@@ -52,11 +52,12 @@ const GalleryGrid = ({
 
   function handleSlideChange(object) {
     if (typeof window !== 'undefined') {
-      window.analytics.track('Gallery Slide Changed', {
+      window.analytics.track('Image Viewed', {
         image: object.slides.current.caption,
         src: object.slides.current.source,
         gallery: parent + ' — ' + title,
         direction: object.action,
+        event: 'Gallery Slide Changed',
       })
     }
     console.log(object)
@@ -65,10 +66,11 @@ const GalleryGrid = ({
 
   function handleLightboxOpen(object) {
     if (typeof window !== 'undefined') {
-      window.analytics.track('Gallery Opened', {
+      window.analytics.track('Image Viewed', {
         image: object.currentSlide.caption,
         src: object.currentSlide.source,
         gallery: parent + ' — ' + title,
+        event: 'Galery Opened',
       })
     }
 
@@ -77,10 +79,11 @@ const GalleryGrid = ({
 
   function handleLightboxClose(object) {
     if (typeof window !== 'undefined') {
-      window.analytics.track('Gallery Closed', {
+      window.analytics.track('Image Viewed', {
         image: object.currentSlide.caption,
         src: object.currentSlide.source,
         gallery: parent + ' — ' + title,
+        event: 'Galery Closed',
       })
     }
 
