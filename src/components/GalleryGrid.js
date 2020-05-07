@@ -93,14 +93,23 @@ const GalleryGrid = ({
   return (
     <>
       {title && (
-        <p
-          sx={{
-            variant: 'styles.h2',
-          }}
-          key={title}
-        >
-          {title}
-        </p>
+        <>
+          <p
+            sx={{
+              variant: 'styles.h2',
+            }}
+            key={title}
+          >
+            {title}
+          </p>
+          <p
+            sx={{
+              variant: 'styles.p',
+            }}
+          >
+            Click on the image for a better view.
+          </p>
+        </>
       )}
       <center>
         <SimpleReactLightbox>
