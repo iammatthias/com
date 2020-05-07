@@ -93,12 +93,13 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
-        name: 'I AM MATTIAS',
+        name: 'I AM MATTHIAS',
+        description: 'A personal portfolio project',
         short_name: 'IAM',
         start_url: '/',
         background_color: '#140D00',
         theme_color: '#140D00',
-        display: 'minimal-ui',
+        display: 'fullscreen',
         icon: './static/images/favicon.png',
       },
     },
