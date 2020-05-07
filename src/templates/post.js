@@ -52,7 +52,9 @@ const PostTemplate = ({ data, pageContext, location }) => {
             margin: '0 auto',
           }}
         >
-          <MDXRenderer>{body.childMdx.body}</MDXRenderer>
+          <article>
+            <MDXRenderer>{body.childMdx.body}</MDXRenderer>
+          </article>
         </div>
       </Container>
       <PostLinks

@@ -25,16 +25,23 @@ const GalleryGrid = ({
   const { theme } = useThemeUI()
 
   const options = {
-    overlayColor: 'rgba(0, 0, 0, 0.9)',
-    buttonsBackgroundColor: theme.colors.secondary,
-    buttonsIconColor: theme.colors.text,
-    autoplaySpeed: 0,
-    transitionSpeed: 900,
-    hideControlsAfter: false,
-    showThumbnails: false,
-    showDownloadButton: false,
-    showCaption: false,
-    enablePanzoom: false,
+    settings: {
+      overlayColor: 'rgba(0, 0, 0, 0.9)',
+      autoplaySpeed: 0,
+      hideControlsAfter: false,
+      disablePanzoom: false,
+    },
+    buttons: {
+      backgroundColor: theme.colors.secondary,
+      iconColor: theme.colors.text,
+      showDownloadButton: false,
+    },
+    caption: {
+      showCaption: false,
+    },
+    thumbnails: {
+      showThumbnails: false,
+    },
   }
 
   const callbacks = {
@@ -44,36 +51,39 @@ const GalleryGrid = ({
   }
 
   function handleSlideChange(object) {
-    // if (typeof window !== 'undefined') {
-    //   window.analytics.track('Image Viewed', {
-    //     image: object.slides.current.caption,
-    //     src: object.slides.current.source,
-    //     gallery: parent + ' — ' + title,
-    //   })
-    // }
+    if (typeof window !== 'undefined') {
+      window.analytics.track('Gallery Slide Changed', {
+        image: object.slides.current.caption,
+        src: object.slides.current.source,
+        gallery: parent + ' — ' + title,
+        direction: object.action,
+      })
+    }
+    console.log(object)
     return object
   }
 
   function handleLightboxOpen(object) {
-    // if (typeof window !== 'undefined') {
-    //   window.analytics.track('Image Viewed', {
-    //     image: object.slides.current.caption,
-    //     src: object.slides.current.source,
-    //     gallery: parent + ' — ' + title,
-    //   })
-    // }
+    if (typeof window !== 'undefined') {
+      window.analytics.track('Gallery Opened', {
+        image: object.currentSlide.caption,
+        src: object.currentSlide.source,
+        gallery: parent + ' — ' + title,
+      })
+    }
 
     return object
   }
 
   function handleLightboxClose(object) {
-    // if (typeof window !== 'undefined') {
-    //   window.analytics.track('Image Viewed', {
-    //     image: object.slides.current.caption,
-    //     src: object.slides.current.source,
-    //     gallery: parent + ' — ' + title,
-    //   })
-    // }
+    if (typeof window !== 'undefined') {
+      window.analytics.track('Gallery Closed', {
+        image: object.currentSlide.caption,
+        src: object.currentSlide.source,
+        gallery: parent + ' — ' + title,
+      })
+    }
+
     return object
   }
 
