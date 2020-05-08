@@ -29,7 +29,7 @@ const GalleryGrid = ({
       overlayColor: 'rgba(0, 0, 0, 0.9)',
       autoplaySpeed: 0,
       hideControlsAfter: false,
-      disablePanzoom: false,
+      disablePanzoom: true,
     },
     buttons: {
       backgroundColor: theme.colors.secondary,

@@ -82,7 +82,7 @@ export const query = graphql`
           images {
             id
             title
-            fluid(maxWidth: 900, quality: 60) {
+            fluid(maxWidth: 1000, quality: 70) {
               ...GatsbyContentfulFluid_withWebp
               src
               srcSet
