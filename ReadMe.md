@@ -1,9 +1,10 @@
 # ReadMe
-## iammatthias.com 
 
 > hint: try running `npx iammatthias` in your terminal. 
 
 >> more info: https://github.com/iammatthias/businesscard
+
+### iammatthias.com 
 
 When I started building my site years ago it was with the express purpose of being a photography portfolio. 
 
@@ -15,7 +16,7 @@ A corner of the web that I can cultivate and design in the open. A place for new
 
 I am really excited about what this means for my portfolio online. Ultimately, I hope that this leads to it feeling more like me, and less like a resume. 
 
-### Built With 
+#### Built With 
 - [GatsbyJS](https://www.gatsbyjs.org/)
 - [Netlify](https://www.netlify.com/), host
 - [Contentful](https://www.contentful.com), CMS
