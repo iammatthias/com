@@ -3,7 +3,7 @@
 
 > hint: try running `npx iammatthias` in your terminal. 
 
-> more info: https://github.com/iammatthias/businesscard
+>> more info: https://github.com/iammatthias/businesscard
 
 When I started building my site years ago it was with the express purpose of being a photography portfolio. 
 
