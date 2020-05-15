@@ -55,7 +55,7 @@ const GalleryGrid = ({
       window.analytics.track('Image Viewed', {
         image: object.slides.current.caption,
         src: object.slides.current.source,
-        gallery: parent + ' — ' + title,
+        location: parent + ' — ' + title,
         direction: object.action,
         event: 'Gallery Slide Changed',
       })
@@ -69,7 +69,7 @@ const GalleryGrid = ({
       window.analytics.track('Image Viewed', {
         image: object.currentSlide.caption,
         src: object.currentSlide.source,
-        gallery: parent + ' — ' + title,
+        location: parent + ' — ' + title,
         event: 'Galery Opened',
       })
     }
@@ -82,7 +82,7 @@ const GalleryGrid = ({
       window.analytics.track('Image Viewed', {
         image: object.currentSlide.caption,
         src: object.currentSlide.source,
-        gallery: parent + ' — ' + title,
+        location: parent + ' — ' + title,
         event: 'Galery Closed',
       })
     }

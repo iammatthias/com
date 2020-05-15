@@ -118,25 +118,3 @@ module.exports = async ({ graphql, actions }) => {
     })
   })
 }
-
-// exports.onCreateNode = ({ node, actions, getNode }) => {
-//   const siteData = graphql(query.data.site)
-
-//   siteData.forEach(site => {
-//     let fileName = site.node.context.slug + '-ogImg'
-//     createPrinterNode({
-//       id: site.node.id,
-//       fileName,
-//       outputDir: 'og-images/',
-//       data: {
-//         title: site.node.context.title,
-//       },
-//       component: require.resolve(`./src/templates/shareImg.js`),
-//     })
-//     // actions.createNodeField({
-//     //   node,
-//     //   name: 'ogFileName',
-//     //   value: fileName,
-//     // })
-//   })
-// }

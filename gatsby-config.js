@@ -7,6 +7,7 @@ module.exports = {
     title: 'I AM MATTHIAS',
     description: 'A personal portfolio project',
     siteUrl: 'https://iammatthias.com',
+    author: 'Matthias Jordan',
     menuLinks: [
       {
         name: 'Home',
@@ -30,6 +31,54 @@ module.exports = {
     basePath: '/',
   },
   plugins: [
+    {
+      resolve: 'gatsby-plugin-feed-generator',
+      options: {
+        generator: `GatsbyJS`,
+        rss: false, // Set to true to enable rss generation
+        json: true, // Set to true to enable json feed generation
+        siteQuery: `
+      {
+        site {
+          siteMetadata {
+            title
+            description
+            siteUrl
+            author
+          }
+        }
+      }
+    `,
+        feeds: [
+          {
+            name: 'feed', // This determines the name of your feed file => feed.json & feed.xml
+            query: `
+        {
+          allContentfulPhotography(sort: { fields: [updatedAt], order: DESC }, limit: 1) {
+            edges {
+              node {
+                id
+                title
+                slug
+                updatedAt
+              }
+            }
+          }
+        }
+      }
+        `,
+            normalize: ({ query: { site, allContentfulPhotography } }) => {
+              return allContentfulPhotography.edges.map(edge => {
+                return {
+                  title: edge.node.title,
+                  url: site.siteMetadata.siteUrl + edge.node.slug,
+                }
+              })
+            },
+          },
+        ],
+      },
+    },
     'gatsby-plugin-emotion',
     'gatsby-plugin-theme-ui',
 

@@ -73,7 +73,7 @@ const Submit = styled.input`
 `
 
 class EmailCapture extends React.Component {
-  constructor(props) {
+  constructor(props, title) {
     super(props)
     this.state = {
       name: '',
@@ -131,14 +131,14 @@ class EmailCapture extends React.Component {
         }}
       >
         <div sx={{ p: 3, position: 'relative' }}>
-          <Styled.h3>Enjoying the content?</Styled.h3>
+          <Styled.h3>Want to see more?</Styled.h3>
+          <Styled.p>Sign up to find out when there is an update.</Styled.p>
           <Styled.p>
-            Sign up to find out when there is an update. Gallery releases, blog
-            posts, and maybe even the occasional recipe.
+            Gallery releases, blog posts, and maybe even the occasional recipe.
           </Styled.p>
-          <Styled.p sx={{ fontSize: 1 }}>
+          <Styled.p sx={{ fontSize: 0 }}>
             <i>
-              <b>Privacy notice:</b> I will never sell or share your personal
+              <b>Privacy:</b> I will never sell or share your personal
               information. Unsubscribe at any time.
             </i>
           </Styled.p>

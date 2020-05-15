@@ -9,6 +9,8 @@ import Container from '../components/Container'
 
 import GalleryGrid from '../components/GalleryGrid'
 
+import EmailCapture from '../components/MDX/EmailCapture'
+
 const PhotoSetTemplate = ({ data, pageContext, location }) => {
   const {
     title,
@@ -46,6 +48,7 @@ const PhotoSetTemplate = ({ data, pageContext, location }) => {
             )}
           </div>
         ))}
+        <EmailCapture title={title} />
       </Container>
     </Layout>
   )
