@@ -51,27 +51,27 @@ module.exports = {
     `,
         feeds: [
           {
-            name: 'feed', // This determines the name of your feed file => feed.json & feed.xml
+            name: 'feed',
             query: `
-        {
-          allContentfulPhotography(sort: { fields: [updatedAt], order: DESC }, limit: 1) {
-            edges {
-              node {
-                id
-                title
-                slug
-                updatedAt
+            {
+              allContentfulPost(sort: { fields: [publishDate], order: DESC }, limit: 1) {
+                edges {
+                  node {
+                  title
+                  id
+                  slug
+                  publishDate(formatString: "MMMM DD, YYYY")
+                  }
+                }
               }
             }
-          }
-        }
-      }
-        `,
-            normalize: ({ query: { site, allContentfulPhotography } }) => {
-              return allContentfulPhotography.edges.map(edge => {
+            `,
+            normalize: ({ query: { site, allContentfulPost } }) => {
+              return allContentfulPost.edges.map(edge => {
                 return {
                   title: edge.node.title,
                   url: site.siteMetadata.siteUrl + edge.node.slug,
+                  date: edge.node.publishDate,
                 }
               })
             },
