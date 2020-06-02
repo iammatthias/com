@@ -1,8 +1,10 @@
 # ReadMe
 
-> hint: try running `npx iammatthias` in your terminal. 
-
->> more info: https://github.com/iammatthias/businesscard
+> hint:\
+> try running `npx iammatthias` or `npx iammatthias-resume` in your terminal.
+>> more info:\
+>> https://github.com/iammatthias/businesscard \
+>> https://github.com/iammatthias/resume
 
 ### iammatthias.com 
 
