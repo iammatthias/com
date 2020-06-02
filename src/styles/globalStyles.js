@@ -100,8 +100,6 @@ export const globalStyles = css`
     height: 100%;
   }
   .siteRoot {
-    min-height: 100vh;
-    height: 100%;
     display: flex;
     flex-direction: column;
   }

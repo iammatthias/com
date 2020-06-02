@@ -175,7 +175,11 @@ export default {
       fontWeight: 'heading',
       textDecoration: 'none',
     },
-
+    blockquote: {
+      paddingLeft: 3,
+      borderLeft: '1px solid',
+      borderColor: 'inherit',
+    },
     pre: {
       fontFamily: 'monospace',
       overflowX: 'auto',

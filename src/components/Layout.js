@@ -20,6 +20,16 @@ const Root = styled.div`
   background: ${props => props.theme.colors.background};
   font-family: ${props => props.theme.fonts.body};
   height: 100%;
+  &::before {
+    content: '';
+    background: black;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    height: 100%;
+    width: 100%;
+  }
 `
 
 const Wrapper = styled.section`
@@ -92,7 +102,6 @@ const Layout = ({
               sx={{
                 padding: [0, 3, 4, 5],
                 mx: 'auto',
-
                 borderColor: 'text',
               }}
             >
