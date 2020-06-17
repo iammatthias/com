@@ -25,6 +25,21 @@ const Posts = ({ data, pageContext, location }) => {
           </Styled.p>
           <Grid gap={3} columns={[1, 2, 4]}>
             <Link
+              to={`/etc/generative/simplexNoise/`}
+              sx={{
+                color: 'text',
+                textDecoration: 'none',
+                border: '1px solid',
+                bordercolor: 'inherit',
+                padding: [2, 3],
+              }}
+            >
+              <Styled.h4>Simplex Noise</Styled.h4>
+              <Styled.p sx={{ m: 0 }}>
+                Noisy flowers using simplex noise
+              </Styled.p>
+            </Link>
+            <Link
               to={`/etc/generative/circlePacking/`}
               sx={{
                 color: 'text',

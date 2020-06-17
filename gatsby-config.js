@@ -1,3 +1,5 @@
+const path = require(`path`)
+
 require('dotenv').config({
   path: `.env.${process.env.NODE_ENV}`,
 })
@@ -156,6 +158,9 @@ module.exports = {
         host: process.env.CONTENTFUL_HOST,
       },
     },
+
+    `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
     {
       resolve: `gatsby-plugin-segment-js`,
       options: {
