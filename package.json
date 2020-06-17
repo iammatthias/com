@@ -69,7 +69,7 @@
   "main": "n/a",
   "scripts": {
     "develop": "gatsby develop",
-    "build": "gatsby build",
+    "build": "GATSBY_EXPERIMENTAL_PAGE_BUILD_ON_DATA_CHANGES=true gatsby build --log-pages",
     "serve": "gatsby serve",
     "test": "yarn run lint:css && yarn run lint:js && yarn run check-pretty",
     "setup": "node ./bin/setup.js",
