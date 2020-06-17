@@ -25,7 +25,7 @@ const Posts = ({ data, pageContext, location }) => {
           </Styled.p>
           <Grid gap={3} columns={[1, 2, 4]}>
             <Link
-              to={`/etc/generative/simplexNoise/`}
+              to={`/etc/generative/simplexFlowers/`}
               sx={{
                 color: 'text',
                 textDecoration: 'none',
@@ -34,7 +34,7 @@ const Posts = ({ data, pageContext, location }) => {
                 padding: [2, 3],
               }}
             >
-              <Styled.h4>Simplex Noise</Styled.h4>
+              <Styled.h4>Simplex Flowers</Styled.h4>
               <Styled.p sx={{ m: 0 }}>
                 Noisy flowers using simplex noise
               </Styled.p>
