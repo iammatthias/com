@@ -101,7 +101,7 @@ class Canvas extends React.Component {
         }
       >
         <ThemeProvider theme={theme}>
-          <SEO title="Circle Packing" />
+          <SEO title="Simplex Flowers" />
           <Flex
             sx={{
               minHeight: '100vh',
