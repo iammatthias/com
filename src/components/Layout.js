@@ -28,14 +28,14 @@ const Wrapper = styled.section`
   width: 100%;
   max-width: ${props => props.theme.sizes.maxWidth};
   flex-grow: 1;
-  box-shadow: -5px -5px 100px ${props => props.theme.colors.background},
-    25px 25px 100px ${props => props.theme.colors.shadow};
   border: 1px solid;
-  margin: 16px;
+  margin: 8px 16px 16px;
   z-index: 1;
   background: ${props => props.theme.colors.background};
   @media screen and (min-width: 1281px) {
     margin-top: 64px;
+    box-shadow: -5px -5px 100px ${props => props.theme.colors.background},
+      25px 25px 100px ${props => props.theme.colors.shadow};
   }
 `
 
