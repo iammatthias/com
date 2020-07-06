@@ -20,6 +20,7 @@ const Root = styled.div`
   background: ${props => props.theme.colors.background};
   font-family: ${props => props.theme.fonts.body};
   height: 100%;
+  padding: 16px;
 `
 
 const Wrapper = styled.section`
@@ -29,13 +30,12 @@ const Wrapper = styled.section`
   flex-grow: 1;
   box-shadow: -5px -5px 100px ${props => props.theme.colors.background},
     25px 25px 100px ${props => props.theme.colors.shadow};
-  border: 0 solid;
-  margin-top: 0;
+  border: 1px solid;
+  margin: 16px;
   z-index: 1;
   background: ${props => props.theme.colors.background};
   @media screen and (min-width: 1281px) {
     margin-top: 64px;
-    border: 1px solid;
   }
 `
 
