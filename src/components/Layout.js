@@ -30,7 +30,6 @@ const Wrapper = styled.section`
   position: relative;
   width: calc(100% - 32px);
   max-width: ${props => props.theme.sizes.maxWidth};
-  flex-grow: 1;
   border: 1px solid;
   margin: 16px auto -32px;
   z-index: 1;

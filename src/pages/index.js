@@ -20,6 +20,10 @@ const ContentGrid = styled.div`
     grid-template-columns: 6fr 3fr;
     grid-template-rows: 1fr;
   }
+  @media screen and (min-width: 1801px) {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
 `
 
 const List = styled.ul`
@@ -126,14 +130,11 @@ const Posts = ({ data, pageContext, location }) => {
               </Link>
             </List>
           </div>
-        </ContentGrid>
-      </Container>
-      <Container>
-        <div>
-          <Styled.h2 sx={{ margin: '1em 0' }}>Etcetera</Styled.h2>
+          <div>
+            <Styled.h2 sx={{ margin: '1em 0' }}>Etcetera</Styled.h2>
 
-          <Grid gap={3} columns={[1, 2, 4]}>
-            {/* <Link
+            <Grid gap={3} columns={[1, 2, 4]}>
+              {/* <Link
               to={`/resume/`}
               sx={{
                 color: 'text',
@@ -146,53 +147,54 @@ const Posts = ({ data, pageContext, location }) => {
               <Styled.h4>Resume</Styled.h4>
               <Styled.p sx={{ m: 0 }}>Interested in working together?</Styled.p>
             </Link> */}
-            <Link
-              to={`/etc/generative/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-              }}
-            >
-              <Styled.h4>Generative</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>
-                Trying my hand at generative art, learning as I go.
-              </Styled.p>
-            </Link>
-            <Link
-              to={`/etc/time/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-              }}
-            >
-              <Styled.h4>Time</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>
-                A real time local clock with a dynamic background gradient.
-              </Styled.p>
-            </Link>
-            <Link
-              to={`/resources/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-              }}
-            >
-              <Styled.h4>Resources</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>
-                Tools and platforms that I've found useful.
-              </Styled.p>
-            </Link>
-          </Grid>
-        </div>
+              <Link
+                to={`/etc/generative/`}
+                sx={{
+                  color: 'text',
+                  textDecoration: 'none',
+                  border: '1px solid',
+                  bordercolor: 'inherit',
+                  padding: [2, 3],
+                }}
+              >
+                <Styled.h4>Generative</Styled.h4>
+                <Styled.p sx={{ m: 0 }}>
+                  Trying my hand at generative art, learning as I go.
+                </Styled.p>
+              </Link>
+              <Link
+                to={`/etc/time/`}
+                sx={{
+                  color: 'text',
+                  textDecoration: 'none',
+                  border: '1px solid',
+                  bordercolor: 'inherit',
+                  padding: [2, 3],
+                }}
+              >
+                <Styled.h4>Time</Styled.h4>
+                <Styled.p sx={{ m: 0 }}>
+                  A real time local clock with a dynamic background gradient.
+                </Styled.p>
+              </Link>
+              <Link
+                to={`/resources/`}
+                sx={{
+                  color: 'text',
+                  textDecoration: 'none',
+                  border: '1px solid',
+                  bordercolor: 'inherit',
+                  padding: [2, 3],
+                }}
+              >
+                <Styled.h4>Resources</Styled.h4>
+                <Styled.p sx={{ m: 0 }}>
+                  Tools and platforms that I've found useful.
+                </Styled.p>
+              </Link>
+            </Grid>
+          </div>
+        </ContentGrid>
       </Container>
     </Layout>
   )
