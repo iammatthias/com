@@ -67,13 +67,13 @@ export default {
     },
   },
   sizes: {
-    maxWidth: '1280px',
+    maxWidth: '100vw',
     maxWidthCentered: '650px',
   },
   responsive: {
-    small: '35em',
-    medium: '50em',
-    large: '70em',
+    small: '35rem',
+    medium: '50rem',
+    large: '70rem',
   },
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {

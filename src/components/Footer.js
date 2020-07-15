@@ -4,13 +4,17 @@ import React from 'react' //eslint-disable-line
 import { jsx, Styled } from 'theme-ui'
 import styled from '@emotion/styled'
 
-const Wrapper = styled.footer`
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin: 0 auto;
+const Wrapper = styled.section`
+  position: relative;
+  width: calc(100% - 32px);
+
   max-width: ${props => props.theme.sizes.maxWidth};
+  flex-grow: 1;
+  margin: 16px auto;
+  @media screen and (min-width: 1281px) {
+    width: calc(100% - 256px);
+    margin: 64px auto;
+  }
 `
 
 const List = styled.ul`
@@ -19,8 +23,11 @@ const List = styled.ul`
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
-  padding: 7em 0 5em;
-  margin: 0 1.5em;
+  li {
+    margin-bottom: 16px;
+    @media screen and (min-width: 1281px) { 
+      margin-bottom: 0;
+  }
 `
 
 const Footer = () => (

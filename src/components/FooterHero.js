@@ -2,6 +2,19 @@ import React from 'react'
 import Image from 'gatsby-image'
 import { StaticQuery, graphql } from 'gatsby'
 
+import styled from '@emotion/styled'
+
+const FooterWrapper = styled.section`
+  position: relative;
+  z-index: 0;
+  margin: -16px 0 0px;
+  display: block;
+  height: 100%;
+  @media screen and (min-width: 1281px) {
+    margin: -64px 64px 0px;
+  }
+`
+
 const randomGenerator = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
@@ -33,14 +46,14 @@ export default function Hero({ data, ...props }) {
         const randomPosition = randomGenerator(1, edges.length - 1)
         const randomizedImage = edges[randomPosition].node
         return (
-          <div {...props}>
+          <FooterWrapper>
             <Image
               fluid={{
                 ...randomizedImage.heroImage.fluid,
                 aspectRatio: 2.2 / 1,
               }}
             />
-          </div>
+          </FooterWrapper>
         )
       }}
     />

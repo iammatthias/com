@@ -21,19 +21,23 @@ const Root = styled.div`
   font-family: ${props => props.theme.fonts.body};
   height: 100%;
   padding: 16px;
+  @media screen and (min-width: 1281px) {
+    padding: 0;
+  }
 `
 
 const Wrapper = styled.section`
   position: relative;
-  width: 100%;
+  width: calc(100% - 32px);
   max-width: ${props => props.theme.sizes.maxWidth};
   flex-grow: 1;
   border: 1px solid;
-  margin: 8px 16px 16px;
+  margin: 16px auto -32px;
   z-index: 1;
   background: ${props => props.theme.colors.background};
   @media screen and (min-width: 1281px) {
-    margin-top: 64px;
+    width: calc(100% - 256px);
+    margin: 64px auto -64px;
     box-shadow: -5px -5px 100px ${props => props.theme.colors.background},
       25px 25px 100px ${props => props.theme.colors.shadow};
   }
@@ -107,17 +111,7 @@ const Layout = ({
 
               {children}
             </Wrapper>
-            {location === '/' && (
-              <FooterHero
-                sx={{
-                  top: ['0', '0', '0', '-10rem'],
-                  position: 'relative',
-                  zIndex: '0',
-                  m: [0, 0, 0, 5],
-                  display: ['block', 'block', 'block'],
-                }}
-              />
-            )}
+            {location === '/' && <FooterHero />}
           </div>
           <Footer />
         </Root>

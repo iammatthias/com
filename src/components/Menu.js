@@ -134,11 +134,12 @@ const Menu = ({
       <Nav sx={{ marginTop: 'auto', marginBottom: '2em', px: [0, 0, 0, 0, 3] }}>
         {location === '/' && (
           <>
-            <Styled.p sx={{ textAlign: ['left', 'right'] }}>
-              Based in Long Beach with my wife and daughter. We have a good life
+            <Styled.p>
+              Based in Long Beach with my wife and daughter.{' '}
+              <br sx={{ display: ['none', 'block'] }} /> We have a good life
               together.
             </Styled.p>
-            <Styled.p sx={{ textAlign: ['left', 'right'] }}>
+            <Styled.p>
               Currently at Aspiration. Previously at Surf Air and General
               Assembly.
             </Styled.p>
