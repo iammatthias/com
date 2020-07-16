@@ -7,7 +7,7 @@ import styled from '@emotion/styled'
 const FooterWrapper = styled.section`
   position: relative;
   z-index: 0;
-  margin: -16px 0 0px;
+  margin: -48px 0 0;
   display: block;
   height: 100%;
   @media screen and (min-width: 1281px) {

@@ -139,7 +139,9 @@ class EmailCapture extends React.Component {
           <Styled.p sx={{ fontSize: 0 }}>
             <i>
               <b>Privacy:</b> I will never sell or share your personal
-              information. Unsubscribe at any time.
+              information.
+              <br />
+              Unsubscribe at any time.
             </i>
           </Styled.p>
           <Modal visible={this.state.showModal}>

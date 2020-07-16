@@ -31,7 +31,7 @@ const Wrapper = styled.section`
   width: calc(100% - 32px);
   max-width: ${props => props.theme.sizes.maxWidth};
   border: 1px solid;
-  margin: 16px auto -32px;
+  margin: 16px auto;
   z-index: 1;
   background: ${props => props.theme.colors.background};
   @media screen and (min-width: 1281px) {
