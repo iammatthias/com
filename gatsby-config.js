@@ -180,7 +180,7 @@ module.exports = {
         background_color: '#140D00',
         theme_color: '#140D00',
         display: 'fullscreen',
-        icon: './static/images/favicon.png',
+        icon: './static/images/fav/animoji_4.png',
       },
     },
     'gatsby-plugin-offline',
