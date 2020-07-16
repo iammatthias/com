@@ -29,6 +29,7 @@ const TagTemplate = ({ data, pageContext, location }) => {
       location={location.pathname}
       title={`Tag: ${startCase(title)}`}
       description={`Posts Tagged: ${startCase(title)}`}
+      sx={{ mb: '64px' }}
     >
       <Container>
         <PageTitle small>

@@ -26,7 +26,7 @@ const PhotoSetTemplate = ({ data, pageContext, location }) => {
       description={metaDescription}
       date={updatedAt}
       location={location.pathname}
-      sx={{ m: '64px auto' }}
+      sx={{ mb: '64px' }}
     >
       <Container>
         {galleries.map((gallery, index) => (

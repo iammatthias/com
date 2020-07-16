@@ -17,6 +17,7 @@ const Header = styled.header`
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
   grid-gap: 1em;
+  border-bottom: 1px solid;
   @media screen and (min-width: ${props => props.theme.responsive.small}) {
     grid-template-columns: 6fr 3fr;
     grid-template-rows: 1fr;
@@ -69,10 +70,10 @@ const Menu = ({
         <Link to="/">
           <Logo />
         </Link>
-        <Styled.h4 sx={{ margin: '1em 0', fontWeight: '400' }}>
+        <Styled.h4 sx={{ margin: '1em 0', fontWeight: '900' }}>
           I Am Matthias
         </Styled.h4>
-        <Styled.h5 sx={{ margin: '1em 0', fontWeight: '400', font: 'header' }}>
+        <Styled.h5 sx={{ margin: '1em 0', fontWeight: '400' }}>
           <Image
             sx={{
               height: '24px',
@@ -147,13 +148,11 @@ const Menu = ({
         )}
 
         {title && location !== '/' && (
-          <Styled.h1 sx={{ textAlign: ['left', 'right'], mb: '.5em' }}>
-            {title}
-          </Styled.h1>
+          <Styled.h1 sx={{ mb: '.5em' }}>{title}</Styled.h1>
         )}
         {blurb && location !== '/' && (
           <>
-            <Styled.p sx={{ textAlign: ['left', 'right'] }}>{blurb}</Styled.p>
+            <Styled.p>{blurb}</Styled.p>
           </>
         )}
         {date && location !== '/' && (

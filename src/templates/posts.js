@@ -18,7 +18,7 @@ const Posts = ({ data, pageContext, location }) => {
       title="Blog"
       blurb={metaDescription}
       location={location.pathname}
-      sx={{ m: '64px auto' }}
+      sx={{ mb: '64px' }}
     >
       <Container>
         <CardList>
