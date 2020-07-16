@@ -20,6 +20,7 @@ const PageTemplate = ({ data, location }) => {
           ? metaDescription.internal.content
           : body.childMarkdownRemark.excerpt
       }
+      sx={{ m: '64px auto' }}
     >
       <Container>
         <div

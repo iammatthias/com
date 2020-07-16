@@ -27,7 +27,7 @@ module.exports = ({ actions }) => {
     type MarkdownRemark implements Node
     @childOf(types: [
       "contentfulPostBodyTextNode",
-      "contentfulPostMetaDescriptionTextNode",
+      "contentfulPageMetaDescriptionTextNode",
       "contentfulPageBodyTextNode",
       "contentfulPageMetaDescriptionTextNode"
     ]) {

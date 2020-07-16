@@ -8,7 +8,7 @@ import Container from '../../../components/Container'
 
 const Posts = ({ data, pageContext, location }) => {
   return (
-    <Layout location={location.pathname}>
+    <Layout location={location.pathname} sx={{ m: '64px auto' }}>
       <Container>
         <div>
           <Styled.h2 sx={{ margin: '1em 0' }}>Generative</Styled.h2>

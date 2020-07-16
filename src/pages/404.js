@@ -14,7 +14,12 @@ const Text = styled.p`
 `
 
 const NotFoundPage = ({ location }) => (
-  <Layout location={location.pathname} title="404" description="Page Not Found">
+  <Layout
+    location={location.pathname}
+    title="404"
+    description="Page Not Found"
+    sx={{ m: '64px auto' }}
+  >
     <Container>
       <PageTitle>Page Not Found</PageTitle>
       <Text>

@@ -6,13 +6,13 @@ import styled from '@emotion/styled'
 
 const Wrapper = styled.section`
   position: relative;
-  width: calc(100% - 32px);
+  width: calc(100% - 96px);
 
   max-width: ${props => props.theme.sizes.maxWidth};
   flex-grow: 1;
   margin: 16px auto;
   @media screen and (min-width: 1281px) {
-    width: calc(100% - 256px);
+    width: calc(100% - 576px);
     margin: 64px auto;
   }
 `

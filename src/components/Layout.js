@@ -97,7 +97,6 @@ const Layout = ({
               id="main"
               sx={{
                 padding: [0, 3, 4, 5],
-                mx: 'auto',
                 borderColor: 'text',
               }}
             >
