@@ -14,12 +14,7 @@ const Posts = ({ data, pageContext, location }) => {
     'Part journal, part project log, part a little bit of everything—touching on photography, art & design, building for the web (and for emails), and life itself.'
 
   return (
-    <Layout
-      title="Blog"
-      blurb={metaDescription}
-      location={location.pathname}
-      sx={{ mb: '64px' }}
-    >
+    <Layout title="Blog" blurb={metaDescription} location={location.pathname}>
       <Container>
         <CardList>
           {posts.map(({ node: post }) => (

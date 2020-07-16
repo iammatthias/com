@@ -12,7 +12,6 @@ const Posts = ({ data, pageContext, location }) => {
       title="Resources"
       blurb="Tools and platforms that I've found useful."
       location={location.pathname}
-      sx={{ m: '64px auto' }}
     >
       <Container>
         <Styled.h2 sx={{ margin: '1em 0' }}>Site Tooling</Styled.h2>

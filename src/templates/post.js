@@ -43,7 +43,6 @@ const PostTemplate = ({ data, pageContext, location }) => {
           ? metaDescription.internal.content
           : body.childMarkdownRemark.excerpt
       }
-      sx={{ mb: '64px' }}
     >
       <Hero title={title} image={heroImage} height={'50vh'} />
       <Container>

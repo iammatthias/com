@@ -11,7 +11,7 @@ const FooterWrapper = styled.section`
   display: block;
   height: 100%;
   @media screen and (min-width: 1281px) {
-    margin: -64px 64px 0px;
+    margin: -128px 64px 0px;
   }
 `
 
