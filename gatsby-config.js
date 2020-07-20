@@ -53,10 +53,20 @@ module.exports = {
     `,
         feeds: [
           {
-            name: 'feedPost',
+            name: 'feed',
             query: `
             {
-              allContentfulPost(sort: { fields: [publishDate], order: DESC }, limit: 1) {
+              allContentfulPost(sort: { fields: [publishDate], order: DESC }, limit: 2) {
+                edges {
+                  node {
+                  title
+                  id
+                  slug
+                  publishDate(formatString: "MMMM DD, YYYY")
+                  }
+                }
+              },
+              allContentfulPhotography(sort: { fields: [publishDate], order: DESC }, limit: 2) {
                 edges {
                   node {
                   title
@@ -66,6 +76,36 @@ module.exports = {
                   }
                 }
               }
+            }
+            `,
+            normalize: ({
+              query: { site, allContentfulPost, allContentfulPhotography },
+            }) => {
+              return [allContentfulPost, allContentfulPhotography].edges.map(
+                edge => {
+                  return {
+                    title: edge.node.title,
+                    url: site.siteMetadata.siteUrl + '/' + edge.node.slug,
+                    date: edge.node.publishDate,
+                  }
+                }
+              )
+            },
+          },
+          {
+            name: 'feedPost',
+            query: `
+            {
+          allContentfulPost(sort: { fields: [publishDate], order: DESC }, limit: 1) {
+            edges {
+              node {
+              title
+              id
+              slug
+              publishDate(formatString: "MMMM DD, YYYY")
+              }
+            }
+          }
             }
             `,
             normalize: ({ query: { site, allContentfulPost } }) => {
@@ -81,18 +121,18 @@ module.exports = {
           {
             name: 'feedPhoto',
             query: `
-            {
-              allContentfulPhotography(sort: { fields: [publishDate], order: DESC }, limit: 1) {
-                edges {
-                  node {
-                  title
-                  id
-                  slug
-                  publishDate(formatString: "MMMM DD, YYYY")
-                  }
-                }
+          {
+          allContentfulPhotography(sort: { fields: [publishDate], order: DESC }, limit: 1) {
+            edges {
+              node {
+              title
+              id
+              slug
+              publishDate(formatString: "MMMM DD, YYYY")
               }
             }
+          }
+          }
             `,
             normalize: ({ query: { site, allContentfulPhotography } }) => {
               return allContentfulPhotography.edges.map(edge => {
