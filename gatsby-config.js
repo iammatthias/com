@@ -56,23 +56,23 @@ module.exports = {
             name: 'feed',
             query: `
             {
-              allContentfulPost(sort: { fields: [publishDate], order: DESC }, limit: 2) {
+              allContentfulPost(sort: { fields: [updatedAt], order: DESC }, limit: 2) {
                 edges {
                   node {
                   title
                   id
                   slug
-                  publishDate(formatString: "MMMM DD, YYYY")
+                  updatedAt(formatString: "MMMM DD, YYYY")
                   }
                 }
               }
-              allContentfulPhotography(sort: { fields: [publishDate], order: DESC }, limit: 2) {
+              allContentfulPhotography(sort: { fields: [updatedAt], order: DESC }, limit: 2) {
                 edges {
                   node {
                   title
                   id
                   slug
-                  publishDate(formatString: "MMMM DD, YYYY")
+                  updatedAt(formatString: "MMMM DD, YYYY")
                   }
                 }
               }
@@ -86,7 +86,7 @@ module.exports = {
                   title: edge.node.title,
                   slug: edge.node.slug,
                   url: site.siteMetadata.siteUrl + '/blog/' + edge.node.slug,
-                  date: edge.node.publishDate,
+                  date: edge.node.updatedAt,
                 }
               })
               let photos = allContentfulPhotography.edges.map(edge => {
@@ -97,7 +97,7 @@ module.exports = {
                     site.siteMetadata.siteUrl +
                     '/photography/' +
                     edge.node.slug,
-                  date: edge.node.publishDate,
+                  date: edge.node.updatedAt,
                 }
               })
               let combined = [...photos, ...posts].sort((a, b) => {
