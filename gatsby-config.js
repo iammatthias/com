@@ -59,26 +59,26 @@ module.exports = {
               allContentfulPost(sort: { fields: [updatedAt], order: DESC }, limit: 2) {
                 edges {
                   node {
-                  title
-                  id
-                  slug
-                  internal {
-                    type
-                  }
-                  updatedAt(formatString: "MMMM DD, YYYY")
+                    title
+                    id
+                    slug
+                    internal {
+                      type
+                    }
+                    updatedAt(formatString: "MMMM DD, YYYY")
                   }
                 }
               }
               allContentfulPhotography(sort: { fields: [updatedAt], order: DESC }, limit: 2) {
                 edges {
                   node {
-                  title
-                  id
-                  slug
-                  internal {
-                    type
-                  }
-                  updatedAt(formatString: "MMMM DD, YYYY")
+                    title
+                    id
+                    slug
+                    internal {
+                      type
+                    }
+                    updatedAt(formatString: "MMMM DD, YYYY")
                   }
                 }
               }
@@ -92,8 +92,8 @@ module.exports = {
                   title: edge.node.title,
                   slug: edge.node.slug,
                   url: site.siteMetadata.siteUrl + '/blog/' + edge.node.slug,
+                  content: edge.node.internal.type,
                   date: edge.node.updatedAt,
-                  type: edge.node.internal.type,
                 }
               })
               let photos = allContentfulPhotography.edges.map(edge => {
@@ -104,8 +104,8 @@ module.exports = {
                     site.siteMetadata.siteUrl +
                     '/photography/' +
                     edge.node.slug,
+                  content: edge.node.internal.type,
                   date: edge.node.updatedAt,
-                  type: edge.node.internal.type,
                 }
               })
               let combined = [...photos, ...posts].sort((a, b) => {
