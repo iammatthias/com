@@ -62,6 +62,9 @@ module.exports = {
                   title
                   id
                   slug
+                  internal {
+                    type
+                  }
                   updatedAt(formatString: "MMMM DD, YYYY")
                   }
                 }
@@ -72,6 +75,9 @@ module.exports = {
                   title
                   id
                   slug
+                  internal {
+                    type
+                  }
                   updatedAt(formatString: "MMMM DD, YYYY")
                   }
                 }
@@ -87,6 +93,7 @@ module.exports = {
                   slug: edge.node.slug,
                   url: site.siteMetadata.siteUrl + '/blog/' + edge.node.slug,
                   date: edge.node.updatedAt,
+                  type: edge.node.internal.type,
                 }
               })
               let photos = allContentfulPhotography.edges.map(edge => {
@@ -98,6 +105,7 @@ module.exports = {
                     '/photography/' +
                     edge.node.slug,
                   date: edge.node.updatedAt,
+                  type: edge.node.internal.type,
                 }
               })
               let combined = [...photos, ...posts].sort((a, b) => {
