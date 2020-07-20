@@ -6,6 +6,7 @@ const Wrapper = styled.section`
   position: relative;
   min-height: 300px;
   height: auto;
+  margin-bottom: 3em;
   @media (min-width: ${props => props.theme.responsive.small}) {
     height: ${props => props.height || 'auto'};
   }
@@ -17,7 +18,7 @@ const BgImg = styled(Img)`
 `
 
 const Hero = props => (
-  <Wrapper height={props.height}>
+  <Wrapper className="hero" height={props.height}>
     <BgImg fluid={props.image.fluid} />
   </Wrapper>
 )

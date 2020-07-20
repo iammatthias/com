@@ -68,7 +68,7 @@ export default {
   },
   sizes: {
     maxWidth: '100vw',
-    maxWidthCentered: '650px',
+    maxWidthCentered: '900px',
   },
   responsive: {
     small: '35rem',

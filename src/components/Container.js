@@ -9,7 +9,7 @@ const Section = styled.section`
 `
 
 const Container = props => {
-  return <Section>{props.children}</Section>
+  return <Section {...props}>{props.children}</Section>
 }
 
 export default Container

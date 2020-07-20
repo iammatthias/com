@@ -44,25 +44,31 @@ const PostTemplate = ({ data, pageContext, location }) => {
           : body.childMarkdownRemark.excerpt
       }
     >
-      <Hero title={title} image={heroImage} height={'50vh'} />
-      <Container>
-        <div
-          sx={{
-            maxWidth: theme => `${theme.sizes.maxWidthCentered}`,
-            margin: '0 auto',
-          }}
-        >
-          <article>
-            <MDXRenderer>{body.childMdx.body}</MDXRenderer>
-          </article>
-        </div>
+      <Container
+        sx={{
+          display: 'grid',
+          gridGap: '1em',
+          gridTemplateColumns:
+            'minmax(1rem, 1fr) minmax(1rem, 1fr) minmax(auto, 100ch) minmax(1rem, 1fr) minmax(1rem, 1fr)',
+          '& > *': {
+            gridColumn: ['1 / 6', '3'],
+          },
+          '& > .hero': {
+            gridColumn: '1 / 6',
+          },
+        }}
+      >
+        <Hero title={title} image={heroImage} height={'61.8vh'} />
+
+        <MDXRenderer>{body.childMdx.body}</MDXRenderer>
+
+        <PostLinks
+          previous={previous}
+          next={next}
+          basePath={basePath}
+          comments={comments}
+        />
       </Container>
-      <PostLinks
-        previous={previous}
-        next={next}
-        basePath={basePath}
-        comments={comments}
-      />
     </Layout>
   )
 }

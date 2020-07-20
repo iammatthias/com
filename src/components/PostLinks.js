@@ -6,7 +6,7 @@ import styled from '@emotion/styled'
 import { Link } from 'gatsby'
 
 const Wrapper = styled.div`
-  margin: -2em 0 0 0;
+  margin: 0;
   padding: 0 1.5em 2em;
 `
 
@@ -46,7 +46,7 @@ const NextLink = styled(Link)`
 
 const PostLinks = props => {
   return (
-    <Wrapper>
+    <Wrapper className="postLinks">
       <Box>
         <div>
           {props.comments && (
