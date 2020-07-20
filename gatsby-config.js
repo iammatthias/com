@@ -84,14 +84,19 @@ module.exports = {
               let posts = allContentfulPost.edges.map(edge => {
                 return {
                   title: edge.node.title,
-                  url: site.siteMetadata.siteUrl + '/' + edge.node.slug,
+                  slug: edge.node.slug,
+                  url: site.siteMetadata.siteUrl + '/blog/' + edge.node.slug,
                   date: edge.node.publishDate,
                 }
               })
               let photos = allContentfulPhotography.edges.map(edge => {
                 return {
                   title: edge.node.title,
-                  url: site.siteMetadata.siteUrl + '/' + edge.node.slug,
+                  slug: edge.node.slug,
+                  url:
+                    site.siteMetadata.siteUrl +
+                    '/photography/' +
+                    edge.node.slug,
                   date: edge.node.publishDate,
                 }
               })
