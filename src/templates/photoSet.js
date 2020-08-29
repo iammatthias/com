@@ -42,7 +42,7 @@ const PhotoSetTemplate = ({ data, pageContext, location }) => {
                 slug={gallery.slug}
                 images={gallery.images}
                 title={gallery.title}
-                itemsPerRow={[2, 3, 4]}
+                itemsPerRow={[2, 4, 6]}
                 parent={title}
               />
             )}
@@ -91,7 +91,7 @@ export const query = graphql`
               srcSet
               aspectRatio
             }
-            thumbnail: fluid(maxWidth: 300, quality: 50) {
+            thumbnail: fluid(maxWidth: 600, quality: 40) {
               ...GatsbyContentfulFluid_withWebp
               src
               srcSet
