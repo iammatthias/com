@@ -111,7 +111,7 @@ const Posts = ({ data, pageContext, location }) => {
                   >
                     <Styled.h4>{post.title}</Styled.h4>
                     <Styled.p>
-                      Updated: {post.updatedAt} &nbsp;/&nbsp;/&nbsp;
+                      Published: {post.publishDate} &nbsp;/&nbsp;/&nbsp;
                       {post.body.childMarkdownRemark.timeToRead} minute read
                     </Styled.p>
                   </Tooltip>
@@ -202,7 +202,7 @@ const Posts = ({ data, pageContext, location }) => {
 
 export const query = graphql`
   query {
-    allContentfulPost(sort: { fields: [publishDate], order: DESC }, limit: 4) {
+    allContentfulPost(sort: { fields: publishDate, order: DESC }, limit: 4) {
       edges {
         node {
           title
@@ -228,7 +228,7 @@ export const query = graphql`
       }
     }
     allContentfulPhotography(
-      sort: { fields: [updatedAt], order: DESC }
+      sort: { fields: updatedAt, order: DESC }
       limit: 4
     ) {
       edges {

@@ -24,7 +24,7 @@ const Posts = ({ data, pageContext, location }) => {
             <Card
               key={gallery.id}
               {...gallery}
-              basePath={basePath + 'photography'}
+              basePath={basePath + location.pathname}
             />
           ))}
         </CardList>
@@ -35,7 +35,7 @@ const Posts = ({ data, pageContext, location }) => {
 
 export const query = graphql`
   query {
-    allContentfulPhotography(sort: { fields: [publishDate], order: DESC }) {
+    allContentfulPhotography(sort: { fields: updatedAt, order: DESC }) {
       edges {
         node {
           title

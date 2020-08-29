@@ -18,7 +18,11 @@ const Posts = ({ data, pageContext, location }) => {
       <Container>
         <CardList>
           {posts.map(({ node: post }) => (
-            <Card key={post.id} {...post} basePath={basePath + 'blog'} />
+            <Card
+              key={post.id}
+              {...post}
+              basePath={basePath + location.pathname}
+            />
           ))}
         </CardList>
       </Container>
