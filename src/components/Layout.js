@@ -16,6 +16,8 @@ import theme from 'gatsby-plugin-theme-ui'
 
 import { MDXGlobalComponents } from '../gatsby-plugin-theme-ui/components'
 
+import { MDXRenderer } from 'gatsby-plugin-mdx'
+
 const Root = styled.div`
   background: ${props => props.theme.colors.background};
   font-family: ${props => props.theme.fonts.body};
@@ -89,9 +91,7 @@ const Layout = ({
             image={socialImage}
             description={description}
           />
-          <Global
-            styles={(theme => theme.styles.Global(theme), globalStyles)}
-          />
+          <Global styles={globalStyles} />
           <div className="siteContent" {...props}>
             <Wrapper
               id="main"

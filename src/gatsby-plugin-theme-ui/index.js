@@ -179,12 +179,15 @@ export default {
       paddingLeft: 3,
       borderLeft: '1px solid',
       borderColor: 'inherit',
+      p: {
+        marginBottom: 0,
+      },
     },
     pre: {
       fontFamily: 'monospace',
       overflowX: 'auto',
       p: 3,
-      mb: 3,
+      mb: 0,
       border: '1px solid',
       borderColor: 'inherit',
       code: {

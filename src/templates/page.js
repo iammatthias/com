@@ -6,7 +6,7 @@ import { graphql } from 'gatsby'
 import Layout from '../components/Layout'
 import Container from '../components/Container'
 
-import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
+import { MDXRenderer } from 'gatsby-plugin-mdx'
 
 const PageTemplate = ({ data, location }) => {
   const { title, metaDescription, body } = data.contentfulPage

@@ -8,7 +8,7 @@ import Hero from '../components/Hero'
 import Container from '../components/Container'
 import PostLinks from '../components/PostLinks'
 
-import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer'
+import { MDXRenderer } from 'gatsby-plugin-mdx'
 
 const PostTemplate = ({ data, pageContext, location }) => {
   const {

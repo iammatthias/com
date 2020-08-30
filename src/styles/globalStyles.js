@@ -141,6 +141,10 @@ export const globalStyles = css`
     list-style: none;
   }
 
+  blockquote p {
+    margin-bottom: 0;
+  }
+
   blockquote,
   q {
     quotes: none;

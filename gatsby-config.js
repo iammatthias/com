@@ -137,9 +137,6 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-plugin-mdx`,
-    },
-    {
       resolve: `gatsby-transformer-remark`,
       options: {
         plugins: [
@@ -193,6 +190,7 @@ module.exports = {
         icon: './static/images/favicon.png',
       },
     },
+    `gatsby-plugin-mdx`,
     'gatsby-plugin-offline',
     // {
     //   resolve: `gatsby-plugin-schema-snapshot`,
