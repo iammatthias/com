@@ -38,11 +38,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
       tags={tags}
       basePath={basePath}
       location={location.pathname}
-      description={
-        metaDescription
-          ? metaDescription.internal.content
-          : body.childMarkdownRemark.excerpt
-      }
+      description={metaDescription.internal.content}
     >
       <Container
         sx={{
