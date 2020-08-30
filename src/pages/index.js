@@ -17,22 +17,12 @@ const ContentGrid = styled.div`
   grid-template-rows: 1fr;
   grid-gap: 1em;
   @media screen and (min-width: ${props => props.theme.responsive.small}) {
-    grid-template-columns: 6fr 3fr;
+    grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
   }
   @media screen and (min-width: 1801px) {
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr;
-  }
-`
-
-const List = styled.ul`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin: 2em auto;
-  @media screen and (min-width: ${props => props.theme.responsive.small}) {
-    margin: 0 auto;
   }
 `
 
