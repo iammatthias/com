@@ -46,19 +46,34 @@ const Posts = ({ data, pageContext, location }) => {
         <ContentGrid>
           <div>
             <Styled.h2 sx={{ margin: '1em 0' }}>Photography</Styled.h2>
-            <List>
+            <Grid gap={3} rows={'auto'}>
               {photography.map(({ node: photoSet }) => (
                 <Link
                   key={photoSet.id}
                   to={`/photography/${photoSet.slug}/`}
-                  sx={{ color: 'text', textDecoration: 'none' }}
+                  sx={{
+                    color: 'text',
+                    textDecoration: 'none',
+                    border: '1px solid',
+                    bordercolor: 'inherit',
+                    padding: [2, 3],
+                    borderRadius: '4px',
+                  }}
                 >
                   <Tooltip
                     // options
                     position="bottom"
                     followCursor="true"
                     html={
-                      <div style={{ width: '200px' }}>
+                      <div
+                        style={{
+                          width: '200px',
+                          border: '1px solid',
+                          bordercolor: 'inherit',
+                          borderRadius: '4px',
+                          overflow: 'hidden',
+                        }}
+                      >
                         <Img
                           fluid={{
                             ...photoSet.heroImage.thumbnail,
@@ -69,7 +84,9 @@ const Posts = ({ data, pageContext, location }) => {
                     }
                   >
                     <Styled.h4>{photoSet.title}</Styled.h4>
-                    <Styled.p>Updated: {photoSet.updatedAt}</Styled.p>
+                    <Styled.p sx={{ m: 0 }}>
+                      Updated: {photoSet.updatedAt}
+                    </Styled.p>
                   </Tooltip>
                 </Link>
               ))}
@@ -83,23 +100,39 @@ const Posts = ({ data, pageContext, location }) => {
               >
                 <Styled.p>View more...</Styled.p>
               </Link>
-            </List>
+            </Grid>
           </div>
           <div>
             <Styled.h2 sx={{ margin: '1em 0' }}>Recent Posts</Styled.h2>
-            <List>
+
+            <Grid gap={3} rows={'auto'}>
               {posts.map(({ node: post }) => (
                 <Link
                   key={post.id}
                   to={`/blog/${post.slug}/`}
-                  sx={{ color: 'text', textDecoration: 'none' }}
+                  sx={{
+                    color: 'text',
+                    textDecoration: 'none',
+                    border: '1px solid',
+                    bordercolor: 'inherit',
+                    padding: [2, 3],
+                    borderRadius: '4px',
+                  }}
                 >
                   <Tooltip
                     // options
                     position="bottom"
                     followCursor="true"
                     html={
-                      <div style={{ width: '200px' }}>
+                      <div
+                        style={{
+                          width: '200px',
+                          border: '1px solid',
+                          bordercolor: 'inherit',
+                          borderRadius: '4px',
+                          overflow: 'hidden',
+                        }}
+                      >
                         <Img
                           fluid={{
                             ...post.heroImage.thumbnail,
@@ -110,7 +143,7 @@ const Posts = ({ data, pageContext, location }) => {
                     }
                   >
                     <Styled.h4>{post.title}</Styled.h4>
-                    <Styled.p>
+                    <Styled.p sx={{ m: 0 }}>
                       Published: {post.publishDate} &nbsp;/&nbsp;/&nbsp;
                       {post.body.childMarkdownRemark.timeToRead} minute read
                     </Styled.p>
@@ -128,12 +161,12 @@ const Posts = ({ data, pageContext, location }) => {
               >
                 <Styled.p>View more...</Styled.p>
               </Link>
-            </List>
+            </Grid>
           </div>
           <div>
             <Styled.h2 sx={{ margin: '1em 0' }}>Etcetera</Styled.h2>
 
-            <Grid gap={3} columns={[1, 2, 4]}>
+            <Grid gap={3} rows={'auto'}>
               {/* <Link
               to={`/resume/`}
               sx={{
@@ -155,6 +188,7 @@ const Posts = ({ data, pageContext, location }) => {
                   border: '1px solid',
                   bordercolor: 'inherit',
                   padding: [2, 3],
+                  borderRadius: '4px',
                 }}
               >
                 <Styled.h4>Generative</Styled.h4>
@@ -170,6 +204,7 @@ const Posts = ({ data, pageContext, location }) => {
                   border: '1px solid',
                   bordercolor: 'inherit',
                   padding: [2, 3],
+                  borderRadius: '4px',
                 }}
               >
                 <Styled.h4>Time</Styled.h4>
@@ -185,6 +220,7 @@ const Posts = ({ data, pageContext, location }) => {
                   border: '1px solid',
                   bordercolor: 'inherit',
                   padding: [2, 3],
+                  borderRadius: '4px',
                 }}
               >
                 <Styled.h4>Resources</Styled.h4>
@@ -211,7 +247,7 @@ export const query = graphql`
           publishDate(formatString: "MMMM DD, YYYY")
           updatedAt(formatString: "MMMM DD, YYYY")
           heroImage {
-            thumbnail: fluid(maxWidth: 200, quality: 50) {
+            thumbnail: fluid(maxWidth: 400, quality: 50) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio
@@ -239,7 +275,7 @@ export const query = graphql`
           publishDate(formatString: "MMMM DD, YYYY")
           updatedAt(formatString: "MMMM DD, YYYY")
           heroImage {
-            thumbnail: fluid(maxWidth: 200, quality: 50) {
+            thumbnail: fluid(maxWidth: 400, quality: 50) {
               ...GatsbyContentfulFluid_withWebp
               src
               aspectRatio

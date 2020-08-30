@@ -29,7 +29,7 @@ export default function Hero({ data, ...props }) {
               node {
                 heroImage {
                   id
-                  fluid(maxWidth: 1280, quality: 45) {
+                  fluid(maxWidth: 1200, quality: 35) {
                     ...GatsbyContentfulFluid_withWebp
                     src
                     aspectRatio

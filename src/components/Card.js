@@ -45,11 +45,23 @@ const Card = ({ slug, heroImage, title, updatedAt, body, ...props }) => {
     <>
       {heroImage && (
         <Post featured={props.featured}>
-          <Link to={`${props.basePath}/${slug}`}>
+          <Link
+            to={`${props.basePath}/${slug}`}
+            sx={{
+              border: '1px solid',
+              bordercolor: 'inherit',
+              borderRadius: '4px',
+              overflow: 'hidden',
+            }}
+          >
             <Img
               fluid={heroImage.fluid}
               backgroundColor={'#eeeeee'}
-              sx={{ mb: 3 }}
+              sx={{
+                mb: 3,
+                borderBottom: '1px solid',
+                bordercolor: 'inherit',
+              }}
             />
             <Styled.h3 sx={{ mx: 3 }}>{title}</Styled.h3>
             <Styled.p sx={{ mx: 3 }}>

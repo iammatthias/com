@@ -16,26 +16,23 @@ import theme from 'gatsby-plugin-theme-ui'
 
 import { MDXGlobalComponents } from '../gatsby-plugin-theme-ui/components'
 
-import { MDXRenderer } from 'gatsby-plugin-mdx'
-
 const Root = styled.div`
   background: ${props => props.theme.colors.background};
   font-family: ${props => props.theme.fonts.body};
   height: 100%;
-  padding: 16px;
-  @media screen and (min-width: 1281px) {
-    padding: 0;
-  }
+  padding: 0;
 `
 
 const Wrapper = styled.section`
   position: relative;
-  width: calc(100% - 32px);
+  width: calc(100% - 24px);
   max-width: ${props => props.theme.sizes.maxWidth};
   border: 1px solid;
-  margin: 16px auto;
+  margin: 12px auto;
   z-index: 1;
   background: ${props => props.theme.colors.background};
+  border-radius: 4px;
+
   @media screen and (min-width: 1281px) {
     width: calc(100% - 384px);
     margin: 64px auto;

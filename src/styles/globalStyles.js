@@ -94,6 +94,12 @@ export const globalStyles = css`
     vertical-align: baseline;
   }
 
+  * {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   /* Added to Fix Footer to bottom of viewport */
   html,
   body {
