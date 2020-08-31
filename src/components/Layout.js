@@ -32,7 +32,6 @@ const Wrapper = styled.section`
   z-index: 1;
   background: ${props => props.theme.colors.background};
   border-radius: 4px;
-
   @media screen and (min-width: 1281px) {
     width: calc(100% - 384px);
     margin: 64px auto;

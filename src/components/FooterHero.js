@@ -10,8 +10,13 @@ const FooterWrapper = styled.section`
   margin: -48px 0 0;
   display: block;
   height: 100%;
+  border: 1px solid;
+  border-radius: 4px;
+  overflow: none;
   @media screen and (min-width: 1281px) {
     margin: -128px 64px 0px;
+    box-shadow: -5px -5px 100px ${props => props.theme.colors.background},
+      25px 25px 100px ${props => props.theme.colors.shadow};
   }
 `
 
