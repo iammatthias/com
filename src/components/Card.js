@@ -40,13 +40,13 @@ const Post = styled.li`
   }
 `
 
-const Card = ({ slug, heroImage, title, updatedAt, body, ...props }) => {
+const Card = ({ slug, heroImage, title, updatedAt, body, path, ...props }) => {
   return (
     <>
       {heroImage && (
         <Post featured={props.featured}>
           <Link
-            to={`${props.basePath}/${slug}`}
+            to={`/${path}/${slug}`}
             sx={{
               border: '1px solid',
               bordercolor: 'inherit',

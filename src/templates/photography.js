@@ -7,7 +7,6 @@ import Container from '../components/Container'
 
 const Posts = ({ data, pageContext, location }) => {
   const photoSets = data.allContentfulPhotography.edges
-  const { basePath } = pageContext
 
   const metaDescription = 'A camera and a dream.'
 
@@ -21,11 +20,7 @@ const Posts = ({ data, pageContext, location }) => {
       <Container>
         <CardList>
           {photoSets.map(({ node: gallery }) => (
-            <Card
-              key={gallery.id}
-              {...gallery}
-              basePath={basePath + location.pathname}
-            />
+            <Card key={gallery.id} {...gallery} path="photography" />
           ))}
         </CardList>
       </Container>

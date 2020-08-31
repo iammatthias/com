@@ -8,7 +8,6 @@ import Pagination from '../components/Pagination'
 
 const Posts = ({ data, pageContext, location }) => {
   const posts = data.allContentfulPost.edges
-  const { basePath } = pageContext
 
   const metaDescription =
     'Part journal, part project log, part a little bit of everything—touching on photography, art & design, building for the web (and for emails), and life itself.'
@@ -18,11 +17,7 @@ const Posts = ({ data, pageContext, location }) => {
       <Container>
         <CardList>
           {posts.map(({ node: post }) => (
-            <Card
-              key={post.id}
-              {...post}
-              basePath={basePath + location.pathname}
-            />
+            <Card key={post.id} {...post} path="blog" />
           ))}
         </CardList>
       </Container>
