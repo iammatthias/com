@@ -93,7 +93,7 @@ module.exports = {
                   slug: edge.node.slug,
                   url: site.siteMetadata.siteUrl + '/blog/' + edge.node.slug,
                   content: edge.node.internal.type,
-                  date: edge.node.updatedAt,
+                  date: edge.node.publishDate,
                 }
               })
               let photos = allContentfulPhotography.edges.map(edge => {

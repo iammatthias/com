@@ -42,7 +42,7 @@ const PhotoSetTemplate = ({ data, pageContext, location }) => {
                 slug={gallery.slug}
                 images={gallery.images}
                 title={gallery.title}
-                itemsPerRow={[2, 4, 6]}
+                itemsPerRow={[3, 5, 7]}
                 parent={title}
               />
             )}

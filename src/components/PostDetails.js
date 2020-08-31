@@ -7,9 +7,6 @@ const Wrapper = styled.div`
   span {
     margin: 0 0.5rem;
   }
-  @media screen and (min-width: ${props => props.theme.responsive.small}) {
-    text-align: right;
-  }
 `
 
 const Date = styled.p`
