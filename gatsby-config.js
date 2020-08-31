@@ -65,7 +65,7 @@ module.exports = {
                     internal {
                       type
                     }
-                    updatedAt(formatString: "MMMM DD, YYYY")
+                    publishDate(formatString: "MMMM DD, YYYY")
                   }
                 }
               }
