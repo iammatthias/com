@@ -127,6 +127,7 @@ const GalleryGrid = ({
                   title={image.title}
                   alt={image.title}
                   sx={{
+                    height: '100%',
                     width: rowAspectRatioSumsByBreakpoints.map(
                       (rowAspectRatioSums, j) => {
                         const rowIndex = Math.floor(
@@ -138,7 +139,7 @@ const GalleryGrid = ({
                           100}%`
                       }
                     ),
-                    maxWidth: '65%',
+                    maxWidth: ['100%', '65%', '17%'],
                     p: 2,
                   }}
                   css={{

@@ -10,8 +10,8 @@ import { Tooltip } from 'react-tippy'
 const Item = styled(Link)`
   color: ${props => props.theme.colors.text};
   background: ${props => props.theme.colors.secondary};
-  box-shadow: -25px -25px 75px ${props => props.theme.colors.background},
-    25px 25px 100px ${props => props.theme.colors.shadow};
+  box-shadow: -5px -5px 35px ${props => props.theme.colors.background},
+    5px 5px 35px ${props => props.theme.colors.shadow};
   border: 1px solid;
   border-color: inherit;
   border-radius: 4px;

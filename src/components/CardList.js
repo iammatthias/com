@@ -7,13 +7,13 @@ const CardList = ({ location, ...props }) => {
   return (
     <>
       {location === '/' && (
-        <Grid gap={3} rows={'auto'}>
+        <Grid gap={'2em'} rows={'auto'}>
           {props.children}
         </Grid>
       )}
       {location !== '/' && (
         <Grid
-          gap={3}
+          gap={'2em'}
           rows={'auto'}
           columns={['1fr', '1fr 1fr', '1fr 1fr 1fr']}
           sx={{ mb: 4 }}

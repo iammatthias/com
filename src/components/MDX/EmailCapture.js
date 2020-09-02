@@ -30,7 +30,6 @@ const Form = styled.form`
   }
   input {
     padding: 16px;
-
     color: ${props => props.theme.colors.text};
     background: ${props => props.theme.colors.secondary};
     &::placeholder {
@@ -125,6 +124,9 @@ class EmailCapture extends React.Component {
         sx={{
           border: '1px solid',
           borderColor: 'inherit',
+          borderRadius: '4px',
+          boxShadow: theme =>
+            `5px -5px 35px ${theme.colors.background}, 5px 5px 35px ${theme.colors.shadow}`,
           alignItems: 'center',
           mb: 3,
           flexWrap: ['wrap', 'nowrap'],

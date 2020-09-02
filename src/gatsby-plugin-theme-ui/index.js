@@ -190,6 +190,7 @@ export default {
       mb: 0,
       border: '1px solid',
       borderColor: 'inherit',
+      borderRadius: '4px',
       code: {
         color: 'inherit',
       },

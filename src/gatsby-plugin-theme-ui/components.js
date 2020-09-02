@@ -41,7 +41,7 @@ export const MDXGlobalComponents = {
       sx={{
         background: theme => `${theme.colors.secondary}`,
         boxShadow: theme =>
-          `-25px -25px 75px ${theme.colors.background}, 25px 25px 100px ${theme.colors.shadow}`,
+          `5px -5px 35px ${theme.colors.background}, 5px 5px 35px ${theme.colors.shadow}`,
         border: '1px solid',
         borderColor: 'inherit',
         borderRadius: '4px',
