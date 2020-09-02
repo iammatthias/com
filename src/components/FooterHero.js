@@ -7,7 +7,7 @@ import styled from '@emotion/styled'
 const FooterWrapper = styled.section`
   position: relative;
   z-index: 0;
-  margin: -48px 0 0;
+  margin: -48px 8px 0;
   display: block;
   height: 100%;
   border: 1px solid;

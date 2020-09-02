@@ -25,10 +25,10 @@ const Root = styled.div`
 
 const Wrapper = styled.section`
   position: relative;
-  width: calc(100% - 24px);
+  width: calc(100% - 32px);
   max-width: ${props => props.theme.sizes.maxWidth};
   border: 1px solid;
-  margin: 12px auto;
+  margin: 16px auto;
   z-index: 1;
   background: ${props => props.theme.colors.background};
   border-radius: 4px;
