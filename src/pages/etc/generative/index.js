@@ -25,6 +25,7 @@ const Posts = ({ data, pageContext, location }) => {
                 border: '1px solid',
                 bordercolor: 'inherit',
                 padding: [2, 3],
+                borderRadius: '4px',
               }}
             >
               <Styled.h4>Simplex Flowers</Styled.h4>
@@ -40,6 +41,7 @@ const Posts = ({ data, pageContext, location }) => {
                 border: '1px solid',
                 bordercolor: 'inherit',
                 padding: [2, 3],
+                borderRadius: '4px',
               }}
             >
               <Styled.h4>Circle Packing</Styled.h4>
@@ -53,6 +55,7 @@ const Posts = ({ data, pageContext, location }) => {
                 border: '1px solid',
                 bordercolor: 'inherit',
                 padding: [2, 3],
+                borderRadius: '4px',
               }}
             >
               <Styled.h4>Cubic Disaray</Styled.h4>
@@ -66,6 +69,7 @@ const Posts = ({ data, pageContext, location }) => {
                 border: '1px solid',
                 bordercolor: 'inherit',
                 padding: [2, 3],
+                borderRadius: '4px',
               }}
             >
               <Styled.h4>Hypnotic Squares</Styled.h4>
@@ -79,6 +83,7 @@ const Posts = ({ data, pageContext, location }) => {
                 border: '1px solid',
                 bordercolor: 'inherit',
                 padding: [2, 3],
+                borderRadius: '4px',
               }}
             >
               <Styled.h4>Joy Division</Styled.h4>
@@ -93,6 +98,7 @@ const Posts = ({ data, pageContext, location }) => {
                 border: '1px solid',
                 bordercolor: 'inherit',
                 padding: [2, 3],
+                borderRadius: '4px',
               }}
             >
               <Styled.h4>Mondrian</Styled.h4>
@@ -106,6 +112,7 @@ const Posts = ({ data, pageContext, location }) => {
                 border: '1px solid',
                 bordercolor: 'inherit',
                 padding: [2, 3],
+                borderRadius: '4px',
               }}
             >
               <Styled.h4>Tiled Lines</Styled.h4>
@@ -119,6 +126,7 @@ const Posts = ({ data, pageContext, location }) => {
                 border: '1px solid',
                 bordercolor: 'inherit',
                 padding: [2, 3],
+                borderRadius: '4px',
               }}
             >
               <Styled.h4>Triangular Mesh</Styled.h4>
@@ -132,6 +140,7 @@ const Posts = ({ data, pageContext, location }) => {
                 border: '1px solid',
                 bordercolor: 'inherit',
                 padding: [2, 3],
+                borderRadius: '4px',
               }}
             >
               <Styled.h4>Un Deux Trois</Styled.h4>

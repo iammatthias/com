@@ -18,9 +18,15 @@ const Posts = ({ data, pageContext, location }) => {
       location={location.pathname}
     >
       <Container>
-        <CardList>
+        <CardList location={location.pathname}>
           {photoSets.map(({ node: gallery }) => (
-            <Card key={gallery.id} {...gallery} path="photography" />
+            <Card
+              key={gallery.id}
+              to={`/photography/${gallery.slug}/`}
+              heroImage={gallery.heroImage.fluid}
+              title={gallery.title}
+              time={'Updated: ' + gallery.updatedAt}
+            />
           ))}
         </CardList>
       </Container>

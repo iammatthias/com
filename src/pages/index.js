@@ -1,14 +1,13 @@
 /** @jsx jsx */
 
 import React from 'react' //eslint-disable-line
-import { jsx, Styled, Grid } from 'theme-ui'
+import { jsx, Styled } from 'theme-ui'
 import { graphql, Link } from 'gatsby'
 import styled from '@emotion/styled'
 import Layout from '../components/Layout'
 import Container from '../components/Container'
-import Img from 'gatsby-image'
-
-import { Tooltip } from 'react-tippy'
+import CardList from '../components/CardList'
+import Card from '../components/Card'
 
 const ContentGrid = styled.div`
   width: 100%;
@@ -36,49 +35,15 @@ const Posts = ({ data, pageContext, location }) => {
         <ContentGrid>
           <div>
             <Styled.h2 sx={{ margin: '1em 0' }}>Photography</Styled.h2>
-            <Grid gap={3} rows={'auto'}>
+            <CardList location={location.pathname}>
               {photography.map(({ node: photoSet }) => (
-                <Link
+                <Card
                   key={photoSet.id}
                   to={`/photography/${photoSet.slug}/`}
-                  sx={{
-                    color: 'text',
-                    textDecoration: 'none',
-                    border: '1px solid',
-                    bordercolor: 'inherit',
-                    padding: [2, 3],
-                    borderRadius: '4px',
-                  }}
-                >
-                  <Tooltip
-                    // options
-                    position="bottom"
-                    followCursor="true"
-                    html={
-                      <div
-                        style={{
-                          width: '200px',
-                          border: '1px solid',
-                          bordercolor: 'inherit',
-                          borderRadius: '4px',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <Img
-                          fluid={{
-                            ...photoSet.heroImage.thumbnail,
-                            aspectRatio: 4 / 3,
-                          }}
-                        />
-                      </div>
-                    }
-                  >
-                    <Styled.h4>{photoSet.title}</Styled.h4>
-                    <Styled.p sx={{ m: 0 }}>
-                      Updated: {photoSet.updatedAt}
-                    </Styled.p>
-                  </Tooltip>
-                </Link>
+                  thumbnail={photoSet.heroImage.thumbnail}
+                  title={photoSet.title}
+                  time={'Updated: ' + photoSet.updatedAt}
+                />
               ))}
               <Link
                 to={`/photography/`}
@@ -90,55 +55,26 @@ const Posts = ({ data, pageContext, location }) => {
               >
                 <Styled.p>View more...</Styled.p>
               </Link>
-            </Grid>
+            </CardList>
           </div>
           <div>
             <Styled.h2 sx={{ margin: '1em 0' }}>Recent Posts</Styled.h2>
 
-            <Grid gap={3} rows={'auto'}>
+            <CardList location={location.pathname}>
               {posts.map(({ node: post }) => (
-                <Link
+                <Card
                   key={post.id}
                   to={`/blog/${post.slug}/`}
-                  sx={{
-                    color: 'text',
-                    textDecoration: 'none',
-                    border: '1px solid',
-                    bordercolor: 'inherit',
-                    padding: [2, 3],
-                    borderRadius: '4px',
-                  }}
-                >
-                  <Tooltip
-                    // options
-                    position="bottom"
-                    followCursor="true"
-                    html={
-                      <div
-                        style={{
-                          width: '200px',
-                          border: '1px solid',
-                          bordercolor: 'inherit',
-                          borderRadius: '4px',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <Img
-                          fluid={{
-                            ...post.heroImage.thumbnail,
-                            aspectRatio: 4 / 3,
-                          }}
-                        />
-                      </div>
-                    }
-                  >
-                    <Styled.h4>{post.title}</Styled.h4>
-                    <Styled.p sx={{ m: 0 }}>
-                      Published: {post.publishDate} &nbsp;/&nbsp;/&nbsp;
-                      {post.body.childMarkdownRemark.timeToRead} minute read
-                    </Styled.p>
-                  </Tooltip>
-                </Link>
+                  thumbnail={post.heroImage.thumbnail}
+                  title={post.title}
+                  time={
+                    'Published: ' +
+                    post.publishDate +
+                    '\u00A0 \u00A0 \u00A0' +
+                    post.body.childMarkdownRemark.timeToRead +
+                    ' minute read'
+                  }
+                />
               ))}
               <Link
                 to={`/blog/`}
@@ -151,74 +87,34 @@ const Posts = ({ data, pageContext, location }) => {
               >
                 <Styled.p>View more...</Styled.p>
               </Link>
-            </Grid>
+            </CardList>
           </div>
           <div>
             <Styled.h2 sx={{ margin: '1em 0' }}>Etcetera</Styled.h2>
 
-            <Grid gap={3} rows={'auto'}>
-              {/* <Link
-              to={`/resume/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-              }}
-            >
-              <Styled.h4>Resume</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>Interested in working together?</Styled.p>
-            </Link> */}
-              <Link
+            <CardList location={location.pathname}>
+              {/* <Card
+                to={`/resume/`}
+                title="Resume"
+                time="Interested in working together?"
+              /> */}
+
+              <Card
                 to={`/etc/generative/`}
-                sx={{
-                  color: 'text',
-                  textDecoration: 'none',
-                  border: '1px solid',
-                  bordercolor: 'inherit',
-                  padding: [2, 3],
-                  borderRadius: '4px',
-                }}
-              >
-                <Styled.h4>Generative</Styled.h4>
-                <Styled.p sx={{ m: 0 }}>
-                  Trying my hand at generative art, learning as I go.
-                </Styled.p>
-              </Link>
-              <Link
+                title="Generative"
+                time="Trying my hand at generative art, learning as I go."
+              />
+              <Card
                 to={`/etc/time/`}
-                sx={{
-                  color: 'text',
-                  textDecoration: 'none',
-                  border: '1px solid',
-                  bordercolor: 'inherit',
-                  padding: [2, 3],
-                  borderRadius: '4px',
-                }}
-              >
-                <Styled.h4>Time</Styled.h4>
-                <Styled.p sx={{ m: 0 }}>
-                  A real time local clock with a dynamic background gradient.
-                </Styled.p>
-              </Link>
-              <Link
+                title="Time"
+                time="A real time local clock with a dynamic background gradient."
+              />
+              <Card
                 to={`/resources/`}
-                sx={{
-                  color: 'text',
-                  textDecoration: 'none',
-                  border: '1px solid',
-                  bordercolor: 'inherit',
-                  padding: [2, 3],
-                  borderRadius: '4px',
-                }}
-              >
-                <Styled.h4>Resources</Styled.h4>
-                <Styled.p sx={{ m: 0 }}>
-                  Tools and platforms that I've found useful.
-                </Styled.p>
-              </Link>
-            </Grid>
+                title="Resources"
+                time="Tools and platforms that I've found useful."
+              />
+            </CardList>
           </div>
         </ContentGrid>
       </Container>

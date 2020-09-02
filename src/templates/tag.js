@@ -38,7 +38,19 @@ const TagTemplate = ({ data, pageContext, location }) => {
         </PageTitle>
         <CardList>
           {posts.slice(skip, limit * humanPageNumber).map(post => (
-            <Card {...post} key={post.id} basePath={basePath + '/blog/'} />
+            <Card
+              key={post.id}
+              to={`/blog/${post.slug}/`}
+              heroImage={post.heroImage.fluid}
+              title={post.title}
+              time={
+                'Published: ' +
+                post.publishDate +
+                '\u00A0 \u00A0 \u00A0' +
+                post.body.childMarkdownRemark.timeToRead +
+                ' minute read'
+              }
+            />
           ))}
         </CardList>
       </Container>

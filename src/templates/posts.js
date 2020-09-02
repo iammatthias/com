@@ -15,9 +15,21 @@ const Posts = ({ data, pageContext, location }) => {
   return (
     <Layout title="Blog" blurb={metaDescription} location={location.pathname}>
       <Container>
-        <CardList>
+        <CardList location={location.pathname}>
           {posts.map(({ node: post }) => (
-            <Card key={post.id} {...post} path="blog" />
+            <Card
+              key={post.id}
+              to={`/blog/${post.slug}/`}
+              heroImage={post.heroImage.fluid}
+              title={post.title}
+              time={
+                'Published: ' +
+                post.publishDate +
+                '\u00A0 \u00A0 \u00A0' +
+                post.body.childMarkdownRemark.timeToRead +
+                ' minute read'
+              }
+            />
           ))}
         </CardList>
       </Container>

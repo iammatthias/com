@@ -1,6 +1,9 @@
-import React from 'react'
+/** @jsx jsx */
+
+import React from 'react' //eslint-disable-line
 
 import {
+  jsx,
   Box,
   Flex,
   Grid,
@@ -32,7 +35,20 @@ export const MDXGlobalComponents = {
   // eslint-disable-next-line react/display-name
   Link: props => <Link {...props} />,
   // eslint-disable-next-line react/display-name
-  Image: props => <Image {...props} />,
+  Image: props => (
+    <Image
+      {...props}
+      sx={{
+        background: theme => `${theme.colors.secondary}`,
+        boxShadow: theme =>
+          `-25px -25px 75px ${theme.colors.background}, 25px 25px 100px ${theme.colors.shadow}`,
+        border: '1px solid',
+        borderColor: 'inherit',
+        borderRadius: '4px',
+        overflow: 'hidden',
+      }}
+    />
+  ),
   // eslint-disable-next-line react/display-name
   Card: props => <Card {...props} />,
   // eslint-disable-next-line react/display-name

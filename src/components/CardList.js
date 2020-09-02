@@ -1,19 +1,28 @@
-import React from 'react'
-import styled from '@emotion/styled'
+/** @jsx jsx */
 
-const List = styled.ul`
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  margin: 0 auto;
-  &::after {
-    content: '';
-    flex: 0 0 32%;
-  }
-`
+import React from 'react' //eslint-disable-line
+import { jsx, Grid } from 'theme-ui'
 
-const CardList = props => {
-  return <List>{props.children}</List>
+const CardList = ({ location, ...props }) => {
+  return (
+    <>
+      {location === '/' && (
+        <Grid gap={3} rows={'auto'}>
+          {props.children}
+        </Grid>
+      )}
+      {location !== '/' && (
+        <Grid
+          gap={3}
+          rows={'auto'}
+          columns={['1fr', '1fr 1fr', '1fr 1fr 1fr']}
+          sx={{ mb: 4 }}
+        >
+          {props.children}
+        </Grid>
+      )}
+    </>
+  )
 }
 
 export default CardList

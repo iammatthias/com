@@ -1,78 +1,99 @@
 /** @jsx jsx */
 
 import React from 'react' //eslint-disable-line
-import { jsx, Styled } from 'theme-ui'
-import styled from '@emotion/styled'
+import { jsx, Styled, Box } from 'theme-ui'
 import { Link } from 'gatsby'
+import styled from '@emotion/styled'
 import Img from 'gatsby-image'
+import { Tooltip } from 'react-tippy'
 
-const Post = styled.li`
-  position: relative;
-  border-radius: 2px;
-  margin: 0 0 1em 0;
-  width: 100%;
-  transition: background 0.2s;
+const Item = styled(Link)`
+  color: ${props => props.theme.colors.text};
   background: ${props => props.theme.colors.secondary};
   box-shadow: -25px -25px 75px ${props => props.theme.colors.background},
     25px 25px 100px ${props => props.theme.colors.shadow};
-  @media screen and (min-width: ${props => props.theme.responsive.small}) {
-    flex: ${props => (props.featured ? '0 0 100%' : '0 0 49%')};
-    margin: 0 0 2vw 0;
-  }
-  @media screen and (min-width: ${props => props.theme.responsive.medium}) {
-    flex: ${props => (props.featured ? '0 0 100%' : '0 0 32%')};
-  }
-
-  a {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-    width: 100%;
-    color: ${props => props.theme.colors.text};
-    text-decoration: none;
-    .gatsby-image-wrapper {
-      height: 0;
-      padding-bottom: 60%;
-      @media screen and (min-width: ${props => props.theme.responsive.small}) {
-        padding-bottom: ${props => (props.featured ? '40%' : '60%')};
-      }
-    }
-  }
+  border: 1px solid;
+  border-color: inherit;
+  border-radius: 4px;
+  text-decoration: none;
+  overflow: hidden;
 `
 
-const Card = ({ slug, heroImage, title, updatedAt, body, path, ...props }) => {
+const Card = ({ key, to, thumbnail, heroImage, title, time }) => {
   return (
     <>
-      {heroImage && (
-        <Post featured={props.featured}>
-          <Link
-            to={`/${path}/${slug}`}
+      {thumbnail ? (
+        <Item
+          key={key}
+          to={to}
+          sx={{
+            padding: [2, 3],
+          }}
+        >
+          <Tooltip
+            // options
+            position="bottom"
+            followCursor="true"
+            html={
+              <div
+                style={{
+                  width: '200px',
+                  border: '1px solid',
+                  bordercolor: 'inherit',
+                  borderRadius: '4px',
+                  overflow: 'hidden',
+                }}
+              >
+                <Img
+                  fluid={{
+                    ...thumbnail,
+                    aspectRatio: 4 / 3,
+                  }}
+                />
+              </div>
+            }
+          >
+            <Box>
+              <Styled.h4>{title}</Styled.h4>
+              <Styled.p sx={{ m: 0 }}>{time}</Styled.p>
+            </Box>
+          </Tooltip>
+        </Item>
+      ) : heroImage ? (
+        <Item key={key} to={to}>
+          <Img
+            fluid={{
+              ...heroImage,
+              aspectRatio: 4 / 3,
+            }}
+            backgroundColor={'#eeeeee'}
             sx={{
-              border: '1px solid',
+              mb: 3,
+              borderBottom: '1px solid',
               bordercolor: 'inherit',
-              borderRadius: '4px',
-              overflow: 'hidden',
+            }}
+          />
+
+          <Box
+            sx={{
+              padding: [2, 3],
             }}
           >
-            <Img
-              fluid={heroImage.fluid}
-              backgroundColor={'#eeeeee'}
-              sx={{
-                mb: 3,
-                borderBottom: '1px solid',
-                bordercolor: 'inherit',
-              }}
-            />
-            <Styled.h3 sx={{ mx: 3 }}>{title}</Styled.h3>
-            <Styled.p sx={{ mx: 3 }}>
-              {updatedAt}
-              {body &&
-                ' / / ' +
-                  `${body.childMarkdownRemark.timeToRead}` +
-                  ' minute read'}
-            </Styled.p>
-          </Link>
-        </Post>
+            <Styled.h4>{title}</Styled.h4>
+            <Styled.p sx={{ m: 0 }}>{time}</Styled.p>
+          </Box>
+        </Item>
+      ) : (
+        <Item key={key} to={to}>
+          <Box
+            sx={{
+              padding: [2, 3],
+            }}
+          >
+            <Styled.h4>{title}</Styled.h4>
+            <Styled.p sx={{ m: 0 }}>{time}</Styled.p>
+          </Box>
+        </Item>
       )}
     </>
   )
