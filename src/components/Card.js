@@ -19,12 +19,12 @@ const Item = styled(Link)`
   overflow: hidden;
 `
 
-const Card = ({ key, to, thumbnail, heroImage, title, time }) => {
+const Card = ({ id, to, thumbnail, heroImage, title, time }) => {
   return (
     <>
       {thumbnail ? (
         <Item
-          key={key}
+          id={id}
           to={to}
           sx={{
             padding: [2, 3],
@@ -60,7 +60,7 @@ const Card = ({ key, to, thumbnail, heroImage, title, time }) => {
           </Tooltip>
         </Item>
       ) : heroImage ? (
-        <Item key={key} to={to}>
+        <Item id={id} to={to}>
           <Img
             fluid={{
               ...heroImage,
@@ -84,7 +84,7 @@ const Card = ({ key, to, thumbnail, heroImage, title, time }) => {
           </Box>
         </Item>
       ) : (
-        <Item key={key} to={to}>
+        <Item id={id} to={to}>
           <Box
             sx={{
               padding: [2, 3],

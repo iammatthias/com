@@ -39,6 +39,7 @@ const Posts = ({ data, pageContext, location }) => {
               {photography.map(({ node: photoSet }) => (
                 <Card
                   key={photoSet.id}
+                  id={photoSet.id}
                   to={`/photography/${photoSet.slug}/`}
                   thumbnail={photoSet.heroImage.thumbnail}
                   title={photoSet.title}
@@ -64,6 +65,7 @@ const Posts = ({ data, pageContext, location }) => {
               {posts.map(({ node: post }) => (
                 <Card
                   key={post.id}
+                  id={post.id}
                   to={`/blog/${post.slug}/`}
                   thumbnail={post.heroImage.thumbnail}
                   title={post.title}

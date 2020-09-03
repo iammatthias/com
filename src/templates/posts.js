@@ -19,6 +19,7 @@ const Posts = ({ data, pageContext, location }) => {
           {posts.map(({ node: post }) => (
             <Card
               key={post.id}
+              id={post.id}
               to={`/blog/${post.slug}/`}
               heroImage={post.heroImage.fluid}
               title={post.title}

@@ -22,6 +22,7 @@ const Posts = ({ data, pageContext, location }) => {
           {photoSets.map(({ node: gallery }) => (
             <Card
               key={gallery.id}
+              id={gallery.id}
               to={`/photography/${gallery.slug}/`}
               heroImage={gallery.heroImage.fluid}
               title={gallery.title}

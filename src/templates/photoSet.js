@@ -23,7 +23,7 @@ const PhotoSetTemplate = ({ data, pageContext, location }) => {
     <Layout
       title={title}
       blurb={metaDescription.internal.content}
-      description={metaDescription}
+      description={metaDescription.internal.content}
       date={updatedAt}
       location={location.pathname}
     >
