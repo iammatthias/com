@@ -30,8 +30,8 @@ function LightenDarkenColor(col, amt) {
   return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16)
 }
 
-var randomHighlight = LightenDarkenColor(palettebackground, 40)
-var randomShadow = LightenDarkenColor(palettebackground, -40)
+var randomHighlight = LightenDarkenColor(palettebackground, 20)
+var randomShadow = LightenDarkenColor(palettebackground, -20)
 
 export default {
   useColorSchemeMediaQuery: true,

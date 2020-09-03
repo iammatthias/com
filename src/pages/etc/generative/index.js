@@ -1,10 +1,12 @@
 /** @jsx jsx */
 
 import React from 'react' //eslint-disable-line
-import { jsx, Styled, Grid } from 'theme-ui'
-import { Link } from 'gatsby'
+import { jsx } from 'theme-ui'
+
 import Layout from '../../../components/Layout'
 import Container from '../../../components/Container'
+import CardList from '../../../components/CardList'
+import Card from '../../../components/Card'
 
 const Posts = ({ data, pageContext, location }) => {
   return (
@@ -16,137 +18,53 @@ const Posts = ({ data, pageContext, location }) => {
     >
       <Container>
         <div>
-          <Grid gap={3} columns={[1, 2, 4]}>
-            <Link
+          <CardList location={location.pathname}>
+            <Card
               to={`/etc/generative/simplexFlowers/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-                borderRadius: '4px',
-              }}
-            >
-              <Styled.h4>Simplex Flowers</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>
-                Noisy flowers using simplex noise
-              </Styled.p>
-            </Link>
-            <Link
+              title="Simplex Flowers"
+              time="Noisy flowers using simplex noise"
+            />
+            <Card
               to={`/etc/generative/circlePacking/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-                borderRadius: '4px',
-              }}
-            >
-              <Styled.h4>Circle Packing</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>Circles in tight spaces</Styled.p>
-            </Link>
-            <Link
+              title="Circle Packing"
+              time="Circles in tight spaces"
+            />
+            <Card
               to={`/etc/generative/cubicDisaray/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-                borderRadius: '4px',
-              }}
-            >
-              <Styled.h4>Cubic Disaray</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>Inspired by Georg Nees</Styled.p>
-            </Link>
-            <Link
+              title="Cubic Disaray"
+              time="Inspired by Georg Nees"
+            />
+            <Card
               to={`/etc/generative/hypnoticSquares/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-                borderRadius: '4px',
-              }}
-            >
-              <Styled.h4>Hypnotic Squares</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>Inspired by William Kolomyjec</Styled.p>
-            </Link>
-            <Link
+              title="Hypnotic Squares"
+              time="Inspired by William Kolomyjec"
+            />
+            <Card
               to={`/etc/generative/joyDivision/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-                borderRadius: '4px',
-              }}
-            >
-              <Styled.h4>Joy Division</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>Unknown Pleasures</Styled.p>
-            </Link>
-
-            <Link
+              title="Joy Division"
+              time="Unknown Pleasures"
+            />
+            <Card
               to={`/etc/generative/mondrian/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-                borderRadius: '4px',
-              }}
-            >
-              <Styled.h4>Mondrian</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>Inspired by Piet Mondrian</Styled.p>
-            </Link>
-            <Link
+              title="Mondrian"
+              time="Inspired by Piet Mondrian"
+            />
+            <Card
               to={`/etc/generative/tiledLines/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-                borderRadius: '4px',
-              }}
-            >
-              <Styled.h4>Tiled Lines</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>Simple Beauty</Styled.p>
-            </Link>
-            <Link
+              title="Tiled Lines"
+              time="Simple Beauty"
+            />
+            <Card
               to={`/etc/generative/triangularMesh/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-                borderRadius: '4px',
-              }}
-            >
-              <Styled.h4>Triangular Mesh</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>A simple mesh layer</Styled.p>
-            </Link>
-            <Link
+              title="Triangular Mesh"
+              time="A simple mesh layer"
+            />
+            <Card
               to={`/etc/generative/unDeuxTrois/`}
-              sx={{
-                color: 'text',
-                textDecoration: 'none',
-                border: '1px solid',
-                bordercolor: 'inherit',
-                padding: [2, 3],
-                borderRadius: '4px',
-              }}
-            >
-              <Styled.h4>Un Deux Trois</Styled.h4>
-              <Styled.p sx={{ m: 0 }}>Inspired by Vera Molnár</Styled.p>
-            </Link>
-          </Grid>
+              title="/Un Deux Trois"
+              time="Inspired by Vera Molnár"
+            />
+          </CardList>
         </div>
       </Container>
     </Layout>
