@@ -1,27 +1,14 @@
 /** @jsx jsx */
 
 import React from 'react' //eslint-disable-line
-import { jsx, Image, Box, Link, useThemeUI } from 'theme-ui'
-import { chunk, sum } from 'lodash'
+import { jsx, Link, useThemeUI } from 'theme-ui'
 import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox'
 
-// import Img from 'gatsby-image'
+import { XMasonry, XBlock } from 'react-xmasonry'
 
-const GalleryGrid = ({
-  title,
-  parent,
-  images,
-  aspectRatio,
-  itemsPerRow: itemsPerRowByBreakpoints,
-}) => {
-  const aspectRatios = images.map(image => image.fluid.aspectRatio)
-  const rowAspectRatioSumsByBreakpoints = itemsPerRowByBreakpoints.map(
-    itemsPerRow =>
-      chunk(aspectRatios, itemsPerRow).map(rowAspectRatios =>
-        sum(rowAspectRatios)
-      )
-  )
+import Img from 'gatsby-image'
 
+const GalleryGrid = ({ title, parent, images, aspectRatio }) => {
   const { theme } = useThemeUI()
 
   const options = {
@@ -114,41 +101,32 @@ const GalleryGrid = ({
       <center>
         <SimpleReactLightbox>
           <SRLWrapper options={options} callbacks={callbacks}>
-            {images.map((image, i) => (
-              <Link
-                key={image.id}
-                href={image.fluid.src}
-                alt={image.title}
-                data-attribute="SRL"
-              >
-                <Box
-                  as={Image}
-                  src={image.thumbnail.src}
-                  title={image.title}
-                  alt={image.title}
-                  sx={{
-                    height: '100%',
-                    width: rowAspectRatioSumsByBreakpoints.map(
-                      (rowAspectRatioSums, j) => {
-                        const rowIndex = Math.floor(
-                          i / itemsPerRowByBreakpoints[j]
-                        )
-                        const rowAspectRatioSum = rowAspectRatioSums[rowIndex]
-                        return `${(image.fluid.aspectRatio /
-                          rowAspectRatioSum) *
-                          100}%`
-                      }
-                    ),
-                    maxWidth: ['100%', '65%', '17%'],
-                    p: 2,
-                  }}
-                  css={{
-                    display: 'inline-block',
-                    verticalAlign: 'middle',
-                  }}
-                />
-              </Link>
-            ))}
+            <XMasonry targetBlockWidth="200">
+              {images.map((image, i) => (
+                <XBlock key={image.id}>
+                  <Link
+                    href={image.fluid.src}
+                    alt={image.title}
+                    data-attribute="SRL"
+                  >
+                    <Img
+                      fluid={image.thumbnail}
+                      title={image.title}
+                      alt={image.title}
+                      sx={{
+                        m: 2,
+                        boxShadow: theme =>
+                          `5px -5px 35px ${theme.colors.background}, 5px 5px 35px ${theme.colors.shadow}`,
+                        border: '1px solid',
+                        borderColor: 'inherit',
+                        borderRadius: '4px',
+                        overflow: 'hidden',
+                      }}
+                    />
+                  </Link>
+                </XBlock>
+              ))}
+            </XMasonry>
           </SRLWrapper>
         </SimpleReactLightbox>
       </center>
