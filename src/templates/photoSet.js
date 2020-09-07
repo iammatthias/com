@@ -91,7 +91,25 @@ export const query = graphql`
               srcSet
               aspectRatio
             }
-            thumbnail: fluid(maxWidth: 600, quality: 40) {
+            fluidMobile: fluid(maxWidth: 600, quality: 70) {
+              ...GatsbyContentfulFluid_withWebp
+              src
+              srcSet
+              aspectRatio
+            }
+            fluidDesktop: fluid(maxWidth: 1000, quality: 70) {
+              ...GatsbyContentfulFluid_withWebp
+              src
+              srcSet
+              aspectRatio
+            }
+            thumbnailMobile: fluid(maxWidth: 200, quality: 30) {
+              ...GatsbyContentfulFluid_withWebp
+              src
+              srcSet
+              aspectRatio
+            }
+            thumbnailDesktop: fluid(maxWidth: 300, quality: 30) {
               ...GatsbyContentfulFluid_withWebp
               src
               srcSet
