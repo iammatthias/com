@@ -43,7 +43,7 @@ const Posts = ({ data, pageContext, location }) => {
                   to={`/photography/${photoSet.slug}/`}
                   thumbnail={photoSet.heroImage.thumbnail}
                   title={photoSet.title}
-                  time={'Updated: ' + photoSet.updatedAt}
+                  info={'Updated: ' + photoSet.updatedAt}
                 />
               ))}
               <Link
@@ -69,7 +69,7 @@ const Posts = ({ data, pageContext, location }) => {
                   to={`/blog/${post.slug}/`}
                   thumbnail={post.heroImage.thumbnail}
                   title={post.title}
-                  time={
+                  info={
                     'Published: ' +
                     post.publishDate +
                     '\u00A0 \u00A0 \u00A0' +
@@ -98,23 +98,23 @@ const Posts = ({ data, pageContext, location }) => {
               {/* <Card
                 to={`/resume/`}
                 title="Resume"
-                time="Interested in working together?"
+                info="Interested in working together?"
               /> */}
 
               <Card
                 to={`/etc/generative/`}
                 title="Generative"
-                time="Trying my hand at generative art, learning as I go."
+                info="Trying my hand at generative art, learning as I go."
               />
               <Card
                 to={`/etc/time/`}
                 title="Time"
-                time="A real time local clock with a dynamic background gradient."
+                info="A real time local clock with a dynamic background gradient."
               />
               <Card
                 to={`/resources/`}
                 title="Resources"
-                time="Tools and platforms that I've found useful."
+                info="Tools and platforms that I've found useful."
               />
             </CardList>
           </div>

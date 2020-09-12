@@ -26,7 +26,7 @@ const Posts = ({ data, pageContext, location }) => {
               to={`/photography/${gallery.slug}/`}
               heroImage={gallery.heroImage.fluid}
               title={gallery.title}
-              time={'Updated: ' + gallery.updatedAt}
+              info={'Updated: ' + gallery.updatedAt}
             />
           ))}
         </CardList>

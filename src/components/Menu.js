@@ -67,7 +67,7 @@ const Menu = ({
   return (
     <Header>
       <Nav>
-        <Link to="/">
+        <Link alt="home" to="/">
           <Logo />
         </Link>
         <Styled.h4 sx={{ margin: '1em 0', fontWeight: '900' }}>
@@ -75,6 +75,7 @@ const Menu = ({
         </Styled.h4>
         <Styled.h5 sx={{ margin: '1em 0', fontWeight: '400' }}>
           <Image
+            alt="camera emoji"
             sx={{
               height: '24px',
               width: 'auto',
@@ -91,7 +92,9 @@ const Menu = ({
               key={link.name}
               sx={{ fontWeight: '400', font: 'header' }}
             >
-              <Link to={link.slug}>{link.name}</Link>
+              <Link alt={link.name} to={link.slug}>
+                {link.name}
+              </Link>
             </Styled.li>
           ))}
 
