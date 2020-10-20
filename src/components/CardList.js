@@ -13,7 +13,7 @@ const CardList = ({ location, ...props }) => {
       )}
       {location !== '/' && (
         <Grid
-          gap={'3rem'}
+          gap={'3em'}
           rows={'auto'}
           columns={['1fr', '1fr 1fr', '1fr 1fr 1fr']}
           sx={{ mb: 4 }}
