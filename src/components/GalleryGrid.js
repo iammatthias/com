@@ -101,7 +101,7 @@ const GalleryGrid = ({ title, parent, images, aspectRatio }) => {
       <center>
         <SimpleReactLightbox>
           <SRLWrapper options={options} callbacks={callbacks}>
-            <XMasonry targetBlockWidth="200">
+            <XMasonry targetBlockWidth="225">
               {images.map((image, i) => (
                 <XBlock key={image.id}>
                   <Link
@@ -120,7 +120,7 @@ const GalleryGrid = ({ title, parent, images, aspectRatio }) => {
                       title={image.title}
                       alt={image.title}
                       sx={{
-                        m: 2,
+                        m: 3,
                         boxShadow: theme =>
                           `5px -5px 35px ${theme.colors.background}, 5px 5px 35px ${theme.colors.shadow}`,
                         border: '1px solid',

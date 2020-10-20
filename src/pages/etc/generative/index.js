@@ -61,7 +61,7 @@ const Posts = ({ data, pageContext, location }) => {
             />
             <Card
               to={`/etc/generative/unDeuxTrois/`}
-              title="/Un Deux Trois"
+              title="Un Deux Trois"
               time="Inspired by Vera Molnár"
             />
           </CardList>
