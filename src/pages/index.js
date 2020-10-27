@@ -16,7 +16,7 @@ const ContentGrid = styled.div`
   grid-template-rows: 1fr;
   grid-gap: 3em;
   @media screen and (min-width: ${props => props.theme.responsive.small}) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     grid-template-rows: 1fr;
   }
   @media screen and (min-width: 1801px) {
@@ -43,7 +43,7 @@ const Posts = ({ data, pageContext, location }) => {
                   to={`/photography/${photoSet.slug}/`}
                   thumbnail={photoSet.heroImage.thumbnail}
                   title={photoSet.title}
-                  info={'Updated: ' + photoSet.updatedAt}
+                  date={'Updated: ' + photoSet.updatedAt}
                 />
               ))}
               <Link
@@ -69,12 +69,9 @@ const Posts = ({ data, pageContext, location }) => {
                   to={`/blog/${post.slug}/`}
                   thumbnail={post.heroImage.thumbnail}
                   title={post.title}
-                  info={
-                    'Published: ' +
-                    post.publishDate +
-                    '\u00A0 \u00A0 \u00A0' +
-                    post.body.childMarkdownRemark.timeToRead +
-                    ' minute read'
+                  date={'Published: ' + post.publishDate}
+                  timeToRead={
+                    post.body.childMarkdownRemark.timeToRead + ' minute read'
                   }
                 />
               ))}
@@ -104,17 +101,17 @@ const Posts = ({ data, pageContext, location }) => {
               <Card
                 to={`/etc/generative/`}
                 title="Generative"
-                info="Trying my hand at generative art, learning as I go."
+                description="Trying my hand at generative art, learning as I go."
               />
               <Card
                 to={`/etc/time/`}
                 title="Time"
-                info="A real time local clock with a dynamic background gradient."
+                description="A real time local clock with a dynamic background gradient."
               />
               <Card
                 to={`/resources/`}
                 title="Resources"
-                info="Tools and platforms that I've found useful."
+                description="Tools and platforms that I've found useful."
               />
             </CardList>
           </div>

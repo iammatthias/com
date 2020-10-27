@@ -23,12 +23,9 @@ const Posts = ({ data, pageContext, location }) => {
               to={`/blog/${post.slug}/`}
               heroImage={post.heroImage.fluid}
               title={post.title}
-              info={
-                'Published: ' +
-                post.publishDate +
-                '\u00A0 \u00A0 \u00A0' +
-                post.body.childMarkdownRemark.timeToRead +
-                ' minute read'
+              date={'Published: ' + post.publishDate}
+              timeToRead={
+                post.body.childMarkdownRemark.timeToRead + ' minute read'
               }
             />
           ))}

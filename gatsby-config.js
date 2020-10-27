@@ -28,8 +28,8 @@ module.exports = {
         slug: '/about/',
       },
     ],
-    postsPerFirstPage: 6,
-    postsPerPage: 6,
+    postsPerFirstPage: 8,
+    postsPerPage: 8,
     basePath: '/',
   },
   plugins: [
@@ -132,7 +132,12 @@ module.exports = {
     {
       resolve: `gatsby-plugin-google-fonts`,
       options: {
-        fonts: [`Montserrat:400,900`, `Crimson Text`, `Inconsolata`],
+        fonts: [
+          `Montserrat:400,900`,
+          `Crimson Text`,
+          `Inconsolata`,
+          `Pacifico`,
+        ],
         display: 'swap',
       },
     },

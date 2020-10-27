@@ -110,13 +110,7 @@ const GalleryGrid = ({ title, parent, images, aspectRatio }) => {
                     data-attribute="SRL"
                   >
                     <Img
-                      fluid={[
-                        image.thumbnailMobile,
-                        {
-                          ...image.thumbnailDesktop,
-                          media: `(min-width: 625px)`,
-                        },
-                      ]}
+                      fluid={image.thumbnail}
                       title={image.title}
                       alt={image.title}
                       sx={{

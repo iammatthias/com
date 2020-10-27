@@ -19,7 +19,16 @@ const Item = styled(Link)`
   overflow: hidden;
 `
 
-const Card = ({ id, to, thumbnail, heroImage, title, info }) => {
+const Card = ({
+  id,
+  to,
+  thumbnail,
+  heroImage,
+  title,
+  date,
+  timeToRead,
+  description,
+}) => {
   return (
     <>
       {thumbnail ? (
@@ -65,7 +74,8 @@ const Card = ({ id, to, thumbnail, heroImage, title, info }) => {
               >
                 {title}
               </Styled.p>
-              <Styled.p sx={{ m: 0 }}>{info}</Styled.p>
+              <Styled.p sx={{ mb: 2 }}>{date}</Styled.p>
+              <Styled.p sx={{ m: 0 }}>{timeToRead}</Styled.p>
             </Box>
           </Tooltip>
         </Item>
@@ -90,7 +100,8 @@ const Card = ({ id, to, thumbnail, heroImage, title, info }) => {
             }}
           >
             <Styled.h4>{title}</Styled.h4>
-            <Styled.p sx={{ m: 0 }}>{info}</Styled.p>
+            <Styled.p sx={{ mb: 2 }}>{date}</Styled.p>
+            <Styled.p sx={{ m: 0 }}>{timeToRead}</Styled.p>
           </Box>
         </Item>
       ) : (
@@ -101,7 +112,7 @@ const Card = ({ id, to, thumbnail, heroImage, title, info }) => {
             }}
           >
             <Styled.h4>{title}</Styled.h4>
-            <Styled.p sx={{ m: 0 }}>{info}</Styled.p>
+            <Styled.p sx={{ m: 0 }}>{description}</Styled.p>
           </Box>
         </Item>
       )}

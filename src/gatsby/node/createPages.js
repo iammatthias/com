@@ -69,8 +69,8 @@ module.exports = async ({ graphql, actions }) => {
     path: `blog/`,
     component: path.resolve(`./src/templates/posts.js`),
     items: posts,
-    itemsPerFirstPage: config.siteMetadata.postsPerFirstPage || 7,
-    itemsPerPage: config.siteMetadata.postsPerPage || 6,
+    itemsPerFirstPage: config.siteMetadata.postsPerFirstPage || 8,
+    itemsPerPage: config.siteMetadata.postsPerPage || 8,
     pathPrefix: `${basePath}blog`,
     context: {
       basePath: basePath === '/' ? '' : `${basePath}blog`,

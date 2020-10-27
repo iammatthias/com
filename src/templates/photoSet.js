@@ -67,15 +67,6 @@ export const query = graphql`
       publishDate(formatString: "MMMM DD, YYYY")
       updatedAt(formatString: "MMMM DD, YYYY")
       publishDateISO: publishDate(formatString: "YYYY-MM-DD")
-      heroImage {
-        title
-        fluid(maxWidth: 1800) {
-          ...GatsbyContentfulFluid_noBase64
-        }
-        ogimg: resize(width: 1800) {
-          src
-        }
-      }
       galleries {
         __typename
         ... on ContentfulGallery {
@@ -91,25 +82,7 @@ export const query = graphql`
               srcSet
               aspectRatio
             }
-            fluidMobile: fluid(maxWidth: 600, quality: 70) {
-              ...GatsbyContentfulFluid_withWebp
-              src
-              srcSet
-              aspectRatio
-            }
-            fluidDesktop: fluid(maxWidth: 1000, quality: 70) {
-              ...GatsbyContentfulFluid_withWebp
-              src
-              srcSet
-              aspectRatio
-            }
-            thumbnailMobile: fluid(maxWidth: 200, quality: 30) {
-              ...GatsbyContentfulFluid_withWebp
-              src
-              srcSet
-              aspectRatio
-            }
-            thumbnailDesktop: fluid(maxWidth: 300, quality: 30) {
+            thumbnail: fluid(maxWidth: 300, quality: 30) {
               ...GatsbyContentfulFluid_withWebp
               src
               srcSet

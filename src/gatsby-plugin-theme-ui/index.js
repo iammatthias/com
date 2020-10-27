@@ -31,37 +31,41 @@ function LightenDarkenColor(col, amt) {
 }
 
 var randomHighlight = LightenDarkenColor(palettebackground, 20)
-var randomShadow = LightenDarkenColor(palettebackground, -20)
+var randomShadow = LightenDarkenColor(paletteColor, -20)
 
 export default {
   useColorSchemeMediaQuery: true,
-  initialColorModeName: 'dark',
+  initialColorModeName: 'light',
   colors: {
     modes: {
       light: {
-        background: '#fff8e7',
-        text: '#101A1F',
-        primary: '#101A1F',
-        secondary: '#FFFBF4',
-        tertiary: '#f3f3f3',
-        highlight: '#5b8bf7',
-        shadow: '#BAB5A9',
+        background: '#F5F2F2',
+        text: '#141919',
+        primary: '#141919',
+        secondary: '#FAFAFA',
+        tertiary: '#6699CC',
+        highlight: '#FAC805',
+        spicy: '#FF3864',
+        shadow: '#647882',
       },
       dark: {
-        background: '#101A1F',
-        text: '#fff8e7',
-        primary: '#fff8e7',
-        secondary: '#364A54',
-        tertiary: '#101A1F',
-        highlight: '#5b8bf7',
-        shadow: '#100B00',
+        background: '#141919',
+        text: '#F5F2F2',
+        primary: '#F5F2F2',
+        secondary: '#191E1E',
+        tertiary: '#6699CC',
+        highlight: '#FAC805',
+        spicy: '#FF3864',
+        shadow: '#647882',
       },
       random: {
         background: palettebackground,
         text: paletteColor,
         primary: paletteColor,
         secondary: randomHighlight,
-        muted: paletteColor,
+        tertiary: randomShadow,
+        highlight: randomShadow,
+        spicy: randomHighlight,
         shadow: randomShadow,
       },
     },
@@ -80,6 +84,7 @@ export default {
     body: '"Crimson Text"',
     heading: 'Montserrat',
     monospace: 'Inconsolata, monospace',
+    cursive: 'Pacifico, cursive',
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
   fontWeights: {
@@ -88,8 +93,8 @@ export default {
     bold: 700,
   },
   lineHeights: {
-    body: 1.5,
-    heading: 1.125,
+    body: 1.75,
+    heading: 2,
   },
 
   styles: {
@@ -171,7 +176,7 @@ export default {
       mb: 3,
     },
     a: {
-      color: 'inherit',
+      color: 'text',
       fontWeight: 'heading',
       textDecoration: 'none',
     },

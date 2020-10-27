@@ -15,9 +15,13 @@ import {
   Card,
 } from 'theme-ui'
 
+import { alpha } from '@theme-ui/color'
+
 import ContactForm from '../components/ContactForm'
 
 import EmailCapture from '../components/MDX/EmailCapture'
+
+import Sparkle from '../components/MDX/Sparkle'
 
 export const MDXGlobalComponents = {
   // eslint-disable-next-line react/display-name
@@ -33,7 +37,33 @@ export const MDXGlobalComponents = {
   // eslint-disable-next-line react/display-name
   Heading: props => <Heading {...props} />,
   // eslint-disable-next-line react/display-name
-  Link: props => <Link {...props} />,
+  Link: props => (
+    <Link
+      {...props}
+      sx={{
+        p: '0 3px',
+        border: '1px solid',
+        borderColor: 'shadow',
+        borderRadius: '4px',
+        backgroundImage: t => `
+        linear-gradient(217deg, ${alpha('spicy', 0.5)(t)}, ${alpha(
+          'text',
+          0.05
+        )(t)} 70.71%),
+            linear-gradient(127deg, ${alpha('highlight', 0.5)(t)}, ${alpha(
+          'background',
+          0.05
+        )(t)} 70.71%),
+            linear-gradient(336deg, ${alpha('tertiary', 0.5)(t)}, ${alpha(
+          'shadow',
+          0.05
+        )(t)} 70.71%)
+    `,
+        animation: 'rotation 2s infinite linear',
+        boxDecorationBreak: 'clone',
+      }}
+    />
+  ),
   // eslint-disable-next-line react/display-name
   Image: props => (
     <Image
@@ -55,4 +85,10 @@ export const MDXGlobalComponents = {
   ContactForm: props => <ContactForm {...props} />,
   // eslint-disable-next-line react/display-name
   EmailCapture: props => <EmailCapture {...props} />,
+  // eslint-disable-next-line react/display-name
+  Sparkle: props => <Sparkle {...props} />,
+  // eslint-disable-next-line react/display-name
+  Spicy: props => (
+    <span {...props} sx={{ fontFamily: 'cursive', color: 'spicy' }} />
+  ),
 }
