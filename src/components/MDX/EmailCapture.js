@@ -31,13 +31,21 @@ const Form = styled.form`
   input {
     padding: 16px;
     color: ${props => props.theme.colors.text};
-    background: ${props => props.theme.colors.secondary};
+    background: ${props => props.theme.colors.light};
+    border-radius: 4px;
+    border: ${props => props.theme.colors.text} 1px solid;
     &::placeholder {
       color: ${props => props.theme.colors.shadow};
     }
     &:last-child {
-      color: ${props => props.theme.colors.text};
-      background: ${props => props.theme.colors.shadow};
+      color: ${props => props.theme.colors.light};
+      background: ${props => props.theme.colors.text};
+      width: 50%;
+      &:hover {
+        background: ${props => props.theme.colors.light};
+        border: 1px solid ${props => props.theme.colors.text};
+        color: ${props => props.theme.colors.text};
+      }
     }
   }
 

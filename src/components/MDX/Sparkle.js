@@ -74,7 +74,7 @@ const generateSparkle = color => {
   const sparkle = {
     id: String(random(10000, 99999)),
     createdAt: Date.now(),
-    color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+    color: `hsla(${Math.random() * 360}, 100%, 50%, 1)`,
     size: random(5, 15),
     style: {
       top: random(0, 100) + '%',

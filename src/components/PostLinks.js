@@ -21,14 +21,17 @@ const Box = styled.div`
     margin: 2em 0;
   }
   a {
-    background: ${props => props.theme.colors.secondary};
-    color: ${props => props.theme.colors.text} !important;
+    background: ${props => props.theme.colors.text};
+    border: 1px solid ${props => props.theme.colors.text};
+    color: ${props => props.theme.colors.background};
     padding: 1em;
     border-radius: 2px;
     text-decoration: none;
     transition: 0.2s;
     &:hover {
-      background: ${props => props.theme.colors.highlight};
+      background: ${props => props.theme.colors.light};
+      border: 1px solid ${props => props.theme.colors.text};
+      color: ${props => props.theme.colors.text};
     }
   }
 `

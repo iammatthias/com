@@ -15,17 +15,19 @@ const Wrapper = styled.div`
 `
 
 const Button = styled(Link)`
-  background: ${props => props.theme.colors.secondary};
-  color: ${props => props.theme.colors.text};
+  background: ${props => props.theme.colors.text};
+  color: ${props => props.theme.colors.background};
   padding: 1rem;
-  border: 1px solid ${props => props.theme.colors.secondary};
-  border-radius: 2px;
+
+  border-radius: 4px;
   margin: 0 0 0 0.5rem;
   cursor: pointer;
   text-decoration: none;
   transition: 0.3s all;
   &:hover {
-    background: ${props => props.theme.colors.highlight};
+    background: ${props => props.theme.colors.light};
+    border: 1px solid ${props => props.theme.colors.text};
+    color: ${props => props.theme.colors.text};
   }
   @media (hover: none) {
     background: ${props => props.theme.colors.primary} !important;
@@ -33,23 +35,24 @@ const Button = styled(Link)`
 `
 
 const Numbers = styled.div`
-  border: 1px solid ${props => props.theme.colors.secondary};
   border-radius: 2px;
   display: inline-block;
   float: left;
-  color: ${props => props.theme.colors.text};
+  background: ${props => props.theme.colors.text};
+  color: ${props => props.theme.colors.background};
   padding: 1rem;
-  background: ${props => props.theme.colors.secondary};
   position: relative;
   transition: 0.3s all;
   svg {
-    fill: ${props => props.theme.colors.text};
+    fill: ${props => props.theme.colors.background};
     margin: 0 0 0 0.25rem;
     transition: 0.3s all;
   }
 
   @media (hover: none) {
-    background: white !important;
+    background: ${props => props.theme.colors.light};
+    border: 1px solid ${props => props.theme.colors.text};
+    color: ${props => props.theme.colors.text};
   }
 `
 

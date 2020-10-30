@@ -46,15 +46,15 @@ export const MDXGlobalComponents = {
         borderColor: 'shadow',
         borderRadius: '4px',
         backgroundImage: t => `
-        linear-gradient(217deg, ${alpha('spicy', 0.5)(t)}, ${alpha(
+        linear-gradient(217deg, ${alpha('red', 0.5)(t)}, ${alpha(
           'text',
           0.05
         )(t)} 70.71%),
-            linear-gradient(127deg, ${alpha('highlight', 0.5)(t)}, ${alpha(
+            linear-gradient(127deg, ${alpha('blue', 0.5)(t)}, ${alpha(
           'background',
           0.05
         )(t)} 70.71%),
-            linear-gradient(336deg, ${alpha('tertiary', 0.5)(t)}, ${alpha(
+            linear-gradient(336deg, ${alpha('yellow', 0.5)(t)}, ${alpha(
           'shadow',
           0.05
         )(t)} 70.71%)
@@ -89,6 +89,6 @@ export const MDXGlobalComponents = {
   Sparkle: props => <Sparkle {...props} />,
   // eslint-disable-next-line react/display-name
   Spicy: props => (
-    <span {...props} sx={{ fontFamily: 'cursive', color: 'spicy' }} />
+    <span {...props} sx={{ fontFamily: 'cursive', color: 'red' }} />
   ),
 }
