@@ -12,7 +12,7 @@ function Icon(props) {
       fill="none"
       viewBox="0 0 377 377"
       strokeWidth="15"
-      sx={{ stroke: 'primary' }}
+      sx={{ stroke: 'text' }}
       {...props}
     >
       <mask
