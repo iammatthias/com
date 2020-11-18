@@ -92,5 +92,5 @@ export const MDXGlobalComponents = {
     <span {...props} sx={{ fontFamily: 'cursive', color: 'red' }} />
   ),
   // eslint-disable-next-line react/display-name
-  Mono: props => <span {...props} sx={{ fontFamily: 'mono' }} />,
+  Mono: props => <span {...props} sx={{ fontFamily: 'monospace' }} />,
 }

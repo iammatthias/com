@@ -176,6 +176,7 @@ export default {
       color: 'text',
       fontWeight: 'heading',
       textDecoration: 'none',
+      fontFamily: 'inherit',
     },
     blockquote: {
       paddingLeft: 3,
