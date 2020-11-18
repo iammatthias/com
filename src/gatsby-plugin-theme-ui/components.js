@@ -91,4 +91,6 @@ export const MDXGlobalComponents = {
   Spicy: props => (
     <span {...props} sx={{ fontFamily: 'cursive', color: 'red' }} />
   ),
+  // eslint-disable-next-line react/display-name
+  Mono: props => <span {...props} sx={{ fontFamily: 'mono' }} />,
 }
