@@ -1,10 +1,5 @@
-node_modules
+node_modules/
 .cache/
-public/
+public
 .DS_Store
-*.log
-contentful-import-error-log*
 .env*
-.contentful.json
-src/pages/resume.js
-src/pages/covid.js
