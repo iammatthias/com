@@ -1,9 +1,10 @@
 export default {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
-    body: 'system-ui, sans-serif',
+    body: '`Playfair Display`, system-ui, sans-serif',
     heading: '`Cormorant Garamond`, serif',
-    monospace: 'Menlo, monospace',
+    monospace: 'Inconsolata, Menlo, monospace',
+    cursive: 'Lobster, cursive',
   },
   fontSizes: [12, 16, 24, 36, 54, 81, 122, 182, 264],
   fontWeights: {
@@ -16,11 +17,9 @@ export default {
     heading: 1.33,
   },
   colors: {
-    text: '#002532',
-    background: '#fff',
-    primary: '#9de4b6',
-    secondary: '#003846',
-    muted: '#d6f4df',
+    text: '#f0EFEF',
+    background: '#110a0d',
+    primary: '#DB8A74',
   },
   styles: {
     root: {

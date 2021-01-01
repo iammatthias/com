@@ -1,6 +1,7 @@
 /** @jsx jsx */
 
 import { jsx, Box, Flex, Grid, Button, Text, Heading } from 'theme-ui';
+
 import Sparkle from './sparkle';
 
 export const MDXGlobalComponents = {
@@ -17,8 +18,10 @@ export const MDXGlobalComponents = {
   Heading: (props) => <Heading {...props} />,
 
   Sparkle: (props) => <Sparkle {...props} />,
+
   Spicy: (props) => (
-    <span {...props} sx={{ fontFamily: 'cursive', color: 'red' }} />
+    <span {...props} sx={{ fontFamily: 'cursive', color: 'primary' }} />
   ),
+
   Mono: (props) => <span {...props} sx={{ fontFamily: 'monospace' }} />,
 };
