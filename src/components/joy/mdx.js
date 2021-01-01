@@ -4,6 +4,8 @@ import { jsx, Box, Flex, Grid, Button, Text, Heading } from 'theme-ui';
 
 import Sparkle from './sparkle';
 
+import Gallery from './gallery/masonry'
+
 export const MDXGlobalComponents = {
   Box: (props) => <Box {...props} />,
 
@@ -24,4 +26,6 @@ export const MDXGlobalComponents = {
   ),
 
   Mono: (props) => <span {...props} sx={{ fontFamily: 'monospace' }} />,
+
+  Gallery: (props) => <Gallery {...props} />,
 };
