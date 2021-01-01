@@ -32,7 +32,7 @@ const Gallery = ({
     }     
     `);
     const images = allContentfulPage.edges.find(
-        edge => edge.images.title === {title}
+        edge => edge.node.==images.title === {title}
     );
 
 
