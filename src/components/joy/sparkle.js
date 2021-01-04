@@ -165,9 +165,8 @@ const SparkleSvg = styled.svg`
     animation: ${spin} 1000ms linear;
   }
 `;
-const ChildWrapper = styled.strong`
+const ChildWrapper = styled.span`
   position: relative;
   z-index: 1;
-  font-weight: bold;
 `;
 export default Sparkles;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { graphql } from 'gatsby';
 
-import Layout from '../components/Layout';
+import Layout from '../../components/Layout';
 
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 
@@ -18,7 +18,7 @@ const Page = ({ data }) => {
 
 export const query = graphql`
   query($id: String!) {
-    contentfulPage(pageType: { eq: "Page" }, id: { eq: $id }) {
+    contentfulPage(pageType: { eq: "Blog" }, id: { eq: $id }) {
       id
       title
       slug

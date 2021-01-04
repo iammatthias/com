@@ -1,8 +1,8 @@
 export default {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
-    body: '`Playfair Display`, system-ui, sans-serif',
-    heading: '`Cormorant Garamond`, serif',
+    body: 'Playfair Display, system-ui, sans-serif',
+    heading: 'Cormorant Garamond, serif',
     monospace: 'Inconsolata, Menlo, monospace',
     cursive: 'Lobster, cursive',
   },

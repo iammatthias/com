@@ -20,6 +20,7 @@ module.exports = {
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-sitemap',
     'gatsby-plugin-offline',
+    // `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-remark-images`,
     {
@@ -44,27 +45,17 @@ module.exports = {
       __key: 'pages',
     },
     {
-      resolve: `gatsby-plugin-prefetch-google-fonts`,
+      resolve: 'gatsby-plugin-web-font-loader',
       options: {
-        fonts: [
-          {
-            family: `Playfair Display`,
-            variants: [`400`]
-          },
-          {
-            family: `Cormorant Garamond`,
-            variants: [`400`]
-          },
-          {
-            family: `Lobster`,
-            variants: [`400`]
-          },
-          {
-            family: `Inconsolata`,
-            variants: [`400`]
-          },
-        ],
+        google: {
+          families: [
+            'Playfair Display',
+            'Cormorant Garamond',
+            'Lobster',
+            'Inconsolata',
+          ],
+        },
       },
-    }
+    },
   ],
 };
