@@ -1,4 +1,6 @@
 export default {
+  useColorSchemeMediaQuery: true,
+  initialColorModeName: 'light',
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
     body: 'Playfair Display, system-ui, sans-serif',
@@ -17,15 +19,26 @@ export default {
     heading: 1.33,
   },
   colors: {
-    text: '#f0EFEF',
-    background: '#110a0d',
-    primary: '#DB8A74',
+    modes: {
+      light: {
+        text: '#120602',
+        background: '#DBE1E1',
+        primary: '#DB8A74',
+      },
+      dark: {
+        text: '#DBE1E1',
+        background: '#120602',
+        primary: '#DB8A74',
+      },
+    },
   },
   styles: {
     root: {
       fontFamily: 'body',
       lineHeight: 'body',
       fontWeight: 'body',
+      fontSize: 1,
+      color: 'text',
     },
     h1: {
       color: 'text',
@@ -74,6 +87,7 @@ export default {
       fontFamily: 'body',
       fontWeight: 'body',
       lineHeight: 'body',
+      fontSize: 1,
     },
     a: {
       color: 'primary',

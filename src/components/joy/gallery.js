@@ -3,11 +3,11 @@
 import React from 'react'; //eslint-disable-line
 import Img from 'gatsby-image';
 import { useStaticQuery, graphql } from 'gatsby';
-import { jsx, Box, Link } from 'theme-ui';
+import { jsx, Box, Link, Styled } from 'theme-ui';
 import { XMasonry, XBlock } from 'react-xmasonry';
 import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
 
-export default function Gallery({ masonrySet, lightbox }) {
+export default function Gallery({ masonrySet, lightbox, ratio }) {
   const { allContentfulPage } = useStaticQuery(graphql`
     query {
       allContentfulPage {
@@ -19,6 +19,7 @@ export default function Gallery({ masonrySet, lightbox }) {
                 title
                 fluid {
                   ...GatsbyContentfulFluid_withWebp
+                  aspectRatio
                   src
                   srcSet
                 }
@@ -37,6 +38,9 @@ export default function Gallery({ masonrySet, lightbox }) {
     // console.log(match);
     return null;
   }
+
+  // get decimal from `ratio` (aspect ratio prop returns a fraction)
+  const r = eval(ratio);
 
   // console.log(match.node.masonry, 'this is working');
 
@@ -121,21 +125,8 @@ export default function Gallery({ masonrySet, lightbox }) {
             >
               {mason.title && (
                 <>
-                  <p
-                    sx={{
-                      variant: 'styles.h2',
-                    }}
-                    key={mason.title}
-                  >
-                    {mason.title}
-                  </p>
-                  <p
-                    sx={{
-                      variant: 'styles.p',
-                    }}
-                  >
-                    Click on the image for a better view.
-                  </p>
+                  <Styled.h2 key={mason.title}>{mason.title}</Styled.h2>
+                  <Styled.p>Click on the image for a better view.</Styled.p>
                 </>
               )}
               <SimpleReactLightbox>
@@ -165,18 +156,19 @@ export default function Gallery({ masonrySet, lightbox }) {
         </>
       ) : (
         <>
-          {match.node.masonry.map((mason) => (
-            <>
-              {mason.images.map((image, i) => (
-                <Img
-                  key={i}
-                  fluid={image.fluid}
-                  title={image.title}
-                  alt={image.title}
-                />
-              ))}
-            </>
-          ))}
+          {match.node.masonry.map((mason) =>
+            mason.images.map((image, i) => (
+              <Img
+                key={i}
+                fluid={{
+                  ...image.fluid,
+                  aspectRatio: r ? r : image.fluid.aspectRatio,
+                }}
+                title={image.title}
+                alt={image.title}
+              />
+            ))
+          )}
         </>
       )}
     </>

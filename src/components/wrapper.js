@@ -13,8 +13,8 @@ const Section = styled('section')`
   width: 100%;
   max-width: ${(props) => (props.wrapped ? '61.8vw' : '100vw')};
   height: 100%;
-  min-height: calc(100vh - 2rem);
-  border: 1px solid red;
+  border: 1px solid;
+  border-color: ${(props) => props.theme.colors.primary};
 `;
 
 const Wrapped = (props) => {
