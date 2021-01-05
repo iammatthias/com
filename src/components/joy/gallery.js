@@ -39,6 +39,8 @@ export default function Gallery({ masonrySet, lightbox, ratio }) {
     return null;
   }
 
+  console.log(allContentfulPage, match);
+
   // get decimal from `ratio` (aspect ratio prop returns a fraction)
   const r = eval(ratio);
 

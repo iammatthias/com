@@ -7,7 +7,7 @@ import theme from './../gatsby-plugin-theme-ui';
 import Wrapper from './wrapper';
 import { MDXGlobalComponents } from './joy/mdx';
 
-export default function Layout({ props, children, wrapped }) {
+export default function Layout({ children, wrapped }) {
   const [colorMode, setColorMode] = useColorMode();
   return (
     <ThemeProvider theme={theme} components={MDXGlobalComponents}>

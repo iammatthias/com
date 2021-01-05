@@ -13,13 +13,13 @@ const Section = styled('section')`
   width: 100%;
   max-width: ${(props) => (props.wrapped ? '61.8vw' : '100vw')};
   height: 100%;
-  border: 1px solid;
+  border: 2px solid;
   border-color: ${(props) => props.theme.colors.primary};
 `;
 
 const Wrapped = (props) => {
   return (
-    <Main {...props}>
+    <Main>
       <Section {...props}>{props.children}</Section>
     </Main>
   );

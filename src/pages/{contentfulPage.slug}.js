@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { jsx } from 'theme-ui';
 import * as React from 'react';
 import { graphql } from 'gatsby';
 
