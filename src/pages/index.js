@@ -1,4 +1,6 @@
-import * as React from 'react';
+/** @jsx jsx */
+import { jsx } from 'theme-ui';
+import * as React from 'react'; //eslint-disable-line
 import { graphql } from 'gatsby';
 
 import Layout from '../components/Layout';
@@ -6,11 +8,12 @@ import Layout from '../components/Layout';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 
 // markup
-const Page = ({ data }) => {
+const Page = ({ data, location }) => {
   const content = data.contentfulPage;
   const wrappedLayout = content.wrappedLayout;
+
   return (
-    <Layout wrapped={wrappedLayout}>
+    <Layout wrapped={wrappedLayout} location={location}>
       <MDXRenderer>{content.body.childMdx.body}</MDXRenderer>
     </Layout>
   );

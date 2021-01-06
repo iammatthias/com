@@ -1,6 +1,6 @@
 /** @jsx jsx */
-
 import { jsx, Box, Flex, Grid, Button, Heading } from 'theme-ui';
+import * as React from 'react'; //eslint-disable-line
 
 import Sparkle from './sparkle';
 

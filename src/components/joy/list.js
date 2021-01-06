@@ -1,35 +1,25 @@
 /** @jsx jsx */
 
 import React from 'react'; //eslint-disable-line
-import { useStaticQuery, graphql } from 'gatsby';
 import { jsx, Box } from 'theme-ui';
 import { Link } from 'gatsby';
 
+import { useSiteMetadata } from '../../hooks/use-site-metadata';
+
 export default function List({ type, location }) {
-  const { allContentfulPage } = useStaticQuery(graphql`
-    query {
-      allContentfulPage {
-        edges {
-          node {
-            id
-            title
-            pageType
-            slug
-          }
-        }
-      }
-    }
-  `);
+  const { allContentfulPage } = useSiteMetadata();
 
   const listPages = allContentfulPage.edges;
 
+  console.log(location);
+
   return (
     <>
-      {/* {listPages.map(
+      {listPages.map(
         (listPage) =>
           listPage.node.pageType === type && (
             <Link
-              getProps={{ location }}
+              key={listPage.node.id}
               to={
                 listPage.node.pageType === 'Gallery'
                   ? '/' + listPage.node.slug
@@ -39,7 +29,6 @@ export default function List({ type, location }) {
               }
             >
               <Box
-                key={listPage.node.id}
                 sx={{
                   paddingBottom: '2rem',
                   borderBottom: '1px solid',
@@ -50,7 +39,7 @@ export default function List({ type, location }) {
               </Box>
             </Link>
           )
-      )} */}
+      )}
     </>
   );
 }

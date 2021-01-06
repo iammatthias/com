@@ -1,4 +1,6 @@
-import * as React from 'react';
+/** @jsx jsx */
+import { jsx } from 'theme-ui';
+import * as React from 'react'; //eslint-disable-line
 import { graphql } from 'gatsby';
 
 import Layout from '../../components/Layout';

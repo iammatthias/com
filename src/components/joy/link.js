@@ -22,7 +22,7 @@ const MarkdownLink = ({ href, ...rest }) => {
   }
 
   return (
-    <a
+    <a //eslint-disable-line
       data-link-external
       href={href}
       target="_blank"
