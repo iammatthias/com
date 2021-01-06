@@ -7,29 +7,10 @@ import { jsx, Box, Link, Styled } from 'theme-ui';
 import { XMasonry, XBlock } from 'react-xmasonry';
 import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
 
+import { useSiteMetadata } from '../../hooks/use-site-metadata';
+
 export default function Gallery({ masonrySet, lightbox, ratio }) {
-  const { allContentfulPage } = useStaticQuery(graphql`
-    query {
-      allContentfulPage {
-        edges {
-          node {
-            masonry {
-              title
-              images {
-                title
-                fluid {
-                  ...GatsbyContentfulFluid_withWebp
-                  aspectRatio
-                  src
-                  srcSet
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `);
+  const { allContentfulPage } = useSiteMetadata();
 
   const match = allContentfulPage.edges.find(
     (edge) => edge.node.masonry[0].title === masonrySet
@@ -38,8 +19,6 @@ export default function Gallery({ masonrySet, lightbox, ratio }) {
     // console.log(match);
     return null;
   }
-
-  console.log(allContentfulPage, match);
 
   // get decimal from `ratio` (aspect ratio prop returns a fraction)
   const r = eval(ratio);
