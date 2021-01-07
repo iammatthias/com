@@ -8,18 +8,25 @@ import { globalHistory } from '@reach/router';
 
 import { useSiteMetadata } from '../../hooks/use-site-metadata';
 
-export default function PageList({ type }) {
-  const { allContentfulPage } = useSiteMetadata();
+export default function PageList({ type, limit }) {
+  const { page, blog, gallery } = useSiteMetadata();
 
-  const listPages = allContentfulPage.edges;
+  const listPages =
+    type === 'Gallery'
+      ? gallery.edges
+      : type === 'Blog'
+      ? blog.edges
+      : type === 'Page'
+      ? page.edges
+      : null;
 
   const path = globalHistory.location.pathname;
 
-  console.log(path);
+  const sliceCount = limit ? limit : '3';
 
   return (
     <>
-      {listPages.map(
+      {listPages.slice(0, sliceCount).map(
         (listPage) =>
           listPage.node.pageType === type && (
             <Link

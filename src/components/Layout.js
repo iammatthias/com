@@ -17,7 +17,7 @@ export default function Layout({ children, wrapped }) {
           setColorMode(colorMode === 'light' ? 'dark' : 'light');
         }}
       >
-        Toggle {colorMode === 'default' ? 'Dark' : 'Light'}
+        Toggle {colorMode === 'light' ? 'dark' : 'light'}
       </button>
       <Wrapper wrapped={wrapped}>{children}</Wrapper>
     </ThemeProvider>

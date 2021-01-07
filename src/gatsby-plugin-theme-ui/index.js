@@ -39,85 +39,93 @@ export default {
       fontWeight: 'body',
       fontSize: 1,
       color: 'text',
-    },
-    h1: {
-      color: 'text',
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 5,
-    },
-    h2: {
-      color: 'text',
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 4,
-    },
-    h3: {
-      color: 'text',
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 3,
-    },
-    h4: {
-      color: 'text',
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 2,
-    },
-    h5: {
-      color: 'text',
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 1,
-    },
-    h6: {
-      color: 'text',
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 0,
-    },
-    p: {
-      color: 'text',
-      fontFamily: 'body',
-      fontWeight: 'body',
-      lineHeight: 'body',
-      fontSize: 1,
-    },
-    a: {
-      color: 'primary',
-    },
-    pre: {
-      fontFamily: 'monospace',
-      overflowX: 'auto',
-      code: {
-        color: 'inherit',
+      paddingBottom: 4,
+
+      h1: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 5,
+        paddingBottom: 4,
       },
-    },
-    code: {
-      fontFamily: 'monospace',
-      fontSize: 'inherit',
-    },
-    table: {
-      width: '100%',
-      borderCollapse: 'separate',
-      borderSpacing: 0,
-    },
-    th: {
-      textAlign: 'left',
-      borderBottomStyle: 'solid',
-    },
-    td: {
-      textAlign: 'left',
-      borderBottomStyle: 'solid',
-    },
-    img: {
-      maxWidth: '100%',
+      h2: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 4,
+        paddingBottom: 4,
+      },
+      h3: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 3,
+        paddingBottom: 4,
+      },
+      h4: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 2,
+        paddingBottom: 4,
+      },
+      h5: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 1,
+        paddingBottom: 4,
+      },
+      h6: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 0,
+        paddingBottom: 4,
+      },
+      p: {
+        fontSize: 1,
+        paddingBottom: 4,
+      },
+      a: {
+        color: 'primary',
+        '&:visited': {
+          color: 'primary',
+        },
+      },
+      pre: {
+        fontFamily: 'monospace',
+        overflowX: 'auto',
+        code: {
+          color: 'inherit',
+        },
+      },
+      code: {
+        fontFamily: 'monospace',
+        fontSize: 'inherit',
+      },
+      table: {
+        width: '100%',
+        borderCollapse: 'separate',
+        borderSpacing: 0,
+      },
+      th: {
+        textAlign: 'left',
+        borderBottomStyle: 'solid',
+      },
+      td: {
+        textAlign: 'left',
+        borderBottomStyle: 'solid',
+      },
+      img: {
+        maxWidth: '100%',
+      },
     },
   },
 };
