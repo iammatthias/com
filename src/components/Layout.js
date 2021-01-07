@@ -7,15 +7,11 @@ import theme from './../gatsby-plugin-theme-ui';
 import Wrapper from './wrapper';
 import { MDXGlobalComponents } from './joy/mdx';
 
-export default function Layout({ children, wrapped, location }) {
+export default function Layout({ children, wrapped }) {
   const [colorMode, setColorMode] = useColorMode();
 
   return (
-    <ThemeProvider
-      theme={theme}
-      components={MDXGlobalComponents}
-      location={location}
-    >
+    <ThemeProvider theme={theme} components={MDXGlobalComponents}>
       <button
         onClick={(e) => {
           setColorMode(colorMode === 'light' ? 'dark' : 'light');
@@ -23,9 +19,7 @@ export default function Layout({ children, wrapped, location }) {
       >
         Toggle {colorMode === 'default' ? 'Dark' : 'Light'}
       </button>
-      <Wrapper wrapped={wrapped} location={location}>
-        {children}
-      </Wrapper>
+      <Wrapper wrapped={wrapped}>{children}</Wrapper>
     </ThemeProvider>
   );
 }

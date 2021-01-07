@@ -8,7 +8,7 @@ import Gallery from './gallery';
 
 import Link from './link';
 
-import List from './list';
+import PageList from './PageList';
 
 export const MDXGlobalComponents = {
   Box: (props) => <Box {...props} />,
@@ -23,7 +23,7 @@ export const MDXGlobalComponents = {
 
   Link: (props) => <Link {...props} />,
 
-  List: (props) => <List {...props} />,
+  PageList: (props) => <PageList {...props} />,
 
   Sparkle: (props) => <Sparkle {...props} />,
 

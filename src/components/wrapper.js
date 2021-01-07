@@ -17,12 +17,10 @@ const Section = styled('section')`
   border-color: ${(props) => props.theme.colors.primary};
 `;
 
-const Wrapped = (props, location) => {
+const Wrapped = (props) => {
   return (
     <Main>
-      <Section {...props} {...location}>
-        {props.children}
-      </Section>
+      <Section {...props}>{props.children}</Section>
     </Main>
   );
 };

@@ -8,12 +8,12 @@ import Layout from '../components/Layout';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 
 // markup
-const Page = ({ data, location }) => {
+const Page = ({ data }) => {
   const content = data.contentfulPage;
   const wrappedLayout = content.wrappedLayout;
 
   return (
-    <Layout wrapped={wrappedLayout} location={location}>
+    <Layout wrapped={wrappedLayout}>
       <MDXRenderer>{content.body.childMdx.body}</MDXRenderer>
     </Layout>
   );

@@ -11,6 +11,7 @@ import { MDXRenderer } from 'gatsby-plugin-mdx';
 const Page = ({ data }) => {
   const content = data.contentfulPage;
   const wrappedLayout = content.wrappedLayout;
+
   return (
     <Layout wrapped={wrappedLayout}>
       <MDXRenderer>{content.body.childMdx.body}</MDXRenderer>
