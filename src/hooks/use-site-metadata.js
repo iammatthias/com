@@ -10,8 +10,14 @@ export const useSiteMetadata = () => {
               title
               pageType
               slug
+              body {
+                childMdx {
+                  body
+                }
+              }
               masonry {
                 title
+                display
                 images {
                   title
                   fluid {
@@ -25,68 +31,57 @@ export const useSiteMetadata = () => {
             }
           }
         }
-        page: allContentfulPage(filter: { pageType: { eq: "Page" } }) {
+        listPages: allContentfulPage(filter: { pageType: { eq: "Page" } }) {
           edges {
             node {
               id
               title
               pageType
               slug
-              masonry {
-                title
-                images {
-                  title
-                  fluid {
-                    ...GatsbyContentfulFluid_withWebp
-                    aspectRatio
-                    src
-                    srcSet
-                  }
-                }
-              }
             }
           }
         }
-        gallery: allContentfulPage(filter: { pageType: { eq: "Gallery" } }) {
+        listGallery: allContentfulPage(
+          filter: { pageType: { eq: "Gallery" } }
+        ) {
           edges {
             node {
               id
               title
               pageType
               slug
-              masonry {
-                title
-                images {
-                  title
-                  fluid {
-                    ...GatsbyContentfulFluid_withWebp
-                    aspectRatio
-                    src
-                    srcSet
-                  }
-                }
-              }
             }
           }
         }
-        blog: allContentfulPage(filter: { pageType: { eq: "Blog" } }) {
+        listBlog: allContentfulPage(filter: { pageType: { eq: "Blog" } }) {
           edges {
             node {
               id
               title
               pageType
               slug
-              masonry {
-                title
-                images {
-                  title
-                  fluid {
-                    ...GatsbyContentfulFluid_withWebp
-                    aspectRatio
-                    src
-                    srcSet
-                  }
-                }
+            }
+          }
+        }
+        contentfulPage {
+          id
+          wrappedLayout
+          pageType
+          slug
+          title
+          body {
+            childMdx {
+              body
+            }
+          }
+          masonry {
+            display
+            images {
+              fluid {
+                ...GatsbyContentfulFluid_withWebp
+                aspectRatio
+                src
+                srcSet
               }
             }
           }

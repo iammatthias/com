@@ -2,13 +2,13 @@
 
 import React from 'react'; //eslint-disable-line
 import Img from 'gatsby-image';
-import { jsx, Box, Link, Styled } from 'theme-ui';
+import { jsx, Box, Link } from 'theme-ui';
 import { XMasonry, XBlock } from 'react-xmasonry';
 import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
 
 import { useSiteMetadata } from '../../hooks/use-site-metadata';
 
-export default function Gallery({ masonrySet, lightbox, ratio }) {
+export default function Gallery({ masonrySet, ratio }) {
   const { allContentfulPage } = useSiteMetadata();
 
   const match = allContentfulPage.edges.find(
@@ -90,67 +90,71 @@ export default function Gallery({ masonrySet, lightbox, ratio }) {
   //   return object;
   // }
 
-  return (
-    <>
-      {lightbox ? (
-        <>
-          {match.node.masonry.map((mason) => (
-            <Box
-              key={mason.title}
-              sx={{
-                paddingBottom: '2rem',
-                borderBottom: '1px solid',
-                borderColor: 'inherit',
-              }}
+  return match.node.masonry.map((mason) =>
+    mason.display === 'Lightbox' ? (
+      <Box
+        key={mason.title}
+        sx={{
+          paddingBottom: '2rem',
+          borderBottom: '1px solid',
+          borderColor: 'inherit',
+        }}
+      >
+        <SimpleReactLightbox>
+          {/* <SRLWrapper options={options} callbacks={callbacks}> */}
+          <SRLWrapper options={options}>
+            <XMasonry
+              targetBlockWidth={
+                mason.images.length === 1
+                  ? '900'
+                  : mason.images.length === 2
+                  ? '600'
+                  : mason.images.length === 3
+                  ? '600'
+                  : mason.images.length >= 4 && '250'
+              }
             >
-              {mason.title && (
-                <>
-                  <Styled.h2 key={mason.title}>{mason.title}</Styled.h2>
-                  <Styled.p>Click on the image for a better view.</Styled.p>
-                </>
-              )}
-              <SimpleReactLightbox>
-                {/* <SRLWrapper options={options} callbacks={callbacks}> */}
-                <SRLWrapper options={options}>
-                  <XMasonry targetBlockWidth="225">
-                    {mason.images.map((image, i) => (
-                      <XBlock key={i}>
-                        <Link
-                          href={image.fluid.srcSet}
-                          alt={image.title}
-                          data-attribute="SRL"
-                        >
-                          <Img
-                            fluid={image.fluid}
-                            title={image.title}
-                            alt={image.title}
-                          />
-                        </Link>
-                      </XBlock>
-                    ))}
-                  </XMasonry>
-                </SRLWrapper>
-              </SimpleReactLightbox>
-            </Box>
+              {mason.images.map((image, i) => (
+                <XBlock key={i}>
+                  <Link
+                    href={image.fluid.srcSet}
+                    alt={image.title}
+                    data-attribute="SRL"
+                  >
+                    <Img
+                      fluid={image.fluid}
+                      title={image.title}
+                      alt={image.title}
+                    />
+                  </Link>
+                </XBlock>
+              ))}
+            </XMasonry>
+          </SRLWrapper>
+        </SimpleReactLightbox>
+      </Box>
+    ) : (
+      <Box
+        key={mason.title}
+        sx={{
+          paddingBottom: '2rem',
+          borderBottom: '1px solid',
+          borderColor: 'inherit',
+        }}
+      >
+        {mason.display === 'Single Image' &&
+          mason.images.map((image, i) => (
+            <Img
+              key={i}
+              fluid={{
+                ...image.fluid,
+                aspectRatio: r ? r : image.fluid.aspectRatio,
+              }}
+              title={image.title}
+              alt={image.title}
+            />
           ))}
-        </>
-      ) : (
-        <>
-          {match.node.masonry.map((mason) =>
-            mason.images.map((image, i) => (
-              <Img
-                key={i}
-                fluid={{
-                  ...image.fluid,
-                  aspectRatio: r ? r : image.fluid.aspectRatio,
-                }}
-                title={image.title}
-                alt={image.title}
-              />
-            ))
-          )}
-        </>
-      )}
-    </>
+      </Box>
+    )
   );
 }

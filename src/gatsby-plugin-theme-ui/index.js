@@ -39,7 +39,7 @@ export default {
       fontWeight: 'body',
       fontSize: 1,
       color: 'text',
-      paddingBottom: 4,
+      paddingBottom: 3,
 
       h1: {
         color: 'text',
@@ -91,7 +91,7 @@ export default {
       },
       p: {
         fontSize: 1,
-        paddingBottom: 4,
+        paddingBottom: 3,
       },
       a: {
         color: 'primary',

@@ -9,55 +9,45 @@ import { globalHistory } from '@reach/router';
 import { useSiteMetadata } from '../../hooks/use-site-metadata';
 
 export default function PageList({ type, limit }) {
-  const { page, blog, gallery } = useSiteMetadata();
+  const { listPages, listBlog, listGallery } = useSiteMetadata();
 
-  const listPages =
-    type === 'Gallery'
-      ? gallery.edges
+  // const path = globalHistory.location.pathname;
+
+  const listLimit = limit ? limit : 10;
+
+  const pages =
+    type === 'Page'
+      ? listPages.edges
       : type === 'Blog'
-      ? blog.edges
-      : type === 'Page'
-      ? page.edges
-      : null;
+      ? listBlog.edges
+      : type === 'Gallery'
+      ? listGallery.edges
+      : '';
 
-  const path = globalHistory.location.pathname;
+  const path =
+    type === 'Page'
+      ? '/'
+      : type === 'Blog'
+      ? 'blog/'
+      : type === 'Gallery'
+      ? 'photography/'
+      : '';
 
-  const sliceCount = limit ? limit : '3';
+  console.log('list:', pages);
 
   return (
     <>
-      {listPages.slice(0, sliceCount).map(
+      {pages.slice(0, listLimit).map(
         (listPage) =>
           listPage.node.pageType === type && (
-            <Link
-              key={listPage.node.id}
-              to={
-                path === '/'
-                  ? listPage.node.pageType === 'Gallery'
-                    ? 'photography/' + listPage.node.slug
-                    : listPage.node.pageType === 'Blog'
-                    ? 'blog/' + listPage.node.slug
-                    : '/' + listPage.node.slug
-                  : path === '/photography/'
-                  ? listPage.node.pageType === 'Gallery'
-                    ? path + listPage.node.slug
-                    : listPage.node.pageType === 'Blog'
-                    ? path + listPage.node.slug
-                    : path + listPage.node.slug
-                  : path === '/blog/'
-                  ? listPage.node.pageType === 'Gallery'
-                    ? path + listPage.node.slug
-                    : listPage.node.pageType === 'Blog'
-                    ? path + listPage.node.slug
-                    : path + listPage.node.slug
-                  : ''
-              }
-            >
+            <Link key={listPage.node.id} to={path + listPage.node.slug}>
               <Box
                 sx={{
-                  paddingBottom: '2rem',
+                  marginBottom: '1rem',
+                  paddingBottom: '1rem',
                   borderBottom: '1px solid',
                   borderColor: 'inherit',
+                  width: ['100%', '50%'],
                 }}
               >
                 {listPage.node.title}
