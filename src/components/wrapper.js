@@ -9,7 +9,7 @@ const Main = styled.main`
 `;
 
 const Section = styled('section')`
-  padding: 1rem;
+  padding: 2rem;
   width: 100%;
   max-width: ${(props) => (props.wrapped ? '61.8vw' : '100vw')};
   height: 100%;

@@ -6,6 +6,7 @@ import theme from './../gatsby-plugin-theme-ui';
 // components
 import Wrapper from './wrapper';
 import { MDXGlobalComponents } from './joy/mdx';
+import Menu from './menu';
 
 export default function Layout({ children, wrapped }) {
   const [colorMode, setColorMode] = useColorMode();
@@ -19,7 +20,10 @@ export default function Layout({ children, wrapped }) {
       >
         Toggle {colorMode === 'light' ? 'dark' : 'light'}
       </button>
-      <Wrapper wrapped={wrapped}>{children}</Wrapper>
+      <Wrapper wrapped={wrapped}>
+        <Menu />
+        {children}
+      </Wrapper>
     </ThemeProvider>
   );
 }

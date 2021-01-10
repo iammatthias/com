@@ -2,7 +2,7 @@
 
 import React from 'react'; //eslint-disable-line
 import Img from 'gatsby-image';
-import { jsx, Box, Link } from 'theme-ui';
+import { jsx, Link } from 'theme-ui';
 import { XMasonry, XBlock } from 'react-xmasonry';
 import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
 
@@ -17,12 +17,8 @@ export default function Gallery({ masonrySet, ratio }) {
     return null;
   }
 
-  console.log(match);
-
   // get decimal from `ratio` (aspect ratio prop returns a fraction)
   const r = eval(ratio); //eslint-disable-line
-
-  // console.log(match.node.masonry, 'this is working');
 
   const options = {
     settings: {

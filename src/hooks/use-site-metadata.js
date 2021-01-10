@@ -1,4 +1,5 @@
 import { useStaticQuery, graphql } from 'gatsby';
+
 export const useSiteMetadata = () => {
   const meta = useStaticQuery(
     graphql`
@@ -77,6 +78,7 @@ export const useSiteMetadata = () => {
               title
               pageType
               slug
+              publishDate
             }
           }
         }

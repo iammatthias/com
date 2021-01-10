@@ -8,7 +8,7 @@ export default {
     monospace: 'Inconsolata, Menlo, monospace',
     cursive: 'Lobster, cursive',
   },
-  fontSizes: [12, 16, 24, 36, 54, 81, 122, 182, 264],
+  fontSizes: [12, 14, 18, 24, 36, 54, 81, 122, 182, 264],
   fontWeights: {
     body: 400,
     heading: 700,
@@ -22,13 +22,19 @@ export default {
     modes: {
       light: {
         text: '#120602',
-        background: '#DBE1E1',
-        primary: '#DB8A74',
+        background: '#F4F2F1',
+        primary: '#233F43',
+        secondary: '#87B8C0',
+        accent: '#E45225',
+        muted: '#A5958D',
       },
       dark: {
         text: '#DBE1E1',
         background: '#120602',
-        primary: '#DB8A74',
+        primary: '#233F43',
+        secondary: '#87B8C0',
+        accent: '#E45225',
+        muted: '#A5958D',
       },
     },
   },
@@ -37,7 +43,7 @@ export default {
       fontFamily: 'body',
       lineHeight: 'body',
       fontWeight: 'body',
-      fontSize: 1,
+      fontSize: 2,
       color: 'text',
       paddingBottom: 3,
 
@@ -90,6 +96,10 @@ export default {
         paddingBottom: 4,
       },
       p: {
+        fontSize: 2,
+        paddingBottom: 3,
+      },
+      small: {
         fontSize: 1,
         paddingBottom: 3,
       },
@@ -125,6 +135,12 @@ export default {
       },
       img: {
         maxWidth: '100%',
+      },
+      blockquote: {
+        borderLeft: '2px solid',
+        borderColor: 'inherit',
+        marginLeft: '0',
+        paddingLeft: '2rem',
       },
     },
   },
