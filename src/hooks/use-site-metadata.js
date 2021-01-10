@@ -16,6 +16,7 @@ export const useSiteMetadata = () => {
                 }
               }
               masonry {
+                id
                 title
                 display
                 images {
@@ -26,6 +27,22 @@ export const useSiteMetadata = () => {
                     src
                     srcSet
                   }
+                }
+              }
+            }
+          }
+        }
+        galleries: allContentfulGallery {
+          edges {
+            node {
+              id
+              title
+              images {
+                fluid {
+                  ...GatsbyContentfulFluid_withWebp
+                  aspectRatio
+                  src
+                  srcSet
                 }
               }
             }
@@ -72,17 +89,6 @@ export const useSiteMetadata = () => {
           body {
             childMdx {
               body
-            }
-          }
-          masonry {
-            display
-            images {
-              fluid {
-                ...GatsbyContentfulFluid_withWebp
-                aspectRatio
-                src
-                srcSet
-              }
             }
           }
         }

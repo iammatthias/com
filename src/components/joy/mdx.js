@@ -4,6 +4,8 @@ import * as React from 'react'; //eslint-disable-line
 
 import Sparkle from './sparkle';
 
+// import Gallery from './lazyGallery';
+
 import Gallery from './gallery';
 
 import Link from './link';

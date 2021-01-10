@@ -7,7 +7,9 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   const result = await graphql(
     `
       {
-        pages: allContentfulPage(filter: { pageType: { eq: "Page" } }) {
+        pages: allContentfulPage(
+          filter: { pageType: { eq: "Page" }, slug: { ne: "home" } }
+        ) {
           edges {
             node {
               id
@@ -73,10 +75,10 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   });
 };
 
-exports.onCreatePage = ({ page, actions }) => {
+module.exports.onCreatePage = ({ page, actions }) => {
   const { deletePage } = actions;
 
-  if (page.path === '/home/') {
+  if (page.path === 'home/') {
     deletePage(page);
   }
 };
