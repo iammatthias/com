@@ -2,9 +2,9 @@
 
 import React from 'react'; //eslint-disable-line
 import { jsx, Box, Text } from 'theme-ui';
-import { Link } from 'gatsby';
-
-import { globalHistory } from '@reach/router';
+import { lighten, alpha } from '@theme-ui/color';
+import Link from './link';
+import Img from 'gatsby-image';
 
 import { useSiteMetadata } from '../../hooks/use-site-metadata';
 
@@ -31,36 +31,83 @@ export default function PageList({ type, limit }) {
       ? 'photography/'
       : '';
 
+  console.count('counter');
+
   return pages.slice(0, listLimit).map(
     (listPage) =>
       listPage.node.pageType === type && (
         <Link
           key={listPage.node.id}
-          to={path + listPage.node.slug}
+          href={path + listPage.node.slug}
           sx={{ textDecoration: 'none' }}
         >
           <Box
             sx={{
               marginBottom: '2rem',
-              paddingBottom: '1rem',
-              borderBottom: '1px solid',
-              borderColor: 'inherit',
-              width: ['100%', '50%'],
+              padding: '0',
+              width: ['100%'],
+              backgroundColor: lighten('background', 0.025),
+              transition: 'background-color .5s ease',
+              '&:hover': {
+                backgroundColor: lighten('background', 0.05),
+                transition: 'background-color .5s ease',
+              },
+              position: 'relative',
+              borderRadius: '4px',
             }}
           >
-            <Text
-              as="p"
-              sx={{ paddingBottom: '0', textDecoration: 'underline' }}
-            >
-              {listPage.node.title}
-            </Text>
-            {type === 'Blog' ? (
-              <Text as="small" sx={{ textDecoration: 'none' }}>
-                {listPage.node.publishDate}
-              </Text>
+            {type === 'Gallery' ? (
+              <Img
+                fluid={{
+                  ...listPage.node.masonry[
+                    (listPage.node.masonry.length * Math.random()) | 0
+                  ].images[0].fluid,
+                  aspectRatio: 4 / 3,
+                }}
+                title={
+                  listPage.node.masonry[
+                    (listPage.node.masonry.length * Math.random()) | 0
+                  ].images[0].title
+                }
+                alt={
+                  listPage.node.masonry[
+                    (listPage.node.masonry.length * Math.random()) | 0
+                  ].images[0].title
+                }
+                sx={{ borderRadius: '4px' }}
+              />
             ) : (
               ''
             )}
+            <Box
+              sx={{
+                position: (props) => `${type === 'Gallery' ? 'absolute' : ''} `,
+                bottom: '0',
+                left: '0',
+                height: '100%',
+                width: '100%',
+                background: alpha('background', 0.5),
+              }}
+            >
+              <Box
+                sx={{
+                  padding: '1rem',
+                  position: (props) =>
+                    `${type === 'Gallery' ? 'absolute' : ''} `,
+                  bottom: '0',
+                  left: '0',
+                }}
+              >
+                <Text as="h3" sx={{ paddingBottom: '0' }}>
+                  {listPage.node.title}
+                </Text>
+                {type === 'Blog' ? (
+                  <Text as="small">{listPage.node.publishDate}</Text>
+                ) : (
+                  ''
+                )}
+              </Box>
+            </Box>
           </Box>
         </Link>
       )

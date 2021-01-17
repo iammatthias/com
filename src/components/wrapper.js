@@ -1,5 +1,9 @@
-import React from 'react';
+/** @jsx jsx */
+
+import React from 'react'; //eslint-disable-line
+import { jsx } from 'theme-ui';
 import styled from '@emotion/styled';
+import { lighten } from '@theme-ui/color';
 
 const Main = styled.main`
   margin: 1rem;
@@ -13,14 +17,15 @@ const Section = styled('section')`
   width: 100%;
   max-width: ${(props) => (props.wrapped ? '61.8vw' : '100vw')};
   height: 100%;
-  border: 2px solid;
-  border-color: ${(props) => props.theme.colors.primary};
+  border-radius: 4px;
 `;
 
 const Wrapped = (props) => {
   return (
     <Main>
-      <Section {...props}>{props.children}</Section>
+      <Section {...props} sx={{ background: lighten('background', 0.025) }}>
+        {props.children}
+      </Section>
     </Main>
   );
 };

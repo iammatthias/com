@@ -8,7 +8,7 @@ export default {
     monospace: 'Inconsolata, Menlo, monospace',
     cursive: 'Lobster, cursive',
   },
-  fontSizes: [12, 14, 18, 24, 36, 54, 81, 122, 182, 264],
+  fontSizes: [14, 18, 24, 36, 54, 81, 122, 182, 264],
   fontWeights: {
     body: 400,
     heading: 700,
@@ -21,7 +21,7 @@ export default {
   colors: {
     modes: {
       light: {
-        text: '#120602',
+        text: '#0C0908',
         background: '#F4F2F1',
         primary: '#233F43',
         secondary: '#87B8C0',
@@ -29,10 +29,10 @@ export default {
         muted: '#A5958D',
       },
       dark: {
-        text: '#DBE1E1',
-        background: '#120602',
-        primary: '#233F43',
-        secondary: '#87B8C0',
+        text: '#F4F2F1',
+        background: '#0C0908',
+        primary: '#87B8C0',
+        secondary: '#233F43',
         accent: '#E45225',
         muted: '#A5958D',
       },
@@ -43,7 +43,7 @@ export default {
       fontFamily: 'body',
       lineHeight: 'body',
       fontWeight: 'body',
-      fontSize: 2,
+      fontSize: 1,
       color: 'text',
       paddingBottom: 3,
 
@@ -96,11 +96,11 @@ export default {
         paddingBottom: 4,
       },
       p: {
-        fontSize: 2,
+        fontSize: 1,
         paddingBottom: 3,
       },
       small: {
-        fontSize: 1,
+        fontSize: 0,
         paddingBottom: 3,
       },
       a: {

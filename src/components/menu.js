@@ -18,7 +18,7 @@ const Menu = (props) => {
         </Text>
       </Box>
       <Box sx={{ textAlign: ['left', 'right'] }}>
-        <Text as="h3">
+        <Text as="h4">
           <Link href="/photography/">Photography</Link>{' '}
           <Link href="/blog/">Blog</Link>
           {'  '}

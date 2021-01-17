@@ -68,6 +68,17 @@ export const useSiteMetadata = () => {
               title
               pageType
               slug
+              masonry {
+                images {
+                  id
+                  fluid {
+                    ...GatsbyContentfulFluid_withWebp
+                    aspectRatio
+                    src
+                    srcSet
+                  }
+                }
+              }
             }
           }
         }
