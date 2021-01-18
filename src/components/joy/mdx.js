@@ -12,7 +12,7 @@ import Gallery from './gallery';
 
 import Link from './link';
 
-import PageList from './PageList';
+import PageList from './pageList';
 
 export const MDXGlobalComponents = {
   Box: (props) => <Box {...props} />,
