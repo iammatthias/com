@@ -13,15 +13,15 @@ export default function Layout({ children, wrapped }) {
 
   return (
     <ThemeProvider theme={theme} components={MDXGlobalComponents}>
-      <button
-        onClick={(e) => {
-          setColorMode(colorMode === 'light' ? 'dark' : 'light');
-        }}
-      >
-        Toggle {colorMode === 'light' ? 'dark' : 'light'}
-      </button>
-      <Wrapper wrapped={wrapped}>
+      <Wrapper wrapped={wrapped.toString()}>
         <Menu />
+        <button
+          onClick={(e) => {
+            setColorMode(colorMode === 'light' ? 'dark' : 'light');
+          }}
+        >
+          Toggle {colorMode === 'light' ? 'dark' : 'light'}
+        </button>
         {children}
       </Wrapper>
     </ThemeProvider>

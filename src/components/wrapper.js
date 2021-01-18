@@ -6,26 +6,28 @@ import styled from '@emotion/styled';
 import { lighten } from '@theme-ui/color';
 
 const Main = styled.main`
-  margin: 1rem;
+  margin: 5rem 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
-const Section = styled('section')`
-  padding: 2rem;
-  width: 100%;
-  max-width: ${(props) => (props.wrapped ? '61.8vw' : '100vw')};
-  height: 100%;
-  border-radius: 4px;
-`;
-
 const Wrapped = (props) => {
   return (
     <Main>
-      <Section {...props} sx={{ background: lighten('background', 0.025) }}>
+      <section
+        {...props}
+        sx={{
+          background: lighten('background', 0.025),
+          padding: ['1rem', '2rem', '5rem'],
+          width: '100%',
+          maxWidth: ['100vw', props.wrapped ? '75vw' : '100vw'],
+          height: '100%',
+          borderRadius: '4px',
+        }}
+      >
         {props.children}
-      </Section>
+      </section>
     </Main>
   );
 };

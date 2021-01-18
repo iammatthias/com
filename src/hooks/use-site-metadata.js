@@ -82,7 +82,10 @@ export const useSiteMetadata = () => {
             }
           }
         }
-        listBlog: allContentfulPage(filter: { pageType: { eq: "Blog" } }) {
+        listBlog: allContentfulPage(
+          filter: { pageType: { eq: "Blog" } }
+          sort: { order: DESC, fields: publishDate }
+        ) {
           edges {
             node {
               id

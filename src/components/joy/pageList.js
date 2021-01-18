@@ -11,7 +11,7 @@ import { useSiteMetadata } from '../../hooks/use-site-metadata';
 export default function PageList({ type, limit }) {
   const { listPages, listBlog, listGallery } = useSiteMetadata();
 
-  const listLimit = limit ? limit : 10;
+  const listLimit = limit ? limit : 1000;
 
   const pages =
     type === 'Page'
