@@ -9,19 +9,11 @@ import { MDXGlobalComponents } from './joy/mdx';
 import Menu from './menu';
 
 export default function Layout({ children, wrapped }) {
-  const [colorMode, setColorMode] = useColorMode();
-
   return (
     <ThemeProvider theme={theme} components={MDXGlobalComponents}>
       <Wrapper wrapped={wrapped.toString()}>
         <Menu />
-        <button
-          onClick={(e) => {
-            setColorMode(colorMode === 'light' ? 'dark' : 'light');
-          }}
-        >
-          Toggle {colorMode === 'light' ? 'dark' : 'light'}
-        </button>
+
         {children}
       </Wrapper>
     </ThemeProvider>
