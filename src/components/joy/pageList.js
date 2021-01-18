@@ -2,7 +2,7 @@
 
 import React from 'react'; //eslint-disable-line
 import { jsx, Box, Text } from 'theme-ui';
-import { lighten, alpha } from '@theme-ui/color';
+import { lighten } from '@theme-ui/color';
 import Link from './link';
 import Img from 'gatsby-image';
 
@@ -38,12 +38,11 @@ export default function PageList({ type, limit }) {
       listPage.node.pageType === type && (
         <Link
           key={listPage.node.id}
-          href={path + listPage.node.slug}
+          href={'https://iammatthias.com' + path + listPage.node.slug}
           sx={{ textDecoration: 'none' }}
         >
           <Box
             sx={{
-              marginBottom: '2rem',
               padding: '0',
               width: ['100%'],
               backgroundColor: lighten('background', 0.025),
@@ -81,21 +80,32 @@ export default function PageList({ type, limit }) {
             )}
             <Box
               sx={{
-                position: (props) => `${type === 'Gallery' ? 'absolute' : ''} `,
+                position: (props) =>
+                  `${type === 'Gallery' ? 'absolute' : 'relative'}`,
                 bottom: '0',
                 left: '0',
                 height: '100%',
                 width: '100%',
-                background: alpha('background', 0.5),
+                zIndex: '1',
+                '&::before': {
+                  content: '""',
+                  opacity: (props) => `${type === 'Gallery' ? '.5' : '1'}`,
+                  backgroundColor: lighten('background', 0.05),
+                  zIndex: '2',
+                  position: 'absolute',
+                  height: '100%',
+                  width: '100%',
+                },
               }}
             >
               <Box
                 sx={{
                   padding: '1rem',
                   position: (props) =>
-                    `${type === 'Gallery' ? 'absolute' : ''} `,
+                    `${type === 'Gallery' ? 'absolute' : 'relative'} `,
                   bottom: '0',
                   left: '0',
+                  zIndex: '5',
                 }}
               >
                 <Text as="h3" sx={{ paddingBottom: '0' }}>
