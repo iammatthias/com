@@ -39,7 +39,7 @@ export const useSiteMetadata = () => {
               id
               title
               images {
-                fluid(maxWidth: 300) {
+                fluid {
                   ...GatsbyContentfulFluid_withWebp
                   aspectRatio
                   src
@@ -71,7 +71,7 @@ export const useSiteMetadata = () => {
               masonry {
                 images {
                   id
-                  fluid {
+                  fluid(maxWidth: 300) {
                     ...GatsbyContentfulFluid_withWebp
                     aspectRatio
                     src
