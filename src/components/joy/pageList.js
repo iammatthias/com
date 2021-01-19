@@ -58,21 +58,11 @@ export default function PageList({ type, limit }) {
             {type === 'Gallery' ? (
               <Img
                 fluid={{
-                  ...listPage.node.masonry[
-                    (listPage.node.masonry.length * Math.random()) | 0
-                  ].images[0].fluid,
+                  ...listPage.node.masonry[0].images[0].fluid,
                   aspectRatio: 4 / 3,
                 }}
-                title={
-                  listPage.node.masonry[
-                    (listPage.node.masonry.length * Math.random()) | 0
-                  ].images[0].title
-                }
-                alt={
-                  listPage.node.masonry[
-                    (listPage.node.masonry.length * Math.random()) | 0
-                  ].images[0].title
-                }
+                title={listPage.node.masonry[0].images[0].title}
+                alt={listPage.node.masonry[0].images[0].title}
                 sx={{ borderRadius: '4px' }}
               />
             ) : (
