@@ -1,12 +1,10 @@
 /** @jsx jsx */
 import { jsx, Box, Flex, Grid, Button, Heading } from 'theme-ui';
-import * as React from 'react'; //eslint-disable-line
+import React from 'react'; //eslint-disable-line
 
 import AM from 'react-music-embed';
 
 import Sparkle from './sparkle';
-
-// import Gallery from './lazyGallery';
 
 import Gallery from './gallery';
 
