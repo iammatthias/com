@@ -5,6 +5,7 @@ import { jsx } from 'theme-ui';
 import styled from '@emotion/styled';
 import { lighten } from '@theme-ui/color';
 import Toggle from './toggle';
+import Logomark from './logomark';
 
 const Main = styled.main`
   margin: 5rem 1rem;
@@ -28,11 +29,18 @@ const Wrapped = (props) => {
           position: 'relative',
         }}
       >
+        <Logomark
+          sx={{
+            position: 'absolute',
+            top: '-3.5rem',
+            left: ['1rem', '2rem', '4rem'],
+          }}
+        />
         <Toggle
           sx={{
             position: 'absolute',
             top: '-3.5rem',
-            right: ['1rem', '2rem', '5rem'],
+            right: ['1rem', '2rem', '4rem'],
           }}
         />
         {props.children}
