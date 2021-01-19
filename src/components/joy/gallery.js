@@ -43,41 +43,39 @@ export default function Gallery({ masonrySet, ratio }) {
   };
 
   return (
-    <ClientOnly>
-      <SimpleReactLightbox key={match.node.id}>
-        <SRLWrapper options={options}>
-          <XMasonry
-            targetBlockWidth={
-              match.node.images.length === 1
-                ? '900'
-                : match.node.images.length === 2
-                ? '600'
-                : match.node.images.length === 3
-                ? '600'
-                : match.node.images.length >= 4 && '250'
-            }
-          >
-            {match.node.images.map((image, i) => (
-              <XBlock key={i}>
-                <Link
-                  href={image.fluid.srcSet}
+    <SimpleReactLightbox key={match.node.id}>
+      <SRLWrapper options={options}>
+        <XMasonry
+          targetBlockWidth={
+            match.node.images.length === 1
+              ? '900'
+              : match.node.images.length === 2
+              ? '600'
+              : match.node.images.length === 3
+              ? '600'
+              : match.node.images.length >= 4 && '250'
+          }
+        >
+          {match.node.images.map((image, i) => (
+            <XBlock key={i}>
+              <Link
+                href={image.fluid.srcSet}
+                alt={image.title}
+                data-attribute="SRL"
+              >
+                <Img
+                  fluid={{
+                    ...image.fluid,
+                    aspectRatio: r ? r : image.fluid.aspectRatio,
+                  }}
+                  title={image.title}
                   alt={image.title}
-                  data-attribute="SRL"
-                >
-                  <Img
-                    fluid={{
-                      ...image.fluid,
-                      aspectRatio: r ? r : image.fluid.aspectRatio,
-                    }}
-                    title={image.title}
-                    alt={image.title}
-                  />
-                </Link>
-              </XBlock>
-            ))}
-          </XMasonry>
-        </SRLWrapper>
-      </SimpleReactLightbox>
-    </ClientOnly>
+                />
+              </Link>
+            </XBlock>
+          ))}
+        </XMasonry>
+      </SRLWrapper>
+    </SimpleReactLightbox>
   );
 }
