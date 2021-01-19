@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeProvider, useColorMode } from 'theme-ui';
+import { ThemeProvider } from 'theme-ui';
 
 import theme from './../gatsby-plugin-theme-ui';
 
@@ -13,7 +13,6 @@ export default function Layout({ children, wrapped }) {
     <ThemeProvider theme={theme} components={MDXGlobalComponents}>
       <Wrapper wrapped={wrapped.toString()}>
         <Menu />
-
         {children}
       </Wrapper>
     </ThemeProvider>

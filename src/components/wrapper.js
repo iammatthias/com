@@ -19,8 +19,8 @@ const Wrapped = (props) => {
       <section
         {...props}
         sx={{
-          background: lighten('background', 0.025),
-          padding: ['1rem', '2rem', '5rem'],
+          backgroundColor: lighten('background', 0.025),
+          padding: ['1rem', '2rem', '4rem'],
           width: '100%',
           maxWidth: ['100vw', props.wrapped ? '75vw' : '100vw'],
           height: '100%',
@@ -28,7 +28,13 @@ const Wrapped = (props) => {
           position: 'relative',
         }}
       >
-        <Toggle sx={{ position: 'absolute', top: '-3.5rem', left: '1rem' }} />
+        <Toggle
+          sx={{
+            position: 'absolute',
+            top: '-3.5rem',
+            right: ['1rem', '2rem', '5rem'],
+          }}
+        />
         {props.children}
       </section>
     </Main>

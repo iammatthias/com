@@ -3,6 +3,7 @@ import React from 'react';
 import { Box, Grid, Text } from 'theme-ui';
 
 import Link from './joy/link';
+import Logomark from './logomark';
 
 const Menu = (props) => {
   return (
@@ -10,12 +11,14 @@ const Menu = (props) => {
       sx={{
         gridTemplateRows: 'auto',
         gridTemplateColumns: ['1fr', '1fr 1fr'],
+        marginBottom: '2rem',
       }}
     >
       <Box>
-        <Text as="h3">
+        {/* <Text as="h3">
           <Link href="/">I am Matthias</Link>
-        </Text>
+        </Text> */}
+        <Logomark />
       </Box>
       <Box sx={{ textAlign: ['left', 'right'] }}>
         <Text as="h4">
