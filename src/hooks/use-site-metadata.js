@@ -39,7 +39,7 @@ export const useSiteMetadata = () => {
               id
               title
               images {
-                fluid {
+                fluid(maxWidth: 300) {
                   ...GatsbyContentfulFluid_withWebp
                   aspectRatio
                   src
