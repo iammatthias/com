@@ -10,10 +10,10 @@ import ClientOnly from './joy/clientOnly';
 
 export default function Layout({ children, wrapped }) {
   return (
-    <ClientOnly>
-      <ThemeProvider theme={theme} components={MDXGlobalComponents}>
-        <Wrapper wrapped={wrapped.toString()}>{children}</Wrapper>
-      </ThemeProvider>
-    </ClientOnly>
+    <ThemeProvider theme={theme} components={MDXGlobalComponents}>
+      <Wrapper wrapped={wrapped.toString()}>
+        <ClientOnly>{children}</ClientOnly>
+      </Wrapper>
+    </ThemeProvider>
   );
 }
