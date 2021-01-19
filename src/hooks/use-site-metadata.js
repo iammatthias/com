@@ -61,6 +61,7 @@ export const useSiteMetadata = () => {
         }
         listGallery: allContentfulPage(
           filter: { pageType: { eq: "Gallery" } }
+          sort: { fields: publishDate }
         ) {
           edges {
             node {
@@ -68,6 +69,7 @@ export const useSiteMetadata = () => {
               title
               pageType
               slug
+              publishDate
               masonry {
                 images {
                   id

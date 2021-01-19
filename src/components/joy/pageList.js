@@ -6,8 +6,6 @@ import { lighten } from '@theme-ui/color';
 import Link from './link';
 import Img from 'gatsby-image';
 
-import ClientOnly from './clientOnly';
-
 import { useSiteMetadata } from '../../hooks/use-site-metadata';
 
 export default function PageList({ type, limit }) {

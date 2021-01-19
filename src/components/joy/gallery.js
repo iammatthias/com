@@ -6,8 +6,6 @@ import { jsx, Link } from 'theme-ui';
 import { XMasonry, XBlock } from 'react-xmasonry';
 import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
 
-import ClientOnly from './clientOnly';
-
 import { useSiteMetadata } from '../../hooks/use-site-metadata';
 
 export default function Gallery({ masonrySet, ratio }) {
