@@ -4,6 +4,8 @@ import React from 'react'; //eslint-disable-line
 
 import AM from 'react-music-embed';
 
+import ClientOnly from './clientOnly';
+
 import Sparkle from './sparkle';
 
 import Gallery from './gallery';
@@ -25,7 +27,11 @@ export const MDXGlobalComponents = {
 
   Link: (props) => <Link {...props} />,
 
-  PageList: (props) => <PageList {...props} />,
+  PageList: (props) => (
+    <ClientOnly>
+      <PageList {...props} />
+    </ClientOnly>
+  ),
 
   Sparkle: (props) => <Sparkle {...props} />,
 
@@ -35,7 +41,11 @@ export const MDXGlobalComponents = {
 
   Mono: (props) => <span {...props} sx={{ fontFamily: 'monospace' }} />,
 
-  Gallery: (props) => <Gallery {...props} />,
+  Gallery: (props) => (
+    <ClientOnly>
+      <Gallery {...props} />
+    </ClientOnly>
+  ),
 
   AM: (props) => <AM {...props} />,
 };
