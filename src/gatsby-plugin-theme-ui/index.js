@@ -97,10 +97,12 @@ export default {
         paddingBottom: 4,
       },
       p: {
+        fontWeight: 'body',
         fontSize: 1,
         paddingBottom: 3,
       },
       small: {
+        fontWeight: 'body',
         fontSize: 0,
         paddingBottom: 3,
       },
