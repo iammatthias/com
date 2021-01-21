@@ -70,17 +70,6 @@ export const useSiteMetadata = () => {
               pageType
               slug
               publishDate
-              masonry {
-                images {
-                  id
-                  fluid(maxWidth: 300) {
-                    ...GatsbyContentfulFluid_withWebp
-                    aspectRatio
-                    src
-                    srcSet
-                  }
-                }
-              }
             }
           }
         }

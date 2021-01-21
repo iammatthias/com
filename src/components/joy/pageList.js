@@ -55,23 +55,9 @@ export default function PageList({ type, limit }) {
               borderRadius: '4px',
             }}
           >
-            {type === 'Gallery' ? (
-              <Img
-                fluid={{
-                  ...listPage.node.masonry[0].images[0].fluid,
-                  aspectRatio: 4 / 3,
-                }}
-                title={listPage.node.masonry[0].images[0].title}
-                alt={listPage.node.masonry[0].images[0].title}
-                sx={{ borderRadius: '4px' }}
-              />
-            ) : (
-              ''
-            )}
             <Box
               sx={{
-                position: (props) =>
-                  `${type === 'Gallery' ? 'absolute' : 'relative'}`,
+                position: 'relative',
                 bottom: '0',
                 left: '0',
                 height: '100%',
@@ -79,7 +65,7 @@ export default function PageList({ type, limit }) {
                 zIndex: '1',
                 '&::before': {
                   content: '""',
-                  opacity: (props) => `${type === 'Gallery' ? '.5' : '1'}`,
+                  opacity: '1',
                   backgroundColor: lighten('background', 0.05),
                   zIndex: '2',
                   position: 'absolute',
@@ -91,8 +77,7 @@ export default function PageList({ type, limit }) {
               <Box
                 sx={{
                   padding: '1rem',
-                  position: (props) =>
-                    `${type === 'Gallery' ? 'absolute' : 'relative'} `,
+                  position: 'relative',
                   bottom: '0',
                   left: '0',
                   zIndex: '5',
@@ -101,11 +86,8 @@ export default function PageList({ type, limit }) {
                 <Text as="h3" sx={{ paddingBottom: '0' }}>
                   {listPage.node.title}
                 </Text>
-                {type === 'Blog' ? (
-                  <Text as="small">{listPage.node.publishDate}</Text>
-                ) : (
-                  ''
-                )}
+
+                <Text as="small">{listPage.node.publishDate}</Text>
               </Box>
             </Box>
           </Box>
