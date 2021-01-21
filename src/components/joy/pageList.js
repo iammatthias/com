@@ -9,27 +9,19 @@ import Img from 'gatsby-image';
 import { useSiteMetadata } from '../../hooks/use-site-metadata-lists';
 
 export default function PageList({ type, limit }) {
-  const { listPages, listBlog, listGallery } = useSiteMetadata();
+  const { listBlog, listGallery } = useSiteMetadata();
 
   const listLimit = limit ? limit : 1000;
 
   const pages =
-    type === 'Page'
-      ? listPages.edges
-      : type === 'Blog'
+    type === 'Blog'
       ? listBlog.edges
       : type === 'Gallery'
       ? listGallery.edges
       : '';
 
   const path =
-    type === 'Page'
-      ? '/'
-      : type === 'Blog'
-      ? 'blog/'
-      : type === 'Gallery'
-      ? 'photography/'
-      : '';
+    type === 'Blog' ? 'blog/' : type === 'Gallery' ? 'photography/' : '';
 
   console.count('counter');
 

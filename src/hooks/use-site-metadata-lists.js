@@ -4,19 +4,9 @@ export const useSiteMetadata = () => {
   const meta = useStaticQuery(
     graphql`
       query {
-        listPages: allContentfulPage(filter: { pageType: { eq: "Page" } }) {
-          edges {
-            node {
-              id
-              title
-              pageType
-              slug
-            }
-          }
-        }
         listGallery: allContentfulPage(
           filter: { pageType: { eq: "Gallery" } }
-          sort: { fields: publishDate }
+          sort: { order: DESC, fields: publishDate }
         ) {
           edges {
             node {
