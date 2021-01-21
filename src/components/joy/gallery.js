@@ -6,7 +6,7 @@ import { jsx, Link } from 'theme-ui';
 import { XMasonry, XBlock } from 'react-xmasonry';
 import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
 
-import { useSiteMetadata } from '../../hooks/use-site-metadata';
+import { useSiteMetadata } from '../../hooks/use-site-metadata-galleries';
 
 export default function Gallery({ masonrySet, ratio }) {
   const { galleries } = useSiteMetadata();
@@ -50,8 +50,8 @@ export default function Gallery({ masonrySet, ratio }) {
               : match.node.images.length === 2
               ? '600'
               : match.node.images.length === 3
-              ? '600'
-              : match.node.images.length >= 4 && '250'
+              ? '350'
+              : match.node.images.length >= 4 && '300'
           }
         >
           {match.node.images.map((image, i) => (

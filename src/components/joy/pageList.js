@@ -6,7 +6,7 @@ import { lighten } from '@theme-ui/color';
 import Link from './link';
 import Img from 'gatsby-image';
 
-import { useSiteMetadata } from '../../hooks/use-site-metadata';
+import { useSiteMetadata } from '../../hooks/use-site-metadata-lists';
 
 export default function PageList({ type, limit }) {
   const { listPages, listBlog, listGallery } = useSiteMetadata();
