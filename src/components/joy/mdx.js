@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx, Box, Flex, Grid, Button, Heading } from 'theme-ui';
+import { jsx, Box, Flex, Grid, Button, Heading, Text } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 
 import AM from 'react-music-embed';
@@ -23,7 +23,9 @@ export const MDXGlobalComponents = {
 
   Button: (props) => <Button {...props} />,
 
-  Text: (props) => <Heading {...props} />,
+  Heading: (props) => <Heading {...props} />,
+
+  Text: (props) => <Text {...props} />,
 
   Link: (props) => <Link {...props} />,
 
