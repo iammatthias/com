@@ -46,16 +46,22 @@ module.exports = {
       __key: 'pages',
     },
     {
-      resolve: 'gatsby-plugin-web-font-loader',
+      resolve: `gatsby-plugin-google-fonts-v2`,
       options: {
-        google: {
-          families: [
-            'Playfair Display',
-            'Cormorant Garamond',
-            'Lobster',
-            'Inconsolata',
-          ],
-        },
+        fonts: [
+          {
+            family: 'Cormorant Garamond',
+            weights: ['300', '700'],
+          },
+          {
+            family: 'Lobster Two',
+            weights: ['400'],
+          },
+          {
+            family: 'Inconsolata',
+            weights: ['400'],
+          },
+        ],
       },
     },
   ],

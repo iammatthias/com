@@ -4,7 +4,6 @@ import React from 'react'; //eslint-disable-line
 import { jsx, Box, Text } from 'theme-ui';
 import { lighten } from '@theme-ui/color';
 import Link from './link';
-import Img from 'gatsby-image';
 
 import { useSiteMetadata } from '../../hooks/use-site-metadata-lists';
 

@@ -4,14 +4,14 @@ export default {
   initialColorModeName: 'light',
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
-    body: 'Playfair Display, system-ui, sans-serif',
-    heading: 'Cormorant Garamond, serif',
+    body: 'Cormorant Garamond, system-ui, sans-serif',
+    heading: 'Cormorant Garamond, system-ui, serif',
     monospace: 'Inconsolata, Menlo, monospace',
     cursive: 'Lobster, cursive',
   },
   fontSizes: [14, 18, 24, 36, 54, 81, 122, 182, 264],
   fontWeights: {
-    body: 400,
+    body: 300,
     heading: 700,
     bold: 700,
   },
