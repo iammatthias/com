@@ -6,10 +6,14 @@ import { jsx, Link } from 'theme-ui';
 import { XMasonry, XBlock } from 'react-xmasonry';
 import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
 
+import { useLocation } from '@reach/router';
+
 import { useSiteMetadata } from '../../hooks/use-site-metadata-galleries';
 
 export default function Gallery({ masonrySet, ratio }) {
   const { galleries } = useSiteMetadata();
+
+  const { pathname } = useLocation();
 
   const match = galleries.edges.find((edge) => edge.node.title === masonrySet);
   if (!match) {
@@ -40,8 +44,16 @@ export default function Gallery({ masonrySet, ratio }) {
     },
   };
 
+  console.log(pathname);
+
   return (
     <SimpleReactLightbox key={match.node.id}>
+      {pathname.includes('/photography/') ? (
+        <>
+          <h2 sx={{ margin: '0', padding: '0' }}>{match.node.title}</h2>
+          <p>{match.node.updatedAt}</p>
+        </>
+      ) : null}
       <SRLWrapper options={options}>
         <XMasonry
           targetBlockWidth={

@@ -14,7 +14,7 @@ export const useSiteMetadata = () => {
               title
               pageType
               slug
-              publishDate
+              publishDate: updatedAt(formatString: "MMMM Do, YYYY")
             }
           }
         }
@@ -28,7 +28,7 @@ export const useSiteMetadata = () => {
               title
               pageType
               slug
-              publishDate
+              publishDate(formatString: "MMMM Do, YYYY")
             }
           }
         }

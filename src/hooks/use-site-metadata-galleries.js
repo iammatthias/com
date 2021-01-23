@@ -9,6 +9,7 @@ export const useSiteMetadata = () => {
             node {
               id
               title
+              updatedAt(formatString: "MMMM Do, YYYY")
               images {
                 fluid {
                   ...GatsbyContentfulFluid_withWebp
