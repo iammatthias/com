@@ -22,18 +22,22 @@ const Label = styled.label`
     right: 0;
     bottom: 0;
     background-color: ${(props) => props.theme.colors.text};
-    -webkit-transition: 0.4s;
+    border: 2px solid ${(props) => props.theme.colors.muted};
+    border-radius: 34px;
     transition: 0.4s;
     &::before {
       position: absolute;
       content: '';
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
+      height: 24px;
+      width: 24px;
+      left: 6px;
+      bottom: 3px;
       background-color: ${(props) => props.theme.colors.background};
-      -webkit-transition: 0.4s;
       transition: 0.4s;
+      border-radius: 50%;
+    }
+    &:hover {
+      border: 2px solid ${(props) => props.theme.colors.accent};
     }
   }
   input {
@@ -41,27 +45,21 @@ const Label = styled.label`
       background-color: ${(props) => props.theme.colors.text};
       &::before {
         background-color: ${(props) => props.theme.colors.background};
+        left: 0;
+        right: 6px;
       }
     }
   }
   input {
     &:focus + .slider {
-      box-shadow: 0 0 1px ${(props) => props.theme.colors.background};
+      box-shadow: 0 0 2px ${(props) => props.theme.colors.background};
     }
   }
   input {
     &:checked + .slider {
       &::before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px);
+        transform: translateX(28px);
       }
-    }
-  }
-  .slider.round {
-    border-radius: 34px;
-    &::before {
-      border-radius: 50%;
     }
   }
 `;
