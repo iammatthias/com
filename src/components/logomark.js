@@ -7,7 +7,7 @@ import Link from './joy/link';
 
 function SvgComponent(props) {
   return (
-    <Link href="https://iammatthias.com">
+    <Link href="https://iammatthias.com" title="homepage">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width={36}
