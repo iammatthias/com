@@ -72,7 +72,7 @@ export default function Toggle(props) {
       <Label htmlFor="colorModeToggle">
         <input
           id="colorModeToggle"
-          name="checkbox"
+          name="colorModeToggle"
           type="checkbox"
           onClick={(e) => {
             setColorMode(colorMode === 'light' ? 'dark' : 'light');
