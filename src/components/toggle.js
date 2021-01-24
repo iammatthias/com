@@ -30,7 +30,7 @@ const Label = styled.label`
       content: '';
       height: 24px;
       width: 24px;
-      left: 6px;
+      left: 4px;
       bottom: 3px;
       background-color: ${(props) => props.theme.colors.background};
       transition: 0.4s;
@@ -46,7 +46,7 @@ const Label = styled.label`
       &::before {
         background-color: ${(props) => props.theme.colors.background};
         left: 0;
-        right: 6px;
+        right: 4px;
       }
     }
   }
@@ -69,8 +69,10 @@ export default function Toggle(props) {
 
   return (
     <Box {...props}>
-      <Label>
+      <Label htmlFor="colorModeToggle">
         <input
+          id="colorModeToggle"
+          name="checkbox"
           type="checkbox"
           onClick={(e) => {
             setColorMode(colorMode === 'light' ? 'dark' : 'light');
