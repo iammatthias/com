@@ -3,6 +3,7 @@ import React from 'react'; //eslint-disable-line
 import styled from '@emotion/styled';
 import { jsx } from 'theme-ui';
 import { keyframes } from '@emotion/core';
+import { lighten } from '@theme-ui/color';
 
 const QUERY = '(prefers-reduced-motion: no-preference)';
 const isRenderingOnServer = typeof window === 'undefined';
@@ -75,7 +76,7 @@ const generateSparkle = (color) => {
   const sparkle = {
     id: String(random(10000, 99999)),
     createdAt: Date.now(),
-    color: `hsla(${Math.random() * 360}, 100%, 50%, 1)`,
+    color: `hsla(${Math.random() * (45 - 10) + 10}, 78%, 52%, 1)`,
     size: random(5, 15),
     style: {
       top: random(0, 100) + '%',

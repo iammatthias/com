@@ -17,19 +17,35 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
             }
           }
         }
-        blog: allContentfulPage(filter: { pageType: { eq: "Blog" } }) {
+        blog: allContentfulPage(
+          filter: { pageType: { eq: "Blog" } }
+          sort: { order: DESC, fields: publishDate }
+        ) {
           edges {
-            node {
+            previous {
               id
               slug
             }
+            next {
+              id
+              slug
+            }
+            node {
+              id
+              slug
+              publishDate(formatString: "MMMM Do, YYYY")
+            }
           }
         }
-        gallery: allContentfulPage(filter: { pageType: { eq: "Gallery" } }) {
+        gallery: allContentfulPage(
+          filter: { pageType: { eq: "Gallery" } }
+          sort: { order: DESC, fields: publishDate }
+        ) {
           edges {
             node {
               id
               slug
+              publishDate(formatString: "MMMM Do, YYYY")
             }
           }
         }
@@ -53,13 +69,15 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       },
     });
   });
-  result.data.blog.edges.forEach(({ node }) => {
+  result.data.blog.edges.forEach(({ node, next, previous }) => {
     createPage({
       path: 'blog/' + node.slug,
       component: pageTemplate,
       context: {
         id: node.id,
         pagePath: node.slug,
+        next,
+        previous,
       },
     });
   });
