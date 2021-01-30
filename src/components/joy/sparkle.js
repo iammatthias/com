@@ -3,7 +3,6 @@ import React from 'react'; //eslint-disable-line
 import styled from '@emotion/styled';
 import { jsx } from 'theme-ui';
 import { keyframes } from '@emotion/core';
-import { lighten } from '@theme-ui/color';
 
 const QUERY = '(prefers-reduced-motion: no-preference)';
 const isRenderingOnServer = typeof window === 'undefined';

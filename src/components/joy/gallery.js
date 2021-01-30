@@ -63,7 +63,7 @@ export default function Gallery({ masonrySet, ratio }) {
               ? '600'
               : match.node.images.length === 3
               ? '350'
-              : match.node.images.length >= 4 && '300'
+              : match.node.images.length === 4 && '300'
           }
         >
           {match.node.images.map((image, i) => (

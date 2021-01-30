@@ -14,8 +14,6 @@ const Page = ({ data, pageContext }) => {
   const content = data.contentfulPage;
   const wrappedLayout = content.wrappedLayout;
 
-  console.log(pageContext);
-
   return (
     <Layout wrapped={wrappedLayout}>
       {content.pageType === 'Blog' ? (
