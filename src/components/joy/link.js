@@ -1,11 +1,14 @@
-import React from 'react';
+/** @jsx jsx */
+
+import React from 'react'; //eslint-disable-line
+import { jsx } from 'theme-ui';
 import PropTypes from 'prop-types';
 import { Link as GatsbyLink } from 'gatsby';
 
 // Checks against absolute URLs that share 👇 so we can still pass it along to Gatsby's internal link component
 const domainRegex = /http[s]*:\/\/[www.]*iammatthias\.com[/]?/;
 
-const MarkdownLink = ({ href, ...rest }) => {
+const MarkdownLink = ({ props, href, ...rest }) => {
   const sameDomain = domainRegex.test(href);
 
   if (sameDomain) {
@@ -28,6 +31,7 @@ const MarkdownLink = ({ href, ...rest }) => {
       target="_blank"
       rel="noopener noreferrer nofollow"
       {...rest}
+      {...props}
     />
   );
 };

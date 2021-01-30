@@ -22,7 +22,6 @@ const Label = styled.label`
     right: 0;
     bottom: 0;
     background-color: ${(props) => props.theme.colors.text};
-    border: 2px solid ${(props) => props.theme.colors.muted};
     border-radius: 34px;
     transition: 0.4s;
     &::before {
@@ -30,14 +29,12 @@ const Label = styled.label`
       content: '';
       height: 24px;
       width: 24px;
-      left: 4px;
-      bottom: 3px;
+      top: 5px;
+      left: 6px;
+      bottom: 5px;
       background-color: ${(props) => props.theme.colors.background};
       transition: 0.4s;
       border-radius: 50%;
-    }
-    &:hover {
-      border: 2px solid ${(props) => props.theme.colors.accent};
     }
   }
   input {
@@ -45,8 +42,6 @@ const Label = styled.label`
       background-color: ${(props) => props.theme.colors.text};
       &::before {
         background-color: ${(props) => props.theme.colors.background};
-        left: 0;
-        right: 4px;
       }
     }
   }
@@ -58,7 +53,7 @@ const Label = styled.label`
   input {
     &:checked + .slider {
       &::before {
-        transform: translateX(28px);
+        transform: translateX(24px);
       }
     }
   }
@@ -69,11 +64,12 @@ export default function Toggle(props) {
 
   return (
     <Box {...props}>
-      <Label htmlFor="colorModeToggle">
+      <Label htmlFor="colorModeToggle" aria-hidden="true">
         <input
           id="colorModeToggle"
           name="colorModeToggle"
           type="checkbox"
+          aria-hidden="true"
           onClick={(e) => {
             setColorMode(colorMode === 'light' ? 'dark' : 'light');
           }}

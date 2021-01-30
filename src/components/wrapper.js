@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { lighten } from '@theme-ui/color';
 import Toggle from './toggle';
 import Logomark from './logomark';
+import Menu from './menu';
 
 const Main = styled.main`
   margin: 5rem 1rem;
@@ -41,6 +42,14 @@ const Wrapped = (props) => {
             position: 'absolute',
             top: '-3.5rem',
             right: ['1rem', '2rem', '4rem'],
+          }}
+        />
+        <Menu
+          sx={{
+            position: ['relative', 'absolute'],
+            top: ['', '10rem'],
+            right: ['', '-8.5rem'],
+            transform: ['rotate(0deg)', 'rotate(90deg)'],
           }}
         />
         {props.children}
