@@ -1,6 +1,7 @@
 /** @jsx jsx */
-import { jsx } from 'theme-ui';
+import { jsx, Box } from 'theme-ui';
 import * as React from 'react'; //eslint-disable-line
+import { darken } from '@theme-ui/color';
 import { graphql } from 'gatsby';
 
 import Layout from '../components/Layout';
@@ -14,7 +15,25 @@ const Page = ({ data }) => {
 
   return (
     <Layout wrapped={wrappedLayout}>
-      <MDXRenderer>{content.body.childMdx.body}</MDXRenderer>
+      {content.pageType === 'Blog' ? (
+        <Box
+          sx={{
+            padding: ['1rem 1rem 2rem', '2rem 2rem 3rem', '4rem 4rem 5rem'],
+            backgroundColor: darken('background', 0.025),
+          }}
+        >
+          <h1 sx={{ m: 0, p: 0 }}>{content.title}</h1>
+          <h3 sx={{ m: 0, p: 0 }}>{content.publishDate},&nbsp;&nbsp;&nbsp;</h3>
+          <h4 sx={{ m: 0, p: 0 }}>
+            Estimated reading time: {content.body.childMdx.timeToRead} min
+          </h4>
+        </Box>
+      ) : (
+        ''
+      )}
+      <Box sx={{ padding: ['1rem', '2rem', '4rem'] }}>
+        <MDXRenderer>{content.body.childMdx.body}</MDXRenderer>
+      </Box>
     </Layout>
   );
 };
@@ -27,9 +46,11 @@ export const query = graphql`
       slug
       wrappedLayout
       pageType
+      publishDate(formatString: "MMMM Do, YYYY")
       body {
         childMdx {
           body
+          timeToRead
         }
       }
     }

@@ -3,7 +3,7 @@
 import React from 'react'; //eslint-disable-line
 import { jsx } from 'theme-ui';
 import styled from '@emotion/styled';
-import { lighten } from '@theme-ui/color';
+import { lighten, darken } from '@theme-ui/color';
 import Toggle from './toggle';
 import Logomark from './logomark';
 import Menu from './menu';
@@ -22,7 +22,7 @@ const Wrapped = (props) => {
         {...props}
         sx={{
           backgroundColor: lighten('background', 0.025),
-          padding: ['1rem', '2rem', '4rem'],
+
           width: '100%',
           maxWidth: ['100vw', props.wrapped ? '75vw' : '100vw'],
           height: '100%',
@@ -47,9 +47,11 @@ const Wrapped = (props) => {
         <Menu
           sx={{
             position: ['relative', 'absolute'],
-            top: ['', '10rem'],
-            right: ['', '-8.5rem'],
+            top: ['', '9rem'],
+            right: ['', '-9.5rem'],
+            padding: ['1rem', '0'],
             transform: ['rotate(0deg)', 'rotate(90deg)'],
+            backgroundColor: [darken('background', 0.025), 'transparent'],
           }}
         />
         {props.children}
