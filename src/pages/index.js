@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from 'theme-ui';
+import { jsx, Box } from 'theme-ui';
 import * as React from 'react'; //eslint-disable-line
 import { graphql } from 'gatsby';
 
@@ -14,7 +14,9 @@ const Page = ({ data }) => {
 
   return (
     <Layout wrapped={wrappedLayout}>
-      <MDXRenderer>{content.body.childMdx.body}</MDXRenderer>
+      <Box sx={{ padding: ['1rem', '2rem', '4rem'] }}>
+        <MDXRenderer>{content.body.childMdx.body}</MDXRenderer>
+      </Box>
     </Layout>
   );
 };
