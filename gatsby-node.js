@@ -37,15 +37,11 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
             }
           }
         }
-        gallery: allContentfulPage(
-          filter: { pageType: { eq: "Gallery" } }
-          sort: { order: DESC, fields: publishDate }
-        ) {
+        gallery: allContentfulPage(filter: { pageType: { eq: "Gallery" } }) {
           edges {
             node {
               id
               slug
-              publishDate(formatString: "MMMM Do, YYYY")
             }
           }
         }
