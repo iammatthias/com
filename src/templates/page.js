@@ -29,6 +29,16 @@ const Page = ({ data, pageContext }) => {
             Estimated reading time: {content.body.childMdx.timeToRead} min
           </h4>
         </Box>
+      ) : content.pageType === 'Gallery' ? (
+        <Box
+          sx={{
+            padding: ['1rem 1rem 2rem', '2rem 2rem 3rem', '4rem 4rem 5rem'],
+            backgroundColor: darken('background', 0.025),
+          }}
+        >
+          <h1 sx={{ m: 0, p: 0 }}>{content.title}</h1>
+          <h3 sx={{ m: 0, p: 0 }}>{content.publishDate},&nbsp;&nbsp;&nbsp;</h3>
+        </Box>
       ) : (
         ''
       )}

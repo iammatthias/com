@@ -50,7 +50,7 @@ export default function Gallery({ masonrySet, ratio }) {
     <SimpleReactLightbox key={match.node.id}>
       {pathname.includes('/photography/') ? (
         <>
-          <h2 sx={{ margin: '0', padding: '0' }}>{match.node.title}</h2>
+          <h3 sx={{ margin: '0', padding: '0' }}>{match.node.title}</h3>
           <p>{match.node.updatedAt}</p>
         </>
       ) : null}
