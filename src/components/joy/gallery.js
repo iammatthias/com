@@ -51,7 +51,7 @@ export default function Gallery({ masonrySet, ratio }) {
       {pathname.includes('/photography/') ? (
         <>
           <h3 sx={{ margin: '0', padding: '0' }}>{match.node.title}</h3>
-          <p>{match.node.updatedAt}</p>
+          <p>Last Updated: {match.node.updatedAt}</p>
         </>
       ) : null}
       <SRLWrapper options={options}>

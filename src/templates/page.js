@@ -37,7 +37,6 @@ const Page = ({ data, pageContext }) => {
           }}
         >
           <h1 sx={{ m: 0, p: 0 }}>{content.title}</h1>
-          <h3 sx={{ m: 0, p: 0 }}>{content.publishDate},&nbsp;&nbsp;&nbsp;</h3>
         </Box>
       ) : (
         ''
