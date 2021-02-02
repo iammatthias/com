@@ -62,6 +62,15 @@ const Label = styled.label`
 export default function Toggle(props) {
   const [colorMode, setColorMode] = useColorMode();
 
+  function handleClick(object) {
+    if (typeof window !== 'undefined') {
+      window.analytics.track('Color Mode Toggled', {
+        colorMode: colorMode,
+      });
+    }
+    return object;
+  }
+
   return (
     <Box {...props}>
       <Label htmlFor="colorModeToggle" aria-hidden="true">
@@ -70,9 +79,9 @@ export default function Toggle(props) {
           name="colorModeToggle"
           type="checkbox"
           aria-hidden="true"
-          onClick={(e) => {
+          onClick={handleClick((e) => {
             setColorMode(colorMode === 'light' ? 'dark' : 'light');
-          }}
+          })}
         />
         <span className="slider round" />
       </Label>
