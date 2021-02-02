@@ -24,7 +24,11 @@ const Wrapped = (props) => {
           backgroundColor: lighten('background', 0.025),
 
           width: '100%',
-          maxWidth: ['100vw', props.wrapped ? '75vw' : '100vw'],
+          maxWidth: [
+            '100vw',
+            props.wrapped ? '85vw' : '100vw',
+            props.wrapped ? '75vw' : '100vw',
+          ],
           height: '100%',
           borderRadius: '4px',
           position: 'relative',
