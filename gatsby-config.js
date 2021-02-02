@@ -99,7 +99,7 @@ module.exports = {
               title
               pageType
               slug
-              publishDate: updatedAt(formatString: "MMMM Do, YYYY")
+              publishDate: updatedAt(formatString: "MMMM DD, YYYY")
             }
           }
         }
@@ -113,7 +113,7 @@ module.exports = {
               title
               pageType
               slug
-              publishDate(formatString: "MMMM Do, YYYY")
+              publishDate(formatString: "MMMM DD, YYYY")
             }
           }
         }
