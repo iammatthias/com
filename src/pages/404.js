@@ -1,28 +1,27 @@
-import React from 'react'
-import { Link } from 'gatsby'
-import styled from '@emotion/styled'
-import PageTitle from '../components/PageTitle'
-import Container from '../components/Container'
-import Layout from '../components/Layout'
+/** @jsx jsx */
+import { jsx, Box } from 'theme-ui';
+import * as React from 'react'; //eslint-disable-line
 
-const Text = styled.p`
-  text-align: center;
-  line-height: 1.6;
-  a {
-    color: ${props => props.theme.colors.text};
-  }
-`
+import Layout from '../components/Layout';
 
-const NotFoundPage = ({ location }) => (
-  <Layout location={location.pathname} title="404" description="Page Not Found">
-    <Container>
-      <PageTitle>Page Not Found</PageTitle>
-      <Text>
-        Please return <Link to="/">home</Link> or use the menu to navigate to a
-        different page.
-      </Text>
-    </Container>
-  </Layout>
-)
+import Link from '../components/joy/link';
 
-export default NotFoundPage
+// markup
+const Page = () => {
+  return (
+    <Layout wrapped>
+      <Box sx={{ padding: ['1rem', '2rem', '4rem'] }}>
+        <h1 sx={{ fontSize: '33vh', m: 0, p: 0, lineHeight: '1' }}>404</h1>
+        <h2 sx={{ textTransform: 'uppercase' }}>
+          you don't have to go{' '}
+          <Link href="https://iammatthias.com" title="homepage">
+            home
+          </Link>{' '}
+          But you can't stay here
+        </h2>
+      </Box>
+    </Layout>
+  );
+};
+
+export default Page;

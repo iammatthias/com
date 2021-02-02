@@ -1,34 +1,48 @@
-# ReadMe
+<p align="center">
+  <a href="https://www.gatsbyjs.com/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter">
+    <img alt="Gatsby" src="https://www.gatsbyjs.com/Gatsby-Monogram.svg" width="60" />
+  </a>
+</p>
+<h1 align="center">
+  Gatsby minimal starter
+</h1>
 
-> hint:\
-> try running `npx iammatthias` or `npx iammatthias-resume` in your terminal.
->> more info:\
->> https://github.com/iammatthias/businesscard \
->> https://github.com/iammatthias/resume
+## 🚀 Quick start
 
-### iammatthias.com 
+1.  **Create a Gatsby site.**
 
-When I started building my site years ago it was with the express purpose of being a photography portfolio. 
+    Use the Gatsby CLI to create a new site, specifying the minimal starter.
 
-It grew over time, showcasing breadcrumbs that lead to various projects on GitHub, Exposure, or various short-lived cooking blogs. I came to realize that a codified web presence was not for me—the constant planning and strategic updates, the immaculately manicured blog posts, the galleries set with surgical intent. It felt ridged, and prohibitive; sporadic updates became a chore. 
+    ```shell
+    # create a new Gatsby site using the minimal starter
+    npm init gatsby
+    ```
 
-Enter a new concept: “a digital garden”. 
+2.  **Start developing.**
 
-A corner of the web that I can cultivate and design in the open. A place for new ideas, exploratory concepts, and general fun. 
+    Navigate into your new site’s directory and start it up.
 
-I am really excited about what this means for my portfolio online. Ultimately, I hope that this leads to it feeling more like me, and less like a resume. 
+    ```shell
+    cd my-gatsby-site/
+    npm run develop
+    ```
 
-#### Built With 
-- [GatsbyJS](https://www.gatsbyjs.org/)
-- [Netlify](https://www.netlify.com/), host
-- [Contentful](https://www.contentful.com), CMS
-- [Cloudinary](https://cloudinary.com/), share card generation
-- [Theme UI](https://theme-ui.com/), primitives 
-- [MDX](https://mdxjs.com/), components in markdown
-- [Segment](https://segment.com/), analytics & more
-- [GCN](https://github.com/ryanwiemer/gatsby-starter-gcn), pagination, tags, base component structure. Heavily modified for personal use cases. 
+3.  **Open the code and start customizing!**
 
+    Your site is now running at http://localhost:8000!
 
-Things are set up to allow for themed modular page creation through Contentful using MDX, or through stand-alone custom pages that exist without the standard Layout wrapper. 
+    Edit `src/pages/index.js` to see your site update in real-time!
 
-This is fun. 
+4.  **Learn more**
+
+    - [Documentation](https://www.gatsbyjs.com/docs/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
+
+    - [Tutorials](https://www.gatsbyjs.com/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
+
+    - [Guides](https://www.gatsbyjs.com/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
+
+    - [API Reference](https://www.gatsbyjs.com/docs/api-reference/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
+
+    - [Plugin Library](https://www.gatsbyjs.com/plugins?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
+
+    - [Cheat Sheet](https://www.gatsbyjs.com/docs/cheat-sheet/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)

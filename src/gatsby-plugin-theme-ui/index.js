@@ -1,231 +1,150 @@
-import randomCombo from 'random-a11y-combo'
-
-const [palettebackground, paletteColor] = randomCombo()
-
-function LightenDarkenColor(col, amt) {
-  var usePound = false
-
-  if (col[0] === '#') {
-    col = col.slice(1)
-    usePound = true
-  }
-
-  var num = parseInt(col, 16)
-
-  var r = (num >> 16) + amt
-
-  if (r > 255) r = 255
-  else if (r < 0) r = 0
-
-  var b = ((num >> 8) & 0x00ff) + amt
-
-  if (b > 255) b = 255
-  else if (b < 0) b = 0
-
-  var g = (num & 0x0000ff) + amt
-
-  if (g > 255) g = 255
-  else if (g < 0) g = 0
-
-  return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16)
-}
-
-var randomHighlight = LightenDarkenColor(palettebackground, 20)
-var randomShadow = LightenDarkenColor(paletteColor, -20)
-
 export default {
-  useColorSchemeMediaQuery: true,
+  useCustomProperties: true,
+  useColorSchemeMediaQuery: false,
   initialColorModeName: 'light',
-  colors: {
-    modes: {
-      light: {
-        background: '#F5F2F2',
-        text: '#141919',
-        blue: '#6699CC',
-        yellow: '#FAC805',
-        red: '#FF3864',
-        light: '#FAFAFA',
-        shadow: '#647882',
-      },
-      dark: {
-        background: '#141919',
-        text: '#F5F2F2',
-        blue: '#6699CC',
-        yellow: '#FAC805',
-        red: '#FF3864',
-        light: '#FAFAFA',
-        shadow: '#647882',
-      },
-      random: {
-        background: palettebackground,
-        text: paletteColor,
-        blue: randomHighlight,
-        yellow: randomShadow,
-        red: randomHighlight,
-        light: randomShadow,
-        shadow: '#647882',
-      },
-    },
-  },
-  sizes: {
-    maxWidth: '100vw',
-    maxWidthCentered: '900px',
-  },
-  responsive: {
-    small: '35rem',
-    medium: '50rem',
-    large: '70rem',
-  },
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
-    body: '"Crimson Text"',
-    heading: 'Montserrat',
-    monospace: 'Inconsolata, monospace',
-    cursive: 'Pacifico, cursive',
+    body: 'Cormorant Garamond, system-ui, sans-serif',
+    heading: 'Cormorant Garamond, system-ui, serif',
+    monospace: 'Inconsolata, Menlo, monospace',
+    cursive: 'Lobster, cursive',
   },
-  fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
+  fontSizes: [14, 18, 24, 36, 54, 81, 122, 182, 264],
   fontWeights: {
-    body: 200,
-    heading: 900,
+    body: 300,
+    heading: 700,
     bold: 700,
   },
   lineHeights: {
-    body: 1.75,
-    heading: 2,
+    body: 1.54,
+    heading: 1.33,
   },
-
+  colors: {
+    modes: {
+      light: {
+        text: '#0C0908',
+        background: '#F4F2F1',
+        primary: '#233F43',
+        secondary: '#87B8C0',
+        accent: '#E45225',
+        muted: '#A5958D',
+      },
+      dark: {
+        text: '#F4F2F1',
+        background: '#0C0908',
+        primary: '#87B8C0',
+        secondary: '#233F43',
+        accent: '#E45225',
+        muted: '#A5958D',
+      },
+    },
+  },
   styles: {
     root: {
       fontFamily: 'body',
       lineHeight: 'body',
       fontWeight: 'body',
-      color: 'text',
-    },
-    h1: {
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 5,
-      mb: 3,
-    },
-    h2: {
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 4,
-      mb: 3,
-    },
-    h3: {
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 3,
-      mb: 3,
-    },
-    h4: {
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 2,
-      mb: 3,
-    },
-    h5: {
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
       fontSize: 1,
-      mb: 3,
-    },
-    h6: {
-      fontFamily: 'heading',
-      lineHeight: 'heading',
-      fontWeight: 'heading',
-      fontSize: 0,
-      mb: 3,
-    },
-    p: {
-      fontFamily: 'body',
-      fontWeight: 'body',
-      lineHeight: 'body',
-      fontSize: 2,
-      mb: 3,
-    },
-
-    ul: {
-      fontFamily: 'body',
-      fontWeight: 'body',
-      lineHeight: 'body',
-      fontSize: 2,
-      mb: 3,
-    },
-    ol: {
-      fontFamily: 'body',
-      fontWeight: 'body',
-      lineHeight: 'body',
-      fontSize: 2,
-      mb: 3,
-    },
-    li: {
-      fontFamily: 'body',
-      fontWeight: 'body',
-      lineHeight: 'body',
-      fontSize: 2,
-      mb: 3,
-    },
-    a: {
       color: 'text',
-      fontWeight: 'heading',
-      textDecoration: 'none',
-      fontFamily: 'inherit',
-    },
-    blockquote: {
-      paddingLeft: 3,
-      borderLeft: '1px solid',
-      borderColor: 'inherit',
+      paddingBottom: 3,
+
+      h1: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 5,
+        paddingBottom: 4,
+      },
+      h2: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 4,
+        paddingBottom: 4,
+      },
+      h3: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 3,
+        paddingBottom: 4,
+      },
+      h4: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 2,
+        paddingBottom: 4,
+      },
+      h5: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 1,
+        paddingBottom: 4,
+      },
+      h6: {
+        color: 'text',
+        fontFamily: 'heading',
+        lineHeight: 'heading',
+        fontWeight: 'heading',
+        fontSize: 0,
+        paddingBottom: 4,
+      },
       p: {
-        marginBottom: 0,
+        fontWeight: 'body',
+        fontSize: 1,
+        paddingBottom: 3,
       },
-    },
-    pre: {
-      fontFamily: 'monospace',
-      overflowX: 'auto',
-      p: 3,
-      mb: 0,
-      border: '1px solid',
-      borderColor: 'inherit',
-      borderRadius: '4px',
+      small: {
+        fontWeight: 'body',
+        fontSize: 0,
+        paddingBottom: 3,
+      },
+      a: {
+        color: 'primary',
+        '&:visited': {
+          color: 'primary',
+        },
+      },
+      pre: {
+        fontFamily: 'monospace',
+        overflowX: 'auto',
+        code: {
+          color: 'inherit',
+        },
+      },
       code: {
-        color: 'inherit',
+        fontFamily: 'monospace',
+        fontSize: 'inherit',
       },
-    },
-    code: {
-      fontFamily: 'monospace',
-      fontSize: 'inherit',
-    },
-    table: {
-      width: '100%',
-      borderCollapse: 'separate',
-      borderSpacing: 0,
-    },
-    th: {
-      textAlign: 'left',
-      borderBottomStyle: 'solid',
-    },
-    td: {
-      textAlign: 'left',
-      borderBottomStyle: 'solid',
-    },
-    img: {
-      maxWidth: '100%',
-    },
-
-    input: {
-      background: 'secondary',
-      color: 'text',
-    },
-    textArea: {
-      background: 'secondary',
-      color: 'background',
+      table: {
+        width: '100%',
+        borderCollapse: 'separate',
+        borderSpacing: 0,
+      },
+      th: {
+        textAlign: 'left',
+        borderBottomStyle: 'solid',
+      },
+      td: {
+        textAlign: 'left',
+        borderBottomStyle: 'solid',
+      },
+      img: {
+        maxWidth: '100%',
+      },
+      blockquote: {
+        borderLeft: '2px solid',
+        borderColor: 'inherit',
+        marginLeft: '0',
+        paddingLeft: '2rem',
+      },
     },
   },
-}
+};
