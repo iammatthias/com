@@ -16,11 +16,17 @@ module.exports = {
         host: process.env.CONTENTFUL_HOST,
       },
     },
+    {
+      resolve: `gatsby-plugin-segment-js`,
+      options: {
+        prodKey: process.env.SEGMENT,
+        devKey: process.env.SEGMENT,
+        trackPage: true,
+      },
+    },
     'gatsby-plugin-theme-ui',
     'gatsby-plugin-sharp',
     'gatsby-plugin-react-helmet',
-    'gatsby-plugin-sitemap',
-    'gatsby-plugin-offline',
     // `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-remark-images`,
@@ -64,5 +70,7 @@ module.exports = {
         ],
       },
     },
+    'gatsby-plugin-sitemap',
+    'gatsby-plugin-offline',
   ],
 };
