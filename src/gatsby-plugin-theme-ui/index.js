@@ -47,6 +47,7 @@ export default {
       fontSize: 1,
       color: 'text',
       paddingBottom: 3,
+      webkitTapHighlightColor: 'transparent',
 
       h1: {
         color: 'text',
