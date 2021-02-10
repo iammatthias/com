@@ -11,7 +11,7 @@ const SEO = () => {
     >
       <meta charSet="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta name="description" content="pop pop! - magnitude"></meta>
+      <meta name="description" content="A personal portfolio project"></meta>
     </Helmet>
   );
 };
