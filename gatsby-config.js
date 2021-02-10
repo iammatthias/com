@@ -26,19 +26,7 @@ module.exports = {
         trackPage: true,
       },
     },
-    {
-      resolve: `gatsby-plugin-mdx`,
-      options: {
-        gatsbyRemarkPlugins: [
-          {
-            resolve: `gatsby-remark-images`,
-            options: {
-              maxWidth: 1200,
-            },
-          },
-        ],
-      },
-    },
+    `gatsby-plugin-mdx`,
     {
       resolve: 'gatsby-source-filesystem',
       options: {
