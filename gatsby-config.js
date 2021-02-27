@@ -147,5 +147,6 @@ module.exports = {
     `gatsby-remark-images`,
     'gatsby-plugin-sitemap',
     'gatsby-plugin-offline',
+    'gatsby-plugin-ipfs',
   ],
 };
