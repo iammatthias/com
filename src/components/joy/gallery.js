@@ -112,7 +112,7 @@ export default function Gallery({ masonrySet, ratio }) {
           {match.node.images.map((image, i) => (
             <XBlock key={i}>
               <Link
-                href={image.fluid.srcSet}
+                href={image.fluid.src}
                 alt={image.title}
                 data-attribute="SRL"
               >
