@@ -25,9 +25,6 @@ const Page = ({ data, pageContext }) => {
         >
           <h1 sx={{ m: 0, p: 0 }}>{content.title}</h1>
           <h3 sx={{ m: 0, p: 0 }}>{content.publishDate},&nbsp;&nbsp;&nbsp;</h3>
-          <h4 sx={{ m: 0, p: 0 }}>
-            Estimated reading time: {content.body.childMdx.timeToRead} min
-          </h4>
         </Box>
       ) : content.pageType === 'Gallery' ? (
         <Box
@@ -88,7 +85,6 @@ export const query = graphql`
       body {
         childMdx {
           body
-          timeToRead
         }
       }
     }
