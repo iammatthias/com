@@ -22,8 +22,6 @@ export default function PageList({ type, limit }) {
   const path =
     type === 'Blog' ? 'blog/' : type === 'Gallery' ? 'photography/' : '';
 
-  console.count('counter');
-
   return pages.slice(0, listLimit).map(
     (listPage) =>
       listPage.node.pageType === type && (

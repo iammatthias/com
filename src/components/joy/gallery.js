@@ -1,7 +1,7 @@
 /** @jsx jsx */
 
 import React from 'react'; //eslint-disable-line
-import Img from 'gatsby-image';
+import { GatsbyImage, getSrc } from 'gatsby-plugin-image';
 import { jsx, Link } from 'theme-ui';
 import { XMasonry, XBlock } from 'react-xmasonry';
 import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
@@ -23,6 +23,8 @@ export default function Gallery({ masonrySet, ratio }) {
 
   // get decimal from `ratio` (aspect ratio prop returns a fraction)
   const r = eval(ratio); //eslint-disable-line
+
+  console.log(r);
 
   const options = {
     settings: {
@@ -112,17 +114,14 @@ export default function Gallery({ masonrySet, ratio }) {
           {match.node.images.map((image, i) => (
             <XBlock key={i}>
               <Link
-                href={image.fluid.src}
+                href={getSrc(image.gatsbyImageData)}
                 alt={image.title}
                 data-attribute="SRL"
               >
-                <Img
-                  fluid={{
-                    ...image.fluid,
-                    aspectRatio: r ? r : image.fluid.aspectRatio,
-                  }}
-                  title={image.title}
+                <GatsbyImage
+                  image={image.gatsbyImageData}
                   alt={image.title}
+                  aspectratio={r}
                 />
               </Link>
             </XBlock>

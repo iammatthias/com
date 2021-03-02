@@ -11,12 +11,8 @@ export const useSiteMetadata = () => {
               title
               updatedAt(formatString: "MMMM Do, YYYY")
               images {
-                fluid {
-                  ...GatsbyContentfulFluid_withWebp
-                  aspectRatio
-                  src
-                  srcSet
-                }
+                title
+                gatsbyImageData(layout: FULL_WIDTH, placeholder: DOMINANT_COLOR)
               }
             }
           }
