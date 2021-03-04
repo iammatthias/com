@@ -142,7 +142,7 @@ module.exports = {
     'gatsby-plugin-theme-ui',
     'gatsby-plugin-sharp',
     'gatsby-plugin-react-helmet',
-    // `gatsby-plugin-image`,
+    `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-remark-images`,
     'gatsby-plugin-sitemap',
