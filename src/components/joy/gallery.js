@@ -21,10 +21,16 @@ export default function Gallery({ masonrySet, ratio }) {
     return null;
   }
 
-  // get decimal from `ratio` (aspect ratio prop returns a fraction)
-  const r = eval(ratio); //eslint-disable-line
+  function reverseString(str) {
+    return str === '' ? '' : reverseString(str.substr(1)) + str.charAt(0);
+  }
 
-  console.log(r);
+  const reverseRatio = ratio ? reverseString(ratio) : '1';
+
+  // get decimal from `ratio` (aspect ratio prop returns a fraction)
+  const r = eval(reverseRatio === 'denifednu' ? '0' : reverseRatio); //eslint-disable-line
+
+  const percent = Math.floor(r * 100);
 
   const options = {
     settings: {
@@ -61,7 +67,7 @@ export default function Gallery({ masonrySet, ratio }) {
         event: 'Lightbox Slide Changed',
       });
     }
-    console.log(object);
+
     return object;
   }
 
@@ -121,7 +127,7 @@ export default function Gallery({ masonrySet, ratio }) {
                 <GatsbyImage
                   image={image.gatsbyImageData}
                   alt={image.title}
-                  aspectratio={r}
+                  sx={{ div: { paddingTop: percent + '% !important' } }}
                 />
               </Link>
             </XBlock>
