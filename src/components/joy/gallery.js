@@ -21,11 +21,13 @@ export default function Gallery({ masonrySet, ratio }) {
     return null;
   }
 
+  console.log(ratio);
+
   function reverseString(str) {
     return str === '' ? '' : reverseString(str.substr(1)) + str.charAt(0);
   }
 
-  const reverseRatio = ratio ? reverseString(ratio) : '1';
+  const reverseRatio = ratio ? reverseString(ratio) : '0';
 
   // get decimal from `ratio` (aspect ratio prop returns a fraction)
   const r = eval(reverseRatio === 'denifednu' ? '0' : reverseRatio); //eslint-disable-line
@@ -127,7 +129,11 @@ export default function Gallery({ masonrySet, ratio }) {
                 <GatsbyImage
                   image={image.gatsbyImageData}
                   alt={image.title}
-                  sx={{ div: { paddingTop: percent + '% !important' } }}
+                  sx={{
+                    ...(ratio
+                      ? { div: { paddingTop: percent + '% !important' } }
+                      : ''),
+                  }}
                 />
               </Link>
             </XBlock>
