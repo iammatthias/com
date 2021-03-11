@@ -45,7 +45,7 @@ module.exports = {
             weights: ['300', '700'],
           },
           {
-            family: 'Lobster Two',
+            family: 'Pacifico',
             weights: ['400'],
           },
           {

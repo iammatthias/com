@@ -7,7 +7,7 @@ export default {
     body: 'Cormorant Garamond, system-ui, sans-serif',
     heading: 'Cormorant Garamond, system-ui, serif',
     monospace: 'Inconsolata, Menlo, monospace',
-    cursive: 'Lobster, cursive',
+    cursive: 'Pacifico, cursive',
   },
   fontSizes: [14, 18, 24, 36, 54, 81, 122, 182, 264],
   fontWeights: {
