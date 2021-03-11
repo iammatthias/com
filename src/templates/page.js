@@ -14,6 +14,10 @@ const Page = ({ data, pageContext }) => {
   const content = data.contentfulPage;
   const wrappedLayout = content.wrappedLayout;
 
+  const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
+    `https://iammatthias.com/blog/${pageContext.pagePath}/`
+  )}`;
+
   return (
     <Layout wrapped={wrappedLayout}>
       {content.pageType === 'Blog' ? (
@@ -24,7 +28,22 @@ const Page = ({ data, pageContext }) => {
           }}
         >
           <h1 sx={{ m: 0, p: 0 }}>{content.title}</h1>
-          <h3 sx={{ m: 0, p: 0 }}>{content.publishDate},&nbsp;&nbsp;&nbsp;</h3>
+          <h3 sx={{ m: 0, p: 0 }}>Published</h3>
+          <h4 sx={{ m: 0, p: 0 }}>{content.publishDate}</h4>
+          <br />
+          <h4 sx={{ m: 0, p: 0 }}>
+            <Link
+              href={comments}
+              sx={{
+                textDecoration: 'none',
+                padding: '12px 24px',
+                background: 'text',
+                color: 'background',
+              }}
+            >
+              Discuss on twitter
+            </Link>
+          </h4>
         </Box>
       ) : content.pageType === 'Gallery' ? (
         <Box
