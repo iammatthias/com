@@ -7171,6 +7171,13 @@ gatsby-plugin-ts@^2.7.0:
     gatsby-plugin-graphql-codegen "^2.7.1"
     ts-loader "^6.2.1"
 
+gatsby-plugin-twitter@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-twitter/-/gatsby-plugin-twitter-3.0.0.tgz#6ba1278aa8ee25377b1a0081a0848e633bc4573d"
+  integrity sha512-krn2qtuFx1SahLLWy3pt4Bih/q76mG2mmR4ek/EJeAwaZHhvh8Yj15zx5W33vhPe5028GVDE3ll2s/8pec8gAw==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 gatsby-plugin-typescript@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/gatsby-plugin-typescript/-/gatsby-plugin-typescript-3.0.0.tgz#09464dcab1f88d572ba2dedd970cef430a05fd5c"

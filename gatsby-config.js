@@ -139,6 +139,7 @@ module.exports = {
         ],
       },
     },
+    'gatsby-plugin-twitter',
     'gatsby-plugin-theme-ui',
     'gatsby-plugin-sharp',
     'gatsby-plugin-react-helmet',
