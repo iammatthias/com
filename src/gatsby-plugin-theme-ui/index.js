@@ -113,6 +113,11 @@ export default {
           color: 'primary',
         },
       },
+      ul: {
+        fontWeight: 'body',
+        fontSize: 1,
+        paddingBottom: 3,
+      },
       pre: {
         fontFamily: 'monospace',
         overflowX: 'auto',
