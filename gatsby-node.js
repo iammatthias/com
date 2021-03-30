@@ -1,4 +1,13 @@
 const path = require('path');
+
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+
+exports.onCreateWebpackConfig = ({ actions }) => {
+  actions.setWebpackConfig({
+    plugins: [new NodePolyfillPlugin()],
+  });
+};
+
 // Implement the Gatsby API “createPages”. This is called once the
 // data layer is bootstrapped to let plugins create pages from data.
 exports.createPages = async ({ graphql, actions, reporter }) => {
