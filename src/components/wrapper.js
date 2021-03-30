@@ -30,6 +30,7 @@ const Wrapped = (props) => {
             props.wrapped ? '75vw' : '100vw',
           ],
           height: '100%',
+          minHeight: '80vh',
           borderRadius: '4px',
           position: 'relative',
         }}

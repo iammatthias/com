@@ -25,5 +25,12 @@ export function useAuth() {
     currentUser: () => {
       return Moralis?.User.current();
     },
+
+    guestbookLog: async () => {
+      try {
+      } catch (e) {
+        console.error(e.message, e);
+      }
+    },
   };
 }
