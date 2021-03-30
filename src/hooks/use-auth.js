@@ -1,3 +1,6 @@
+/** @jsx jsx */
+import { jsx, Box, Button } from 'theme-ui';
+import * as React from 'react'; //eslint-disable-line
 import { navigate } from 'gatsby-link';
 import { useMoralis } from './use-moralis';
 
@@ -28,6 +31,9 @@ export function useAuth() {
 
     guestbookLog: async () => {
       try {
+        const guests = await Moralis.Cloud.run('getUserList', {});
+        console.log(guests);
+        return guests;
       } catch (e) {
         console.error(e.message, e);
       }
