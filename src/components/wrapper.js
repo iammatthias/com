@@ -51,8 +51,8 @@ const Wrapped = (props) => {
         <Menu
           sx={{
             position: ['relative', 'absolute'],
-            top: ['', '9rem'],
-            right: ['', '-9.5rem'],
+            top: ['', '12.5rem'],
+            right: ['', '-13.5rem'],
             padding: ['1rem', '0'],
             transform: ['rotate(0deg)', 'rotate(90deg)'],
             backgroundColor: [darken('background', 0.025), 'transparent'],

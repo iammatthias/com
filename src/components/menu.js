@@ -30,6 +30,13 @@ const Menu = (props) => {
         >
           About
         </Link>
+        &nbsp;&nbsp;&nbsp;
+        <Link
+          href="https://iammatthias.com/guestbook/"
+          sx={{ textDecoration: 'none' }}
+        >
+          Guestbook
+        </Link>
       </Sparkle>
     </Text>
   );
