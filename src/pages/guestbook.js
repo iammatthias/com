@@ -13,7 +13,7 @@ import { useAuth } from '../hooks/use-auth';
 // markup
 
 export default function Guestbook() {
-  const { login, logout, currentUser } = useAuth();
+  const { login, currentUser } = useAuth();
   const user = currentUser();
   const userAddress = user?.get('ethAddress');
 
@@ -25,27 +25,17 @@ export default function Guestbook() {
             ETH Address: {userAddress}
             <br />
             <br />
-            <Button
-              onClick={() => {
-                return logout().catch((e) => {
-                  console.error(e);
-                });
-              }}
-            >
-              Logout
-            </Button>
           </>
-        ) : (
-          <Button
-            onClick={() => {
-              return login().catch((e) => {
-                console.error(e);
-              });
-            }}
-          >
-            Login
-          </Button>
-        )}
+        ) : null}
+        <Button
+          onClick={() => {
+            return login().catch((e) => {
+              console.error(e);
+            });
+          }}
+        >
+          Sign the Guestbook
+        </Button>
         <br />
         <br />
         guest list

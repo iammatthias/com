@@ -7,23 +7,32 @@ export function useAuth() {
     login: async () => {
       try {
         await Moralis?.Web3.authenticate();
-        navigate('/guestbook');
+        try {
+          await Moralis?.User.logOut();
+          navigate('/guestbook');
+        } catch (e) {
+          console.error(e.message, e);
+        }
       } catch (e) {
         console.error(e.message, e);
       }
     },
 
-    logout: async () => {
-      try {
-        await Moralis?.User.logOut();
-        navigate('/guestbook');
-      } catch (e) {
-        console.error(e.message, e);
-      }
-    },
+    // logout: async () => {
+    //   try {
+    //     await Moralis?.User.logOut();
+    //     navigate('/guestbook');
+    //   } catch (e) {
+    //     console.error(e.message, e);
+    //   }
+    // },
 
     currentUser: () => {
-      return Moralis?.User.current();
+      try {
+        Moralis.User.currentAsync();
+      } catch (e) {
+        console.error(e.message, e);
+      }
     },
 
     guestbookLog: async () => {
