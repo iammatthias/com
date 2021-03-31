@@ -22,9 +22,9 @@ export function useAuth() {
       }
     },
 
-    currentUser: () => {
-      return Moralis?.User.current();
-    },
+    // currentUser: () => {
+    //   return Moralis?.User.current();
+    // },
 
     guestbookLog: async () => {
       try {
