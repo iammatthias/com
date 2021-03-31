@@ -8,6 +8,8 @@ import GuestList from '../components/joy/guestlist';
 
 import ClientOnly from '../components/joy/clientOnly';
 
+import Sparkle from '../components/joy/sparkle';
+
 import Link from '../components/joy/link';
 
 import { useAuth } from '../hooks/use-auth';
@@ -15,20 +17,10 @@ import { useAuth } from '../hooks/use-auth';
 // markup
 
 export default function Guestbook() {
-  const { login, currentUser } = useAuth();
-  const user = currentUser();
-  const userAddress = user?.get('ethAddress');
-
+  const { login } = useAuth();
   return (
     <Layout wrapped>
       <Box sx={{ padding: ['1rem', '2rem', '4rem'] }}>
-        {user ? (
-          <>
-            ETH Address: {userAddress}
-            <br />
-            <br />
-          </>
-        ) : null}
         <Button
           onClick={() => {
             return login().catch((e) => {
@@ -36,7 +28,7 @@ export default function Guestbook() {
             });
           }}
         >
-          Sign the Guestbook
+          <Sparkle>Sign the Guestbook</Sparkle>
         </Button>
         <br />
         <br />

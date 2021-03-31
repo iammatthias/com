@@ -18,14 +18,6 @@ export function useAuth() {
       }
     },
 
-    currentUser: () => {
-      try {
-        Moralis.User.currentAsync();
-      } catch (e) {
-        console.error(e.message, e);
-      }
-    },
-
     guestbookLog: async () => {
       try {
         const guests = await Moralis.Cloud.run('getUserList', {});

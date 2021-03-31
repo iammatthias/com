@@ -2,6 +2,7 @@
 
 import React from 'react'; //eslint-disable-line
 import { jsx, Box } from 'theme-ui';
+import { darken } from '@theme-ui/color';
 import moment from 'moment';
 import Link from './link';
 
@@ -37,12 +38,12 @@ export default function GuestList() {
             key={item.ethAddress}
             sx={{
               borderBottom: '1px solid',
-              borderColor: 'inherit',
-              mb: '2rem',
+              borderColor: darken('background', 0.025),
+              my: '1rem',
             }}
           >
             <p sx={{ m: 0, p: '0 0 1rem' }}>{signedDate}</p>
-            <h4 sx={{ m: 0, p: '0 0 2rem' }}>
+            <h4 sx={{ m: 0, p: '0 0 1rem' }}>
               <Link
                 href={'https://etherscan.io/address/' + item.ethAddress}
                 sx={{ fontWeight: 'normal', textDecoration: 'none' }}
@@ -53,7 +54,17 @@ export default function GuestList() {
           </Box>
         );
       });
-      return <Box>{itemList}</Box>;
+      return (
+        <Box
+          sx={{
+            borderTop: '1px solid',
+            borderColor: darken('background', 0.25),
+            width: ['100%', '61.8%'],
+          }}
+        >
+          {itemList}
+        </Box>
+      );
     }
   }
   return <Signature />;
