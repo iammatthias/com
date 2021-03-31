@@ -37,7 +37,7 @@ const Page = ({ data, pageContext }) => {
               sx={{
                 textDecoration: 'none',
                 padding: '12px 24px',
-                background: 'text',
+                bg: 'text',
                 color: 'background',
               }}
             >
