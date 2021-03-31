@@ -12,20 +12,11 @@ export default function GuestList() {
   const { guestbookLog } = useAuth();
 
   const guests = guestbookLog();
-
   class Signature extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {
-        data: [],
-      };
+      this.state = { isClient: false, data: [] };
     }
-    componentDidMount() {
-      guests.then((data) => {
-        this.setState({ data });
-      });
-    }
-
     render() {
       const { data } = this.state;
       const itemList = data.map(function (item) {
@@ -56,6 +47,7 @@ export default function GuestList() {
       });
       return (
         <Box
+          key={this.state.isClient}
           sx={{
             borderTop: '1px solid',
             borderColor: darken('background', 0.25),
@@ -66,6 +58,12 @@ export default function GuestList() {
         </Box>
       );
     }
+    componentDidMount() {
+      guests.then((data) => {
+        this.setState({ data, isClient: true });
+      });
+    }
   }
+
   return <Signature />;
 }
