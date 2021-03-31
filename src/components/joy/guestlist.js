@@ -31,7 +31,7 @@ export default function GuestList() {
         let signedDate = moment(item.updatedAt).format(
           'MM/DD/YYYY [at] h:mm:ss a'
         );
-        console.log(signedDate);
+
         return (
           <Box
             key={item.ethAddress}

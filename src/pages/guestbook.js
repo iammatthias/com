@@ -6,6 +6,8 @@ import Layout from '../components/Layout';
 
 import GuestList from '../components/joy/guestlist';
 
+import ClientOnly from '../components/joy/clientOnly';
+
 import { useAuth } from '../hooks/use-auth';
 
 // markup
@@ -49,7 +51,9 @@ export default function Guestbook() {
         guest list
         <br />
         <br />
-        <GuestList />
+        <ClientOnly>
+          <GuestList />
+        </ClientOnly>
       </Box>
     </Layout>
   );
