@@ -1,18 +1,17 @@
-require('dotenv').config({
+require(`dotenv`).config({
   path: `.env.${process.env.NODE_ENV}`,
 });
 
 module.exports = {
   siteMetadata: {
-    title: 'iammatthias',
-    siteUrl: 'https://iammatthias.com',
-    description: 'A personal portfolio project',
-    author: 'Matthias Jordan',
+    title: `iammatthias`,
+    siteUrl: `https://iammatthias.com`,
+    description: `A personal portfolio project`,
+    author: `Matthias Jordan`,
   },
-  pathPrefix: '__GATSBY_IPFS_PATH_PREFIX__',
   plugins: [
     {
-      resolve: 'gatsby-source-contentful',
+      resolve: `gatsby-source-contentful`,
       options: {
         spaceId: process.env.CONTENTFUL_SPACE_ID,
         accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
@@ -29,34 +28,34 @@ module.exports = {
     },
     `gatsby-plugin-mdx`,
     {
-      resolve: 'gatsby-source-filesystem',
+      resolve: `gatsby-source-filesystem`,
       options: {
-        name: 'pages',
-        path: './src/pages/',
+        name: `pages`,
+        path: `./src/pages/`,
       },
-      __key: 'pages',
+      __key: `pages`,
     },
     {
       resolve: `gatsby-plugin-google-fonts-v2`,
       options: {
         fonts: [
           {
-            family: 'Cormorant Garamond',
-            weights: ['300', '700'],
+            family: `Cormorant Garamond`,
+            weights: [`300`, `700`],
           },
           {
-            family: 'Pacifico',
-            weights: ['400'],
+            family: `Pacifico`,
+            weights: [`400`],
           },
           {
-            family: 'Inconsolata',
-            weights: ['400'],
+            family: `Inconsolata`,
+            weights: [`400`],
           },
         ],
       },
     },
     {
-      resolve: 'gatsby-plugin-feed-generator',
+      resolve: `gatsby-plugin-feed-generator`,
       options: {
         generator: `GatsbyJS`,
         rss: false, // Set to true to enable rss generation
@@ -75,7 +74,7 @@ module.exports = {
     `,
         feeds: [
           {
-            name: 'feed', // This determines the name of your feed file => feed.json & feed.xml
+            name: `feed`, // This determines the name of your feed file => feed.json & feed.xml
             query: `
         {
         listGallery: allContentfulPage(
@@ -113,7 +112,7 @@ module.exports = {
                 return {
                   title: edge.node.title,
                   slug: edge.node.slug,
-                  url: site.siteMetadata.siteUrl + '/blog/' + edge.node.slug,
+                  url: site.siteMetadata.siteUrl + `/blog/` + edge.node.slug,
                   content: edge.node.pageType,
                   date: edge.node.publishDate,
                 };
@@ -124,7 +123,7 @@ module.exports = {
                   slug: edge.node.slug,
                   url:
                     site.siteMetadata.siteUrl +
-                    '/photography/' +
+                    `/photography/` +
                     edge.node.slug,
                   content: edge.node.pageType,
                   date: edge.node.publishDate,
@@ -139,15 +138,14 @@ module.exports = {
         ],
       },
     },
-    'gatsby-plugin-twitter',
-    'gatsby-plugin-theme-ui',
-    'gatsby-plugin-sharp',
-    'gatsby-plugin-react-helmet',
+    `gatsby-plugin-twitter`,
+    `gatsby-plugin-theme-ui`,
+    `gatsby-plugin-sharp`,
+    `gatsby-plugin-react-helmet`,
     `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-remark-images`,
-    'gatsby-plugin-sitemap',
-    'gatsby-plugin-offline',
-    'gatsby-plugin-ipfs',
+    `gatsby-plugin-sitemap`,
+    `gatsby-plugin-offline`,
   ],
 };

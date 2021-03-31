@@ -27,7 +27,6 @@
     "gatsby-plugin-feed-generator": "^2.0.5",
     "gatsby-plugin-google-fonts-v2": "^0.0.6",
     "gatsby-plugin-image": "^1.2.0",
-    "gatsby-plugin-ipfs": "^2.0.2",
     "gatsby-plugin-manifest": "^3.2.0",
     "gatsby-plugin-mdx": "^2.2.0",
     "gatsby-plugin-offline": "^4.2.0",
@@ -52,5 +51,10 @@
     "react-xmasonry": "^3.0.5",
     "simple-react-lightbox": "^3.6.4",
     "theme-ui": "^0.6.1"
+  },
+  "resolutions": {
+    "graphql": "^15.4.0",
+    "graphql-compose": "^7.25.0",
+    "webpack": "^5.24.2"
   }
 }
