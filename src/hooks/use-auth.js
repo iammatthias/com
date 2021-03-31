@@ -18,15 +18,6 @@ export function useAuth() {
       }
     },
 
-    // logout: async () => {
-    //   try {
-    //     await Moralis?.User.logOut();
-    //     navigate('/guestbook');
-    //   } catch (e) {
-    //     console.error(e.message, e);
-    //   }
-    // },
-
     currentUser: () => {
       try {
         Moralis.User.currentAsync();
