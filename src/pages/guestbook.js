@@ -19,17 +19,15 @@ export default function Guestbook() {
     <Layout wrapped>
       <Box sx={{ padding: ['1rem', '2rem', '4rem'] }}>
         {user ? (
-          <>
-            <Button
-              onClick={() => {
-                return logout().catch((e) => {
-                  console.error(e);
-                });
-              }}
-            >
-              Logout
-            </Button>
-          </>
+          <Button
+            onClick={() => {
+              return logout().catch((e) => {
+                console.error(e);
+              });
+            }}
+          >
+            Logout
+          </Button>
         ) : (
           <Button
             onClick={() => {
