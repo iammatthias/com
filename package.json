@@ -44,7 +44,6 @@
     "gatsby-transformer-sharp": "^3.2.0",
     "https-browserify": "^1.0.0",
     "moment": "^2.29.1",
-    "moralis": "^0.0.15",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",
@@ -57,6 +56,7 @@
   },
   "devDependencies": {
     "assert": "^2.0.0",
+    "moralis": "^0.0.15",
     "node-polyfill-webpack-plugin": "^1.1.0",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
