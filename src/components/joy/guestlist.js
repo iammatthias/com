@@ -16,7 +16,6 @@ export default function GuestList() {
     constructor(props) {
       super(props);
       this.state = {
-        isClient: false,
         data: [],
       };
     }
@@ -51,7 +50,6 @@ export default function GuestList() {
       });
       return (
         <Box
-          key={this.state.isClient}
           sx={{
             borderTop: '1px solid',
             borderColor: darken('background', 0.25),
@@ -64,7 +62,7 @@ export default function GuestList() {
     }
     componentDidMount() {
       guests.then((data) => {
-        this.setState({ data, isClient: true });
+        this.setState({ data });
       });
     }
   }
