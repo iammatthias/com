@@ -39,6 +39,22 @@ export default {
       },
     },
   },
+  buttons: {
+    primary: {
+      // you can reference other values defined in the theme
+      color: 'background',
+      bg: 'primary',
+      fontFamily: 'heading',
+      fontWeight: 'heading',
+      transitionProperty: '*',
+      transitionTimingFunction: 'ease-in-out',
+      transitionDuration: '.2s',
+      '&:hover': {
+        color: 'text',
+        bg: 'secondary',
+      },
+    },
+  },
   styles: {
     root: {
       fontFamily: 'body',

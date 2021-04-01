@@ -39,24 +39,20 @@ export default function Guestbook() {
         <p>
           The guestbook is built using{' '}
           <Link href="https://moralis.io">Moralis</Link>. Immediately after
-          signing a `logout` call is set. Be secure, and disconnect from your
-          wallet as well ✌️
+          signing a `logout` event is sent to disconnect, but be secure and
+          disconnect from your wallet as well ✌️
         </p>
         <p>
-          You can view the source{' '}
-          <Link href="https://github.com/iammatthias/.com/tree/master">
-            here
-          </Link>
-          ,{' '}
+          You can view the source for this page{' '}
           <Link href="https://github.com/iammatthias/.com/blob/master/src/components/joy/guestlist.js">
             here
           </Link>
           ,{' '}
-          <Link href="https://github.com/iammatthias/.com/blob/guestbook/src/hooks/use-auth.js">
+          <Link href="https://github.com/iammatthias/.com/blob/guestbook/src/hooks/use-moralis.js">
             here
           </Link>
           , and{' '}
-          <Link href="https://github.com/iammatthias/.com/blob/guestbook/src/hooks/use-moralis.js">
+          <Link href="https://github.com/iammatthias/.com/blob/guestbook/src/hooks/use-auth.js">
             here
           </Link>
           .
