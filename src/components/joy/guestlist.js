@@ -15,10 +15,14 @@ export default function GuestList() {
   class Signature extends React.Component {
     constructor(props) {
       super(props);
-      this.state = { isClient: false, data: [] };
+      this.state = {
+        isClient: false,
+        data: [{ ethAddress: null, updatedAt: null }],
+      };
     }
     render() {
       const { data } = this.state;
+      console.log(data);
       const itemList = data.map(function (item) {
         let signedDate = moment(item.updatedAt).format(
           'MM/DD/YYYY [at] h:mm:ss a'
