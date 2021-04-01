@@ -17,7 +17,7 @@ export default function GuestList() {
       super(props);
       this.state = {
         isClient: false,
-        data: [{ ethAddress: null, updatedAt: null }],
+        data: [],
       };
     }
     render() {
