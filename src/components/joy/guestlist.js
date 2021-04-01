@@ -36,15 +36,17 @@ export default function GuestList() {
               my: '1rem',
             }}
           >
-            <p sx={{ m: 0, p: '0 0 1rem' }}>{signedDate}</p>
-            <h4 sx={{ m: 0, p: '0 0 1rem' }}>
+            <small sx={{ m: 0, p: '0 0 1rem', fontWeight: 'bold' }}>
+              {signedDate}
+            </small>
+            <p sx={{ m: 0, p: '0 0 1rem' }}>
               <Link
                 href={'https://etherscan.io/address/' + item.ethAddress}
                 sx={{ fontWeight: 'normal', textDecoration: 'none' }}
               >
                 {item.ethAddress}
               </Link>
-            </h4>
+            </p>
           </Box>
         );
       });
