@@ -8,7 +8,7 @@ export function useMoralis() {
       process.env.MORALIS_APPLICATION_ID,
       process.env.MORALIS_MASTER_KEY
     );
-    Moralis.serverURL = process.env.MORALIS_SERVER_ID;
+    Moralis.serverURL = 'https://1bmita1upxl9.moralis.io:2053/server';
   }
   return { Moralis };
 }

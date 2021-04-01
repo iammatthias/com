@@ -50,6 +50,7 @@ export default function GuestList() {
       });
       return (
         <Box
+          key="guestbook"
           sx={{
             borderTop: '1px solid',
             borderColor: darken('background', 0.25),
