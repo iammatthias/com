@@ -1,6 +1,7 @@
+let Moralis;
 export function useMoralis() {
+  if (Moralis) return { Moralis };
   // Moralis Initialization
-  let Moralis;
   if (typeof window !== `undefined`) {
     Moralis = require('moralis');
     Moralis.initialize(
