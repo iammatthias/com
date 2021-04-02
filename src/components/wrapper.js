@@ -58,6 +58,7 @@ const Wrapped = (props) => {
             writingMode: ['', 'vertical-rl'],
             textOrientation: 'mixed',
             backgroundColor: [darken('background', 0.025), 'transparent'],
+            width: 'auto',
           }}
         />
         {props.children}
