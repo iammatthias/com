@@ -4,8 +4,8 @@ export function useMoralis() {
   // Moralis Initialization
   if (typeof window !== `undefined`) {
     Moralis = require('moralis');
-    Moralis.initialize('knjJS1n0Hf0vkWjluePnByHQKVgUNdujnbtPbMUD');
-    Moralis.serverURL = 'https://memk9nntn6p4.moralis.io:2053/server';
+    Moralis.initialize(process.env.MORALIS_APPLICATION_ID);
+    Moralis.serverURL = process.env.MORALIS_SERVER_ID;
   }
   return { Moralis };
 }
