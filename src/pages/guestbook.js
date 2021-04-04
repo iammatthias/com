@@ -23,9 +23,31 @@ export default function Guestbook() {
       <Box sx={{ padding: ['1rem', '2rem', '4rem'] }}>
         <Button
           onClick={() => {
-            return login().catch((e) => {
-              console.error(e);
+
+            window.addEventListener('load', function() {
+
+              // Check if Web3 has been injected by the browser (Mist/MetaMask).
+              if (typeof web3 !== 'undefined') {
+                
+                return login().catch((e) => {
+                console.error(e);
+              });
+              } else {
+                // Handle the case where the user doesn't have web3. Probably 
+                // show them a message telling them to install Metamask in 
+                // order to use the app.
+                
+                return alert("web3 is needed");
+              
+              
+              }
+            
             });
+
+
+            
+
+            
           }}
         >
           <Sparkle>Sign the Guestbook</Sparkle>
