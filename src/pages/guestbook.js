@@ -1,18 +1,18 @@
 /** @jsx jsx */
-import { jsx, Box, Button } from 'theme-ui';
-import * as React from 'react'; //eslint-disable-line
+import { jsx, Box, Button } from "theme-ui";
+import * as React from "react"; //eslint-disable-line
 
-import Layout from '../components/Layout';
+import Layout from "../components/Layout";
 
-import GuestList from '../components/joy/guestlist';
+import GuestList from "../components/joy/guestlist";
 
-import ClientOnly from '../components/joy/clientOnly';
+import ClientOnly from "../components/joy/clientOnly";
 
-import Sparkle from '../components/joy/sparkle';
+import Sparkle from "../components/joy/sparkle";
 
-import Link from '../components/joy/link';
+import Link from "../components/joy/link";
 
-import { useAuth } from '../hooks/use-auth';
+import { useAuth } from "../hooks/use-auth";
 
 // markup
 
@@ -20,33 +20,13 @@ export default function Guestbook() {
   const { login } = useAuth();
   return (
     <Layout wrapped>
-      <Box sx={{ padding: ['1rem', '2rem', '4rem'] }}>
+      <Box sx={{ padding: ["1rem", "2rem", "4rem"] }}>
         <Button
           onClick={() => {
-
-            window.addEventListener('load', function() {
-
-              // Check if Web3 has been injected by the browser (Mist/MetaMask).
-              if (typeof web3 !== 'undefined') {
-                
-                return login().catch((e) => {
+            return login().catch((e) => {
+                alert('web3 is needed'),
                 console.error(e);
               });
-              } else {
-                // Handle the case where the user doesn't have web3. Probably 
-                // show them a message telling them to install Metamask in 
-                // order to use the app.
-                
-                return alert("web3 is needed");
-              
-              
-              }
-            
-            });
-
-
-            
-
             
           }}
         >
@@ -54,30 +34,12 @@ export default function Guestbook() {
         </Button>
         <br />
         <br />
+        <p>This web3 guestbook lets you sign the ledger with MetaMask (more wallets may be supported in the future).</p>
         <p>
-          This web3 guestbook lets you sign the ledger with MetaMask (more
-          wallets may be supported in the future).
+          The guestbook is built using <Link href="https://moralis.io">Moralis</Link>. Immediately after signing a `logout` event is sent to disconnect, but be secure and disconnect from your wallet as well ✌️
         </p>
         <p>
-          The guestbook is built using{' '}
-          <Link href="https://moralis.io">Moralis</Link>. Immediately after
-          signing a `logout` event is sent to disconnect, but be secure and
-          disconnect from your wallet as well ✌️
-        </p>
-        <p>
-          You can view the source for this page{' '}
-          <Link href="https://github.com/iammatthias/.com/blob/master/src/components/joy/guestlist.js">
-            here
-          </Link>
-          ,{' '}
-          <Link href="https://github.com/iammatthias/.com/blob/guestbook/src/hooks/use-moralis.js">
-            here
-          </Link>
-          , and{' '}
-          <Link href="https://github.com/iammatthias/.com/blob/guestbook/src/hooks/use-auth.js">
-            here
-          </Link>
-          .
+          You can view the source for this page <Link href="https://github.com/iammatthias/.com/blob/master/src/components/joy/guestlist.js">here</Link>, <Link href="https://github.com/iammatthias/.com/blob/guestbook/src/hooks/use-moralis.js">here</Link>, and <Link href="https://github.com/iammatthias/.com/blob/guestbook/src/hooks/use-auth.js">here</Link>.
         </p>
 
         <ClientOnly>
@@ -87,3 +49,4 @@ export default function Guestbook() {
     </Layout>
   );
 }
+
