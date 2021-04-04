@@ -18,13 +18,18 @@ import { useAuth } from "../hooks/use-auth";
 
 export default function Guestbook() {
   const { login } = useAuth();
+
+  function notEth() {
+    alert('needs web3');
+  }
+
   return (
     <Layout wrapped>
       <Box sx={{ padding: ["1rem", "2rem", "4rem"] }}>
         <Button
           onClick={() => {
             return login().catch((e) => {
-                alert('web3 is needed'),
+                notEth,
                 console.error(e);
               });
             
