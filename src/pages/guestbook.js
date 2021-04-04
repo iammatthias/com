@@ -29,8 +29,8 @@ export default function Guestbook() {
         <Button
           onClick={() => {
             return login().catch((e) => {
-                notEth,
                 console.error(e);
+                return notEth()
               });
             
           }}
