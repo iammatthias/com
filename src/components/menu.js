@@ -4,8 +4,6 @@ import { Text } from 'theme-ui';
 
 import Link from './joy/link';
 
-import Sparkle from './joy/sparkle';
-
 const Menu = (props) => {
   return (
     <Text
@@ -15,19 +13,19 @@ const Menu = (props) => {
     >
       <Link
         href="https://iammatthias.com/photography/"
-        sx={{ textDecoration: 'none' }}
+        sx={{ textDecoration: 'none', m: ['0 1rem 0', '0 0 1rem'] }}
       >
         Photography
       </Link>{' '}
       <Link
         href="https://iammatthias.com/blog/"
-        sx={{ textDecoration: 'none' }}
+        sx={{ textDecoration: 'none', m: '0 0 1rem' }}
       >
         Blog
       </Link>{' '}
       <Link
         href="https://iammatthias.com/about/"
-        sx={{ textDecoration: 'none' }}
+        sx={{ textDecoration: 'none', m: '0 0 1rem' }}
       >
         About
       </Link>{' '}
