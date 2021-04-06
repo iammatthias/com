@@ -10,7 +10,7 @@ export default function GuestSign() {
   const { login } = useAuth();
 
   function notEth() {
-    alert('needs web3');
+    alert('You need a Web3 enabled browser to sign the guestbook.');
   }
 
   async function sign() {

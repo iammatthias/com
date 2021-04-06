@@ -21,9 +21,7 @@ export default function Guestbook() {
         <GuestSign />
         <br />
         <br />
-        <p>
-          This web3 guestbook lets you sign the ledger a Web3 enabled browser.
-        </p>
+        <p>This guestbook lets you sign with a Web3 enabled browser.</p>
         <p>
           It is built using <Link href="https://moralis.io">Moralis</Link>.
           After signing a `logout` event is sent to disconnect. Be secure and
