@@ -19,13 +19,13 @@ const Menu = (props) => {
       </Link>{' '}
       <Link
         href="https://iammatthias.com/blog/"
-        sx={{ textDecoration: 'none', m: '0 0 1rem' }}
+        sx={{ textDecoration: 'none', m: ['0 1rem 0', '0 0 1rem'] }}
       >
         Blog
       </Link>{' '}
       <Link
         href="https://iammatthias.com/about/"
-        sx={{ textDecoration: 'none', m: '0 0 1rem' }}
+        sx={{ textDecoration: 'none', m: ['0 1rem 0', '0 0 1rem'] }}
       >
         About
       </Link>{' '}
