@@ -21,8 +21,6 @@ export default function Gallery({ masonrySet, ratio }) {
     return null;
   }
 
-  console.log(ratio);
-
   function reverseString(str) {
     return str === '' ? '' : reverseString(str.substr(1)) + str.charAt(0);
   }

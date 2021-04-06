@@ -2,7 +2,7 @@
 import { jsx, Box, Flex, Grid, Button, Heading, Text } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 
-import AM from 'react-music-embed';
+import AppleMusic from 'react-music-embed';
 
 import ClientOnly from './clientOnly';
 
@@ -49,5 +49,5 @@ export const MDXGlobalComponents = {
     </ClientOnly>
   ),
 
-  AM: (props) => <AM {...props} />,
+  AM: (props) => <AppleMusic {...props} />,
 };

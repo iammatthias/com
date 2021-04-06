@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx, Box } from 'theme-ui';
+import { jsx, Box, Button } from 'theme-ui';
 import * as React from 'react'; //eslint-disable-line
 import { darken } from '@theme-ui/color';
 import { graphql } from 'gatsby';
@@ -32,16 +32,8 @@ const Page = ({ data, pageContext }) => {
           <h4 sx={{ m: 0, p: 0 }}>{content.publishDate}</h4>
           <br />
           <h4 sx={{ m: 0, p: 0 }}>
-            <Link
-              href={comments}
-              sx={{
-                textDecoration: 'none',
-                padding: '12px 24px',
-                background: 'text',
-                color: 'background',
-              }}
-            >
-              Discuss on twitter
+            <Link href={comments}>
+              <Button>Discuss on twitter</Button>
             </Link>
           </h4>
         </Box>
@@ -70,7 +62,7 @@ const Page = ({ data, pageContext }) => {
                     'https://iammatthias.com/blog/' + pageContext.previous.slug
                   }
                 >
-                  Previous
+                  <Button>Previous</Button>
                 </Link>
                 &nbsp;&nbsp;&nbsp;
               </>
@@ -80,7 +72,7 @@ const Page = ({ data, pageContext }) => {
               <Link
                 href={'https://iammatthias.com/blog/' + pageContext.next.slug}
               >
-                Next
+                <Button>Next</Button>
               </Link>
             ) : null}
           </h4>

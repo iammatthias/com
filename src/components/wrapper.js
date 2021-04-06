@@ -30,6 +30,7 @@ const Wrapped = (props) => {
             props.wrapped ? '75vw' : '100vw',
           ],
           height: '100%',
+          minHeight: '80vh',
           borderRadius: '4px',
           position: 'relative',
         }}
@@ -51,11 +52,13 @@ const Wrapped = (props) => {
         <Menu
           sx={{
             position: ['relative', 'absolute'],
-            top: ['', '9rem'],
-            right: ['', '-9.5rem'],
             padding: ['1rem', '0'],
-            transform: ['rotate(0deg)', 'rotate(90deg)'],
+            top: ['', '2rem'],
+            right: ['', '-2.5rem'],
+            writingMode: ['', 'vertical-rl'],
+            textOrientation: 'mixed',
             backgroundColor: [darken('background', 0.025), 'transparent'],
+            width: 'auto',
           }}
         />
         {props.children}

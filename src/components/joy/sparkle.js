@@ -2,7 +2,7 @@
 import React from 'react'; //eslint-disable-line
 import styled from '@emotion/styled';
 import { jsx } from 'theme-ui';
-import { keyframes } from '@emotion/core';
+import { keyframes } from '@emotion/react';
 
 const QUERY = '(prefers-reduced-motion: no-preference)';
 const isRenderingOnServer = typeof window === 'undefined';
