@@ -21,7 +21,7 @@ export default function GuestList() {
     }
     render() {
       const { data } = this.state;
-      console.log(data);
+
       const itemList = data.map(function (item) {
         let signedDate = moment(item.updatedAt).format(
           'MM/DD/YYYY [at] h:mm:ss a'

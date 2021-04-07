@@ -8,8 +8,8 @@ export function useAuth() {
       try {
         await Moralis?.Web3.authenticate();
         try {
-          await Moralis?.User.logOut();
           navigate('/guestbook');
+          await Moralis?.User.logOut();
         } catch (e) {
           console.error(e.message, e);
         }
