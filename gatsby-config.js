@@ -9,6 +9,7 @@ module.exports = {
     description: `A personal portfolio project`,
     author: `Matthias Jordan`,
   },
+  assetPrefix: '__GATSBY_RELATIVE_PATH__',
   plugins: [
     {
       resolve: `gatsby-source-contentful`,
@@ -145,6 +146,7 @@ module.exports = {
     `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-remark-images`,
+    `gatsby-plugin-relative-paths`,
     `gatsby-plugin-sitemap`,
     `gatsby-plugin-offline`,
   ],
