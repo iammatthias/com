@@ -1,7 +1,6 @@
 export default {
   useCustomProperties: true,
   useColorSchemeMediaQuery: false,
-  initialColorModeName: 'light',
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
     body: 'Cormorant Garamond, system-ui, sans-serif',
@@ -20,15 +19,13 @@ export default {
     heading: 1.33,
   },
   colors: {
+    text: '#0C0908',
+    background: '#F4F2F1',
+    primary: '#233F43',
+    secondary: '#87B8C0',
+    accent: '#E45225',
+    muted: '#A5958D',
     modes: {
-      light: {
-        text: '#0C0908',
-        background: '#F4F2F1',
-        primary: '#233F43',
-        secondary: '#87B8C0',
-        accent: '#E45225',
-        muted: '#A5958D',
-      },
       dark: {
         text: '#F4F2F1',
         background: '#0C0908',
@@ -52,6 +49,17 @@ export default {
       '&:hover': {
         color: 'text',
         bg: 'secondary',
+      },
+    },
+  },
+  forms: {
+    switch: {
+      backgroundColor: 'muted',
+      div: {
+        backgroundColor: 'background',
+      },
+      'input:checked ~ &': {
+        backgroundColor: 'muted',
       },
     },
   },

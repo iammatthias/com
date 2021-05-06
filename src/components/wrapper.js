@@ -4,7 +4,7 @@ import React from 'react'; //eslint-disable-line
 import { jsx } from 'theme-ui';
 import styled from '@emotion/styled';
 import { lighten, darken } from '@theme-ui/color';
-import Toggle from './toggle';
+import Switch from './switch';
 import Logomark from './logomark';
 import Menu from './menu';
 
@@ -42,7 +42,7 @@ const Wrapped = (props) => {
             left: ['1rem', '2rem', '4rem'],
           }}
         />
-        <Toggle
+        <Switch
           sx={{
             position: 'absolute',
             top: '-3.5rem',
