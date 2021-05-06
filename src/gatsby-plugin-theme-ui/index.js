@@ -1,7 +1,8 @@
 const theme = {
   useCustomProperties: true,
   useRootStyles: true,
-  useColorSchemeMediaQuery: false,
+  useColorSchemeMediaQuery: true,
+  initialColorModeName: 'light',
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
     body: 'Cormorant Garamond, system-ui, sans-serif',
@@ -20,13 +21,15 @@ const theme = {
     heading: 1.33,
   },
   colors: {
-    text: '#0C0908',
-    background: '#F4F2F1',
-    primary: '#233F43',
-    secondary: '#87B8C0',
-    accent: '#E45225',
-    muted: '#A5958D',
     modes: {
+      light: {
+        text: '#0C0908',
+        background: '#F4F2F1',
+        primary: '#233F43',
+        secondary: '#87B8C0',
+        accent: '#E45225',
+        muted: '#A5958D',
+      },
       dark: {
         text: '#F4F2F1',
         background: '#0C0908',
@@ -40,16 +43,14 @@ const theme = {
   buttons: {
     primary: {
       // you can reference other values defined in the theme
-      color: 'background',
-      bg: 'primary',
+      color: 'var(--theme-ui-colors-background)',
+      bg: 'var(--theme-ui-colors-text)',
       fontFamily: 'heading',
       fontWeight: 'heading',
-      transitionProperty: '*',
-      transitionTimingFunction: 'ease-in-out',
       transitionDuration: '.2s',
       '&:hover': {
-        color: 'text',
-        bg: 'secondary',
+        color: 'var(--theme-ui-colors-background)',
+        bg: 'var(--theme-ui-colors-primary)',
       },
     },
   },
@@ -70,12 +71,13 @@ const theme = {
       lineHeight: 'body',
       fontWeight: 'body',
       fontSize: 1,
-      color: 'text',
+      color: 'var(--theme-ui-colors-text)',
       paddingBottom: 3,
       webkitTapHighlightColor: 'transparent',
-
+      transitionProperty: '*',
+      transitionTimingFunction: 'ease-in-out',
       h1: {
-        color: 'text',
+        color: 'inherit',
         fontFamily: 'heading',
         lineHeight: 'heading',
         fontWeight: 'heading',
@@ -83,7 +85,7 @@ const theme = {
         paddingBottom: 4,
       },
       h2: {
-        color: 'text',
+        color: 'inherit',
         fontFamily: 'heading',
         lineHeight: 'heading',
         fontWeight: 'heading',
@@ -91,7 +93,7 @@ const theme = {
         paddingBottom: 4,
       },
       h3: {
-        color: 'text',
+        color: 'inherit',
         fontFamily: 'heading',
         lineHeight: 'heading',
         fontWeight: 'heading',
@@ -99,7 +101,7 @@ const theme = {
         paddingBottom: 4,
       },
       h4: {
-        color: 'text',
+        color: 'inherit',
         fontFamily: 'heading',
         lineHeight: 'heading',
         fontWeight: 'heading',
@@ -107,7 +109,7 @@ const theme = {
         paddingBottom: 4,
       },
       h5: {
-        color: 'text',
+        color: 'inherit',
         fontFamily: 'heading',
         lineHeight: 'heading',
         fontWeight: 'heading',
@@ -115,7 +117,7 @@ const theme = {
         paddingBottom: 4,
       },
       h6: {
-        color: 'text',
+        color: 'inherit',
         fontFamily: 'heading',
         lineHeight: 'heading',
         fontWeight: 'heading',
@@ -126,6 +128,10 @@ const theme = {
         fontWeight: 'body',
         fontSize: 1,
         paddingBottom: 3,
+        color: 'inherit',
+        a: {
+          fontWeight: 'heading',
+        },
       },
       small: {
         fontWeight: 'body',
@@ -133,9 +139,16 @@ const theme = {
         paddingBottom: 3,
       },
       a: {
-        color: 'text',
+        color: 'inherit',
+        transitionDuration: '.2s',
         '&:visited': {
-          color: 'text',
+          color: 'inherit',
+          '&:hover': {
+            color: 'var(--theme-ui-colors-primary)',
+          },
+        },
+        '&:hover': {
+          color: 'var(--theme-ui-colors-primary)',
         },
       },
       ul: {

@@ -72,9 +72,9 @@ export default function PageList({ type, limit }) {
                   zIndex: '5',
                 }}
               >
-                <Text as="h3" sx={{ paddingBottom: '0' }}>
+                <h3 sx={{ padding: '0', margin: '0' }}>
                   {listPage.node.title}
-                </Text>
+                </h3>
 
                 <Text as="small">{listPage.node.publishDate}</Text>
               </Box>
