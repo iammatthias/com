@@ -18,7 +18,7 @@ export default function Toggle(props) {
   return (
     <Switch
       onClick={handleClick((e) => {
-        setColorMode(colorMode === 'default' ? 'dark' : 'default');
+        setColorMode(colorMode === 'dark' ? 'default' : 'dark');
       })}
       {...props}
     />

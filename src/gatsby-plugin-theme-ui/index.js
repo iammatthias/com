@@ -1,5 +1,6 @@
-export default {
+const theme = {
   useCustomProperties: true,
+  useRootStyles: true,
   useColorSchemeMediaQuery: false,
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
@@ -54,12 +55,12 @@ export default {
   },
   forms: {
     switch: {
-      backgroundColor: 'muted',
+      backgroundColor: 'var(--theme-ui-colors-text)',
       div: {
-        backgroundColor: 'background',
+        backgroundColor: 'var(--theme-ui-colors-background)',
       },
       'input:checked ~ &': {
-        backgroundColor: 'muted',
+        backgroundColor: 'var(--theme-ui-colors-text)',
       },
     },
   },
@@ -132,9 +133,9 @@ export default {
         paddingBottom: 3,
       },
       a: {
-        color: 'primary',
+        color: 'text',
         '&:visited': {
-          color: 'primary',
+          color: 'text',
         },
       },
       ul: {
@@ -178,3 +179,5 @@ export default {
     },
   },
 };
+
+export default theme;
