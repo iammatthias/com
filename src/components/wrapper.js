@@ -2,27 +2,25 @@
 
 import React from 'react'; //eslint-disable-line
 import { jsx } from 'theme-ui';
-import styled from '@emotion/styled';
 import { lighten, darken } from '@theme-ui/color';
 import Switch from './switch';
 import Logomark from './logomark';
 import Menu from './menu';
 
-const Main = styled.main`
-  margin: 5rem 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 const Wrapped = (props) => {
   return (
-    <Main>
+    <main
+      sx={{
+        margin: '5rem 1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <section
         {...props}
         sx={{
           backgroundColor: lighten('background', 0.025),
-
           width: '100%',
           maxWidth: [
             '100vw',
@@ -63,7 +61,7 @@ const Wrapped = (props) => {
         />
         {props.children}
       </section>
-    </Main>
+    </main>
   );
 };
 
