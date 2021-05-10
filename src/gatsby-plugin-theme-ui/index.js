@@ -166,6 +166,9 @@ export default {
         borderColor: 'inherit',
         marginLeft: '0',
         paddingLeft: '2rem',
+        p: {
+          paddingBottom: '0',
+        },
       },
     },
   },

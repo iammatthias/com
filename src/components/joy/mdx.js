@@ -4,6 +4,8 @@ import React from 'react'; //eslint-disable-line
 
 import AppleMusic from 'react-music-embed';
 
+import Vimeo from '@u-wave/react-vimeo';
+
 import ClientOnly from './clientOnly';
 
 import Sparkle from './sparkle';
@@ -50,4 +52,18 @@ export const MDXGlobalComponents = {
   ),
 
   AM: (props) => <AppleMusic {...props} />,
+
+  Vimeo: (props) => (
+    <Vimeo
+      {...props}
+      responsive
+      autoplay="true"
+      muted="true"
+      loop="true"
+      autopause="false"
+      showTitle="false"
+      showPortrait="false"
+      showByline="false"
+    />
+  ),
 };
