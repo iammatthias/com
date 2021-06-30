@@ -10,6 +10,7 @@ module.exports = {
     author: `Matthias Jordan`,
   },
   assetPrefix: `__GATSBY_RELATIVE_PATH__`,
+  flags: { PRESERVE_WEBPACK_CACHE: true },
   plugins: [
     `gatsby-plugin-relative-paths`,
     {
