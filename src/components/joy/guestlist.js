@@ -7,6 +7,8 @@ import moment from 'moment';
 import Link from './link';
 
 import { useAuth } from '../../hooks/use-auth';
+// import { usePromise } from '../../hooks/use-promise';
+// import { useEns } from '../../hooks/use-ens';
 
 export default function GuestList() {
   const { guestbookLog } = useAuth();

@@ -16,7 +16,7 @@ import Link from './link';
 
 import PageList from './pageList';
 
-import GuestSign from './guestSign';
+import Guestbook from './guestbookCta';
 
 export const MDXGlobalComponents = {
   Box: (props) => <Box {...props} />,
@@ -69,5 +69,5 @@ export const MDXGlobalComponents = {
     />
   ),
 
-  GuestSign: (props) => <GuestSign {...props} />,
+  Guestbook: (props) => <Guestbook {...props} />,
 };

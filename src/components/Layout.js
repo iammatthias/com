@@ -8,11 +8,11 @@ import Wrapper from './wrapper';
 import Seo from './seo';
 import { MDXGlobalComponents } from './joy/mdx';
 
-export default function Layout({ children, wrapped }) {
+export default function Layout({ children }) {
   return (
     <ThemeProvider theme={theme} components={MDXGlobalComponents}>
       <Seo />
-      <Wrapper wrapped={wrapped.toString()}>{children}</Wrapper>
+      <Wrapper>{children}</Wrapper>
     </ThemeProvider>
   );
 }

@@ -8,7 +8,7 @@ import Guestlist from '../components/joy/guestlist';
 
 import ClientOnly from '../components/joy/clientOnly';
 
-import GuestSign from '../components/joy/guestSign';
+import GuestbookCta from '../components/joy/guestbookCta';
 
 import Link from '../components/joy/link';
 
@@ -18,7 +18,7 @@ export default function Guestbook() {
   return (
     <Layout wrapped>
       <Box sx={{ padding: ['1rem', '2rem', '4rem'] }}>
-        <GuestSign />
+        <GuestbookCta />
         <br />
         <br />
         <p>
