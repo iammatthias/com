@@ -16,6 +16,8 @@ import Link from './link';
 
 import PageList from './pageList';
 
+import GuestSign from './guestSign';
+
 export const MDXGlobalComponents = {
   Box: (props) => <Box {...props} />,
 
@@ -66,4 +68,6 @@ export const MDXGlobalComponents = {
       showByline="false"
     />
   ),
+
+  GuestSign: (props) => <GuestSign {...props} />,
 };

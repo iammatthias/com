@@ -21,12 +21,11 @@ export default function Guestbook() {
         <GuestSign />
         <br />
         <br />
-        <p>This guestbook lets you sign with a Web3 enabled browser.</p>
         <p>
-          It is built using <Link href="https://moralis.io">Moralis</Link>.
-          After signing a `logout` event is sent to disconnect. Be secure and
-          disconnect from your wallet as well ✌️
+          This web3 guestbook is built using{' '}
+          <Link href="https://moralis.io">Moralis</Link>.
         </p>
+        <p>WalletConnect coming soon ✌️</p>
         <p>
           You can view the source for this page{' '}
           <Link href="https://github.com/iammatthias/.com/blob/master/src/components/joy/guestlist.js">

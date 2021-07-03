@@ -10,7 +10,7 @@ export default function GuestSign() {
   const { login } = useAuth();
 
   function notEth() {
-    alert('You need a Web3 enabled browser to sign the guestbook.');
+    alert('You need a Web3 enabled browser to sign the guestbook');
   }
 
   async function sign() {
@@ -26,7 +26,7 @@ export default function GuestSign() {
 
   return (
     <Button onClick={sign}>
-      <Sparkle>Sign the Guestbook</Sparkle>
+      <Sparkle>Sign the web3 Guestbook</Sparkle>
     </Button>
   );
 }
