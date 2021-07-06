@@ -8,7 +8,7 @@
     "gatsby"
   ],
   "scripts": {
-    "develop": "gatsby develop",
+    "develop": "gatsby develop -S",
     "start": "gatsby develop",
     "build": "gatsby build --prefix-paths --verbose",
     "serve": "gatsby serve",
@@ -23,7 +23,8 @@
     "@mdx-js/react": "^1.6.22",
     "@metamask/detect-provider": "^1.2.0",
     "@theme-ui/color": "^0.6.1",
-    "@u-wave/react-vimeo": "^0.9.4",
+    "@u-wave/react-vimeo": "^0.9.5",
+    "@walletconnect/web3-provider": "^1.4.1",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "dotenv": "^8.2.0",
@@ -64,8 +65,8 @@
   },
   "devDependencies": {
     "assert": "^2.0.0",
-    "moralis": "^0.0.15",
-    "node-polyfill-webpack-plugin": "^1.1.0",
+    "moralis": "^0.0.26",
+    "node-polyfill-webpack-plugin": "^1.1.4",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "stream-browserify": "^3.0.0"

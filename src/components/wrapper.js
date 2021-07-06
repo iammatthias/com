@@ -19,9 +19,8 @@ const Wrapped = (props) => {
   return (
     <Main>
       <section
-        {...props}
         sx={{
-          backgroundColor: lighten('background', 0.025),
+          bg: lighten('background', 0.025),
           width: '100%',
           maxWidth: ['100vw', '85vw'],
           height: '100%',
@@ -29,6 +28,7 @@ const Wrapped = (props) => {
           borderRadius: '4px',
           position: 'relative',
         }}
+        {...props}
       >
         <Logomark
           sx={{
