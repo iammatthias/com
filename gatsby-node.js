@@ -1,11 +1,21 @@
+require('process');
 const path = require('path');
 
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
-exports.onCreateWebpackConfig = ({ actions }) => {
-  actions.setWebpackConfig({
-    plugins: [new NodePolyfillPlugin()],
-  });
+exports.onCreateWebpackConfig = ({ actions, stage, plugins }) => {
+  if (stage === 'build-javascript' || stage === 'develop') {
+    actions.setWebpackConfig({
+      plugins: [
+        new NodePolyfillPlugin(),
+        plugins.provide({ process: 'process/browser' }),
+      ],
+    });
+  } else {
+    actions.setWebpackConfig({
+      plugins: [new NodePolyfillPlugin()],
+    });
+  }
 };
 
 // Implement the Gatsby API “createPages”. This is called once the

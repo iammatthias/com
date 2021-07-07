@@ -61,11 +61,12 @@
     "simple-react-lightbox": "^3.6.4",
     "stream-http": "^3.1.1",
     "theme-ui": "^0.6.1",
+    "web3": "^1.4.0",
     "webpack": "^5.24.2"
   },
   "devDependencies": {
     "assert": "^2.0.0",
-    "moralis": "^0.0.26",
+    "moralis": "^0.0.27",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",

@@ -5,7 +5,6 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 export function useAuth() {
   const { Moralis } = useMoralis();
   const provider = new WalletConnectProvider({
-    // infuraId: process.env.GATSBY_INFURA,
     rpc: {
       1: process.env.GATSBY_MORALIS_NODE,
       4: process.env.GATSBY_MORALIS_NODE_RINKEBY,
