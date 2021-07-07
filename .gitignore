@@ -1,6 +1,5 @@
 node_modules/
 .cache/
 public
-.DS_Store
 .env*
-generate/
+.DS_store

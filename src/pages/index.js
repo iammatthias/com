@@ -1,40 +1,27 @@
 /** @jsx jsx */
-import { jsx, Box } from 'theme-ui';
-import * as React from 'react'; //eslint-disable-line
-import { graphql } from 'gatsby';
+import { jsx } from 'theme-ui';
 
-import Layout from '../components/Layout';
+import Layout from '../components/layout';
 
-import { MDXRenderer } from 'gatsby-plugin-mdx';
+import { useMoralis } from 'react-moralis';
 
 // markup
-const Page = ({ data }) => {
-  const content = data.contentfulPage;
-  const wrappedLayout = content.wrappedLayout;
+const IndexPage = () => {
+  const { authenticate, isAuthenticated, user } = useMoralis();
 
   return (
-    <Layout wrapped={wrappedLayout}>
-      <Box sx={{ padding: ['1rem', '2rem', '4rem'] }}>
-        <MDXRenderer>{content.body.childMdx.body}</MDXRenderer>
-      </Box>
+    <Layout>
+      <p sx={{ color: 'text' }}>bruh</p>
+      <br />
+      {!isAuthenticated ? (
+        <button onClick={() => authenticate({ provider: 'walletconnect' })}>
+          Authenticate
+        </button>
+      ) : (
+        <span>Welcome {user.get('username')}</span>
+      )}
     </Layout>
   );
 };
 
-export const query = graphql`
-  query {
-    contentfulPage(title: { eq: "Home" }) {
-      id
-      title
-      slug
-      wrappedLayout
-      body {
-        childMdx {
-          body
-        }
-      }
-    }
-  }
-`;
-
-export default Page;
+export default IndexPage;

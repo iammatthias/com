@@ -1,18 +1,38 @@
-import React from 'react';
-import { ThemeProvider } from 'theme-ui';
-
-import theme from './../gatsby-plugin-theme-ui';
-
-// components
-import Wrapper from './wrapper';
-import Seo from './seo';
-import { MDXGlobalComponents } from './joy/mdx';
+/** @jsx jsx */
+import { jsx } from 'theme-ui';
+import { lighten, darken } from '@theme-ui/color';
+import ColorToggle from './colorToggle';
 
 export default function Layout({ children }) {
   return (
-    <ThemeProvider theme={theme} components={MDXGlobalComponents}>
-      <Seo />
-      <Wrapper>{children}</Wrapper>
-    </ThemeProvider>
+    <main
+      sx={{
+        bg: 'background',
+        m: ['1rem', '4rem'],
+
+        height: 'calc(100vh - 8rem)',
+        display: 'grid',
+        gridTemplateAreas: ['"nav" "body" "body"', '"body body nav"'],
+        gridTemplateRows: ['auto 1fr', '1fr'],
+        gridTemplateColumns: ['1fr', '1fr auto'],
+        gridGap: '1rem',
+      }}
+    >
+      <section
+        sx={{
+          p: ['0 .5rem', '.5rem 0'],
+          gridArea: 'nav',
+          writingMode: ['', 'vertical-rl'],
+          bg: [darken('background', 0.025), 'transparent'],
+        }}
+      >
+        <ColorToggle />
+      </section>
+      <section
+        sx={{ p: '.5rem', gridArea: 'body', bg: lighten('background', 0.025) }}
+      >
+        {children}
+      </section>
+    </main>
   );
 }
