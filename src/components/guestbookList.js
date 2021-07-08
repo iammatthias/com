@@ -2,7 +2,7 @@
 
 import React from 'react'; //eslint-disable-line
 import { jsx, Box } from 'theme-ui';
-import { darken } from '@theme-ui/color';
+import { lighten } from '@theme-ui/color';
 import moment from 'moment';
 import { useMoralisCloudFunction } from 'react-moralis';
 import Link from './link';
@@ -18,7 +18,7 @@ export default function GuestbookList() {
       <Box
         key={address}
         sx={{
-          bg: darken('background', 0.025),
+          bg: lighten('background', 0.025),
           my: '1rem',
           width: ['calc(100vw - 4rem)', '50%'],
           p: '.5rem',

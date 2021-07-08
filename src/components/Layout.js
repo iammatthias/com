@@ -27,7 +27,7 @@ export default function Layout({ children }) {
           sx={{
             p: ['.5rem', '2rem'],
             gridArea: 'body',
-            bg: lighten('background', 0.025),
+            bg: lighten('background', 0.015),
             borderRadius: '4px',
           }}
         >
