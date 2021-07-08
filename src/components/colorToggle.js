@@ -20,7 +20,7 @@ const ColorToggle = (props) => {
           whiteSpace: 'nowrap',
         }}
       >
-        Click Me!
+        Color Mode
       </span>
     </button>
   );

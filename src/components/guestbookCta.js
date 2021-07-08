@@ -24,7 +24,7 @@ export default function GuestSign() {
           whiteSpace: 'nowrap',
         }}
       >
-        Click Me!
+        Web3 Auth
       </span>
     </button>
   );
