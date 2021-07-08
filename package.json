@@ -42,6 +42,7 @@
     "theme-ui": "^0.10.0"
   },
   "resolutions": {
-    "@mdx-js/react": "^1.6.22"
+    "@mdx-js/react": "^1.6.22",
+    "graphql-compose": "^9.0.1"
   }
 }
