@@ -1,28 +1,30 @@
 /** @jsx jsx */
-import { jsx, useColorMode } from 'theme-ui';
+import { jsx, useColorMode, Switch } from 'theme-ui';
+import React from 'react'; //eslint-disable-line
 const ColorToggle = (props) => {
   const [mode, setMode] = useColorMode();
   return (
-    <button
-      {...props}
-      sx={{ p: ['8px 12px'] }}
+    <Switch
       onClick={(e) => {
         const next = mode === 'dark' ? 'light' : 'dark';
         setMode(next);
       }}
-    >
-      <span
-        sx={{
-          display: 'inline-block',
-          lineHeight: '4px',
-          textAlign: 'center',
-          writingMode: ['', 'vertical-rl'],
-          whiteSpace: 'nowrap',
-        }}
-      >
-        Color Mode
-      </span>
-    </button>
+      sx={{
+        mr: '0',
+        bg: 'text',
+        '> div': {
+          bg: 'background',
+        },
+        // This will not be visible since the input is hidden
+        // '&:checked': {
+        //   backgroundColor: 'primary'
+        // },
+        // This will be visible
+        'input:checked ~ &': {
+          backgroundColor: 'text',
+        },
+      }}
+    />
   );
 };
 export default ColorToggle;

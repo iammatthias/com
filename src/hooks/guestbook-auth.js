@@ -2,7 +2,7 @@ import { useMoralis } from 'react-moralis';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 
 export function GuestbookAuth() {
-  const { authenticate, Moralis } = useMoralis();
+  const { authenticate, Moralis, user } = useMoralis();
   //  Create WalletConnect Provider
   const provider = new WalletConnectProvider({
     rpc: {
@@ -16,10 +16,12 @@ export function GuestbookAuth() {
       await provider.enable();
       Moralis.Web3.getSigningData = () => 'My custom message';
       try {
-        await authenticate({
-          provider: provider,
-          onSuccess: () => alert('🎉'),
-        });
+        await authenticate(
+          {
+            provider: 'wc',
+          },
+          console.log(user.get('ethAddress'))
+        );
       } catch (e) {
         console.error(e.message, e);
       }

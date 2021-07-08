@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import { jsx } from 'theme-ui';
+import React from 'react'; //eslint-disable-line
 
 import Layout from '../components/layout';
 import GuestbookCta from '../components/guestbookCta';
@@ -12,6 +13,7 @@ const IndexPage = () => {
       <p sx={{ color: 'text' }}>bruh</p>
       <br />
       <GuestbookCta />
+      <hr />
       <br />
       <GuestbookList />
     </Layout>

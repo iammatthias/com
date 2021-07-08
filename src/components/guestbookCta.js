@@ -1,7 +1,7 @@
 /** @jsx jsx */
 
 import React from 'react'; //eslint-disable-line
-import { jsx } from 'theme-ui';
+import { jsx, Button } from 'theme-ui';
 
 import { GuestbookAuth } from '../hooks/guestbook-auth';
 
@@ -15,7 +15,7 @@ export default function GuestSign() {
   }
 
   return (
-    <button sx={{ p: ['8px 12px'] }} onClick={GuestAuth}>
+    <Button sx={{ p: ['8px 12px'] }} onClick={GuestAuth}>
       <span
         sx={{
           display: 'inline-block',
@@ -26,6 +26,6 @@ export default function GuestSign() {
       >
         Web3 Auth
       </span>
-    </button>
+    </Button>
   );
 }
