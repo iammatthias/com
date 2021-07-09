@@ -50,11 +50,5 @@ export default function GuestbookList() {
     );
   });
 
-  return (
-    <>
-      <span>guestlist</span>
-      <br />
-      {GuestList}
-    </>
-  );
+  return <>{GuestList}</>;
 }

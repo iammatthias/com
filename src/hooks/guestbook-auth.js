@@ -1,27 +1,20 @@
 import { useMoralis } from 'react-moralis';
-import WalletConnectProvider from '@walletconnect/web3-provider';
+import { navigate } from 'gatsby-link';
 
 export function GuestbookAuth() {
-  const { authenticate, Moralis, user } = useMoralis();
-  //  Create WalletConnect Provider
-  const provider = new WalletConnectProvider({
-    rpc: {
-      1: process.env.GATSBY_MORALIS_NODE,
-      4: process.env.GATSBY_MORALIS_NODE_RINKEBY,
-    },
-  });
+  const { authenticate, logout, Moralis } = useMoralis();
 
   return {
     login: async () => {
-      await provider.enable();
-      Moralis.Web3.getSigningData = () => 'My custom message';
+      Moralis.Web3.getSigningData = () =>
+        'Sign the web3 guestbook on iammatthias.com';
       try {
-        await authenticate(
-          {
-            provider: provider,
+        await authenticate({
+          provider: 'walletconnect',
+          onComplete: () => {
+            navigate('/guestbook');
           },
-          console.log(user.get('ethAddress'))
-        );
+        });
       } catch (e) {
         console.error(e.message, e);
       }

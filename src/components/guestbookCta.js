@@ -27,7 +27,7 @@ export default function GuestSign() {
             whiteSpace: 'nowrap',
           }}
         >
-          Web3 Auth
+          Sign the Web3 Guestbook
         </span>
       </Sparkle>
     </Button>
