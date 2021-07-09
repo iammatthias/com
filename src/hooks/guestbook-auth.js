@@ -14,6 +14,7 @@ export function GuestbookAuth() {
           onSuccess: () => {
             navigate('/guestbook');
             logout();
+            alert('yay');
           },
         });
       } catch (e) {
