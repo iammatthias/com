@@ -18,7 +18,7 @@ export function GuestbookAuth() {
       try {
         await authenticate(
           {
-            provider: 'wc',
+            provider: provider,
           },
           console.log(user.get('ethAddress'))
         );

@@ -2,6 +2,7 @@
 import { jsx } from 'theme-ui';
 import { lighten } from '@theme-ui/color';
 import Nav from './nav';
+import Seo from './seo';
 const { MoralisProvider } = require('react-moralis');
 
 export default function Layout({ children }) {

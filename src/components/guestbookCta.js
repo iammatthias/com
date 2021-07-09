@@ -5,6 +5,8 @@ import { jsx, Button } from 'theme-ui';
 
 import { GuestbookAuth } from '../hooks/guestbook-auth';
 
+import Sparkle from './sparkle';
+
 export default function GuestSign() {
   const { login } = GuestbookAuth();
 
@@ -16,16 +18,18 @@ export default function GuestSign() {
 
   return (
     <Button sx={{ p: ['8px 12px'] }} onClick={GuestAuth}>
-      <span
-        sx={{
-          display: 'inline-block',
-          lineHeight: '4px',
-          textAlign: 'center',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        Web3 Auth
-      </span>
+      <Sparkle>
+        <span
+          sx={{
+            display: 'inline-block',
+            lineHeight: '4px',
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Web3 Auth
+        </span>
+      </Sparkle>
     </Button>
   );
 }

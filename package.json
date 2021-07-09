@@ -18,6 +18,7 @@
     "@mdx-js/mdx": "^1.6.22",
     "@mdx-js/react": "^1.6.22",
     "@theme-ui/color": "^0.10.0",
+    "@u-wave/react-vimeo": "^0.9.5",
     "@walletconnect/web3-provider": "^1.4.1",
     "base-64": "^1.0.0",
     "dotenv": "^10.0.0",
@@ -41,6 +42,7 @@
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",
     "react-moralis": "^0.1.9",
+    "react-music-embed": "^1.0.1",
     "theme-ui": "^0.10.0"
   },
   "resolutions": {
