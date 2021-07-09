@@ -6,6 +6,7 @@ import { darken } from '@theme-ui/color';
 import { useMoralisCloudFunction } from 'react-moralis';
 import ColorToggle from './ColorToggle';
 import Link from './link';
+import Logo from './logo';
 
 export default function Nav() {
   const { data } = useMoralisCloudFunction('getUserList', {});
@@ -14,15 +15,29 @@ export default function Nav() {
   return (
     <section
       sx={{
+        display: 'grid',
         gridArea: 'nav',
-        display: 'flex',
-        flexDirection: ['row', 'column'],
+        gridTemplateAreas: [
+          '"logo toggle" "menu menu"',
+          '"logo" "menu" "toggle"',
+        ],
+        gridTemplateRows: ['1fr 1fr', 'auto 1fr 1fr'],
+        gridTemplateColumns: ['1fr 1fr', '1fr'],
       }}
     >
       <Box
         sx={{
+          gridArea: 'logo',
+          py: '1rem',
+        }}
+      >
+        <Logo sx={{ mb: ['0', '1rem'], mr: ['1rem', '0'] }} />
+      </Box>
+      <Box
+        sx={{
+          gridArea: 'menu',
           mb: ['0', '1rem'],
-          mr: ['1rem', '0'],
+
           padding: '1rem',
           bg: [darken('background', 0.025)],
           borderRadius: '4px',
@@ -85,10 +100,12 @@ export default function Nav() {
       </Box>
       <Box
         sx={{
+          gridArea: 'toggle',
           py: '1rem',
-          display: 'flex',
-          justifyContent: 'center',
-          alignContent: 'center',
+          '> label': {
+            display: 'flex',
+            justifyContent: 'flex-end',
+          },
         }}
       >
         <ColorToggle />

@@ -8,7 +8,7 @@ import { useMoralisCloudFunction } from 'react-moralis';
 import Link from './link';
 
 export default function GuestbookList() {
-  const { data } = useMoralisCloudFunction('getUserList', {});
+  const { data } = useMoralisCloudFunction('getUserList');
   console.log(data);
 
   const GuestList = data.map((guest) => {
