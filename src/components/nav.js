@@ -7,7 +7,6 @@ import { useMoralisCloudFunction } from 'react-moralis';
 import ColorToggle from './ColorToggle';
 import Link from './link';
 import Logo from './logo';
-import Sparkle from './sparkle';
 
 export default function Nav() {
   const { data } = useMoralisCloudFunction('getUserList', {});
@@ -46,61 +45,61 @@ export default function Nav() {
           flexGrow: ['1', '0'],
           justifyContent: 'center',
           alignContent: 'center',
-          '> span span p': {
+          textAlign: 'center',
+          '> p': {
             display: ['inline-block', 'block'],
             writingMode: ['', 'vertical-rl'],
-            lineHeight: '.35',
+            lineHeight: ['3', '.35'],
+            pb: '0',
           },
         }}
       >
-        <Sparkle>
-          <p
-            sx={{
-              m: ['0 1rem 0 0', '0 0 1rem 0'],
-            }}
-          >
-            <Link href="#" sx={{ textDecoration: 'none' }}>
-              home
-            </Link>
-          </p>
-          <p
-            sx={{
-              m: ['0 1rem 0 0', '0 0 1rem 0'],
-            }}
-          >
-            <Link href="#" sx={{ textDecoration: 'none' }}>
-              work
-            </Link>
-          </p>
-          <p
-            sx={{
-              m: ['0 1rem 0 0', '0 0 1rem 0'],
-            }}
-          >
-            <Link href="#" sx={{ textDecoration: 'none' }}>
-              blog
-            </Link>
-          </p>
-          <p
-            sx={{
-              m: ['0 1rem 0 0', '0 0 1rem 0'],
-            }}
-          >
-            <Link href="#" sx={{ textDecoration: 'none' }}>
-              about
-            </Link>
-          </p>
-          <p
-            sx={{
-              m: ['0 0 0 0', '0 0 0 0'],
-              p: '0',
-            }}
-          >
-            <Link href="#" sx={{ textDecoration: 'none' }}>
-              guestbook
-            </Link>
-          </p>
-        </Sparkle>
+        <p
+          sx={{
+            m: ['0 1rem 0 0', '0 0 1rem 0'],
+          }}
+        >
+          <Link href="#" sx={{ textDecoration: 'none' }}>
+            home
+          </Link>
+        </p>
+        <p
+          sx={{
+            m: ['0 1rem 0 0', '0 0 1rem 0'],
+          }}
+        >
+          <Link href="#" sx={{ textDecoration: 'none' }}>
+            work
+          </Link>
+        </p>
+        <p
+          sx={{
+            m: ['0 1rem 0 0', '0 0 1rem 0'],
+          }}
+        >
+          <Link href="#" sx={{ textDecoration: 'none' }}>
+            blog
+          </Link>
+        </p>
+        <p
+          sx={{
+            m: ['0 1rem 0 0', '0 0 1rem 0'],
+          }}
+        >
+          <Link href="#" sx={{ textDecoration: 'none' }}>
+            about
+          </Link>
+        </p>
+        <p
+          sx={{
+            m: ['0 0 0 0', '0 0 0 0'],
+            p: '0',
+          }}
+        >
+          <Link href="#" sx={{ textDecoration: 'none' }}>
+            guestbook
+          </Link>
+        </p>
       </Box>
       <Box
         sx={{
