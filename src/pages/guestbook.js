@@ -2,11 +2,11 @@
 import { jsx } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 
-import Layout from './../components/layout';
-import GuestbookCta from './../components/guestbookCta';
-import GuestbookList from './../components/guestbookList';
-import Link from './../components/link';
-import ClientOnly from './../components/clientOnly';
+import Layout from '../components/layout';
+import GuestbookCta from '../components/guestbookCta';
+import GuestbookList from '../components/guestbookList';
+import Link from '../components/link';
+import ClientOnly from '../components/clientOnly';
 
 // markup
 const IndexPage = () => {
