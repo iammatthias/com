@@ -5,8 +5,8 @@ import { graphql } from 'gatsby';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import { darken } from '@theme-ui/color';
 
-import Layout from '../components/layout';
-import Link from '../components/link';
+import Layout from './../components/layout';
+import Link from './../components/link';
 
 // markup
 const Page = ({ data, pageContext }) => {
