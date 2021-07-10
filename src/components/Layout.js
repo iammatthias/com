@@ -7,7 +7,7 @@ import Seo from './seo';
 
 const { MoralisProvider } = require('react-moralis');
 
-export default function Layout({ children, pageType }) {
+export default function Layout({ children }) {
   return (
     <MoralisProvider
       appId={process.env.GATSBY_MORALIS_APPLICATION_ID}

@@ -10,6 +10,10 @@ module.exports = {
     author: `Matthias Jordan`,
   },
   assetPrefix: `__GATSBY_RELATIVE_PATH__`,
+  flags: {
+    FAST_DEV: true,
+    PARALLEL_SOURCING: true,
+  },
   plugins: [
     'gatsby-plugin-theme-ui',
     'gatsby-plugin-image',

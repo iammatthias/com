@@ -1,5 +1,5 @@
 import { useMoralis } from 'react-moralis';
-import { navigate } from 'gatsby-link';
+// import { navigate } from 'gatsby-link';
 
 export function GuestbookAuth() {
   const { authenticate, logout, Moralis } = useMoralis();
@@ -12,11 +12,11 @@ export function GuestbookAuth() {
         await authenticate({
           provider: 'walletconnect',
           onSuccess: () => {
-            navigate('/guestbook');
             logout();
-            alert('yay');
+            window.location.reload();
           },
         });
+        // navigate('/guestbook');
       } catch (e) {
         console.error(e.message, e);
       }
