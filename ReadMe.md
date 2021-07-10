@@ -1,54 +1,24 @@
-<p align="center">
-  <a href="https://www.gatsbyjs.com/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter">
-    <img alt="Gatsby" src="https://www.gatsbyjs.com/Gatsby-Monogram.svg" width="60" />
-  </a>
-</p>
-<h1 align="center">
-  Gatsby minimal starter
-</h1>
+# ReadMe
 
-## 🚀 Quick start
+> hint:\
+> try running `npx iammatthias` or `npx iammatthias-resume` in your terminal.
+>> more info:\
+>> https://github.com/iammatthias/businesscard \
+>> https://github.com/iammatthias/resume
 
-1.  **Create a Gatsby site.**
+### iammatthias.com 
 
-    Use the Gatsby CLI to create a new site, specifying the minimal starter.
+Site content is now 99% MDX served through Contentful. Hosted on IPFS using fleek.co
 
-    ```shell
-    # create a new Gatsby site using the minimal starter
-    npm init gatsby
-    ```
+#### Built With 
+- [GatsbyJS](https://www.gatsbyjs.org/)
+- [Fleek](https://www.fleek.co/), host
+- [Contentful](https://www.contentful.com), CMS
+- [Theme UI](https://theme-ui.com/), primitives 
+- [MDX](https://mdxjs.com/), components in markdown
+- [Segment](https://segment.com/), analytics & more
 
-2.  **Start developing.**
 
-    Navigate into your new site’s directory and start it up.
+Things are set up to allow for themed modular page creation through Contentful using MDX, or through stand-alone custom pages that exist without the standard Layout wrapper. 
 
-    ```shell
-    cd my-gatsby-site/
-    npm run develop
-    ```
-
-3.  **Open the code and start customizing!**
-
-    Your site is now running at http://localhost:8000!
-
-    Edit `src/pages/index.js` to see your site update in real-time!
-
-4.  **Learn more**
-
-    - [Documentation](https://www.gatsbyjs.com/docs/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Tutorials](https://www.gatsbyjs.com/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Guides](https://www.gatsbyjs.com/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [API Reference](https://www.gatsbyjs.com/docs/api-reference/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Plugin Library](https://www.gatsbyjs.com/plugins?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Cheat Sheet](https://www.gatsbyjs.com/docs/cheat-sheet/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-## 🚀 Quick start (Gatsby Cloud)
-
-Deploy this starter with one click on [Gatsby Cloud](https://www.gatsbyjs.com/cloud/):
-
-[<img src="https://www.gatsbyjs.com/deploynow.svg" alt="Deploy to Gatsby Cloud">](https://www.gatsbyjs.com/dashboard/deploynow?url=https://github.com/gatsbyjs/gatsby-starter-minimal)
+This is fun. 
