@@ -3,9 +3,9 @@ import React from 'react'; //eslint-disable-line
 
 import { jsx } from 'theme-ui';
 
-import Link from './joy/link';
+import Link from './link';
 
-function SvgComponent(props) {
+function Logo(props) {
   return (
     <Link href="https://iammatthias.com" title="homepage">
       <svg
@@ -30,4 +30,4 @@ function SvgComponent(props) {
   );
 }
 
-export default SvgComponent;
+export default Logo;

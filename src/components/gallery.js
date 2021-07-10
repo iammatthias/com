@@ -8,7 +8,7 @@ import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
 
 import { useLocation } from '@reach/router';
 
-import { useSiteMetadata } from '../../hooks/use-site-metadata-galleries';
+import { useSiteMetadata } from '../hooks/use-site-metadata-galleries';
 
 export default function Gallery({ masonrySet, ratio }) {
   const { galleries } = useSiteMetadata();
@@ -21,16 +21,7 @@ export default function Gallery({ masonrySet, ratio }) {
     return null;
   }
 
-  function reverseString(str) {
-    return str === '' ? '' : reverseString(str.substr(1)) + str.charAt(0);
-  }
-
-  const reverseRatio = ratio ? reverseString(ratio) : '0';
-
-  // get decimal from `ratio` (aspect ratio prop returns a fraction)
-  const r = eval(reverseRatio === 'denifednu' ? '0' : reverseRatio); //eslint-disable-line
-
-  const percent = Math.floor(r * 100);
+  const percent = Math.floor(ratio * 100);
 
   const options = {
     settings: {
@@ -107,7 +98,7 @@ export default function Gallery({ masonrySet, ratio }) {
         <XMasonry
           targetBlockWidth={
             match.node.images.length === 1
-              ? '900'
+              ? '1000'
               : match.node.images.length === 2
               ? '600'
               : match.node.images.length === 3
@@ -128,9 +119,7 @@ export default function Gallery({ masonrySet, ratio }) {
                   image={image.gatsbyImageData}
                   alt={image.title}
                   sx={{
-                    ...(ratio
-                      ? { div: { paddingTop: percent + '% !important' } }
-                      : ''),
+                    ...(ratio ? { paddingTop: percent + '% !important' } : ''),
                   }}
                 />
               </Link>

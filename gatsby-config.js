@@ -10,19 +10,30 @@ module.exports = {
     author: `Matthias Jordan`,
   },
   assetPrefix: `__GATSBY_RELATIVE_PATH__`,
-  flags: {
-    PRESERVE_WEBPACK_CACHE: true,
-    FAST_DEV: true,
-    PARALLEL_SOURCING: true,
-  },
   plugins: [
-    `gatsby-plugin-relative-paths`,
+    'gatsby-plugin-theme-ui',
+    'gatsby-plugin-image',
+    'gatsby-plugin-react-helmet',
+    'gatsby-plugin-sitemap',
     {
-      resolve: `gatsby-source-contentful`,
+      resolve: 'gatsby-plugin-manifest',
       options: {
-        spaceId: process.env.CONTENTFUL_SPACE_ID,
-        accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-        host: process.env.CONTENTFUL_HOST,
+        icon: 'src/images/icon.png',
+      },
+    },
+    'gatsby-plugin-mdx',
+    'gatsby-plugin-sharp',
+    'gatsby-transformer-sharp',
+    {
+      resolve: 'gatsby-plugin-web-font-loader',
+      options: {
+        google: {
+          families: [
+            'Cormorant Garamond:300,700',
+            'Pacifico',
+            'Inconsolata:300',
+          ],
+        },
       },
     },
     {
@@ -33,33 +44,21 @@ module.exports = {
         trackPage: true,
       },
     },
-    `gatsby-plugin-mdx`,
     {
-      resolve: `gatsby-source-filesystem`,
+      resolve: `gatsby-source-contentful`,
       options: {
-        name: `pages`,
-        path: `./src/pages/`,
+        spaceId: process.env.CONTENTFUL_SPACE_ID,
+        accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+        host: process.env.CONTENTFUL_HOST,
       },
-      __key: `pages`,
     },
     {
-      resolve: `gatsby-plugin-google-fonts-v2`,
+      resolve: 'gatsby-source-filesystem',
       options: {
-        fonts: [
-          {
-            family: `Cormorant Garamond`,
-            weights: [`300`, `700`],
-          },
-          {
-            family: `Pacifico`,
-            weights: [`400`],
-          },
-          {
-            family: `Inconsolata`,
-            weights: [`400`],
-          },
-        ],
+        name: 'pages',
+        path: './src/pages/',
       },
+      __key: 'pages',
     },
     {
       resolve: `gatsby-plugin-feed-generator`,
@@ -145,14 +144,9 @@ module.exports = {
         ],
       },
     },
-    `gatsby-plugin-twitter`,
-    `gatsby-plugin-theme-ui`,
-    `gatsby-plugin-sharp`,
-    `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-relative-paths`,
     `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-remark-images`,
-    `gatsby-plugin-sitemap`,
-    `gatsby-plugin-offline`,
   ],
 };

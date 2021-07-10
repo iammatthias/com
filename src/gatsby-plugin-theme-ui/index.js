@@ -1,12 +1,28 @@
-export default {
-  useCustomProperties: true,
-  useColorSchemeMediaQuery: false,
-  initialColorModeName: 'light',
+const theme = {
+  initialColorMode: 'light',
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
+  colors: {
+    text: '#0C0908',
+    background: '#F4F2F1',
+    primary: '#233F43',
+    secondary: '#87B8C0',
+    accent: '#E45225',
+    muted: '#A5958D',
+    modes: {
+      dark: {
+        text: '#F4F2F1',
+        background: '#0e0e11',
+        primary: '#87B8C0',
+        secondary: '#233F43',
+        accent: '#E45225',
+        muted: '#A5958D',
+      },
+    },
+  },
   fonts: {
-    body: 'Cormorant Garamond, system-ui, sans-serif',
     heading: 'Cormorant Garamond, system-ui, serif',
-    monospace: 'Inconsolata, Menlo, monospace',
+    body: 'Cormorant Garamond, system-ui, sans-serif',
+    mono: 'Inconsolata, Menlo, monospace',
     cursive: 'Pacifico, cursive',
   },
   fontSizes: [14, 18, 24, 36, 54, 81, 122, 182, 264],
@@ -19,25 +35,9 @@ export default {
     body: 1.54,
     heading: 1.33,
   },
-  colors: {
-    modes: {
-      light: {
-        text: '#0C0908',
-        background: '#F4F2F1',
-        primary: '#233F43',
-        secondary: '#87B8C0',
-        accent: '#E45225',
-        muted: '#A5958D',
-      },
-      dark: {
-        text: '#F4F2F1',
-        background: '#0C0908',
-        primary: '#87B8C0',
-        secondary: '#233F43',
-        accent: '#E45225',
-        muted: '#A5958D',
-      },
-    },
+  letterSpacings: { tracked: '0.1em' },
+  boxShadows: {
+    0: '0 1px 1px rgba(0,0,0,0.11), 0 2px 2px rgba(0,0,0,0.11), 0 4px 4px rgba(0,0,0,0.11), 0 6px 8px rgba(0,0,0,0.11), 0 8px 16px rgba(0,0,0,0.11)',
   },
   buttons: {
     primary: {
@@ -173,3 +173,4 @@ export default {
     },
   },
 };
+export default theme;

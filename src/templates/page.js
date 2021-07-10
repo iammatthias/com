@@ -1,29 +1,26 @@
 /** @jsx jsx */
 import { jsx, Box, Button } from 'theme-ui';
-import * as React from 'react'; //eslint-disable-line
-import { darken } from '@theme-ui/color';
+import React from 'react'; //eslint-disable-line
 import { graphql } from 'gatsby';
-
-import Layout from '../components/Layout';
-import Link from '../components/joy/link';
-
 import { MDXRenderer } from 'gatsby-plugin-mdx';
+import { darken } from '@theme-ui/color';
+
+import Layout from '../components/layout';
+import Link from '../components/link';
 
 // markup
 const Page = ({ data, pageContext }) => {
   const content = data.contentfulPage;
-  const wrappedLayout = content.wrappedLayout;
-
   const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/blog/${pageContext.pagePath}/`
   )}`;
 
   return (
-    <Layout wrapped={wrappedLayout}>
+    <Layout>
       {content.pageType === 'Blog' ? (
         <Box
           sx={{
-            padding: ['1rem 1rem 2rem', '2rem 2rem 3rem', '4rem 4rem 5rem'],
+            p: ['.5rem', '2rem'],
             backgroundColor: darken('background', 0.025),
           }}
         >
@@ -40,7 +37,7 @@ const Page = ({ data, pageContext }) => {
       ) : content.pageType === 'Gallery' ? (
         <Box
           sx={{
-            padding: ['1rem 1rem 2rem', '2rem 2rem 3rem', '4rem 4rem 5rem'],
+            p: ['.5rem', '2rem'],
             backgroundColor: darken('background', 0.025),
           }}
         >
@@ -49,11 +46,12 @@ const Page = ({ data, pageContext }) => {
       ) : (
         ''
       )}
-      <Box sx={{ padding: ['1rem', '2rem', '4rem'] }}>
+
+      <article sx={{ p: ['.5rem', '2rem'] }}>
         <MDXRenderer>{content.body.childMdx.body}</MDXRenderer>
-      </Box>
+      </article>
       {content.pageType === 'Blog' ? (
-        <Box sx={{ padding: ['1rem', '1rem 2rem', '1rem 4rem'] }}>
+        <Box sx={{ p: ['.5rem', '2rem'] }}>
           <h4>
             {pageContext.previous != null ? (
               <>
@@ -85,12 +83,11 @@ const Page = ({ data, pageContext }) => {
 };
 
 export const query = graphql`
-  query($id: String!) {
+  query ($id: String!) {
     contentfulPage(id: { eq: $id }) {
       id
       title
       slug
-      wrappedLayout
       pageType
       publishDate(formatString: "MMMM Do, YYYY")
       body {

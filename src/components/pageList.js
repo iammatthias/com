@@ -3,9 +3,9 @@
 import React from 'react'; //eslint-disable-line
 import { jsx, Box, Text } from 'theme-ui';
 import { lighten } from '@theme-ui/color';
-import Link from './link';
 
-import { useSiteMetadata } from '../../hooks/use-site-metadata-lists';
+import Link from './link';
+import { useSiteMetadata } from '../hooks/use-site-metadata-lists';
 
 export default function PageList({ type, limit }) {
   const { listBlog, listGallery } = useSiteMetadata();
