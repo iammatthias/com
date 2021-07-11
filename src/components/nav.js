@@ -4,7 +4,7 @@ import React from 'react'; //eslint-disable-line
 import { jsx, Box } from 'theme-ui';
 import { darken } from '@theme-ui/color';
 import { useMoralisCloudFunction } from 'react-moralis';
-import ColorToggle from './ColorToggle';
+import ColorToggle from './colorToggle';
 import Link from './link';
 import Logo from './logo';
 
