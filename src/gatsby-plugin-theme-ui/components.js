@@ -2,6 +2,7 @@
 import { jsx, Box, Flex, Grid, Button, Heading, Text } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 
+import ClientOnly from '../components/guestbookCta';
 import Gallery from '../components/gallery';
 import PageList from '../components/pageList';
 import Link from '../components/link';
@@ -25,8 +26,16 @@ const components = {
   ),
   Mono: (props) => <span {...props} sx={{ fontFamily: 'monospace' }} />,
   Link: (props) => <Link {...props} />,
-  PageList: (props) => <PageList {...props} />,
-  Gallery: (props) => <Gallery {...props} />,
+  PageList: (props) => (
+    <ClientOnly>
+      <PageList {...props} />
+    </ClientOnly>
+  ),
+  Gallery: (props) => (
+    <ClientOnly>
+      <Gallery {...props} />
+    </ClientOnly>
+  ),
 
   //helpers
   AM: (props) => <AppleMusic {...props} />,
