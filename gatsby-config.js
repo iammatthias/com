@@ -9,39 +9,40 @@ module.exports = {
     description: `A personal portfolio project`,
     author: `Matthias Jordan`,
   },
-  assetPrefix: '__GATSBY_RELATIVE_PATH__',
+  assetPrefix: `__GATSBY_RELATIVE_PATH__`,
   flags: {
     FAST_DEV: true,
     PARALLEL_SOURCING: true,
   },
   plugins: [
-    'gatsby-plugin-theme-ui',
-    'gatsby-plugin-image',
-    'gatsby-plugin-react-helmet',
-    'gatsby-plugin-sitemap',
+    `gatsby-plugin-theme-ui`,
+    `gatsby-plugin-image`,
+    `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-sitemap`,
     {
-      resolve: 'gatsby-plugin-manifest',
+      resolve: `gatsby-plugin-manifest`,
       options: {
-        icon: 'src/images/gatsby-icon.png',
+        icon: `src/images/gatsby-icon.png`,
       },
     },
-    'gatsby-plugin-mdx',
-    'gatsby-plugin-sharp',
-    'gatsby-transformer-sharp',
+    `gatsby-plugin-mdx`,
+    `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
+    `gatsby-remark-images`,
     {
       resolve: `gatsby-plugin-google-fonts-v2`,
       options: {
         fonts: [
           {
-            family: 'Cormorant Garamond',
-            weights: ['300', '700'],
+            family: `Cormorant Garamond`,
+            weights: [`300`, `700`],
           },
           {
-            family: 'Pacifico',
+            family: `Pacifico`,
           },
           {
-            family: 'Inconsolata',
-            weights: ['300'],
+            family: `Inconsolata`,
+            weights: [`300`],
           },
         ],
       },
@@ -63,12 +64,12 @@ module.exports = {
       },
     },
     {
-      resolve: 'gatsby-source-filesystem',
+      resolve: `gatsby-source-filesystem`,
       options: {
-        name: 'pages',
-        path: './src/pages/',
+        name: `pages`,
+        path: `./src/pages/`,
       },
-      __key: 'pages',
+      __key: `pages`,
     },
     {
       resolve: `gatsby-plugin-feed-generator`,
@@ -155,8 +156,5 @@ module.exports = {
       },
     },
     `gatsby-plugin-relative-paths`,
-    `gatsby-plugin-image`,
-    `gatsby-plugin-sharp`,
-    `gatsby-remark-images`,
   ],
 };
