@@ -1,11 +1,9 @@
 /** @jsx jsx */
 import { jsx } from 'theme-ui';
 import { lighten } from '@theme-ui/color';
+import { MoralisProvider } from 'react-moralis';
 
 import Nav from './nav';
-import Seo from './seo';
-
-const { MoralisProvider } = require('react-moralis');
 
 export default function Layout({ children }) {
   return (
@@ -13,7 +11,6 @@ export default function Layout({ children }) {
       appId={process.env.GATSBY_MORALIS_APPLICATION_ID}
       serverUrl={process.env.GATSBY_MORALIS_SERVER_ID}
     >
-      <Seo />
       <main
         sx={{
           bg: 'background',

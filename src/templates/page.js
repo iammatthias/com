@@ -7,6 +7,7 @@ import { darken } from '@theme-ui/color';
 
 import Layout from '../components/layout';
 import Link from '../components/link';
+import Seo from '../components/seo';
 
 // markup
 const Page = ({ data, pageContext }) => {
@@ -17,6 +18,7 @@ const Page = ({ data, pageContext }) => {
 
   return (
     <Layout>
+      <Seo />
       {content.pageType === 'Blog' ? (
         <Box
           sx={{

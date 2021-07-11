@@ -12,8 +12,8 @@ export function GuestbookAuth() {
         await authenticate({
           provider: 'walletconnect',
           onSuccess: () => {
-            logout();
             window.location.reload();
+            logout();
           },
         });
         // navigate('/guestbook');
