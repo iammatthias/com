@@ -2,7 +2,7 @@
 import { jsx, Box, Flex, Grid, Button, Heading, Text } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 
-import ClientOnly from '../components/guestbookCta';
+import ClientOnly from '../components/clientOnly';
 import Gallery from '../components/gallery';
 import PageList from '../components/pageList';
 import Link from '../components/link';
