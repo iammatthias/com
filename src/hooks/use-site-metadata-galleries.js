@@ -12,7 +12,7 @@ export const useSiteMetadata = () => {
               updatedAt(formatString: "MMMM Do, YYYY")
               images {
                 title
-                gatsbyImageData(layout: FULL_WIDTH, placeholder: DOMINANT_COLOR)
+                gatsbyImageData(layout: FULL_WIDTH, placeholder: BLURRED)
               }
             }
           }

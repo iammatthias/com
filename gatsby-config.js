@@ -22,7 +22,7 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
-        icon: 'src/images/icon.png',
+        icon: 'src/images/gatsby-icon.png',
       },
     },
     'gatsby-plugin-mdx',
@@ -33,9 +33,9 @@ module.exports = {
       options: {
         google: {
           families: [
-            'Cormorant Garamond:300,700',
-            'Pacifico',
-            'Inconsolata:300',
+            'Cormorant Garamond:300,700:latin',
+            'Pacifico:latin',
+            'Inconsolata:300:latin',
           ],
         },
       },
