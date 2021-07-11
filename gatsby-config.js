@@ -9,7 +9,7 @@ module.exports = {
     description: `A personal portfolio project`,
     author: `Matthias Jordan`,
   },
-  pathPrefix: `__GATSBY_IPFS_PATH_PREFIX__`,
+  assetPrefix: '__GATSBY_RELATIVE_PATH__',
   flags: {
     FAST_DEV: true,
     PARALLEL_SOURCING: true,
@@ -148,7 +148,7 @@ module.exports = {
         ],
       },
     },
-    `@chris.troutner/gatsby-plugin-ipfs`,
+    `gatsby-plugin-relative-paths`,
     `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-remark-images`,
