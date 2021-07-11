@@ -3,7 +3,7 @@
 import React from 'react'; //eslint-disable-line
 import { jsx, Box } from 'theme-ui';
 import { lighten } from '@theme-ui/color';
-import moment from 'moment';
+// import moment from 'moment';
 import { useMoralisCloudFunction } from 'react-moralis';
 import Link from './link';
 
@@ -12,7 +12,8 @@ export default function GuestbookList() {
   console.log(data);
 
   const GuestList = data.map((guest) => {
-    let signedAt = moment(guest.updatedAt).format('MM/DD/YYYY [at] h:mm:ss a');
+    // let signedAt = moment(guest.updatedAt).format('MM/DD/YYYY [at] h:mm:ss a');
+    let signedAt = new Date(guest.updatedAt).toLocaleDateString('en-gb');
     let address = guest.ethAddress;
     return (
       <Box

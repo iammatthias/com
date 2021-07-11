@@ -2936,14 +2936,6 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/readable-stream@^2.3.9":
-  version "2.3.11"
-  resolved "https://registry.yarnpkg.com/@types/readable-stream/-/readable-stream-2.3.11.tgz#942bc4574a1d7ca4368cb9cb4352e3d2b4b51dea"
-  integrity sha512-0z+/apYJwKFz/RHp6mOMxz/y7xOvWPYPevuCEyAY3gXsjtaac02E26RvxA+I96rfvmVH/dEMGXNvyJfViR1FSQ==
-  dependencies:
-    "@types/node" "*"
-    safe-buffer "*"
-
 "@types/responselike@*":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/responselike/-/responselike-1.0.0.tgz#251f4fe7d154d2bad125abe1b429b23afd262e29"
@@ -10713,9 +10705,9 @@ jimp@^0.14.0:
     regenerator-runtime "^0.13.3"
 
 joi@^17.2.1, joi@^17.4.0:
-  version "17.4.0"
-  resolved "https://registry.yarnpkg.com/joi/-/joi-17.4.0.tgz#b5c2277c8519e016316e49ababd41a1908d9ef20"
-  integrity sha512-F4WiW2xaV6wc1jxete70Rw4V/VuMd6IN+a5ilZsxG4uYtUXWu2kq9W5P2dz30e7Gmw8RCbY/u/uk+dMPma9tAg==
+  version "17.4.1"
+  resolved "https://registry.yarnpkg.com/joi/-/joi-17.4.1.tgz#15d2f23c8cbe4d1baded2dd190c58f8dbe11cca0"
+  integrity sha512-gDPOwQ5sr+BUxXuPDGrC1pSNcVR/yGGcTI0aCnjYxZEa3za60K/iCQ+OFIkEHWZGVCUcUlXlFKvMmrlmxrG6UQ==
   dependencies:
     "@hapi/hoek" "^9.0.0"
     "@hapi/topo" "^5.0.0"
@@ -13248,10 +13240,10 @@ pbkdf2@^3.0.17, pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-peek-readable@^3.1.3:
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/peek-readable/-/peek-readable-3.1.3.tgz#932480d46cf6aa553c46c68566c4fb69a82cd2b1"
-  integrity sha512-mpAcysyRJxmICBcBa5IXH7SZPvWkcghm6Fk8RekoS3v+BpbSzlZzuWbMx+GXrlUwESi9qHar4nVEZNMKylIHvg==
+peek-readable@^3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/peek-readable/-/peek-readable-3.1.4.tgz#f5c3b41a4eeb63a1322c4131f0b5bac7105b892e"
+  integrity sha512-DX7ec7frSMtCWw+zMd27f66hcxIz/w9LQTY2RflB4WNHCVPAye1pJiP2t3gvaaOhu7IOhtPbHw8MemMj+F5lrg==
 
 pend@~1.2.0:
   version "1.2.0"
@@ -14330,11 +14322,10 @@ readable-stream@~1.0.15, readable-stream@~1.0.31:
     string_decoder "~0.10.x"
 
 readable-web-to-node-stream@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/readable-web-to-node-stream/-/readable-web-to-node-stream-3.0.1.tgz#3f619b1bc5dd73a4cfe5c5f9b4f6faba55dff845"
-  integrity sha512-4zDC6CvjUyusN7V0QLsXVB7pJCD9+vtrM9bYDRv6uBQ+SKfx36rp5AFNPRgh9auKRul/a1iFZJYXcCbwRL+SaA==
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/readable-web-to-node-stream/-/readable-web-to-node-stream-3.0.2.tgz#5d52bb5df7b54861fd48d015e93a2cb87b3ee0bb"
+  integrity sha512-ePeK6cc1EcKLEhJFt/AebMCLL+GgSKhuygrZ/GLaKZYEecIgIECf4UaUuaByiGtzckwR4ain9VzUh95T1exYGw==
   dependencies:
-    "@types/readable-stream" "^2.3.9"
     readable-stream "^3.6.0"
 
 readdirp@^2.2.1:
@@ -14947,15 +14938,15 @@ rxjs@^6.6.0:
   dependencies:
     tslib "^1.9.0"
 
-safe-buffer@*, safe-buffer@>=5.1.0, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@^5.2.0, safe-buffer@~5.2.0:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.1.tgz#1eaf9fa9bdb1fdd4ec75f58f9cdb4e6b7827eec6"
-  integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
-
 safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
   integrity sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
+
+safe-buffer@>=5.1.0, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@^5.2.0, safe-buffer@~5.2.0:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.1.tgz#1eaf9fa9bdb1fdd4ec75f58f9cdb4e6b7827eec6"
+  integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
 
 safe-event-emitter@^1.0.1:
   version "1.0.1"
@@ -16064,13 +16055,13 @@ strip-outer@^1.0.0, strip-outer@^1.0.1:
     escape-string-regexp "^1.0.2"
 
 strtok3@^6.0.3:
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/strtok3/-/strtok3-6.1.1.tgz#4e948b5bffeee4c66504c73625a28b170d45ae45"
-  integrity sha512-Q2YbTf17/GPyhWnYGPcxZdPuXvVvstHEKdgxgdaj+SI2c5//KezIgAQJAT2/RYI0H+CQt2fDVvPiLBdl82i0yA==
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/strtok3/-/strtok3-6.1.2.tgz#4422aff1a50cf61652a03a9888f4a71386aae4b7"
+  integrity sha512-ECqYgTe/FU1r2fSgXaCywfhoveNNxDWcGSaJesD7OvlrQLIwSck8mZT6xxYdnI4q0l8SwrrExx/01chzUM4Dzw==
   dependencies:
     "@tokenizer/token" "^0.1.1"
     "@types/debug" "^4.1.6"
-    peek-readable "^3.1.3"
+    peek-readable "^3.1.4"
 
 style-loader@^2.0.0:
   version "2.0.0"
