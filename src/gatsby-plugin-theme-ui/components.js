@@ -2,7 +2,9 @@
 import { jsx, Box, Flex, Grid, Button, Heading, Text } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 
+import ClientOnly from '../components/clientOnly';
 import Guestbook from '../components/guestbookCta';
+import Guestlist from '../components/guestbookList';
 import Gallery from '../components/gallery';
 import PageList from '../components/pageList';
 import Link from '../components/link';
@@ -29,6 +31,11 @@ const components = {
   PageList: (props) => <PageList {...props} />,
   Gallery: (props) => <Gallery {...props} />,
   Guestbook: (props) => <Guestbook {...props} />,
+  Guestlist: (props) => (
+    <ClientOnly>
+      <Guestlist {...props} />
+    </ClientOnly>
+  ),
 
   //helpers
   AM: (props) => <AppleMusic {...props} />,

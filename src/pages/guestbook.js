@@ -6,7 +6,6 @@ import Layout from '../components/layout';
 import GuestbookCta from '../components/guestbookCta';
 import GuestbookList from '../components/guestbookList';
 import Link from '../components/link';
-import ClientOnly from '../components/clientOnly';
 import Seo from '../components/seo';
 
 // markup
@@ -15,9 +14,7 @@ const IndexPage = () => {
     <Layout>
       <Seo />
       <article sx={{ p: ['.5rem', '2rem'] }}>
-        <ClientOnly>
-          <GuestbookCta />
-        </ClientOnly>
+        <GuestbookCta />
         <br />
         <br />
         <p>

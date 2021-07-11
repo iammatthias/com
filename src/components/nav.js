@@ -3,15 +3,11 @@
 import React from 'react'; //eslint-disable-line
 import { jsx, Box } from 'theme-ui';
 import { darken } from '@theme-ui/color';
-import { useMoralisCloudFunction } from 'react-moralis';
 import ColorToggle from './colorToggle';
 import Link from './link';
 import Logo from './logo';
 
 export default function Nav() {
-  const { data } = useMoralisCloudFunction('getUserList', {});
-  console.log(data);
-
   return (
     <nav
       sx={{
