@@ -29,15 +29,21 @@ module.exports = {
     'gatsby-plugin-sharp',
     'gatsby-transformer-sharp',
     {
-      resolve: 'gatsby-plugin-web-font-loader',
+      resolve: `gatsby-plugin-google-fonts-v2`,
       options: {
-        google: {
-          families: [
-            'Cormorant Garamond:300,700:latin',
-            'Pacifico:latin',
-            'Inconsolata:300:latin',
-          ],
-        },
+        fonts: [
+          {
+            family: 'Cormorant Garamond',
+            weights: ['300', '700'],
+          },
+          {
+            family: 'Pacifico',
+          },
+          {
+            family: 'Inconsolata',
+            weights: ['300'],
+          },
+        ],
       },
     },
     {
