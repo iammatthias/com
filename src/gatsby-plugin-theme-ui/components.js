@@ -2,6 +2,7 @@
 import { jsx, Box, Flex, Grid, Button, Heading, Text } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 
+// custom
 import ClientOnly from '../components/clientOnly';
 import Guestbook from '../components/guestbookCta';
 import Guestlist from '../components/guestbookList';
@@ -9,6 +10,9 @@ import Gallery from '../components/gallery';
 import PageList from '../components/pageList';
 import Link from '../components/link';
 import Sparkle from '../components/sparkle';
+import EmailCapture from '../components/emailCapture';
+
+//helpers
 import AppleMusic from 'react-music-embed';
 import Vimeo from '@u-wave/react-vimeo';
 
@@ -36,6 +40,7 @@ const components = {
       <Guestlist {...props} />
     </ClientOnly>
   ),
+  Email: (props) => <EmailCapture {...props} />,
 
   //helpers
   AM: (props) => <AppleMusic {...props} />,

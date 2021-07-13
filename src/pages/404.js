@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx, Grid } from 'theme-ui';
+import { jsx } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 
 import Layout from '../components/layout';

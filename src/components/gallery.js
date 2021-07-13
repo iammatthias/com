@@ -10,6 +10,8 @@ import { useLocation } from '@reach/router';
 
 import { useSiteMetadata } from '../hooks/use-site-metadata-galleries';
 
+import { track } from '../hooks/use-segment';
+
 export default function Gallery({ masonrySet, ratio }) {
   const { galleries } = useSiteMetadata();
 
@@ -51,7 +53,7 @@ export default function Gallery({ masonrySet, ratio }) {
 
   function handleSlideChange(object) {
     if (typeof window !== 'undefined') {
-      window.analytics.track('Image Viewed', {
+      track('Image Viewed', {
         src: object.slides.current.source,
         location: pathname,
         direction: object.action,
@@ -64,7 +66,7 @@ export default function Gallery({ masonrySet, ratio }) {
 
   function handleLightboxOpen(object) {
     if (typeof window !== 'undefined') {
-      window.analytics.track('Image Viewed', {
+      track('Image Viewed', {
         src: object.currentSlide.source,
         location: pathname,
         event: 'Lightbox Opened',
@@ -76,7 +78,7 @@ export default function Gallery({ masonrySet, ratio }) {
 
   function handleLightboxClose(object) {
     if (typeof window !== 'undefined') {
-      window.analytics.track('Image Viewed', {
+      track('Image Viewed', {
         src: object.currentSlide.source,
         location: pathname,
         event: 'Lightbox Closed',
