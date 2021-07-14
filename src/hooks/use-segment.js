@@ -7,6 +7,5 @@ export const identify = (data) => {
 };
 
 export const track = (props, data) => {
-  console.log(props);
   window.analytics.track(props, data);
 };
