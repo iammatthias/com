@@ -2,17 +2,22 @@
 import { jsx, Box, Label, Input, Button } from 'theme-ui';
 import React, { useState } from 'react'; //eslint-disable-line
 import styled from '@emotion/styled';
+import { useLocation } from '@reach/router';
 import { useForm } from 'react-hook-form';
-
-import { identify } from '../hooks/use-segment';
+import { identify, track } from '../hooks/use-segment';
 
 export default function EmailCapture() {
   const [open, setOpen] = useState(false);
 
   const { register, handleSubmit } = useForm();
 
+  const { pathname } = useLocation();
+
   const onSubmit = (data, e) => {
     identify({ email: data.email, firstName: data.firstName });
+    track('Subscribed', {
+      location: pathname,
+    });
     setOpen(true);
     e.target.reset();
   };

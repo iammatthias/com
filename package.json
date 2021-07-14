@@ -53,8 +53,7 @@
     "react-music-embed": "^1.0.1",
     "react-xmasonry": "^3.0.5",
     "simple-react-lightbox": "^3.6.6",
-    "theme-ui": "^0.10.0",
-    "uuid": "^8.3.2"
+    "theme-ui": "^0.10.0"
   },
   "resolutions": {
     "@mdx-js/react": "^1.6.22",

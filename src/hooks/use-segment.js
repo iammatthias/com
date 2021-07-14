@@ -1,9 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-
-const uuid = uuidv4();
-
 export const identify = (data) => {
-  window.analytics.identify(uuid, data);
+  window.analytics.identify(data);
 };
 
 export const track = (props, data) => {
