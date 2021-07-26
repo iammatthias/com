@@ -27,8 +27,7 @@ const Page = ({ data, pageContext }) => {
           }}
         >
           <h1 sx={{ m: 0, p: 0 }}>{content.title}</h1>
-          <h3 sx={{ m: 0, p: 0 }}>Published</h3>
-          <h4 sx={{ m: 0, p: 0 }}>{content.publishDate}</h4>
+          <h4 sx={{ m: 0, p: 0 }}>Published {content.publishDate}</h4>
           <br />
           <h4 sx={{ m: 0, p: 0 }}>
             <Link href={comments}>
