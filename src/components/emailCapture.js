@@ -39,12 +39,19 @@ export default function EmailCapture() {
   `;
 
   return (
-    <Box sx={{ position: 'relative', p: ['.5rem', '2rem'], bg: 'background' }}>
+    <Box
+      sx={{
+        position: 'relative',
+        p: ['.5rem', '2rem'],
+        bg: 'background',
+        height: 'fit-content',
+      }}
+    >
       <Box
         sx={{
           display: 'grid',
-          gridTemplateRows: ['auto 1fr', '1fr'],
-          gridTemplateColumns: ['1fr', '1fr 1fr'],
+          gridTemplateRows: ['auto 1fr', 'auto 1fr', 'auto 1fr', '1fr'],
+          gridTemplateColumns: ['1fr', '1fr', '1fr', '1fr 1fr'],
           gridGap: '1rem',
         }}
       >
