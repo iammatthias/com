@@ -57,5 +57,14 @@ const components = {
       showByline="false"
     />
   ),
+
+  // text
+  p: (props) => <p {...props} />, //eslint-disable-line
+  h1: (props) => <h1 {...props} />, //eslint-disable-line
+  h2: (props) => <h2 {...props} />, //eslint-disable-line
+  h3: (props) => <h3 {...props} />, //eslint-disable-line
+  h4: (props) => <h4 {...props} />, //eslint-disable-line
+  h5: (props) => <h5 {...props} />, //eslint-disable-line
+  small: (props) => <small {...props} />, //eslint-disable-line
 };
 export default components;
