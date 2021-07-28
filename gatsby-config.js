@@ -22,6 +22,12 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
+        name: `I AM MATTHIAS`,
+        short_name: `IAM`,
+        start_url: `/`,
+        background_color: `#F4F2F1`,
+        theme_color: `#0C0908`,
+        display: `standalone`,
         icon: `src/images/gatsby-icon.png`,
       },
     },
