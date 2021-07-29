@@ -66,6 +66,7 @@ module.exports = {
         prodKey: process.env.SEGMENT,
         devKey: process.env.SEGMENT,
         trackPage: true,
+        delayLoad: true,
       },
     },
     {

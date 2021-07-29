@@ -4,7 +4,7 @@ import React from 'react'; //eslint-disable-line
 
 // custom
 import ClientOnly from '../components/clientOnly';
-import Gallery from '../components/gallery';
+import LazyGallery from '../components/lazyGallery';
 import PageList from '../components/pageList';
 import Link from '../components/link';
 import Sparkle from '../components/sparkle';
@@ -38,7 +38,7 @@ const components = {
   ),
   Gallery: (props) => (
     <ClientOnly>
-      <Gallery {...props} />
+      <LazyGallery {...props} />
     </ClientOnly>
   ),
   Email: (props) => (
