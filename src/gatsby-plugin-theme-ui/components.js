@@ -8,7 +8,7 @@ import LazyGallery from '../components/lazyGallery';
 import LazyPageList from '../components/lazyPageList';
 import Link from '../components/link';
 import Sparkle from '../components/sparkle';
-import LazyEmailCapture from '../components/lazyEmailCapture';
+import EmailCapture from '../components/emailCapture';
 
 //helpers
 import AppleMusic from 'react-music-embed';
@@ -33,7 +33,7 @@ const components = {
 
   PageList: (props) => <LazyPageList {...props} />,
   Gallery: (props) => <LazyGallery {...props} />,
-  Email: (props) => <LazyEmailCapture {...props} />,
+  Email: (props) => <EmailCapture {...props} />,
 
   //helpers
   AM: (props) => (

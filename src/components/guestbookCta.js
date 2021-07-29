@@ -7,8 +7,6 @@ import { GuestbookAuth } from '../hooks/guestbook-auth';
 
 import Sparkle from './sparkle';
 
-import ClientOnly from './clientOnly';
-
 export default function GuestSign() {
   const { login } = GuestbookAuth();
 
@@ -19,21 +17,19 @@ export default function GuestSign() {
   }
 
   return (
-    <ClientOnly>
-      <Button sx={{ p: ['8px 12px'] }} onClick={GuestAuth}>
-        <Sparkle>
-          <span
-            sx={{
-              display: 'inline-block',
-              lineHeight: '4px',
-              textAlign: 'center',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Sign the Web3 Guestbook
-          </span>
-        </Sparkle>
-      </Button>
-    </ClientOnly>
+    <Button sx={{ p: ['8px 12px'] }} onClick={GuestAuth}>
+      <Sparkle>
+        <span
+          sx={{
+            display: 'inline-block',
+            lineHeight: '4px',
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Sign the Web3 Guestbook
+        </span>
+      </Sparkle>
+    </Button>
   );
 }
