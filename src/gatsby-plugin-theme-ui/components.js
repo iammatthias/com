@@ -36,25 +36,19 @@ const components = {
   Email: (props) => <EmailCapture {...props} />,
 
   //helpers
-  AM: (props) => (
-    <ClientOnly>
-      <AppleMusic {...props} />
-    </ClientOnly>
-  ),
+  AM: (props) => <AppleMusic {...props} />,
   Vimeo: (props) => (
-    <ClientOnly>
-      <Vimeo
-        {...props}
-        responsive
-        autoplay="true"
-        muted="true"
-        loop="true"
-        autopause="false"
-        showTitle="false"
-        showPortrait="false"
-        showByline="false"
-      />
-    </ClientOnly>
+    <Vimeo
+      {...props}
+      responsive
+      autoplay="true"
+      muted="true"
+      loop="true"
+      autopause="false"
+      showTitle="false"
+      showPortrait="false"
+      showByline="false"
+    />
   ),
 
   // text
