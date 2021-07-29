@@ -30,28 +30,43 @@ const components = {
   ),
   Mono: (props) => <span {...props} sx={{ fontFamily: 'monospace' }} />,
   Link: (props) => <Link {...props} />,
-  PageList: (props) => <PageList {...props} />,
+
+  PageList: (props) => (
+    <ClientOnly>
+      <PageList {...props} />
+    </ClientOnly>
+  ),
   Gallery: (props) => (
     <ClientOnly>
       <Gallery {...props} />
     </ClientOnly>
   ),
-  Email: (props) => <EmailCapture {...props} />,
+  Email: (props) => (
+    <ClientOnly>
+      <EmailCapture {...props} />
+    </ClientOnly>
+  ),
 
   //helpers
-  AM: (props) => <AppleMusic {...props} />,
+  AM: (props) => (
+    <ClientOnly>
+      <AppleMusic {...props} />
+    </ClientOnly>
+  ),
   Vimeo: (props) => (
-    <Vimeo
-      {...props}
-      responsive
-      autoplay="true"
-      muted="true"
-      loop="true"
-      autopause="false"
-      showTitle="false"
-      showPortrait="false"
-      showByline="false"
-    />
+    <ClientOnly>
+      <Vimeo
+        {...props}
+        responsive
+        autoplay="true"
+        muted="true"
+        loop="true"
+        autopause="false"
+        showTitle="false"
+        showPortrait="false"
+        showByline="false"
+      />
+    </ClientOnly>
   ),
 
   // text
