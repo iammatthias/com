@@ -4,8 +4,6 @@ import React from 'react'; //eslint-disable-line
 
 // custom
 import ClientOnly from '../components/clientOnly';
-import Guestbook from '../components/guestbookCta';
-import Guestlist from '../components/guestbookList';
 import Gallery from '../components/gallery';
 import PageList from '../components/pageList';
 import Link from '../components/link';
@@ -33,11 +31,9 @@ const components = {
   Mono: (props) => <span {...props} sx={{ fontFamily: 'monospace' }} />,
   Link: (props) => <Link {...props} />,
   PageList: (props) => <PageList {...props} />,
-  Gallery: (props) => <Gallery {...props} />,
-  Guestbook: (props) => <Guestbook {...props} />,
-  Guestlist: (props) => (
+  Gallery: (props) => (
     <ClientOnly>
-      <Guestlist {...props} />
+      <Gallery {...props} />
     </ClientOnly>
   ),
   Email: (props) => <EmailCapture {...props} />,

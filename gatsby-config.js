@@ -15,6 +15,13 @@ module.exports = {
     PARALLEL_SOURCING: true,
   },
   plugins: [
+    // {
+    //   resolve: `gatsby-plugin-webpack-bundle-analyser-v2`,
+    //   options: {
+    //     devMode: true,
+    //     defaultSizes: `gzip`,
+    //   },
+    // },
     `gatsby-plugin-theme-ui`,
     `gatsby-plugin-image`,
     `gatsby-plugin-react-helmet`,

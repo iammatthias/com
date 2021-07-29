@@ -58,5 +58,8 @@
   "resolutions": {
     "@mdx-js/react": "^1.6.22",
     "graphql-compose": "^9.0.1"
+  },
+  "devDependencies": {
+    "gatsby-plugin-webpack-bundle-analyser-v2": "^1.1.24"
   }
 }
