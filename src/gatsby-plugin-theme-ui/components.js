@@ -5,10 +5,10 @@ import React from 'react'; //eslint-disable-line
 // custom
 import ClientOnly from '../components/clientOnly';
 import LazyGallery from '../components/lazyGallery';
-import PageList from '../components/pageList';
+import LazyPageList from '../components/lazyPageList';
 import Link from '../components/link';
 import Sparkle from '../components/sparkle';
-import EmailCapture from '../components/emailCapture';
+import LazyEmailCapture from '../components/lazyEmailCapture';
 
 //helpers
 import AppleMusic from 'react-music-embed';
@@ -31,21 +31,9 @@ const components = {
   Mono: (props) => <span {...props} sx={{ fontFamily: 'monospace' }} />,
   Link: (props) => <Link {...props} />,
 
-  PageList: (props) => (
-    <ClientOnly>
-      <PageList {...props} />
-    </ClientOnly>
-  ),
-  Gallery: (props) => (
-    <ClientOnly>
-      <LazyGallery {...props} />
-    </ClientOnly>
-  ),
-  Email: (props) => (
-    <ClientOnly>
-      <EmailCapture {...props} />
-    </ClientOnly>
-  ),
+  PageList: (props) => <LazyPageList {...props} />,
+  Gallery: (props) => <LazyGallery {...props} />,
+  Email: (props) => <LazyEmailCapture {...props} />,
 
   //helpers
   AM: (props) => (
