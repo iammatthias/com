@@ -1,5 +1,6 @@
 const theme = {
   initialColorMode: 'light',
+  breakpoints: ['48em', '58em', '1280px'],
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   colors: {
     text: '#0C0908',

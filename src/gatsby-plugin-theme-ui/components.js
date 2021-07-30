@@ -3,7 +3,7 @@ import { jsx, Box, Flex, Grid, Button, Heading, Text } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 
 // custom
-import ClientOnly from '../components/clientOnly';
+// import ClientOnly from '../components/clientOnly';
 import LazyGallery from '../components/lazyGallery';
 import LazyPageList from '../components/lazyPageList';
 import Link from '../components/link';
@@ -41,13 +41,13 @@ const components = {
     <Vimeo
       {...props}
       responsive
-      autoplay="true"
-      muted="true"
-      loop="true"
-      autopause="false"
-      showTitle="false"
-      showPortrait="false"
-      showByline="false"
+      autoplay={true}
+      muted={true}
+      loop={true}
+      autopause={false}
+      showTitle={false}
+      showPortrait={false}
+      showByline={false}
     />
   ),
 
