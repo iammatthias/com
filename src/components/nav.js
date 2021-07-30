@@ -24,6 +24,7 @@ export default function Nav() {
       <Box
         sx={{
           gridArea: 'logo',
+          mb: ['0rem', '2rem'],
           textAlign: ['left', 'center'],
         }}
       >
@@ -32,7 +33,7 @@ export default function Nav() {
       <Box
         sx={{
           gridArea: 'menu',
-          mb: '2rem',
+          mb: ['0rem', '2rem'],
           padding: '1rem',
           bg: [darken('background', 0.025)],
           borderRadius: '4px',
