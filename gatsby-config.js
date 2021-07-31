@@ -23,6 +23,7 @@ module.exports = {
     //   },
     // },
     `gatsby-plugin-theme-ui`,
+    `gatsby-plugin-loadable-components-ssr`,
     `gatsby-plugin-image`,
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-sitemap`,
@@ -66,7 +67,6 @@ module.exports = {
         prodKey: process.env.SEGMENT,
         devKey: process.env.SEGMENT,
         trackPage: true,
-        delayLoad: true,
       },
     },
     {

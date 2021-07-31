@@ -1,18 +1,18 @@
 /** @jsx jsx */
 import { jsx, Box, Flex, Grid, Button, Heading, Text } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
+import loadable from '@loadable/component';
 
+//loadable
 // custom
-// import ClientOnly from '../components/clientOnly';
-import LazyGallery from '../components/lazyGallery';
-import LazyPageList from '../components/lazyPageList';
-import Link from '../components/link';
-import Sparkle from '../components/sparkle';
-import EmailCapture from '../components/emailCapture';
-
+const Gallery = loadable(() => import('../components/gallery'));
+const PageList = loadable(() => import('../components/pageList'));
+const Link = loadable(() => import('../components/link'));
+const Sparkle = loadable(() => import('../components/sparkle'));
+const EmailCapture = loadable(() => import('../components/emailCapture'));
 //helpers
-import AppleMusic from 'react-music-embed';
-import Vimeo from '@u-wave/react-vimeo';
+const AppleMusic = loadable(() => import('react-music-embed'));
+const Vimeo = loadable(() => import('@u-wave/react-vimeo'));
 
 const components = {
   // theme-ui
@@ -31,8 +31,8 @@ const components = {
   Mono: (props) => <span {...props} sx={{ fontFamily: 'monospace' }} />,
   Link: (props) => <Link {...props} />,
 
-  PageList: (props) => <LazyPageList {...props} />,
-  Gallery: (props) => <LazyGallery {...props} />,
+  PageList: (props) => <PageList {...props} />,
+  Gallery: (props) => <Gallery {...props} />,
   Email: (props) => <EmailCapture {...props} />,
 
   //helpers
