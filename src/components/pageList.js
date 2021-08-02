@@ -5,19 +5,17 @@ import { jsx, Box, Text } from 'theme-ui';
 import { lighten } from '@theme-ui/color';
 
 import Link from './link';
-import { useSiteMetadata } from '../hooks/use-site-metadata-lists';
+import { useSiteMetadataListGalleries } from '../hooks/use-site-metadata-list-galleries';
+import { useSiteMetadataListBlog } from '../hooks/use-site-metadata-list-blog';
 
 export default function PageList({ type, limit }) {
-  const { listBlog, listGallery } = useSiteMetadata();
+  const { galleries } = useSiteMetadataListGalleries();
+  const { posts } = useSiteMetadataListBlog();
 
   const listLimit = limit ? limit : 1000;
 
   const pages =
-    type === 'Blog'
-      ? listBlog.edges
-      : type === 'Gallery'
-      ? listGallery.edges
-      : '';
+    type === 'Blog' ? posts.edges : type === 'Gallery' ? galleries.edges : '';
 
   const path =
     type === 'Blog' ? 'blog/' : type === 'Gallery' ? 'photography/' : '';

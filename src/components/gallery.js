@@ -8,12 +8,12 @@ import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
 
 import { useLocation } from '@reach/router';
 
-import { useSiteMetadata } from '../hooks/use-site-metadata-galleries';
+import { useSiteMetadataImageGalleries } from '../hooks/use-site-metadata-image-galleries';
 
 import { track } from '../hooks/use-segment';
 
 export default function Gallery({ masonrySet, ratio }) {
-  const { galleries } = useSiteMetadata();
+  const { galleries } = useSiteMetadataImageGalleries();
 
   const { pathname } = useLocation();
 
