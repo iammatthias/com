@@ -7,8 +7,8 @@ import Layout from '../components/layout';
 import Seo from '../components/seo';
 import Link from '../components/link';
 
-import Guestbook from '../components/guestbookCta';
-import Guestlist from '../components/guestbookList';
+const Guestbook = loadable(() => import('../components/guestbookCta'));
+const Guestlist = loadable(() => import('../components/guestbookList'));
 
 // markup
 const Guests = () => {
