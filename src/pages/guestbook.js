@@ -2,6 +2,7 @@
 import { jsx, Grid, Box } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 import { MoralisProvider } from 'react-moralis';
+import loadable from '@loadable/component';
 
 import Layout from '../components/layout';
 import Seo from '../components/seo';

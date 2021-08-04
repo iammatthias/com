@@ -25,6 +25,7 @@ const Page = ({ data, pageContext }) => {
           sx={{
             p: ['.5rem', '2rem'],
             backgroundColor: darken('background', 0.025),
+            borderRadius: '4px 4px 0 0',
           }}
         >
           <h1 sx={{ m: 0, p: 0 }}>{content.title}</h1>

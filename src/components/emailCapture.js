@@ -45,6 +45,7 @@ export default function EmailCapture() {
         p: ['.5rem', '2rem'],
         bg: 'background',
         height: 'fit-content',
+        borderRadius: '4px',
       }}
     >
       <Box

@@ -28,53 +28,18 @@ export default function PageList({ type, limit }) {
         >
           <Box
             sx={{
-              padding: '0',
+              p: ['.5rem', '1rem'],
               width: ['100%'],
               backgroundColor: lighten('background', 0.025),
-              transition: 'background-color .5s ease',
-              '&:hover': {
-                backgroundColor: lighten('background', 0.05),
-                transition: 'background-color .5s ease',
-              },
               position: 'relative',
               borderRadius: '4px',
             }}
           >
-            <Box
-              sx={{
-                position: 'relative',
-                bottom: '0',
-                left: '0',
-                height: '100%',
-                width: '100%',
-                zIndex: '1',
-                '&::before': {
-                  content: '""',
-                  opacity: '1',
-                  backgroundColor: lighten('background', 0.05),
-                  zIndex: '2',
-                  position: 'absolute',
-                  height: '100%',
-                  width: '100%',
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  padding: '1rem',
-                  position: 'relative',
-                  bottom: '0',
-                  left: '0',
-                  zIndex: '5',
-                }}
-              >
-                <Text as="h3" sx={{ paddingBottom: '0' }}>
-                  {listPage.node.title}
-                </Text>
+            <Text as="h3" sx={{ paddingBottom: '0' }}>
+              {listPage.node.title}
+            </Text>
 
-                <Text as="small">{listPage.node.publishDate}</Text>
-              </Box>
-            </Box>
+            <Text as="small">{listPage.node.publishDate}</Text>
           </Box>
         </Link>
       )
