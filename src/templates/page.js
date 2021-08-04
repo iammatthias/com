@@ -12,6 +12,8 @@ import Seo from '../components/seo';
 // markup
 const Page = ({ data, pageContext }) => {
   const content = data.contentfulPage;
+  const masonry = content.masonry;
+  // console.log(masonry);
   const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/blog/${pageContext.pagePath}/`
   )}`;
@@ -49,7 +51,9 @@ const Page = ({ data, pageContext }) => {
       )}
 
       <article sx={{ p: ['.5rem', '2rem'] }}>
-        <MDXRenderer>{content.body.childMdx.body}</MDXRenderer>
+        <MDXRenderer masonry={masonry}>
+          {content.body.childMdx.body}
+        </MDXRenderer>
       </article>
       {content.pageType === 'Blog' ? (
         <Box sx={{ p: ['.5rem', '2rem'] }}>
@@ -96,6 +100,8 @@ export const query = graphql`
           body
         }
       }
+      ...Masonry
+      ...Lists
     }
   }
 `;

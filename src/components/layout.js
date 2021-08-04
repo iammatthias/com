@@ -9,7 +9,7 @@ import Sparkle from './sparkle';
 export default function Layout({ children }) {
   return (
     <div>
-      <div sx={{ bg: 'accent', padding: '1rem', textAlign: 'center' }}>
+      <div sx={{ bg: 'accent', padding: '.5rem', textAlign: 'center' }}>
         <Sparkle>🚧 In case of render bugs, please refresh. 🚧</Sparkle>
       </div>
       <main

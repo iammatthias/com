@@ -1,6 +1,7 @@
 /** @jsx jsx */
 
 import React from 'react'; //eslint-disable-line
+import { graphql } from 'gatsby';
 import { GatsbyImage, getSrc } from 'gatsby-plugin-image';
 import { jsx, Link } from 'theme-ui';
 import { XMasonry, XBlock } from 'react-xmasonry';
@@ -8,22 +9,18 @@ import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
 
 import { useLocation } from '@reach/router';
 
-import { useSiteMetadataImageGalleries } from '../hooks/use-site-metadata-image-galleries';
-
 import { track } from '../hooks/use-segment';
 
-export default function Gallery({ masonrySet, ratio }) {
-  const { galleries } = useSiteMetadataImageGalleries();
-
+export default function Gallery({ masonrySet, ratio, masonry }) {
   const { pathname } = useLocation();
-
-  const match = galleries.edges.find((edge) => edge.node.title === masonrySet);
+  const percent = Math.floor(eval(ratio) * 100);
+  const match = masonry.find((masonry) => masonry.title === masonrySet);
   if (!match) {
     // console.log(match);
     return null;
   }
 
-  const percent = Math.floor(ratio * 100);
+  console.log(match);
 
   const options = {
     settings: {
@@ -89,28 +86,28 @@ export default function Gallery({ masonrySet, ratio }) {
   }
 
   return (
-    <SimpleReactLightbox key={match.node.id}>
+    <SimpleReactLightbox key={match.id}>
       {pathname.includes('/photography/') ? (
         <>
-          <h3 sx={{ margin: '0', padding: '0' }}>{match.node.title}</h3>
-          <p>Last Updated: {match.node.updatedAt}</p>
+          <h3 sx={{ margin: '0', padding: '0' }}>{match.title}</h3>
+          <p>Last Updated: {match.updatedAt}</p>
         </>
       ) : null}
       <SRLWrapper options={options} callbacks={callbacks}>
         <XMasonry
           targetBlockWidth={
-            match.node.images.length === 1
+            match.images.length === 1
               ? '1000'
-              : match.node.images.length === 2
+              : match.images.length === 2
               ? '600'
-              : match.node.images.length === 3
+              : match.images.length === 3
               ? '350'
-              : match.node.images.length === 4
+              : match.images.length === 4
               ? '300'
-              : match.node.images.length >= 5 && '300'
+              : match.images.length >= 5 && '300'
           }
         >
-          {match.node.images.map((image, i) => (
+          {match.images.map((image, i) => (
             <XBlock key={i}>
               <Link
                 href={getSrc(image.gatsbyImageData)}
@@ -132,3 +129,17 @@ export default function Gallery({ masonrySet, ratio }) {
     </SimpleReactLightbox>
   );
 }
+
+export const query = graphql`
+  fragment Masonry on ContentfulPage {
+    masonry {
+      id
+      title
+      updatedAt(formatString: "MMMM Do, YYYY")
+      images {
+        title
+        gatsbyImageData(layout: FULL_WIDTH, placeholder: BLURRED)
+      }
+    }
+  }
+`;
