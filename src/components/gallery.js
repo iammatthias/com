@@ -16,11 +16,8 @@ export default function Gallery({ masonrySet, ratio, masonry }) {
   const percent = Math.floor(eval(ratio) * 100);
   const match = masonry.find((masonry) => masonry.title === masonrySet);
   if (!match) {
-    // console.log(match);
     return null;
   }
-
-  console.log(match);
 
   const options = {
     settings: {

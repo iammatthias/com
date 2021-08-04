@@ -13,7 +13,6 @@ import Seo from '../components/seo';
 const Page = ({ data, pageContext }) => {
   const content = data.contentfulPage;
   const masonry = content.masonry;
-  // console.log(masonry);
   const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/blog/${pageContext.pagePath}/`
   )}`;
