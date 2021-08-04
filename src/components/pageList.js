@@ -5,12 +5,10 @@ import { jsx, Box, Text } from 'theme-ui';
 import { lighten } from '@theme-ui/color';
 
 import Link from './link';
-import { useSiteMetadataListGalleries } from '../hooks/use-site-metadata-list-galleries';
-import { useSiteMetadataListBlog } from '../hooks/use-site-metadata-list-blog';
+import { useSiteMetadataList } from '../hooks/use-site-metadata-lists';
 
 export default function PageList({ type, limit }) {
-  const { galleries } = useSiteMetadataListGalleries();
-  const { posts } = useSiteMetadataListBlog();
+  const { galleries, posts } = useSiteMetadataList();
 
   const listLimit = limit ? limit : 1000;
 

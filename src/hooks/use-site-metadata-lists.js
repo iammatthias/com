@@ -1,6 +1,6 @@
 import { useStaticQuery, graphql } from 'gatsby';
 
-export const useSiteMetadataListBlog = () => {
+export const useSiteMetadataList = () => {
   const meta = useStaticQuery(
     graphql`
       query {
@@ -15,6 +15,20 @@ export const useSiteMetadataListBlog = () => {
               pageType
               slug
               publishDate(formatString: "MMMM Do, YYYY")
+            }
+          }
+        }
+        galleries: allContentfulPage(
+          filter: { pageType: { eq: "Gallery" } }
+          sort: { order: DESC, fields: publishDate }
+        ) {
+          edges {
+            node {
+              id
+              title
+              pageType
+              slug
+              publishDate: updatedAt(formatString: "MMMM Do, YYYY")
             }
           }
         }
