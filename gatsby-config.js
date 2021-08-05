@@ -9,7 +9,7 @@ module.exports = {
     description: `A personal portfolio project`,
     author: `Matthias Jordan`,
   },
-  pathPrefix: `__PATH_PREFIX__`,
+  assetPrefix: `__GATSBY_RELATIVE_PATH__`,
   flags: {
     FAST_DEV: true,
     PARALLEL_SOURCING: true,
@@ -170,10 +170,9 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-plugin-runtime-path-prefix`,
+      resolve: 'gatsby-plugin-relative-paths',
       options: {
-        prefix: `__PATH_PREFIX__`,
-        pattern: /^(\/(?:ipfs|ipns)\/[^/]+)/,
+        assetFolder: 'public/',
       },
     },
   ],
