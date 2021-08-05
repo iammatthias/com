@@ -9,7 +9,7 @@ module.exports = {
     description: `A personal portfolio project`,
     author: `Matthias Jordan`,
   },
-  pathPrefix: `__GATSBY_IPFS_PATH_PREFIX__`,
+  pathPrefix: `__PATH_PREFIX__`,
   flags: {
     FAST_DEV: true,
     PARALLEL_SOURCING: true,
@@ -169,6 +169,12 @@ module.exports = {
         ],
       },
     },
-    `@chris.troutner/gatsby-plugin-ipfs`,
+    {
+      resolve: `gatsby-plugin-runtime-path-prefix`,
+      options: {
+        prefix: `__PATH_PREFIX__`,
+        pattern: /^(\/(?:ipfs|ipns)\/[^/]+)/,
+      },
+    },
   ],
 };
