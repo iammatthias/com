@@ -9,7 +9,7 @@ module.exports = {
     description: `A personal portfolio project`,
     author: `Matthias Jordan`,
   },
-  assetPrefix: `__GATSBY_RELATIVE_PATH__`,
+  // assetPrefix: `__GATSBY_RELATIVE_PATH__`,
   flags: {
     FAST_DEV: true,
     PARALLEL_SOURCING: true,
@@ -169,11 +169,11 @@ module.exports = {
         ],
       },
     },
-    {
-      resolve: 'gatsby-plugin-relative-paths',
-      options: {
-        assetFolder: 'public/',
-      },
-    },
+    // {
+    //   resolve: 'gatsby-plugin-relative-paths',
+    //   options: {
+    //     assetFolder: 'public/',
+    //   },
+    // },
   ],
 };
