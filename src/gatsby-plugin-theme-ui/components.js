@@ -3,6 +3,10 @@ import { jsx, Box, Flex, Grid, Button, Heading, Text } from 'theme-ui';
 import React from 'react'; //eslint-disable-line
 import loadable from '@loadable/component';
 
+//helpers
+import Vimeo from '@u-wave/react-vimeo';
+import AppleMusic from 'react-music-embed';
+
 //loadable
 // custom
 const Gallery = loadable(() => import('../components/gallery'));
@@ -10,9 +14,6 @@ const PageList = loadable(() => import('../components/pageList'));
 const Link = loadable(() => import('../components/link'));
 const Sparkle = loadable(() => import('../components/sparkle'));
 const EmailCapture = loadable(() => import('../components/emailCapture'));
-//helpers
-const AppleMusic = loadable(() => import('react-music-embed'));
-const Vimeo = loadable(() => import('@u-wave/react-vimeo'));
 
 const components = {
   // theme-ui
