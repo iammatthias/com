@@ -19,6 +19,9 @@ export default function Gallery({ masonrySet, ratio, masonry }) {
     return null;
   }
 
+  const pageType = masonry.pageType;
+  console.log({ pageType });
+
   const options = {
     settings: {
       overlayColor: 'rgba(0, 0, 0, 0.9)',
@@ -112,7 +115,7 @@ export default function Gallery({ masonrySet, ratio, masonry }) {
                 data-attribute="SRL"
               >
                 <GatsbyImage
-                  image={image.gatsbyImageData}
+                  image={image.thumbnail}
                   alt={image.title}
                   sx={{
                     ...(ratio ? { paddingTop: percent + '% !important' } : ''),
@@ -129,6 +132,7 @@ export default function Gallery({ masonrySet, ratio, masonry }) {
 
 export const query = graphql`
   fragment Masonry on ContentfulPage {
+    pageType
     masonry {
       id
       title
@@ -136,6 +140,11 @@ export const query = graphql`
       images {
         title
         gatsbyImageData(layout: FULL_WIDTH, placeholder: BLURRED)
+        thumbnail: gatsbyImageData(
+          width: 500
+          layout: FULL_WIDTH
+          placeholder: BLURRED
+        )
       }
     }
   }
