@@ -1,5 +1,5 @@
-node_modules/
-.cache/
-public
+.vercel
+.next
+node_modules
+.DS_Store
 .env*
-.DS_store
