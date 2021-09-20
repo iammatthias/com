@@ -137,10 +137,11 @@ export default function Gallery(props) {
           {imageSetImages.length > 1 ? (
             <>
               <h3>{imageSetTitle}</h3>
-              <hr />
+              <br />
             </>
-          ) : null}
-
+          ) : (
+            ''
+          )}
           <Snuggle columnWidth={columnWidth}>
             {imageSetImages.map(image => (
               <Image
@@ -155,6 +156,7 @@ export default function Gallery(props) {
               />
             ))}
           </Snuggle>
+          <hr />
         </Box>
       </SRLWrapper>
     </SimpleReactLightbox>

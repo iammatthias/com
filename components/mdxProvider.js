@@ -9,6 +9,7 @@ import Spicy from './spicy'
 import Vimeo from '@u-wave/react-vimeo'
 import AppleMusic from 'react-music-embed'
 import EmailCapture from './emailCapture'
+import ClientOnly from './clientOnly'
 
 const mdComponents = {
   // theme-ui
@@ -38,7 +39,7 @@ const mdComponents = {
   Link: props => <Link {...props} />,
   Email: props => <EmailCapture {...props} />,
   PageList: props => <PageList {...props} />,
-  Gallery: props => <Gallery {...props} />,
+  Gallery: props => <ClientOnly><Gallery {...props} /></ClientOnly>,
   AM: props => <AppleMusic {...props} />,
   Vimeo: props => (
     <Vimeo
