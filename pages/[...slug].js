@@ -26,7 +26,6 @@ export default function Home({
         boxShadow: 'card',
         borderRadius: '4px',
         gridArea: 'body',
-        p: [3, 3, 4],
       }}
     >
       {pageType == 'Blog' || pageType == 'Gallery' ? (
@@ -38,10 +37,11 @@ export default function Home({
           slug={slug}
         />
       ) : null}
-
-      <article ref={post}>
-        <MDXRemote {...source} />
-      </article>
+      <Box sx={{ p: [3, 3, 4] }}>
+        <article ref={post}>
+          <MDXRemote {...source} />
+        </article>
+      </Box>
     </Box>
   )
 }
