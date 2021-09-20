@@ -16,7 +16,7 @@ export default function Home({
   slug,
 }) {
   const post = useRef()
-  const { readingTime, wordsCount } =
+  const { readingTime, wordsCount } = () =>
     pageType == 'Blog' ? useReadingTime(post) : '0'
 
   return (
@@ -28,7 +28,7 @@ export default function Home({
         gridArea: 'body',
       }}
     >
-      {pageType == 'Blog' || pageType ==  'Gallery' ? (
+      {pageType == 'Blog' || pageType == 'Gallery' ? (
         <PageHeader
           pageTitle={pageTitle}
           publishDate={publishDate}
@@ -36,9 +36,7 @@ export default function Home({
           wordsCount={wordsCount}
           slug={slug}
         />
-      ) : (
-        ''
-      )}
+      ) : null}
       <Box
         sx={{
           p: 4,
