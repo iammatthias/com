@@ -13,15 +13,10 @@ export default function Home({ source }) {
         boxShadow: 'card',
         borderRadius: '4px',
         gridArea: 'body',
+        p: [3, 3, 4],
       }}
     >
-      <Box
-        sx={{
-          m: 4,
-        }}
-      >
-        <MDXRemote {...source} />
-      </Box>
+      <MDXRemote {...source} />
     </Box>
   )
 }

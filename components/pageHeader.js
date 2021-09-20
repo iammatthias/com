@@ -11,7 +11,10 @@ export default function Spicy({ children, ...props }) {
 
   const spacer = '\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0'
   return (
-    <Box {...props} sx={{ p: 4, bg: 'muted', borderRadius: '4px 4px 0 0' }}>
+    <Box
+      {...props}
+      sx={{ p: [3, 3, 4], bg: 'muted', borderRadius: '4px 4px 0 0' }}
+    >
       <h2>{props.pageTitle}</h2>
       <hr />
       <small>

@@ -32,7 +32,7 @@ export default function EmailCapture({ props }) {
     <Box
       sx={{
         position: 'relative',
-        p: ['.5rem', '2rem'],
+        p: [3, 3, 4],
         bg: 'elevated',
         height: 'fit-content',
         borderRadius: '4px',

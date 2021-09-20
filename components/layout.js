@@ -12,14 +12,13 @@ export default function Layout({ children }) {
         gridTemplateAreas: ['"nav" "body" "body"', '', '"body body nav"'],
         gridTemplateRows: ['auto 1fr', '', '1fr'],
         gridTemplateColumns: ['1fr', '', '1fr auto'],
-        gridGap: [0, '', 3],
+        gridGap: [3, 3, 4],
         width: '100%;',
         maxWidth: ['100%', '', '80vw'],
         mx: 'auto',
       }}
     >
       <Nav />
-
       {children}
     </Box>
   )

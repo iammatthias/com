@@ -5,7 +5,7 @@
 import Image from 'next/image'
 import { useQuery, gql } from '@apollo/client'
 import Snuggle from 'react-snuggle'
-import { Box } from 'theme-ui'
+import { Box, AspectRatio } from 'theme-ui'
 import { useRouter } from 'next/router'
 import Loading from './loading'
 
@@ -125,15 +125,15 @@ export default function Gallery(props) {
     imageSetImages.length == 1
       ? ''
       : imageSetImages.length == 2
-      ? '500'
-      : imageSetImages.length == 3
       ? '350'
+      : imageSetImages.length == 3
+      ? '250'
       : '250'
 
   return (
     <SimpleReactLightbox>
       <SRLWrapper options={options} callbacks={callbacks}>
-        <Box sx={{ mx: 'auto', mb: 6 }}>
+        <Box sx={{ mx: 'auto' }}>
           {imageSetImages.length > 1 ? (
             <>
               <h3>{imageSetTitle}</h3>
@@ -144,19 +144,21 @@ export default function Gallery(props) {
           )}
           <Snuggle columnWidth={columnWidth}>
             {imageSetImages.map(image => (
-              <Image
-                key={image}
-                src={image.url}
-                alt={image.title}
-                width={image.width}
-                height={image.height}
-                layout="intrinsic"
-                placeholder="blur"
-                blurDataURL={image.loader}
-              />
+              <AspectRatio key={image} ratio={eval(props.ratio)}>
+                <Image
+                  src={image.url}
+                  alt={image.title}
+                  width={image.width}
+                  height={image.height}
+                  layout="fill"
+                  placeholder="blur"
+                  blurDataURL={image.loader}
+                  objectFit="cover"
+                />
+              </AspectRatio>
             ))}
           </Snuggle>
-          <hr />
+          {imageSetImages.length > 1 ? <hr /> : ''}
         </Box>
       </SRLWrapper>
     </SimpleReactLightbox>
