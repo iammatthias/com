@@ -57,8 +57,8 @@ export async function getStaticPaths() {
   // We define our query here
   const { data } = await client.query({
     query: gql`
-      query SlugsIndex {
-        pageCollection {
+      query SlugsIndex($slug: String) {
+        pageCollection(where: { slug: $slug, slug_not: "home" }) {
           items {
             slug
           }
