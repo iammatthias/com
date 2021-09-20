@@ -28,18 +28,12 @@ export default function Home({
         gridArea: 'body',
       }}
     >
-      {pageType == 'Blog' ? (
+      {pageType == 'Blog' || pageType ==  'Gallery' ? (
         <PageHeader
           pageTitle={pageTitle}
           publishDate={publishDate}
           readingTime={readingTime}
           wordsCount={wordsCount}
-          slug={slug}
-        />
-      ) : pageType == 'Gallery' ? (
-        <PageHeader
-          pageTitle={pageTitle}
-          publishDate={publishDate}
           slug={slug}
         />
       ) : (
