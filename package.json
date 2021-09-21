@@ -23,6 +23,7 @@
     "@next/mdx": "^11.1.2",
     "@segment/snippet": "^4.14.2",
     "@u-wave/react-vimeo": "^0.9.5",
+    "@walletconnect/web3-provider": "^1.6.5",
     "graphql": "^15.5.3",
     "moralis": "^0.0.54",
     "next": "^11.1.2",
