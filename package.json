@@ -18,13 +18,13 @@
     "start": "NODE_ENV='production' next start"
   },
   "dependencies": {
-    "@apollo/client": "^3.4.12",
+    "@apollo/client": "^3.4.13",
     "@mdx-js/loader": "^1.6.22",
     "@next/mdx": "^11.1.2",
-    "@segment/snippet": "^4.14.2",
+    "@segment/snippet": "^4.15.3",
     "@u-wave/react-vimeo": "^0.9.5",
     "@walletconnect/web3-provider": "^1.6.5",
-    "graphql": "^15.5.3",
+    "graphql": "^15.6.0",
     "moralis": "^0.0.54",
     "next": "^11.1.2",
     "next-mdx-remote": "^3.0.4",
