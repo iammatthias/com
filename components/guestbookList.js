@@ -7,7 +7,7 @@ import { Box } from 'theme-ui'
 import Link from 'next/link'
 import Loading from './loading'
 
-export default async function GuestbookList({ props }) {
+export default function GuestbookList({ props }) {
   const { data, error, isLoading } = useMoralisCloudFunction('getGuestbook')
 
   if (isLoading) {
@@ -21,51 +21,57 @@ export default async function GuestbookList({ props }) {
 
   if (error) {
     console.error(error)
-    return null
+    return <span>error</span>
   }
 
+  console.log(data)
   if (data) {
-    const GuestList = data.map(guest => {
-      let signedAtDate = new Date(guest.updatedAt).toLocaleDateString('en-gb')
-      let signedAtTime = new Date(guest.updatedAt).toLocaleTimeString('en-US')
-      let address = guest.ethAddress
-      return (
-        <Box
-          key={address}
-          sx={{
-            bg: lighten('background', 0.025),
-            my: '1rem',
-            width: ['calc(100vw - 4rem)', '50%'],
-            p: '.5rem',
-            borderRadius: '4px',
-          }}
-        >
-          <small
-            sx={{ m: 0, p: '0 0 1rem', fontWeight: 'bold', fontFamily: 'mono' }}
-          >
-            {signedAtDate} at {signedAtTime}
-          </small>
-          <p
+    console.log(data)
+    return (
+      <>
+        {data.map(guest => (
+          <Box
+            key={guest.ethAddress}
             sx={{
-              m: 0,
-              p: '0',
-              overflow: 'scroll',
-              textOverflow: 'clip ellipsis',
-              fontFamily: 'mono',
+              bg: 'elevated',
+              my: '1rem',
+              width: ['calc(100vw - 4rem)', '50%'],
+              p: '.5rem',
+              borderRadius: '4px',
             }}
           >
-            å
-            <Link
-              href={'https://etherscan.io/address/' + address}
-              sx={{ fontWeight: 'normal', textDecoration: 'none' }}
+            <small
+              sx={{
+                m: 0,
+                p: '0 0 1rem',
+                fontWeight: 'bold',
+                fontFamily: 'monospace',
+              }}
             >
-              {address}
-            </Link>
-          </p>
-        </Box>
-      )
-    })
-
-    return { GuestList }
+              {new Date(guest.updatedAt).toLocaleDateString('en-gb')} at{' '}
+              {new Date(guest.updatedAt).toLocaleTimeString('en-US')}
+            </small>
+            <p
+              sx={{
+                m: 0,
+                p: '0',
+                overflow: 'scroll',
+                fontFamily: 'monospace',
+                a: {
+                  fontWeight: 'normal',
+                  fontFamily: 'inherit',
+                  textDecoration: 'none',
+                },
+              }}
+            >
+              <Link href={'https://etherscan.io/address/' + guest.ethAddress}>
+                {guest.ethAddress}
+              </Link>
+            </p>
+          </Box>
+        ))}
+      </>
+    )
   }
+  return <span>foo</span>
 }
