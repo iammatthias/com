@@ -29,7 +29,7 @@ export async function getStaticProps() {
   return {
     props: {
       metadata: {
-        title: '404',
+        title: 'Error',
       },
     },
   }
