@@ -26,10 +26,8 @@ const components = {
 
   //custom
   Sparkle: (props) => <Sparkle {...props} />,
-  Spicy: (props) => (
-    <span {...props} sx={{ fontFamily: 'cursive', color: 'primary' }} />
-  ),
-  Mono: (props) => <span {...props} sx={{ fontFamily: 'monospace' }} />,
+  Spicy: (props) => <span {...props} sx={{ fontFamily: 'cursive', color: 'primary' }} />,
+  Mono: (props) => <span {...props} sx={{ fontFamily: 'monospace', fontSize: 0 }} />,
   Link: (props) => <Link {...props} />,
 
   PageList: (props) => <PageList {...props} />,
@@ -38,19 +36,7 @@ const components = {
 
   //helpers
   AM: (props) => <AppleMusic {...props} />,
-  Vimeo: (props) => (
-    <Vimeo
-      {...props}
-      responsive
-      autoplay={true}
-      muted={true}
-      loop={true}
-      autopause={false}
-      showTitle={false}
-      showPortrait={false}
-      showByline={false}
-    />
-  ),
+  Vimeo: (props) => <Vimeo {...props} responsive autoplay={true} muted={true} loop={true} autopause={false} showTitle={false} showPortrait={false} showByline={false} />,
 
   // text
   p: (props) => <p {...props} />, //eslint-disable-line

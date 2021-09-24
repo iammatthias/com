@@ -12,20 +12,14 @@ export default function PageList({ type, limit }) {
 
   const listLimit = limit ? limit : 1000;
 
-  const pages =
-    type === 'Blog' ? posts.edges : type === 'Gallery' ? galleries.edges : '';
+  const pages = type === 'Blog' ? posts.edges : type === 'Gallery' ? galleries.edges : '';
 
-  const path =
-    type === 'Blog' ? 'blog/' : type === 'Gallery' ? 'photography/' : '';
+  const path = type === 'Blog' ? 'blog/' : type === 'Gallery' ? 'photography/' : '';
 
   return pages.slice(0, listLimit).map(
     (listPage) =>
       listPage.node.pageType === type && (
-        <Link
-          key={listPage.node.id}
-          href={'https://iammatthias.com' + path + listPage.node.slug}
-          sx={{ textDecoration: 'none' }}
-        >
+        <Link key={listPage.node.id} href={'https://iammatthias.com' + path + listPage.node.slug} sx={{ textDecoration: 'none' }}>
           <Box
             sx={{
               p: ['.5rem', '1rem'],
@@ -33,13 +27,12 @@ export default function PageList({ type, limit }) {
               backgroundColor: lighten('background', 0.025),
               position: 'relative',
               borderRadius: '4px',
-            }}
-          >
-            <Text as="h3" sx={{ paddingBottom: '0' }}>
+            }}>
+            <Text as='h3' sx={{ paddingBottom: '0' }}>
               {listPage.node.title}
             </Text>
 
-            <Text as="small">{listPage.node.publishDate}</Text>
+            <Text as='small'>{listPage.node.publishDate}</Text>
           </Box>
         </Link>
       )

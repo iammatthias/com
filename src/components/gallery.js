@@ -19,9 +19,6 @@ export default function Gallery({ masonrySet, ratio, masonry }) {
     return null;
   }
 
-  const pageType = masonry.pageType;
-  console.log({ pageType });
-
   const options = {
     settings: {
       overlayColor: 'rgba(0, 0, 0, 0.9)',
@@ -94,26 +91,10 @@ export default function Gallery({ masonrySet, ratio, masonry }) {
         </>
       ) : null}
       <SRLWrapper options={options} callbacks={callbacks}>
-        <XMasonry
-          targetBlockWidth={
-            match.images.length === 1
-              ? '1000'
-              : match.images.length === 2
-              ? '600'
-              : match.images.length === 3
-              ? '350'
-              : match.images.length === 4
-              ? '300'
-              : match.images.length >= 5 && '300'
-          }
-        >
+        <XMasonry targetBlockWidth={match.images.length === 1 ? '1000' : match.images.length === 2 ? '600' : match.images.length === 3 ? '350' : match.images.length === 4 ? '300' : match.images.length >= 5 && '300'}>
           {match.images.map((image, i) => (
             <XBlock key={i}>
-              <Link
-                href={getSrc(image.gatsbyImageData)}
-                alt={image.title}
-                data-attribute="SRL"
-              >
+              <Link href={getSrc(image.gatsbyImageData)} alt={image.title} data-attribute='SRL'>
                 <GatsbyImage
                   image={image.thumbnail}
                   alt={image.title}
@@ -132,7 +113,6 @@ export default function Gallery({ masonrySet, ratio, masonry }) {
 
 export const query = graphql`
   fragment Masonry on ContentfulPage {
-    pageType
     masonry {
       id
       title
@@ -140,11 +120,7 @@ export const query = graphql`
       images {
         title
         gatsbyImageData(layout: FULL_WIDTH, placeholder: BLURRED)
-        thumbnail: gatsbyImageData(
-          width: 500
-          layout: FULL_WIDTH
-          placeholder: BLURRED
-        )
+        thumbnail: gatsbyImageData(width: 500, layout: FULL_WIDTH, placeholder: BLURRED)
       }
     }
   }

@@ -13,21 +13,16 @@ export default function Nav() {
       sx={{
         display: 'grid',
         gridArea: 'nav',
-        gridTemplateAreas: [
-          '"logo toggle" "menu menu"',
-          '"logo" "menu" "toggle"',
-        ],
+        gridTemplateAreas: ['"logo toggle" "menu menu"', '"logo" "menu" "toggle"'],
         gridTemplateRows: ['1fr 2fr', 'auto auto 1fr'],
         gridTemplateColumns: ['1fr 1fr', '1fr'],
-      }}
-    >
+      }}>
       <Box
         sx={{
           gridArea: 'logo',
           mb: ['0rem', '2rem'],
           textAlign: ['left', 'center'],
-        }}
-      >
+        }}>
         <Logo sx={{ m: ['0 1rem 0 0', '0 auto 1rem auto'] }} />
       </Box>
       <Box
@@ -48,41 +43,36 @@ export default function Nav() {
             lineHeight: ['3', '.35'],
             pb: '0',
           },
-        }}
-      >
+        }}>
         <p
           sx={{
             m: ['0 1rem 0 0', '0 0 1rem 0'],
-          }}
-        >
-          <Link href="/" sx={{ textDecoration: 'none' }}>
+          }}>
+          <Link href='/' sx={{ textDecoration: 'none' }}>
             home
           </Link>
         </p>
         <p
           sx={{
             m: ['0 1rem 0 0', '0 0 1rem 0'],
-          }}
-        >
-          <Link href="/photography" sx={{ textDecoration: 'none' }}>
+          }}>
+          <Link href='/photography' sx={{ textDecoration: 'none' }}>
             work
           </Link>
         </p>
         <p
           sx={{
             m: ['0 1rem 0 0', '0 0 1rem 0'],
-          }}
-        >
-          <Link href="/blog" sx={{ textDecoration: 'none' }}>
+          }}>
+          <Link href='/blog' sx={{ textDecoration: 'none' }}>
             blog
           </Link>
         </p>
         <p
           sx={{
             m: ['0 1rem 0 0', '0 0 1rem 0'],
-          }}
-        >
-          <Link href="/about" sx={{ textDecoration: 'none' }}>
+          }}>
+          <Link href='/about' sx={{ textDecoration: 'none' }}>
             about
           </Link>
         </p>
@@ -90,9 +80,8 @@ export default function Nav() {
           sx={{
             m: ['0 0 0 0', '0 0 0 0'],
             p: '0',
-          }}
-        >
-          <Link href="/guestbook" sx={{ textDecoration: 'none' }}>
+          }}>
+          <Link href='/guestbook' sx={{ textDecoration: 'none' }}>
             guestbook
           </Link>
         </p>
@@ -104,8 +93,7 @@ export default function Nav() {
             display: 'flex',
             justifyContent: 'flex-end',
           },
-        }}
-      >
+        }}>
         <ColorToggle />
       </Box>
     </nav>

@@ -66,7 +66,6 @@ const theme = {
       color: 'text',
       paddingBottom: 3,
       webkitTapHighlightColor: 'transparent',
-
       h1: {
         color: 'text',
         fontFamily: 'heading',
