@@ -8,7 +8,9 @@ const Meta = ({
   title = 'I AM MATTHIAS', // page title
   name = 'I AM MATTHIAS', // site name
   description = 'A personal portfolio project in a digital garden ', // page description
-  image = '', // social card image URL
+  image = 'https://og.iammatthias.com/' +
+    encodeURIComponent(name == 'Home' ? 'I AM MATTHIAS' : name) +
+    '.png?theme=dark&md=0', // social card image URL
   url = './',
   children,
 }) => (

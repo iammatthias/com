@@ -18,7 +18,7 @@ export default function App({ Component, pageProps }) {
     <ThemeProvider theme={theme}>
       <ApolloProvider client={client}>
         <MDXProvider>
-          <Meta />
+          <Meta name={pageProps.metadata.title} />
           <Layout {...pageProps}>
             <Component {...pageProps} />
           </Layout>

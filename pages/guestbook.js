@@ -62,3 +62,15 @@ export default function Home() {
     </MoralisProvider>
   )
 }
+
+//////////////// PAGE CONTENT /////////////////////
+
+export async function getStaticProps() {
+  return {
+    props: {
+      metadata: {
+        title: 'Guestbook',
+      },
+    },
+  }
+}
