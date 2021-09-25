@@ -10,6 +10,7 @@ import Vimeo from '@u-wave/react-vimeo'
 import AppleMusic from 'react-music-embed'
 import EmailCapture from './emailCapture'
 import ClientOnly from './clientOnly'
+import MobileOnly from './mobileOnly'
 import Squiggle from './squiggle'
 
 const mdComponents = {
@@ -41,6 +42,7 @@ const mdComponents = {
   Email: props => <EmailCapture {...props} />,
   PageList: props => <PageList {...props} />,
   Squiggle: props => <Squiggle {...props} />,
+  MobileOnly: props => <MobileOnly {...props} />,
   Gallery: props => (
     <ClientOnly>
       <Gallery {...props} />
