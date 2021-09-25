@@ -1,6 +1,7 @@
 /** @jsxImportSource theme-ui */
 import { Box, Button } from 'theme-ui'
 import Link from 'next/link'
+import Squiggle from './squiggle'
 
 // page header
 
@@ -16,7 +17,7 @@ export default function Spicy({ children, ...props }) {
       sx={{ p: [3, 3, 4], bg: 'muted', borderRadius: '4px 4px 0 0' }}
     >
       <h2>{props.pageTitle}</h2>
-      <hr />
+      <Squiggle />
       <small>
         Published: {props.publishDate}
         {props.readingTime > 0 ? (

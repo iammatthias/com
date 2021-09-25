@@ -6,6 +6,7 @@ import { useMoralisCloudFunction } from 'react-moralis'
 import { Box } from 'theme-ui'
 import Link from 'next/link'
 import Loading from './loading'
+import Squiggle from './squiggle'
 
 export default function GuestbookList({ props }) {
   const { data, error, isLoading } = useMoralisCloudFunction('getGuestbook')
@@ -14,7 +15,7 @@ export default function GuestbookList({ props }) {
     return (
       <>
         <Loading />
-        <hr />
+        <Squiggle />
       </>
     )
   }

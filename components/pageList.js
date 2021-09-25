@@ -4,7 +4,9 @@
 
 import { useQuery, gql } from '@apollo/client'
 import Link from 'next/link'
-import { Card, Text } from 'theme-ui'
+import { Card, Box } from 'theme-ui'
+import Loading from './loading'
+import Squiggle from './squiggle'
 
 const QUERY = gql`
   query ($type: String, $limit: Int) {
@@ -32,7 +34,12 @@ export default function PageList(props) {
   })
 
   if (loading) {
-    return <h2>Loading...</h2>
+    return (
+      <Box>
+        <Loading />
+        <Squiggle />
+      </Box>
+    )
   }
 
   if (error) {
@@ -47,14 +54,12 @@ export default function PageList(props) {
       {pageList.map(page => (
         <Link key={page.slug} href={page.slug}>
           <Card>
-            <Text>
-              <p sx={{ fontSize: 1, fontWeight: 'bold', m: 0, p: 0 }}>
-                {page.title}
-              </p>
-              <small>
-                {new Date(page.publishDate).toLocaleDateString('en-us')}
-              </small>
-            </Text>
+            <p sx={{ fontSize: 1, fontWeight: 'bold', m: 0, p: 0 }}>
+              {page.title}
+            </p>
+            <small>
+              {new Date(page.publishDate).toLocaleDateString('en-us')}
+            </small>
           </Card>
         </Link>
       ))}

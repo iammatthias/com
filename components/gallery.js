@@ -8,6 +8,7 @@ import Snuggle from 'react-snuggle'
 import { Box, AspectRatio } from 'theme-ui'
 import { useRouter } from 'next/router'
 import Loading from './loading'
+import Squiggle from './squiggle'
 
 // lightbox
 import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox'
@@ -45,7 +46,7 @@ export default function Gallery(props) {
     return (
       <>
         <Loading />
-        <hr />
+        <Squiggle />
       </>
     )
   }

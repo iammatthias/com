@@ -41,8 +41,8 @@ export default function EmailCapture({ props }) {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateRows: ['auto 1fr', 'auto 1fr', 'auto 1fr', '1fr'],
-          gridTemplateColumns: ['1fr', '1fr', '1fr', '1fr 1fr'],
+          gridTemplateRows: ['auto 1fr'],
+          gridTemplateColumns: ['1fr'],
           gridGap: '1rem',
         }}
       >
@@ -53,8 +53,8 @@ export default function EmailCapture({ props }) {
             justifyContent: 'center',
           }}
         >
-          <h5 sx={{ m: 0, mb: 3, p: 0 }}>The Newsletter</h5>
-          <p sx={{ m: 0, mb: 3, p: 0 }}>Sign up for the occaisional update.</p>
+          <h5 sx={{ m: 0, mb: 2, p: 0 }}>The Newsletter</h5>
+          <p sx={{ m: 0, p: 0 }}>Sign up for the occaisional update.</p>
         </Box>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Label
@@ -77,7 +77,7 @@ export default function EmailCapture({ props }) {
             name="first name"
             id="firstName"
             {...register('firstName')}
-            mb={3}
+            mb={2}
           />
           <Label
             htmlFor="email"
@@ -99,7 +99,7 @@ export default function EmailCapture({ props }) {
             name="email"
             id="email"
             {...register('email')}
-            mb={3}
+            mb={2}
           />
           <Button type="submit">Submit</Button>
         </form>
@@ -126,8 +126,8 @@ export default function EmailCapture({ props }) {
           alignItems: 'center',
         }}
       >
-        <h4 sx={{ m: 0, mb: 3, p: 0 }}>Thanks for subscribing! </h4>
-        <p sx={{ m: 0, mb: 3, p: 0 }}>See you in your inbox sometime soon.</p>
+        <h4 sx={{ m: 0, mb: 2, p: 0 }}>Thanks for subscribing! </h4>
+        <p sx={{ m: 0, mb: 2, p: 0 }}>See you in your inbox sometime soon.</p>
         <Button onClick={() => setOpen(false)} sx={{ width: 'fit-content' }}>
           Close
         </Button>
