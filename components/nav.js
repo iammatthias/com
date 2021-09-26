@@ -49,10 +49,10 @@ export default function Nav() {
             lineHeight: ['3', '', '.35'],
             color: 'text',
             pb: [0, '', 3],
-            px: [3, '', 0],
+            px: [2, '', 0],
             '&:last-child': {
               pb: [0, 0, 0],
-              px: [0, 0, 0],
+              px: [2, '', 0],
             },
           },
         }}

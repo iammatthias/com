@@ -24,7 +24,7 @@ export default function Spicy({ children, ...props }) {
         flexDirection: 'column',
       }}
     >
-      <Box sx={{ width: 'fit-content' }}>
+      <Box sx={{ width: 'fit-content', textAlign: 'center' }}>
         <h2>{props.pageTitle}</h2>
         <br />
         <Squiggle />
