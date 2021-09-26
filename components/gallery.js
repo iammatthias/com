@@ -164,7 +164,7 @@ export default function Gallery(props) {
           {imageSetImages.length > 1 ? (
             <>
               <br />
-              <Squiggle strokeColor="elevated" />
+              <Squiggle strokeColor="muted" />
               <br />
               <br />
             </>
