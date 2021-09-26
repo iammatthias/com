@@ -20,7 +20,7 @@ const QUERY = gql`
         title
         imagesCollection {
           items {
-            url(transform: { width: 600, quality: 60 })
+            url(transform: { width: 900, quality: 60 })
             loader: url(transform: { width: 5, quality: 1 })
             title
             width
@@ -44,10 +44,10 @@ export default function Gallery(props) {
 
   if (loading) {
     return (
-      <>
+      <Box sx={{ width: 'fit-content', margin: '0 auto' }}>
         <Loading />
         <Squiggle />
-      </>
+      </Box>
     )
   }
 
@@ -136,10 +136,12 @@ export default function Gallery(props) {
       <SRLWrapper options={options} callbacks={callbacks}>
         <Box sx={{ mx: 'auto' }}>
           {imageSetImages.length > 1 ? (
-            <>
-              <h3>{imageSetTitle}</h3>
+            <Box sx={{ width: 'fit-content', margin: '0 auto' }}>
+              <h2>{imageSetTitle}</h2>
               <br />
-            </>
+              <Squiggle />
+              <br />
+            </Box>
           ) : (
             ''
           )}
@@ -159,7 +161,16 @@ export default function Gallery(props) {
               </AspectRatio>
             ))}
           </Snuggle>
-          {imageSetImages.length > 1 ? <hr /> : ''}
+          {imageSetImages.length > 1 ? (
+            <>
+              <br />
+              <Squiggle strokeColor="elevated" />
+              <br />
+              <br />
+            </>
+          ) : (
+            ''
+          )}
         </Box>
       </SRLWrapper>
     </SimpleReactLightbox>

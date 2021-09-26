@@ -38,7 +38,13 @@ export default function Home({
         />
       ) : null}
       <Box sx={{ p: [3, 3, 4] }}>
-        <article ref={post}>
+        <article
+          ref={post}
+          sx={{
+            width: pageType == 'Blog' ? ['100%', '', '61.8%'] : '100%',
+            margin: '0 auto',
+          }}
+        >
           <MDXRemote {...source} />
         </article>
       </Box>

@@ -7,7 +7,7 @@ import { Box } from 'theme-ui'
 import { range } from '../lib/utils/range'
 import { useContainerDimensions } from '../lib/utils/useContainerDimensions'
 
-export default function Squiggle({ height, squiggleWidth }) {
+export default function Squiggle({ height, strokeColor, squiggleWidth }) {
   const svgRef = useRef(null)
 
   const { width } = useContainerDimensions(svgRef)
@@ -44,7 +44,7 @@ export default function Squiggle({ height, squiggleWidth }) {
         sx={{
           display: 'block',
           overflow: 'visible',
-          stroke: 'accent',
+          stroke: strokeColor,
           textAlign: 'center',
           strokeWidth: '2',
         }}
@@ -58,4 +58,5 @@ export default function Squiggle({ height, squiggleWidth }) {
 Squiggle.defaultProps = {
   squiggleWidth: 32,
   height: '24',
+  strokeColor: 'accent',
 }

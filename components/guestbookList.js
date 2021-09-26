@@ -13,10 +13,10 @@ export default function GuestbookList({ props }) {
 
   if (isLoading) {
     return (
-      <>
+      <Box sx={{ width: 'fit-content', margin: '0 auto' }}>
         <Loading />
         <Squiggle />
-      </>
+      </Box>
     )
   }
 

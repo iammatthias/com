@@ -14,10 +14,23 @@ export default function Spicy({ children, ...props }) {
   return (
     <Box
       {...props}
-      sx={{ p: [3, 3, 4], bg: 'muted', borderRadius: '4px 4px 0 0' }}
+      sx={{
+        p: [3, 3, 4],
+        bg: 'muted',
+        borderRadius: '4px 4px 0 0',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+      }}
     >
-      <h2>{props.pageTitle}</h2>
-      <Squiggle />
+      <Box sx={{ width: 'fit-content' }}>
+        <h2>{props.pageTitle}</h2>
+        <br />
+        <Squiggle />
+        <br />
+      </Box>
+
       <small>
         Published: {props.publishDate}
         {props.readingTime > 0 ? (
@@ -27,7 +40,6 @@ export default function Spicy({ children, ...props }) {
           </span>
         ) : null}
       </small>
-      <br />
       <br />
       <Link href={comments}>
         <Button title="Discuss on Twitter">Discuss on Twitter</Button>

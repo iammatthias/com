@@ -35,7 +35,7 @@ export default function PageList(props) {
 
   if (loading) {
     return (
-      <Box>
+      <Box sx={{ width: 'fit-content', margin: '0 auto' }}>
         <Loading />
         <Squiggle />
       </Box>
