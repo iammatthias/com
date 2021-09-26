@@ -1,6 +1,6 @@
 # I AM MATTHIAS
 
-A digital garden built with [Next.js]. Set up for image galleries, with lightboxes, and blogging. Routes are created dynamically, and content is provided with MDX. 
+A digital garden built with [Next.js]. Optimized for image galleries with lightboxes, and lightweight blogging. Routes are created dynamically, and content is provided with MDX. 
 
 web2: [iammatthias.com](iammatthias.com)  
 web3: [ipfs.iammatthias.com](ipfs.iammatthias.com)
@@ -23,4 +23,4 @@ All content is abstracted into MDX, and provided via Contentful.
 
 --- 
 
-Special thanks to @jpvalery and @Holben888 whose work helped me set up NextJS with GraphQL and Contentful. 
+Special thanks to @jpvalery [Contentful + GraphQL], @Holben888 [Theme-UI Starter], and @joshwcomeau [various bits of component joy]. 
