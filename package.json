@@ -36,7 +36,7 @@
     "react-music-embed": "^1.0.1",
     "react-snuggle": "^1.2.3",
     "simple-react-lightbox": "^3.6.9-0",
-    "theme-ui": "^0.11.2",
+    "theme-ui": "^0.11.3",
     "use-reading-time": "^0.2.0"
   }
 }
