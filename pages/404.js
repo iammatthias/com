@@ -2,8 +2,9 @@
 
 import { Box } from 'theme-ui'
 import Link from 'next/link'
+import Squiggle from '../components/squiggle'
 
-export default function Home() {
+export default function Custom404Page(props) {
   return (
     <Box
       sx={{
@@ -15,6 +16,12 @@ export default function Home() {
     >
       <Box sx={{ p: [3, 3, 4] }}>
         <article>
+          <Box sx={{ width: 'fit-content' }}>
+            <h1>{props.metadata.title}</h1>
+            <br />
+            <Squiggle />
+            <br />
+          </Box>
           You don't have to go <Link href="/">home</Link>, but you can't stay
           here.
         </article>
@@ -29,7 +36,7 @@ export async function getStaticProps() {
   return {
     props: {
       metadata: {
-        title: 'Error',
+        title: '404',
       },
     },
   }

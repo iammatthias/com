@@ -31,6 +31,7 @@ const mdComponents = {
   h4: props => <h4 {...props} />, //eslint-disable-line
   h5: props => <h5 {...props} />, //eslint-disable-line
   small: props => <small {...props} />, //eslint-disable-line
+  span: props => <span {...props} />, //eslint-disable-line
 
   // Text Modifiers
   Sparkle: props => <Sparkle {...props} />,
