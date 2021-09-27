@@ -11,6 +11,7 @@ import AppleMusic from 'react-music-embed'
 import EmailCapture from './emailCapture'
 import ClientOnly from './clientOnly'
 import MobileOnly from './mobileOnly'
+import DesktopOnly from './desktopOnly'
 import Squiggle from './squiggle'
 
 const mdComponents = {
@@ -44,6 +45,7 @@ const mdComponents = {
   PageList: props => <PageList {...props} />,
   Squiggle: props => <Squiggle {...props} />,
   MobileOnly: props => <MobileOnly {...props} />,
+  DesktopOnly: props => <DesktopOnly {...props} />,
   Gallery: props => (
     <ClientOnly>
       <Gallery {...props} />

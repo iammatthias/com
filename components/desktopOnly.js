@@ -1,13 +1,13 @@
 /** @jsxImportSource theme-ui */
 
-// mobile only
+// desktop only
 
-export default function MobileOnly({ children, props }) {
+export default function DesktopOnly({ children, props }) {
   return (
     <span
       {...props}
       sx={{
-        display: ['inline', 'none'],
+        display: ['none', 'inline'],
       }}
     >
       {children}
