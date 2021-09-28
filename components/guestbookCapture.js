@@ -21,7 +21,7 @@ export default function GuestbookCapture({ props }) {
         <Spicy>Sign the web3 guestbook!</Spicy>
       </h3>
       <p>
-        Connect with your favorite wallet, and sign the Web3 Guestbook with a
+        Connect with your favorite wallet, and sign the Web3 Guestbook using a
         gasless meta-transaction.
       </p>
 
