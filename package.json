@@ -26,7 +26,7 @@
     "@u-wave/react-vimeo": "^0.9.5",
     "@walletconnect/web3-provider": "^1.6.5",
     "graphql": "^15.6.0",
-    "moralis": "^0.0.54",
+    "moralis": "^0.0.59",
     "next": "^11.1.2",
     "next-mdx-remote": "^3.0.4",
     "react": "^17.0.2",

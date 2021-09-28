@@ -335,7 +335,7 @@
     core-js-pure "^3.0.0"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@7.12.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2":
+"@babel/runtime@7.12.5":
   version "7.12.5"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.12.5.tgz"
   integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
@@ -349,7 +349,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.1.2", "@babel/runtime@^7.5.5":
+"@babel/runtime@^7.1.2", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2":
   version "7.15.4"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.4.tgz#fd17d16bfdf878e6dd02d19753a39fa8a8d9c84a"
   integrity sha512-99catp6bHCaxr4sJ/DbTGgHS4+Rs2RVd2g7iOap6SLGPDknRK9ztKNsE/Fg6QhSeh1FGE5f6gHGQmvvn3I3xhw==
@@ -4433,10 +4433,10 @@ mock-fs@^4.1.0:
   resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.14.0.tgz#ce5124d2c601421255985e6e94da80a7357b1b18"
   integrity sha512-qYvlv/exQ4+svI3UOvPUpLDF0OMX5euvUH0Ny4N5QyRyhNdgAgUrVH3iUINSzEPLvx0kbo/Bp28GJKIqvE7URw==
 
-moralis@^0.0.54:
-  version "0.0.54"
-  resolved "https://registry.yarnpkg.com/moralis/-/moralis-0.0.54.tgz#24ffb5ff015f0de6befb7a54d92821e7080ef6eb"
-  integrity sha512-oK+vzvtTP5kzf7eYyCtdeycd8EKAsM6/23yHx3I5VZ31Wdu10cqvClI8oj8jcfvOhmkqKdhDiF0tGtWnni2ikQ==
+moralis@^0.0.59:
+  version "0.0.59"
+  resolved "https://registry.yarnpkg.com/moralis/-/moralis-0.0.59.tgz#c8b6d17e1530edf16f8e8f2d7d5c02aa6c43fafa"
+  integrity sha512-YraSq73BdXiveW8qXoQlSQUHHcWwyePT3JZSRXUs4w7P85Y4a0vc0VnT5s5P9jCBKmhmJgtClf9tRAWKuqq0eQ==
   dependencies:
     "@babel/runtime" "7.12.5"
     "@babel/runtime-corejs3" "7.12.5"
