@@ -15,7 +15,6 @@ export default function GuestbookCapture({ props }) {
         bg: 'elevated',
         height: 'fit-content',
         borderRadius: '4px',
-        maxWidth: ['100%', '50%'],
       }}
     >
       <h3>
