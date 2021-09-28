@@ -9,6 +9,7 @@ import Spicy from './spicy'
 import Vimeo from '@u-wave/react-vimeo'
 import AppleMusic from 'react-music-embed'
 import EmailCapture from './emailCapture'
+import GuestbookCapture from './guestbookCapture'
 import ClientOnly from './clientOnly'
 import MobileOnly from './mobileOnly'
 import DesktopOnly from './desktopOnly'
@@ -42,6 +43,7 @@ const mdComponents = {
   // etc
   Link: props => <Link {...props} />,
   Email: props => <EmailCapture {...props} />,
+  Guestbook: props => <GuestbookCapture {...props} />,
   PageList: props => <PageList {...props} />,
   Squiggle: props => <Squiggle {...props} />,
   MobileOnly: props => <MobileOnly {...props} />,
