@@ -31,6 +31,7 @@
     "next-mdx-remote": "^3.0.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-headroom": "^3.1.1",
     "react-hook-form": "^7.15.4",
     "react-moralis": "^0.2.3",
     "react-music-embed": "^1.0.1",

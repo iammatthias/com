@@ -26,8 +26,8 @@ export default function Home() {
             <br />
             <br />
             <p>
-              Connect with your wallet, and sign the Web3 Guestbook with a
-              gasless meta-transaction.
+              Connect with your favorite wallet, and sign the Web3 Guestbook
+              with a gasless meta-transaction.
             </p>
             <p>
               <small>

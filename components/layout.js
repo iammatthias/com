@@ -1,8 +1,11 @@
 /** @jsxImportSource theme-ui */
-// components/layout.js
+// layout
 
 import { Box } from 'theme-ui'
+import Headroom from 'react-headroom'
 import Nav from './nav'
+import MobileOnly from './mobileOnly'
+import DesktopOnly from './desktopOnly'
 
 export default function Layout({ children }) {
   return (
@@ -18,7 +21,14 @@ export default function Layout({ children }) {
         mx: 'auto',
       }}
     >
-      <Nav />
+      <DesktopOnly>
+        <Nav />
+      </DesktopOnly>
+      <MobileOnly>
+        <Headroom>
+          <Nav />
+        </Headroom>
+      </MobileOnly>
       {children}
     </Box>
   )
