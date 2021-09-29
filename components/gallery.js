@@ -15,6 +15,11 @@ import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox'
 
 const QUERY = gql`
   query ($title: String) {
+    pageCollection(order: publishDate_DESC, limit: 1) {
+      items {
+        pageType
+      }
+    }
     galleryCollection(where: { title: $title }) {
       items {
         title
@@ -58,6 +63,8 @@ export default function Gallery(props) {
 
   const imageSetTitle = data.galleryCollection.items[0].title
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items
+  const pageType = data.pageCollection.items[0].pageType
+  console.log(pageType)
 
   const options = {
     settings: {
@@ -151,8 +158,6 @@ export default function Gallery(props) {
                 <Image
                   src={image.url}
                   alt={image.title}
-                  width={image.width}
-                  height={image.height}
                   layout="fill"
                   placeholder="blur"
                   blurDataURL={image.loader}

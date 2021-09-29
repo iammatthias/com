@@ -42,14 +42,19 @@ export default function Home({
         <article
           ref={post}
           sx={{
-            width: pageType == 'Blog' ? ['100%', '', '61.8%'] : '100%',
-            margin: '0 auto',
+            '*': {
+              width: pageType == 'Blog' ? ['100%', '', '61.8%'] : '100%',
+              margin: '0 auto',
+            },
+            div: {
+              width: '100%',
+            },
           }}
         >
           <MDXRemote {...source} />
         </article>
       </Box>
-      {pageType == 'Blog' ? <PageFooter type={pageType} slug={slug} /> : null}
+      {/* {pageType == 'Blog' ? <PageFooter type={pageType} slug={slug} /> : null} */}
     </Box>
   )
 }
@@ -61,7 +66,7 @@ export async function getStaticPaths() {
   // We define our query here
   const { data } = await client.query({
     query: gql`
-      query SlugsIndex($slug: String, $type: String) {
+      query SlugsIndex($slug: String) {
         pageCollection(where: { slug: $slug, slug_not: "home" }) {
           items {
             slug
