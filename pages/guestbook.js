@@ -32,19 +32,19 @@ export default function Home() {
             <p>
               <small>
                 You can view the source for this page{' '}
-                <Link href="https://github.com/iammatthias/.com/blob/master/src/pages/guestbook.js">
+                <Link href="https://github.com/iammatthias/.com/blob/master/pages/guestbook.js">
                   here
                 </Link>
                 ,{' '}
-                <Link href="https://github.com/iammatthias/.com/blob/master/src/components/guestbookList.js">
+                <Link href="https://github.com/iammatthias/.com/blob/master/components/guestbookList.js">
                   here
                 </Link>
                 ,{' '}
-                <Link href="https://github.com/iammatthias/.com/blob/master/src/components/guestbookCta.js">
+                <Link href="hhttps://github.com/iammatthias/.com/blob/master/components/guestbookCTA.js">
                   here
                 </Link>
                 , and{' '}
-                <Link href="https://github.com/iammatthias/.com/blob/guestbook/src/hooks/guestbook-auth.js">
+                <Link href="https://github.com/iammatthias/.com/blob/master/components/guestbookCapture.js">
                   here
                 </Link>
                 .<br />

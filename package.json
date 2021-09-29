@@ -19,25 +19,27 @@
     "export": "NODE_ENV='production' next export"
   },
   "dependencies": {
-    "@apollo/client": "^3.4.13",
+    "@apollo/client": "^3.4.15",
+    "@ensdomains/ensjs": "^2.0.1",
     "@mdx-js/loader": "^1.6.22",
     "@next/mdx": "^11.1.2",
     "@segment/snippet": "^4.15.3",
     "@u-wave/react-vimeo": "^0.9.5",
     "@walletconnect/web3-provider": "^1.6.5",
+    "ethers": "^5.4.7",
     "graphql": "^15.6.0",
-    "moralis": "^0.0.54",
+    "moralis": "^0.0.59",
     "next": "^11.1.2",
     "next-mdx-remote": "^3.0.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-headroom": "^3.1.1",
-    "react-hook-form": "^7.15.4",
+    "react-hook-form": "^7.16.1",
     "react-moralis": "^0.2.3",
     "react-music-embed": "^1.0.1",
     "react-snuggle": "^1.2.3",
     "simple-react-lightbox": "^3.6.9-0",
-    "theme-ui": "^0.11.2",
+    "theme-ui": "^0.11.3",
     "use-reading-time": "^0.2.0"
   }
 }

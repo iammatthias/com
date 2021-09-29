@@ -3,6 +3,8 @@
 // guestbook list
 
 import { useMoralisCloudFunction } from 'react-moralis'
+import ENS, { getEnsAddress } from '@ensdomains/ensjs'
+import { ethers } from 'ethers'
 import { Box } from 'theme-ui'
 import Link from 'next/link'
 import Loading from './loading'
@@ -10,6 +12,12 @@ import Squiggle from './squiggle'
 
 export default function GuestbookList({ props }) {
   const { data, error, isLoading } = useMoralisCloudFunction('getGuestbook')
+
+  const provider = new ethers.providers.JsonRpcProvider(
+    process.env.NEXT_PUBLIC_MORALIS_SPEEDY_NODE,
+  )
+
+  const ens = new ENS({ provider, ensAddress: getEnsAddress('1') })
 
   if (isLoading) {
     return (
@@ -24,10 +32,7 @@ export default function GuestbookList({ props }) {
     console.error(error)
     return <span>error</span>
   }
-
-  console.log(data)
   if (data) {
-    console.log(data)
     return (
       <>
         {data.map(guest => (
@@ -49,7 +54,7 @@ export default function GuestbookList({ props }) {
                 fontFamily: 'monospace',
               }}
             >
-              {new Date(guest.updatedAt).toLocaleDateString('en-gb')} at{' '}
+              {new Date(guest.updatedAt).toLocaleDateString('en-US')} at{' '}
               {new Date(guest.updatedAt).toLocaleTimeString('en-US')}
             </small>
             <p
@@ -67,6 +72,7 @@ export default function GuestbookList({ props }) {
             >
               <Link href={'https://etherscan.io/address/' + guest.ethAddress}>
                 {guest.ethAddress}
+                {/* {ens.getName(guest.ethAddress)} */}
               </Link>
             </p>
           </Box>

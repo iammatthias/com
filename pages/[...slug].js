@@ -7,6 +7,7 @@ import client from '../lib/utils/apolloClient'
 import { Box } from 'theme-ui'
 import useReadingTime from 'use-reading-time'
 import PageHeader from '../components/pageHeader'
+import PageFooter from '../components/pageFooter'
 
 export default function Home({
   source,
@@ -48,6 +49,7 @@ export default function Home({
           <MDXRemote {...source} />
         </article>
       </Box>
+      {pageType == 'Blog' ? <PageFooter type={pageType} slug={slug} /> : null}
     </Box>
   )
 }
@@ -59,7 +61,7 @@ export async function getStaticPaths() {
   // We define our query here
   const { data } = await client.query({
     query: gql`
-      query SlugsIndex($slug: String) {
+      query SlugsIndex($slug: String, $type: String) {
         pageCollection(where: { slug: $slug, slug_not: "home" }) {
           items {
             slug
@@ -72,13 +74,10 @@ export async function getStaticPaths() {
   const slugs = data.pageCollection.items
 
   // Map them under the accepted format for the return part of getStaticPaths
-  // const paths = slugs.map(page => ({
-  //   params: { slug: [page.slug] },
-  // }))
-
   const paths = slugs.map(page => ({
     params: {
       slug: page.slug.includes('/') ? page.slug.split('/') : [page.slug],
+      page: page++,
     },
   }))
 
@@ -95,7 +94,6 @@ export async function getStaticPaths() {
 // We use getStaticProps to get the content at build time
 export async function getStaticProps({ params }) {
   // params contains the page 'slug'.
-
   // We define our query here
   const { data } = await client.query({
     query: gql`
