@@ -15,11 +15,6 @@ import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox'
 
 const QUERY = gql`
   query ($title: String) {
-    pageCollection(order: publishDate_DESC, limit: 1) {
-      items {
-        pageType
-      }
-    }
     galleryCollection(where: { title: $title }) {
       items {
         title
@@ -63,8 +58,6 @@ export default function Gallery(props) {
 
   const imageSetTitle = data.galleryCollection.items[0].title
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items
-  const pageType = data.pageCollection.items[0].pageType
-  console.log(pageType)
 
   const options = {
     settings: {
@@ -94,11 +87,10 @@ export default function Gallery(props) {
 
   function handleSlideChange(object) {
     if (typeof window !== 'undefined') {
-      global.analytics.track('Image Viewed', {
+      global.analytics.track('Lightbox Slide Changed', {
         src: object.slides.current.source,
         location: pathname,
         direction: object.action,
-        event: 'Lightbox Slide Changed',
       })
     }
 
@@ -107,10 +99,9 @@ export default function Gallery(props) {
 
   function handleLightboxOpen(object) {
     if (typeof window !== 'undefined') {
-      global.analytics.track('Image Viewed', {
+      global.analytics.track('Lightbox Opened', {
         src: object.currentSlide.source,
         location: pathname,
-        event: 'Lightbox Opened',
       })
     }
 
@@ -119,10 +110,9 @@ export default function Gallery(props) {
 
   function handleLightboxClose(object) {
     if (typeof window !== 'undefined') {
-      global.analytics.track('Image Viewed', {
+      global.analytics.track('Lightbox Closed', {
         src: object.currentSlide.source,
         location: pathname,
-        event: 'Lightbox Closed',
       })
     }
 
@@ -133,16 +123,18 @@ export default function Gallery(props) {
     imageSetImages.length == 1
       ? ''
       : imageSetImages.length == 2
-      ? '350'
+      ? '450'
       : imageSetImages.length == 3
-      ? '250'
+      ? '350'
       : '250'
 
+  console.log('pathname: ' + pathname)
+  console.log('pathname includes work: ' + pathname.includes('work'))
   return (
     <SimpleReactLightbox>
       <SRLWrapper options={options} callbacks={callbacks}>
         <Box sx={{ mx: 'auto' }}>
-          {imageSetImages.length > 1 ? (
+          {pathname.includes('work') ? (
             <Box sx={{ width: 'fit-content', margin: '0 auto' }}>
               <h2>{imageSetTitle}</h2>
               <br />
