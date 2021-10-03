@@ -57,9 +57,6 @@ export default function PageList(props) {
   const paginationPrev = data.pagination.items[prev].slug
   const paginationNext = data.pagination.items[next].slug
 
-  console.log('Prev: ' + paginationPrev)
-  console.log('Next: ' + paginationNext)
-
   return (
     <Box>
       <Squiggle />

@@ -42,8 +42,8 @@ export default function Home({
         <article
           ref={post}
           sx={{
-            'p, h1, h2, h3, h4, h5, h6, small, span, blockquote, ul, pre': {
-              width: pageType == 'Blog' ? ['100%', '', '61.8%'] : '100%',
+            'p, h1, h2, h3, h4, h5, h6, small, blockquote, ul, pre': {
+              maxWidth: pageType == 'Blog' ? ['100%', '', '61.8%'] : '100%',
               mx: 'auto',
             },
           }}
