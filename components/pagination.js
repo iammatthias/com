@@ -43,13 +43,13 @@ export default function PageList(props) {
     console.error(error)
     return null
   }
-
+  const paginationTotal = data.pagination.total
   const paginationIndex = data.pagination.items
     .map(item => item.slug)
     .indexOf(props.slug)
 
   const prev =
-    paginationIndex + 1 == data.pagination.total
+    paginationIndex + 1 == paginationTotal
       ? paginationIndex
       : paginationIndex + 1
   const next = paginationIndex - 1 == -1 ? 0 : paginationIndex - 1
@@ -64,7 +64,9 @@ export default function PageList(props) {
         <Link href={paginationNext}>
           <Button>Next</Button>
         </Link>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;{paginationIndex + 1} /{' '}
+        {paginationTotal}
+        &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
         <Link href={paginationPrev}>
           <Button>Previous</Button>
         </Link>
