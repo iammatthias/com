@@ -1,13 +1,13 @@
 # I AM MATTHIAS
 
-A digital garden built with [Next.js]. Optimized for image galleries with lightboxes, and lightweight blogging. Routes are created dynamically, and content is provided with MDX. 
+A digital garden built with [Next.js]. Optimized for image galleries and lightweight blogging. Routes are created dynamically, and content is styled with MDX. 
 
 web2: [iammatthias.com](iammatthias.com)  
-web3: [ipfs.iammatthias.com](ipfs.iammatthias.com)
+~~web3: [ipfs.iammatthias.com](ipfs.iammatthias.com)~~ <-- Broken CI, fix coming soon 
 
 --- 
 
-> Repo is made available `as is`, feel free to look at how it is all put together.
+> Repo is made available `as is`, feel free to look at how it is all put together. 
 
 ---
 

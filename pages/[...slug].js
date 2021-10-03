@@ -51,7 +51,9 @@ export default function Home({
           <MDXRemote {...source} />
         </article>
       </Box>
-      {pageType == 'Blog' ? <PageFooter type={pageType} slug={slug} /> : null}
+      {pageType == 'Blog' || pageType == 'Gallery' ? (
+        <PageFooter type={pageType} slug={slug} />
+      ) : null}
     </Box>
   )
 }
