@@ -42,7 +42,7 @@ export default function Home({
         <article
           ref={post}
           sx={{
-            'p, h1, h2, h3, h4, h5, h6, small, span, blockquote': {
+            'p, h1, h2, h3, h4, h5, h6, small, span, blockquote, ul, pre': {
               width: pageType == 'Blog' ? ['100%', '', '61.8%'] : '100%',
               mx: 'auto',
             },
@@ -51,7 +51,7 @@ export default function Home({
           <MDXRemote {...source} />
         </article>
       </Box>
-      {/* {pageType == 'Blog' ? <PageFooter type={pageType} slug={slug} /> : null} */}
+      {pageType == 'Blog' ? <PageFooter type={pageType} slug={slug} /> : null}
     </Box>
   )
 }

@@ -10,21 +10,8 @@ import Squiggle from './squiggle'
 
 const QUERY = gql`
   query ($type: String) {
-    paginationNext: pageCollection(
+    pagination: pageCollection(
       order: publishDate_DESC
-      skip: 1
-      limit: 1
-      where: { pageType: $type }
-    ) {
-      total
-      items {
-        slug
-      }
-    }
-    paginationPrev: pageCollection(
-      order: publishDate_DESC
-      skip: -1
-      limit: 1
       where: { pageType: $type }
     ) {
       total
@@ -57,21 +44,32 @@ export default function PageList(props) {
     return null
   }
 
-  const paginationNext = data.paginationNext.items[0].slug
-  const paginationPrev = data.paginationPrev.items[0].slug
+  const paginationIndex = data.pagination.items
+    .map(item => item.slug)
+    .indexOf(props.slug)
 
-  console.log(paginationPrev)
+  const prev =
+    paginationIndex + 1 == data.pagination.total
+      ? paginationIndex
+      : paginationIndex + 1
+  const next = paginationIndex - 1 == -1 ? 0 : paginationIndex - 1
+
+  const paginationPrev = data.pagination.items[prev].slug
+  const paginationNext = data.pagination.items[next].slug
+
+  console.log('Prev: ' + paginationPrev)
+  console.log('Next: ' + paginationNext)
 
   return (
     <Box>
       <Squiggle />
       <Box mt={4}>
-        <Link href={paginationPrev}>
-          <Button>Previous</Button>
-        </Link>
-        &nbsp;&nbsp;&nbsp;
         <Link href={paginationNext}>
           <Button>Next</Button>
+        </Link>
+        &nbsp;&nbsp;&nbsp;
+        <Link href={paginationPrev}>
+          <Button>Previous</Button>
         </Link>
       </Box>
     </Box>

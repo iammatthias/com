@@ -128,8 +128,6 @@ export default function Gallery(props) {
       ? '350'
       : '250'
 
-  console.log('pathname: ' + pathname)
-  console.log('pathname includes work: ' + pathname.includes('work'))
   return (
     <SimpleReactLightbox>
       <SRLWrapper options={options} callbacks={callbacks}>
