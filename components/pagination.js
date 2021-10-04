@@ -60,13 +60,17 @@ export default function PageList(props) {
   return (
     <Box>
       <Squiggle />
-      <Box mt={4}>
+      <Box
+        sx={{ mt: 4, display: 'flex', flexDirection: ['column', '', 'row'] }}
+      >
         <Link href={paginationNext}>
-          <Button>Next</Button>
+          <Button sx={{ mb: [3, '', 0] }}>Next</Button>
         </Link>
-        &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;{paginationIndex + 1} /{' '}
-        {paginationTotal}
-        &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
+        <span sx={{ mb: [3, '', 0] }}>
+          &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;{paginationIndex + 1} /{' '}
+          {paginationTotal}
+          &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
+        </span>
         <Link href={paginationPrev}>
           <Button>Previous</Button>
         </Link>
