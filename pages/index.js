@@ -10,10 +10,21 @@ export default function Home({ source }) {
   return (
     <Box
       sx={{
-        bg: 'background',
-        boxShadow: 'card',
+        backgroundImage: theme =>
+          `linear-gradient(to bottom, ${theme.colors.background}, ${theme.colors.backgroundTint})`,
         borderRadius: '4px',
         gridArea: 'body',
+        position: 'relative',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '50%',
+          zIndex: '-10',
+          boxShadow: 'frame',
+        },
       }}
     >
       <Box sx={{ p: [3, 3, 4] }}>
