@@ -126,7 +126,7 @@ export default function Gallery(props) {
       ? '450'
       : imageSetImages.length == 3
       ? '350'
-      : '250'
+      : '225'
 
   return (
     <SimpleReactLightbox>
@@ -152,6 +152,7 @@ export default function Gallery(props) {
                   placeholder="blur"
                   blurDataURL={image.loader}
                   objectFit="cover"
+                  sx={{ borderRadius: '4px', boxShadow: 'card' }}
                 />
               </AspectRatio>
             ))}
