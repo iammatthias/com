@@ -157,7 +157,7 @@ export default function Gallery(props) {
       : 1
 
   function contentfulImageLoader({ src, width, quality }) {
-    return `${src}?w=${width}&q=${quality || 75}&fit=fill&f=face`
+    return `${src}?w=${width}&q=${quality || 45}&fit=fill&f=face`
   }
 
   return (
