@@ -156,41 +156,51 @@ export default function Gallery(props) {
         : 1
       : 1
 
+  function contentfulImageLoader({ src, width, quality }) {
+    return `${src}?w=${width}&q=${quality || 75}&fit=fill&f=face`
+  }
+
   return (
-    <Box ref={ref}>
-      <SimpleReactLightbox>
-        <SRLWrapper options={options} callbacks={callbacks}>
-          <Grid
-            className="grid"
-            // Arbitrary data, should contain keys, possibly heights, etc.
-            data={imageSetImages}
-            // Key accessor, instructs grid on how to fet individual keys from the data set
-            keys={d => d.title}
-            // Can be a fixed value or an individual data accessor
-            heights={d => {
-              const aspect = props.ratio
-                ? eval(props.ratio) * bounds.width
-                : ((d.height / d.width) * bounds.width) / columns
-              return aspect
-            }}
-            columns={columns}
-            margin={16}
-          >
-            {data => (
-              <Image
-                src={data.url}
-                alt={data.title}
-                layout="fill"
-                placeholder="blur"
-                blurDataURL={data.loader}
-                objectFit="cover"
-                onClick={() => openLightbox(data.index)}
-                className="gallery"
-              />
-            )}
-          </Grid>
-        </SRLWrapper>
-      </SimpleReactLightbox>
-    </Box>
+    <SimpleReactLightbox>
+      <SRLWrapper options={options} callbacks={callbacks}>
+        <Box sx={{ mx: 'auto' }}>
+          {pathname.includes('work') ? (
+            <Box sx={{ width: 'fit-content', margin: '0 auto' }}>
+              <h2>{imageSetTitle}</h2>
+              <br />
+              <Squiggle />
+              <br />
+            </Box>
+          ) : (
+            ''
+          )}
+          <Snuggle columnWidth={columnWidth}>
+            {imageSetImages.map(image => (
+              <AspectRatio key={image} ratio={eval(props.ratio)}>
+                <Image
+                  src={image.url}
+                  alt={image.title}
+                  layout="fill"
+                  placeholder="blur"
+                  blurDataURL={image.loader}
+                  objectFit="cover"
+                  loader={contentfulImageLoader}
+                />
+              </AspectRatio>
+            ))}
+          </Snuggle>
+          {imageSetImages.length > 1 ? (
+            <>
+              <br />
+              <Squiggle strokeColor="muted" />
+              <br />
+              <br />
+            </>
+          ) : (
+            ''
+          )}
+        </Box>
+      </SRLWrapper>
+    </SimpleReactLightbox>
   )
 }
