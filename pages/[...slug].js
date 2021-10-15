@@ -135,7 +135,9 @@ export async function getStaticProps({ params }) {
   const pageType = data.pageCollection.items[0].pageType
   const pageTitle = data.pageCollection.items[0].title
   const publishDate = new Date(
-    data.pageCollection.items[0].publishDate,
+    data.pageCollection.items[0].publishDate
+      .replace(/-/g, '/')
+      .replace(/T.+/, ''),
   ).toLocaleDateString('en-us')
   const slug = data.pageCollection.items[0].slug
 
