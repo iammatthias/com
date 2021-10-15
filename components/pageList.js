@@ -58,7 +58,9 @@ export default function PageList(props) {
               {page.title}
             </p>
             <small>
-              {new Date(page.publishDate).toLocaleDateString('en-us')}
+              {new Date(
+                page.publishDate.replace(/-/g, '/').replace(/T.+/, ''),
+              ).toLocaleDateString('en-us')}
             </small>
           </Card>
         </Link>

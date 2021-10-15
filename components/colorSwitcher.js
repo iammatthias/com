@@ -19,14 +19,20 @@ const ColorSwitcher = props => {
       }}
       {...props}
     >
-      <svg viewBox="0 0 32 32" width={24} height={24} fill="currentcolor">
+      <svg
+        viewBox="0 0 32 32"
+        width={24}
+        height={24}
+        fill="none"
+        sx={{ borderRadius: '50px', boxShadow: 'card' }}
+      >
         <circle
           cx={16}
           cy={16}
           r={14}
-          fill="none"
           stroke="currentcolor"
-          strokeWidth={2}
+          strokeWidth={3}
+          sx={{ fill: 'backgroundTint' }}
         />
       </svg>
     </IconButton>

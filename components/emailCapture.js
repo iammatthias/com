@@ -36,6 +36,7 @@ export default function EmailCapture({ props }) {
         bg: 'elevated',
         height: 'fit-content',
         borderRadius: '4px',
+        boxShadow: 'card',
       }}
     >
       <Box
