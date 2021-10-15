@@ -53,10 +53,11 @@ export default function Home({
         <article
           ref={post}
           sx={{
-            'p, h1, h2, h3, h4, h5, h6, small, blockquote, ul, pre': {
-              maxWidth: pageType == 'Blog' ? ['100%', '', '61.8%'] : '100%',
-              mx: 'auto',
-            },
+            'p, h1, h2, h3, h4, h5, h6, small, blockquote, ul, pre, #squiggleContainer':
+              {
+                maxWidth: pageType == 'Blog' ? ['100%', '', '61.8%'] : '100%',
+                mx: 'auto',
+              },
           }}
         >
           <MDXRemote {...source} />

@@ -36,7 +36,7 @@ export default function Squiggle({ height, strokeColor, squiggleWidth }) {
     return `${acc} ${instruction}`
   }, `M ${initialPoint.x},${initialPoint.y}`)
   return (
-    <Box ref={svgRef} sx={{ width: '100%' }}>
+    <Box id="squiggleContainer" ref={svgRef} sx={{ width: '100%' }}>
       <svg
         id="squiggle"
         width={numOfSquiggles * roundedSquiggleWidth}

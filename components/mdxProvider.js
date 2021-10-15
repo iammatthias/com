@@ -14,6 +14,7 @@ import ClientOnly from './clientOnly'
 import MobileOnly from './mobileOnly'
 import DesktopOnly from './desktopOnly'
 import Squiggle from './squiggle'
+import Code from './code'
 
 const mdComponents = {
   // theme-ui
@@ -37,8 +38,9 @@ const mdComponents = {
 
   // Text Modifiers
   Sparkle: props => <Sparkle {...props} />,
-  Spicy: props => <Spicy {...props} sx={{ fontFamily: 'heading' }} />,
+  Spicy: props => <Spicy {...props} />,
   Mono: props => <span {...props} sx={{ fontFamily: 'monospace' }} />,
+  Code: props => <Code {...props} />,
 
   // etc
   Link: props => <Link {...props} />,
