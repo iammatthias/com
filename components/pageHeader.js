@@ -31,19 +31,23 @@ export default function Spicy({ children, ...props }) {
         <br />
       </Box>
 
-      <small>
-        Published: {props.publishDate}
-        {props.readingTime > 0 ? (
-          <span>
-            {spacer} {props.readingTime} <em> min to read</em> {spacer}{' '}
-            {props.wordsCount} <em> words</em>
-          </span>
-        ) : null}
-      </small>
-      <br />
-      <Link href={comments}>
-        <Button title="Discuss on Twitter">Discuss on Twitter</Button>
-      </Link>
+      {props.publishDate ? (
+        <>
+          <small>
+            Published: {props.publishDate}
+            {props.readingTime > 0 ? (
+              <span>
+                {spacer} {props.readingTime} <em> min to read</em> {spacer}{' '}
+                {props.wordsCount} <em> words</em>
+              </span>
+            ) : null}
+          </small>
+          <br />
+          <Link href={comments}>
+            <Button title="Discuss on Twitter">Discuss on Twitter</Button>
+          </Link>
+        </>
+      ) : null}
     </Box>
   )
 }

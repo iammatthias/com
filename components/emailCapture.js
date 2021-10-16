@@ -30,6 +30,7 @@ export default function EmailCapture({ props }) {
   `
   return (
     <Box
+      id="emailCapture"
       sx={{
         position: 'relative',
         p: [3, 3, 4],

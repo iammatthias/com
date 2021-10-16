@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import { gql } from '@apollo/client'
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
+import { useRouter } from 'next/router'
 import client from '../lib/utils/apolloClient'
 import { Box } from 'theme-ui'
 import useReadingTime from 'use-reading-time'
@@ -19,6 +20,9 @@ export default function Home({
   const post = useRef()
   const { readingTime, wordsCount } = () =>
     pageType == 'Blog' ? useReadingTime(post) : '0'
+
+  const router = useRouter()
+  const pathname = router.asPath
 
   return (
     <Box
@@ -49,15 +53,27 @@ export default function Home({
           slug={slug}
         />
       ) : null}
+      {pathname == '/work/' ? (
+        <PageHeader pageTitle={pageTitle} slug={slug} />
+      ) : null}
+      {pathname == '/blog/' ? (
+        <PageHeader pageTitle={pageTitle} slug={slug} />
+      ) : null}
       <Box sx={{ p: [3, 3, 4] }}>
         <article
           ref={post}
           sx={{
-            'p, h1, h2, h3, h4, h5, h6, small, blockquote, ul, pre, #squiggleContainer':
-              {
-                maxWidth: pageType == 'Blog' ? ['100%', '', '61.8%'] : '100%',
-                mx: 'auto',
-              },
+            'p, h1, h2, h3, h4, h5, h6, small, blockquote, ul, pre': {
+              ...(pageType == 'Blog' || pageType == 'Gallery'
+                ? { maxWidth: ['100%', '', '61.8%'] }
+                : null),
+              mx: 'auto',
+            },
+            '#gallery, #pageList, #emailCapture, #squiggleContainer': {
+              maxWidth: '100%',
+              'p, h1, h2, h3, h4, h5, h6, small, blockquote, ul, pre, #squiggleContainer':
+                { maxWidth: '100%', mx: 0 },
+            },
           }}
         >
           <MDXRemote {...source} />

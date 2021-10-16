@@ -131,17 +131,7 @@ export default function Gallery(props) {
   return (
     <SimpleReactLightbox>
       <SRLWrapper options={options} callbacks={callbacks}>
-        <Box sx={{ mx: 'auto' }}>
-          {pathname.includes('work') ? (
-            <Box sx={{ width: 'fit-content', margin: '0 auto' }}>
-              <h2>{imageSetTitle}</h2>
-              <br />
-              <Squiggle />
-              <br />
-            </Box>
-          ) : (
-            ''
-          )}
+        <Box sx={{ mx: 'auto' }} id="gallery">
           <Snuggle columnWidth={columnWidth}>
             {imageSetImages.map(image => (
               <AspectRatio key={image} ratio={eval(props.ratio)}>
@@ -152,21 +142,14 @@ export default function Gallery(props) {
                   placeholder="blur"
                   blurDataURL={image.loader}
                   objectFit="cover"
-                  sx={{ borderRadius: '4px', boxShadow: 'card' }}
+                  sx={{
+                    borderRadius: columnWidth == 1 ? '4px' : '',
+                    boxShadow: 'card',
+                  }}
                 />
               </AspectRatio>
             ))}
           </Snuggle>
-          {imageSetImages.length > 1 ? (
-            <>
-              <br />
-              <Squiggle strokeColor="placeholder" squiggleWidth="16" />
-              <br />
-              <br />
-            </>
-          ) : (
-            ''
-          )}
         </Box>
       </SRLWrapper>
     </SimpleReactLightbox>

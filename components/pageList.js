@@ -53,7 +53,7 @@ export default function PageList(props) {
     <>
       {pageList.map(page => (
         <Link key={page.slug} href={page.slug}>
-          <Card>
+          <Card id="pageList">
             <p sx={{ fontSize: 1, fontWeight: 'bold', m: 0, p: 0 }}>
               {page.title}
             </p>
