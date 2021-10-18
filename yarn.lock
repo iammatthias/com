@@ -7166,10 +7166,10 @@ react-headroom@^3.2.0:
     raf "^3.3.0"
     shallowequal "^1.1.0"
 
-react-hook-form@^7.17.2:
-  version "7.17.2"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.17.2.tgz#235f15bb65c13e7a1198d33f2db24bcc9e27b303"
-  integrity sha512-oBaHwlYnbpzSFdNrs43QpcM+K2A0kUeNjV86ECYkCimlR1Ctl+tz4oQQd9plfGYkO7PJGLVMOVpUtL5EHjAcYQ==
+react-hook-form@^7.17.4:
+  version "7.17.4"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.17.4.tgz#232b6aaccddb91eb4a228ac20b154abd90866fdb"
+  integrity sha512-7XhbCr7d9fDC1TgcK/BUbt7D3q0VJMu7jPErfsa0JrxVjv/nni41xWdJcy0Zb7R+Np8OsCkQ2lMyloAtE3DLiQ==
 
 react-is@17.0.2:
   version "17.0.2"
@@ -9027,10 +9027,8 @@ watchpack@^1.4.0:
   resolved "https://registry.yarnpkg.com/watchpack/-/watchpack-1.7.5.tgz#1267e6c55e0b9b5be44c2023aed5437a2c26c453"
   integrity sha512-9P3MWk6SrKjHsGkLT2KHXdQ/9SNkyoJbabxnKOoJepsvJjJG8uYTR3yTPxPQvNDI3w4Nz1xnE0TLHK4RIVe/MQ==
   dependencies:
-    chokidar "^3.4.1"
     graceful-fs "^4.1.2"
     neo-async "^2.5.0"
-    watchpack-chokidar2 "^2.0.1"
   optionalDependencies:
     chokidar "^3.4.1"
     watchpack-chokidar2 "^2.0.1"
