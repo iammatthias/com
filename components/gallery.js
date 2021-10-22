@@ -124,7 +124,7 @@ export default function Gallery(props) {
     return object
   }
 
-  const length = imageSetImages.length <= 4 ? imageSetImages.length : 4
+  const length = imageSetImages.length <= 5 ? imageSetImages.length : 5
 
   return (
     <Box ref={ref}>
