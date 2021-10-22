@@ -145,6 +145,7 @@ export default function Gallery(props) {
               return aspect
             }}
             columns={length}
+            margin={16}
           >
             {data => (
               <Image
