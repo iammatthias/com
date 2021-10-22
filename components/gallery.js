@@ -4,14 +4,18 @@
 
 import Image from 'next/image'
 import { useQuery, gql } from '@apollo/client'
-import Snuggle from 'react-snuggle'
-import { Box, AspectRatio } from 'theme-ui'
+import { Box } from 'theme-ui'
 import { useRouter } from 'next/router'
+import { Grid } from 'mauerwerk'
+import useMeasure from 'react-use-measure'
 import Loading from './loading'
 import Squiggle from './squiggle'
 
 // lightbox
-import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox'
+import SimpleReactLightbox, {
+  SRLWrapper,
+  useLightbox,
+} from 'simple-react-lightbox'
 
 const QUERY = gql`
   query ($title: String) {
@@ -35,6 +39,8 @@ const QUERY = gql`
 export default function Gallery(props) {
   const router = useRouter()
   const pathname = router.asPath
+  const [ref, bounds] = useMeasure()
+  const { openLightbox } = useLightbox()
 
   const { data, loading, error } = useQuery(QUERY, {
     variables: {
@@ -56,7 +62,6 @@ export default function Gallery(props) {
     return null
   }
 
-  const imageSetTitle = data.galleryCollection.items[0].title
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items
 
   const options = {
@@ -119,39 +124,44 @@ export default function Gallery(props) {
     return object
   }
 
-  const columnWidth =
-    imageSetImages.length == 1
-      ? ''
-      : imageSetImages.length == 2
-      ? '450'
-      : imageSetImages.length == 3
-      ? '350'
-      : '225'
+  const length = imageSetImages.length <= 4 ? imageSetImages.length : 4
 
   return (
-    <SimpleReactLightbox>
-      <SRLWrapper options={options} callbacks={callbacks}>
-        <Box sx={{ mx: 'auto' }} id="gallery">
-          <Snuggle columnWidth={columnWidth}>
-            {imageSetImages.map(image => (
-              <AspectRatio key={image} ratio={eval(props.ratio)}>
-                <Image
-                  src={image.url}
-                  alt={image.title}
-                  layout="fill"
-                  placeholder="blur"
-                  blurDataURL={image.loader}
-                  objectFit="cover"
-                  sx={{
-                    borderRadius: columnWidth == 1 ? '4px' : '',
-                    boxShadow: 'card',
-                  }}
-                />
-              </AspectRatio>
-            ))}
-          </Snuggle>
-        </Box>
-      </SRLWrapper>
-    </SimpleReactLightbox>
+    <Box ref={ref}>
+      <SimpleReactLightbox>
+        <SRLWrapper options={options} callbacks={callbacks}>
+          <Grid
+            className="grid"
+            // Arbitrary data, should contain keys, possibly heights, etc.
+            data={imageSetImages}
+            // Key accessor, instructs grid on how to fet individual keys from the data set
+            keys={d => d.title}
+            // Can be a fixed value or an individual data accessor
+            heights={d => {
+              const aspect = props.ratio
+                ? eval(props.ratio) * bounds.width
+                : ((d.height / d.width) * bounds.width) / length
+              console.log(aspect)
+              return aspect
+            }}
+            columns={length}
+          >
+            {data => (
+              <Image
+                src={data.url}
+                alt={data.title}
+                layout="fill"
+                placeholder="blur"
+                blurDataURL={data.loader}
+                objectFit="cover"
+                width={data.width}
+                height={data.height}
+                onClick={() => openLightbox(data.index)}
+              />
+            )}
+          </Grid>
+        </SRLWrapper>
+      </SimpleReactLightbox>
+    </Box>
   )
 }
