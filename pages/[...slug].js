@@ -53,12 +53,12 @@ export default function Home({
           slug={slug}
         />
       ) : null}
-      {pathname == '/work/' ? (
+      {pathname == '/work/' ||
+      pathname == '/blog/' ||
+      pathname.includes('/tokens/') ? (
         <PageHeader pageTitle={pageTitle} slug={slug} />
       ) : null}
-      {pathname == '/blog/' ? (
-        <PageHeader pageTitle={pageTitle} slug={slug} />
-      ) : null}
+
       <Box sx={{ p: [3, 3, 4] }}>
         <article
           ref={post}
