@@ -38,74 +38,69 @@ export default function EmailCapture({ props }) {
         height: 'fit-content',
         borderRadius: '4px',
         boxShadow: 'card',
+        display: 'grid',
+        gridTemplateRows: ['auto 1fr'],
+        gridTemplateColumns: ['1fr'],
+        gridGap: '1rem',
       }}
     >
       <Box
         sx={{
-          display: 'grid',
-          gridTemplateRows: ['auto 1fr'],
-          gridTemplateColumns: ['1fr'],
-          gridGap: '1rem',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}
       >
-        <Box
+        <h5 sx={{ m: 0, mb: 2, p: 0 }}>The Newsletter</h5>
+        <p sx={{ m: 0, p: 0 }}>Sign up for the occaisional update.</p>
+      </Box>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Label
+          htmlFor="firstName"
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            fontWeight: 'bold',
+            width: 'fit-content',
+            ml: '.5rem',
+            mb: '-.75rem',
+            px: '.5rem',
+            bg: 'elevated',
+            zIndex: '1',
+            position: 'relative',
           }}
         >
-          <h5 sx={{ m: 0, mb: 2, p: 0 }}>The Newsletter</h5>
-          <p sx={{ m: 0, p: 0 }}>Sign up for the occaisional update.</p>
-        </Box>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Label
-            htmlFor="firstName"
-            sx={{
-              fontWeight: 'bold',
-              width: 'fit-content',
-              ml: '.5rem',
-              mb: '-.75rem',
-              px: '.5rem',
-              bg: 'elevated',
-              zIndex: '1',
-              position: 'relative',
-            }}
-          >
-            first name
-          </Label>
-          <Input
-            type="firstName"
-            name="first name"
-            id="firstName"
-            {...register('firstName')}
-            mb={2}
-          />
-          <Label
-            htmlFor="email"
-            sx={{
-              fontWeight: 'bold',
-              width: 'fit-content',
-              ml: '.5rem',
-              mb: '-.75rem',
-              px: '.5rem',
-              bg: 'elevated',
-              zIndex: '1',
-              position: 'relative',
-            }}
-          >
-            email
-          </Label>
-          <Input
-            type="email"
-            name="email"
-            id="email"
-            {...register('email')}
-            mb={2}
-          />
-          <Button type="submit">Submit</Button>
-        </form>
-      </Box>
+          first name
+        </Label>
+        <Input
+          type="firstName"
+          name="first name"
+          id="firstName"
+          {...register('firstName')}
+          mb={2}
+        />
+        <Label
+          htmlFor="email"
+          sx={{
+            fontWeight: 'bold',
+            width: 'fit-content',
+            ml: '.5rem',
+            mb: '-.75rem',
+            px: '.5rem',
+            bg: 'elevated',
+            zIndex: '1',
+            position: 'relative',
+          }}
+        >
+          email
+        </Label>
+        <Input
+          type="email"
+          name="email"
+          id="email"
+          {...register('email')}
+          mb={2}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
       <Modal
         open={open}
         sx={{
