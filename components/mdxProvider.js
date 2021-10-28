@@ -38,6 +38,7 @@ const mdComponents = {
 
   // Text Modifiers
   Sparkle: props => <Sparkle {...props} />,
+  // Sparkle: props => <span {...props} />,
   Spicy: props => <Spicy {...props} />,
   Mono: props => <span {...props} sx={{ fontFamily: 'monospace' }} />,
   Code: props => <Code {...props} />,

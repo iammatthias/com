@@ -102,7 +102,7 @@ const Sparkles = ({ color, children, ...delegated }) => {
     prefersReducedMotion ? null : 450,
   )
   return (
-    <Wrapper {...delegated}>
+    <Wrapper {...delegated} id="sparkle">
       {sparkles.map(sparkle => (
         <Sparkle
           key={sparkle.id}
@@ -111,7 +111,7 @@ const Sparkles = ({ color, children, ...delegated }) => {
           style={sparkle.style}
         />
       ))}
-      <ChildWrapper>{children}</ChildWrapper>
+      <ChildWrapper >{children}</ChildWrapper>
     </Wrapper>
   )
 }

@@ -158,6 +158,7 @@ export default function Gallery(props) {
                 width={data.width}
                 height={data.height}
                 onClick={() => openLightbox(data.index)}
+                className="gallery"
               />
             )}
           </Grid>

@@ -63,16 +63,18 @@ export default function Home({
         <article
           ref={post}
           sx={{
-            'p, h1, h2, h3, h4, h5, h6, small, blockquote, ul, pre': {
-              ...(pageType == 'Blog' || pageType == 'Gallery'
-                ? { maxWidth: ['100%', '', '61.8%'] }
-                : null),
-              mx: 'auto',
-            },
-            '#gallery, #pageList, #emailCapture, #squiggleContainer': {
+
+            'a, p, h1, h2, h3, h4, h5, h6, hr, small, blockquote, ul, pre, span, #squiggleContainer':
+              {
+                ...(pageType == 'Blog' || pageType == 'Gallery'
+                  ? { maxWidth: ['100%', '', '61.8%'] }
+                  : null),
+
+                mx: 'auto',
+              },
+            'p, a': { width: '100%' },
+            '.grid span, #pageList, #emailCapture, #sparkle, blockquote p': {
               maxWidth: '100%',
-              'p, h1, h2, h3, h4, h5, h6, small, blockquote, ul, pre, #squiggleContainer':
-                { maxWidth: '100%', mx: 0 },
             },
           }}
         >
