@@ -4,5 +4,6 @@ module.exports = withMDX({
   pageExtensions: ['js', 'mdx'],
   images: {
     domains: ['images.ctfassets.net'],
+    formats: ['image/avif', 'image/webp'],
   },
 })
