@@ -9,6 +9,7 @@ import { Box } from 'theme-ui'
 import useReadingTime from 'use-reading-time'
 import PageHeader from '../components/pageHeader'
 import PageFooter from '../components/pageFooter'
+import { isDev } from '../components/isDev'
 
 export default function Home({
   source,
@@ -63,8 +64,7 @@ export default function Home({
         <article
           ref={post}
           sx={{
-
-            'a, p, h1, h2, h3, h4, h5, h6, hr, small, blockquote, ul, pre, span, #squiggleContainer':
+            'a, p, h1, h2, h3, h4, h5, h6, hr, small, blockquote, ul, ol, pre, span, #squiggleContainer':
               {
                 ...(pageType == 'Blog' || pageType == 'Gallery'
                   ? { maxWidth: ['100%', '', '61.8%'] }
@@ -95,14 +95,20 @@ export async function getStaticPaths() {
   // We define our query here
   const { data } = await client.query({
     query: gql`
-      query SlugsIndex($slug: String) {
-        pageCollection(where: { slug: $slug, slug_not: "home" }) {
+      query SlugsIndex($preview: Boolean, $slug: String) {
+        pageCollection(
+          preview: $preview
+          where: { slug: $slug, slug_not: "home" }
+        ) {
           items {
             slug
           }
         }
       }
     `,
+    variables: {
+      preview: isDev,
+    },
   })
   // Get the paths we want to pre-render based on posts
   const slugs = data.pageCollection.items
@@ -131,8 +137,12 @@ export async function getStaticProps({ params }) {
   // We define our query here
   const { data } = await client.query({
     query: gql`
-      query ($slug: String) {
-        pageCollection(limit: 1, where: { slug: $slug, slug_not: "home" }) {
+      query ($preview: Boolean, $slug: String) {
+        pageCollection(
+          preview: $preview
+          limit: 1
+          where: { slug: $slug, slug_not: "home" }
+        ) {
           items {
             title
             publishDate
@@ -145,6 +155,7 @@ export async function getStaticProps({ params }) {
     `,
     variables: {
       slug: params.slug.join('/'),
+      preview: isDev,
     },
   })
 

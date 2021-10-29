@@ -7,10 +7,12 @@ import { Box, Button } from 'theme-ui'
 import Link from 'next/link'
 import Loading from './loading'
 import Squiggle from './squiggle'
+import { isDev } from './isDev'
 
 const QUERY = gql`
-  query ($type: String) {
+  query ($preview: Boolean, $type: String) {
     pagination: pageCollection(
+      preview: $preview
       order: publishDate_DESC
       where: { pageType: $type }
     ) {
@@ -27,6 +29,7 @@ export default function PageList(props) {
     variables: {
       type: props.type,
       slug: props.slug,
+      preview: isDev,
     },
   })
 

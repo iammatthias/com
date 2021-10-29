@@ -7,10 +7,12 @@ import Link from 'next/link'
 import { Card, Box } from 'theme-ui'
 import Loading from './loading'
 import Squiggle from './squiggle'
+import { isDev } from './isDev'
 
 const QUERY = gql`
-  query ($type: String, $limit: Int) {
+  query ($preview: Boolean, $type: String, $limit: Int) {
     pageCollection(
+      preview: $preview
       where: { pageType: $type }
       limit: $limit
       order: publishDate_DESC
@@ -30,6 +32,7 @@ export default function PageList(props) {
     variables: {
       type: props.type,
       limit: parseInt(props.limit),
+      preview: isDev,
     },
   })
 

@@ -4856,10 +4856,10 @@ graphql-tag@^2.12.3:
   dependencies:
     tslib "^2.1.0"
 
-graphql@^15.7.2:
-  version "15.7.2"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.7.2.tgz#85ab0eeb83722977151b3feb4d631b5f2ab287ef"
-  integrity sha512-AnnKk7hFQFmU/2I9YSQf3xw44ctnSFCfp3zE0N6W174gqe9fWG/2rKaKxROK7CcI3XtERpjEKFqts8o319Kf7A==
+graphql@^16.0.0:
+  version "16.0.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.0.0.tgz#5724f2767aefa543418e83671372117c39408c8f"
+  integrity sha512-n9NxoRfwnpYBZB/WJ7L166gyrShuZ8qYgVaX8oxVyELcJfAwkvwPt6WlYIl90WRlzqDjaNWvLmNOSnKs5llZWQ==
 
 har-schema@^2.0.0:
   version "2.0.0"
@@ -6422,10 +6422,10 @@ mock-fs@^4.1.0:
   resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.14.0.tgz#ce5124d2c601421255985e6e94da80a7357b1b18"
   integrity sha512-qYvlv/exQ4+svI3UOvPUpLDF0OMX5euvUH0Ny4N5QyRyhNdgAgUrVH3iUINSzEPLvx0kbo/Bp28GJKIqvE7URw==
 
-moralis@^0.0.110:
-  version "0.0.110"
-  resolved "https://registry.yarnpkg.com/moralis/-/moralis-0.0.110.tgz#646310bc2ade6c04dda54b4b76a979eb7567a632"
-  integrity sha512-0e0hZI5xr/VznA4EQViUR8fLSQ67VtjBMeV6p1dVG3T+eUJLQf5OqmOQ6krPelPItCZbevIInrwzl0n+WdZzvA==
+moralis@^0.0.111:
+  version "0.0.111"
+  resolved "https://registry.yarnpkg.com/moralis/-/moralis-0.0.111.tgz#e78f73adef848594f38b29490e6e53a615a34335"
+  integrity sha512-HVxortp2ikKOJ0llIQPaDaQjD8Oxxz+uslnxu2uyw+zPp2dviTzVX+3wRAvu7VcU9CAlvt8C1B0JT3PlHlsqKA==
   dependencies:
     "@babel/runtime" "7.12.5"
     "@babel/runtime-corejs3" "7.12.5"
