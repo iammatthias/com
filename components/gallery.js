@@ -141,7 +141,6 @@ export default function Gallery(props) {
               const aspect = props.ratio
                 ? eval(props.ratio) * bounds.width
                 : ((d.height / d.width) * bounds.width) / length
-              console.log(aspect)
               return aspect
             }}
             columns={length}
