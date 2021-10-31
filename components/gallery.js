@@ -136,16 +136,25 @@ export default function Gallery(props) {
   const length = imageSetImages.length <= 5 ? imageSetImages.length : 5
 
   const columns =
-    bounds.width >= 1000
-      ? 5
-      : bounds.width >= 800
-      ? 4
-      : bounds.width >= 600
-      ? 3
-      : bounds.width >= 500
-      ? 2
-      : 2
-  console.log(bounds.width)
+    length > 1
+      ? bounds.width >= 1000
+        ? length === 5
+          ? 5
+          : length
+        : bounds.width >= 800
+        ? length === 4
+          ? length
+          : 4
+        : bounds.width >= 600
+        ? length === 3
+          ? length
+          : 3
+        : bounds.width >= 500
+        ? length === 2
+          ? length
+          : 2
+        : 2
+      : 1
 
   return (
     <Box ref={ref}>
