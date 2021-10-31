@@ -3,6 +3,7 @@
 // gallery
 
 import Image from 'next/image'
+import { useState, useEffect } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { Box } from 'theme-ui'
 import { useRouter } from 'next/router'
@@ -37,11 +38,17 @@ const QUERY = gql`
 `
 
 export default function Gallery(props) {
+  // get path for events
   const router = useRouter()
   const pathname = router.asPath
+
+  // container width
   const [ref, bounds] = useMeasure()
+
+  // init lightbox
   const { openLightbox } = useLightbox()
 
+  // data
   const { data, loading, error } = useQuery(QUERY, {
     variables: {
       title: props.imageset,
@@ -62,8 +69,10 @@ export default function Gallery(props) {
     return null
   }
 
+  // data result - images
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items
 
+  // lightbox options
   const options = {
     settings: {
       overlayColor: 'rgba(0, 0, 0, 0.9)',
@@ -126,6 +135,18 @@ export default function Gallery(props) {
 
   const length = imageSetImages.length <= 5 ? imageSetImages.length : 5
 
+  const columns =
+    bounds.width >= 1000
+      ? 5
+      : bounds.width >= 800
+      ? 4
+      : bounds.width >= 600
+      ? 3
+      : bounds.width >= 500
+      ? 2
+      : 2
+  console.log(bounds.width)
+
   return (
     <Box ref={ref}>
       <SimpleReactLightbox>
@@ -140,10 +161,10 @@ export default function Gallery(props) {
             heights={d => {
               const aspect = props.ratio
                 ? eval(props.ratio) * bounds.width
-                : ((d.height / d.width) * bounds.width) / length
+                : ((d.height / d.width) * bounds.width) / columns
               return aspect
             }}
-            columns={length}
+            columns={columns}
             margin={16}
           >
             {data => (

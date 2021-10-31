@@ -6422,10 +6422,10 @@ mock-fs@^4.1.0:
   resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.14.0.tgz#ce5124d2c601421255985e6e94da80a7357b1b18"
   integrity sha512-qYvlv/exQ4+svI3UOvPUpLDF0OMX5euvUH0Ny4N5QyRyhNdgAgUrVH3iUINSzEPLvx0kbo/Bp28GJKIqvE7URw==
 
-moralis@^0.0.111:
-  version "0.0.111"
-  resolved "https://registry.yarnpkg.com/moralis/-/moralis-0.0.111.tgz#e78f73adef848594f38b29490e6e53a615a34335"
-  integrity sha512-HVxortp2ikKOJ0llIQPaDaQjD8Oxxz+uslnxu2uyw+zPp2dviTzVX+3wRAvu7VcU9CAlvt8C1B0JT3PlHlsqKA==
+moralis@^0.0.112:
+  version "0.0.112"
+  resolved "https://registry.yarnpkg.com/moralis/-/moralis-0.0.112.tgz#31dc9e21a5f7233e06666331a0cf76dbb5b642f0"
+  integrity sha512-Npdl34HEirZ7xsHlmYJLl22UKtMqkXjz/uIJnPwgepMEDvHJxQrVWl9ilCfz/JUeUqAYPgv15tnhQIZUgecsQw==
   dependencies:
     "@babel/runtime" "7.12.5"
     "@babel/runtime-corejs3" "7.12.5"
