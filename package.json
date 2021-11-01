@@ -22,7 +22,7 @@
     "@apollo/client": "^3.4.16",
     "@ensdomains/ensjs": "^2.0.1",
     "@mdx-js/loader": "^1.6.22",
-    "@next/mdx": "^12.0.1",
+    "@next/mdx": "^12.0.2",
     "@segment/snippet": "^4.15.3",
     "@u-wave/react-vimeo": "^0.9.5",
     "@walletconnect/web3-provider": "^1.6.6",
