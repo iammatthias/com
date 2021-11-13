@@ -33,6 +33,7 @@ export default function Home({
         borderRadius: '4px',
         gridArea: 'body',
         position: 'relative',
+        height: '100%',
         '&::after': {
           content: '""',
           position: 'absolute',
@@ -60,24 +61,20 @@ export default function Home({
         <PageHeader pageTitle={pageTitle} slug={slug} />
       ) : null}
 
-      <Box sx={{ p: [3, 3, 4] }}>
-        <article
-          ref={post}
-          sx={{
-            'a, p, h1, h2, h3, h4, h5, h6, hr, small, blockquote, ul, ol, pre, span, #squiggleContainer':
-              {
-                ...(pageType == 'Blog' || pageType == 'Gallery'
-                  ? { maxWidth: ['100%', '', '61.8%'] }
-                  : null),
+      <Box
+        sx={{
+          p: [3, 3, 4],
+          'article > *': {
+            ...(pageType == 'Blog' || pageType == 'Gallery'
+              ? { maxWidth: ['100%', '', '61.8%'] }
+              : null),
 
-                mx: 'auto',
-              },
-            'p, a': { width: '100%' },
-            '.grid span, #pageList, #emailCapture, #sparkle, blockquote p': {
-              maxWidth: '100%',
-            },
-          }}
-        >
+            mx: 'auto',
+          },
+          'article > .gallery': { maxWidth: '100%' },
+        }}
+      >
+        <article ref={post}>
           <MDXRemote {...source} />
         </article>
       </Box>

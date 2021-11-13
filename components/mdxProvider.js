@@ -52,7 +52,7 @@ const mdComponents = {
   MobileOnly: props => <MobileOnly {...props} />,
   DesktopOnly: props => <DesktopOnly {...props} />,
   Gallery: props => (
-    <ClientOnly>
+    <ClientOnly className="gallery">
       <Gallery {...props} />
     </ClientOnly>
   ),

@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@apollo/client@^3.4.16":
-  version "3.4.16"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.4.16.tgz#67090d5655aa843fa64d26f1913315e384a5fa0f"
-  integrity sha512-iF4zEYwvebkri0BZQyv8zfavPfVEafsK0wkOofa6eC2yZu50J18uTutKtC174rjHZ2eyxZ8tV7NvAPKRT+OtZw==
+"@apollo/client@^3.4.17":
+  version "3.4.17"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.4.17.tgz#4972e19a49809e16d17c5adc67f45623a6dac135"
+  integrity sha512-MDt2rwMX1GqodiVEKJqmDmAz8xr0qJmq5PdWeIt0yDaT4GOkKYWZiWkyfhfv3raTk8PyJvbsNG9q2CqmUrlGfg==
   dependencies:
     "@graphql-typed-document-node/core" "^3.0.0"
     "@wry/context" "^0.6.0"
@@ -6410,10 +6410,10 @@ mock-fs@^4.1.0:
   resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.14.0.tgz#ce5124d2c601421255985e6e94da80a7357b1b18"
   integrity sha512-qYvlv/exQ4+svI3UOvPUpLDF0OMX5euvUH0Ny4N5QyRyhNdgAgUrVH3iUINSzEPLvx0kbo/Bp28GJKIqvE7URw==
 
-moralis@^0.0.124:
-  version "0.0.124"
-  resolved "https://registry.yarnpkg.com/moralis/-/moralis-0.0.124.tgz#63181fd11d45c876c5673151952b626779e562fb"
-  integrity sha512-meX1sEw7mrAHPk741EQOmcpTaQlKmTxJkt4gRdjOGty3xkdU9XE0NDN/5jtvTeHwRIgK7U9fsrKxI3PzC60hMA==
+moralis@^0.0.131:
+  version "0.0.131"
+  resolved "https://registry.yarnpkg.com/moralis/-/moralis-0.0.131.tgz#68585d4f489f1265a1abc0f54dabf3e00ce98402"
+  integrity sha512-41J3ixj5Fdpc/QxCXNwJBPu7eC0m0XhanpQ8IoBAXq1nOuml4XmX7N2sYlgCC0jSWkOadbRI5dk0TifCWqUmgg==
   dependencies:
     "@babel/runtime" "7.12.5"
     "@babel/runtime-corejs3" "7.12.5"
@@ -6549,10 +6549,10 @@ neo-async@^2.5.0:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-next-mdx-remote@^3.0.7:
-  version "3.0.7"
-  resolved "https://registry.yarnpkg.com/next-mdx-remote/-/next-mdx-remote-3.0.7.tgz#37d93cd1722b2f0ed21cf3e6da09e30907bb21f1"
-  integrity sha512-qLHf9nJHozhnntasYWUD+Y3xGAitMaG4dcS0qy+AxjS4pN241qwH6Rbik53ZqOA6ZCFWBCB/Y1HEQKDFnq1rew==
+next-mdx-remote@^3.0.8:
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/next-mdx-remote/-/next-mdx-remote-3.0.8.tgz#ea2e7f9f3c99a0ce8167976c547e621d5930e1e0"
+  integrity sha512-WFSxt0crxG5PN/0WvaunzxzqV3wh3dPBZyhkclxwyQfLSRKzsNSArzot/4gYTOOZ/GtyRfNjbI/HtDsW2S4fqQ==
   dependencies:
     "@mdx-js/mdx" "^1.6.22"
     "@mdx-js/react" "^1.6.22"
@@ -7503,10 +7503,10 @@ react-headroom@^3.2.0:
     raf "^3.3.0"
     shallowequal "^1.1.0"
 
-react-hook-form@^7.19.0:
-  version "7.19.0"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.19.0.tgz#8549d33988be48157769d5d6788a05bef2d8ea07"
-  integrity sha512-imJZIjqaDo12CrcMctK88PdNvl9CweS2QAsH/aZqxzJc/JIpvaBpaoYFdnBVs58imGm8drQ9+cM0vRK+HglN3w==
+react-hook-form@^7.19.5:
+  version "7.19.5"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.19.5.tgz#cc6087419facf2fb57d47d5b0d4a8ca63201298f"
+  integrity sha512-+M9gd0nWWASuEitf5PQGOGNElnHknzY3rGISrPDXwsOmZb7c/jyvkRUqk4OJXaZit1ZwesSv+EysttdAeFEfmw==
 
 react-is@17.0.2:
   version "17.0.2"

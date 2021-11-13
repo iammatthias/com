@@ -184,8 +184,6 @@ export default function Gallery(props) {
                 placeholder="blur"
                 blurDataURL={data.loader}
                 objectFit="cover"
-                width={data.width}
-                height={data.height}
                 onClick={() => openLightbox(data.index)}
                 className="gallery"
               />

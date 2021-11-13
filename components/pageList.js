@@ -57,14 +57,15 @@ export default function PageList(props) {
       {pageList.map(page => (
         <Link key={page.slug} href={page.slug}>
           <Card id="pageList">
-            <p sx={{ fontSize: 1, fontWeight: 'bold', m: 0, p: 0 }}>
+            <p sx={{ fontSize: [1, 2], fontWeight: 'bold', m: 0, mb: 1, p: 0 }}>
               {page.title}
             </p>
-            <small>
+            <Squiggle squiggleWidth={10} strokeColor="backgroundTint" />
+            <p sx={{ fontSize: [0, 1], m: 0, p: 0 }}>
               {new Date(
                 page.publishDate.replace(/-/g, '/').replace(/T.+/, ''),
               ).toLocaleDateString('en-us')}
-            </small>
+            </p>
           </Card>
         </Link>
       ))}
