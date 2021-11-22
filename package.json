@@ -30,7 +30,7 @@
     "feed": "^4.2.2",
     "graphql": "^16.0.1",
     "mauerwerk": "^2.0.2",
-    "moralis": "^0.0.131",
+    "moralis": "^0.0.134",
     "next": "^12.0.3",
     "next-mdx-remote": "^3.0.8",
     "react": "^17.0.2",
