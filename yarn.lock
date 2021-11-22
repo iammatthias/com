@@ -7503,10 +7503,10 @@ react-headroom@^3.2.0:
     raf "^3.3.0"
     shallowequal "^1.1.0"
 
-react-hook-form@^7.19.5:
-  version "7.19.5"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.19.5.tgz#cc6087419facf2fb57d47d5b0d4a8ca63201298f"
-  integrity sha512-+M9gd0nWWASuEitf5PQGOGNElnHknzY3rGISrPDXwsOmZb7c/jyvkRUqk4OJXaZit1ZwesSv+EysttdAeFEfmw==
+react-hook-form@^7.20.2:
+  version "7.20.2"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.20.2.tgz#6fe76b680dd54ceb95c9c1a3c6338162081ba2e2"
+  integrity sha512-J5zkZW0Mf3KuMlk7Tl1tWYXoSjYhfKyEu//NfWTn2xzvv2vnDT5/EE/vHgtNb7kVeYpx6/mHIBd9aOfNnWcOsg==
 
 react-is@17.0.2:
   version "17.0.2"
