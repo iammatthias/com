@@ -60,7 +60,7 @@ export default function PageList(props) {
             <p sx={{ fontSize: [1, 2], fontWeight: 'bold', m: 0, mb: 1, p: 0 }}>
               {page.title}
             </p>
-            <Squiggle squiggleWidth={10} strokeColor="backgroundTint" />
+            <Squiggle squiggleWidth={8} />
             <p sx={{ fontSize: [0, 1], m: 0, p: 0 }}>
               {new Date(
                 page.publishDate.replace(/-/g, '/').replace(/T.+/, ''),

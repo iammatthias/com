@@ -3,20 +3,22 @@
 // gallery
 
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useRef } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { Box } from 'theme-ui'
-import { useRouter } from 'next/router'
-import { Grid } from 'mauerwerk'
+import {
+  Masonry,
+  useMasonry,
+  usePositioner,
+  useContainerPosition,
+  useScroller,
+} from 'masonic'
 import useMeasure from 'react-use-measure'
 import Loading from './loading'
 import Squiggle from './squiggle'
 
 // lightbox
-import SimpleReactLightbox, {
-  SRLWrapper,
-  useLightbox,
-} from 'simple-react-lightbox'
+import Lightbox from './galleryLightbox'
 
 const QUERY = gql`
   query ($title: String) {
@@ -25,7 +27,8 @@ const QUERY = gql`
         title
         imagesCollection {
           items {
-            url(transform: { width: 900, quality: 85 })
+            url(transform: { width: 1200, quality: 75 })
+            urlSmall: url(transform: { width: 500, quality: 85 })
             loader: url(transform: { width: 5, quality: 1 })
             title
             width
@@ -38,15 +41,8 @@ const QUERY = gql`
 `
 
 export default function Gallery(props) {
-  // get path for events
-  const router = useRouter()
-  const pathname = router.asPath
-
   // container width
   const [ref, bounds] = useMeasure()
-
-  // init lightbox
-  const { openLightbox } = useLightbox()
 
   // data
   const { data, loading, error } = useQuery(QUERY, {
@@ -71,126 +67,49 @@ export default function Gallery(props) {
 
   // data result - images
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items
+  const length = imageSetImages.length <= 7 ? imageSetImages.length : 7
+  const columns = bounds.width / length
+  console.log(columns)
 
-  // lightbox options
-  const options = {
-    settings: {
-      overlayColor: 'rgba(0, 0, 0, 0.9)',
-      autoplaySpeed: 0,
-      hideControlsAfter: false,
-      disablePanzoom: true,
-    },
-    buttons: {
-      backgroundColor: 'white',
-      iconColor: 'black',
-      showDownloadButton: false,
-    },
-    caption: {
-      showCaption: false,
-    },
-    thumbnails: {
-      showThumbnails: false,
-    },
-  }
+  // masonry
 
-  const callbacks = {
-    onSlideChange: object => handleSlideChange(object),
-    onLightboxOpened: object => handleLightboxOpen(object),
-    onLightboxClosed: object => handleLightboxClose(object),
-  }
-
-  function handleSlideChange(object) {
-    if (typeof window !== 'undefined') {
-      global.analytics.track('Lightbox Slide Changed', {
-        src: object.slides.current.source,
-        location: pathname,
-        direction: object.action,
-      })
-    }
-
-    return object
-  }
-
-  function handleLightboxOpen(object) {
-    if (typeof window !== 'undefined') {
-      global.analytics.track('Lightbox Opened', {
-        src: object.currentSlide.source,
-        location: pathname,
-      })
-    }
-
-    return object
-  }
-
-  function handleLightboxClose(object) {
-    if (typeof window !== 'undefined') {
-      global.analytics.track('Lightbox Closed', {
-        src: object.currentSlide.source,
-        location: pathname,
-      })
-    }
-
-    return object
-  }
-
-  const length = imageSetImages.length <= 5 ? imageSetImages.length : 5
-
-  const columns =
-    length > 1
-      ? bounds.width >= 1000
-        ? length === 5
-          ? 5
-          : length
-        : bounds.width >= 800
-        ? length === 4
-          ? length
-          : 4
-        : bounds.width >= 600
-        ? length === 3
-          ? length
-          : 3
-        : bounds.width >= 500
-        ? length === 2
-          ? length
-          : 2
-        : 1
-      : 1
+  const MasonryCard = ({ index, data }) => (
+    <div
+      key={index}
+      sx={{
+        height: props.ratio
+          ? eval(props.ratio) * columns
+          : (data.width / data.height) * columns,
+        '*': {
+          borderRadius: (length = 1 ? '4px' : 0),
+          boxShadow: (length = 1 ? 'card' : ''),
+        },
+      }}
+      className="workDamnYou"
+    >
+      <Image
+        src={(length = 1 ? data.url : data.urlSmall)}
+        alt={data.title}
+        layout="fill"
+        placeholder="blur"
+        blurDataURL={data.loader}
+        objectFit="cover"
+        className="gallery"
+      />
+    </div>
+  )
 
   return (
     <Box ref={ref}>
-      <SimpleReactLightbox>
-        <SRLWrapper options={options} callbacks={callbacks}>
-          <Grid
-            className="grid"
-            // Arbitrary data, should contain keys, possibly heights, etc.
-            data={imageSetImages}
-            // Key accessor, instructs grid on how to fet individual keys from the data set
-            keys={d => d.title}
-            // Can be a fixed value or an individual data accessor
-            heights={d => {
-              const aspect = props.ratio
-                ? eval(props.ratio) * bounds.width
-                : ((d.height / d.width) * bounds.width) / columns
-              return aspect
-            }}
-            columns={columns}
-            margin={16}
-          >
-            {data => (
-              <Image
-                src={data.url}
-                alt={data.title}
-                layout="fill"
-                placeholder="blur"
-                blurDataURL={data.loader}
-                objectFit="cover"
-                onClick={() => openLightbox(data.index)}
-                className="gallery"
-              />
-            )}
-          </Grid>
-        </SRLWrapper>
-      </SimpleReactLightbox>
+      <Lightbox>
+        <Masonry
+          items={imageSetImages}
+          render={MasonryCard}
+          columnGutter={8}
+          columnWidth={columns}
+          overscanBy={1}
+        />
+      </Lightbox>
     </Box>
   )
 }

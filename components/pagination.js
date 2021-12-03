@@ -61,10 +61,15 @@ export default function PageList(props) {
   const paginationNext = data.pagination.items[next].slug
 
   return (
-    <Box>
+    <Box sx={{ width: 'fit-content' }}>
       <Squiggle />
       <Box
-        sx={{ mt: 4, display: 'flex', flexDirection: ['column', '', 'row'] }}
+        sx={{
+          mt: 4,
+          display: 'flex',
+          flexDirection: ['column', '', 'row'],
+          width: 'fit-content',
+        }}
       >
         <Link href={paginationNext}>
           <Button sx={{ mb: [3, '', 0] }}>Next</Button>

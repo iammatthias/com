@@ -15,7 +15,6 @@ export default function Layout({ children }) {
       <Box
         sx={{
           width: '100%;',
-          maxWidth: ['100%', '', '80vw'],
         }}
       >
         <DesktopOnly>

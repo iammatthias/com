@@ -58,5 +58,5 @@ export default function Squiggle({ height, strokeColor, squiggleWidth }) {
 Squiggle.defaultProps = {
   squiggleWidth: 8,
   height: '24',
-  strokeColor: 'accent',
+  strokeColor: 'text',
 }

@@ -18,37 +18,38 @@ export default function Spicy({ children, ...props }) {
         borderRadius: '4px 4px 0 0',
         display: 'flex',
         flexDirection: 'column',
-        mb: 5,
+        mb: 3,
       }}
     >
-      <Box sx={{ width: 'fit-content', textAlign: 'center' }}>
-        <h2>{props.pageTitle}</h2>
+      <Box sx={{ width: 'fit-content' }}>
+        <h2 sx={{ width: 'fit-content' }}>{props.pageTitle}</h2>
+        {props.publishDate ? (
+          <>
+            <small sx={{ mb: 3, display: 'block', width: 'fit-content' }}>
+              Published: {props.publishDate}
+              {props.readingTime > 0 ? (
+                <span>
+                  {spacer} {props.readingTime} <em> min to read</em> {spacer}{' '}
+                  {props.wordsCount} <em> words</em>
+                </span>
+              ) : null}
+            </small>
+
+            <Link href={comments}>
+              <Button
+                sx={{ width: ['100%', '250px'], mb: 3 }}
+                title="Discuss on Twitter"
+              >
+                Discuss on Twitter
+              </Button>
+            </Link>
+            <br />
+          </>
+        ) : null}
+
         <Squiggle />
         <br />
       </Box>
-
-      {props.publishDate ? (
-        <>
-          <small>
-            Published: {props.publishDate}
-            {props.readingTime > 0 ? (
-              <span>
-                {spacer} {props.readingTime} <em> min to read</em> {spacer}{' '}
-                {props.wordsCount} <em> words</em>
-              </span>
-            ) : null}
-          </small>
-          <br />
-          <Link href={comments}>
-            <Button
-              sx={{ width: ['100%', '250px'] }}
-              title="Discuss on Twitter"
-            >
-              Discuss on Twitter
-            </Button>
-          </Link>
-        </>
-      ) : null}
     </Box>
   )
 }

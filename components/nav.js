@@ -12,19 +12,10 @@ export default function Nav() {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        p: [3, 3, 4],
+        // justifyContent: ['center', '', 'start'],
+        py: [3, 3, 4],
       }}
     >
-      <Box
-        sx={{
-          gridArea: 'logo',
-          textAlign: ['left', '', 'center'],
-        }}
-      >
-        <Link href="/" passHref>
-          <Logo />
-        </Link>
-      </Box>
       <Box
         sx={{
           gridArea: 'menu',
