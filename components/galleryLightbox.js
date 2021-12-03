@@ -13,9 +13,6 @@ export default function Lightbox({ children }) {
   const router = useRouter()
   const pathname = router.asPath
 
-  // init lightbox
-  const { openLightbox } = useLightbox()
-
   // lightbox options
   const options = {
     settings: {

@@ -66,6 +66,7 @@ export default function Gallery(props) {
   }
 
   // data result - images
+  const imageSetTitle = data.galleryCollection.items[0].title
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items
   const length = imageSetImages.length <= 7 ? imageSetImages.length : 7
   const columns = bounds.width / length
@@ -79,7 +80,7 @@ export default function Gallery(props) {
       sx={{
         height: props.ratio
           ? eval(props.ratio) * columns
-          : (data.width / data.height) * columns,
+          : (data.height / data.width) * columns,
         '*': {
           borderRadius: (length = 1 ? '4px' : 0),
           boxShadow: (length = 1 ? 'card' : ''),
@@ -101,13 +102,14 @@ export default function Gallery(props) {
 
   return (
     <Box ref={ref}>
+      <h1>{imageSetTitle}</h1>
       <Lightbox>
         <Masonry
           items={imageSetImages}
           render={MasonryCard}
           columnGutter={8}
           columnWidth={columns}
-          overscanBy={1}
+          overscanBy={Infinity}
         />
       </Lightbox>
     </Box>
