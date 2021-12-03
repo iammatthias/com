@@ -42,12 +42,12 @@ const Meta = ({
     <meta
       key="theme_color"
       name="theme-color"
-      content={theme.colors.green[1]}
+      content={theme.colors.background}
     />
     <meta
       key="tile_color"
       name="msapplication-TileColor"
-      content={theme.colors.green[1]}
+      content={theme.colors.background}
     />
     {/* <link
       key="safari_icon"

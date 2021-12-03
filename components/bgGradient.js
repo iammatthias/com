@@ -10,13 +10,9 @@ export default function Background({ props }) {
   const refAnimationFrame = useRef()
 
   useEffect(() => {
-    const colors = [
-      0x00aeef, 0x1b5cff, 0x7d2e61,
-      // 0xed3d24,
-      0xffd600, 0xed0f69,
-    ]
+    const colors = [0x00aeef, 0x1b5cff, 0x7d2e61, 0xed3d24, 0xffd600, 0xed0f69]
 
-    const NUM_CIRCLES = 15
+    const NUM_CIRCLES = colors.length
 
     const canvas = refCanvas.current
     const ctx = canvas.getContext('2d')
@@ -91,7 +87,7 @@ export default function Background({ props }) {
         left: '0',
         height: '100vh',
         width: '100vw',
-        opacity: '0.25',
+        opacity: '0.382',
         zIndex: '-10',
       }}
     >
