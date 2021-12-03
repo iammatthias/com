@@ -25,7 +25,7 @@ const QUERY = gql`
         title
         imagesCollection {
           items {
-            url(transform: { width: 1200, quality: 70 })
+            url(transform: { width: 900, quality: 85 })
             loader: url(transform: { width: 5, quality: 1 })
             title
             width
