@@ -2,8 +2,8 @@
 
 A digital garden built with [Next.js]. Optimized for image galleries and lightweight blogging. Routes are created dynamically, and content is styled with MDX.
 
-web2: [iammatthias.com](iammatthias.com)  
-web3: [ipfs.iammatthias.com](ipfs.iammatthias.com)
+web2: [iammatthias.com](https://iammatthias.com)  
+web3: [ipfs.iammatthias.com](https://ipfs.iammatthias.com)
 
 ---
 
