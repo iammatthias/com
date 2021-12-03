@@ -32,7 +32,7 @@ const ColorSwitcher = props => {
           r={14}
           stroke="currentcolor"
           strokeWidth={3}
-          sx={{ fill: 'backgroundTint' }}
+          sx={{ fill: 'transparent' }}
         />
       </svg>
     </IconButton>

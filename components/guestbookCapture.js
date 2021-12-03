@@ -12,14 +12,12 @@ export default function GuestbookCapture({ props }) {
       sx={{
         position: 'relative',
         p: [3, 3, 4],
-        bg: 'elevated',
+        boxShadow: 'card',
         height: 'fit-content',
         borderRadius: '4px',
       }}
     >
-      <h3>
-        <Spicy>Sign the web3 guestbook!</Spicy>
-      </h3>
+      <h3 sx={{ m: 0 }}>Web3 Guestbook</h3>
       <p>
         Connect with your favorite wallet, and sign the Web3 Guestbook using a
         gasless meta-transaction.

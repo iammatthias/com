@@ -31,9 +31,9 @@ export default function Home() {
           </p>
         </article>
       </Box>
-      <ClientOnly>
+      {/* <ClientOnly>
         <Gradient />
-      </ClientOnly>
+      </ClientOnly> */}
     </>
   )
 }

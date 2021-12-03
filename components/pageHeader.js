@@ -15,18 +15,14 @@ export default function Spicy({ children, ...props }) {
     <Box
       {...props}
       sx={{
-        p: [3, 3, 4],
-        bg: 'muted',
         borderRadius: '4px 4px 0 0',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         flexDirection: 'column',
+        mb: 5,
       }}
     >
       <Box sx={{ width: 'fit-content', textAlign: 'center' }}>
         <h2>{props.pageTitle}</h2>
-        <br />
         <Squiggle />
         <br />
       </Box>
@@ -44,7 +40,12 @@ export default function Spicy({ children, ...props }) {
           </small>
           <br />
           <Link href={comments}>
-            <Button title="Discuss on Twitter">Discuss on Twitter</Button>
+            <Button
+              sx={{ width: ['100%', '250px'] }}
+              title="Discuss on Twitter"
+            >
+              Discuss on Twitter
+            </Button>
           </Link>
         </>
       ) : null}

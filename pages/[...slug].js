@@ -26,26 +26,7 @@ export default function Home({
   const pathname = router.asPath
 
   return (
-    <Box
-      sx={{
-        backgroundImage: theme =>
-          `linear-gradient(to bottom, ${theme.colors.background}, ${theme.colors.backgroundTint})`,
-        borderRadius: '4px',
-        gridArea: 'body',
-        position: 'relative',
-        height: '100%',
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '50%',
-          zIndex: '-10',
-          boxShadow: 'frame',
-        },
-      }}
-    >
+    <>
       {pageType == 'Blog' || pageType == 'Gallery' ? (
         <PageHeader
           pageTitle={pageTitle}
@@ -63,13 +44,10 @@ export default function Home({
 
       <Box
         sx={{
-          p: [3, 3, 4],
           'article > *': {
             ...(pageType == 'Blog' || pageType == 'Gallery'
               ? { maxWidth: ['100%', '', '61.8%'] }
               : null),
-
-            mx: 'auto',
           },
           'article > .gallery': { maxWidth: '100%' },
         }}
@@ -81,7 +59,7 @@ export default function Home({
       {pageType == 'Blog' || pageType == 'Gallery' ? (
         <PageFooter type={pageType} slug={slug} />
       ) : null}
-    </Box>
+    </>
   )
 }
 

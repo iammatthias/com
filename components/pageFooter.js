@@ -10,11 +10,10 @@ export default function Spicy({ children, ...props }) {
     <Box
       {...props}
       sx={{
-        p: [3, 3, 4],
-        bg: 'muted',
+        mt: 4,
+        py: [3, 3, 4],
         borderRadius: '4px 4px 0 0',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
       }}

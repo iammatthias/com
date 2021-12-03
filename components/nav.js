@@ -8,22 +8,16 @@ export default function Nav() {
   return (
     <Box
       sx={{
-        display: 'grid',
         gridArea: 'nav',
-        gridTemplateAreas: [
-          '"logo toggle" "menu menu"',
-          '',
-          '"logo" "menu" "toggle"',
-        ],
-        gridTemplateRows: ['1fr 2fr', '', 'auto auto 1fr'],
-        gridTemplateColumns: ['1fr 1fr', '', '1fr'],
-        gridGap: [3, '', 0],
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        p: [3, 3, 4],
       }}
     >
       <Box
         sx={{
           gridArea: 'logo',
-          mb: [0, '', 3],
           textAlign: ['left', '', 'center'],
         }}
       >
@@ -34,22 +28,17 @@ export default function Nav() {
       <Box
         sx={{
           gridArea: 'menu',
-          mb: [0, '', 3],
-          padding: [1, '', 3],
-          bg: 'background',
+          mx: [0, '', 3],
+          width: '100%',
           borderRadius: '4px',
-          boxShadow: 'card',
           height: 'fit-content',
-          justifyContent: 'center',
-          alignContent: 'center',
+          width: 'fit-content',
           textAlign: 'center',
           '> a': {
-            display: ['inline-block', '', 'block'],
-            writingMode: ['', '', 'vertical-rl'],
+            textAlign: 'center',
             lineHeight: ['3', '', '.35'],
             color: 'text',
-            pb: [0, '', 3],
-            px: [2, '', 0],
+            px: 2,
             '&:last-child': {
               pb: [0, 0, 0],
               px: [2, '', 0],

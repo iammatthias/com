@@ -8,7 +8,7 @@ const Logo = React.forwardRef((props, ref) => (
       width="36"
       height="36"
       viewBox="0 0 400 400"
-      sx={{ bg: 'backgroundTint', borderRadius: '50px', boxShadow: 'card' }}
+      sx={{ bg: 'transparent', borderRadius: '50px', boxShadow: 'card' }}
     >
       <g>
         <path

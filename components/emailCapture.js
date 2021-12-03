@@ -34,7 +34,7 @@ export default function EmailCapture({ props }) {
       sx={{
         position: 'relative',
         p: [3, 3, 4],
-        bg: 'elevated',
+
         height: 'fit-content',
         borderRadius: '4px',
         boxShadow: 'card',
