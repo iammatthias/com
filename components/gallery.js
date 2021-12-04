@@ -67,7 +67,7 @@ export default function Gallery(props) {
 
   const MasonryCard = ({ index, data, width }) => (
     <>
-      <p>{(data.height / data.width) * columns}</p>
+      {/* <p>{(data.height / data.width) * columns}</p> */}
       <div
         key={index}
         sx={{
