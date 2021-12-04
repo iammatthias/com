@@ -3,16 +3,10 @@
 // gallery
 
 import Image from 'next/image'
-import { useRef } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { Box } from 'theme-ui'
-import {
-  Masonry,
-  useMasonry,
-  usePositioner,
-  useContainerPosition,
-  useScroller,
-} from 'masonic'
+import { Masonry } from 'masonic'
+import { useRouter } from 'next/router'
 import useMeasure from 'react-use-measure'
 import Loading from './loading'
 import Squiggle from './squiggle'
@@ -41,8 +35,11 @@ const QUERY = gql`
 `
 
 export default function Gallery(props) {
+  const router = useRouter()
+  const pathname = router.asPath
+
   // container width
-  const [ref, bounds] = useMeasure()
+  const [ref, bounds] = useMeasure({ options: { offset: false } })
 
   // data
   const { data, loading, error } = useQuery(QUERY, {
@@ -52,12 +49,7 @@ export default function Gallery(props) {
   })
 
   if (loading) {
-    return (
-      <Box sx={{ width: 'fit-content', margin: '0 auto' }}>
-        <Loading />
-        <Squiggle />
-      </Box>
-    )
+    return <Loading />
   }
 
   if (error) {
@@ -68,46 +60,50 @@ export default function Gallery(props) {
   // data result - images
   const imageSetTitle = data.galleryCollection.items[0].title
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items
-  const length = imageSetImages.length <= 7 ? imageSetImages.length : 7
-  const columns = bounds.width / length
-  console.log(columns)
+  const imageSetLength = imageSetImages.length
+  const columns = bounds.width / (imageSetLength >= 6 ? 6 : imageSetLength)
 
   // masonry
 
-  const MasonryCard = ({ index, data }) => (
-    <div
-      key={index}
-      sx={{
-        height: props.ratio
-          ? eval(props.ratio) * columns
-          : (data.height / data.width) * columns,
-        '*': {
-          borderRadius: (length = 1 ? '4px' : 0),
-          boxShadow: (length = 1 ? 'card' : ''),
-        },
-      }}
-      className="workDamnYou"
-    >
-      <Image
-        src={(length = 1 ? data.url : data.urlSmall)}
-        alt={data.title}
-        layout="fill"
-        placeholder="blur"
-        blurDataURL={data.loader}
-        objectFit="cover"
-        className="gallery"
-      />
-    </div>
+  const MasonryCard = ({ index, data, width }) => (
+    <>
+      <p>{(data.height / data.width) * columns}</p>
+      <div
+        key={index}
+        sx={{
+          position: 'relative',
+          width: '100%',
+          height: props.ratio
+            ? eval(props.ratio) * columns
+            : (data.height / data.width) * columns,
+          '*': {
+            borderRadius: '4px',
+            boxShadow: 'card',
+          },
+        }}
+      >
+        <Image
+          src={(length = 1 ? data.url : data.urlSmall)}
+          alt={data.title}
+          layout="fill"
+          placeholder="blur"
+          blurDataURL={data.loader}
+          objectFit="cover"
+          className="gallery"
+        />
+      </div>
+    </>
   )
 
   return (
     <Box ref={ref}>
-      <h1>{imageSetTitle}</h1>
+      {pathname.includes('/work/') ? <h1>{imageSetTitle}</h1> : null}
+
       <Lightbox>
         <Masonry
           items={imageSetImages}
           render={MasonryCard}
-          columnGutter={8}
+          columnGutter={16}
           columnWidth={columns}
           overscanBy={Infinity}
         />

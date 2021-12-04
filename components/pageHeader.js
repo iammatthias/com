@@ -22,29 +22,27 @@ export default function Spicy({ children, ...props }) {
       }}
     >
       <Box sx={{ width: 'fit-content' }}>
+        {props.publishDate ? (
+          <small sx={{ display: 'block', width: 'fit-content' }}>
+            Published: {props.publishDate}
+            {props.readingTime > 0 ? (
+              <span>
+                {spacer} {props.readingTime} <em> min to read</em> {spacer}{' '}
+                {props.wordsCount} <em> words</em>
+              </span>
+            ) : null}
+          </small>
+        ) : null}
         <h2 sx={{ width: 'fit-content' }}>{props.pageTitle}</h2>
         {props.publishDate ? (
-          <>
-            <small sx={{ mb: 3, display: 'block', width: 'fit-content' }}>
-              Published: {props.publishDate}
-              {props.readingTime > 0 ? (
-                <span>
-                  {spacer} {props.readingTime} <em> min to read</em> {spacer}{' '}
-                  {props.wordsCount} <em> words</em>
-                </span>
-              ) : null}
-            </small>
-
-            <Link href={comments}>
-              <Button
-                sx={{ width: ['100%', '250px'], mb: 3 }}
-                title="Discuss on Twitter"
-              >
-                Discuss on Twitter
-              </Button>
-            </Link>
-            <br />
-          </>
+          <Link href={comments}>
+            <Button
+              sx={{ width: ['100%', '250px'], mb: 3 }}
+              title="Discuss on Twitter"
+            >
+              Discuss on Twitter
+            </Button>
+          </Link>
         ) : null}
 
         <Squiggle />

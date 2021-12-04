@@ -3,10 +3,7 @@
 // gallery
 
 import { useRouter } from 'next/router'
-import SimpleReactLightbox, {
-  SRLWrapper,
-  useLightbox,
-} from 'simple-react-lightbox'
+import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox'
 
 export default function Lightbox({ children }) {
   // get path for events
