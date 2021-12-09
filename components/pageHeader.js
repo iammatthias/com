@@ -33,20 +33,17 @@ export default function Spicy({ children, ...props }) {
             ) : null}
           </small>
         ) : null}
-        <h2 sx={{ width: 'fit-content' }}>{props.pageTitle}</h2>
+        <h1 sx={{ width: 'fit-content', mt: 1, mb: 3 }}>{props.pageTitle}</h1>
         {props.publishDate ? (
           <Link href={comments}>
             <Button
-              sx={{ width: ['100%', '250px'], mb: 3 }}
+              sx={{ width: ['100%', '250px'], mb: 4 }}
               title="Discuss on Twitter"
             >
               Discuss on Twitter
             </Button>
           </Link>
         ) : null}
-
-        <Squiggle />
-        <br />
       </Box>
     </Box>
   )

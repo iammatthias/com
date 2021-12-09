@@ -28,7 +28,7 @@ export default class extends Document {
       <Html lang="en-US">
         <Head>
           <link
-            href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua&family=Source+Serif+Pro&family=Space+Mono&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Crimson+Pro&family=Inconsolata&display=swap"
             rel="stylesheet"
           />
           <script dangerouslySetInnerHTML={{ __html: this.renderSnippet() }} />
