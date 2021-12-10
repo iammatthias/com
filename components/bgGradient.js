@@ -22,7 +22,7 @@ export default function Background({ props }) {
 
     const circles = Array.from(new Array(NUM_CIRCLES), (_, i) => {
       const MIN_RADIUS = h * 0.618
-      const MAX_RADIUS = h * 6.18
+      const MAX_RADIUS = h * 3.82
       const rad = Math.random() * (MAX_RADIUS + MIN_RADIUS) + MAX_RADIUS
       const x = Math.random() * w
       const y = Math.random() * h
@@ -85,8 +85,8 @@ export default function Background({ props }) {
         position: 'fixed',
         top: '0',
         left: '0',
-        height: '100vh',
-        width: '100vw',
+        height: '200vh',
+        width: '200vw',
         opacity: '0.618',
         zIndex: '-10',
       }}
