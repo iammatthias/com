@@ -21,31 +21,28 @@ export default function Home() {
           gasless meta-transaction.
         </p>
         <p>
-          <small>
-            You can view the source for this page{' '}
-            <Link href="https://github.com/iammatthias/.com/blob/master/pages/guestbook.js">
-              here
-            </Link>
-            ,{' '}
-            <Link href="https://github.com/iammatthias/.com/blob/master/components/guestbookList.js">
-              here
-            </Link>
-            ,{' '}
-            <Link href="hhttps://github.com/iammatthias/.com/blob/master/components/guestbookCTA.js">
-              here
-            </Link>
-            , and{' '}
-            <Link href="https://github.com/iammatthias/.com/blob/master/components/guestbookCapture.js">
-              here
-            </Link>
-            .<br />
-            This Web3 guestbook is built using{' '}
-            <Link href="https://moralis.io">Moralis</Link>, and web3
-            authentication is handled using{' '}
-            <Link href="https://walletconnect.org">WalletConnect</Link>.
-          </small>
+          The source for this page can be found{' '}
+          <Link href="https://github.com/iammatthias/.com/blob/master/pages/guestbook.js">
+            here
+          </Link>
+          ,{' '}
+          <Link href="https://github.com/iammatthias/.com/blob/master/components/guestbookList.js">
+            here
+          </Link>
+          ,{' '}
+          <Link href="hhttps://github.com/iammatthias/.com/blob/master/components/guestbookCTA.js">
+            here
+          </Link>
+          , and{' '}
+          <Link href="https://github.com/iammatthias/.com/blob/master/components/guestbookCapture.js">
+            here
+          </Link>
+          .<br />
+          It is built using <Link href="https://moralis.io">Moralis</Link>, and
+          the web3 authentication is handled using{' '}
+          <Link href="https://walletconnect.org">WalletConnect</Link>.
         </p>
-        <hr />
+
         <GuestbookList />
       </article>
     </MoralisProvider>

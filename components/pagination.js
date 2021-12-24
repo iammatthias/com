@@ -67,14 +67,14 @@ export default function PageList(props) {
         sx={{
           mt: 4,
           display: 'flex',
-          flexDirection: ['column', '', 'row'],
+          flexDirection: 'row',
           width: 'fit-content',
         }}
       >
         <Link href={paginationNext}>
-          <Button sx={{ mb: [3, '', 0] }}>Next</Button>
+          <Button>Next</Button>
         </Link>
-        <span sx={{ mb: [3, '', 0] }}>
+        <span>
           &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;{paginationIndex + 1} /{' '}
           {paginationTotal}
           &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;

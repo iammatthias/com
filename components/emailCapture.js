@@ -4,6 +4,7 @@ import { useState } from 'react' //eslint-disable-line
 import styled from '@emotion/styled'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
+import Sparkle from './sparkle'
 
 // email
 
@@ -24,88 +25,64 @@ export default function EmailCapture({ props }) {
     e.target.reset()
   }
 
+  const Capture = styled.div`
+    opacity: ${props => (props.open ? '0' : '1')};
+    visibility: ${props => (props.open ? 'hidden' : 'visible')};
+  `
   const Modal = styled.div`
     opacity: ${props => (props.open ? '1' : '0')};
     visibility: ${props => (props.open ? 'visible' : 'hidden')};
   `
   return (
     <Box
-      id="emailCapture"
       sx={{
         position: 'relative',
         p: [3, 3, 4],
-
         height: 'fit-content',
         borderRadius: '4px',
-        boxShadow: 'card',
         display: 'grid',
         gridTemplateRows: ['auto 1fr'],
         gridTemplateColumns: ['1fr'],
         gridGap: '1rem',
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}
-      >
-        <h5 sx={{ m: 0, mb: 2, p: 0 }}>The Newsletter</h5>
-        <p sx={{ m: 0, p: 0 }}>Sign up for the occasional update.</p>
-      </Box>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Label
-          htmlFor="firstName"
+      <Capture open={open}>
+        <Box
           sx={{
-            fontWeight: 'bold',
-            width: 'fit-content',
-            ml: '.5rem',
-            mb: '-.75rem',
-            px: '.5rem',
-            bg: 'elevated',
-            zIndex: '1',
-            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
           }}
         >
-          first name
-        </Label>
-        <Input
-          type="firstName"
-          name="first name"
-          id="firstName"
-          {...register('firstName')}
-          mb={2}
-        />
-        <Label
-          htmlFor="email"
-          sx={{
-            fontWeight: 'bold',
-            width: 'fit-content',
-            ml: '.5rem',
-            mb: '-.75rem',
-            px: '.5rem',
-            bg: 'elevated',
-            zIndex: '1',
-            position: 'relative',
-          }}
-        >
-          email
-        </Label>
-        <Input
-          type="email"
-          name="email"
-          id="email"
-          {...register('email')}
-          mb={2}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
+          <h5 sx={{ m: 0, mb: 2, p: 0 }}>The Newsletter</h5>
+          <p sx={{ m: 0, p: 0 }}>Sign up for the occasional update.</p>
+        </Box>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Input
+            type="firstName"
+            name="first name"
+            id="firstName"
+            placeholder="name"
+            {...register('firstName')}
+            sx={{ mb: 2, '&::placeholder': { color: 'text' } }}
+          />
+          <Input
+            type="email"
+            name="email"
+            id="email"
+            placeholder="email"
+            {...register('email')}
+            sx={{ mb: 2, '&::placeholder': { color: 'text' } }}
+          />
+          <Button type="submit">
+            <Sparkle>Submit</Sparkle>
+          </Button>
+        </form>
+      </Capture>
       <Modal
         open={open}
         sx={{
           content: '""',
-          bg: 'elevated',
           borderRadius: '4px',
           transition: 'all 0.3s',
           position: 'absolute',
@@ -116,17 +93,13 @@ export default function EmailCapture({ props }) {
           height: '100%',
           width: '100%',
           zIndex: '2',
-          p: ['.5rem'],
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
+          p: [3, 3, 4],
         }}
       >
         <h4 sx={{ m: 0, mb: 2, p: 0 }}>Thanks for subscribing! </h4>
         <p sx={{ m: 0, mb: 2, p: 0 }}>See you in your inbox sometime soon.</p>
         <Button onClick={() => setOpen(false)} sx={{ width: 'fit-content' }}>
-          Close
+          <Sparkle>Close</Sparkle>
         </Button>
       </Modal>
     </Box>

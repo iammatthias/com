@@ -18,11 +18,11 @@ export default function Background({ props }) {
     const ctx = canvas.getContext('2d')
     let w = canvas.offsetWidth
     let h = canvas.offsetHeight
-    let velocity = Math.random() * (6.18 - 3.82) + 3.82
+    let velocity = Math.random() * (1.618 - 1.382) + 1.382
 
     const circles = Array.from(new Array(NUM_CIRCLES), (_, i) => {
-      const MIN_RADIUS = h * 0.618
-      const MAX_RADIUS = h * 3.82
+      const MIN_RADIUS = h * 0.382
+      const MAX_RADIUS = h * 6.18
       const rad = Math.random() * (MAX_RADIUS + MIN_RADIUS) + MAX_RADIUS
       const x = Math.random() * w
       const y = Math.random() * h
@@ -85,9 +85,9 @@ export default function Background({ props }) {
         position: 'fixed',
         top: '0',
         left: '0',
-        height: '200vh',
-        width: '200vw',
-        opacity: '0.618',
+        height: '100vh',
+        width: '100vw',
+        opacity: '0.382',
         zIndex: '-10',
       }}
     >

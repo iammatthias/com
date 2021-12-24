@@ -39,11 +39,8 @@ export default function GuestbookList({ props }) {
           <Box
             key={guest.ethAddress}
             sx={{
-              bg: 'elevated',
               my: '1rem',
-              width: ['calc(100vw - 4rem)', '50%'],
-              p: '.5rem',
-              borderRadius: '4px',
+              width: 'fit-content',
             }}
           >
             <small
@@ -75,6 +72,11 @@ export default function GuestbookList({ props }) {
                 {/* {ens.getName(guest.ethAddress)} */}
               </Link>
             </p>
+            <Squiggle
+              sx={{
+                width: 'fit-content',
+              }}
+            />
           </Box>
         ))}
       </>
