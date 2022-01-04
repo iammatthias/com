@@ -19,7 +19,6 @@ export default function Nav() {
       <Box
         sx={{
           gridArea: 'menu',
-          mx: [0, '', 3],
           width: '100%',
           borderRadius: '4px',
           height: 'fit-content',
@@ -30,10 +29,6 @@ export default function Nav() {
             lineHeight: ['3', '', '.35'],
             color: 'text',
             px: 2,
-            '&:last-child': {
-              pb: [0, 0, 0],
-              px: [2, '', 0],
-            },
           },
         }}
       >

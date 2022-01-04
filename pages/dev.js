@@ -31,9 +31,6 @@ export default function Home() {
           </p>
         </article>
       </Box>
-      {/* <ClientOnly>
-        <Gradient />
-      </ClientOnly> */}
     </>
   )
 }

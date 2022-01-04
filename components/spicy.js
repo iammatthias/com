@@ -5,13 +5,20 @@
 import { keyframes } from '@emotion/react'
 
 export default function Spicy({ children, props }) {
-  const gradient = keyframes({ to: { backgroundPosition: '200% center' } })
+  const gradient = keyframes({
+    from: {
+      backgroundPosition: '200% top',
+    },
+    to: {
+      backgroundPosition: '200% bottom',
+    },
+  })
   return (
     <span
       {...props}
       sx={{
-        backgroundImage:
-          'linear-gradient(to right, #77f, #33d0ff, #25ffbb, #33d0ff, #77f)',
+        backgroundImage: theme =>
+          `linear-gradient(to right, ${theme.colors.red[4]}, ${theme.colors.blue[4]}, ${theme.colors.green[4]}, ${theme.colors.magenta[4]})`,
         backgroundSize: '200% auto',
         backgroundClip: 'text',
         textFillColor: 'transparent',

@@ -20,8 +20,11 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.6",
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
     "@ensdomains/ensjs": "^2.0.1",
     "@mdx-js/loader": "^1.6.22",
+    "@mdx-js/react": "^1.6.22",
     "@next/mdx": "^12.0.7",
     "@segment/snippet": "^4.15.3",
     "@u-wave/react-vimeo": "^0.9.5",
@@ -31,7 +34,7 @@
     "graphql": "^16.2.0",
     "masonic": "^3.6.1",
     "mauerwerk": "^2.0.2",
-    "moralis": "^0.0.176",
+    "moralis": "^0.0.181",
     "next": "^12.0.7",
     "next-mdx-remote": "^3.0.8",
     "react": "^17.0.2",
@@ -43,7 +46,7 @@
     "react-music-embed": "^1.0.1",
     "react-use-measure": "^2.1.1",
     "simple-react-lightbox": "^3.6.9-0",
-    "theme-ui": "^0.12.1",
+    "theme-ui": "^0.13.0",
     "use-reading-time": "^0.2.0"
   }
 }
