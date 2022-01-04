@@ -4,7 +4,7 @@
 
 import { useQuery, gql } from '@apollo/client'
 import Link from 'next/link'
-import { Card, Box } from 'theme-ui'
+import { Box } from 'theme-ui'
 import Loading from './loading'
 import Squiggle from './squiggle'
 import { isDev } from './isDev'
@@ -56,17 +56,25 @@ export default function PageList(props) {
     <>
       {pageList.map(page => (
         <Link key={page.slug} href={page.slug}>
-          <Card id="pageList">
-            <small sx={{ mb: 3, display: 'block', width: 'fit-content' }}>
+          <Box
+            id="pageList"
+            sx={{
+              width: 'fit-content',
+            }}
+          >
+            <p sx={{ fontWeight: 'bold', m: 0, mb: 1, p: 0 }}>{page.title} </p>
+            <small sx={{ fontWeight: 'normal' }}>
+              Published:{' '}
               {new Date(
                 page.publishDate.replace(/-/g, '/').replace(/T.+/, ''),
               ).toLocaleDateString('en-us')}
             </small>
-            <p sx={{ fontSize: [1, 2], fontWeight: 'bold', m: 0, mb: 1, p: 0 }}>
-              {page.title}
-            </p>
-            <Squiggle squiggleWidth={8} />
-          </Card>
+            <Squiggle
+              sx={{
+                width: 'fit-content',
+              }}
+            />
+          </Box>
         </Link>
       ))}
     </>
