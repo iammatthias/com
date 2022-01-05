@@ -53,30 +53,42 @@ export default function PageList(props) {
   const pageList = data.pageCollection.items
 
   return (
-    <>
+    <Box
+      sx={{
+        display: 'flex',
+        flexFlow: 'row wrap',
+        '::after': { content: `''`, flex: '1 0 auto' },
+      }}
+    >
       {pageList.map(page => (
-        <Link key={page.slug} href={page.slug}>
-          <Box
-            id="pageList"
-            sx={{
-              width: 'fit-content',
-            }}
-          >
-            <p sx={{ fontWeight: 'bold', m: 0, mb: 1, p: 0 }}>{page.title} </p>
-            <small sx={{ fontWeight: 'normal' }}>
-              Published:{' '}
-              {new Date(
-                page.publishDate.replace(/-/g, '/').replace(/T.+/, ''),
-              ).toLocaleDateString('en-us')}
-            </small>
-            <Squiggle
+        <Box
+          id="pageList"
+          sx={{
+            mb: 4,
+            mr: 4,
+            flex: '1 0 auto',
+          }}
+        >
+          <Link key={page.slug} href={page.slug}>
+            <Box
               sx={{
                 width: 'fit-content',
               }}
-            />
-          </Box>
-        </Link>
+            >
+              <p sx={{ fontWeight: 'bold', m: 0, mb: 1, p: 0 }}>
+                {page.title}{' '}
+              </p>
+              <small sx={{ fontWeight: 'normal' }}>
+                Published:{' '}
+                {new Date(
+                  page.publishDate.replace(/-/g, '/').replace(/T.+/, ''),
+                ).toLocaleDateString('en-us')}
+              </small>
+              <Squiggle />
+            </Box>
+          </Link>
+        </Box>
       ))}
-    </>
+    </Box>
   )
 }
