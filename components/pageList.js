@@ -57,15 +57,15 @@ export default function PageList(props) {
       sx={{
         display: 'flex',
         flexFlow: 'row wrap',
-        '::after': { content: `''`, flex: '1 0 auto' },
+        '::after': { content: `''`, flexGrow: '100' },
       }}
     >
       {pageList.map(page => (
         <Box
           id="pageList"
           sx={{
-            mb: 4,
-            mr: 4,
+            mb: [3, 4],
+            mr: [3, 4],
             flex: '1 0 auto',
           }}
         >

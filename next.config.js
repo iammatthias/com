@@ -13,6 +13,11 @@ module.exports = withMDX({
         destination: '/work/:slug', // Matched parameters can be used in the destination
         permanent: true,
       },
+      {
+        source: '/about',
+        destination: '/', // Matched parameters can be used in the destination
+        permanent: true,
+      },
     ]
   },
 })
