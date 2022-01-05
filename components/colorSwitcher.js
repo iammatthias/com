@@ -11,6 +11,7 @@ const ColorSwitcher = props => {
         color: 'accent',
         cursor: 'pointer',
         borderRadius: '50px',
+        mx: 3,
         transition: 'box-shadow .125s ease-in-out',
         ':hover,:focus': {
           boxShadow: '0 0 0 2px',

@@ -32,7 +32,7 @@ export default function Nav() {
           },
         }}
       >
-        <Link href="/">home</Link>
+        <Link href="/">//</Link>
         <Link href="/work">work</Link>
         <Link href="/blog">blog</Link>
         {/* <Link href="/about">about</Link> */}
