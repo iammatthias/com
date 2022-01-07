@@ -5,8 +5,8 @@ export default function handler(req, res) {
     handle: 'iammatthias',
     role: 'growth',
     company: 'Tornado',
-    web: 'iammatthias.com/iammatthias',
+    web: 'iammatthias.com/',
     twitter: 'twitter.com/iammatthias',
-    git: 'github.com/',
+    git: 'github.com/iammatthias',
   })
 }
