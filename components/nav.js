@@ -35,8 +35,7 @@ export default function Nav() {
         <Link href="/">//</Link>
         <Link href="/work">work</Link>
         <Link href="/blog">blog</Link>
-        {/* <Link href="/about">about</Link> */}
-        {/* <Link href="/guestbook">guestbook</Link> */}
+        <Link href="/guestbook">guestbook</Link>
       </Box>
       <Box
         sx={{
