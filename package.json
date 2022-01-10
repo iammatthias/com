@@ -46,7 +46,7 @@
     "react-music-embed": "^1.0.1",
     "react-use-measure": "^2.1.1",
     "simple-react-lightbox": "^3.6.9-0",
-    "theme-ui": "^0.13.0",
+    "theme-ui": "^0.13.1",
     "use-reading-time": "^0.2.0"
   }
 }
