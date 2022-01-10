@@ -34,7 +34,7 @@
     "graphql": "^16.2.0",
     "masonic": "^3.6.1",
     "mauerwerk": "^2.0.2",
-    "moralis": "^0.0.181",
+    "moralis": "^0.0.183",
     "next": "^12.0.7",
     "next-mdx-remote": "^3.0.8",
     "react": "^17.0.2",
