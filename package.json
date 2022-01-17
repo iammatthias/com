@@ -40,7 +40,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-headroom": "^3.2.0",
-    "react-hook-form": "^7.22.5",
+    "react-hook-form": "^7.24.0",
     "react-masonry-css": "^1.0.16",
     "react-moralis": "^0.3.11",
     "react-music-embed": "^1.0.1",
