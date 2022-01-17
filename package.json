@@ -19,7 +19,7 @@
     "export": "NODE_ENV='production' next export"
   },
   "dependencies": {
-    "@apollo/client": "^3.5.6",
+    "@apollo/client": "^3.5.7",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@ensdomains/ensjs": "^2.0.1",
