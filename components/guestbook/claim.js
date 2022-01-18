@@ -1,24 +1,22 @@
 /** @jsxImportSource theme-ui */
 import { Button, Box } from 'theme-ui'
-import { useEffect } from 'react'
-import { useContractWrite, useSigner } from 'wagmi'
+import { useContractWrite, useProvider } from 'wagmi'
 
 import abi from '../../lib/abi.json'
 
-import Loading from '../loading'
 import ClientOnly from '../helpers/clientOnly'
 
 export default function Claim(message) {
   const contractAddress = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS
 
-  const [{ data: signer }] = useSigner()
+  const provider = useProvider()
 
   const [{ data: writeData, loading, error }, signTheGuestBook] =
     useContractWrite(
       {
         addressOrName: contractAddress,
         contractInterface: abi.abi,
-        signerOrProvider: signer,
+        signerOrProvider: provider,
       },
       'signTheGuestBook',
     )

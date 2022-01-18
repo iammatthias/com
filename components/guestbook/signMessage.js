@@ -39,10 +39,14 @@ export default function SignMessage() {
             sx={{
               width: 'fit-content',
               mb: 4,
+              p: 3,
+              border: '1px solid',
+              borderColor: 'inherit',
+              borderRadius: '4px',
             }}
           >
             <Sparkle>
-              <p>
+              <p sx={{ m: 0 }}>
                 <small>
                   <b>preview:</b>
                 </small>
@@ -70,19 +74,6 @@ export default function SignMessage() {
           }}
           sx={{ mb: 4, width: ['100%', '50%'], minWidth: '250px' }}
         >
-          <p>
-            posting as:{' '}
-            <a
-              href={
-                process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                '/address/' +
-                accountData.address
-              }
-            >
-              <Ens address={accountData.address} />
-            </a>
-          </p>
-
           <input
             id="message"
             placeholder="Sign The Guest Book"

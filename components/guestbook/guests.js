@@ -29,11 +29,7 @@ export default function Guests() {
   return loading ? (
     <Loading />
   ) : (
-    <Box
-      sx={{
-        gridArea: 'guests',
-      }}
-    >
+    <Box>
       {allGuests &&
         allGuests
           .slice(0)

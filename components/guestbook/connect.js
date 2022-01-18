@@ -1,23 +1,44 @@
 /** @jsxImportSource theme-ui */
+import { useState, useEffect } from 'react'
 import { Button, Box } from 'theme-ui'
 
 import { useConnect } from 'wagmi'
 
 export default function Connect() {
-  const [{ data, error, loading }, connect] = useConnect()
+  const useIsMounted = () => {
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => setMounted(true), [])
+
+    return mounted
+  }
+
+  const isMounted = useIsMounted()
+
+  const [
+    {
+      data: { connector, connectors },
+      error,
+      loading,
+    },
+    connect,
+  ] = useConnect()
 
   return (
-    <>
-      {data.connectors.map(x => (
-        <Button key={x.name} onClick={() => connect(x)} sx={{ mr: 4, mb: 2 }}>
-          {x.name}
+    <Box sx={{ mb: 4 }}>
+      {connectors.map(x => (
+        <Button
+          disabled={isMounted && !x.ready}
+          key={x.name}
+          onClick={() => connect(x)}
+          sx={{ mb: 2, mr: 4 }}
+        >
+          {x.id === 'injected' ? (isMounted ? x.name : x.id) : x.name}
+          {isMounted && !x.ready && ' (unsupported)'}
+          {loading && x.name === connector?.name && '…'}
         </Button>
       ))}
-      {error && (
-        <Box sx={{ mb: 2 }}>
-          <p>{error?.message ?? 'Failed to connect'}</p>
-        </Box>
-      )}
-    </>
+      {error && <p>{error?.message ?? 'Failed to connect'}</p>}
+    </Box>
   )
 }
