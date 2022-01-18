@@ -10,7 +10,7 @@ export default function Background({ props }) {
   const refAnimationFrame = useRef()
 
   useEffect(() => {
-    const colors = [0x00aeef, 0x1b5cff, 0x7d2e61, 0xed3d24, 0xffd600, 0xed0f69]
+    const colors = [0x1da1f2, 0x7796c4, 0x70b780, 0xffd768, 0xe1306c]
 
     const NUM_CIRCLES = colors.length
 
@@ -18,7 +18,7 @@ export default function Background({ props }) {
     const ctx = canvas.getContext('2d')
     let w = canvas.offsetWidth
     let h = canvas.offsetHeight
-    let velocity = Math.random() * (1.618 - 1.382) + 1.382
+    let velocity = Math.random() * (1.618 - 1.382) + 6.18
 
     const circles = Array.from(new Array(NUM_CIRCLES), (_, i) => {
       const MIN_RADIUS = h * 0.382

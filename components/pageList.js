@@ -63,13 +63,14 @@ export default function PageList(props) {
       {pageList.map(page => (
         <Box
           id="pageList"
+          key={page.slug}
           sx={{
             mb: [3, 4],
             mr: [3, 4],
             flex: '1 0 auto',
           }}
         >
-          <Link key={page.slug} href={page.slug}>
+          <Link href={page.slug}>
             <Box
               sx={{
                 width: 'fit-content',
