@@ -2,7 +2,7 @@
 
 import { Box } from 'theme-ui'
 import Link from 'next/link'
-import Squiggle from '../components/squiggle'
+import Squiggle from '../components/joy/squiggle'
 
 export default function Custom404Page(props) {
   return (

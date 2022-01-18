@@ -4,7 +4,7 @@ import { useState } from 'react' //eslint-disable-line
 import styled from '@emotion/styled'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
-import Sparkle from './sparkle'
+import Sparkle from '../joy/sparkle'
 
 // email
 

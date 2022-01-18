@@ -1,7 +1,7 @@
 /** @jsxImportSource theme-ui */
 import { Box, Button } from 'theme-ui'
 import Link from 'next/link'
-import Squiggle from './squiggle'
+import Squiggle from './joy/squiggle'
 
 // page header
 

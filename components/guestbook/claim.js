@@ -6,7 +6,7 @@ import { useContractWrite, useSigner } from 'wagmi'
 import abi from '../../lib/abi.json'
 
 import Loading from '../loading'
-import ClientOnly from '../clientOnly'
+import ClientOnly from '../helpers/clientOnly'
 
 export default function Claim(message) {
   const contractAddress = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS
@@ -42,6 +42,7 @@ export default function Claim(message) {
               href={
                 process.env.NEXT_PUBLIC_ETHERSCAN_URL + '/tx/' + writeData.hash
               }
+              sx={{ overflowWrap: 'break-word' }}
             >
               {writeData.hash}
             </a>

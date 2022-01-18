@@ -4,10 +4,10 @@
 import { Box } from 'theme-ui'
 import Headroom from 'react-headroom'
 import Nav from './nav'
-import MobileOnly from './mobileOnly'
-import DesktopOnly from './desktopOnly'
-import Gradient from '../components/bgGradient'
-import ClientOnly from '../components/clientOnly'
+import MobileOnly from './helpers/mobileOnly'
+import DesktopOnly from './helpers/desktopOnly'
+import ClientOnly from './helpers/clientOnly'
+import Gradient from './joy/bgGradient'
 
 export default function Layout({ children }) {
   return (

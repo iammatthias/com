@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js'
 import abi from '../../lib/abi.json'
 
 import Ens from './ens'
-import Squiggle from '../squiggle'
+import Squiggle from '../joy/squiggle'
 import Loading from '../loading'
 
 export default function Guests() {

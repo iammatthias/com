@@ -8,7 +8,7 @@ import { Box } from 'theme-ui'
 import Masonry from 'react-masonry-css'
 import { useRouter } from 'next/router'
 import useMeasure from 'react-use-measure'
-import Loading from './loading'
+import Loading from '../loading'
 
 // lightbox
 import Lightbox from './galleryLightbox'

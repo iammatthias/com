@@ -4,8 +4,8 @@
 
 import { useRef } from 'react'
 import { Box } from 'theme-ui'
-import { range } from '../lib/utils/range'
-import { useContainerDimensions } from '../lib/utils/useContainerDimensions'
+import { range } from '../../lib/utils/range'
+import { useContainerDimensions } from '../../lib/utils/useContainerDimensions'
 
 export default function Squiggle({ height, strokeColor, squiggleWidth }) {
   const svgRef = useRef(null)

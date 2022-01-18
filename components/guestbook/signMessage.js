@@ -6,8 +6,8 @@ import { verifyMessage } from 'ethers/lib/utils'
 import { useSignMessage, useAccount } from 'wagmi'
 
 import Ens from './ens'
-import Squiggle from '../squiggle'
-import Sparkle from '../sparkle'
+import Squiggle from '../joy/squiggle'
+import Sparkle from '../joy/sparkle'
 
 // dynamic imports
 

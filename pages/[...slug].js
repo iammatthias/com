@@ -9,7 +9,7 @@ import { Box } from 'theme-ui'
 import useReadingTime from 'use-reading-time'
 import PageHeader from '../components/pageHeader'
 import PageFooter from '../components/pageFooter'
-import { isDev } from '../components/isDev'
+import { isDev } from '../components/helpers/isDev'
 
 export default function Home({
   source,
@@ -19,8 +19,10 @@ export default function Home({
   slug,
 }) {
   const post = useRef()
-  const { readingTime, wordsCount } = () =>
-    pageType == 'Blog' ? useReadingTime(post) : '0'
+  const {
+    readingTime,
+    wordsCount,
+  } = () => (pageType == 'Blog' ? useReadingTime(post) : '0')
 
   const router = useRouter()
   const pathname = router.asPath

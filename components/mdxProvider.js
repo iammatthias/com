@@ -2,20 +2,20 @@
 import { MDXProvider } from '@mdx-js/react'
 import Link from 'next/link'
 import { Box, Flex, Grid, Button, Heading, Text, Card } from 'theme-ui'
-import Gallery from './gallery'
+import Gallery from './gallery/gallery'
 import PageList from './pageList'
-import Sparkle from './sparkle'
-import Spicy from './spicy'
 import Vimeo from '@u-wave/react-vimeo'
 import AppleMusic from 'react-music-embed'
-import EmailCapture from './emailCapture'
-import GuestbookCapture from './guestbookCapture'
-import GuestCapture from './guestCapture'
-import ClientOnly from './clientOnly'
-import MobileOnly from './mobileOnly'
-import DesktopOnly from './desktopOnly'
-import Squiggle from './squiggle'
-import Code from './code'
+import EmailCapture from './capture/emailCapture'
+import GuestbookCapture from './capture/guestbookCapture'
+import GuestCapture from './capture/guestCapture'
+import ClientOnly from './helpers/clientOnly'
+import MobileOnly from './helpers/mobileOnly'
+import DesktopOnly from './helpers/desktopOnly'
+import Sparkle from './joy/sparkle'
+import Spicy from './joy/spicy'
+import Squiggle from './joy/squiggle'
+import Code from './joy/code'
 
 const mdComponents = {
   // theme-ui
@@ -46,6 +46,8 @@ const mdComponents = {
 
   // etc
   Link: props => <Link {...props} />,
+  EmailCapture: props => <EmailCapture {...props} />,
+  GuestbookCapture: props => <GuestbookCapture {...props} />,
   GuestCapture: props => <GuestCapture {...props} />,
   PageList: props => <PageList {...props} />,
   Squiggle: props => <Squiggle {...props} />,

@@ -1,7 +1,7 @@
 /** @jsxImportSource theme-ui */
 import { Box, Button } from 'theme-ui'
 import Link from 'next/link'
-import Sparkle from './sparkle'
+import Sparkle from '../joy/sparkle'
 
 // email
 

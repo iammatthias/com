@@ -6,8 +6,8 @@ import { useQuery, gql } from '@apollo/client'
 import Link from 'next/link'
 import { Box } from 'theme-ui'
 import Loading from './loading'
-import Squiggle from './squiggle'
-import { isDev } from './isDev'
+import Squiggle from './joy/squiggle'
+import { isDev } from './helpers/isDev'
 
 const QUERY = gql`
   query ($preview: Boolean, $type: String, $limit: Int) {
