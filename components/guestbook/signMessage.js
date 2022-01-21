@@ -12,7 +12,7 @@ import Sparkle from '../joy/sparkle'
 // dynamic imports
 
 import dynamic from 'next/dynamic'
-const Claim = dynamic(() => import('./claim'))
+const Write = dynamic(() => import('./write'))
 
 export default function SignMessage() {
   const [{ data: accountData }, disconnect] = useAccount({
@@ -63,7 +63,7 @@ export default function SignMessage() {
               />
             </Sparkle>
           </Box>
-          <Claim message={previousMessage.current} />
+          <Write message={previousMessage.current} />
         </>
       ) : (
         <form

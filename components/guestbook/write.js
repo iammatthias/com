@@ -21,7 +21,7 @@ export default function Claim(message) {
       'signTheGuestBook',
     )
 
-  const handleClaim = async () => {
+  const handleWrite = async () => {
     await signTheGuestBook({
       args: [message.message],
     })
@@ -52,8 +52,8 @@ export default function Claim(message) {
           </ClientOnly>
         </>
       ) : (
-        <Button sx={{ display: 'block', mr: 4, mb: 4 }} onClick={handleClaim}>
-          Add Message & Claim NFT
+        <Button sx={{ display: 'block', mr: 4, mb: 4 }} onClick={handleWrite}>
+          Add Message
         </Button>
       )}
       {error && <Box sx={{ mb: 4 }}>{error?.message}</Box>}

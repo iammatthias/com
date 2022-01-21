@@ -22,10 +22,7 @@ export default function TheGuestBook() {
       }}
     >
       <Box>
-        <p sx={{ m: 0, mb: 4 }}>
-          write a message on the blockchain<sup>1</sup> and get an nft
-          <sup>2</sup>
-        </p>
+        <p sx={{ m: 0, mb: 4 }}>write a message on the blockchain*</p>
         {accountData?.address ? (
           <>
             <Account />
@@ -36,7 +33,7 @@ export default function TheGuestBook() {
         )}
         <p sx={{ m: 0, mb: 4 }}>
           <small>
-            <sup>1</sup> contract:{' '}
+            *contract:{' '}
             <a
               href={
                 process.env.NEXT_PUBLIC_ETHERSCAN_URL +
@@ -46,11 +43,7 @@ export default function TheGuestBook() {
             >
               {process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS}
             </a>
-            <br />
-            <sup>2</sup> [9999] guests available. free to mint, wallet holder
-            pays gas. max 3 guests per wallet
-            <br />☞ missed the nfts? you can still write your message on the
-            blockchain
+            <br />☞ nominal gas fee to write message on chain ✌️
           </small>
         </p>
       </Box>
