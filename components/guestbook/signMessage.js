@@ -38,7 +38,7 @@ export default function SignMessage() {
           <Box
             sx={{
               width: 'fit-content',
-              mb: 4,
+              mb: 3,
               p: 3,
               border: '1px solid',
               borderColor: 'inherit',
@@ -72,7 +72,7 @@ export default function SignMessage() {
             previousMessage.current = message
             signMessage({ message })
           }}
-          sx={{ mb: 4, width: ['100%', '50%'], minWidth: '250px' }}
+          sx={{ mb: 3, width: ['100%', '50%'], minWidth: '250px' }}
         >
           <input
             id="message"
@@ -88,7 +88,7 @@ export default function SignMessage() {
               color: 'text',
               bg: 'background',
               display: 'block',
-              mb: 4,
+              mb: 3,
             }}
           />
 

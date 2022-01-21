@@ -22,18 +22,12 @@ export default function TheGuestBook() {
       }}
     >
       <Box>
-        <p sx={{ m: 0, mb: 4 }}>write a message on the blockchain*</p>
-        {accountData?.address ? (
-          <>
-            <Account />
-            <SignMessage />
-          </>
-        ) : (
-          <Connect />
-        )}
-        <p sx={{ m: 0, mb: 4 }}>
+        {accountData?.address ? <Account /> : <Connect />}
+        <p sx={{ m: 0, mb: 3 }}>write a message on the blockchain*</p>
+        {accountData?.address && <SignMessage />}
+        <p sx={{ m: 0, mb: 3 }}>
           <small>
-            *contract:{' '}
+            *contract on rinkeby:{' '}
             <a
               href={
                 process.env.NEXT_PUBLIC_ETHERSCAN_URL +
