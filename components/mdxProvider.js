@@ -36,6 +36,7 @@ const mdComponents = {
   h5: props => <h5 {...props} />, //eslint-disable-line
   small: props => <small {...props} />, //eslint-disable-line
   span: props => <span {...props} />, //eslint-disable-line
+  hr: props => <Squiggle {...props} />,
 
   // Text Modifiers
   Sparkle: props => <Sparkle {...props} />,
@@ -53,11 +54,7 @@ const mdComponents = {
   Squiggle: props => <Squiggle {...props} />,
   MobileOnly: props => <MobileOnly {...props} />,
   DesktopOnly: props => <DesktopOnly {...props} />,
-  Gallery: props => (
-    <ClientOnly className="gallery">
-      <Gallery {...props} />
-    </ClientOnly>
-  ),
+  Gallery: props => <Gallery {...props} />,
   AM: props => <AppleMusic {...props} />,
   Vimeo: props => (
     <Vimeo

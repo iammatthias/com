@@ -6,7 +6,7 @@ import { Provider, chain, defaultChains } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
-import TheGuestBook from '../../components/guestbook/theGuestBook'
+import TheGuestBook from '../components/guestbook/theGuestBook'
 
 export default function Guestbook() {
   const etherscan = process.env.NEXT_PUBLIC_ETHERSCAN

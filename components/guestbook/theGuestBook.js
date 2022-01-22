@@ -14,13 +14,7 @@ export default function TheGuestBook() {
   const [{ data: accountData }] = useAccount()
 
   return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: ['1fr', '1fr', '1fr 1fr'],
-        gridGap: 4,
-      }}
-    >
+    <Box className="theGuestBook">
       <Box>
         {accountData?.address ? <Account /> : <Connect />}
         <p sx={{ m: 0, mb: 3 }}>write a message on the blockchain*</p>

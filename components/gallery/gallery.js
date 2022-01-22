@@ -80,10 +80,10 @@ export default function Gallery(props) {
   console.log(bounds.width)
 
   return (
-    <Box ref={ref}>
-      {pathname.includes('/work/') ? <h1>{imageSetTitle}</h1> : null}
+    <Box ref={ref} className="gallery" sx={{ mb: '2rem' }}>
+      {pathname.includes('/work/') ? <h2>{imageSetTitle}</h2> : null}
 
-      <Lightbox className="container">
+      <Lightbox className="container galleryGrid">
         <Masonry
           breakpointCols={columns}
           className="my-masonry-grid"
@@ -109,9 +109,6 @@ export default function Gallery(props) {
                 height: props.ratio
                   ? eval(props.ratio) * columnWidth
                   : (image.height / image.width) * columnWidth,
-                '*': {
-                  boxShadow: 'card',
-                },
               }}
             >
               <a href={image.url}>

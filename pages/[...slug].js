@@ -44,20 +44,10 @@ export default function Home({
         <PageHeader pageTitle={pageTitle} slug={slug} />
       ) : null}
 
-      <Box
-        sx={{
-          'article > *': {
-            ...(pageType == 'Blog' || pageType == 'Gallery'
-              ? { maxWidth: ['100%', '', '61.8%'] }
-              : null),
-          },
-          'article > .gallery': { maxWidth: '100%' },
-        }}
-      >
-        <article ref={post}>
-          <MDXRemote {...source} />
-        </article>
-      </Box>
+      <article ref={post}>
+        <MDXRemote {...source} />
+      </article>
+
       {pageType == 'Blog' || pageType == 'Gallery' ? (
         <PageFooter type={pageType} slug={slug} />
       ) : null}

@@ -65,7 +65,6 @@ export default function PageList(props) {
       <Squiggle />
       <Box
         sx={{
-          mt: 4,
           display: 'flex',
           flexDirection: 'row',
           width: 'fit-content',

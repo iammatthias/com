@@ -2,11 +2,7 @@
 // layout
 
 import { Box } from 'theme-ui'
-import Headroom from 'react-headroom'
 import Nav from './nav'
-import MobileOnly from './helpers/mobileOnly'
-import DesktopOnly from './helpers/desktopOnly'
-import ClientOnly from './helpers/clientOnly'
 import Gradient from './joy/bgGradient'
 
 export default function Layout({ children }) {
@@ -14,29 +10,61 @@ export default function Layout({ children }) {
     <Box
       sx={{
         width: '100%;',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(9,1fr)',
+        gridTemplateRows: 'auto',
+        gridGap: '2rem',
+        padding: 3,
+        '> *': { gridGap: '2rem' },
+
+        '.nav, .pageHeader, .pageFooter, .theGuestBook': {
+          gridColumn: ['1 / 10', '2 / 9', '3 / 8', '4 / 7'],
+        },
+        '.nav': {
+          gridRow: '1',
+        },
+        '.pageHeader': {
+          gridRow: '2',
+        },
+        '.theGuestBook': {
+          // rules for parent grid
+          gridRow: '2',
+        },
+        article: {
+          // rules for parent grid
+          gridColumn: '1 / 10',
+          gridRow: '3',
+          // rules for inner grid
+          display: 'grid',
+          gridTemplateColumns: 'repeat(9,1fr)',
+          gridTemplateRows: 'auto',
+          gridGap: '0',
+          '> *': { gridColumn: ['1 / 10', '2 / 9', '3 / 8', '4 / 7'] },
+          '.gallery': {
+            // rules for inner grid
+            display: 'grid',
+            gridTemplateColumns: 'repeat(9,1fr)',
+            gridTemplateRows: 'auto',
+            gridColumn: '1 / 10',
+            h2: {
+              gridColumn: ['1 / 10', '2 / 9', '3 / 8', '4 / 7'],
+            },
+            div: {
+              gridColumn: '1 / 10',
+            },
+          },
+          '.sBleed': { gridColumn: ['1 / 10', '2 / 9', '3 / 8', null] },
+          '.mBleed': { gridColumn: ['1 / 10', '2 / 9', null, null] },
+          '.lBleed': { gridColumn: '1 / 10' },
+        },
+        '.pageFooter': {
+          gridRow: '4',
+        },
       }}
     >
-      <Box
-        sx={{
-          borderRadius: '4px',
-          gridArea: 'body',
-          position: 'relative',
-          p: [3, 3, 4],
-        }}
-      >
-        <DesktopOnly>
-          <Nav />
-        </DesktopOnly>
-        <MobileOnly>
-          <Headroom>
-            <Nav />
-          </Headroom>
-        </MobileOnly>
-        {children}
-      </Box>
-      <ClientOnly>
-        <Gradient />
-      </ClientOnly>
+      <Nav />
+      {children}
+      <Gradient />
     </Box>
   )
 }

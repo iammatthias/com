@@ -12,15 +12,7 @@ export default function Spicy({ children, ...props }) {
 
   const spacer = '\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0'
   return (
-    <Box
-      {...props}
-      sx={{
-        borderRadius: '4px 4px 0 0',
-        display: 'flex',
-        flexDirection: 'column',
-        mb: 3,
-      }}
-    >
+    <Box {...props} className="pageHeader">
       <Box sx={{ width: 'fit-content' }}>
         {props.publishDate ? (
           <small sx={{ display: 'block', width: 'fit-content' }}>

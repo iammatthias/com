@@ -9,8 +9,8 @@ export default function Spicy({ children, ...props }) {
   return (
     <Box
       {...props}
+      className="pageFooter"
       sx={{
-        mt: 4,
         py: [3, 3, 4],
         borderRadius: '4px 4px 0 0',
         display: 'flex',
