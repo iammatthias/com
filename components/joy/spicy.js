@@ -18,7 +18,7 @@ export default function Spicy({ children, props }) {
       {...props}
       sx={{
         backgroundImage: theme =>
-          `linear-gradient(to right, ${theme.colors.red[4]}, ${theme.colors.blue[4]}, ${theme.colors.green[4]}, ${theme.colors.magenta[4]})`,
+          `linear-gradient(to right, ${theme.colors.red[4]}, ${theme.colors.blue[4]}, ${theme.colors.green[4]}, ${theme.colors.gold[4]})`,
         backgroundSize: '200% auto',
         backgroundClip: 'text',
         textFillColor: 'transparent',
