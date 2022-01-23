@@ -12,7 +12,7 @@ const ColorSwitcher = props => {
       sx={{
         color: 'accent',
         cursor: 'pointer',
-        fontSize: '16px',
+        fontSize: '18px',
       }}
       {...props}
     >

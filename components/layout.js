@@ -38,7 +38,7 @@ export default function Layout({ children }) {
           display: 'grid',
           gridTemplateColumns: 'repeat(9,1fr)',
           gridTemplateRows: 'auto',
-          gridGap: '0',
+
           '> *': { gridColumn: ['1 / 10', '2 / 9', '3 / 8', '4 / 7'] },
           '.gallery': {
             // rules for inner grid
