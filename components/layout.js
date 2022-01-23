@@ -14,7 +14,7 @@ export default function Layout({ children }) {
         gridTemplateColumns: 'repeat(9,1fr)',
         gridTemplateRows: 'auto',
         gridGap: '2rem',
-        padding: 3,
+        padding: '24px 16px',
         '> *': { gridGap: '2rem' },
 
         '.nav, .pageHeader, .pageFooter, .theGuestBook': {
