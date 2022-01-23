@@ -27,7 +27,6 @@ export default function GuestbookCapture({ props }) {
         }}
       >
         <h5 sx={{ m: 0, mb: 2, p: 0 }}>The Guestbook</h5>
-        <p sx={{ m: 0, mb: 2, p: 0 }}>Sign the guestbook, get an NFT.</p>
         <Link href="/guestbook">
           <Button title="Guestbook" sx={{ width: 'fit-content' }}>
             <Sparkle>Guestbook</Sparkle>

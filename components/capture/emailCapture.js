@@ -55,7 +55,6 @@ export default function EmailCapture({ props }) {
           }}
         >
           <h5 sx={{ m: 0, mb: 2, p: 0 }}>The Newsletter</h5>
-          <p sx={{ m: 0, p: 0 }}>Sign up for the occasional update.</p>
         </Box>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
