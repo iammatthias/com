@@ -25,20 +25,22 @@ export default function Connect() {
   ] = useConnect()
 
   return (
-    <Box sx={{ mb: 3 }}>
+    <Box>
       {connectors.map(x => (
         <Button
           disabled={isMounted && !x.ready}
           key={x.name}
           onClick={() => connect(x)}
-          sx={{ m: 0, mr: 4 }}
+          sx={{ m: 0, mr: 4, mb: 3 }}
         >
           {x.id === 'injected' ? (isMounted ? x.name : x.id) : x.name}
           {isMounted && !x.ready && ' (unsupported)'}
           {loading && x.name === connector?.name && '…'}
         </Button>
       ))}
-      {error && <p sx={{ mt: 2 }}>{error?.message ?? 'Failed to connect'}</p>}
+      {error && (
+        <p sx={{ mt: 2, mb: 3 }}>{error?.message ?? 'Failed to connect'}</p>
+      )}
     </Box>
   )
 }

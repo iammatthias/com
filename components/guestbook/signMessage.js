@@ -37,18 +37,16 @@ export default function SignMessage() {
         <>
           <Box
             sx={{
-              border: '1px solid',
-              borderColor: 'text',
-              borderRadius: '4px',
               mb: 3,
-              padding: 2,
 
               wordBreak: 'break-word',
             }}
           >
             <Sparkle>
               <p sx={{ m: 0, mb: 1 }}>
-                <b>preview:</b>
+                <small>
+                  <b>preview:</b>
+                </small>
               </p>
               <p sx={{ m: 0, mb: 1 }}>
                 <a

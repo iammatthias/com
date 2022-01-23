@@ -35,12 +35,7 @@ export default function Guests() {
           .slice(0)
           .reverse()
           .map(guest => (
-            <Box
-              key={guest}
-              sx={{
-                width: 'fit-content',
-              }}
-            >
+            <>
               <p sx={{ m: 0, mb: 1 }}>
                 <a
                   href={
@@ -68,7 +63,7 @@ export default function Guests() {
                 </small>
               </p>
               <Squiggle />
-            </Box>
+            </>
           ))}
     </Box>
   )
