@@ -67,11 +67,7 @@ export default function Guests() {
                   </a>
                 </small>
               </p>
-              <Squiggle
-                sx={{
-                  width: 'fit-content',
-                }}
-              />
+              <Squiggle />
             </Box>
           ))}
     </Box>

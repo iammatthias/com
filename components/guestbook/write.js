@@ -1,5 +1,5 @@
 /** @jsxImportSource theme-ui */
-import { Button, Box } from 'theme-ui'
+import { Button, Alert } from 'theme-ui'
 import { useContractWrite, useProvider } from 'wagmi'
 
 import abi from '../../lib/abi.json'
@@ -35,15 +35,19 @@ export default function Claim(message) {
       {writeData ? (
         <>
           <p>
-            hash:{' '}
-            <a
-              href={
-                process.env.NEXT_PUBLIC_ETHERSCAN_URL + '/tx/' + writeData.hash
-              }
-              sx={{ overflowWrap: 'break-word' }}
-            >
-              {writeData.hash}
-            </a>
+            <small>
+              hash:{' '}
+              <a
+                href={
+                  process.env.NEXT_PUBLIC_ETHERSCAN_URL +
+                  '/tx/' +
+                  writeData.hash
+                }
+                sx={{ overflowWrap: 'break-word' }}
+              >
+                {writeData.hash}
+              </a>
+            </small>
           </p>
           <ClientOnly>
             <Button sx={{ display: 'block', mr: 4, mb: 4 }} onClick={refresh}>
@@ -56,7 +60,7 @@ export default function Claim(message) {
           Add Message
         </Button>
       )}
-      {error && <Box sx={{ mb: 4 }}>{error?.message}</Box>}
+      {error && <Alert sx={{ mb: 4 }}>{error?.message}</Alert>}
     </>
   )
 }

@@ -7,7 +7,12 @@ import { Box } from 'theme-ui'
 import { range } from '../../lib/utils/range'
 import { useContainerDimensions } from '../../lib/utils/useContainerDimensions'
 
-export default function Squiggle({ height, strokeColor, squiggleWidth }) {
+export default function Squiggle({
+  height,
+  strokeColor,
+  squiggleWidth,
+  ...props
+}) {
   const svgRef = useRef(null)
 
   const { width } = useContainerDimensions(svgRef)
@@ -40,6 +45,7 @@ export default function Squiggle({ height, strokeColor, squiggleWidth }) {
       id="squiggleContainer"
       ref={svgRef}
       sx={{ width: '100%', mx: 'auto', mb: '2rem' }}
+      {...props}
     >
       <svg
         id="squiggle"

@@ -21,7 +21,8 @@ export default function TheGuestBook() {
         {accountData?.address && <SignMessage />}
         <p sx={{ m: 0, mb: 3 }}>
           <small>
-            *contract on rinkeby:{' '}
+            *nominal gas fee to write message on chain ✌️
+            <br />☞ contract:{' '}
             <a
               href={
                 process.env.NEXT_PUBLIC_ETHERSCAN_URL +
@@ -31,7 +32,6 @@ export default function TheGuestBook() {
             >
               {process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS}
             </a>
-            <br />☞ nominal gas fee to write message on chain ✌️
           </small>
         </p>
       </Box>

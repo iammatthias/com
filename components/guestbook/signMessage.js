@@ -1,5 +1,5 @@
 /** @jsxImportSource theme-ui */
-import { Button, Box } from 'theme-ui'
+import { Button, Box, Alert } from 'theme-ui'
 
 import { useRef, useState, useMemo } from 'react'
 import { verifyMessage } from 'ethers/lib/utils'
@@ -37,28 +37,34 @@ export default function SignMessage() {
         <>
           <Box
             sx={{
-              width: 'fit-content',
-              mb: 3,
-              p: 3,
               border: '1px solid',
-              borderColor: 'inherit',
+              borderColor: 'text',
               borderRadius: '4px',
+              mb: 3,
+              padding: 2,
+
+              wordBreak: 'break-word',
             }}
           >
             <Sparkle>
-              <p sx={{ m: 0 }}>
-                <small>
-                  <b>preview:</b>
-                </small>
+              <p sx={{ m: 0, mb: 1 }}>
+                <b>preview:</b>
               </p>
-              <p>
-                <Ens address={recoveredAddress} />
+              <p sx={{ m: 0, mb: 1 }}>
+                <a
+                  href={
+                    process.env.NEXT_PUBLIC_ETHERSCAN_URL +
+                    '/address/' +
+                    recoveredAddress
+                  }
+                >
+                  <Ens address={recoveredAddress} />
+                </a>
               </p>
-
-              <p>{previousMessage.current}</p>
+              <p sx={{ m: 0, mb: 1 }}>{previousMessage.current}</p>
               <Squiggle
                 sx={{
-                  width: 'fit-content',
+                  mb: 0,
                 }}
               />
             </Sparkle>
@@ -92,12 +98,15 @@ export default function SignMessage() {
             }}
           />
 
-          <Button disabled={signLoading || !message.length} sx={{ mr: 4 }}>
+          <Button
+            disabled={signLoading || !message.length}
+            sx={{ mr: 4, mb: 3 }}
+          >
             {signLoading ? 'Check Wallet' : 'Sign Message'}
           </Button>
 
           {signError && (
-            <div>{signError?.message ?? 'Error signing message'}</div>
+            <Alert>{signError?.message ?? 'Error signing message'}</Alert>
           )}
         </form>
       )}

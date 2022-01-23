@@ -26,9 +26,10 @@ export default function Connected() {
           sx={{
             border: '1px solid',
             borderColor: 'text',
+            borderRadius: '4px',
             mb: 3,
             padding: 2,
-            width: 'fit-content',
+
             wordBreak: 'break-word',
           }}
         >
