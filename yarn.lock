@@ -3215,10 +3215,10 @@ react-headroom@^3.2.0:
     raf "^3.3.0"
     shallowequal "^1.1.0"
 
-react-hook-form@^7.24.1:
-  version "7.24.1"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.24.1.tgz#00e80ca20fe3bb3b86d236d74ed1a4e5f6525228"
-  integrity sha512-UndVzKetChAsO+qkRo/6vOgaeTP60x324mHQ4iXVgHDvFjd+X/caWW0/QuAqipt8Bs7pyKH8147UQCrPTYFc2g==
+react-hook-form@^7.25.0:
+  version "7.25.0"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.25.0.tgz#ffba58e5e14c8eeb81e2c43b741667552f11ae29"
+  integrity sha512-MyF4YXegIT/vfyZloTm98mpJwLUPfULdX37yPzXeijT1hePCkV8DN1IAnEufxgtqCpc7aFGRinegQwisUGZCnA==
 
 react-is@17.0.2:
   version "17.0.2"
@@ -3985,10 +3985,10 @@ wagmi-private@0.1.3:
     "@ethersproject/providers" "^5.5.1"
     eventemitter3 "^4.0.7"
 
-wagmi@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.1.7.tgz#3cd6fd000269c7724e9b05d62757e69678142674"
-  integrity sha512-YaHyuUTZrY/18Zp5PLSo1s5aEDFc0WpImycG+rxY1cBUm5zKZAv+b8T6VamYZ3CV5Net7DQURVajMuYTsFFLSg==
+wagmi@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.2.0.tgz#97622db20b58709ac64ea9cc6f192c4c1de8d66a"
+  integrity sha512-yvsS25WB218C0o240TiMk5uebity0tBxSImO4MrZTfPvd/wLOZu0SfYvYJtrObPz1/H/8jaSoWvby3P0mXqRDg==
   dependencies:
     "@ethersproject/providers" "^5.5.1"
     "@walletconnect/ethereum-provider" "^1.6.6"
