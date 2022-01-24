@@ -17,7 +17,7 @@ export default function Layout({ children }) {
         padding: '24px 16px',
         '> *': { gridGap: '2rem' },
 
-        '.nav, .pageHeader, .pageFooter, .theGuestBook': {
+        '.nav, .pageHeader, .pageFooter, .theGuestBook, .guests': {
           gridColumn: ['1 / 10', '2 / 9', '3 / 8', '4 / 7'],
         },
         '.nav': {
@@ -29,6 +29,10 @@ export default function Layout({ children }) {
         '.theGuestBook': {
           // rules for parent grid
           gridRow: '2',
+        },
+        '.guests': {
+          // rules for parent grid
+          gridRow: '3',
         },
         article: {
           // rules for parent grid

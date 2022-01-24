@@ -26,11 +26,12 @@ export default function Guests() {
     },
   )
 
-  return loading ? (
-    <Loading />
-  ) : (
-    <Box>
-      {allGuests &&
+  return (
+    <Box className="guests">
+      {loading ? (
+        <Loading />
+      ) : (
+        allGuests &&
         allGuests
           .slice(0)
           .reverse()
@@ -64,7 +65,8 @@ export default function Guests() {
               </p>
               <Squiggle />
             </>
-          ))}
+          ))
+      )}
     </Box>
   )
 }

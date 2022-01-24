@@ -7,6 +7,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 import TheGuestBook from '../components/guestbook/theGuestBook'
+import Guests from '../components/guestbook/guests'
 
 export default function Guestbook() {
   const alchemy = process.env.NEXT_PUBLIC_ALCHEMY
@@ -42,6 +43,7 @@ export default function Guestbook() {
   return (
     <Provider autoConnect connectors={connectors} provider={provider}>
       <TheGuestBook />
+      <Guests />
     </Provider>
   )
 }

@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi'
 import dynamic from 'next/dynamic'
 const Connect = dynamic(() => import('./connect'))
 const Account = dynamic(() => import('./account'))
-const Guests = dynamic(() => import('./guests'))
+
 const SignMessage = dynamic(() => import('./signMessage'))
 
 export default function TheGuestBook() {
@@ -15,27 +15,24 @@ export default function TheGuestBook() {
 
   return (
     <Box className="theGuestBook">
-      <Box>
-        {accountData?.address ? <Account /> : <Connect />}
-        <p sx={{ m: 0, mb: 3 }}>write a message on the blockchain*</p>
-        {accountData?.address && <SignMessage />}
-        <p sx={{ m: 0, mb: 3 }}>
-          <small>
-            *nominal gas fee to write message on chain ✌️
-            <br />☞ contract:{' '}
-            <a
-              href={
-                process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                '/address/' +
-                process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS
-              }
-            >
-              {process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS}
-            </a>
-          </small>
-        </p>
-      </Box>
-      <Guests />
+      {accountData?.address ? <Account /> : <Connect />}
+      <p sx={{ m: 0, mb: 3 }}>write a message on the blockchain*</p>
+      {accountData?.address && <SignMessage />}
+      <p sx={{ m: 0, mb: 3 }}>
+        <small>
+          *nominal gas fee to write message on chain ✌️
+          <br />☞ contract:{' '}
+          <a
+            href={
+              process.env.NEXT_PUBLIC_ETHERSCAN_URL +
+              '/address/' +
+              process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS
+            }
+          >
+            {process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS}
+          </a>
+        </small>
+      </p>
     </Box>
   )
 }
