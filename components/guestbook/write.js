@@ -4,8 +4,6 @@ import { useContractWrite, useProvider, useWaitForTransaction } from 'wagmi'
 
 import abi from '../../lib/contracts/abi.json'
 
-import ClientOnly from '../helpers/clientOnly'
-
 export default function Claim(message) {
   const contractAddress = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS
 

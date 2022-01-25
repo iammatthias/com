@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@apollo/client@^3.5.7":
-  version "3.5.7"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.5.7.tgz#38051c0a414ebf784319fa5131faa19df24fa9ec"
-  integrity sha512-HSLqTGp3sp/PVIWYLLr5v3fjQSr6Fxg6Z5RQj5Q9ALyseIVudD8GZk1jHplaUblTFMBueXGw3Z6DXObuVAr3tw==
+"@apollo/client@^3.5.8":
+  version "3.5.8"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.5.8.tgz#7215b974c5988b6157530eb69369209210349fe0"
+  integrity sha512-MAm05+I1ullr64VLpZwon/ISnkMuNLf6vDqgo9wiMhHYBGT4yOAbAIseRdjCHZwfSx/7AUuBgaTNOssZPIr6FQ==
   dependencies:
     "@graphql-typed-document-node/core" "^3.0.0"
     "@wry/context" "^0.6.0"
@@ -2303,10 +2303,10 @@ framer-motion@^4.1.17:
   optionalDependencies:
     "@emotion/is-prop-valid" "^0.8.2"
 
-framer-motion@^6.2.1:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-6.2.1.tgz#e0d02dd47211fe87e43bf5a0779991372bdadb1c"
-  integrity sha512-/8MMBCKgiuO6V/raGsJ+2dFZw5kteXsX1cSarxiM8o1F0XNlzd+4WGTIos85G2nZpwpmReJuUk+Hz4S3Y7fwPw==
+framer-motion@^6.2.3:
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-6.2.3.tgz#1ff314c178566a286d2b985fd31cab3910cf1eed"
+  integrity sha512-2afb2KvqFi5bEgyKEVNm/RGvMThHbWvHPvdJMmm9DR+Lg2tvCmc9o459gQ20tNxLoRUmCGF8bKtm9lvPlqxh2Q==
   dependencies:
     framesync "6.0.1"
     hey-listen "^1.0.8"
@@ -3985,10 +3985,10 @@ wagmi-private@0.1.3:
     "@ethersproject/providers" "^5.5.1"
     eventemitter3 "^4.0.7"
 
-wagmi@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.2.0.tgz#97622db20b58709ac64ea9cc6f192c4c1de8d66a"
-  integrity sha512-yvsS25WB218C0o240TiMk5uebity0tBxSImO4MrZTfPvd/wLOZu0SfYvYJtrObPz1/H/8jaSoWvby3P0mXqRDg==
+wagmi@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.2.1.tgz#783e5e9f80714267ee9cc6e42ab66edd92bb1887"
+  integrity sha512-D6TMQbCmS2mFi3djHfSZICRPgEmOBW1q7t0qwqsvzMd8IeMETQmDLTSDIKfUGKjCSspw0mjSfoN6Wv+ONUA4EA==
   dependencies:
     "@ethersproject/providers" "^5.5.1"
     "@walletconnect/ethereum-provider" "^1.6.6"

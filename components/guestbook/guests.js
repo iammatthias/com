@@ -14,7 +14,7 @@ export default function Guests() {
   const contractAddress = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS
 
   const provider = useProvider()
-  console.log(provider)
+
   const [{ data: allGuests, loading }, read] = useContractRead(
     {
       addressOrName: contractAddress,

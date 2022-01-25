@@ -19,7 +19,7 @@
     "export": "NODE_ENV='production' next export"
   },
   "dependencies": {
-    "@apollo/client": "^3.5.7",
+    "@apollo/client": "^3.5.8",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@ethersproject/providers": "^5.5.2",
@@ -32,7 +32,7 @@
     "bignumber.js": "^9.0.2",
     "ethers": "^5.5.3",
     "feed": "^4.2.2",
-    "framer-motion": "^6.2.1",
+    "framer-motion": "^6.2.3",
     "graphql": "^16.2.0",
     "masonic": "^3.6.1",
     "next": "^12.0.8",
@@ -47,6 +47,6 @@
     "simple-react-lightbox": "^3.6.9-0",
     "theme-ui": "^0.13.1",
     "use-reading-time": "^0.2.0",
-    "wagmi": "^0.2.0"
+    "wagmi": "^0.2.1"
   }
 }
