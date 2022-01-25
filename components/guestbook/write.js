@@ -1,8 +1,8 @@
 /** @jsxImportSource theme-ui */
 import { Button, Alert } from 'theme-ui'
-import { useContractWrite, useProvider } from 'wagmi'
+import { useContractWrite, useProvider, useWaitForTransaction } from 'wagmi'
 
-import abi from '../../lib/abi.json'
+import abi from '../../lib/contracts/abi.json'
 
 import ClientOnly from '../helpers/clientOnly'
 
@@ -30,31 +30,33 @@ export default function Claim(message) {
     window.location.reload(false)
   }
 
+  const Transaction = hash => {
+    const [
+      {
+        data: transactionData,
+        error: transactionError,
+        loading: transactionLoading,
+      },
+      wait,
+    ] = useWaitForTransaction({
+      hash: hash.hash,
+    })
+
+    return (
+      <div>
+        {transactionError && (
+          <p>Something went wrong. Please try again later.</p>
+        )}{' '}
+        {transactionLoading && <p>Loading...</p>}{' '}
+        {transactionData && <p>hash: {transactionData.transactionHash}</p>}
+      </div>
+    )
+  }
+
   return (
     <>
       {writeData ? (
-        <>
-          <p>
-            <small>
-              hash:{' '}
-              <a
-                href={
-                  process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                  '/tx/' +
-                  writeData.hash
-                }
-                sx={{ overflowWrap: 'break-word' }}
-              >
-                {writeData.hash}
-              </a>
-            </small>
-          </p>
-          <ClientOnly>
-            <Button sx={{ display: 'block', mr: 4, mb: 4 }} onClick={refresh}>
-              Reset
-            </Button>
-          </ClientOnly>
-        </>
+        <Transaction hash={writeData.hash} />
       ) : (
         <Button sx={{ display: 'block', mr: 4, mb: 4 }} onClick={handleWrite}>
           Add Message

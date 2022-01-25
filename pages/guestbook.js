@@ -36,6 +36,7 @@ export default function Guestbook() {
     chainId: 80001,
     _defaultProvider: providers =>
       new providers.AlchemyProvider(80001, alchemy),
+    // new providers.JsonRpcProvider(['https://polygon-rpc.com', 'maticm']),
   }
 
   const provider = () => providers.getDefaultProvider(network)

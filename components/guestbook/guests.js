@@ -4,7 +4,7 @@ import { Box } from 'theme-ui'
 import { useContractRead, useProvider } from 'wagmi'
 import BigNumber from 'bignumber.js'
 
-import abi from '../../lib/abi.json'
+import abi from '../../lib/contracts/abi.json'
 
 import Ens from './ens'
 import Squiggle from '../joy/squiggle'
@@ -14,6 +14,7 @@ export default function Guests() {
   const contractAddress = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS
 
   const provider = useProvider()
+  console.log(provider)
   const [{ data: allGuests, loading }, read] = useContractRead(
     {
       addressOrName: contractAddress,
@@ -21,52 +22,51 @@ export default function Guests() {
       signerOrProvider: provider,
     },
     'getAllGuests',
-    {
-      watch: true,
-    },
+    // {
+    //   watch: true,
+    // },
   )
 
   return (
     <Box className="guests">
-      {loading ? (
-        <Loading />
-      ) : (
-        allGuests &&
-        allGuests
-          .slice(0)
-          .reverse()
-          .map(guest => (
-            <>
-              <p sx={{ m: 0, mb: 1 }}>
-                <a
-                  href={
-                    process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                    '/address/' +
-                    guest.guest
-                  }
-                >
-                  <Ens address={guest.guest} />
-                </a>
-              </p>
-              <p sx={{ m: 0, mb: 1 }}>{guest.message}</p>
-              <p sx={{ m: 0, mb: 1 }}>
-                <small>
-                  at{' '}
+      {loading
+        ? // <Loading />
+          null
+        : allGuests &&
+          allGuests
+            .slice(0)
+            .reverse()
+            .map(guest => (
+              <>
+                <p sx={{ m: 0, mb: 1 }}>
                   <a
                     href={
                       process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                      '/block/' +
-                      BigNumber(guest.timestamp._hex).toString()
+                      '/address/' +
+                      guest.guest
                     }
                   >
-                    {BigNumber(guest.timestamp._hex).toString()}
+                    <Ens address={guest.guest} />
                   </a>
-                </small>
-              </p>
-              <Squiggle />
-            </>
-          ))
-      )}
+                </p>
+                <p sx={{ m: 0, mb: 1 }}>{guest.message}</p>
+                <p sx={{ m: 0, mb: 1 }}>
+                  <small>
+                    at{' '}
+                    <a
+                      href={
+                        process.env.NEXT_PUBLIC_ETHERSCAN_URL +
+                        '/block/' +
+                        BigNumber(guest.timestamp._hex).toString()
+                      }
+                    >
+                      {BigNumber(guest.timestamp._hex).toString()}
+                    </a>
+                  </small>
+                </p>
+                <Squiggle />
+              </>
+            ))}
     </Box>
   )
 }
