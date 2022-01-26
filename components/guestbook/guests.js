@@ -27,6 +27,8 @@ export default function Guests() {
     // },
   )
 
+  console.log(provider)
+
   return (
     <Box className="guests">
       {loading

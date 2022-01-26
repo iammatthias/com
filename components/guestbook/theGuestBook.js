@@ -16,23 +16,11 @@ export default function TheGuestBook() {
   return (
     <Box className="theGuestBook">
       {accountData?.address ? <Account /> : <Connect />}
-      <p sx={{ m: 0, mb: 3 }}>write a message on the blockchain*</p>
-      {accountData?.address && <SignMessage />}
+      <p sx={{ m: 0, mb: 1 }}>write a message on the blockchain*</p>
       <p sx={{ m: 0, mb: 3 }}>
-        <small>
-          *nominal gas fee to write message on chain ✌️
-          <br />☞ contract:{' '}
-          <a
-            href={
-              process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-              '/address/' +
-              process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS
-            }
-          >
-            {process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS}
-          </a>
-        </small>
+        <small>*contract runs on Polygon, nominal gas fee applies ✌️</small>
       </p>
+      {accountData?.address && <SignMessage />}
     </Box>
   )
 }

@@ -10,15 +10,16 @@ import Squiggle from '../joy/squiggle'
 import Sparkle from '../joy/sparkle'
 
 // dynamic imports
-
 import dynamic from 'next/dynamic'
 const Write = dynamic(() => import('./write'))
 
 export default function SignMessage() {
+  // account data, fetch ENS
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
   })
 
+  // store message for preview
   const previousMessage = useRef
   const [message, setMessage] = useState('')
   const [
@@ -26,19 +27,21 @@ export default function SignMessage() {
     signMessage,
   ] = useSignMessage()
 
+  // store user for preview
   const recoveredAddress = useMemo(() => {
     if (!signData || !previousMessage.current) return undefined
     return verifyMessage(previousMessage.current, signData)
   }, [signData, previousMessage])
 
   return (
+    // conditionally display form or preview of message
     <>
       {signData ? (
+        // preview
         <>
           <Box
             sx={{
               mb: 3,
-
               wordBreak: 'break-word',
             }}
           >
@@ -70,27 +73,27 @@ export default function SignMessage() {
           <Write message={previousMessage.current} />
         </>
       ) : (
+        // message submission form
         <form
           onSubmit={event => {
             event.preventDefault()
             previousMessage.current = message
             signMessage({ message })
           }}
-          sx={{ mb: 3, width: ['100%', '50%'], minWidth: '250px' }}
+          sx={{ mb: 3, width: ['100%', '80%', '60%'], minWidth: '250px' }}
         >
           <input
             id="message"
-            placeholder="Sign The Guest Book"
+            placeholder="gm"
             onChange={event => setMessage(event.target.value)}
             sx={{
-              minWidth: ['100%', '60%', '30%'],
               width: '100%',
-              padding: '8px',
+              padding: 2,
               border: 'solid 1px',
               borderColor: 'text',
               borderRadius: '4px',
               color: 'text',
-              bg: 'background',
+              bg: 'transparent',
               display: 'block',
               mb: 3,
             }}

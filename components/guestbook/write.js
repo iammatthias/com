@@ -42,11 +42,14 @@ export default function Claim(message) {
 
     return (
       <div>
-        {transactionError && (
-          <p>Something went wrong. Please try again later.</p>
-        )}{' '}
-        {transactionLoading && <p>Loading...</p>}{' '}
-        {transactionData && <p>hash: {transactionData.transactionHash}</p>}
+        {transactionError && <p>There was an error. Please try again later.</p>}{' '}
+        {transactionLoading && <p>Writing message to chain...</p>}{' '}
+        {transactionData && (
+          <>
+            <p>hash: {transactionData.transactionHash}</p>
+            <p>Message posted.</p>
+          </>
+        )}
       </div>
     )
   }
