@@ -24,9 +24,6 @@ export default function Claim(message) {
       args: [message.message],
     })
   }
-  const refresh = () => {
-    window.location.reload(false)
-  }
 
   const Transaction = hash => {
     const [

@@ -24,8 +24,8 @@ export default function Background({ props }) {
     let velocity = Math.random() * (1.618 - 1.382) + 6.18
 
     const circles = Array.from(new Array(NUM_CIRCLES), (_, i) => {
-      const MIN_RADIUS = h * 0.382
-      const MAX_RADIUS = h * 6.18
+      const MIN_RADIUS = h * 0.618
+      const MAX_RADIUS = h * 3.82
       const rad = Math.random() * (MAX_RADIUS + MIN_RADIUS) + MAX_RADIUS
       const x = Math.random() * w
       const y = Math.random() * h
