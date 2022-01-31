@@ -26,7 +26,7 @@
     "@ethersproject/units": "^5.5.0",
     "@mdx-js/loader": "^1.6.22",
     "@mdx-js/react": "^1.6.22",
-    "@next/mdx": "^12.0.8",
+    "@next/mdx": "^12.0.9",
     "@segment/snippet": "^4.15.3",
     "@u-wave/react-vimeo": "^0.9.5",
     "bignumber.js": "^9.0.2",
