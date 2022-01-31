@@ -30,7 +30,7 @@
     "@segment/snippet": "^4.15.3",
     "@u-wave/react-vimeo": "^0.9.5",
     "bignumber.js": "^9.0.2",
-    "ethers": "^5.5.3",
+    "ethers": "^5.5.4",
     "feed": "^4.2.2",
     "framer-motion": "^6.2.3",
     "graphql": "^16.2.0",
