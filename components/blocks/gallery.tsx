@@ -73,7 +73,13 @@ export default function Gallery(props: any) {
     (imageSetLength >= columnLimit ? columnLimit : imageSetLength)
   const columns = imageSetLength >= columnLimit ? columnLimit : imageSetLength
 
-  // bricks
+  function normalizeSrc(src: string) {
+    return src[0] === '/' ? src.slice(1) : src
+  }
+
+  function contentfulLoader({ src }: any): string {
+    return `${normalizeSrc(src)}`
+  }
 
   return (
     <Box ref={ref} className="gallery" css={{ marginBottom: '2rem' }}>
@@ -106,6 +112,7 @@ export default function Gallery(props: any) {
                   blurDataURL={image.placeholder}
                   objectFit="cover"
                   className="gallery"
+                  loader={contentfulLoader}
                 />
               </a>
             </Box>

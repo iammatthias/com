@@ -9,6 +9,7 @@ import withMDX from '@next/mdx'
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   images: {
+    loader: 'custom',
     domains: ['images.ctfassets.net'],
     formats: [
       'image/avif',

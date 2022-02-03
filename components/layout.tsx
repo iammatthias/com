@@ -10,13 +10,13 @@ export default function Layout({ children }: any) {
         margin: '0 auto',
         padding: '1rem',
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr 2fr 4fr 2fr 1fr 1fr',
+        gridTemplateColumns: '1fr 1fr 1fr 6fr 1fr 1fr 1fr',
         gridTemplateRows: 'auto',
         gridGap: '1rem',
         article: {
           gridColumn: '1 / 8',
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr 2fr 4fr 2fr 1fr 1fr',
+          gridTemplateColumns: '1fr 1fr 1fr 6fr 1fr 1fr 1fr',
           gridTemplateRows: 'auto',
           gridGap: '1rem',
           '> *': {
