@@ -13,6 +13,8 @@ import H5 from '@/components/primitives/text/H5'
 import Small from '@/components/primitives/text/small'
 import Pre from '@/components/primitives/text/pre'
 import Code from '@/components/primitives/text/code'
+import Span from '@/components/primitives/text/Span'
+import Mono from '@/components/joy/mono'
 
 // blocks
 import PageList from '@/components/blocks/pageList'
@@ -43,7 +45,7 @@ const mdComponents = {
   h5: (props: any) => <H5 {...props} />,
   H5: (props: any) => <H5 {...props} />,
   small: (props: any) => <Small {...props} />,
-  span: (props: any) => <span {...props} />,
+  span: (props: any) => <Span {...props} />,
   pre: (props: any) => <Pre {...props} />,
   code: (props: any) => <Code {...props} />,
   Code: (props: any) => <Code {...props} />,
@@ -57,7 +59,8 @@ const mdComponents = {
   Anchor: (props: any) => <Anchor {...props} />,
   Squiggle: (props: any) => <Squiggle {...props} />,
   Sparkle: (props: any) => <Sparkles {...props} />,
-  Spicy: (props: any) => <span {...props} />,
+  Spicy: (props: any) => <Spicy {...props} />,
+  Mono: (props: any) => <Mono {...props} />,
   Vimeo: (props: any) => (
     <Vimeo
       {...props}
