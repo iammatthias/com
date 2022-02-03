@@ -1,6 +1,6 @@
 import { styled } from '@stitches/react'
-import Box from './primitives/box'
-import Tooltip from './primitives/tooltip'
+import Box from '../primitives/box'
+import Tooltip from '../primitives/tooltip'
 import Link from 'next/link'
 import {
   HomeIcon,
@@ -8,7 +8,7 @@ import {
   FileTextIcon,
   FaceIcon,
 } from '@radix-ui/react-icons'
-import ColorToggle from './colorToggle'
+import ColorToggle from '../colorToggle'
 
 const Icon = styled('div', {
   padding: '12px 12px',

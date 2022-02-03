@@ -12,11 +12,29 @@ import { MDXRemote } from 'next-mdx-remote'
 import { isDev } from '@/lib/isDev'
 
 // components
+import PageHeader from '@/components/blocks/pageHeader'
+import PageFooter from '@/components/blocks/pageFooter'
 
-export default function Page({ mdx }: any) {
+export default function Page({
+  mdx,
+  publishDate,
+  pageTitle,
+  pageType,
+  slug,
+}: any) {
   return (
     <article>
+      <PageHeader
+        publishDate={publishDate}
+        pageTitle={pageTitle}
+        pageType={pageType}
+        slug={slug}
+      />
       <MDXRemote {...mdx} />
+
+      {(pageType === 'Gallery' || pageType === 'Blog') && (
+        <PageFooter slug={slug} />
+      )}
     </article>
   )
 }

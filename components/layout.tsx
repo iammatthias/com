@@ -1,5 +1,5 @@
 import { styled } from '@stitches/react'
-import Nav from './nav'
+import Nav from './blocks/nav'
 import Box from './primitives/box'
 import Background from './joy/bg'
 
@@ -67,7 +67,7 @@ export default function Layout({ children }: any) {
     >
       <Nav />
       {children}
-      <Background />
+      {/* <Background /> */}
     </Box>
   )
 }
