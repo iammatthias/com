@@ -87,7 +87,6 @@ export const globalStyles = globalCss({
   },
   '.my-masonry-grid': {
     display: 'flex',
-    marginLeft: '-24px',
     '.my-masonry-grid_column': {
       paddingLeft: '24px',
       backgroundClip: 'padding-box',
