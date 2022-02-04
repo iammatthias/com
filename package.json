@@ -26,6 +26,8 @@
     "@types/simple-react-lightbox": "^3.6.1",
     "@types/three": "^0.137.0",
     "@u-wave/react-vimeo": "^0.9.5",
+    "bignumber.js": "^9.0.2",
+    "ethers": "^5.5.4",
     "graphql": "^16.3.0",
     "next": "12.0.10",
     "next-mdx-remote": "^4.0.0-alpha.2",
@@ -35,7 +37,8 @@
     "react-masonry-css": "^1.0.16",
     "react-use-measure": "^2.1.1",
     "simple-react-lightbox": "^3.6.9-0",
-    "three": "^0.137.5"
+    "three": "^0.137.5",
+    "wagmi": "^0.2.8"
   },
   "devDependencies": {
     "@types/node": "17.0.14",

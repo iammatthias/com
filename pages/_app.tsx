@@ -5,6 +5,7 @@ import { ThemeProvider } from 'next-themes'
 import { darkTheme } from '@/lib/stitches.config'
 import { ApolloProvider } from '@apollo/client'
 import client from '@/lib/apolloClient'
+import Meta from '@/components/meta'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -17,6 +18,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <ApolloProvider client={client}>
+        <Meta />
         <MDX>
           <Layout>
             <Component {...pageProps} />

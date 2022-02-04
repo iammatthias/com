@@ -1,10 +1,10 @@
 import { styled, keyframes } from '@/lib/stitches.config'
 
-export default function Button({ children }: any) {
+export default function Button({ children, ...props }: any) {
   const Butt = styled('button', {
     fontFamily: '$system',
     fontSize: '$fontSizes$2',
-    padding: '1rem 2rem',
+    padding: '8px 16px',
     color: '$colors$slate1',
     backgroundColor: '$colors$slate12',
     border: '1px solid $colors$slate12',
@@ -16,6 +16,7 @@ export default function Button({ children }: any) {
       backgroundColor: 'transparent',
     },
     '&:focus': { outline: 'none', boxShadow: `0 0 0 1px $$shadowColor` },
+    ...props.css,
   })
-  return <Butt>{children}</Butt>
+  return <Butt {...props}>{children}</Butt>
 }

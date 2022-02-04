@@ -6,6 +6,7 @@ import Box from '../primitives/box'
 import Masonry from 'react-masonry-css'
 import { useRouter } from 'next/router'
 import useMeasure from 'react-use-measure'
+import AspectRatio from '../primitives/aspectRatio'
 
 // lightbox
 import Lightbox from './galleryLightbox'

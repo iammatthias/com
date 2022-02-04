@@ -124,7 +124,6 @@ export async function getStaticProps({ params }: any) {
   // We return the result of the query as props to pass them above
   return {
     props: {
-      metadata: data.pageCollection.items[0],
       pageType: pageType,
       pageTitle: pageTitle,
       publishDate: publishDate,

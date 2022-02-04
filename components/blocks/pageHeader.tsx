@@ -11,20 +11,19 @@ export default function PageHeader({ children, ...props }: any) {
     `https://iammatthias.com/${props.slug}`,
   )}`
   return (
-    <Box {...props} className="pageHeader" css={{ margin: '0 0 16px' }}>
+    <Box {...props} className="pageHeader" css={{ margin: '16px 0' }}>
       <Box css={{ width: 'fit-content', margin: '0 0 16px' }}>
-        {props.pageType === 'Blog' ||
-          (props.pageType === 'Gallery' && (
-            <Small css={{ display: 'block', width: 'fit-content' }}>
-              Published: {props.publishDate}
-              {/* {props.readingTime > 0 ? (
+        {(props.pageType === 'Blog' || props.pageType === 'Gallery') && (
+          <Small css={{ display: 'block', width: 'fit-content' }}>
+            Published: {props.publishDate}
+            {/* {props.readingTime > 0 ? (
               <span>
                 {spacer} {props.readingTime} <em> min to read</em> {spacer}{' '}
                 {props.wordsCount} <em> words</em>
               </span>
             ) : null} */}
-            </Small>
-          ))}
+          </Small>
+        )}
         <H1 css={{ width: 'fit-content', margin: '8px 0 16px' }}>
           {props.pageTitle}
         </H1>
@@ -40,7 +39,9 @@ export default function PageHeader({ children, ...props }: any) {
             </Link>
           ))}
       </Box>
-      <Squiggle />
+      {(props.pageType === 'Blog' || props.pageType === 'Gallery') && (
+        <Squiggle />
+      )}
     </Box>
   )
 }

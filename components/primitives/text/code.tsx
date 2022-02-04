@@ -1,7 +1,7 @@
 // code
 import { styled } from '@/lib/stitches.config'
 
-export default function Code({ children }: any) {
+export default function Code({ children, ...props }: any) {
   const Code = styled('code', {
     whiteSpace: 'pre-wrap',
     border: '1px solid',
@@ -12,6 +12,7 @@ export default function Code({ children }: any) {
     fontSize: '14px',
     lineHeight: '1.5',
     color: '$colors$slate12',
+    ...props.css,
   })
   return <Code>{children}</Code>
 }
