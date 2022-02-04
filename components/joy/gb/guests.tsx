@@ -3,6 +3,8 @@ import P from '@/components/primitives/text/P'
 import Small from '@/components/primitives/text/small'
 import Squiggle from '../squiggle'
 import abi from '@/lib/contracts/abi.json'
+import Ens from './ens'
+import Anchor from '@/components/primitives/text/Anchor'
 
 import { useContractRead, useProvider } from 'wagmi'
 import BigNumber from 'bignumber.js'
@@ -36,22 +38,21 @@ export default function Guests() {
               <Box key={guest}>
                 <Squiggle />
                 <P css={{ margin: '8px 0' }}>
-                  <a
+                  <Anchor
                     href={
                       process.env.NEXT_PUBLIC_ETHERSCAN_URL +
                       '/address/' +
                       guest.guest
                     }
                   >
-                    {/* <Ens address={guest.guest} /> */}
-                    {guest.guest}
-                  </a>
+                    <Ens address={guest.guest} />
+                  </Anchor>
                 </P>
                 <P css={{ margin: '0 0 8px' }}>{guest.message}</P>
                 <P css={{ margin: '0 0 8px' }}>
                   <Small>
                     at{' '}
-                    <a
+                    <Anchor
                       href={
                         process.env.NEXT_PUBLIC_ETHERSCAN_URL +
                         '/block/' +
@@ -59,7 +60,7 @@ export default function Guests() {
                       }
                     >
                       {new BigNumber(guest.timestamp._hex).toString()}
-                    </a>
+                    </Anchor>
                   </Small>
                 </P>
               </Box>

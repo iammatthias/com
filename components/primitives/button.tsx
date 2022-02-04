@@ -2,6 +2,7 @@ import { styled, keyframes } from '@/lib/stitches.config'
 
 export default function Button({ children, ...props }: any) {
   const Butt = styled('button', {
+    width: 'fit-content',
     fontFamily: '$system',
     fontSize: '$fontSizes$2',
     padding: '8px 16px',

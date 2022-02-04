@@ -8,6 +8,7 @@ import Account from './account'
 import P from '@/components/primitives/text/P'
 import Small from '@/components/primitives/text/small'
 import Guests from './guests'
+import WriteMessage from './signMessage'
 
 export default function TheGuestBook() {
   const [{ data: accountData }] = useAccount()
@@ -18,6 +19,7 @@ export default function TheGuestBook() {
       <P>
         <Small>*contract runs on Polygon, nominal gas fee applies ✌️</Small>
       </P>
+      {accountData && <WriteMessage />}
       <Guests />
     </>
   )

@@ -17,7 +17,7 @@ export default function Anchor({ children, ...props }: any) {
   return (
     <Text>
       <Link passHref {...props}>
-        {children}
+        <a>{children}</a>
       </Link>
     </Text>
   )
