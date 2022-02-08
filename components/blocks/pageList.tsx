@@ -76,7 +76,6 @@ export default function PageList(props: any) {
           <Box
             key={page.slug}
             css={{
-              border: '1px solid pink',
               padding: '0 16px 16px 0',
               maxWidth: 'calc(columnWidth - 32px)',
             }}
