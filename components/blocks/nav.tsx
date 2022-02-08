@@ -37,57 +37,58 @@ const Span = styled('span', {
 
 export default function Nav() {
   return (
-    <Box
-      className="nav"
-      css={{
-        verticalAlign: 'middle',
-        fontSize: '15px',
-        display: 'flex',
-        flexDirection: 'row',
-      }}
-    >
-      <Tooltip copy="Home">
-        <Span tabIndex={0}>
-          <Link href="/" passHref>
-            <Icon>
-              <HomeIcon />
-            </Icon>
-          </Link>
-        </Span>
-      </Tooltip>
-      <Tooltip copy="Work">
-        <Span tabIndex={0}>
-          <Link href="/work" passHref>
-            <Icon>
-              <CameraIcon />
-            </Icon>
-          </Link>
-        </Span>
-      </Tooltip>
-      <Tooltip copy="Blog">
-        <Span tabIndex={0}>
-          <Link href="/blog" passHref>
-            <Icon>
-              <FileTextIcon />
-            </Icon>
-          </Link>
-        </Span>
-      </Tooltip>
-      <Tooltip copy="Guestbook">
-        <Span tabIndex={0}>
-          <Link href="/guestbook" passHref>
-            <Icon>
-              <FaceIcon />
-            </Icon>
-          </Link>
-        </Span>
-      </Tooltip>
+    <Box className="nav">
+      <Box
+        css={{
+          verticalAlign: 'middle',
+          fontSize: '15px',
+          display: 'flex',
+          flexDirection: 'row',
+        }}
+      >
+        <Tooltip copy="Home">
+          <Span tabIndex={0}>
+            <Link href="/" passHref>
+              <Icon>
+                <HomeIcon />
+              </Icon>
+            </Link>
+          </Span>
+        </Tooltip>
+        <Tooltip copy="Work">
+          <Span tabIndex={0}>
+            <Link href="/work" passHref>
+              <Icon>
+                <CameraIcon />
+              </Icon>
+            </Link>
+          </Span>
+        </Tooltip>
+        <Tooltip copy="Blog">
+          <Span tabIndex={0}>
+            <Link href="/blog" passHref>
+              <Icon>
+                <FileTextIcon />
+              </Icon>
+            </Link>
+          </Span>
+        </Tooltip>
+        <Tooltip copy="Guestbook">
+          <Span tabIndex={0}>
+            <Link href="/guestbook" passHref>
+              <Icon>
+                <FaceIcon />
+              </Icon>
+            </Link>
+          </Span>
+        </Tooltip>
 
-      <Tooltip copy="Color Mode">
-        <Span tabIndex={0}>
-          <ColorToggle />
-        </Span>
-      </Tooltip>
+        <Tooltip copy="Color Mode">
+          <Span tabIndex={0}>
+            <ColorToggle />
+          </Span>
+        </Tooltip>
+      </Box>
     </Box>
   )
 }

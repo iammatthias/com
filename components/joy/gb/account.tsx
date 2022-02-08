@@ -33,6 +33,7 @@ export default function Account() {
             margin: '0 0 16px',
             padding: '8px',
             wordBreak: 'break-word',
+            width: '100%',
           }}
         >
           <P css={{ margin: '0 0 8px' }}>

@@ -1,9 +1,8 @@
 // squiggle
 
-import { useRef } from 'react'
 import Box from '../primitives/box'
 import { range } from '@/lib/range'
-import { useContainerDimensions } from '@/lib/useContainerDimensions'
+import useMeasure from 'react-use-measure'
 
 export default function Squiggle({
   height,
@@ -11,12 +10,10 @@ export default function Squiggle({
   squiggleWidth,
   ...props
 }: any) {
-  const svgRef = useRef(null)
+  const [svgRef, bounds] = useMeasure()
 
-  const { width } = useContainerDimensions(svgRef)
-
-  const numOfSquiggles = Math.round(width / squiggleWidth) + 2
-  const roundedSquiggleWidth = width / numOfSquiggles
+  const numOfSquiggles = Math.round(bounds.width / squiggleWidth)
+  const roundedSquiggleWidth = bounds.width / numOfSquiggles
 
   const linePositionY = height / 2
 

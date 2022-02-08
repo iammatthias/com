@@ -1084,10 +1084,10 @@
   resolved "https://registry.yarnpkg.com/@react-spring/types/-/types-9.4.2.tgz#f0518f6d23a0b0f699a71976483323ac84bc4ace"
   integrity sha512-GGiIscTM+CEUNV52anj3g5FqAZKL2+eRKtvBOAlC99qGBbvJ3qTLImrUR/I3lXY7PRuLgzI6kh34quA1oUxWYQ==
 
-"@react-three/drei@^8.8.1":
-  version "8.8.1"
-  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-8.8.1.tgz#66491763aee0292077282b37b0a32e495d00a109"
-  integrity sha512-3YOLk7C+t3oWrsFlQd4laeHsDND3srKcYn1Xj9Hiyo7WfHR/lLHdh01IlHLqdZED22a7MiYyNozZPWohnS0HSA==
+"@react-three/drei@^8.8.3":
+  version "8.8.3"
+  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-8.8.3.tgz#a4c3ad678a42e9300c739a578d0591f33fc5e22f"
+  integrity sha512-vXRnUFZUTSqJzegTAxYfH+I6UoV6Ek6m26gU7w+/D1TabeKdMLRxcByBvi293jsBbb220mVFgqAafUXpa/Ql4w==
   dependencies:
     "@babel/runtime" "^7.11.2"
     "@react-spring/three" "^9.3.1"
@@ -1100,7 +1100,7 @@
     react-merge-refs "^1.1.0"
     stats.js "^0.17.0"
     three-mesh-bvh "^0.5.4"
-    three-stdlib "^2.8.2"
+    three-stdlib "^2.8.6"
     troika-three-text "^0.44.0"
     use-asset "^1.0.4"
     utility-types "^3.10.0"
@@ -1221,10 +1221,15 @@
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.31.tgz#31b7ca6407128a3d2bbc27fe2d21b345397f6197"
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
-"@types/node@*", "@types/node@17.0.14":
+"@types/node@*":
   version "17.0.14"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.14.tgz#33b9b94f789a8fedd30a68efdbca4dbb06b61f20"
   integrity sha512-SbjLmERksKOGzWzPNuW7fJM7fk3YXVTFiZWB/Hs99gwhk+/dnrQRPBQjPW9aO+fi1tAffi9PrwFvsmOKmDTyng==
+
+"@types/node@17.0.16":
+  version "17.0.16"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.16.tgz#e3733f46797b9df9e853ca9f719c8a6f7b84cd26"
+  integrity sha512-ydLaGVfQOQ6hI1xK2A5nVh8bl0OGoIfYMxPWHqqYe9bTkWCfqiVvZoh2I/QF2sNSkZzZyROBoTefIEI+PB6iIA==
 
 "@types/pbkdf2@^3.0.0":
   version "3.1.0"
@@ -1238,10 +1243,19 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.4.tgz#fcf7205c25dff795ee79af1e30da2c9790808f11"
   integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
 
-"@types/react@*", "@types/react@>=16", "@types/react@^17.0.0", "@types/react@^17.0.38":
+"@types/react@*", "@types/react@>=16", "@types/react@^17.0.0":
   version "17.0.38"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.38.tgz#f24249fefd89357d5fa71f739a686b8d7c7202bd"
   integrity sha512-SI92X1IA+FMnP3qM5m4QReluXzhcmovhZnLNm3pyeQlooi02qI7sLiepEYqT678uNiyc25XfCqxREFpy3W7YhQ==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^17.0.39":
+  version "17.0.39"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.39.tgz#d0f4cde092502a6db00a1cded6e6bf2abb7633ce"
+  integrity sha512-UVavlfAxDd/AgAacMa60Azl7ygyQNRwC/DsHZmKgNvPmRR5p70AJ5Q9EAmL2NWOJmeV+vVUI4IAP7GZrN8h8Ug==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -5107,10 +5121,10 @@ three-mesh-bvh@^0.5.4:
   resolved "https://registry.yarnpkg.com/three-mesh-bvh/-/three-mesh-bvh-0.5.5.tgz#2d7df2607ac8ea9ef0413eb47eb168d618fa54ab"
   integrity sha512-WPsEXLfUh+8n2CcWaDnBm4q3c6PbISPbXOBNYt8VLEOTATXP8UqAfEyEBmQU8B9h5FJSSccdXXlHiexO3hZezg==
 
-three-stdlib@^2.8.2:
-  version "2.8.5"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.8.5.tgz#28e6b756bda8c48f5e24fbe73ad009c00e548590"
-  integrity sha512-2BNFVcSUFPc3864VvJylM4+QlJWfi9yVIzENxyjfgQ0aQImTeo0tL2qzHH++cBs/Yi6Zm1FFGz0mmarpkkOV6g==
+three-stdlib@^2.8.6:
+  version "2.8.6"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.8.6.tgz#80aab4ea175acb2f5c32d7488bb26e0a0955be9f"
+  integrity sha512-0emGIVrJG3SGmDyU/mdd4fPOwkXrDCCCwSugHiQBkN5AruAtSTS85Y7zjvexQsQaDYb5RGlJsDefH41nM9uG4Q==
   dependencies:
     "@babel/runtime" "^7.16.7"
     "@webgpu/glslang" "^0.0.15"
@@ -5426,22 +5440,22 @@ vfile@^5.0.0, vfile@^5.2.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
-wagmi-private@0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/wagmi-private/-/wagmi-private-0.1.7.tgz#7e29f609452531395692cc0c4f7ffa57d4a92dc5"
-  integrity sha512-73HlcoZkom1WSZCfNRrtNd7MZ3j1z5T9nVG3LJZ+dAhOhVLxg00uEFo6PGq2Ex8IWkowU5fff9DCDWYGoCjrCg==
+wagmi-private@0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/wagmi-private/-/wagmi-private-0.1.8.tgz#744e8b29cce5daa2869fb51108f2a52431fd82af"
+  integrity sha512-xREyemJcxdLYlIYrNagdv46PUaovCCGz+Bfy/6D3ZUTbsW/5E/50MK+a+NzJSuAjCbtTF9kaiZIaGBUNx/AO8A==
   dependencies:
     "@ethersproject/providers" "^5.5.1"
     eventemitter3 "^4.0.7"
 
-wagmi@^0.2.8:
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.2.8.tgz#7c8f27cc4ddd3f95b3de3ab794df0a01c61439b3"
-  integrity sha512-/MtC5Y34GUCMpr61gCpvR+T+ePRVxm1wfVU69IXESk65zrd54wIlg5PUEIXeWO33wbOFVR+avI+iT4+tdspp+g==
+wagmi@^0.2.9:
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.2.9.tgz#39f403cac747d64f0f01834d51d657f36d9bfdb6"
+  integrity sha512-lHmpC1O30t2Q80N2GuhoAQZiXG/I1gQO3HGdrn9wS8fbjaYM653JgjbwWzY9kCMqrPEdK5s2BDPhgqguHzu0gQ==
   dependencies:
     "@ethersproject/providers" "^5.5.1"
     "@walletconnect/ethereum-provider" "1.7.1"
-    wagmi-private "0.1.7"
+    wagmi-private "0.1.8"
     walletlink "^2.2.8"
 
 walletlink@^2.2.8:

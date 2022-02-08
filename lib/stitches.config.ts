@@ -46,6 +46,7 @@ export const {
       7: '48px'
     },
     fontSizes: {
+      0: '14px',
       1: '16px',
       2: '18px',
       3: '24px',

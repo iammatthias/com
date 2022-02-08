@@ -37,16 +37,18 @@ export default function Guests() {
             .map(guest => (
               <Box key={guest}>
                 <Squiggle />
-                <P css={{ margin: '8px 0' }}>
-                  <Anchor
-                    href={
-                      process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                      '/address/' +
-                      guest.guest
-                    }
-                  >
-                    <Ens address={guest.guest} />
-                  </Anchor>
+                <P css={{ margin: '8px 0', wordBreak: 'break-word' }}>
+                  <Small>
+                    <Anchor
+                      href={
+                        process.env.NEXT_PUBLIC_ETHERSCAN_URL +
+                        '/address/' +
+                        guest.guest
+                      }
+                    >
+                      <Ens address={guest.guest} />
+                    </Anchor>
+                  </Small>
                 </P>
                 <P css={{ margin: '0 0 8px' }}>{guest.message}</P>
                 <P css={{ margin: '0 0 8px' }}>

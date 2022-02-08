@@ -6,7 +6,6 @@ import Box from '../primitives/box'
 import Masonry from 'react-masonry-css'
 import { useRouter } from 'next/router'
 import useMeasure from 'react-use-measure'
-import AspectRatio from '../primitives/aspectRatio'
 
 // lightbox
 import Lightbox from './galleryLightbox'
@@ -60,13 +59,13 @@ export default function Gallery(props: any) {
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items
   const imageSetLength = imageSetImages.length
   const columnLimit =
-    bounds.width > 1100
+    bounds.width > 1536
       ? 7
-      : bounds.width > 900
+      : bounds.width > 1024
       ? 5
-      : bounds.width > 700
+      : bounds.width > 768
       ? 3
-      : bounds.width > 500
+      : bounds.width > 512
       ? 2
       : 2
   const columnWidth =
