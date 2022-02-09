@@ -48,7 +48,7 @@ export default function Nav() {
       >
         <Tooltip copy="Home">
           <Span tabIndex={0}>
-            <Link href="/">
+            <Link href="/" scroll={false}>
               <Icon>
                 <HomeIcon />
               </Icon>

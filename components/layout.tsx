@@ -1,10 +1,15 @@
 import { styled } from '@stitches/react'
-import Nav from './blocks/nav'
 import Box from './primitives/box'
-// import Background from './joy/bg'
-// import ClientOnly from './clientOnly'
+import { motion } from 'framer-motion'
+import { useRouter } from 'next/router'
 
 export default function Layout({ children }: any) {
+  const router = useRouter()
+  const variants = {
+    hidden: { opacity: 0, x: 0, y: 0 },
+    enter: { opacity: 1, x: 0, y: 0 },
+    exit: { opacity: 0, x: 0, y: 0 },
+  }
   return (
     <Box
       css={{
@@ -52,11 +57,16 @@ export default function Layout({ children }: any) {
         },
       }}
     >
-      <Nav />
-      {children}
-      {/* <ClientOnly>
-        <Background />
-      </ClientOnly> */}
+      <motion.main
+        initial="hidden"
+        animate="enter"
+        exit="exit"
+        variants={variants}
+        key={router.asPath}
+        transition={{ duration: 0.2, ease: 'easeInOut', type: 'tween' }}
+      >
+        {children}
+      </motion.main>
     </Box>
   )
 }

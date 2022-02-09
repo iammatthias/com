@@ -5,7 +5,11 @@ import { ThemeProvider } from 'next-themes'
 import { darkTheme } from '@/lib/stitches.config'
 import { ApolloProvider } from '@apollo/client'
 import client from '@/lib/apolloClient'
+import { AnimatePresence } from 'framer-motion'
 import Meta from '@/components/meta'
+import Nav from '@/components/blocks/nav'
+// import Background from './joy/bg'
+// import ClientOnly from './clientOnly'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -21,7 +25,14 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Meta />
         <MDX>
           <Layout>
-            <Component {...pageProps} />
+            <Nav />
+            <AnimatePresence exitBeforeEnter>
+              <Component {...pageProps} />
+            </AnimatePresence>
+
+            {/* <ClientOnly>
+              <Background />
+            </ClientOnly> */}
           </Layout>
         </MDX>
       </ApolloProvider>
