@@ -13,7 +13,7 @@ export default function PageHeader({ children, ...props }: any) {
   return (
     <Box {...props} className="pageHeader" css={{ margin: '16px 0' }}>
       <Box css={{ width: 'fit-content', margin: '0 0 16px' }}>
-        {(props.pageType === 'Blog' || props.pageType === 'Gallery') && (
+        {(props.type === 'Blog' || props.type === 'Gallery') && (
           <Small css={{ display: 'block', width: 'fit-content' }}>
             Published: {props.publishDate}
             {/* {props.readingTime > 0 ? (
@@ -25,10 +25,10 @@ export default function PageHeader({ children, ...props }: any) {
           </Small>
         )}
         <H1 css={{ width: 'fit-content', margin: '8px 0 16px' }}>
-          {props.pageTitle}
+          {props.title}
         </H1>
-        {props.pageType === 'Blog' ||
-          (props.pageType === 'Gallery' && (
+        {props.type === 'Blog' ||
+          (props.type === 'Gallery' && (
             <Link href={comments}>
               <Button
                 sx={{ width: ['100%', '250px'] }}
@@ -39,9 +39,7 @@ export default function PageHeader({ children, ...props }: any) {
             </Link>
           ))}
       </Box>
-      {(props.pageType === 'Blog' || props.pageType === 'Gallery') && (
-        <Squiggle />
-      )}
+      {(props.type === 'Blog' || props.type === 'Gallery') && <Squiggle />}
     </Box>
   )
 }

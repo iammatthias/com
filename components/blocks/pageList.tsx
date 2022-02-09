@@ -1,6 +1,7 @@
 // page list
 
 import { useQuery, gql } from '@apollo/client'
+import { styled } from '@/lib/stitches.config'
 import Link from 'next/link'
 import Box from '../primitives/box'
 import { isDev } from '@/lib/isDev'
@@ -63,7 +64,16 @@ export default function PageList(props: any) {
       ? 2
       : 1
 
-  const columnWidth = bounds.width / columns
+  const ListItem = styled('div', {
+    marginBottom: '24px',
+    padding: '8px 16px',
+    border: '1px solid',
+    borderColor: 'inherit',
+    borderRadius: '4px',
+    $$shadowColor: '$colors$slate12',
+    '&:hover': { boxShadow: `0 0 0 1px $$shadowColor` },
+    '&:focus': { outline: 'none', boxShadow: `0 0 0 1px $$shadowColor` },
+  })
 
   return (
     <Box ref={ref}>
@@ -73,13 +83,7 @@ export default function PageList(props: any) {
         columnClassName="column"
       >
         {pageList.map((page: any) => (
-          <Box
-            key={page.slug}
-            css={{
-              padding: '0 16px 16px 0',
-              maxWidth: 'calc(columnWidth - 32px)',
-            }}
-          >
+          <ListItem key={page.slug}>
             <Link href={page.slug}>
               <a
                 style={{
@@ -96,10 +100,9 @@ export default function PageList(props: any) {
                     page.publishDate.replace(/-/g, '/').replace(/T.+/, ''),
                   ).toLocaleDateString('en-us')}
                 </Small>
-                <Squiggle />
               </a>
             </Link>
-          </Box>
+          </ListItem>
         ))}
       </Masonry>
     </Box>

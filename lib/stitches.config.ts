@@ -88,14 +88,23 @@ export const globalStyles = globalCss({
   },
   '.my-masonry-grid': {
     display: 'flex',
+    gap: '24px',
     '.my-masonry-grid_column': {
       paddingLeft: '24px',
       backgroundClip: 'padding-box',
     },
     '.my-masonry-grid_column > div': {
       width: 'calc(100% - 24px)',
-      marginBottom: '16px',
+      marginBottom: '24px',
     },
+  },
+  '.gradient-canvas': {
+    width: '100vw',
+    height: '100vh',
+    '--gradient-color-1': '#c3e4ff',
+    '--gradient-color-2': '#6ec3f4',
+    '--gradient-color-3': '#eae2ff',
+    '--gradient-color-4': '#b9beff',
   },
   "@dark": {
     // notice the `media` definition on the stitches.config.ts file

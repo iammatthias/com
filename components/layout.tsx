@@ -1,7 +1,8 @@
 import { styled } from '@stitches/react'
 import Nav from './blocks/nav'
 import Box from './primitives/box'
-import Background from './joy/bg'
+// import Background from './joy/bg'
+// import ClientOnly from './clientOnly'
 
 export default function Layout({ children }: any) {
   return (
@@ -9,6 +10,9 @@ export default function Layout({ children }: any) {
       css={{
         margin: '0 auto',
         padding: '1rem',
+        article: {
+          margin: '3rem auto',
+        },
         'article, .nav': {
           display: 'grid',
           gridTemplateColumns: '1fr 1fr 1fr 6fr 1fr 1fr 1fr',
@@ -50,7 +54,9 @@ export default function Layout({ children }: any) {
     >
       <Nav />
       {children}
-      {/* <Background /> */}
+      {/* <ClientOnly>
+        <Background />
+      </ClientOnly> */}
     </Box>
   )
 }

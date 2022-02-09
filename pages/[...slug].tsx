@@ -25,9 +25,9 @@ export default function Page({
   return (
     <article>
       <PageHeader
-        publishDate={publishDate}
-        pageTitle={pageTitle}
-        pageType={pageType}
+        date={publishDate}
+        title={pageTitle}
+        type={pageType}
         slug={slug}
       />
       <MDXRemote {...mdx} />

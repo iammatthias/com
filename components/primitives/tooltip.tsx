@@ -43,18 +43,11 @@ export default function Tooltip({ children, copy }: any) {
       },
     },
   })
-  const StyledArrow = styled(TooltipPrimitive.Arrow, {
-    fill: 'white',
-  })
-
   return (
     <TooltipPrimitive.Provider delayDuration={100}>
       <TooltipPrimitive.Root>
         <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
-        <StyledContent sideOffset={5}>
-          {copy}
-          <StyledArrow />
-        </StyledContent>
+        <StyledContent sideOffset={16}>{copy}</StyledContent>
       </TooltipPrimitive.Root>
     </TooltipPrimitive.Provider>
   )

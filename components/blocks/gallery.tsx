@@ -98,6 +98,7 @@ export default function Gallery(props: any) {
               css={{
                 position: 'relative',
                 width: '100%',
+                marginBottom: '24px',
                 height: props.ratio
                   ? eval(props.ratio) * columnWidth
                   : (image.height / image.width) * columnWidth,

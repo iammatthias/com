@@ -8,12 +8,17 @@ export default function Squiggle({
   height,
   strokeColor,
   squiggleWidth,
+  width,
   ...props
 }: any) {
   const [svgRef, bounds] = useMeasure()
 
-  const numOfSquiggles = Math.round(bounds.width / squiggleWidth)
+  const numOfSquiggles = squiggleWidth
+    ? Math.floor(bounds.width / squiggleWidth)
+    : Math.round(bounds.width / 16)
+
   const roundedSquiggleWidth = bounds.width / numOfSquiggles
+  const svgWidth = numOfSquiggles * roundedSquiggleWidth
 
   const linePositionY = height / 2
 
@@ -42,7 +47,7 @@ export default function Squiggle({
     >
       <svg
         id="squiggle"
-        width={numOfSquiggles * roundedSquiggleWidth}
+        width={svgWidth}
         height={height}
         style={{
           display: 'block',

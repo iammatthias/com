@@ -42,7 +42,7 @@ export default function Guests() {
                     <Anchor
                       href={
                         process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                        '/address/' +
+                        'address/' +
                         guest.guest
                       }
                     >
@@ -57,7 +57,7 @@ export default function Guests() {
                     <Anchor
                       href={
                         process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                        '/block/' +
+                        'block/' +
                         new BigNumber(guest.timestamp._hex).toString()
                       }
                     >
