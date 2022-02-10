@@ -24,8 +24,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ApolloProvider client={client}>
         <Meta />
         <MDX>
+          <Nav />
           <Layout>
-            <Nav />
             <AnimatePresence exitBeforeEnter>
               <Component {...pageProps} />
             </AnimatePresence>

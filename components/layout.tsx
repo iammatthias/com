@@ -1,4 +1,3 @@
-import { styled } from '@stitches/react'
 import Box from './primitives/box'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -17,8 +16,6 @@ export default function Layout({ children }: any) {
         padding: '1rem',
         article: {
           margin: '3rem auto',
-        },
-        'article, .nav': {
           display: 'grid',
           gridTemplateColumns: '1fr 1fr 1fr 6fr 1fr 1fr 1fr',
           gridTemplateRows: 'auto',
@@ -28,28 +25,28 @@ export default function Layout({ children }: any) {
           },
         },
         '@bp1': {
-          'article, .nav': {
+          article: {
             '> *': {
               gridColumn: '1 / 8',
             },
           },
         },
         '@bp2': {
-          'article, .nav': {
+          article: {
             '> *': {
               gridColumn: '2 / 7',
             },
           },
         },
         '@bp3': {
-          'article, .nav': {
+          article: {
             '> *': {
               gridColumn: '3 / 6',
             },
           },
         },
         '@bp4': {
-          'article, .nav': {
+          article: {
             '> *': {
               gridColumn: '4 / 5',
             },
@@ -63,7 +60,12 @@ export default function Layout({ children }: any) {
         exit="exit"
         variants={variants}
         key={router.asPath}
-        transition={{ duration: 0.2, ease: 'easeInOut', type: 'tween' }}
+        transition={{
+          delay: 0,
+          duration: 0.618,
+          ease: 'easeInOut',
+          type: 'tween',
+        }}
       >
         {children}
       </motion.main>
