@@ -98,13 +98,19 @@ export const globalStyles = globalCss({
       marginBottom: '24px',
     },
   },
-  '.gradient-canvas': {
-    width: '100vw',
-    height: '100vh',
-    '--gradient-color-1': '#c3e4ff',
-    '--gradient-color-2': '#6ec3f4',
-    '--gradient-color-3': '#eae2ff',
-    '--gradient-color-4': '#b9beff',
+  '#gradient-canvas': {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: '-11',
+    width: '100%',
+    height: '100%',
+    opacity: '0.382',
+    '--gradient-color-1': '#a4dff1',
+    '--gradient-color-2': '#a4e4d4',
+    '--gradient-color-3': '#c9e894',
+    '--gradient-color-4': '#f9e68c',
+    '--gradient-color-5': '#fac7be',
   },
   "@dark": {
     // notice the `media` definition on the stitches.config.ts file

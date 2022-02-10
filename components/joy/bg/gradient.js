@@ -1,9 +1,7 @@
 /*
- *   Stripe WebGl Gradient Animation
- *   All Credits to Stripe.com
+ *   Stripe WebGl Gradient Animation by Stripe.com
  *   ScrollObserver functionality to disable animation when not scrolled into view has been disabled and
  *   commented out for now.
- *   https://kevinhufnagl.com
  */
 
 //Converting colors to proper format
@@ -492,7 +490,7 @@ function e(object, propertyName, val) {
 }
 
 //Gradient object
-class Gradient {
+export class Gradient {
   constructor(...t) {
     e(this, 'el', void 0),
       e(this, 'cssVarRetries', 0),
@@ -627,7 +625,7 @@ class Gradient {
         playing: true,
       }),
       document.querySelectorAll('canvas').length < 1
-        ? console.log('DID NOT LOAD CANVAS')
+        ? console.log('DID NOT LOAD HERO STRIPE CANVAS')
         : ((this.minigl = new MiniGl(this.el, null, null, !0)),
           requestAnimationFrame(() => {
             this.el &&
@@ -659,7 +657,7 @@ class Gradient {
         value: 0,
       }),
       u_shadow_power: new this.minigl.Uniform({
-        value: 5,
+        value: 10,
       }),
       u_darken_top: new this.minigl.Uniform({
         value: '' === this.el.dataset.jsDarkenTop ? 1 : 0,
@@ -838,6 +836,7 @@ class Gradient {
       '--gradient-color-2',
       '--gradient-color-3',
       '--gradient-color-4',
+      '--gradient-color-5',
     ]
       .map(cssPropertyName => {
         let hex = this.computedCanvasStyle
@@ -859,4 +858,16 @@ class Gradient {
   }
 }
 
-export { Gradient }
+/*
+ *Finally initializing the Gradient class, assigning a canvas to it and calling Gradient.connect() which initializes everything,
+ * Use Gradient.pause() and Gradient.play() for controls.
+ *
+ * Here are some default property values you can change anytime:
+ * Amplitude:    Gradient.amp = 0
+ * Colors:       Gradient.sectionColors (if you change colors, use normalizeColor(#hexValue)) before you assign it.
+ *
+ *
+ * Useful functions
+ * Gradient.toggleColor(index)
+ * Gradient.updateFrequency(freq)
+ */

@@ -10,6 +10,7 @@ import Small from '../primitives/text/small'
 import Squiggle from '../joy/squiggle'
 import Masonry from 'react-masonry-css'
 import useMeasure from 'react-use-measure'
+import { keyframes } from '@/lib/stitches.config'
 
 const QUERY = gql`
   query ($preview: Boolean, $type: String, $limit: Int) {
@@ -64,14 +65,28 @@ export default function PageList(props: any) {
       ? 2
       : 1
 
+  const fadeIn = keyframes({
+    from: { boxShadow: `0 0 0 0 $$shadowColor` },
+    to: { boxShadow: `0 0 0 1px $$shadowColor` },
+  })
+
+  const fadeOut = keyframes({
+    from: { boxShadow: `0 0 0 1px $$shadowColor` },
+    to: { boxShadow: `0 0 0 0 $$shadowColor` },
+  })
+
   const ListItem = styled('div', {
     marginBottom: '24px',
-    padding: '8px 16px',
+    padding: '8px 16px 12px',
     border: '1px solid',
     borderColor: 'inherit',
     borderRadius: '4px',
+    animation: `${fadeOut} 328ms ease-out`,
     $$shadowColor: '$colors$slate12',
-    '&:hover': { boxShadow: `0 0 0 1px $$shadowColor` },
+    '&:hover': {
+      boxShadow: `0 0 0 1px $$shadowColor`,
+      animation: `${fadeIn} 328ms ease-out`,
+    },
     '&:focus': { outline: 'none', boxShadow: `0 0 0 1px $$shadowColor` },
   })
 

@@ -22,7 +22,6 @@
     "@stitches/react": "^1.2.6",
     "@types/mdx": "^2.0.1",
     "@types/simple-react-lightbox": "^3.6.1",
-    "@types/three": "^0.137.0",
     "@u-wave/react-vimeo": "^0.9.5",
     "bignumber.js": "^9.0.2",
     "esbuild": "^0.14.21",
@@ -37,7 +36,6 @@
     "react-masonry-css": "^1.0.16",
     "react-use-measure": "^2.1.1",
     "simple-react-lightbox": "^3.6.9-0",
-    "three": "^0.137.5",
     "wagmi": "^0.2.9"
   },
   "devDependencies": {

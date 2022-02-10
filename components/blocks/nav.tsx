@@ -1,4 +1,4 @@
-import { styled } from '@stitches/react'
+import { styled, keyframes } from '@stitches/react'
 import Box from '../primitives/box'
 import Tooltip from '../primitives/tooltip'
 import Link from 'next/link'
@@ -10,39 +10,55 @@ import {
 } from '@radix-ui/react-icons'
 import ColorToggle from '../colorToggle'
 
-const Icon = styled('div', {
-  padding: '12px 12px',
-  height: '15px',
-})
-
-const Span = styled('span', {
-  maxWidth: '39px',
-  maxHeight: '39px',
-  marginRight: '24px',
-  border: '1px solid',
-  borderColor: 'inherit',
-  borderRadius: '4px',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  $$shadowColor: '$colors$slate12',
-  '&:hover': { boxShadow: `0 0 0 1px $$shadowColor` },
-  '&:focus': { outline: 'none', boxShadow: `0 0 0 1px $$shadowColor` },
-  '&:last-child': {
-    marginRight: '0',
-    marginLeft: 'auto',
-    borderRadius: '50px',
-  },
-})
-
 export default function Nav() {
+  const fadeIn = keyframes({
+    from: { boxShadow: `0 0 0 0 $$shadowColor` },
+    to: { boxShadow: `0 0 0 1px $$shadowColor` },
+  })
+
+  const fadeOut = keyframes({
+    from: { boxShadow: `0 0 0 1px $$shadowColor` },
+    to: { boxShadow: `0 0 0 0 $$shadowColor` },
+  })
+
+  const Icon = styled('div', {
+    padding: '12px 12px',
+    height: '15px',
+  })
+
+  const Span = styled('span', {
+    maxWidth: '39px',
+    maxHeight: '39px',
+    marginRight: '24px',
+    border: '1px solid',
+    borderColor: 'inherit',
+    borderRadius: '4px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    animation: `${fadeOut} 328ms ease-out`,
+    $$shadowColor: '$colors$slate12',
+    '&:hover': {
+      boxShadow: `0 0 0 1px $$shadowColor`,
+      animation: `${fadeIn} 328ms ease-out`,
+      // mixBlendMode: 'multiply',
+      // backdropFilter: 'invert(100%) opacity(25%) saturate(1000%)',
+    },
+    '&:focus': { outline: 'none', boxShadow: `0 0 0 1px $$shadowColor` },
+    '&:last-child': {
+      marginRight: '0',
+      marginLeft: 'auto',
+      borderRadius: '50px',
+    },
+  })
   return (
     <Box
       className="nav"
       css={{
+        position: 'relative',
         margin: '0 auto',
         padding: '1rem',
-
         display: 'grid',
         gridTemplateColumns: '1fr 1fr 1fr 6fr 1fr 1fr 1fr',
         gridTemplateRows: 'auto',

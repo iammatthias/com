@@ -8,8 +8,9 @@ import client from '@/lib/apolloClient'
 import { AnimatePresence } from 'framer-motion'
 import Meta from '@/components/meta'
 import Nav from '@/components/blocks/nav'
-// import Background from './joy/bg'
-// import ClientOnly from './clientOnly'
+
+import Background from '@/components/joy/bg/bg'
+import ClientOnly from '@/components/clientOnly'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -29,11 +30,10 @@ function MyApp({ Component, pageProps }: AppProps) {
             <AnimatePresence exitBeforeEnter>
               <Component {...pageProps} />
             </AnimatePresence>
-
-            {/* <ClientOnly>
-              <Background />
-            </ClientOnly> */}
           </Layout>
+          <ClientOnly>
+            <Background />
+          </ClientOnly>
         </MDX>
       </ApolloProvider>
     </ThemeProvider>
