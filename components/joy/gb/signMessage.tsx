@@ -6,6 +6,8 @@ import { styled } from '@/lib/stitches.config'
 import Box from '@/components/primitives/box'
 import Button from '@/components/primitives/button'
 import P from '@/components/primitives/text/P'
+import Small from '@/components/primitives/text/small'
+import Anchor from '@/components/primitives/text/Anchor'
 
 import Ens from './ens'
 import Squiggle from '../squiggle'
@@ -51,15 +53,17 @@ export default function SignMessage() {
                 </small>
               </P>
               <P css={{ margin: '0 0 8px' }}>
-                <a
-                  href={
-                    process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                    '/address/' +
-                    recoveredAddress
-                  }
-                >
-                  <Ens address={recoveredAddress} />
-                </a>
+                <Small>
+                  <Anchor
+                    href={
+                      process.env.NEXT_PUBLIC_ETHERSCAN_URL +
+                      'address/' +
+                      recoveredAddress
+                    }
+                  >
+                    <Ens address={recoveredAddress} />
+                  </Anchor>
+                </Small>
               </P>
               <P css={{ margin: '0 0 8px' }}>{previousMessage.current}</P>
               <Squiggle />
@@ -90,7 +94,8 @@ export default function SignMessage() {
               background: 'transparent',
               display: 'block',
               margin: '0 0 16px',
-              width: '100%',
+              maxWidth: '361px',
+              width: 'calc(100% - 16px)',
             }}
           />
 

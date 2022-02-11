@@ -35,7 +35,7 @@ export default function Guests() {
             .slice()
             .reverse()
             .map(guest => (
-              <Box key={guest}>
+              <Box key={guest} css={{ width: 'fit-content' }}>
                 <Squiggle />
                 <P css={{ margin: '8px 0', wordBreak: 'break-word' }}>
                   <Small>

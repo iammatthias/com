@@ -17,8 +17,8 @@ const QUERY = gql`
         title
         imagesCollection {
           items {
-            url(transform: { width: 1200, quality: 75 })
-            urlSmall: url(transform: { width: 400, quality: 75 })
+            url
+
             placeholder: url(transform: { width: 5, quality: 1 })
             title
             width
@@ -77,8 +77,14 @@ export default function Gallery(props: any) {
     return src[0] === '/' ? src.slice(1) : src
   }
 
-  function contentfulLoader({ src }: any): string {
-    return `${normalizeSrc(src)}`
+  function contentfulLoader({ src, quality, width }: any): string {
+    const params = ['w=' + width]
+
+    if (quality) {
+      params.push('q=' + quality)
+    }
+
+    return `${normalizeSrc(src)}?${params.join('&')}`
   }
 
   return (
@@ -106,7 +112,7 @@ export default function Gallery(props: any) {
             >
               <a href={image.url}>
                 <Image
-                  src={(length = 1 ? image.url : image.urlSmall)}
+                  src={image.url}
                   alt={image.title}
                   layout="fill"
                   placeholder="blur"

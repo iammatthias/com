@@ -33,7 +33,7 @@ export default function Page({
       <MDXRemote {...mdx} />
 
       {(pageType === 'Gallery' || pageType === 'Blog') && (
-        <PageFooter slug={slug} />
+        <PageFooter type={pageType} slug={slug} />
       )}
     </article>
   )

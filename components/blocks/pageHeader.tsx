@@ -15,7 +15,7 @@ export default function PageHeader({ children, ...props }: any) {
       <Box css={{ width: 'fit-content', margin: '0 0 16px' }}>
         {(props.type === 'Blog' || props.type === 'Gallery') && (
           <Small css={{ display: 'block', width: 'fit-content' }}>
-            Published: {props.publishDate}
+            Published: {props.date}
             {/* {props.readingTime > 0 ? (
               <span>
                 {spacer} {props.readingTime} <em> min to read</em> {spacer}{' '}

@@ -5,7 +5,7 @@ import { ThemeProvider } from 'next-themes'
 import { darkTheme } from '@/lib/stitches.config'
 import { ApolloProvider } from '@apollo/client'
 import client from '@/lib/apolloClient'
-import { AnimatePresence } from 'framer-motion'
+
 import Meta from '@/components/meta'
 import Nav from '@/components/blocks/nav'
 
@@ -27,9 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <MDX>
           <Nav />
           <Layout>
-            <AnimatePresence exitBeforeEnter>
-              <Component {...pageProps} />
-            </AnimatePresence>
+            <Component {...pageProps} />
           </Layout>
           <ClientOnly>
             <Background />

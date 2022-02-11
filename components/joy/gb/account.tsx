@@ -33,10 +33,10 @@ export default function Account() {
             margin: '0 0 16px',
             padding: '8px',
             wordBreak: 'break-word',
-            width: '100%',
+            width: 'fit-content',
           }}
         >
-          <P css={{ margin: '0 0 8px' }}>
+          <P css={{ margin: '0' }}>
             <Small>
               connected as{' '}
               <a
@@ -52,7 +52,7 @@ export default function Account() {
               </a>
             </Small>
           </P>
-          <P css={{ margin: '0 0 8px' }}>
+          <P css={{ margin: '0' }}>
             <Small>
               contract:{' '}
               <a

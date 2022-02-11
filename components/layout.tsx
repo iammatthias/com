@@ -14,6 +14,7 @@ export default function Layout({ children }: any) {
       css={{
         margin: '0 auto',
         padding: '1rem',
+        minHeight: '100vh',
         article: {
           margin: '3rem auto',
           display: 'grid',
