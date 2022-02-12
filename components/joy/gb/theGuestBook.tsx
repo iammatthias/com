@@ -28,7 +28,9 @@ export default function TheGuestBook() {
           <li>
             *optional writing a message & minting an nft are 1 transaction
           </li>
-          <li>to add punctuation wrap your message in "double quotes"</li>
+          <li>
+            to add punctuation wrap your message in &quot;double quotes&quot;
+          </li>
         </ul>
       </Small>
 
