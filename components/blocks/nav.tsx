@@ -42,13 +42,20 @@ export default function Nav() {
     '&:hover': {
       boxShadow: `0 0 0 1px $$shadowColor`,
       animation: `${fadeIn} 328ms ease-out`,
-      // mixBlendMode: 'multiply',
-      // backdropFilter: 'invert(100%) opacity(25%) saturate(1000%)',
+      backdropFilter: 'invert(100%) opacity(38.2%) saturate(1618%)',
     },
-    '&:focus': { outline: 'none', boxShadow: `0 0 0 1px $$shadowColor` },
+    '&:focus': {
+      outline: 'none',
+      boxShadow: `0 0 0 1px $$shadowColor`,
+    },
+    '&:active': {
+      outline: 'none',
+      boxShadow: `0 0 0 1px $$shadowColor`,
+      backdropFilter: 'invert(100%) opacity(25%) saturate(1000%)',
+    },
     '&:last-child': {
-      marginRight: '0',
-      marginLeft: 'auto',
+      // marginRight: '0',
+      // marginLeft: 'auto',
       borderRadius: '50px',
     },
   })

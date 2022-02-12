@@ -86,6 +86,7 @@ export default function PageList(props: any) {
     '&:hover': {
       boxShadow: `0 0 0 1px $$shadowColor`,
       animation: `${fadeIn} 328ms ease-out`,
+      backdropFilter: 'invert(100%) opacity(38.2%) saturate(1618%)',
     },
     '&:focus': { outline: 'none', boxShadow: `0 0 0 1px $$shadowColor` },
   })

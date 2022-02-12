@@ -5311,10 +5311,10 @@ wagmi-private@0.1.8:
     "@ethersproject/providers" "^5.5.1"
     eventemitter3 "^4.0.7"
 
-wagmi@^0.2.9:
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.2.9.tgz#39f403cac747d64f0f01834d51d657f36d9bfdb6"
-  integrity sha512-lHmpC1O30t2Q80N2GuhoAQZiXG/I1gQO3HGdrn9wS8fbjaYM653JgjbwWzY9kCMqrPEdK5s2BDPhgqguHzu0gQ==
+wagmi@^0.2.10:
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.2.10.tgz#31a372a9998af07f8682d56cc6af139d3a3c4350"
+  integrity sha512-hTP9HfWrtuQzi+kN9IHi7sk/2nA+vsvKmQHEI9njSuMgGiJrLAGb9viHLQdGazlRR6aSoKBGz5CteXVhlV8AQg==
   dependencies:
     "@ethersproject/providers" "^5.5.1"
     "@walletconnect/ethereum-provider" "1.7.1"

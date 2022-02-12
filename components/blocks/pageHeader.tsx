@@ -11,7 +11,11 @@ export default function PageHeader({ children, ...props }: any) {
     `https://iammatthias.com/${props.slug}`,
   )}`
   return (
-    <Box {...props} className="pageHeader" css={{ margin: '16px 0' }}>
+    <Box
+      {...props}
+      className="pageHeader"
+      css={{ margin: '16px 0', width: '100%' }}
+    >
       <Box css={{ width: 'fit-content', margin: '0 0 16px' }}>
         {(props.type === 'Blog' || props.type === 'Gallery') && (
           <Small css={{ display: 'block', width: 'fit-content' }}>

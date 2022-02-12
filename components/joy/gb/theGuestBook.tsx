@@ -15,10 +15,19 @@ export default function TheGuestBook() {
   return (
     <>
       {accountData?.address ? <Account /> : <Connect />}
-      <P>write a message on the blockchain*</P>
-      <P>
-        <Small>*contract runs on Polygon, nominal gas fee applies ✌️</Small>
+      <P css={{ margin: '0' }}>
+        Write a message on the blockchain. Maybe get it on an NFT.
       </P>
+      <Small>
+        <ul style={{ marginTop: '0' }}>
+          <li>x max supply (tokens)</li>
+          <li>unlimited guestbook messages</li>
+          <li>nominal gas fee applies to write message on-chain</li>
+          <li>nominal gas fee applies to write message & mint nft</li>
+          <li>to add punctuation wrap your message in "double quotes"</li>
+        </ul>
+      </Small>
+
       {accountData && <WriteMessage />}
       <Guests />
     </>

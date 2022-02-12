@@ -12,22 +12,43 @@ export default function WriteMessage(message: any) {
 
   const provider = useProvider()
 
-  const [{ data: writeData, loading, error }, signTheGuestBook] =
+  const [
+    { data: writeWithoutMintData, error: writeWithoutMintError },
+    signWithoutMint,
+  ] = useContractWrite(
+    {
+      addressOrName: contractAddress as string,
+      contractInterface: abi.abi,
+      signerOrProvider: provider,
+    },
+    'signWithoutMint',
+  )
+
+  const [{ data: writeWithMintData, error: writeWithMintError }, signWithMint] =
     useContractWrite(
       {
         addressOrName: contractAddress as string,
         contractInterface: abi.abi,
         signerOrProvider: provider,
       },
-      'signTheGuestBook',
+      'signWithMint',
     )
 
-  const handleWrite = async () => {
+  const handleWriteWithoutMint = async () => {
     console.log(message.message)
-    await signTheGuestBook({
+    await signWithoutMint({
       args: message.message,
     })
   }
+  const handleWriteWithMint = async () => {
+    console.log(message.message)
+    await signWithMint({
+      args: message.message,
+    })
+  }
+
+  const writeData: any = writeWithMintData || writeWithoutMintData
+  const writeError: any = writeWithMintError || writeWithoutMintError
 
   const Transaction = (hash: any) => {
     const [
@@ -72,9 +93,12 @@ export default function WriteMessage(message: any) {
       {writeData ? (
         <Transaction hash={writeData.hash} />
       ) : (
-        <Button onClick={handleWrite}>Add Message</Button>
+        <>
+          <Button onClick={handleWriteWithMint}>Write With Mint</Button>
+          <Button onClick={handleWriteWithoutMint}>Write Without Mint</Button>
+        </>
       )}
-      {error && <P>{error?.message}</P>}
+      {writeError && <P>{writeError?.message}</P>}
     </>
   )
 }

@@ -1,6 +1,6 @@
 // gallery
 
-import Image from 'next/image'
+import Image, { ImageLoaderProps } from 'next/image'
 import { useQuery, gql } from '@apollo/client'
 import Box from '../primitives/box'
 import Masonry from 'react-masonry-css'
@@ -18,11 +18,7 @@ const QUERY = gql`
         imagesCollection {
           items {
             url
-
-            placeholder: url(transform: { width: 5, quality: 1 })
             title
-            width
-            height
           }
         }
       }
@@ -73,18 +69,8 @@ export default function Gallery(props: any) {
     (imageSetLength >= columnLimit ? columnLimit : imageSetLength)
   const columns = imageSetLength >= columnLimit ? columnLimit : imageSetLength
 
-  function normalizeSrc(src: string) {
-    return src[0] === '/' ? src.slice(1) : src
-  }
-
-  function contentfulLoader({ src, quality, width }: any): string {
-    const params = ['w=' + width]
-
-    if (quality) {
-      params.push('q=' + quality)
-    }
-
-    return `${normalizeSrc(src)}?${params.join('&')}`
+  function contentfulLoader({ src, quality, width }: ImageLoaderProps): string {
+    return `${src}?w=${width || 1200}&q=${quality || 70}`
   }
 
   return (
@@ -116,7 +102,11 @@ export default function Gallery(props: any) {
                   alt={image.title}
                   layout="fill"
                   placeholder="blur"
-                  blurDataURL={image.placeholder}
+                  blurDataURL={contentfulLoader({
+                    src: image.url,
+                    width: 5,
+                    quality: 1,
+                  })}
                   objectFit="cover"
                   className="gallery"
                   loader={contentfulLoader}
