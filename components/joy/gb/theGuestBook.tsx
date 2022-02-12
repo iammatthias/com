@@ -9,21 +9,25 @@ import P from '@/components/primitives/text/P'
 import Small from '@/components/primitives/text/small'
 import Guests from './guests'
 import WriteMessage from './signMessage'
+import MaxTokens from './maxTokens'
 
 export default function TheGuestBook() {
   const [{ data: accountData }] = useAccount()
+  const maxTokens = MaxTokens()
   return (
     <>
       {accountData?.address ? <Account /> : <Connect />}
       <P css={{ margin: '0' }}>
-        Write a message on the blockchain. Maybe get it on an NFT.
+        Write a message on the blockchain. Get it on an NFT (if you want).
       </P>
       <Small>
         <ul style={{ marginTop: '0' }}>
-          <li>x max supply (tokens)</li>
+          <li>{maxTokens} max supply (tokens)</li>
           <li>unlimited guestbook messages</li>
-          <li>nominal gas fee applies to write message on-chain</li>
-          <li>nominal gas fee applies to write message & mint nft</li>
+          <li>user pays gas to write message on-chain</li>
+          <li>
+            *optional writing a message & minting an nft are 1 transaction
+          </li>
           <li>to add punctuation wrap your message in "double quotes"</li>
         </ul>
       </Small>

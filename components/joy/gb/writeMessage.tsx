@@ -4,6 +4,8 @@ import Button from '@/components/primitives/button'
 import P from '@/components/primitives/text/P'
 import Small from '@/components/primitives/text/small'
 import Anchor from '@/components/primitives/text/Anchor'
+import MaxTokens from './maxTokens'
+import TokenCount from './tokenCount'
 
 import abi from '@/lib/contracts/abi.json'
 
@@ -50,6 +52,9 @@ export default function WriteMessage(message: any) {
   const writeData: any = writeWithMintData || writeWithoutMintData
   const writeError: any = writeWithMintError || writeWithoutMintError
 
+  const maxTokens: any = MaxTokens()
+  const tokenCount: any = TokenCount()
+
   const Transaction = (hash: any) => {
     const [
       {
@@ -94,7 +99,9 @@ export default function WriteMessage(message: any) {
         <Transaction hash={writeData.hash} />
       ) : (
         <>
-          <Button onClick={handleWriteWithMint}>Write With Mint</Button>
+          {tokenCount < maxTokens + 1 && (
+            <Button onClick={handleWriteWithMint}>Write With Mint</Button>
+          )}
           <Button onClick={handleWriteWithoutMint}>Write Without Mint</Button>
         </>
       )}
