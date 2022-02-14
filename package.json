@@ -32,7 +32,7 @@
     "bignumber.js": "^9.0.2",
     "ethers": "^5.5.3",
     "feed": "^4.2.2",
-    "framer-motion": "^6.2.3",
+    "framer-motion": "^6.2.6",
     "graphql": "^16.2.0",
     "masonic": "^3.6.1",
     "next": "^12.0.8",
