@@ -11,7 +11,7 @@ pragma solidity 0.8.9;
 /*
  bWljcm9kb3NlIHVudGlsIHRoZSBjb2RlIHdvcmtz 
 
- - 9 max supply (tokens) 
+ - 9999 max supply (tokens) 
  - unlimited guestbook signatures 
  - it costs gas to write your message to the contract regardless of minting 
  - to add punctuation to your message, wrap it in quotes 
@@ -28,7 +28,7 @@ import "./base64.sol";
 /// @notice The Guest Book Contract
 contract TheGuestBook is ERC721Delegated {
     
-    uint256 internal constant maxTokens = 9;
+    uint256 public constant maxTokens = 9;
     /// @notice total guests
     uint256 public guestCount;
     uint256 public tokenCount;
@@ -48,9 +48,7 @@ contract TheGuestBook is ERC721Delegated {
                 hasTransferHook: false
             })
         )
-    {
-        tokenCount += 1;
-    }
+    {}
 
     // metadata
     struct Guest {
@@ -84,7 +82,7 @@ contract TheGuestBook is ERC721Delegated {
     /// @notice write a message to the blockchain and get an nft
     /// @notice your message will be inscribed in an on-chain svg, recommend less than 590 characters
     function signWithMint(string memory message) public {
-        require(tokenCount < maxTokens, "Token ID invalid");
+        require(tokenCount < (maxTokens), "No guest mints remaining");
         Guest memory g = Guest(msg.sender, message, block.number);
         guests.push(g);
         emit NewGuest(msg.sender, message, block.number);
@@ -118,17 +116,17 @@ contract TheGuestBook is ERC721Delegated {
 
     function getSvg(string memory message) private view returns (string memory) {
         string[12] memory parts;
-        parts[0] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><rect width="100%" height="100%"/><text x="50%" y="15%" style="font-family:serif;font-size:14px;text-anchor:middle;fill:#fff">';
+        parts[0] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><rect width="100%" height="100%"/>';
 
-        parts[1] = '~~ The Guest Book ~~';
+        parts[1] = '<text x="50%" y="15%" style="font-family:serif;font-size:14px;text-anchor:middle;fill:#fff">~~ The Guest Book ~~</text>';
 
-        parts[2] = '</text><foreignObject x="20" y="35%" width="310" height="30%"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:serif;font-size:10px;text-align:center;color:#fff">';
+        parts[2] = '<foreignObject x="20" y="35%" width="310" height="30%"><div xmlns="http://www.w3.org/1999/xhtml"><p style="font-family:serif;font-size:10px;text-align:center;color:#fff">';
 
         parts[3] = message;
 
-        parts[4] = '</div></foreignObject><text x="50%" y="75%" style="font-family:serif;font-size:10px;text-anchor:middle;fill:#fff">';
+        parts[4] = '</p></div></foreignObject><text x="50%" y="75%" style="font-family:serif;font-size:10px;text-anchor:middle;fill:#fff">';
 
-        parts[5] = toString(tokenCount);
+        parts[5] = toString(tokenCount + 1);
 
         parts[6] = ' / ';
         
@@ -145,7 +143,7 @@ contract TheGuestBook is ERC721Delegated {
         string memory output = string(abi.encodePacked(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]));
         output = string(abi.encodePacked(output, parts[6], parts[7], parts[8], parts[9], parts[10], parts[11]));
 
-        string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "guest #', toString(tokenCount), '", "description": "an on-chain nft svg from a web3 guestbook. curious.\\n\\ninscribed by 0x', toAsciiString(msg.sender), '", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)),'"}'))));
+        string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "guest #', toString(tokenCount + 1), '", "description": "an on-chain nft svg from a web3 guestbook. curious.\\n\\ninscribed by 0x', toAsciiString(msg.sender), '", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)),'"}'))));
         output = string(abi.encodePacked("data:application/json;base64,", json));
   
         return output;
