@@ -31,8 +31,7 @@ export default function TheGuestBook() {
           <li>
             <b>
               <i>
-                special characters and punctuation break nft render and are not
-                recommended
+                special characters can break the svg and are not recommended
               </i>
             </b>
           </li>

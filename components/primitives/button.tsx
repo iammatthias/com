@@ -12,6 +12,7 @@ export default function Button({ children, ...props }: any) {
   })
 
   const Butt = styled('button', {
+    cursor: 'pointer',
     width: 'fit-content',
     fontFamily: '$system',
     fontSize: '$fontSizes$2',

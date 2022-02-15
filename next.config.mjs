@@ -10,7 +10,7 @@ const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   images: {
     loader: 'custom',
-    domains: 'images.ctfassets.net',
+    domains: ['images.ctfassets.net', 'glass-production.imgix.net/'],
     formats: [
       'image/avif',
       'image/webp',

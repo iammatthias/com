@@ -1,7 +1,7 @@
 // pages/guestbook.tsx
 
 import { providers } from 'ethers'
-import { Provider, chain, defaultChains, defaultL2Chains } from 'wagmi'
+import { Provider, chain, defaultChains } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
@@ -9,8 +9,6 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 export default function WagmiProvider({ children }: any) {
   // Pick chains
-  // const chains = defaultL2Chains
-  // const defaultChain = chain.polygonTestnetMumbai
   const chains = defaultChains
   const defaultChain = chain.rinkeby
 
@@ -27,12 +25,7 @@ export default function WagmiProvider({ children }: any) {
     ]
   }
   // Set up providers
-  // const mumbai = {
-  //   name: 'maticmum',
-  //   chainId: 80001,
-  //   _defaultProvider: (providers: any) =>
-  //     new providers.JsonRpcProvider('https://rpc-mumbai.matic.today'),
-  // }
+
   const rinkeby = {
     name: 'rinkeby',
     chainId: 4,
@@ -40,7 +33,12 @@ export default function WagmiProvider({ children }: any) {
       new providers.JsonRpcProvider('https://rinkeby-light.eth.linkpool.io/'),
   }
 
-  const provider = () => providers.getDefaultProvider(rinkeby)
+  const provider = () =>
+    providers.getDefaultProvider(rinkeby, {
+      etherscan: process.env.NEXT_PUBLIC_ETHERSCAN,
+      infura: process.env.NEXT_PUBLIC_INFURA,
+      alchemy: process.env.NEXT_PUBLIC_ALCHEMY,
+    })
 
   return (
     <Provider autoConnect connectors={connectors} provider={provider}>

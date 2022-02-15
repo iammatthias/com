@@ -26,6 +26,7 @@ import Sparkles from '@/components/joy/sparkle'
 import Spicy from '@/components/joy/spicy'
 import Vimeo from '@u-wave/react-vimeo'
 import Gallery from '@/components/blocks/gallery'
+import Glass from '@/components/joy/glass'
 
 const mdComponents = {
   // primitives
@@ -74,6 +75,7 @@ const mdComponents = {
       showByline={false}
     />
   ),
+  Glass: (props: any) => <Glass {...props} />,
 }
 
 const MDX = ({ children }: any) => (
