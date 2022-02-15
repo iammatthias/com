@@ -47,7 +47,7 @@ export default function Squiggle({
     >
       <svg
         id="squiggle"
-        width={svgWidth}
+        width={svgWidth ? svgWidth : '0'}
         height={height}
         style={{
           display: 'block',

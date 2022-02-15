@@ -1,4 +1,5 @@
 import { useContractWrite, useProvider, useWaitForTransaction } from 'wagmi'
+import he from 'he'
 
 import Button from '@/components/primitives/button'
 import P from '@/components/primitives/text/P'
@@ -36,16 +37,30 @@ export default function WriteMessage(message: any) {
       'signWithMint',
     )
 
+  function toUnicode(str: string) {
+    return str
+      .split('')
+      .map(function (value, index, array) {
+        var temp = value.charCodeAt(0).toString(16).toUpperCase()
+        if (temp.length > 2) {
+          return '\\u' + temp
+        }
+        return value
+      })
+      .join('')
+  }
+
+  const encoded = he.encode(message.message)
+
   const handleWriteWithoutMint = async () => {
-    console.log(message.message)
     await signWithoutMint({
-      args: message.message,
+      args: encoded,
     })
   }
+
   const handleWriteWithMint = async () => {
-    console.log(message.message)
     await signWithMint({
-      args: message.message,
+      args: encoded,
     })
   }
 

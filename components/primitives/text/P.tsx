@@ -6,6 +6,7 @@ export default function P({ children, ...props }: any) {
     fontSize: '$fontSizes$2',
     lineHeight: '$space$5',
     margin: '0',
+    overflowWrap: 'break-word',
     ...props.css,
   })
   return <Text>{children}</Text>

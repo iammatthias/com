@@ -11,7 +11,7 @@ pragma solidity 0.8.9;
 /*
  bWljcm9kb3NlIHVudGlsIHRoZSBjb2RlIHdvcmtz 
 
- - 9999 max supply (tokens) 
+ - 9 max supply (tokens) 
  - unlimited guestbook signatures 
  - it costs gas to write your message to the contract regardless of minting 
  - to add punctuation to your message, wrap it in quotes 
