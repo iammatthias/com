@@ -21,9 +21,3 @@ web3: [ipfs.iammatthias.com](https://ipfs.iammatthias.com)
 [wagmi](https://wagmi-xyz.vercel.app)
 
 All content is abstracted into MDX, and provided via Contentful.
-
-web3 guestbook is currently on polygon mumbai: https://mumbai.polygonscan.com/address/0x8EA78686Fb00ef2C2C6Ea8A1BF555E3de6b52A08
-
----
-
-Special thanks to @jpvalery (Contentful + GraphQL), @Holben888 (Theme-UI Starter), and @joshwcomeau (various bits of component joy).
