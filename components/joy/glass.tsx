@@ -28,7 +28,6 @@ export default function Gallery(props: any) {
   const glassPosts = data.data ? data.data.data : []
 
   const imageSetLength = glassPosts.length
-  console.log(imageSetLength)
   const columnLimit =
     bounds.width > 1536
       ? 7
@@ -44,7 +43,7 @@ export default function Gallery(props: any) {
     (imageSetLength >= columnLimit ? columnLimit : imageSetLength)
   const columns = imageSetLength >= columnLimit ? columnLimit : imageSetLength
 
-  function glassLoader({ src, quality, width }: ImageLoaderProps): string {
+  function glassLoader({ src }: ImageLoaderProps): string {
     return `${src}`
   }
 

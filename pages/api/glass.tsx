@@ -3,7 +3,7 @@ import axios from 'axios'
 export default async (req: any, res: any) => {
   const glassUser = 'iammatthias'
   const limit = '9'
-  const url = `https://glass.photo/api/v2/users/${glassUser}/posts?limit=${limit}`
+  const url = `https://glass.photo/api/v2/users/${glassUser}/posts?limit=100`
 
   await axios
     .get(url)

@@ -8,6 +8,7 @@ import Anchor from '@/components/primitives/text/Anchor'
 
 import { useContractRead, useProvider } from 'wagmi'
 import BigNumber from 'bignumber.js'
+import he from 'he'
 
 export default function Guests() {
   const contractAddress = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS
@@ -50,7 +51,7 @@ export default function Guests() {
                     </Anchor>
                   </Small>
                 </P>
-                <P css={{ margin: '0 0 8px' }}>{guest.message}</P>
+                <P css={{ margin: '0 0 8px' }}>{he.decode(guest.message)}</P>
                 <P css={{ margin: '0 0 8px' }}>
                   <Small>
                     at{' '}
