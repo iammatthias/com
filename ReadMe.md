@@ -15,7 +15,8 @@ web3: [ipfs.iammatthias.com](https://ipfs.iammatthias.com)
 
 [next.js](https://nextjs.org)  
 [mdx](https://mdxjs.com)  
-[theme ui](https://theme-ui.com)  
+[stitches](https://stitches.dev)
+[radix](https://www.radix-ui.com)  
 [contentful](https://www.contentful.com)  
 [wagmi](https://wagmi-xyz.vercel.app)
 
