@@ -9,8 +9,6 @@ pragma solidity 0.8.9;
 */
 
 /*
- bWljcm9kb3NlIHVudGlsIHRoZSBjb2RlIHdvcmtz 
-
  - 9999 max supply (tokens) 
  - unlimited guestbook signatures 
  - it costs gas to write your message to the contract regardless of minting 
@@ -34,7 +32,6 @@ contract TheGuestBook is ERC721Delegated {
     uint256 public tokenCount;
     mapping(uint256 => string) metadataJson;
 
-
     /// @notice delegate constructor for gwei saving nft impl
     constructor(address baseFactory)
         ERC721Delegated(
@@ -50,60 +47,55 @@ contract TheGuestBook is ERC721Delegated {
         )
     {}
 
-    // metadata
+    /// ============ metadata ============
     struct Guest {
         address guest; // The address of the guest.
         string message; // The message the guest sent.
         uint256 timestamp; // The timestamp when the guest visited.
     }
-
     event NewGuest(
         address indexed from, 
         string message,
         uint256 timestamp
     );
-
     Guest[] private guests;
-
     /// @notice returns all guests
     function getAllGuests() public view returns (Guest[] memory) {
         return guests;
     }
 
-    // guestbook functions
-    /// @notice write a message to the blockchain
-    function signWithoutMint(string memory message) public {
+    /// ============ guestbook functions ============
+    function addGuest(string memory message) private {
         Guest memory g = Guest(msg.sender, message, block.number);
         guests.push(g);
         emit NewGuest(msg.sender, message, block.number);
         guestCount += 1;
     }
-
+    /// @notice write a message to the blockchain
+    function signWithoutMint(string memory message) public {
+        addGuest(message);
+    }
     /// @notice write a message to the blockchain and get an nft
     /// @notice your message will be inscribed in an on-chain svg, recommend less than 590 characters
     function signWithMint(string memory message) public {
         require(tokenCount < (maxTokens), "No guest mints remaining");
-        Guest memory g = Guest(msg.sender, message, block.number);
-        guests.push(g);
-        emit NewGuest(msg.sender, message, block.number);
-        guestCount += 1;
+        addGuest(message);
         string memory svgData = getSvg(message);
         mint(svgData);
     }
 
-    // token functions
+    /// ============ token functions ============
     function mint(string memory nftMetadata) private {
         metadataJson[tokenCount] = nftMetadata;
         _mint(msg.sender, tokenCount);
         tokenCount += 1;
     }
-
     /// @notice view token uri
     function tokenURI(uint256 tokenId) external view returns (string memory) {
         return metadataJson[tokenId];
     }
 
-    // nft functions
+    // ============ nft functions ============
     string[] private strictures = ["wagmi ", "gmi ", "gm ", "gm ser ", "ser ", "curious ", "looks rare ", "probably nothing "];
     string[] private moji = [unicode"🏝️", unicode"✌️", unicode"👁️👄👁️", unicode"🌜🌞🌛", unicode"🌀", unicode"🌐", unicode"✨", unicode"🌈", unicode"🦄", unicode"🚀", unicode"👀"];
     
@@ -149,7 +141,7 @@ contract TheGuestBook is ERC721Delegated {
         return output;
     }
 
-    // helper functions
+    /// ============ helper functions ============
     function toString(uint256 value) internal pure returns (string memory) {
     // Inspired by OraclizeAPI's implementation - MIT license
     // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol
