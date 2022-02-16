@@ -1,6 +1,6 @@
 # I AM MATTHIAS
 
-A digital garden built with [Next.js]. Optimized for image galleries and lightweight blogging. Routes are created dynamically, and content is styled with MDX.
+A digital garden built with [Next.js] and Typescript. Optimized for image galleries and lightweight blogging. Routes are created dynamically, and content is styled with MDX.
 
 web2: [iammatthias.com](https://iammatthias.com)  
 web3: [ipfs.iammatthias.com](https://ipfs.iammatthias.com)
@@ -21,7 +21,7 @@ web3: [ipfs.iammatthias.com](https://ipfs.iammatthias.com)
 
 All content is abstracted into MDX, and provided via Contentful.
 
-web3 guestbook is on polygon mumbai: https://mumbai.polygonscan.com/address/0x8EA78686Fb00ef2C2C6Ea8A1BF555E3de6b52A08
+web3 guestbook is currently on polygon mumbai: https://mumbai.polygonscan.com/address/0x8EA78686Fb00ef2C2C6Ea8A1BF555E3de6b52A08
 
 ---
 
