@@ -828,7 +828,7 @@
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-primitive" "0.1.3"
 
-"@radix-ui/react-collapsible@0.1.5":
+"@radix-ui/react-collapsible@0.1.5", "@radix-ui/react-collapsible@^0.1.5":
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-collapsible/-/react-collapsible-0.1.5.tgz#086ebc9fb6ee35035dc3e755fa6940bc5b1e5206"
   integrity sha512-jhj0h+gGc04D04mQW1zJgBxMJecYV21XaeyghjyXtp+ObM4EHkXnfOA5MyRMzSNB4u8wQ6P1zGtAbxHz1A4Vvg==
