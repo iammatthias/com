@@ -33,13 +33,15 @@ export default function PageHeader({ children, ...props }: any) {
         </H1>
         {props.type === 'Blog' ||
           (props.type === 'Gallery' && (
-            <Link href={comments}>
-              <Button
-                sx={{ width: ['100%', '250px'] }}
-                title="Discuss on Twitter"
-              >
-                Discuss on Twitter
-              </Button>
+            <Link href={comments} passHref>
+              <a>
+                <Button
+                  sx={{ width: ['100%', '250px'] }}
+                  title="Discuss on Twitter"
+                >
+                  Discuss on Twitter
+                </Button>
+              </a>
             </Link>
           ))}
       </Box>

@@ -106,7 +106,7 @@ export default function Nav() {
       >
         <Tooltip copy="Home">
           <Span tabIndex={0}>
-            <Link href="/" scroll={false}>
+            <Link href="/" scroll={false} passHref>
               <Icon>
                 <HomeIcon />
               </Icon>
@@ -115,7 +115,7 @@ export default function Nav() {
         </Tooltip>
         <Tooltip copy="Work">
           <Span tabIndex={0}>
-            <Link href="/work">
+            <Link href="/work" scroll={false} passHref>
               <Icon>
                 <CameraIcon />
               </Icon>
@@ -124,7 +124,7 @@ export default function Nav() {
         </Tooltip>
         <Tooltip copy="Blog">
           <Span tabIndex={0}>
-            <Link href="/blog">
+            <Link href="/blog" scroll={false} passHref>
               <Icon>
                 <FileTextIcon />
               </Icon>
@@ -133,7 +133,7 @@ export default function Nav() {
         </Tooltip>
         <Tooltip copy="Guestbook">
           <Span tabIndex={0}>
-            <Link href="/guestbook">
+            <Link href="/guestbook" scroll={false} passHref>
               <Icon>
                 <FaceIcon />
               </Icon>

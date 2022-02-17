@@ -69,7 +69,7 @@ export default function Gallery(props: any) {
     (imageSetLength >= columnLimit ? columnLimit : imageSetLength)
   const columns = imageSetLength >= columnLimit ? columnLimit : imageSetLength
 
-  function contentfulLoader({ src, quality, width }: ImageLoaderProps): string {
+  function contentfulLoader({ src, width, quality }: any): string {
     return `${src}?w=${width || 1200}&q=${quality || 70}`
   }
 
