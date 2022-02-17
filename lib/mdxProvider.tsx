@@ -25,8 +25,8 @@ import Squiggle from '@/components/joy/squiggle'
 import Sparkles from '@/components/joy/sparkle'
 import Spicy from '@/components/joy/spicy'
 import Vimeo from '@u-wave/react-vimeo'
-import Gallery from '@/components/blocks/gallery'
-import Glass from '@/components/joy/glass'
+// import Gallery from '@/components/blocks/gallery'
+// import Glass from '@/components/joy/glass'
 
 const mdComponents = {
   // primitives
@@ -53,7 +53,7 @@ const mdComponents = {
 
   // blocks
   PageList: (props: any) => <PageList {...props} />,
-  Gallery: (props: any) => <Gallery {...props} />,
+  // Gallery: (props: any) => <Gallery {...props} />,
 
   // etc
   Link: (props: any) => <Anchor {...props} />,
@@ -75,7 +75,7 @@ const mdComponents = {
       showByline={false}
     />
   ),
-  Glass: (props: any) => <Glass {...props} />,
+  // Glass: (props: any) => <Glass {...props} />,
 }
 
 const MDX = ({ children }: any) => (
