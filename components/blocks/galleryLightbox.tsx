@@ -15,15 +15,17 @@ export default function Lightbox({ children }: any) {
   // lightbox options
   const options = {
     settings: {
-      overlayColor: 'rgba(0, 0, 0, 0.9)',
       autoplaySpeed: 0,
-      hideControlsAfter: false,
+      boxShadow: 'none',
+      disableKeyboardControls: false,
       disablePanzoom: true,
+      overlayColor: 'rgba(0, 0 ,0, 0.618)',
     },
     buttons: {
       backgroundColor: 'white',
       iconColor: 'black',
       showDownloadButton: false,
+      showFullscreenButton: false,
     },
     caption: {
       showCaption: false,

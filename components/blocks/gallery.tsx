@@ -76,10 +76,10 @@ export default function Gallery(props: any) {
   }
 
   return (
-    <Box ref={ref} className="gallery" css={{ marginBottom: '2rem' }}>
+    <Box ref={ref} className="gallery">
       {pathname.includes('/work/') ? <h2>{imageSetTitle}</h2> : null}
 
-      <Lightbox className="container galleryGrid">
+      <Lightbox>
         <Masonry
           breakpointCols={columns}
           className="my-masonry-grid"

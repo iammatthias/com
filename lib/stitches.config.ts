@@ -115,6 +115,14 @@ export const globalStyles = globalCss({
     '--gradient-color-4': '#70e0c8',
     '--gradient-color-5': '#fac7be',
   },
+  '#SRLLightbox': {
+    backdropFilter: 'blur(4px)',
+    button: {
+      borderRadius: '4px',
+      margin: '16px',
+      padding: '2px',
+    },
+  },
   '@dark': {
     // notice the `media` definition on the stitches.config.ts file
     ':root:not(.light)': {
