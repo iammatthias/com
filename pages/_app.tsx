@@ -12,7 +12,24 @@ import Nav from '@/components/blocks/nav'
 import Background from '@/components/joy/bg/bg'
 import ClientOnly from '@/components/clientOnly'
 
+import Script from 'next/script'
+import * as snippet from '@segment/snippet'
+
 function MyApp({ Component, pageProps }: AppProps) {
+  function renderSnippet() {
+    const opts = {
+      apiKey: process.env.NEXT_PUBLIC_SEGMENT,
+      // note: the page option only covers SSR tracking.
+      // Page.js is used to track other events using `window.analytics.page()`
+      page: true,
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      return snippet.max(opts)
+    }
+
+    return snippet.min(opts)
+  }
   return (
     <ThemeProvider
       attribute="class"
@@ -34,6 +51,15 @@ function MyApp({ Component, pageProps }: AppProps) {
           </ClientOnly>
         </MDX>
       </ApolloProvider>
+      <Script
+        id="segment"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: renderSnippet() }}
+      />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200;400;800&family=Inconsolata&display=swap"
+        rel="stylesheet"
+      />
     </ThemeProvider>
   )
 }
