@@ -1,15 +1,26 @@
-import Document, { Html, Head, Main, NextScript } from 'next/document'
+import Document, {
+  DocumentContext,
+  Html,
+  Head,
+  Main,
+  NextScript,
+} from 'next/document'
 
-export default class extends Document {
-  static async getInitialProps(ctx: any) {
+class MyDocument extends Document {
+  static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)
-    return { ...initialProps }
-  }
 
+    return initialProps
+  }
   render() {
     return (
       <Html lang="en-US">
-        <Head />
+        <Head>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200;400;800&family=Inconsolata&display=swap"
+            rel="stylesheet"
+          />
+        </Head>
         <body>
           <Main />
           <NextScript />
@@ -18,3 +29,5 @@ export default class extends Document {
     )
   }
 }
+
+export default MyDocument

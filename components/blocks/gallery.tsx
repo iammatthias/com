@@ -44,7 +44,7 @@ export default function Gallery(props: any) {
   })
 
   if (loading) {
-    return <>loading...</>
+    return <p>loading...</p>
   }
 
   if (error) {

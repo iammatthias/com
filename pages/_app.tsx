@@ -56,10 +56,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{ __html: renderSnippet() }}
       />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200;400;800&family=Inconsolata&display=swap"
-        rel="stylesheet"
-      />
     </ThemeProvider>
   )
 }
