@@ -1,5 +1,5 @@
 // stitches.config.ts
-import { createStitches } from '@stitches/react';
+import { createStitches } from '@stitches/react'
 import {
   blackA,
   whiteA,
@@ -7,15 +7,15 @@ import {
   redDark,
   blue,
   blueDark,
-  sky, 
+  sky,
   skyDark,
   green,
   greenDark,
-  slate, 
+  slate,
   slateDark,
   gold,
-  goldDark
-} from '@radix-ui/colors';
+  goldDark,
+} from '@radix-ui/colors'
 
 export const {
   styled,
@@ -43,7 +43,7 @@ export const {
       4: '24px',
       5: '32px',
       6: '40px',
-      7: '48px'
+      7: '48px',
     },
     fontSizes: {
       0: '14px',
@@ -52,7 +52,7 @@ export const {
       3: '24px',
       4: '32px',
       5: '48px',
-      6: '64px'
+      6: '64px',
     },
     fonts: {
       system: '"Crimson Pro", apple-system, Roboto, sans-serif',
@@ -61,13 +61,13 @@ export const {
     transitions: {},
   },
   media: {
-    dark: "(prefers-color-scheme: dark)",
+    dark: '(prefers-color-scheme: dark)',
     bp1: '(min-width: 32rem)',
     bp2: '(min-width: 48rem)',
     bp3: '(min-width: 64rem)',
     bp4: '(min-width: 96rem)',
   },
-});
+})
 
 export const darkTheme = createTheme({
   colors: {
@@ -78,9 +78,12 @@ export const darkTheme = createTheme({
     ...slateDark,
     ...goldDark,
   },
-});
+})
 
 export const globalStyles = globalCss({
+  '*': {
+    wordBreak: 'break-word',
+  },
   body: {
     background: '$slate4',
     color: '$slate12',
@@ -112,16 +115,16 @@ export const globalStyles = globalCss({
     '--gradient-color-4': '#70e0c8',
     '--gradient-color-5': '#fac7be',
   },
-  "@dark": {
+  '@dark': {
     // notice the `media` definition on the stitches.config.ts file
-    ":root:not(.light)": {
-      ...Object.keys(darkTheme.colors).reduce((varSet) => {
+    ':root:not(.light)': {
+      ...Object.keys(darkTheme.colors).reduce(varSet => {
         return {
           ...varSet,
-        };
+        }
       }, {}),
     },
   },
-});
+})
 
-globalStyles();
+globalStyles()
