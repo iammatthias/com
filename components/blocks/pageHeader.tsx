@@ -31,19 +31,18 @@ export default function PageHeader({ children, ...props }: any) {
         <H1 css={{ width: 'fit-content', margin: '8px 0 16px' }}>
           {props.title}
         </H1>
-        {props.type === 'Blog' ||
-          (props.type === 'Gallery' && (
-            <Link href={comments} passHref>
-              <a>
-                <Button
-                  sx={{ width: ['100%', '250px'] }}
-                  title="Discuss on Twitter"
-                >
-                  Discuss on Twitter
-                </Button>
-              </a>
-            </Link>
-          ))}
+        {(props.type === 'Blog' || props.type === 'Gallery') && (
+          <Link href={comments} passHref>
+            <a>
+              <Button
+                sx={{ width: ['100%', '250px'] }}
+                title="Discuss on Twitter"
+              >
+                Discuss on Twitter
+              </Button>
+            </a>
+          </Link>
+        )}
       </Box>
       {(props.type === 'Blog' || props.type === 'Gallery') && <Squiggle />}
     </Box>
