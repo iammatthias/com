@@ -19,6 +19,8 @@ const QUERY = gql`
           items {
             url
             title
+            height
+            width
           }
         }
       }

@@ -1,4 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
+import Script from 'next/script'
 import * as snippet from '@segment/snippet'
 
 export default class extends Document {
@@ -29,7 +30,10 @@ export default class extends Document {
             href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200;400;800&family=Inconsolata&display=swap"
             rel="stylesheet"
           />
-          <script dangerouslySetInnerHTML={{ __html: this.renderSnippet() }} />
+          <Script
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{ __html: this.renderSnippet() }}
+          />
         </Head>
         <body>
           <Main />
