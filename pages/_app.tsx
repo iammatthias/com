@@ -9,8 +9,10 @@ import client from '@/lib/apolloClient'
 import Meta from '@/components/meta'
 import Nav from '@/components/blocks/nav'
 
-import Background from '@/components/joy/bg/bg'
 import ClientOnly from '@/components/clientOnly'
+import dynamic from 'next/dynamic'
+
+const Background = dynamic(() => import('@/components/joy/bg/bg'))
 
 import Script from 'next/script'
 import * as snippet from '@segment/snippet'
