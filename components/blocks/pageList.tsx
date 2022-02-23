@@ -99,14 +99,14 @@ export default function PageList(props: any) {
         columnClassName="column"
       >
         {pageList.map((page: any) => (
-          <ListItem key={page.slug}>
-            <Link href={page.slug}>
-              <a
-                style={{
-                  color: 'inherit',
-                  textDecoration: 'none',
-                }}
-              >
+          <Link href={page.slug} key={page.slug}>
+            <a
+              style={{
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              <ListItem>
                 <P css={{ fontWeight: 'bold', m: 0, mb: 1, p: 0 }}>
                   {page.title}{' '}
                 </P>
@@ -116,9 +116,9 @@ export default function PageList(props: any) {
                     page.publishDate.replace(/-/g, '/').replace(/T.+/, ''),
                   ).toLocaleDateString('en-us')}
                 </Small>
-              </a>
-            </Link>
-          </ListItem>
+              </ListItem>
+            </a>
+          </Link>
         ))}
       </Masonry>
     </Box>
