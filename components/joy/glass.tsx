@@ -5,6 +5,7 @@ import useSWR from 'swr'
 import Box from '../primitives/box'
 import Masonry from 'react-masonry-css'
 import useMeasure from 'react-use-measure'
+// import Lightbox from '@/components/blocks/galleryLightbox'
 
 export default function Gallery(props: any) {
   // container width
@@ -49,6 +50,7 @@ export default function Gallery(props: any) {
 
   return (
     <Box ref={ref} className="gallery" css={{ marginBottom: '2rem' }}>
+      {/* <Lightbox> */}
       <Masonry
         breakpointCols={columns}
         className="my-masonry-grid"
@@ -83,6 +85,7 @@ export default function Gallery(props: any) {
           </Box>
         ))}
       </Masonry>
+      {/* </Lightbox> */}
     </Box>
   )
 }
