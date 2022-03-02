@@ -88,6 +88,7 @@ export const globalStyles = globalCss({
     background: '$slate4',
     color: '$slate12',
     fontSize: '18px',
+    minHeight: '100vh',
   },
   '.my-masonry-grid': {
     display: 'flex',

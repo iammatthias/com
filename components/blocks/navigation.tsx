@@ -1,8 +1,5 @@
-import { forwardRef } from 'react'
-
 import { styled, keyframes } from '@/lib/stitches.config'
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
-import Box from '../primitives/box'
 import Grid from '../primitives/grid'
 import NavigationQuery from './navigationQuery'
 import {
