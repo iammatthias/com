@@ -82,7 +82,7 @@ export default function NavigationQuery(props: any) {
 
   return pageList.map((page: any, index: number) => (
     <ListItem key={index}>
-      <NavigationMenuLink {...props} href={page.slug}>
+      <NavigationMenuLink {...props} href={`/${page.slug}`}>
         <LinkTitle>{page.title}</LinkTitle>
         <LinkText>
           Published:{' '}
