@@ -10,6 +10,7 @@ import {
   FaceIcon,
 } from '@radix-ui/react-icons'
 import ColorToggle from '../colorToggle'
+import Link from 'next/link'
 
 export default function Nav() {
   // keyframes
@@ -109,7 +110,7 @@ export default function Nav() {
     },
   })
 
-  const StyledLink = styled(NavigationMenuPrimitive.Link, {
+  const StyledLink = styled('a', {
     ...itemStyles,
     display: 'block',
     textDecoration: 'none',
@@ -215,9 +216,11 @@ export default function Nav() {
       <StyledMenu>
         <StyledList>
           <NavigationMenuPrimitive.Item>
-            <StyledLink href="/">
-              <HomeIcon />
-            </StyledLink>
+            <Link href="/" passHref>
+              <StyledLink>
+                <HomeIcon />
+              </StyledLink>
+            </Link>
           </NavigationMenuPrimitive.Item>
 
           <NavigationMenuPrimitive.Item>
@@ -245,9 +248,11 @@ export default function Nav() {
           </NavigationMenuPrimitive.Item>
 
           <NavigationMenuPrimitive.Item>
-            <StyledLink href="/guestbook">
-              <FaceIcon />
-            </StyledLink>
+            <Link href="/guestbook" passHref>
+              <StyledLink>
+                <FaceIcon />
+              </StyledLink>
+            </Link>
           </NavigationMenuPrimitive.Item>
 
           <NavigationMenuPrimitive.Item>

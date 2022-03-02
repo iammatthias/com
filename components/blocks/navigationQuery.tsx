@@ -2,6 +2,7 @@ import { useQuery, gql } from '@apollo/client'
 import { isDev } from '@/lib/isDev'
 import { styled } from '@stitches/react'
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
+import Link from 'next/link'
 
 const QUERY = gql`
   query ($preview: Boolean, $type: String, $limit: Int) {
@@ -36,15 +37,12 @@ export default function NavigationQuery(props: any) {
     '&:focus': { position: 'relative', boxShadow: `0 0 0 1px $$shadowColor` },
   }
 
-  const StyledLink = styled(NavigationMenuPrimitive.Link, {
+  const StyledLink = styled('a', {
     ...itemStyles,
     display: 'block',
     textDecoration: 'none',
     lineHeight: 1,
   })
-
-  // Exports
-  const NavigationMenuLink = StyledLink
 
   const ListItem = styled('div')
 
@@ -82,15 +80,17 @@ export default function NavigationQuery(props: any) {
 
   return pageList.map((page: any, index: number) => (
     <ListItem key={index}>
-      <NavigationMenuLink {...props} href={`/${page.slug}`}>
-        <LinkTitle>{page.title}</LinkTitle>
-        <LinkText>
-          Published:{' '}
-          {new Date(
-            page.publishDate.replace(/-/g, '/').replace(/T.+/, ''),
-          ).toLocaleDateString('en-us')}
-        </LinkText>
-      </NavigationMenuLink>
+      <Link href={`/${page.slug}`} passHref>
+        <StyledLink>
+          <LinkTitle>{page.title}</LinkTitle>
+          <LinkText>
+            Published:{' '}
+            {new Date(
+              page.publishDate.replace(/-/g, '/').replace(/T.+/, ''),
+            ).toLocaleDateString('en-us')}
+          </LinkText>
+        </StyledLink>
+      </Link>
     </ListItem>
   ))
 }
