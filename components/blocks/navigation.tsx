@@ -73,7 +73,7 @@ export default function Nav() {
     listStyle: 'none',
     $$shadowColor: '$colors$slate12',
     boxShadow: `0 0 0 1px $$shadowColor`,
-    backdropFilter: 'opacity(38.2%) saturate(1618%) blur(50px)',
+    backdropFilter: 'blur(50px) opacity(38.2%) saturate(1618%) ',
     '&:hover': {
       boxShadow: `0 0 0 2px $$shadowColor`,
       animation: `${fadeIn} 328ms ease-out`,
@@ -135,8 +135,8 @@ export default function Nav() {
     left: 0,
     width: '100%',
     borderRadius: 6,
-    backdropFilter: 'opacity(38.2%) saturate(1618%) blur(50px)',
-
+    // backdropFilter: ' blur(50px) opacity(38.2%) saturate(1618%) ',
+    background: 'white',
     '@media (prefers-reduced-motion: no-preference)': {
       animationDuration: '250ms',
       animationTimingFunction: 'ease',
@@ -165,9 +165,9 @@ export default function Nav() {
   const StyledArrow = styled('div', {
     position: 'relative',
     top: '70%',
-    // backgroundColor: 'white',
+    backgroundColor: 'white',
     borderRadius: 6,
-    backdropFilter: 'opacity(38.2%) saturate(1618%) blur(50px)',
+    // backdropFilter: 'opacity(38.2%) saturate(1618%) blur(50px)',
     width: 10,
     height: 10,
     transform: 'rotate(45deg)',
