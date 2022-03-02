@@ -55,8 +55,9 @@ export const {
       6: '64px',
     },
     fonts: {
-      system: '"Crimson Pro", apple-system, Roboto, sans-serif',
-      mono: 'Inconsolata, menlo, monospace',
+      system: '"Playfair Display", apple-system, Roboto, sans-serif',
+      body: 'Inter, apple-system, Roboto, sans-serif',
+      mono: 'Space Mono, menlo, monospace',
     },
     transitions: {},
   },

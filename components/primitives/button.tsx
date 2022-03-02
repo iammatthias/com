@@ -16,6 +16,7 @@ export default function Button({ children, ...props }: any) {
     width: 'fit-content',
     fontFamily: '$system',
     fontSize: '$fontSizes$2',
+    fontWeight: 'bold',
     padding: '8px 16px',
     color: '$colors$slate12',
     backgroundColor: 'transparent',

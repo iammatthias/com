@@ -5,7 +5,7 @@ import Link from 'next/link'
 export default function Anchor({ children, ...props }: any) {
   const Text = styled('span', {
     color: 'inherit',
-    fontFamily: 'inherit',
+    fontFamily: '$system',
     fontSize: 'inherit',
     fontWeight: 'bold',
     lineHeight: 'inherit',

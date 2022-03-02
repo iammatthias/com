@@ -3,6 +3,7 @@ import { styled } from '@/lib/stitches.config'
 
 export default function Code({ children, ...props }: any) {
   const Code = styled('code', {
+    fontFamily: '$mono',
     whiteSpace: 'pre-wrap',
     border: '1px solid',
     borderColor: '$colors$slate8',
