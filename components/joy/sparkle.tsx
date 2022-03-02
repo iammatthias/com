@@ -76,7 +76,7 @@ const generateSparkle = (color: string) => {
     style: {
       top: random(0, 100) + '%',
       left: random(0, 100) + '%',
-      zIndex: random(0, 100),
+      zIndex: random(0, 50),
     },
   }
   return sparkle

@@ -48,10 +48,11 @@ export default function TheGuestBook() {
     border: '1px solid $colors$slate12',
     animation: `${fadeOut} 328ms ease-out`,
     $$shadowColor: '$colors$slate12',
+    backdropFilter: 'opacity(38.2%) saturate(1618%) blur(50px)',
+
     '&:hover': {
       boxShadow: `0 0 0 1px $$shadowColor`,
       animation: `${fadeIn} 328ms ease-out`,
-      backdropFilter: 'invert(100%) opacity(38.2%) saturate(1618%)',
     },
     '&:focus': {
       outline: 'none',
@@ -60,56 +61,67 @@ export default function TheGuestBook() {
     '&:active': {
       outline: 'none',
       boxShadow: `0 0 0 1px $$shadowColor`,
-      backdropFilter: 'invert(100%) opacity(25%) saturate(1000%)',
     },
   })
 
   return (
     <>
       {accountData?.address ? <Account /> : <Connect />}
-      <P css={{ margin: '0' }}>
+      <P css={{ margin: '0 0 16px' }}>
         Write a message on the blockchain. Get it on an NFT (if you want).
       </P>
       <Collapsible open={open} onOpenChange={setOpen}>
-        <Box>
+        <Box css={{ margin: '0 0 16px' }}>
           <H3 css={{ display: 'inline' }}>FAQ</H3>
           <CollapsibleTrigger asChild>
             <IconButton>
               {open ? <Cross2Icon /> : <RowSpacingIcon />}
             </IconButton>
           </CollapsibleTrigger>
+          <CollapsibleContent>
+            <ul>
+              <li>
+                <Small>
+                  <b>how many nfts are available?</b>
+                  <br />
+                  {maxTokens} max nfts.
+                </Small>
+              </li>
+              <li>
+                <Small>
+                  <b>how many guests can sign the guestbook?</b>
+                  <br />
+                  unlimited.
+                </Small>
+              </li>
+              <li>
+                <Small>
+                  <b>does it cost anything?</b>
+                  <br />
+                  free to write or mint, user pays network gas fees.
+                </Small>
+              </li>
+              <li>
+                <Small>
+                  <b>why?</b>
+                  <br />a transaction is incurred when writing to the
+                  blockchain.
+                </Small>
+              </li>
+              <li>
+                <Small>
+                  <b>anything we should know before minting?</b>
+                  <br />
+                  special characters are not recommended and can break the
+                  on-chain svg.
+                  <br />
+                  when minting from this page, special characters are encoded to
+                  minimize risk.
+                </Small>
+              </li>
+            </ul>
+          </CollapsibleContent>
         </Box>
-
-        <CollapsibleContent>
-          <ul>
-            <li>
-              <b>how many nfts are available?</b>
-              <br />
-              {maxTokens} max nfts.
-            </li>
-            <li>
-              <b>how many guests can sign the guestbook?</b>
-              <br />
-              unlimited.
-            </li>
-            <li>
-              <b>does it cost anything?</b>
-              <br />
-              free to write or mint, user pays network gas fees.
-            </li>
-            <li>
-              <b>why?</b>
-              <br />a transaction is incurred when writing to the blockchain.
-            </li>
-            <li>
-              <b>anything we should know before minting?</b>
-              <br />
-              special characters are not recommended and can break the on-chain
-              svg. when minting from this page, special characters are encoded
-              to minimize risk.
-            </li>
-          </ul>
-        </CollapsibleContent>
       </Collapsible>
 
       {accountData && <WriteMessage />}

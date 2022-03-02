@@ -81,6 +81,7 @@ export default function SignMessage() {
           }}
           style={{ width: '100%' }}
         >
+          <P>Sign your message to preview.</P>
           <input
             id="message"
             placeholder="gm"
@@ -98,13 +99,16 @@ export default function SignMessage() {
               width: 'calc(100% - 16px)',
             }}
           />
-
-          <Button
-            disabled={signLoading || !message.length}
-            css={{ margin: '0 16px 16px 0' }}
-          >
-            {signLoading ? 'Check Wallet' : 'Sign Message'}
-          </Button>
+          {signLoading ? (
+            <P>Check Wallet</P>
+          ) : (
+            <Button
+              disabled={signLoading || !message.length}
+              css={{ margin: '0 16px 16px 0' }}
+            >
+              Sign Message
+            </Button>
+          )}
 
           {signError && <P>{signError?.message ?? 'Error signing message'}</P>}
         </form>

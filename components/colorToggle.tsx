@@ -19,9 +19,7 @@ export default function ColorToggle() {
   }
 
   const StyledToggle = styled(TogglePrimitive.Root, {
-    width: '39px',
-    height: '39px',
-    padding: '12px',
+    height: '34px',
     border: 'none',
     backgroundColor: 'transparent',
   })

@@ -15,30 +15,31 @@ export default function WagmiProvider({ children }: any) {
   // Set up connectors
   const connectors = () => {
     return [
-      new InjectedConnector({ chains }),
+      new InjectedConnector({
+        chains: [defaultChain],
+      }),
       new WalletConnectConnector({
         chains: [defaultChain],
         options: {
+          infuraId: process.env.NEXT_PUBLIC_INFURA,
+          chainId: 4,
           qrcode: true,
         },
       }),
     ]
   }
-  // Set up providers
 
-  const rinkeby = {
+  // Set up providers
+  const ethProviders = {
     name: 'rinkeby',
     chainId: 4,
     _defaultProvider: (providers: any) =>
       new providers.JsonRpcProvider('https://rinkeby-light.eth.linkpool.io/'),
+    // new providers.AlchemyProvider(4, process.env.NEXT_PUBLIC_ALCHEMY),
+    // new providers.InfuraProvider(4, process.env.NEXT_PUBLIC_INFURA)
   }
 
-  const provider = () =>
-    providers.getDefaultProvider(rinkeby, {
-      etherscan: process.env.NEXT_PUBLIC_ETHERSCAN,
-      infura: process.env.NEXT_PUBLIC_INFURA,
-      alchemy: process.env.NEXT_PUBLIC_ALCHEMY,
-    })
+  const provider = () => providers.getDefaultProvider(ethProviders)
 
   return (
     <Provider autoConnect connectors={connectors} provider={provider}>

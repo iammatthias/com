@@ -7,7 +7,7 @@ import { ApolloProvider } from '@apollo/client'
 import client from '@/lib/apolloClient'
 
 import Meta from '@/components/meta'
-import Nav from '@/components/blocks/nav'
+import Navigation from '@/components/blocks/navigation'
 
 import ClientOnly from '@/components/clientOnly'
 import dynamic from 'next/dynamic'
@@ -44,7 +44,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ApolloProvider client={client}>
         <Meta />
         <MDX>
-          <Nav />
+          <Navigation />
           <Layout>
             <Component {...pageProps} />
           </Layout>

@@ -23,10 +23,11 @@ export default function Button({ children, ...props }: any) {
     borderRadius: '4px',
     animation: `${fadeOut} 328ms ease-out`,
     $$shadowColor: '$colors$slate12',
+    backdropFilter: 'opacity(38.2%) saturate(1618%) blur(50px)',
+
     '&:hover': {
       boxShadow: `0 0 0 1px $$shadowColor`,
       animation: `${fadeIn} 328ms ease-out`,
-      backdropFilter: 'invert(100%) opacity(38.2%) saturate(1618%)',
     },
     '&:focus': {
       outline: 'none',
