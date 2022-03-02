@@ -10,7 +10,7 @@ export default function Background({ ...props }) {
       // console.log(ref)
       gradient.initGradient('#gradient-canvas')
     }
-  }, [ref])
+  })
   //@ts-ignore
   return <canvas ref={ref} id="gradient-canvas" data-transition-in {...props} />
 }

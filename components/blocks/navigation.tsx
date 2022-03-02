@@ -112,15 +112,6 @@ export default function Nav() {
     },
   })
 
-  const StyledTriggerWithCaret = forwardRef(
-    ({ children, ...props }: any, forwardedRef) => (
-      <StyledTrigger {...props} ref={forwardedRef}>
-        {children}
-        <StyledCaret aria-hidden />
-      </StyledTrigger>
-    ),
-  )
-
   const StyledLink = styled(NavigationMenuPrimitive.Link, {
     ...itemStyles,
     display: 'block',
@@ -175,12 +166,6 @@ export default function Nav() {
     $$shadowColor: '$colors$slate12',
     boxShadow: `0 0 0 2px $$shadowColor`,
   })
-
-  const StyledIndicatorWithArrow = forwardRef((props: any, forwardedRef) => (
-    <StyledIndicator {...props} ref={forwardedRef}>
-      <StyledArrow />
-    </StyledIndicator>
-  ))
 
   const StyledViewport = styled(NavigationMenuPrimitive.Viewport, {
     position: 'relative',
@@ -239,9 +224,10 @@ export default function Nav() {
           </NavigationMenuPrimitive.Item>
 
           <NavigationMenuPrimitive.Item>
-            <StyledTriggerWithCaret>
+            <StyledTrigger>
               <CameraIcon />
-            </StyledTriggerWithCaret>
+              <StyledCaret aria-hidden />
+            </StyledTrigger>
             <StyledContent>
               <ContentList>
                 <NavigationQuery type="Gallery" />
@@ -250,9 +236,10 @@ export default function Nav() {
           </NavigationMenuPrimitive.Item>
 
           <NavigationMenuPrimitive.Item>
-            <StyledTriggerWithCaret>
+            <StyledTrigger>
               <FileTextIcon />
-            </StyledTriggerWithCaret>
+              <StyledCaret aria-hidden />
+            </StyledTrigger>
             <StyledContent>
               <ContentList>
                 <NavigationQuery type="Blog" />
@@ -270,7 +257,9 @@ export default function Nav() {
             <ColorToggle />
           </NavigationMenuPrimitive.Item>
 
-          <StyledIndicatorWithArrow />
+          <StyledIndicator>
+            <StyledArrow />
+          </StyledIndicator>
         </StyledList>
 
         <ViewportPosition>
