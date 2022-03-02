@@ -24,7 +24,7 @@ const QUERY = gql`
 export default function NavigationQuery(props: any) {
   const itemStyles = {
     margin: '0',
-    padding: '0 12px 12px 0',
+    padding: '0',
     outline: 'none',
     userSelect: 'none',
     fontWeight: 500,
@@ -52,8 +52,8 @@ export default function NavigationQuery(props: any) {
     fontWeight: 'Bold',
     lineHeight: 1.2,
     margin: '0 0 8px',
-
     fontSize: '15px',
+    wordWrap: 'break-word',
   })
 
   const LinkText = styled('p', {

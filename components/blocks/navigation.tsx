@@ -123,7 +123,7 @@ export default function Nav() {
     left: 0,
     width: '100%',
     borderRadius: 6,
-    // backdropFilter: ' blur(50px) opacity(38.2%) saturate(1618%) ',
+    // backdropFilter: 'opacity(38.2%) saturate(1618%) blur(50px)',
     background: 'white',
     '@media (prefers-reduced-motion: no-preference)': {
       animationDuration: '250ms',
@@ -184,11 +184,11 @@ export default function Nav() {
 
   // Your app...
   const ContentList = styled('div', {
-    top: 0,
-    left: 0,
-    width: '100%',
+    position: 'relative',
+
+    width: 'calc(100% - 48px)',
     height: '100%',
-    padding: 16,
+    padding: 24,
     margin: 0,
     display: 'grid',
     gridTemplateColumns: '1fr',
