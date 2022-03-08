@@ -136,30 +136,16 @@ export default function Nav() {
     },
   })
 
-  const StyledIndicator = styled(NavigationMenuPrimitive.Indicator, {
-    display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    height: 10,
-    top: '100%',
-    overflow: 'hidden',
-    zIndex: 1,
-    '@media (prefers-reduced-motion: no-preference)': {
-      transition: 'width, transform 250ms ease',
-      '&[data-state="visible"]': { animation: `${fadeIn} 200ms ease` },
-      '&[data-state="hidden"]': { animation: `${fadeOut} 200ms ease` },
-    },
-  })
-
   const StyledViewport = styled(NavigationMenuPrimitive.Viewport, {
     position: 'relative',
     marginTop: 10,
+    marginBottom: 50,
     width: '100%',
     borderRadius: 6,
     overflow: 'hidden',
+    height: 'var(--radix-navigation-menu-viewport-height)',
     $$shadowColor: '$colors$slate12',
     boxShadow: `0 0 0 2px $$shadowColor`,
-    height: 'var(--radix-navigation-menu-viewport-height)',
     '@media (prefers-reduced-motion: no-preference)': {
       transition: 'width, height, 300ms ease',
       '&[data-state="open"]': { animation: `${scaleIn} 200ms ease` },
@@ -172,7 +158,6 @@ export default function Nav() {
   // Your app...
   const ContentList = styled('div', {
     position: 'relative',
-
     width: 'calc(100% - 48px)',
     height: '100%',
     padding: 24,
