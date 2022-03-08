@@ -125,7 +125,7 @@ export default function Nav() {
     width: '100%',
     borderRadius: 6,
     // backdropFilter: 'opacity(38.2%) saturate(1618%) blur(50px)',
-    background: 'white',
+    background: '$colors$slate1',
     '@media (prefers-reduced-motion: no-preference)': {
       animationDuration: '250ms',
       animationTimingFunction: 'ease',
@@ -149,20 +149,6 @@ export default function Nav() {
       '&[data-state="visible"]': { animation: `${fadeIn} 200ms ease` },
       '&[data-state="hidden"]': { animation: `${fadeOut} 200ms ease` },
     },
-  })
-
-  const StyledArrow = styled('div', {
-    position: 'relative',
-    top: '70%',
-    backgroundColor: 'white',
-    borderRadius: 6,
-    // backdropFilter: 'opacity(38.2%) saturate(1618%) blur(50px)',
-    width: 10,
-    height: 10,
-    transform: 'rotate(45deg)',
-    borderTopLeftRadius: 2,
-    $$shadowColor: '$colors$slate12',
-    boxShadow: `0 0 0 2px $$shadowColor`,
   })
 
   const StyledViewport = styled(NavigationMenuPrimitive.Viewport, {
@@ -258,10 +244,6 @@ export default function Nav() {
           <NavigationMenuPrimitive.Item>
             <ColorToggle />
           </NavigationMenuPrimitive.Item>
-
-          <StyledIndicator>
-            <StyledArrow />
-          </StyledIndicator>
         </StyledList>
 
         <ViewportPosition>

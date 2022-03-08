@@ -1,6 +1,6 @@
-import { styled } from '@/lib/stitches.config'
-
+import { styled, keyframes } from '@/lib/stitches.config'
 import Link from 'next/link'
+import Tooltip from '../tooltip'
 
 export default function Anchor({ children, ...props }: any) {
   const Text = styled('span', {
@@ -15,10 +15,12 @@ export default function Anchor({ children, ...props }: any) {
     },
   })
   return (
-    <Text>
-      <Link passHref {...props}>
-        <a>{children}</a>
-      </Link>
-    </Text>
+    <Tooltip iframe={props.href}>
+      <Text>
+        <Link passHref {...props}>
+          <a>{children}</a>
+        </Link>
+      </Text>
+    </Tooltip>
   )
 }
