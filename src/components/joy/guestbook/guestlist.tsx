@@ -14,7 +14,7 @@ export default function Guestlist() {
 
   const provider = useProvider();
 
-  const [{ data: allGuests, loading }, read] = useContractRead(
+  const [{ data: allGuests, loading }] = useContractRead(
     {
       addressOrName: contractAddress,
       contractInterface: abi.abi,

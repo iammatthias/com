@@ -7,7 +7,7 @@ import SignMessage from './signMessage';
 
 // page header
 
-export default function TheGuestbook({ ...props }: any) {
+export default function TheGuestbook() {
   const [{ data: accountData, loading, error }] = useAccount();
   return (
     <>

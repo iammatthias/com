@@ -1,7 +1,7 @@
 // pages/guestbook.tsx
 
 import { providers } from 'ethers';
-import { Provider, defaultChains, chain } from 'wagmi';
+import { Provider, defaultChains } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
@@ -10,7 +10,6 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 export default function WagmiProvider({ children }: any) {
   // Pick chains
   const chains = defaultChains;
-  // const defaultChain = chain.rinkeby;
   const defaultChain = chains[2];
 
   // Set up connectors
@@ -35,9 +34,6 @@ export default function WagmiProvider({ children }: any) {
     name: `rinkeby`,
     chainId: 4,
     _defaultProvider: (providers: any) => (
-      // new providers.JsonRpcProvider(
-      //   'https://rinkey.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-      // ),
       new providers.AlchemyProvider(4, process.env.NEXT_PUBLIC_ALCHEMY),
       new providers.InfuraProvider(4, process.env.NEXT_PUBLIC_INFURA)
     ),

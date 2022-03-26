@@ -8,7 +8,7 @@ export default function MaxTokens() {
 
   const provider = useProvider();
 
-  const [{ data, loading }, read] = useContractRead(
+  const [{ data, loading }] = useContractRead(
     {
       addressOrName: contractAddress,
       contractInterface: abi.abi,

@@ -8,7 +8,7 @@ export default function TokenCount() {
 
   const provider = useProvider();
 
-  const [{ data, loading }, read] = useContractRead(
+  const [{ data, loading }] = useContractRead(
     {
       addressOrName: contractAddress,
       contractInterface: abi.abi,

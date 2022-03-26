@@ -11,7 +11,7 @@ export default function Account() {
   });
 
   // get current network
-  const [{ data: networkData }, switchNetwork] = useNetwork();
+  const [{ data: networkData }] = useNetwork();
 
   return (
     <Box>

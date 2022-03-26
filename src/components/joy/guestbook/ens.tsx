@@ -1,7 +1,7 @@
 import { useEnsLookup } from 'wagmi';
 
 export default function Ens({ address }: any) {
-  const [{ data: ens, loading }, lookupAddress] = useEnsLookup({
+  const [{ data: ens, loading }] = useEnsLookup({
     address: address,
   });
 
