@@ -17,6 +17,8 @@ export default function SignMessage() {
 
   const previousMessage: any = useRef;
   const [message, setMessage] = useState(``);
+  const [signedData, setSignedData] = useState(``);
+
   const [
     { data: signData, error: signError, loading: signLoading },
     signMessage,
@@ -25,13 +27,19 @@ export default function SignMessage() {
   // store user for preview
   const recoveredAddress = useMemo(() => {
     if (!signData || !previousMessage.current) return undefined;
-    return verifyMessage(previousMessage.current, signData);
+    return (
+      setSignedData(signData), verifyMessage(previousMessage.current, signData)
+    );
   }, [signData, previousMessage]);
+
+  const handleReset = () => {
+    setSignedData(``);
+  };
 
   return (
     // conditionally display form or preview of message
     <>
-      {signData ? (
+      {signedData ? (
         // preview
         <>
           <WriteMessage message={previousMessage.current} />
@@ -67,6 +75,7 @@ export default function SignMessage() {
               </Text>
             </Sparkle>
           </Box>
+          <Button onClick={handleReset}>reset</Button>
         </>
       ) : (
         // message submission form
@@ -74,7 +83,8 @@ export default function SignMessage() {
           onSubmit={(event) => {
             event.preventDefault();
             previousMessage.current = message;
-            signMessage({ message });
+
+            signMessage({ message: message });
           }}
           style={{ width: `100%` }}
         >

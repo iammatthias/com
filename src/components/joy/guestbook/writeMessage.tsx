@@ -16,7 +16,11 @@ export default function WriteMessage(message: any) {
   const provider = useProvider();
 
   const [
-    { data: writeWithoutMintData, error: writeWithoutMintError },
+    {
+      data: writeWithoutMintData,
+      error: writeWithoutMintError,
+      loading: writeWithoutMintLoading,
+    },
     signWithoutMint,
   ] = useContractWrite(
     {
@@ -27,15 +31,21 @@ export default function WriteMessage(message: any) {
     `signWithoutMint`,
   );
 
-  const [{ data: writeWithMintData, error: writeWithMintError }, signWithMint] =
-    useContractWrite(
-      {
-        addressOrName: contractAddress as string,
-        contractInterface: abi.abi,
-        signerOrProvider: provider,
-      },
-      `signWithMint`,
-    );
+  const [
+    {
+      data: writeWithMintData,
+      error: writeWithMintError,
+      loading: writeWithMintLoading,
+    },
+    signWithMint,
+  ] = useContractWrite(
+    {
+      addressOrName: contractAddress as string,
+      contractInterface: abi.abi,
+      signerOrProvider: provider,
+    },
+    `signWithMint`,
+  );
 
   const encoded = he.encode(message.message);
 
@@ -53,6 +63,7 @@ export default function WriteMessage(message: any) {
 
   const writeData: any = writeWithMintData || writeWithoutMintData;
   const writeError: any = writeWithMintError || writeWithoutMintError;
+  const writeLoading: any = writeWithMintLoading || writeWithoutMintLoading;
 
   const maxTokens: any = MaxTokens();
   const tokenCount: any = TokenCount();
@@ -85,7 +96,7 @@ export default function WriteMessage(message: any) {
                     transactionData.transactionHash
                   }
                 >
-                  hash: {transactionData.transactionHash}
+                  tx: {transactionData.transactionHash}
                 </Link>
               </Text>
             </Text>
@@ -107,7 +118,7 @@ export default function WriteMessage(message: any) {
               onClick={handleWriteWithMint}
               css={{ padding: `16px`, margin: `0 16px 16px 0` }}
             >
-              Write With Mint
+              <Text as="p">Write With Mint</Text>
             </Button>
           )}
           <Button
@@ -118,7 +129,16 @@ export default function WriteMessage(message: any) {
           </Button>
         </>
       )}
-      {writeError && <Text as="p">{writeError?.message}</Text>}
+      {writeLoading && (
+        <Text as="p" css={{ margin: `0 0 16px` }}>
+          Loading...
+        </Text>
+      )}
+      {writeError && (
+        <Text as="p" css={{ margin: `0 0 16px` }}>
+          {writeError?.message}
+        </Text>
+      )}
     </>
   );
 }

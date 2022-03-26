@@ -21,7 +21,7 @@ export default function Account() {
             onClick={() => disconnect()}
             css={{ padding: `16px`, margin: `0 16px 16px 0` }}
           >
-            Disconnect from {accountData?.connector?.name}
+            <Text as="p">Disconnect from {accountData?.connector?.name}</Text>
           </Button>
         </Box>
       )}

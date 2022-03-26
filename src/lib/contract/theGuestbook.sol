@@ -19,20 +19,20 @@ pragma solidity 0.8.9;
 import {ERC721Delegated} from 'gwei-slim-nft-contracts/contracts/base/ERC721Delegated.sol';
 import {IBaseERC721Interface, ConfigSettings} from 'gwei-slim-nft-contracts/contracts/base/ERC721Base.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
-import './base64.sol';
+import '@openzeppelin/contracts/utils/Base64.sol';
 
 /// @notice The Guest Book Contract
 contract TheGuestBook is ERC721Delegated {
-  uint256 public constant maxTokens = 9;
   /// @notice total guests
   uint256 public guestCount;
   uint256 public tokenCount;
   mapping(uint256 => string) metadataJson;
+  uint256 public maxTokens = 9999;
 
   /// @notice delegate constructor for gwei saving nft impl
-  constructor(address baseFactory)
+  constructor()
     ERC721Delegated(
-      baseFactory,
+      0x86c67a16C16BF784BdFE7D4b7575dB664D191F88,
       'The Guest Book',
       'GUEST',
       ConfigSettings({
@@ -94,11 +94,15 @@ contract TheGuestBook is ERC721Delegated {
 
   // ============ nft functions ============
   string[] private strictures = [
+    'gm',
+    'gn',
     'wagmi ',
     'gmi ',
-    'gm ',
     'gm ser ',
     'ser ',
+    'degen ',
+    'moon ',
+    'alpha ',
     'curious ',
     'looks rare ',
     'probably nothing '
@@ -204,6 +208,7 @@ contract TheGuestBook is ERC721Delegated {
   }
 
   /// ============ helper functions ============
+
   function toString(uint256 value) internal pure returns (string memory) {
     // Inspired by OraclizeAPI's implementation - MIT license
     // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol
