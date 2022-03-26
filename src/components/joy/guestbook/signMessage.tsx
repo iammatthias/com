@@ -75,7 +75,12 @@ export default function SignMessage() {
               </Text>
             </Sparkle>
           </Box>
-          <Button onClick={handleReset}>reset</Button>
+          <Button
+            onClick={handleReset}
+            css={{ padding: `16px`, margin: `0 16px 16px 0` }}
+          >
+            <Text as="p">Reset</Text>
+          </Button>
         </>
       ) : (
         // message submission form

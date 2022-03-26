@@ -31,7 +31,7 @@ export default function NavWrapper() {
     listStyle: `none`,
     $$shadowColor: `$colors$primary`,
     boxShadow: `0 0 0 1px $$shadowColor`,
-    backdropFilter: `blur(50px) opacity(38.2%) saturate(1618%) `,
+    backdropFilter: `blur(50px) opacity(38.2%) saturate(2618%) `,
     '&:hover': {
       boxShadow: `0 0 0 2px $$shadowColor`,
     },

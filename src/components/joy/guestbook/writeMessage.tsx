@@ -82,9 +82,7 @@ export default function WriteMessage(message: any) {
     return (
       <Box css={{ margin: `0 0 16px` }}>
         {transactionError && <p>There was an error. Please try again later.</p>}
-        {` `}
         {transactionLoading && <p>Writing message to chain...</p>}
-        {` `}
         {transactionData && (
           <>
             <Text as="p">

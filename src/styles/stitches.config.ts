@@ -245,6 +245,20 @@ export const globalStyles = globalCss({
       padding: `2px`,
     },
   },
+  '#gradient-canvas': {
+    position: `fixed`,
+    top: 0,
+    left: 0,
+    zIndex: `-11`,
+    width: `100%`,
+    height: `100%`,
+    opacity: `0.1382`,
+    '--gradient-color-1': `#c1ecf9`,
+    '--gradient-color-2': `#bfefe2`,
+    '--gradient-color-3': `#68dcfd`,
+    '--gradient-color-4': `#70e0c8`,
+    '--gradient-color-5': `#fac7be`,
+  },
 });
 
 globalStyles();
