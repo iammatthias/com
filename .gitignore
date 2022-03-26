@@ -5,8 +5,12 @@
 /.pnp
 .pnp.js
 
+# JetBrains IDE files
+.idea/
+
 # testing
 /coverage
+test.tsx
 
 # next.js
 /.next/
@@ -14,11 +18,11 @@
 
 # production
 /build
-dev.tsx
 
 # misc
 .DS_Store
 *.pem
+tsconfig.tsbuildinfo
 
 # debug
 npm-debug.log*
@@ -34,6 +38,3 @@ yarn-error.log*
 
 # vercel
 .vercel
-
-# typescript
-*.tsbuildinfo
