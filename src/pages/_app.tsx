@@ -6,9 +6,10 @@ import NavWrapper from '@/components/blocks/navigation/navWrapper';
 import Layout from '@/components/layout';
 import MDX from '@/lib/mdxProvider';
 import WagmiProvider from '@/lib/wagmiProvider';
+import Meta from '@/components/meta';
 
 // fonts
-import '@fontsource/playfair-display/900.css';
+import '@fontsource/crimson-pro/900.css';
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/900.css';
 import '@fontsource/space-mono';
@@ -35,6 +36,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         light: `light`,
       }}
     >
+      <Meta title={pageProps.pageTitle} />
       <NavWrapper />
       {path === `/guestbook` ? (
         <WagmiProvider>

@@ -17,9 +17,7 @@ export default function Guestbook() {
 export const getStaticProps = async () => {
   return {
     props: {
-      metadata: {
-        title: `Guestbook`,
-      },
+      pageTitle: `Guestbook`,
     },
   };
 };

@@ -44,7 +44,7 @@ export async function getStaticProps() {
   // We return the result of the query as props to pass them above
   return {
     props: {
-      title: data.title ? data.title : null,
+      pageTitle: data.title ? data.title : `I Am Matthias`,
       mdx: mdxSource,
     },
   };

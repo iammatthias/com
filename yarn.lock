@@ -773,6 +773,11 @@
     "@ethersproject/properties" "^5.6.0"
     "@ethersproject/strings" "^5.6.0"
 
+"@fontsource/crimson-pro@4.5.6":
+  version "4.5.6"
+  resolved "https://registry.yarnpkg.com/@fontsource/crimson-pro/-/crimson-pro-4.5.6.tgz#5c7892fc1aec4ebd376a2833d4bab6988e11262f"
+  integrity sha512-GjbOTWSVxp9yaUuHClqPRTM0aw1TK3fCeNrJ9cVQgTSX+YbHFuM04rV016yAPDhAQpNp3ojqB1WMrPQiRZqzHA==
+
 "@fontsource/inter@4.5.7":
   version "4.5.7"
   resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-4.5.7.tgz#f0657c52105ed51e04ac636a25d6016896c5ee9d"

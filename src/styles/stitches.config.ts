@@ -147,7 +147,7 @@ export const globalStyles = globalCss({
     padding: `0`,
   },
   'h1, h2, h3, h4, h5, h6': {
-    fontFamily: `"Playfair Display", serif`,
+    fontFamily: `"Crimson Pro", serif`,
     fontWeight: `900`,
   },
   'pre, code': {

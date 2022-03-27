@@ -47,6 +47,7 @@ export default function Glass(props: any) {
   function glassLoader({ src }: ImageLoaderProps): string {
     return `${src}`;
   }
+  console.log(glassPosts);
 
   return (
     <Box ref={ref} className="gallery" css={{ marginBottom: `2rem` }}>
@@ -56,12 +57,13 @@ export default function Glass(props: any) {
         columnClassName="column"
       >
         {glassPosts.map((post: any, index: any) => (
-          <GalleryWrapper
-            key={index}
-            imageKey={index}
-            images={glassPosts}
-            iframe="true"
-          >
+          // <GalleryWrapper
+          //   key={index}
+          //   imageKey={index}
+          //   images={glassPosts}
+          //   iframe="true"
+          // >
+          <a href={post.share_url} key={index}>
             <Box
               className="column"
               key={post.id}
@@ -86,7 +88,8 @@ export default function Glass(props: any) {
                 unoptimized={true}
               />
             </Box>
-          </GalleryWrapper>
+          </a>
+          // </GalleryWrapper>
         ))}
       </Masonry>
     </Box>

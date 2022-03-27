@@ -9,7 +9,6 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 
 import { Box } from '../primitives/box';
 import Image from 'next/image';
-import useMeasure from 'react-use-measure';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { Button } from '../primitives/button';
@@ -56,9 +55,6 @@ const StyledContent = styled(`div`, {
   width: `auto`,
   maxWidth: `80%`,
   height: `80%`,
-  div: {
-    height: `100%`,
-  },
 });
 
 function Content({ children, ...props }: any) {
@@ -103,10 +99,6 @@ const IconButton = styled(`button`, {
 });
 
 export default function Modal({ children, images, imageKey, iframe }: any) {
-  const [ref, bounds] = useMeasure({
-    options: { offset: false },
-  } as any);
-
   function contentfulLoader({ src, width, quality }: any) {
     return `${src}?w=${width || 1200}&q=${quality || 70}`;
   }
@@ -129,61 +121,105 @@ export default function Modal({ children, images, imageKey, iframe }: any) {
     },
   );
 
-  const boxWidth = !iframe
-    ? (image.width / image.height) * bounds.height
-    : bounds.width;
-  const boxHeight = !iframe
-    ? (image.height / image.width) * bounds.width
-    : bounds.height;
-
   return (
     <Dialog>
       <DialogTrigger asChild>
         <ModalTrigger onClick={() => setI(imageKey)}>{children}</ModalTrigger>
       </DialogTrigger>
       <DialogContent>
-        <Box ref={ref} css={{ height: `100%`, width: `100%` }}>
-          <Box css={{ height: boxHeight, width: boxWidth, margin: `0 auto` }}>
-            {!iframe && (
-              <>
-                <Image
-                  src={image.url}
-                  alt={image.title}
-                  layout="responsive"
-                  placeholder="blur"
-                  blurDataURL={contentfulLoader({
-                    src: image.url,
-                    width: 5,
-                    quality: 1,
-                  })}
-                  width={image.width}
-                  height={image.height}
-                  className="gallery"
-                  loader={contentfulLoader}
-                />
-                <Button
-                  css={{ position: `absolute`, top: `50%`, left: `25px` }}
-                  onClick={() => setI(prev)}
-                >
-                  <TriangleLeftIcon />
-                </Button>
-                <Button
-                  css={{ position: `absolute`, top: `50%`, right: `25px` }}
-                  onClick={() => setI(next)}
-                >
-                  <TriangleRightIcon />
-                </Button>
-              </>
-            )}
-            {iframe && (
-              <iframe
-                src={image.share_url}
-                width={boxWidth}
-                height={boxHeight}
-              />
-            )}
+        <Box
+          css={{
+            height: `100%`,
+            width: `100%`,
+            display: `flex`,
+            flexDirection: `column`,
+            alignItems: `center`,
+            justifyContent: `center`,
+          }}
+        >
+          <Box
+            css={{
+              position: `relative`,
+              width: `100%`,
+              height: `fit-content`,
+            }}
+          >
+            <Image
+              src={image.url}
+              alt={image.title}
+              layout="responsive"
+              placeholder="blur"
+              blurDataURL={contentfulLoader({
+                src: image.url,
+                width: 5,
+                quality: 1,
+              })}
+              width={image.width}
+              height={image.height}
+              className="gallery"
+              loader={contentfulLoader}
+            />
+          </Box>
+          <Box
+            css={{
+              position: `absolute`,
+              bottom: `100px`,
+              width: `100%`,
+              '@bp1': {
+                bottom: `unset`,
+                top: `50%`,
+              },
+              '@bp2': {
+                bottom: `unset`,
+                top: `50%`,
+              },
+            }}
+          >
+            <Button
+              css={{
+                position: `absolute`,
+                left: `25px`,
+                '@bp1': {
+                  position: `relative`,
+                },
+                '@bp2': {
+                  position: `relative`,
+                },
+                '@bp3': {
+                  position: `absolute`,
+                },
+                '@bp4': {
+                  position: `absolute`,
+                },
+              }}
+              onClick={() => setI(prev)}
+            >
+              <TriangleLeftIcon />
+            </Button>
+            <Button
+              css={{
+                position: `absolute`,
+                right: `25px`,
+                '@bp1': {
+                  position: `relative`,
+                },
+                '@bp2': {
+                  position: `relative`,
+                },
+                '@bp3': {
+                  position: `absolute`,
+                },
+                '@bp4': {
+                  position: `absolute`,
+                },
+              }}
+              onClick={() => setI(next)}
+            >
+              <TriangleRightIcon />
+            </Button>
           </Box>
         </Box>
+
         <DialogClose asChild onClick={() => setI(imageKey)}>
           <IconButton>
             <Cross2Icon />
