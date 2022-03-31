@@ -68,6 +68,8 @@ export default function WriteMessage(message: any) {
   const maxTokens: any = MaxTokens();
   const tokenCount: any = TokenCount();
 
+  console.log({ maxTokens, tokenCount });
+
   const Transaction = (hash: any) => {
     const [
       {

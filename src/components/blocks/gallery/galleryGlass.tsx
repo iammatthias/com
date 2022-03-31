@@ -5,7 +5,6 @@ import useSWR from 'swr';
 import { Box } from '@/components/primitives/box';
 import Masonry from 'react-masonry-css';
 import useMeasure from 'react-use-measure';
-import GalleryWrapper from './galleryWrapper';
 
 export default function Glass(props: any) {
   // container width
@@ -57,12 +56,6 @@ export default function Glass(props: any) {
         columnClassName="column"
       >
         {glassPosts.map((post: any, index: any) => (
-          // <GalleryWrapper
-          //   key={index}
-          //   imageKey={index}
-          //   images={glassPosts}
-          //   iframe="true"
-          // >
           <a href={post.share_url} key={index}>
             <Box
               className="column"
@@ -89,7 +82,6 @@ export default function Glass(props: any) {
               />
             </Box>
           </a>
-          // </GalleryWrapper>
         ))}
       </Masonry>
     </Box>

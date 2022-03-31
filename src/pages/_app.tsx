@@ -5,7 +5,7 @@ import { darkTheme } from '@/styles/stitches.config';
 import NavWrapper from '@/components/blocks/navigation/navWrapper';
 import Layout from '@/components/layout';
 import MDX from '@/lib/mdxProvider';
-import WagmiProvider from '@/lib/wagmiProvider';
+import WagmiProvider from '@/lib/web3Provider';
 import Meta from '@/components/meta';
 
 // fonts

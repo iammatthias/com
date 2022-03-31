@@ -1,14 +1,12 @@
 // pages/guestbook.tsx
 
-import TheGuestbook from '@/components/joy/guestbook/theGuestbook';
-import { Text } from '@/components/primitives/text';
+import TheGuestbook from '@/components/joy/guestbook';
 
 // components
 
 export default function Guestbook() {
   return (
     <article>
-      <Text as="h1">The Guest Book</Text>
       <TheGuestbook />
     </article>
   );

@@ -12,6 +12,7 @@ import Image from 'next/image';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { Button } from '../primitives/button';
+import useMeasure from 'react-use-measure';
 
 const overlayShow = keyframes({
   '0%': { opacity: 0 },
@@ -51,10 +52,10 @@ const StyledModal = styled(DialogPrimitive.Content, {
 });
 
 const StyledContent = styled(`div`, {
-  margin: `50px auto`,
+  margin: `0 auto`,
   width: `auto`,
   maxWidth: `80%`,
-  height: `80%`,
+  height: `100%`,
 });
 
 function Content({ children, ...props }: any) {
@@ -98,7 +99,9 @@ const IconButton = styled(`button`, {
   '&:focus': { outline: `none` },
 });
 
-export default function Modal({ children, images, imageKey, iframe }: any) {
+export default function Modal({ children, images, imageKey }: any) {
+  const [ref, bounds] = useMeasure({ options: { offset: false } } as any);
+
   function contentfulLoader({ src, width, quality }: any) {
     return `${src}?w=${width || 1200}&q=${quality || 70}`;
   }
@@ -121,6 +124,9 @@ export default function Modal({ children, images, imageKey, iframe }: any) {
     },
   );
 
+  const containerWidth = bounds?.width;
+  const containerHeight = bounds?.height;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -128,6 +134,7 @@ export default function Modal({ children, images, imageKey, iframe }: any) {
       </DialogTrigger>
       <DialogContent>
         <Box
+          ref={ref}
           css={{
             height: `100%`,
             width: `100%`,
