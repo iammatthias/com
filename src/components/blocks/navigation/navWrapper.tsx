@@ -9,8 +9,10 @@ import {
   CameraIcon,
   FileTextIcon,
   FaceIcon,
+  ArrowRightIcon,
 } from '@radix-ui/react-icons';
 import Link from 'next/link';
+import { Text } from '@/components/primitives/text';
 
 export default function NavWrapper() {
   // primitives
@@ -152,7 +154,12 @@ export default function NavWrapper() {
             </StyledTrigger>
             <StyledContent>
               <ContentList>
-                <NavQuery type="Gallery" />
+                <NavQuery type="Gallery" limit="9" />
+                <Link href="/work" passHref>
+                  <a>
+                    <ArrowRightIcon />
+                  </a>
+                </Link>
               </ContentList>
             </StyledContent>
           </NavigationMenuPrimitive.Item>
@@ -164,7 +171,13 @@ export default function NavWrapper() {
             </StyledTrigger>
             <StyledContent>
               <ContentList>
-                <NavQuery type="Blog" />
+                <NavQuery type="Blog" limit="9" />
+
+                <Link href="/blog" passHref>
+                  <a>
+                    <ArrowRightIcon />
+                  </a>
+                </Link>
               </ContentList>
             </StyledContent>
           </NavigationMenuPrimitive.Item>

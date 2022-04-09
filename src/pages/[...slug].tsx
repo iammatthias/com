@@ -44,13 +44,7 @@ export async function getStaticPaths() {
   const { data } = await client.query({
     query: gql`
       query SlugsIndex($preview: Boolean) {
-        pageCollection(
-          preview: $preview
-          where: {
-            slug_not: "home"
-            OR: { slug_not: "work", OR: { slug_not: "blog" } }
-          }
-        ) {
+        pageCollection(preview: $preview, where: { slug_not: "home" }) {
           items {
             slug
           }
@@ -92,11 +86,7 @@ export async function getStaticProps({ params }: any) {
         pageCollection(
           preview: $preview
           limit: 1
-          where: {
-            slug: $slug
-            slug_not: "home"
-            OR: { slug_not: "work", OR: { slug_not: "blog" } }
-          }
+          where: { slug: $slug, slug_not: "home" }
         ) {
           items {
             title

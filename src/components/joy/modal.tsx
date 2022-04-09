@@ -25,7 +25,9 @@ const contentShow = keyframes({
 });
 
 const StyledOverlay = styled(DialogPrimitive.Overlay, {
-  backgroundColor: `$background`,
+  backgroundColor: `$faded`,
+  backdropFilter: `blur(50px) saturate(618%)`,
+
   position: `fixed`,
   inset: 0,
   '@media (prefers-reduced-motion: no-preference)': {
@@ -35,7 +37,7 @@ const StyledOverlay = styled(DialogPrimitive.Overlay, {
 });
 
 const StyledModal = styled(DialogPrimitive.Content, {
-  backgroundColor: `$background`,
+  backgroundColor: `$faded`,
   borderRadius: 6,
   boxShadow: `hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px`,
   position: `fixed`,
@@ -196,6 +198,7 @@ export default function Modal({ children, images, imageKey }: any) {
               css={{
                 position: `absolute`,
                 left: `25px`,
+                boxShadow: `none`,
                 '@bp1': {
                   position: `relative`,
                 },
@@ -217,6 +220,7 @@ export default function Modal({ children, images, imageKey }: any) {
               css={{
                 position: `absolute`,
                 right: `25px`,
+                boxShadow: `none`,
                 '@bp1': {
                   position: `relative`,
                 },

@@ -19,6 +19,7 @@ import Mono from '@/components/joy/mono';
 import Squiggle from '@/components/joy/squiggle';
 import Spicy from '@/components/joy/spicy';
 import Vimeo from '@u-wave/react-vimeo';
+import NavQuery from '@/components/blocks/navigation/navQuery';
 
 const mdComponents = {
   // primitives
@@ -53,6 +54,7 @@ const mdComponents = {
   GalleryGrid: (props: any) => <GalleryGrid {...props} />,
 
   // etc
+  PageList: (props: any) => <NavQuery {...props} />,
   Sparkle: (props: any) => (
     <ClientOnly>
       <Sparkles {...props} />

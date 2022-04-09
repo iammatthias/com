@@ -16,7 +16,7 @@ export const {
       black: `rgba(19, 19, 21, 1)`,
       blackFade: `rgba(19, 19, 21, .2)`,
       white: `rgba(255, 255, 255, 1)`,
-      whiteFaded: `rgba(255, 255, 255, .2)`,
+      whiteFade: `rgba(255, 255, 255, .2)`,
       gray: `rgba(128, 128, 128, 1)`,
       blue: `rgba(3, 136, 252, 1)`,
       red: `rgba(249, 16, 74, 1)`,
@@ -32,7 +32,7 @@ export const {
       link: `$blue`,
       background: `$white`,
       border: `$black`,
-      faded: `$blackFade`,
+      faded: `$whiteFade`,
     },
     space: {
       1: `4px`,
@@ -75,7 +75,7 @@ export const darkTheme = createTheme({
     link: `$blue`,
     background: `$black`,
     border: `$black`,
-    faded: `$whiteFade`,
+    faded: `$blackFade`,
   },
 });
 
