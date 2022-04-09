@@ -7,7 +7,10 @@ import { Box } from '@/components/primitives/box';
 // text
 import { Text } from '@/components/primitives/text';
 import Link from '@/components/primitives/link';
+
+// gallery
 import GalleryQuery from '@/components/blocks/gallery/galleryQuery';
+import GalleryGrid from '@/components/blocks/gallery/galleryGrid';
 import Glass from '@/components/blocks/gallery/galleryGlass';
 
 // etc
@@ -47,6 +50,7 @@ const mdComponents = {
   // galleries
   Gallery: (props: any) => <GalleryQuery {...props} />,
   Glass: (props: any) => <Glass {...props} />,
+  GalleryGrid: (props: any) => <GalleryGrid {...props} />,
 
   // etc
   Sparkle: (props: any) => (
@@ -59,7 +63,6 @@ const mdComponents = {
   Spicy: (props: any) => <Spicy {...props} />,
   Vimeo: (props: any) => (
     <Vimeo
-      {...props}
       responsive
       autoplay={true}
       muted={true}
@@ -68,6 +71,7 @@ const mdComponents = {
       showTitle={false}
       showPortrait={false}
       showByline={false}
+      {...props}
     />
   ),
 };

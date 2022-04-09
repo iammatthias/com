@@ -127,6 +127,17 @@ export default function Modal({ children, images, imageKey }: any) {
   const containerWidth = bounds?.width;
   const containerHeight = bounds?.height;
 
+  const maxWidthFromHeight =
+    image.height > image.width
+      ? containerHeight * 0.6
+      : image.height === image.width
+      ? containerHeight * 0.8
+      : containerWidth * 0.8;
+
+  const maxWidth =
+    image.width > maxWidthFromHeight ? maxWidthFromHeight : image.width;
+  const maxHeight = maxWidth * (image.height / image.width);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -149,20 +160,23 @@ export default function Modal({ children, images, imageKey }: any) {
               position: `relative`,
               width: `100%`,
               height: `fit-content`,
+              display: `flex`,
+              alignContent: `center`,
+              justifyContent: `center`,
             }}
           >
             <Image
               src={image.url}
               alt={image.title}
-              layout="responsive"
+              // layout="responsive"
               placeholder="blur"
               blurDataURL={contentfulLoader({
                 src: image.url,
                 width: 5,
                 quality: 1,
               })}
-              width={image.width}
-              height={image.height}
+              width={maxWidth}
+              height={maxHeight}
               className="gallery"
               loader={contentfulLoader}
             />

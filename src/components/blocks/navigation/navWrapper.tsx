@@ -31,7 +31,7 @@ export default function NavWrapper() {
     listStyle: `none`,
     $$shadowColor: `$colors$primary`,
     boxShadow: `0 0 0 1px $$shadowColor`,
-    backdropFilter: `blur(50px) opacity(38.2%) saturate(2618%) `,
+    backdropFilter: `blur(50px) saturate(618%)`,
     '&:hover': {
       boxShadow: `0 0 0 2px $$shadowColor`,
     },
@@ -48,7 +48,9 @@ export default function NavWrapper() {
     color: `$colors$primary`,
     $$shadowColor: `$colors$primary`,
     '&:focus': { position: `relative`, background: `$colors$secondary` },
-    '&:hover': { background: `$colors$secondary` },
+    '&:hover': {
+      background: `$colors$faded`,
+    },
   };
 
   const StyledTrigger = styled(NavigationMenuPrimitive.Trigger, {
@@ -85,8 +87,9 @@ export default function NavWrapper() {
     left: 0,
     width: `100%`,
     borderRadius: 6,
-    // backdropFilter: `opacity(38.2%) saturate(1618%) blur(50px)`,
-    background: `$colors$background`,
+    backdropFilter: `blur(50px) saturate(618%)`,
+
+    // background: `$colors$background`,
   });
 
   const StyledViewport = styled(NavigationMenuPrimitive.Viewport, {

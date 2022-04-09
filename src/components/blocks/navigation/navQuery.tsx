@@ -34,7 +34,7 @@ export default function NavQuery(props: any) {
     fontSize: 15,
     color: `$colors$primary`,
     $$shadowColor: `$colors$primary`,
-    '&:focus': { position: `relative`, boxShadow: `0 0 0 1px $$shadowColor` },
+    '&:focus': { position: `relative` },
   };
 
   const StyledLink = styled(`a`, {

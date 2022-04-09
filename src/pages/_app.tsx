@@ -1,11 +1,10 @@
 import { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { ThemeProvider } from 'next-themes';
-import { darkTheme } from '@/styles/stitches.config';
+import { darkTheme, globalStyles } from '@/styles/stitches.config';
 import NavWrapper from '@/components/blocks/navigation/navWrapper';
 import Layout from '@/components/layout';
 import MDX from '@/lib/mdxProvider';
-import WagmiProvider from '@/lib/web3Provider';
 import Meta from '@/components/meta';
 
 // fonts
@@ -17,16 +16,8 @@ import '@fontsource/space-mono';
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const path = router.pathname;
+  globalStyles();
 
-  function Body() {
-    return (
-      <Layout>
-        <MDX>
-          <Component {...pageProps} />
-        </MDX>
-      </Layout>
-    );
-  }
   return (
     <ThemeProvider
       attribute="class"
@@ -38,13 +29,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     >
       <Meta title={pageProps.pageTitle} />
       <NavWrapper />
-      {path === `/guestbook` ? (
-        <WagmiProvider>
-          <Body />
-        </WagmiProvider>
-      ) : (
-        <Body />
-      )}
+      <Layout>
+        <MDX>
+          <Component {...pageProps} />
+        </MDX>
+      </Layout>
     </ThemeProvider>
   );
 }
