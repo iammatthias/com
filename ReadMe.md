@@ -2,25 +2,26 @@ Bootstrapped with
 
 # I AM MATTHIAS
 
-A digital garden built with [Next.js] and Typescript. Optimized for image galleries and lightweight blogging. Routes are created dynamically, and content is styled with MDX.
+A digital garden built with [Next.js] and Typescript. Optimized for image galleries and lightweight blogging. Routes are created dynamically, and content is styled with MDX. Bootstrapped using [Next.js TypeScript Starter](https://github.com/jpedroschmitz/typescript-nextjs-starter).
 
 web2: [iammatthias.com](https://iammatthias.com)  
 web3: [ipfs.iammatthias.com](https://ipfs.iammatthias.com)
 
 ---
 
-> Repo is made available `as is`, feel free to look at how it is all put together.
+## Repo is made available `as is`, feel free to look at how it is all put together.
 
 ---
 
-## Features
-[next.js](https://nextjs.org)  
-[Next.js TypeScript Starter](https://github.com/jpedroschmitz/typescript-nextjs-starter)
-[mdx](https://mdxjs.com)  
-[stitches](https://stitches.dev)
-[radix](https://www.radix-ui.com)  
-[contentful](https://www.contentful.com)  
-[wagmi](https://wagmi-xyz.vercel.app)
-[rainbowkit]()
+### built with 
+- [next.js](https://nextjs.org)  
+- [next-pwa](https://www.npmjs.com/package/next-pwa)  
+- [mdx](https://mdxjs.com)  
+- [stitches](https://stitches.dev)
+- [radix](https://www.radix-ui.com)  
+- [react-masonry-css](https://www.npmjs.com/package/react-masonry-css)
+- [contentful](https://www.contentful.com)  
+- [wagmi](https://wagmi-xyz.vercel.app)  
+- [rainbowkit]()
 
 All content is abstracted into MDX, and provided via Contentful.
