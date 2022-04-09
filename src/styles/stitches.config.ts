@@ -142,7 +142,7 @@ export const globalStyles = globalCss({
     background: `$background`,
     color: `$primary`,
     minHeight: `100vh`,
-    padding: `2rem 0 4rem`,
+    padding: `2rem 1rem 4rem`,
   },
   'h1, h2, h3, h4, h5, h6': {
     fontFamily: `Cormorant, serif`,
