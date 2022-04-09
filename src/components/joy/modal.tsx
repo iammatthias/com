@@ -198,7 +198,7 @@ export default function Modal({ children, images, imageKey }: any) {
               css={{
                 position: `absolute`,
                 left: `25px`,
-                boxShadow: `none`,
+
                 '@bp1': {
                   position: `relative`,
                 },
@@ -220,7 +220,6 @@ export default function Modal({ children, images, imageKey }: any) {
               css={{
                 position: `absolute`,
                 right: `25px`,
-                boxShadow: `none`,
                 '@bp1': {
                   position: `relative`,
                 },
@@ -242,9 +241,15 @@ export default function Modal({ children, images, imageKey }: any) {
         </Box>
 
         <DialogClose asChild onClick={() => setI(imageKey)}>
-          <IconButton>
+          <Button
+            css={{
+              position: `absolute`,
+              top: `25px`,
+              right: `35px`,
+            }}
+          >
             <Cross2Icon />
-          </IconButton>
+          </Button>
         </DialogClose>
       </DialogContent>
     </Dialog>
