@@ -22,6 +22,6 @@ web3: [ipfs.iammatthias.com](https://ipfs.iammatthias.com)
 - [react-masonry-css](https://www.npmjs.com/package/react-masonry-css)
 - [contentful](https://www.contentful.com)  
 - [wagmi](https://wagmi-xyz.vercel.app)  
-- [rainbowkit]()
+- [rainbowkit](https://www.npmjs.com/package/@rainbow-me/rainbowkit)
 
 All content is abstracted into MDX, and provided via Contentful.

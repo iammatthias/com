@@ -51,8 +51,32 @@ export default function Meta({
           <meta key="tw_img" name="twitter:image" content={image} />
         </>
       )}
-      <meta key="tile_color" name="msapplication-TileColor" content="#131315" />
-      <link rel="icon" type="image/png" href="/favicon.png"></link>
+      <link
+        rel="apple-touch-icon"
+        sizes="180x180"
+        href="/image/apple-touch-icon.png"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="/image/favicon-32x32.png"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href="/image/favicon-16x16.png"
+      />
+      <link
+        rel="mask-icon"
+        href="/image/safari-pinned-tab.svg"
+        color="#131315"
+      />
+      <link rel="shortcut icon" href="/image/favicon.ico" />
+      <meta name="msapplication-TileColor" content="#131315" />
+      <meta name="msapplication-config" content="/image/browserconfig.xml" />
+      <meta name="theme-color" content="#131315" />
       <link key="manifest" rel="manifest" href="/manifest.json" />
       {children}
     </Head>
