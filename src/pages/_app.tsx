@@ -1,5 +1,4 @@
 import { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
 import { ThemeProvider } from 'next-themes';
 import { darkTheme, globalStyles } from '@/styles/stitches.config';
 import NavWrapper from '@/components/blocks/navigation/navWrapper';
@@ -15,8 +14,6 @@ import '@fontsource/inter/900.css';
 import '@fontsource/space-mono';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  const router = useRouter();
-  const path = router.pathname;
   globalStyles();
 
   return (

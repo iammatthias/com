@@ -4,9 +4,7 @@ import Image from 'next/image';
 import { useQuery, gql } from '@apollo/client';
 import client from '@/lib/apolloClient';
 import { Box } from '@/components/primitives/box';
-import Masonry from 'react-masonry-css';
 import { useRouter } from 'next/router';
-import useMeasure from 'react-use-measure';
 import GalleryGrid from './galleryGrid';
 
 // lightbox
@@ -34,9 +32,6 @@ export default function GalleryQuery(props: any) {
   const router = useRouter();
   const pathname = router.asPath;
 
-  // container width
-  const [ref, bounds] = useMeasure({ options: { offset: false } } as any);
-
   // data
   const { data, loading, error } = useQuery(QUERY, {
     variables: {
@@ -63,7 +58,7 @@ export default function GalleryQuery(props: any) {
   }
 
   return (
-    <Box ref={ref} className="gallery">
+    <Box className="gallery">
       {pathname.includes(`/work/`) ? <h2>{imageSetTitle}</h2> : null}
 
       <GalleryGrid>

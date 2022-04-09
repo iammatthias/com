@@ -3,14 +3,10 @@
 import Image, { ImageLoaderProps } from 'next/image';
 import useSWR from 'swr';
 import { Box } from '@/components/primitives/box';
-import Masonry from 'react-masonry-css';
-import useMeasure from 'react-use-measure';
 import GalleryGrid from './galleryGrid';
 
-export default function Glass(props: any) {
+export default function Glass() {
   // container width
-
-  const [ref, bounds] = useMeasure({ options: { offset: false } } as any);
 
   // data
   const fetcher = (url: any) => fetch(url).then((res) => res.json());
@@ -33,7 +29,7 @@ export default function Glass(props: any) {
   }
 
   return (
-    <Box ref={ref} className="gallery" css={{ marginBottom: `2rem` }}>
+    <Box className="gallery" css={{ marginBottom: `2rem` }}>
       <GalleryGrid>
         {glassPosts.map((post: any, index: any) => (
           <a href={post.share_url} key={index}>

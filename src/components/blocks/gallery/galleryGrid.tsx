@@ -1,13 +1,11 @@
 // gallery
 
 import { Children } from 'react';
-import client from '@/lib/apolloClient';
 import { Box } from '@/components/primitives/box';
 import Masonry from 'react-masonry-css';
-import { useRouter } from 'next/router';
 import useMeasure from 'react-use-measure';
 
-export default function GalleryGrid({ children }: any, columns: any) {
+export default function GalleryGrid({ children }: any) {
   // container width
   const [ref, bounds] = useMeasure({ options: { offset: false } } as any);
 

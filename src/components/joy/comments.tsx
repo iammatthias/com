@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '../primitives/button';
 import { TwitterLogoIcon } from '@radix-ui/react-icons';
-import { Text } from '../primitives/text';
+
 // page header
 
 export default function Comments({ ...props }: any) {
