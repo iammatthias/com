@@ -142,7 +142,7 @@ export const globalStyles = globalCss({
     background: `$background`,
     color: `$primary`,
     minHeight: `100vh`,
-    padding: `0`,
+    padding: `2rem 0 4rem`,
   },
   'h1, h2, h3, h4, h5, h6': {
     fontFamily: `Cormorant, serif`,
@@ -150,13 +150,13 @@ export const globalStyles = globalCss({
   },
   'pre, code': {
     fontFamily: `Space Mono, monospace`,
-    border: `2px solid`,
+    border: `1px solid`,
     borderColor: `inherit`,
     borderRadius: `6px`,
-    fontSize: `$2`,
+    fontSize: `90%`,
   },
   pre: { padding: `0.35rem 0.65rem` },
-  code: { padding: `0 0.35rem` },
+  code: { margin: `0`, padding: `0 0.25rem` },
   'pre code': {
     padding: `0.25rem 0.45rem`,
     border: `none`,

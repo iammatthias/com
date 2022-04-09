@@ -59,7 +59,9 @@ export default function GalleryQuery(props: any) {
 
   return (
     <Box className="gallery">
-      {pathname.includes(`/work/`) ? <h2>{imageSetTitle}</h2> : null}
+      {!props.hideTitle && pathname.includes(`/work/`) ? (
+        <h3>{imageSetTitle}</h3>
+      ) : null}
 
       <GalleryGrid>
         {imageSetImages.map((image: any, index: any) => (

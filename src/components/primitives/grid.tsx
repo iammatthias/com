@@ -3,7 +3,7 @@ import { styled } from '@/styles/stitches.config';
 const Grid = styled(`article`, {
   position: `relative`,
   margin: `0 auto`,
-  padding: `2rem 1rem`,
+  padding: `0`,
   display: `grid`,
   gridTemplateColumns: `1fr 1fr 1fr 6fr 1fr 1fr 1fr`,
   gridTemplateRows: `auto`,
