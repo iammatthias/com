@@ -53,9 +53,9 @@ export default function Meta({
           <meta key="tw_img" name="twitter:image" content={image} />
         </>
       )}
-      <meta key="theme_color" name="theme-color" content="#000000" />
-      <meta key="tile_color" name="msapplication-TileColor" content="#000000" />
-      <link key="manifest" rel="manifest" href={`${url}/site.webmanifest`} />
+      <meta key="theme_color" name="theme-color" content="#131315" />
+      <meta key="tile_color" name="msapplication-TileColor" content="#131315" />
+      <link key="manifest" rel="manifest" href="/manifest.json" />
       {children}
     </Head>
   );

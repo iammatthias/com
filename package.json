@@ -46,6 +46,7 @@
     "he": "1.2.0",
     "next": "12.1.4",
     "next-mdx-remote": "4.0.1",
+    "next-pwa": "5.5.0",
     "next-themes": "0.1.1",
     "react": "18.0.0",
     "react-dom": "18.0.0",
