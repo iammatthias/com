@@ -12,7 +12,6 @@ import {
   ArrowRightIcon,
 } from '@radix-ui/react-icons';
 import Link from 'next/link';
-import { Text } from '@/components/primitives/text';
 
 export default function NavWrapper() {
   // primitives
