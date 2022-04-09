@@ -10,7 +10,7 @@ import useMeasure from 'react-use-measure';
 import GalleryGrid from './galleryGrid';
 
 // lightbox
-import GalleryWrapper from './galleryWrapper';
+import GalleryModal from './galleryModal';
 
 const QUERY = gql`
   query ($title: String) {
@@ -57,13 +57,6 @@ export default function GalleryQuery(props: any) {
   // data result - images
   const imageSetTitle = data.galleryCollection.items[0].title;
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items;
-  const imageSetLength = imageSetImages.length;
-  const columnLimit = bounds.width > 735 ? 4 : bounds.width > 413 ? 2 : 1;
-
-  const columnWidth =
-    bounds.width /
-    (imageSetLength >= columnLimit ? columnLimit : imageSetLength);
-  const columns = imageSetLength >= columnLimit ? columnLimit : imageSetLength;
 
   function contentfulLoader({ src, width, quality }: any) {
     return `${src}?w=${width || 1200}&q=${quality || 70}`;
@@ -73,75 +66,28 @@ export default function GalleryQuery(props: any) {
     <Box ref={ref} className="gallery">
       {pathname.includes(`/work/`) ? <h2>{imageSetTitle}</h2> : null}
 
-      <Masonry
-        breakpointCols={columns}
-        className="my-masonry-grid"
-        columnClassName="column"
-      >
+      <GalleryGrid>
         {imageSetImages.map((image: any, index: any) => (
-          <GalleryWrapper key={index} imageKey={index} images={imageSetImages}>
-            <Box
-              className="column"
-              css={{
-                position: `relative`,
-                width: `100%`,
-                height: props.ratio
-                  ? eval(props.ratio) * columnWidth
-                  : (image.height / image.width) * columnWidth,
-              }}
-            >
-              <Image
-                src={image.url}
-                alt={image.title}
-                layout="responsive"
-                height={image.height}
-                width={image.width}
-                placeholder="blur"
-                blurDataURL={contentfulLoader({
-                  src: image.url,
-                  width: 5,
-                  quality: 1,
-                })}
-                objectFit="cover"
-                className="gallery"
-                loader={contentfulLoader}
-              />
-            </Box>
-          </GalleryWrapper>
+          <GalleryModal key={index} imageKey={index} images={imageSetImages}>
+            <Image
+              src={image.url}
+              alt={image.title}
+              layout="responsive"
+              height={image.height}
+              width={image.width}
+              placeholder="blur"
+              blurDataURL={contentfulLoader({
+                src: image.url,
+                width: 5,
+                quality: 1,
+              })}
+              objectFit="cover"
+              className="gallery"
+              loader={contentfulLoader}
+            />
+          </GalleryModal>
         ))}
-      </Masonry>
-      {/* <GalleryGrid columns={columns}>
-        {imageSetImages.map((image: any, index: any) => (
-          <GalleryWrapper key={index} imageKey={index} images={imageSetImages}>
-            <Box
-              className="column"
-              css={{
-                position: `relative`,
-                width: `100%`,
-                marginBottom: `24px`,
-                height: props.ratio
-                  ? eval(props.ratio) * columnWidth
-                  : (image.height / image.width) * columnWidth,
-              }}
-            >
-              <Image
-                src={image.url}
-                alt={image.title}
-                layout="fill"
-                placeholder="blur"
-                blurDataURL={contentfulLoader({
-                  src: image.url,
-                  width: 5,
-                  quality: 1,
-                })}
-                objectFit="cover"
-                className="gallery"
-                loader={contentfulLoader}
-              />
-            </Box>
-          </GalleryWrapper>
-        ))}
-      </GalleryGrid> */}
+      </GalleryGrid>
     </Box>
   );
 }

@@ -2,7 +2,7 @@
 
 import Modal from '@/components/joy/modal';
 
-export default function GalleryWrapper({
+export default function GalleryModal({
   children,
   images,
   imageKey,

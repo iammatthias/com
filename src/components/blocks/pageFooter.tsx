@@ -42,19 +42,23 @@ export default function PageFooter({ ...props }) {
     console.error(error);
     return null;
   }
+
   const paginationTotal = data.pagination.total;
   const paginationIndex = data.pagination.items
     .map((item: any) => item.slug)
     .indexOf(props.slug);
 
-  const prev =
+  const prevIndex =
     paginationIndex + 1 == paginationTotal
       ? paginationIndex
       : paginationIndex + 1;
-  const next = paginationIndex - 1 == -1 ? 0 : paginationIndex - 1;
+  const nextIndex = paginationIndex - 1 == -1 ? 0 : paginationIndex - 1;
 
-  const paginationPrev = data.pagination.items[prev].slug;
-  const paginationNext = data.pagination.items[next].slug;
+  const paginationPrev = data.pagination.items[prevIndex];
+  const paginationNext = data.pagination.items[nextIndex];
+
+  const prevSlug = paginationPrev ? paginationPrev.slug : `/`;
+  const nextSlug = paginationNext ? paginationNext.slug : `/`;
 
   return (
     <Box>
@@ -62,7 +66,7 @@ export default function PageFooter({ ...props }) {
         <Squiggle />
       </Box>
 
-      <Link href={paginationNext}>
+      <Link href={nextSlug}>
         <a>
           <Button>
             <TriangleLeftIcon />
@@ -76,7 +80,7 @@ export default function PageFooter({ ...props }) {
         &nbsp;&nbsp;&nbsp;
       </span>
 
-      <Link href={paginationPrev}>
+      <Link href={prevSlug}>
         <a>
           <Button>
             <TriangleRightIcon />

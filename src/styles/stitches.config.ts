@@ -191,7 +191,7 @@ export const globalStyles = globalCss({
     color: `inherit`,
     fontFamily: `Cormorant, serif`,
     fontWeight: `700`,
-    fontSize: `115%`,
+    fontSize: `120%`,
     textDecoration: `none`,
   },
   'ul, ol': {

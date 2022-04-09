@@ -12,17 +12,24 @@ export default function PageHeader({ ...props }: any) {
       className="pageHeader"
       css={{ margin: `16px 0`, width: `100%` }}
     >
-      <Box css={{ width: `fit-content`, margin: `0 0 16px` }}>
-        <Text as="h1" css={{ width: `fit-content`, margin: `8px 0 16px` }}>
+      <Box css={{ width: `fit-content`, margin: `0 0 24px` }}>
+        <Text as="h1" css={{ width: `fit-content`, margin: `8px 0` }}>
           {props.pagetitle}
         </Text>
+        {props.pagetype === `Blog` && (
+          <Text
+            as="small"
+            css={{
+              display: `block`,
+              width: `fit-content`,
+              margin: `8px 0`,
+            }}
+          >
+            Published: {props.publishdate}
+          </Text>
+        )}
         {(props.pagetype === `Blog` || props.pagetype === `Gallery`) && (
-          <>
-            <Text as="small" css={{ display: `block`, width: `fit-content` }}>
-              Published: {props.publishdate}
-            </Text>
-            <Comments slug={props.slug} />
-          </>
+          <Comments slug={props.slug} />
         )}
       </Box>
       {(props.pagetype === `Blog` || props.pagetype === `Gallery`) && (

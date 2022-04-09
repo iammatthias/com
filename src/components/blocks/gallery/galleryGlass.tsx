@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import { Box } from '@/components/primitives/box';
 import Masonry from 'react-masonry-css';
 import useMeasure from 'react-use-measure';
+import GalleryGrid from './galleryGrid';
 
 export default function Glass(props: any) {
   // container width
@@ -27,62 +28,31 @@ export default function Glass(props: any) {
   const data = useGlass();
   const glassPosts = data.data ? data.data.data : [];
 
-  const imageSetLength = glassPosts.length;
-  const columnLimit =
-    bounds.width > 1536
-      ? 7
-      : bounds.width > 1024
-      ? 5
-      : bounds.width > 768
-      ? 3
-      : bounds.width > 512
-      ? 2
-      : 2;
-  const columnWidth =
-    bounds.width /
-    (imageSetLength >= columnLimit ? columnLimit : imageSetLength);
-  const columns = imageSetLength >= columnLimit ? columnLimit : imageSetLength;
-
   function glassLoader({ src }: ImageLoaderProps): string {
     return `${src}`;
   }
 
   return (
     <Box ref={ref} className="gallery" css={{ marginBottom: `2rem` }}>
-      <Masonry
-        breakpointCols={columns}
-        className="my-masonry-grid"
-        columnClassName="column"
-      >
+      <GalleryGrid>
         {glassPosts.map((post: any, index: any) => (
           <a href={post.share_url} key={index}>
-            <Box
-              className="column"
-              key={post.id}
-              css={{
-                position: `relative`,
-                width: `100%`,
-                marginBottom: `24px`,
-                height: props.ratio
-                  ? eval(props.ratio) * columnWidth
-                  : (post.height / post.width) * columnWidth,
-              }}
-            >
-              <Image
-                src={post.image828x0}
-                alt={post.id}
-                layout="fill"
-                placeholder="blur"
-                blurDataURL={post.image0x240}
-                objectFit="cover"
-                className="gallery"
-                loader={glassLoader}
-                unoptimized={true}
-              />
-            </Box>
+            <Image
+              src={post.image828x0}
+              alt={post.id}
+              layout="responsive"
+              width={post.width}
+              height={post.height}
+              placeholder="blur"
+              blurDataURL={post.image0x240}
+              objectFit="cover"
+              className="gallery"
+              loader={glassLoader}
+              unoptimized={true}
+            />
           </a>
         ))}
-      </Masonry>
+      </GalleryGrid>
     </Box>
   );
 }
