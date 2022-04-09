@@ -181,7 +181,7 @@ export default function Modal({ children, images, imageKey }: any) {
             <Button
               css={{
                 position: `absolute`,
-                left: `25px`,
+                left: `35px`,
 
                 '@bp1': {
                   position: `relative`,
