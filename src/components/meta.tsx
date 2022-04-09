@@ -8,11 +8,9 @@ export default function Meta({
   title = `I AM MATTHIAS`, // page title
   name = `I AM MATTHIAS`, // site name
   description = `A personal portfolio project in a digital garden `, // page description
-  image = `https://og.iammatthias.com/` +
-    encodeURIComponent(title) +
-    `.png?theme=dark&md=0`,
-  // social card image URL
-  url,
+  image = `https://og.iammatthias.com/${encodeURIComponent(
+    title,
+  )}.png?theme=dark&md=0`,
   children,
 }: any) {
   return (
@@ -53,8 +51,8 @@ export default function Meta({
           <meta key="tw_img" name="twitter:image" content={image} />
         </>
       )}
-      <meta key="theme_color" name="theme-color" content="#131315" />
       <meta key="tile_color" name="msapplication-TileColor" content="#131315" />
+      <link rel="icon" type="image/png" href="/favicon.png"></link>
       <link key="manifest" rel="manifest" href="/manifest.json" />
       {children}
     </Head>
