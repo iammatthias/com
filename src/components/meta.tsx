@@ -74,8 +74,6 @@ export default function Meta({
         color="#131315"
       />
       <link rel="shortcut icon" href="/image/favicon.ico" />
-      <meta name="msapplication-TileColor" content="#131315" />
-      <meta name="msapplication-config" content="/image/browserconfig.xml" />
       <meta name="theme-color" content="#131315" />
       <link key="manifest" rel="manifest" href="/manifest.json" />
       {children}
