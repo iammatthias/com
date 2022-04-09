@@ -62,6 +62,7 @@ const mdComponents = {
   Squiggle: (props: any) => <Squiggle {...props} />,
   Spicy: (props: any) => <Spicy {...props} />,
   Vimeo: (props: any) => (
+    // @ts-ignore
     <Vimeo
       responsive
       autoplay={true}
