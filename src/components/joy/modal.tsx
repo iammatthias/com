@@ -46,7 +46,7 @@ const StyledModal = styled(DialogPrimitive.Content, {
   transform: `translate(-50%, -50%)`,
   width: `100%`,
   height: `100%`,
-  zIndex: `101`,
+  zIndex: `999`,
   '@media (prefers-reduced-motion: no-preference)': {
     animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards`,
   },
@@ -82,22 +82,6 @@ const ModalTrigger = styled(`button`, {
   border: 0,
   background: `transparent`,
   width: `100%`,
-  '&:focus': { outline: `none` },
-});
-
-const IconButton = styled(`button`, {
-  all: `unset`,
-  fontFamily: `inherit`,
-  borderRadius: `100%`,
-  height: 25,
-  width: 25,
-  display: `inline-flex`,
-  alignItems: `center`,
-  justifyContent: `center`,
-  color: `$primary`,
-  position: `absolute`,
-  top: 5,
-  right: 5,
   '&:focus': { outline: `none` },
 });
 
