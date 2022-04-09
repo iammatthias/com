@@ -7,6 +7,7 @@ import { Box } from '@/components/primitives/box';
 import Masonry from 'react-masonry-css';
 import { useRouter } from 'next/router';
 import useMeasure from 'react-use-measure';
+import GalleryGrid from './galleryGrid';
 
 // lightbox
 import GalleryWrapper from './galleryWrapper';
@@ -57,16 +58,8 @@ export default function GalleryQuery(props: any) {
   const imageSetTitle = data.galleryCollection.items[0].title;
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items;
   const imageSetLength = imageSetImages.length;
-  const columnLimit =
-    bounds.width > 1536
-      ? 7
-      : bounds.width > 1024
-      ? 5
-      : bounds.width > 768
-      ? 3
-      : bounds.width > 512
-      ? 2
-      : 2;
+  const columnLimit = bounds.width > 735 ? 4 : bounds.width > 413 ? 2 : 1;
+
   const columnWidth =
     bounds.width /
     (imageSetLength >= columnLimit ? columnLimit : imageSetLength);
@@ -85,6 +78,39 @@ export default function GalleryQuery(props: any) {
         className="my-masonry-grid"
         columnClassName="column"
       >
+        {imageSetImages.map((image: any, index: any) => (
+          <GalleryWrapper key={index} imageKey={index} images={imageSetImages}>
+            <Box
+              className="column"
+              css={{
+                position: `relative`,
+                width: `100%`,
+                height: props.ratio
+                  ? eval(props.ratio) * columnWidth
+                  : (image.height / image.width) * columnWidth,
+              }}
+            >
+              <Image
+                src={image.url}
+                alt={image.title}
+                layout="responsive"
+                height={image.height}
+                width={image.width}
+                placeholder="blur"
+                blurDataURL={contentfulLoader({
+                  src: image.url,
+                  width: 5,
+                  quality: 1,
+                })}
+                objectFit="cover"
+                className="gallery"
+                loader={contentfulLoader}
+              />
+            </Box>
+          </GalleryWrapper>
+        ))}
+      </Masonry>
+      {/* <GalleryGrid columns={columns}>
         {imageSetImages.map((image: any, index: any) => (
           <GalleryWrapper key={index} imageKey={index} images={imageSetImages}>
             <Box
@@ -115,7 +141,7 @@ export default function GalleryQuery(props: any) {
             </Box>
           </GalleryWrapper>
         ))}
-      </Masonry>
+      </GalleryGrid> */}
     </Box>
   );
 }

@@ -46,7 +46,6 @@ export default function Glass(props: any) {
   function glassLoader({ src }: ImageLoaderProps): string {
     return `${src}`;
   }
-  console.log(glassPosts);
 
   return (
     <Box ref={ref} className="gallery" css={{ marginBottom: `2rem` }}>

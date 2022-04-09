@@ -1,20 +1,5 @@
 import Head from 'next/head';
 
-// const Meta = ({
-//   title = 'I AM MATTHIAS', // page title
-//   name = 'I AM MATTHIAS', // site name
-//   description = 'A personal portfolio project in a digital garden ', // page description
-//   image = 'https://og.iammatthias.com/' +
-//     encodeURIComponent(name == 'Home' ? 'I AM MATTHIAS' : name) +
-//     '.png?theme=dark&md=0', // social card image URL
-//   url = './',
-//   children,
-// }: any) => (
-
-// );
-
-// export default Meta;
-
 function makeTitle(title: string, name: string) {
   return title === name ? title : `${title} - ${name}`;
 }
@@ -25,7 +10,8 @@ export default function Meta({
   description = `A personal portfolio project in a digital garden `, // page description
   image = `https://og.iammatthias.com/` +
     encodeURIComponent(title) +
-    `.png?theme=dark&md=0`, // social card image URL
+    `.png?theme=dark&md=0`,
+  // social card image URL
   url,
   children,
 }: any) {

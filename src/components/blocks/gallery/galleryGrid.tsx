@@ -7,21 +7,19 @@ import Masonry from 'react-masonry-css';
 import { useRouter } from 'next/router';
 import useMeasure from 'react-use-measure';
 
-export default function GalleryGrid({ children }: any) {
+export default function GalleryGrid({ children }: any, columns: any) {
   // container width
   const [ref, bounds] = useMeasure({ options: { offset: false } } as any);
 
   const count = Children.toArray(children).length;
 
-  console.log(bounds.width);
-
-  const columnLimit = bounds.width > 700 ? 4 : bounds.width > 512 ? 2 : 2;
-  const columns = count >= columnLimit ? columnLimit : count;
+  const columnLimit = bounds.width > 735 ? 4 : bounds.width > 413 ? 2 : 1;
+  const _columns = count >= columnLimit ? columnLimit : count;
 
   return (
     <Box ref={ref}>
       <Masonry
-        breakpointCols={columns}
+        breakpointCols={_columns}
         className="my-masonry-grid"
         columnClassName="column"
       >
