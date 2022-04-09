@@ -124,19 +124,12 @@ export default function Modal({ children, images, imageKey }: any) {
     },
   );
 
-  const containerWidth = bounds?.width;
+  const showButtons = images.length > 1;
+
   const containerHeight = bounds?.height;
 
-  const maxWidthFromHeight =
-    image.height > image.width
-      ? containerHeight * 0.6
-      : image.height === image.width
-      ? containerHeight * 0.8
-      : containerWidth * 0.8;
-
-  const maxWidth =
-    image.width > maxWidthFromHeight ? maxWidthFromHeight : image.width;
-  const maxHeight = maxWidth * (image.height / image.width);
+  const maxHeight = containerHeight * 0.8;
+  const maxWidth = maxHeight * (image.width / image.height);
 
   return (
     <Dialog>
@@ -160,6 +153,8 @@ export default function Modal({ children, images, imageKey }: any) {
               position: `relative`,
               width: `100%`,
               height: `fit-content`,
+              maxWidth: `${maxWidth}px`,
+              maxHeight: `${maxHeight}px`,
               display: `flex`,
               alignContent: `center`,
               justifyContent: `center`,
@@ -175,14 +170,15 @@ export default function Modal({ children, images, imageKey }: any) {
                 width: 5,
                 quality: 1,
               })}
-              width={maxWidth}
-              height={maxHeight}
+              width={image.width}
+              height={image.height}
               className="gallery"
               loader={contentfulLoader}
             />
           </Box>
           <Box
             css={{
+              display: `${showButtons ? `` : `none`}`,
               position: `absolute`,
               bottom: `100px`,
               width: `100%`,
