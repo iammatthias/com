@@ -34,15 +34,6 @@ export const {
       border: `$black`,
       faded: `$blackFade`,
     },
-    fontSizes: {
-      1: `12px`,
-      2: `14px`,
-      3: `16px`,
-      4: `20px`,
-      5: `24px`,
-      6: `32px`,
-      7: `48px`,
-    },
     space: {
       1: `4px`,
       2: `8px`,
@@ -141,18 +132,21 @@ export const globalStyles = globalCss({
     wordBreak: `break-word`,
     whiteSpace: `normal`,
   },
+  ':root': {
+    fontFamily: `Inter, system-ui, sans-serif`,
+    fontWeight: `400`,
+    fontSize: `16px`,
+    lineHeight: `1.618`,
+  },
   body: {
     background: `$background`,
     color: `$primary`,
     minHeight: `100vh`,
-    fontFamily: `Inter, system-ui, sans-serif`,
-    fontWeight: `400`,
-    lineHeight: `1.618`,
     padding: `0`,
   },
   'h1, h2, h3, h4, h5, h6': {
-    fontFamily: `"Crimson Pro", serif`,
-    fontWeight: `900`,
+    fontFamily: `Cormorant, serif`,
+    fontWeight: `300`,
   },
   'pre, code': {
     fontFamily: `Space Mono, monospace`,
@@ -167,39 +161,37 @@ export const globalStyles = globalCss({
     padding: `0.25rem 0.45rem`,
     border: `none`,
   },
-  p: {
-    fontSize: `$3`,
-  },
   h1: {
-    fontSize: `$7`,
-    marginBottom: `$5`,
-  },
-  h2: {
-    fontSize: `$6`,
+    fontSize: `5.653rem`,
     marginBottom: `$4`,
   },
-  h3: {
-    fontSize: `$5`,
+  h2: {
+    fontSize: `3.998rem`,
     marginBottom: `$3`,
   },
-  h4: {
-    fontSize: `$4`,
+  h3: {
+    fontSize: `2.827rem`,
     marginBottom: `$2`,
+  },
+  h4: {
+    fontSize: `1.999rem`,
+    marginBottom: `$1`,
   },
   h5: {
-    fontSize: `$3`,
-    marginBottom: `$2`,
+    fontSize: `1.414rem`,
+    marginBottom: `$0`,
   },
   h6: {
-    fontSize: `$2`,
-    marginBottom: `$2`,
+    fontSize: `1rem`,
   },
   small: {
-    fontSize: `$1`,
+    fontSize: `0.707rem`,
   },
   a: {
     color: `inherit`,
-    fontWeight: `900`,
+    fontFamily: `Cormorant, serif`,
+    fontWeight: `700`,
+    fontSize: `inherit`,
     textDecoration: `none`,
   },
   'ul, ol': {

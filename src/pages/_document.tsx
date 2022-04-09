@@ -8,6 +8,7 @@ import Document, {
 
 // import Segment Snippet
 import * as snippet from '@segment/snippet';
+import { getCssText } from '@/styles/stitches.config';
 
 class MyDocument extends Document {
   renderSnippet() {
@@ -36,6 +37,10 @@ class MyDocument extends Document {
       <Html lang="en-US">
         <Head>
           <script dangerouslySetInnerHTML={{ __html: this.renderSnippet() }} />
+          <style
+            id="stitches"
+            dangerouslySetInnerHTML={{ __html: getCssText() }}
+          />
         </Head>
         <body>
           <Main />

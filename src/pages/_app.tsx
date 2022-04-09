@@ -8,7 +8,8 @@ import MDX from '@/lib/mdxProvider';
 import Meta from '@/components/meta';
 
 // fonts
-import '@fontsource/crimson-pro/900.css';
+import '@fontsource/cormorant/300.css';
+import '@fontsource/cormorant/700.css';
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/900.css';
 import '@fontsource/space-mono';

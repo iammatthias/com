@@ -778,6 +778,11 @@
     "@ethersproject/properties" "^5.6.0"
     "@ethersproject/strings" "^5.6.0"
 
+"@fontsource/cormorant@4.5.6":
+  version "4.5.6"
+  resolved "https://registry.yarnpkg.com/@fontsource/cormorant/-/cormorant-4.5.6.tgz#b8236c9e929ee198deb50cde6a4000fbb388901e"
+  integrity sha512-ki9cod0cRnc2HECPgwG+QIBICSc4kzBAE2bM/peScPg+RX4QMdivepUTL+e+SBsOD4NuyOnBWQ334xOs/KRaig==
+
 "@fontsource/crimson-pro@4.5.7":
   version "4.5.7"
   resolved "https://registry.yarnpkg.com/@fontsource/crimson-pro/-/crimson-pro-4.5.7.tgz#ea28267af68e4604a5fe521a9ab4e0fdbfa4584e"
@@ -787,11 +792,6 @@
   version "4.5.7"
   resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-4.5.7.tgz#f0657c52105ed51e04ac636a25d6016896c5ee9d"
   integrity sha512-25k3thupaOEBexuU+jAkGqieKPbuhSuA+sinDwp1iBNhqQPiJ9QHDvsXgoCgCbZ4sGlE8aCwZmSlDJrPdJHNkw==
-
-"@fontsource/playfair-display@4.5.6":
-  version "4.5.6"
-  resolved "https://registry.yarnpkg.com/@fontsource/playfair-display/-/playfair-display-4.5.6.tgz#f2f71a59185e6cf5ac2fe2e20e27e93d58838446"
-  integrity sha512-2QWIG+SBlmNHcLG8+wqu1vF1TUP/v5wVB00vJqLTGPRKCvE2T7tajIOl+y6ud+tfuQ7tNdbna41PINe1YWVCyA==
 
 "@fontsource/space-mono@4.5.5":
   version "4.5.5"
@@ -841,11 +841,6 @@
   dependencies:
     "@json-rpc-tools/types" "^1.7.6"
     "@pedrouid/environment" "^1.0.1"
-
-"@juggle/resize-observer@3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
-  integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
 
 "@mdx-js/mdx@^2.0.0":
   version "2.0.0"
@@ -1863,11 +1858,6 @@ acorn@^8.0.0, acorn@^8.4.1, acorn@^8.7.0:
   version "8.7.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.7.0.tgz#90951fde0f8f09df93549481e5fc141445b791cf"
   integrity sha512-V/LGr1APy+PXIwKebEWrkZPwoeoF+w1jiOBUmuxuiUIaOHtob8Qc9BTrYo7VuI5fR8tqsy+buA2WFooR5olqvQ==
-
-add@2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/add/-/add-2.0.6.tgz#248f0a9f6e5a528ef2295dbeec30532130ae2235"
-  integrity sha1-JI8Kn25aUo7yKV2+7DBTITCuIjU=
 
 aes-js@3.0.0:
   version "3.0.0"

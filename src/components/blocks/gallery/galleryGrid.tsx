@@ -13,18 +13,9 @@ export default function GalleryGrid({ children }: any) {
 
   const count = Children.toArray(children).length;
 
-  console.log(count);
+  console.log(bounds.width);
 
-  const columnLimit =
-    bounds.width > 1536
-      ? 7
-      : bounds.width > 1024
-      ? 5
-      : bounds.width > 768
-      ? 3
-      : bounds.width > 512
-      ? 2
-      : 2;
+  const columnLimit = bounds.width > 700 ? 4 : bounds.width > 512 ? 2 : 2;
   const columns = count >= columnLimit ? columnLimit : count;
 
   return (
