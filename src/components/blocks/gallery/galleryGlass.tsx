@@ -5,34 +5,26 @@ import useSWR from 'swr';
 import { Box } from '@/components/primitives/box';
 import GalleryGrid from './galleryGrid';
 
-export default function Glass() {
-  // container width
-
+export default function Glass(props: any) {
   // data
   const fetcher = (url: any) => fetch(url).then((res) => res.json());
-  function useGlass() {
-    const { data, error } = useSWR(`/api/glass`, fetcher);
+  const { data, error } = useSWR(`/api/glass`, fetcher);
 
-    return {
-      data: data,
-      isLoading: !error && !data,
-      isError: error,
-    };
-  }
+  if (error) return <div>failed to load</div>;
+  if (!data) return <div>loading...</div>;
 
   // data result - images
-  const data = useGlass();
-  const glassPosts = data.data ? data.data.data : [];
+  const glassPosts = data.data;
 
   function glassLoader({ src }: ImageLoaderProps): string {
     return `${src}`;
   }
 
   return (
-    <Box className="gallery" css={{ marginBottom: `2rem` }}>
+    <Box className={props.className} css={{ marginBottom: `2rem` }}>
       <GalleryGrid>
         {glassPosts.map((post: any, index: any) => (
-          <a href={post.share_url} key={index}>
+          <a href={post.share_url} key={index} target="_blank" rel="noreferrer">
             <Image
               src={post.image828x0}
               alt={post.id}

@@ -32,25 +32,6 @@ const Grid = styled(`article`, {
       gridColumn: `4 / 5`,
     },
   },
-  variants: {
-    hero: {
-      '@bp2': {
-        '> *': {
-          gridColumn: `1 / 8`,
-        },
-      },
-      '@bp3': {
-        '> *': {
-          gridColumn: `2 / 7`,
-        },
-      },
-      '@bp4': {
-        '> *': {
-          gridColumn: `3 / 6`,
-        },
-      },
-    },
-  },
 });
 
 export default Grid;

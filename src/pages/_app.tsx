@@ -5,6 +5,7 @@ import NavWrapper from '@/components/blocks/navigation/navWrapper';
 import Layout from '@/components/layout';
 import MDX from '@/lib/mdxProvider';
 import Meta from '@/components/meta';
+import Background from '@/components/joy/background/backgroundWrapper';
 
 // fonts
 import '@fontsource/cormorant/300.css';
@@ -32,6 +33,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </MDX>
       </Layout>
+      <Background />
     </ThemeProvider>
   );
 }

@@ -1,7 +1,7 @@
 import { Box } from '@/components/primitives/box';
 import { Text } from '@/components/primitives/text';
 import Squiggle from '../squiggle';
-import Link from '@/components/primitives/link';
+import Link from 'next/link';
 
 import { useContractRead, useProvider } from 'wagmi';
 import { BigNumber } from 'ethers';
@@ -45,6 +45,7 @@ export default function Guestlist() {
                         `address/` +
                         guest.guest
                       }
+                      passHref
                     >
                       <Ens address={guest.guest} />
                     </Link>
@@ -62,6 +63,7 @@ export default function Guestlist() {
                         `block/` +
                         BigNumber.from(guest.timestamp._hex).toString()
                       }
+                      passHref
                     >
                       {BigNumber.from(guest.timestamp._hex).toString()}
                     </Link>

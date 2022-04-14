@@ -5,7 +5,7 @@ import { useSignMessage } from 'wagmi';
 import { Box } from '@/components/primitives/box';
 import { Button } from '@/components/primitives/button';
 import { Text } from '@/components/primitives/text';
-import Link from '@/components/primitives/link';
+import Link from 'next/link';
 
 // import Ens from './ens'
 import Squiggle from '../squiggle';

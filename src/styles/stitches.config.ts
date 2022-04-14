@@ -223,14 +223,14 @@ export const globalStyles = globalCss({
   // etc
   '.my-masonry-grid': {
     display: `flex`,
-    gap: `24px`,
+    gap: `8px`,
     '.my-masonry-grid_column': {
-      paddingLeft: `24px`,
+      paddingLeft: `8px`,
       backgroundClip: `padding-box`,
     },
     '.my-masonry-grid_column > div': {
-      width: `calc(100% - 24px)`,
-      marginBottom: `24px`,
+      width: `calc(100% - 8px)`,
+      marginBottom: `8px`,
     },
   },
   '#SRLLightbox': {
@@ -254,5 +254,14 @@ export const globalStyles = globalCss({
     '--gradient-color-3': `#68dcfd`,
     '--gradient-color-4': `#70e0c8`,
     '--gradient-color-5': `#fac7be`,
+  },
+  '.mBleed': {
+    gridColumn: `3 / 6`,
+  },
+  '.lBleed': {
+    gridColumn: `2 / 7`,
+  },
+  '.fullBleed': {
+    gridColumn: `1 / 8 !important`,
   },
 });

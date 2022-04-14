@@ -6,10 +6,10 @@ import { Box } from '@/components/primitives/box';
 
 // text
 import { Text } from '@/components/primitives/text';
-import Link from '@/components/primitives/link';
+import Link from 'next/link';
 
 // gallery
-import GalleryQuery from '@/components/blocks/gallery/galleryQuery';
+import GalleryContentful from '@/components/blocks/gallery/galleryContentful';
 import GalleryGrid from '@/components/blocks/gallery/galleryGrid';
 import Glass from '@/components/blocks/gallery/galleryGlass';
 
@@ -46,10 +46,9 @@ const mdComponents = {
   code: (props: any) => <Text as="code" {...props} />,
   Code: (props: any) => <Text as="code" {...props} />,
   Link: (props: any) => <Link {...props} />,
-  Anchor: (props: any) => <Link {...props} />,
 
   // galleries
-  Gallery: (props: any) => <GalleryQuery {...props} />,
+  Gallery: (props: any) => <GalleryContentful {...props} />,
   Glass: (props: any) => <Glass {...props} />,
   GalleryGrid: (props: any) => <GalleryGrid {...props} />,
 

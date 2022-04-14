@@ -1,6 +1,6 @@
-// pages/test.tsx
+// pages/404.tsx
 
-import Link from '@/components/primitives/link';
+import Link from 'next/link';
 import { Button } from '@/components/primitives/button';
 import { Text } from '@/components/primitives/text';
 

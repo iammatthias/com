@@ -28,9 +28,11 @@ const QUERY = gql`
   }
 `;
 
-export default function GalleryQuery(props: any) {
+export default function GalleryContentful(props: any) {
   const router = useRouter();
   const pathname = router.asPath;
+
+  console.log(props);
 
   // data
   const { data, loading, error } = useQuery(QUERY, {
@@ -58,33 +60,33 @@ export default function GalleryQuery(props: any) {
   }
 
   return (
-    <Box className="gallery">
+    <>
       {!props.hideTitle && pathname.includes(`/work/`) ? (
         <h3>{imageSetTitle}</h3>
       ) : null}
-
-      <GalleryGrid>
-        {imageSetImages.map((image: any, index: any) => (
-          <GalleryModal key={index} imageKey={index} images={imageSetImages}>
-            <Image
-              src={image.url}
-              alt={image.title}
-              layout="responsive"
-              height={image.height}
-              width={image.width}
-              placeholder="blur"
-              blurDataURL={contentfulLoader({
-                src: image.url,
-                width: 5,
-                quality: 1,
-              })}
-              objectFit="cover"
-              className="gallery"
-              loader={contentfulLoader}
-            />
-          </GalleryModal>
-        ))}
-      </GalleryGrid>
-    </Box>
+      <Box className={props.className}>
+        <GalleryGrid>
+          {imageSetImages.map((image: any, index: any) => (
+            <GalleryModal key={index} imageKey={index} images={imageSetImages}>
+              <Image
+                src={image.url}
+                alt={image.title}
+                layout="responsive"
+                height={image.height}
+                width={image.width}
+                placeholder="blur"
+                blurDataURL={contentfulLoader({
+                  src: image.url,
+                  width: 5,
+                  quality: 1,
+                })}
+                objectFit="cover"
+                loader={contentfulLoader}
+              />
+            </GalleryModal>
+          ))}
+        </GalleryGrid>
+      </Box>
+    </>
   );
 }

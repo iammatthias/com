@@ -3,7 +3,7 @@ import he from 'he';
 
 import { Button } from '@/components/primitives/button';
 import { Text } from '@/components/primitives/text';
-import Link from '@/components/primitives/link';
+import Link from 'next/link';
 import MaxTokens from './maxTokens';
 import TokenCount from './tokenCount';
 
