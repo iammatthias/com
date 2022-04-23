@@ -68,11 +68,7 @@ export default function Meta({
         sizes="16x16"
         href="/image/favicon-16x16.png"
       />
-      <link
-        rel="mask-icon"
-        href="/image/safari-pinned-tab.svg"
-        color="#131315"
-      />
+      <link rel="mask-icon" href="/image/safari-pinned-tab.svg" />
       <link rel="shortcut icon" href="/image/favicon.ico" />
       <meta name="theme-color" content="#131315" />
       <link key="manifest" rel="manifest" href="/manifest.json" />

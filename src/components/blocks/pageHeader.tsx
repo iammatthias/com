@@ -7,11 +7,7 @@ import Comments from '../joy/comments';
 
 export default function PageHeader({ ...props }: any) {
   return (
-    <Box
-      {...props}
-      className="pageHeader"
-      css={{ margin: `16px 0`, width: `100%` }}
-    >
+    <Box {...props} className="pageHeader" css={{ margin: `0`, width: `100%` }}>
       <Box css={{ width: `fit-content`, margin: `0 0 24px` }}>
         <Text as="h1" css={{ width: `fit-content`, margin: `8px 0` }}>
           {props.pagetitle}
