@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import Grid from './primitives/grid';
 
 export default function Layout({ children }: any) {

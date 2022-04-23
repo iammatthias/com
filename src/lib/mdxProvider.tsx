@@ -46,6 +46,7 @@ const mdComponents = {
   code: (props: any) => <Text as="code" {...props} />,
   Code: (props: any) => <Text as="code" {...props} />,
   Link: (props: any) => <Link {...props} />,
+  Anchor: (props: any) => <Link {...props} />,
 
   // galleries
   Gallery: (props: any) => <GalleryContentful {...props} />,

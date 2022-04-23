@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Gradient } from './gradient';
-import GradientSVG from './gradientSVG';
+// import GradientSVG from './gradientSVG';
 
 export default function Background({ ...props }) {
   const gradient: any = new Gradient();
