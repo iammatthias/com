@@ -47,7 +47,9 @@ export default function Guestlist() {
                       }
                       passHref
                     >
-                      <Ens address={guest.guest} />
+                      <a>
+                        <Ens address={guest.guest} />
+                      </a>
                     </Link>
                   </Text>
                 </Text>

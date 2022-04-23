@@ -32,8 +32,6 @@ export default function GalleryContentful(props: any) {
   const router = useRouter();
   const pathname = router.asPath;
 
-  console.log(props);
-
   // data
   const { data, loading, error } = useQuery(QUERY, {
     variables: {

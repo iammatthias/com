@@ -33,7 +33,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </MDX>
       </Layout>
-      <Background />
+      {/* <Background /> */}
     </ThemeProvider>
   );
 }

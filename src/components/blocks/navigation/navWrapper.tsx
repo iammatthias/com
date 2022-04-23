@@ -19,7 +19,7 @@ export default function NavWrapper() {
     position: `relative`,
     display: `flex`,
     justifyContent: `start`,
-    zIndex: 99,
+    zIndex: 89,
   });
 
   const StyledList = styled(NavigationMenuPrimitive.List, {
