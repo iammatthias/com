@@ -1,0 +1,188 @@
+diff --git a/node_modules/@rainbow-me/rainbowkit/dist/chunk-LCTUQUNA.js b/node_modules/@rainbow-me/rainbowkit/dist/chunk-LCTUQUNA.js
+index d7c9386..be0456f 100644
+--- a/node_modules/@rainbow-me/rainbowkit/dist/chunk-LCTUQUNA.js
++++ b/node_modules/@rainbow-me/rainbowkit/dist/chunk-LCTUQUNA.js
+@@ -183,7 +183,7 @@ var DropdownIcon = () => /* @__PURE__ */ React3.createElement("svg", {
+ 
+ // src/components/ConnectButton/ConnectButtonRenderer.tsx
+ import React34, { useCallback as useCallback5, useEffect as useEffect7, useState as useState6 } from "react";
+-import { useAccount as useAccount2, useBalance, useNetwork as useNetwork2 } from "wagmi";
++import { useAccount as useAccount2, useDisconnect, useEnsName, useEnsAvatar, useBalance, useNetwork as useNetwork2 } from "wagmi";
+ 
+ // src/hooks/useIsMounted.ts
+ import { useEffect, useState } from "react";
+@@ -647,7 +647,7 @@ function ProfileDetails({
+   if (!accountData) {
+     return null;
+   }
+-  const accountName = (_b = (_a = accountData.ens) == null ? void 0 : _a.name) != null ? _b : formatAddress(accountData.address);
++  const accountName = (_b = (_a = ensName) == null ? void 0 : _a.name) != null ? _b : formatAddress(accountData.address);
+   const ethBalance = balanceData == null ? void 0 : balanceData.formatted;
+   const balance = Number(ethBalance).toPrecision(3);
+   const titleId = "rk_profile_title";
+@@ -678,7 +678,7 @@ function ProfileDetails({
+     marginTop: mobile ? "24" : "0"
+   }, /* @__PURE__ */ React15.createElement(Avatar, {
+     address: accountData.address,
+-    imageUrl: (_c = accountData.ens) == null ? void 0 : _c.avatar,
++    imageUrl: (_c = ensName) == null ? void 0 : _c.avatar,
+     size: mobile ? 82 : 74
+   })), /* @__PURE__ */ React15.createElement(Box, {
+     display: "flex",
+@@ -783,25 +783,25 @@ function ChainModal({
+   open
+ }) {
+   const [switchingToChain, setSwitchingToChain] = useState3();
+-  const [{ data: connectData }] = useConnect();
++  const { connector } = useConnect();
+   const titleId = "rk_chain_modal_title";
+   const mobile = isMobile();
+   const rainbowkitChainsById = useRainbowKitChainsById();
+   useEffect5(() => {
+-    if (!connectData.connector) {
++    if (!connector) {
+       return;
+     }
+     const stopSwitching = () => {
+       setSwitchingToChain(null);
+       onClose();
+     };
+-    const provider = connectData.connector.getProvider();
++    const provider = connector.getProvider();
+     provider.on("chainChanged", stopSwitching);
+     return () => {
+       provider.removeListener("chainChanged", stopSwitching);
+     };
+-  }, [connectData.connector, setSwitchingToChain, onClose]);
+-  if (!networkData || !networkData.chain) {
++  }, [connector, setSwitchingToChain, onClose]);
++  if (!networkData || !activeChain) {
+     return null;
+   }
+   return /* @__PURE__ */ React18.createElement(Dialog, {
+@@ -835,9 +835,9 @@ function ChainModal({
+     flexDirection: "column",
+     gap: "4",
+     padding: "2"
+-  }, onSwitchNetwork && networkData.chains.map((chain, idx) => {
++  }, onSwitchNetwork && activeChains.map((chain, idx) => {
+     var _a, _b, _c;
+-    const isCurrentChain = chain.id === ((_a = networkData.chain) == null ? void 0 : _a.id);
++    const isCurrentChain = chain.id === ((_a = activeChain) == null ? void 0 : _a.id);
+     const switching = chain.id === switchingToChain;
+     const chainIconUrl = (_b = rainbowkitChainsById[chain.id]) == null ? void 0 : _b.iconUrl;
+     return /* @__PURE__ */ React18.createElement(Fragment, {
+@@ -906,7 +906,7 @@ function ChainModal({
+       height: "8",
+       marginLeft: "8",
+       width: "8"
+-    }))))), mobile && idx < ((_c = networkData == null ? void 0 : networkData.chains) == null ? void 0 : _c.length) - 1 && /* @__PURE__ */ React18.createElement(Box, {
++    }))))), mobile && idx < ((_c = networkData == null ? void 0 : activeChains) == null ? void 0 : _c.length) - 1 && /* @__PURE__ */ React18.createElement(Box, {
+       background: "generalBorderDim",
+       height: "1",
+       marginX: "8"
+@@ -979,7 +979,7 @@ function addRecentWalletId(walletId) {
+ 
+ // src/wallets/useWalletConnectors.ts
+ function useWalletConnectors() {
+-  const [{ data: connectData }, connect] = useConnect2();
++  const { connectors: connectors2, isConnected: connected2, connectAsync: connect } = useConnect2();
+   async function connectWallet(walletId, connector) {
+     const result = await connect(connector);
+     if (result.data) {
+@@ -987,7 +987,7 @@ function useWalletConnectors() {
+     }
+     return result;
+   }
+-  const connectorByWalletId = indexBy(connectData.connectors, (connector) => {
++  const connectorByWalletId = indexBy(connectors2, (connector) => {
+     var _a;
+     return (_a = connector._wallet) == null ? void 0 : _a.id;
+   });
+@@ -995,7 +995,7 @@ function useWalletConnectors() {
+   const recentConnectors = getRecentWalletIds().map((walletId) => connectorByWalletId[walletId]).filter(isNotNullish).slice(0, MAX_RECENT_WALLETS);
+   const connectors = [
+     ...recentConnectors,
+-    ...connectData.connectors.filter((connector) => !recentConnectors.includes(connector))
++    ...connectors2.filter((connector) => !recentConnectors.includes(connector))
+   ];
+   return connectors.map((connector) => {
+     var _a;
+@@ -3225,7 +3225,7 @@ function ConnectOptions({ onClose }) {
+ // src/components/ConnectModal/ConnectModal.tsx
+ function ConnectModal({ onClose, open }) {
+   const titleId = "rk_connect_title";
+-  const [{ data: connectData }] = useAccount();
++  const { data: connectData } = useAccount();
+   return !connectData ? /* @__PURE__ */ React33.createElement(Dialog, {
+     onClose,
+     open,
+@@ -3251,15 +3251,16 @@ function ConnectButtonRenderer({
+ }) {
+   var _a, _b, _c, _d, _e, _f, _g;
+   const isMounted = useIsMounted();
+-  const [{ data: accountData }, disconnect] = useAccount2({
+-    fetchEns: true
+-  });
+-  const [{ data: balanceData }] = useBalance({
++  const { data: accountData } = useAccount2();
++  const { disconnect } = useDisconnect();
++  const { data: ensName } = useEnsName();
++  const { data: ensAvatar } = useEnsAvatar();
++  const { data: balanceData } = useBalance({
+     addressOrName: accountData == null ? void 0 : accountData.address
+   });
+-  const [{ data: networkData }, switchNetwork] = useNetwork2();
++  const { data: networkData, activeChain, switchNetworkAsync: switchNetwork } = useNetwork2();
+   const rainbowkitChainsById = useRainbowKitChainsById();
+-  const chainIconUrl = networkData.chain ? (_b = (_a = rainbowkitChainsById[networkData.chain.id]) == null ? void 0 : _a.iconUrl) != null ? _b : void 0 : void 0;
++  const chainIconUrl = activeChain ? (_b = (_a = rainbowkitChainsById[activeChain.id]) == null ? void 0 : _a.iconUrl) != null ? _b : void 0 : void 0;
+   const {
+     setFalse: closeConnectModal,
+     setTrue: openConnectModal,
+@@ -3292,16 +3293,16 @@ function ConnectButtonRenderer({
+       balanceFormatted: balanceData == null ? void 0 : balanceData.formatted,
+       balanceSymbol: balanceData == null ? void 0 : balanceData.symbol,
+       displayBalance,
+-      displayName: (_d = (_c = accountData.ens) == null ? void 0 : _c.name) != null ? _d : formatAddress(accountData.address),
+-      ensAvatar: (_f = (_e = accountData.ens) == null ? void 0 : _e.avatar) != null ? _f : void 0,
+-      ensName: (_g = accountData.ens) == null ? void 0 : _g.name
++      displayName: (_d = (_c = ensName) == null ? void 0 : _c.name) != null ? _d : formatAddress(accountData.address),
++      ensAvatar: (_f = (_e = ensAvatar) == null ? void 0 : _e.avatar) != null ? _f : void 0,
++      ensName: (_g = ensName) == null ? void 0 : _g.name
+     } : void 0,
+     accountModalOpen,
+-    chain: (networkData == null ? void 0 : networkData.chain) ? {
++    chain: (networkData == null ? void 0 : activeChain) ? {
+       iconUrl: chainIconUrl,
+-      id: networkData.chain.id,
+-      name: networkData.chain.name,
+-      unsupported: networkData.chain.unsupported
++      id: activeChain.id,
++      name: activeChain.name,
++      unsupported: activeChain.unsupported
+     } : void 0,
+     chainModalOpen,
+     connectModalOpen,
+diff --git a/node_modules/@rainbow-me/rainbowkit/dist/index.js b/node_modules/@rainbow-me/rainbowkit/dist/index.js
+index c8f2cb9..2781cb2 100644
+--- a/node_modules/@rainbow-me/rainbowkit/dist/index.js
++++ b/node_modules/@rainbow-me/rainbowkit/dist/index.js
+@@ -79,7 +79,7 @@ var argent = ({ chains, infuraId }) => ({
+ 
+ // src/wallets/walletConnectors/coinbase/coinbase.ts
+ import { InjectedConnector } from "wagmi/connectors/injected";
+-import { WalletLinkConnector } from "wagmi/connectors/walletLink";
++import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+ 
+ // src/wallets/walletConnectors/coinbase/coinbase.svg
+ var coinbase_default = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyOCAyOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI4IiBoZWlnaHQ9IjI4IiBmaWxsPSIjMkM1RkY2Ii8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTQgMjMuOEMxOS40MTI0IDIzLjggMjMuOCAxOS40MTI0IDIzLjggMTRDMjMuOCA4LjU4NzYxIDE5LjQxMjQgNC4yIDE0IDQuMkM4LjU4NzYxIDQuMiA0LjIgOC41ODc2MSA0LjIgMTRDNC4yIDE5LjQxMjQgOC41ODc2MSAyMy44IDE0IDIzLjhaTTExLjU1IDEwLjhDMTEuMTM1OCAxMC44IDEwLjggMTEuMTM1OCAxMC44IDExLjU1VjE2LjQ1QzEwLjggMTYuODY0MiAxMS4xMzU4IDE3LjIgMTEuNTUgMTcuMkgxNi40NUMxNi44NjQyIDE3LjIgMTcuMiAxNi44NjQyIDE3LjIgMTYuNDVWMTEuNTVDMTcuMiAxMS4xMzU4IDE2Ljg2NDIgMTAuOCAxNi40NSAxMC44SDExLjU1WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==";
+@@ -102,7 +102,7 @@ var coinbase = ({
+   createConnector: ({ chainId }) => {
+     var _a;
+     return {
+-      connector: typeof window !== "undefined" && ((_a = window.ethereum) == null ? void 0 : _a.isCoinbaseWallet) ? new InjectedConnector({ chains }) : new WalletLinkConnector({
++      connector: typeof window !== "undefined" && ((_a = window.ethereum) == null ? void 0 : _a.isCoinbaseWallet) ? new InjectedConnector({ chains }) : new CoinbaseWalletConnector({
+         chains,
+         options: {
+           appName,

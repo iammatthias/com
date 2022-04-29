@@ -2,16 +2,17 @@ import { Box } from '@/components/primitives/box';
 import { Button } from '@/components/primitives/button';
 import { Text } from '@/components/primitives/text';
 
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useDisconnect, useNetwork } from 'wagmi';
 
 export default function Account() {
   const contractAddress = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS;
-  const [{ data: accountData }, disconnect] = useAccount({
-    fetchEns: true,
-  });
+
+  const { disconnect } = useDisconnect();
+
+  const { data: accountData } = useAccount();
 
   // get current network
-  const [{ data: networkData }] = useNetwork();
+  const { activeChain } = useNetwork();
 
   return (
     <Box>
@@ -50,7 +51,7 @@ export default function Account() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {accountData?.ens?.name ?? accountData?.address}
+                  {accountData?.address}
                 </a>
               </Text>
             </Text>
@@ -74,10 +75,10 @@ export default function Account() {
 
           <Text as="p" css={{ margin: `0` }}>
             <Text as="small">
-              network: {networkData.chain?.name ?? networkData.chain?.id}
+              network: {activeChain?.name ?? activeChain?.id}
               {` `}
-              {networkData.chain?.unsupported && `(unsupported)`}
-              {!networkData.chain && `not connected`}
+              {activeChain?.unsupported && `(unsupported)`}
+              {!activeChain && `not connected`}
             </Text>
           </Text>
         </Box>

@@ -70,7 +70,7 @@ export default function Meta({
       />
       <link rel="mask-icon" href="/image/safari-pinned-tab.svg" />
       <link rel="shortcut icon" href="/image/favicon.ico" />
-      <meta name="theme-color" content="#131315" />
+      <meta name="theme-color" content="#fdfcfc" />
       <link key="manifest" rel="manifest" href="/manifest.json" />
       {children}
     </Head>

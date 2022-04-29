@@ -15,8 +15,8 @@ export const {
     colors: {
       black: `rgba(22, 22, 21, 1)`,
       blackFade: `rgba(19, 19, 21, .2)`,
-      white: `rgba(237, 237, 236, 1)`,
-      whiteFade: `rgba(237, 237, 236, .2)`,
+      white: `rgba(253, 252, 252, 1)`,
+      whiteFade: `rgba(253, 252, 252, .2)`,
       gray: `rgba(128, 128, 128, 1)`,
       blue: `rgba(3, 136, 252, 1)`,
       red: `rgba(249, 16, 74, 1)`,
@@ -133,7 +133,7 @@ export const globalStyles = globalCss({
     whiteSpace: `normal`,
   },
   ':root': {
-    fontFamily: `Inter, system-ui, sans-serif`,
+    fontFamily: `"Crimson Text", system-ui, sans-serif`,
     fontWeight: `400`,
     fontSize: `16px`,
     lineHeight: `1.618`,
@@ -160,6 +160,9 @@ export const globalStyles = globalCss({
   'pre code': {
     padding: `0.25rem 0.45rem`,
     border: `none`,
+  },
+  p: {
+    fontSize: `1rem`,
   },
   h1: {
     fontSize: `5.653rem`,
@@ -189,7 +192,7 @@ export const globalStyles = globalCss({
   },
   a: {
     color: `inherit`,
-    fontFamily: `Cormorant, serif`,
+    fontFamily: `"Crimson Text", serif`,
     fontWeight: `700`,
     fontSize: `120%`,
     textDecoration: `none`,

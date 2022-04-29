@@ -54,7 +54,7 @@ export default function GalleryContentful(props: any) {
   const imageSetImages = data.galleryCollection.items[0].imagesCollection.items;
 
   function contentfulLoader({ src, width, quality }: any) {
-    return `${src}?w=${width || 1200}&q=${quality || 70}`;
+    return `${src}?w=${width || 1200}&q=${quality || 60}`;
   }
 
   return (

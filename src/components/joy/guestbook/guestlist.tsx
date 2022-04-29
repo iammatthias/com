@@ -5,30 +5,23 @@ import Link from 'next/link';
 
 import { useContractRead, useProvider } from 'wagmi';
 import { BigNumber } from 'ethers';
-import he from 'he';
 import abi from '@/lib/contract/abi.json';
 import Ens from './ens';
 
 export default function Guestlist() {
   const contractAddress = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS;
 
-  const provider = useProvider();
-
-  const [{ data: allGuests, loading }] = useContractRead(
+  const { data: allGuests, isLoading } = useContractRead(
     {
       addressOrName: contractAddress,
       contractInterface: abi.abi,
-      signerOrProvider: provider,
     } as any,
     `getAllGuests`,
-    // {
-    //   watch: true,
-    // },
   );
 
   return (
     <Box className="guests">
-      {loading
+      {isLoading
         ? null
         : allGuests &&
           allGuests
@@ -43,18 +36,18 @@ export default function Guestlist() {
                       href={
                         process.env.NEXT_PUBLIC_ETHERSCAN_URL +
                         `address/` +
-                        guest.guest
+                        guest[0]
                       }
                       passHref
                     >
                       <a>
-                        <Ens address={guest.guest} />
+                        <Ens address={guest[0]} />
                       </a>
                     </Link>
                   </Text>
                 </Text>
                 <Text as="p" css={{ margin: `0 0 8px` }}>
-                  {he.decode(guest.message)}
+                  {guest[1]}
                 </Text>
                 <Text as="p" css={{ margin: `0 0 8px` }}>
                   <Text as="small">
@@ -63,11 +56,11 @@ export default function Guestlist() {
                       href={
                         process.env.NEXT_PUBLIC_ETHERSCAN_URL +
                         `block/` +
-                        BigNumber.from(guest.timestamp._hex).toString()
+                        BigNumber.from(guest[2]._hex).toString()
                       }
                       passHref
                     >
-                      {BigNumber.from(guest.timestamp._hex).toString()}
+                      {BigNumber.from(guest[2]._hex).toString()}
                     </Link>
                   </Text>
                 </Text>

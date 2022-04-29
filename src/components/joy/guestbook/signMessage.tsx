@@ -19,10 +19,12 @@ export default function SignMessage() {
   const [message, setMessage] = useState(``);
   const [signedData, setSignedData] = useState(``);
 
-  const [
-    { data: signData, error: signError, loading: signLoading },
-    signMessage,
-  ] = useSignMessage();
+  const {
+    data: signData,
+    error: signError,
+    isLoading: signLoading,
+    signMessageAsync,
+  } = useSignMessage();
 
   // store user for preview
   const recoveredAddress = useMemo(() => {
@@ -89,7 +91,7 @@ export default function SignMessage() {
             event.preventDefault();
             previousMessage.current = message;
 
-            signMessage({ message: message });
+            signMessageAsync({ message: message });
           }}
           style={{ width: `100%` }}
         >

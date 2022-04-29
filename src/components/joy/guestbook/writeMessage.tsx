@@ -15,14 +15,12 @@ export default function WriteMessage(message: any) {
 
   const provider = useProvider();
 
-  const [
-    {
-      data: writeWithoutMintData,
-      error: writeWithoutMintError,
-      loading: writeWithoutMintLoading,
-    },
-    signWithoutMint,
-  ] = useContractWrite(
+  const {
+    data: writeWithoutMintData,
+    error: writeWithoutMintError,
+    isLoading: writeWithoutMintLoading,
+    write: signWithoutMint,
+  }: any = useContractWrite(
     {
       addressOrName: contractAddress as string,
       contractInterface: abi.abi,
@@ -31,14 +29,12 @@ export default function WriteMessage(message: any) {
     `signWithoutMint`,
   );
 
-  const [
-    {
-      data: writeWithMintData,
-      error: writeWithMintError,
-      loading: writeWithMintLoading,
-    },
-    signWithMint,
-  ] = useContractWrite(
+  const {
+    data: writeWithMintData,
+    error: writeWithMintError,
+    isLoading: writeWithMintLoading,
+    write: signWithMint,
+  }: any = useContractWrite(
     {
       addressOrName: contractAddress as string,
       contractInterface: abi.abi,
@@ -68,16 +64,12 @@ export default function WriteMessage(message: any) {
   const maxTokens: any = MaxTokens();
   const tokenCount: any = TokenCount();
 
-  console.log({ maxTokens, tokenCount });
-
   const Transaction = (hash: any) => {
-    const [
-      {
-        data: transactionData,
-        error: transactionError,
-        loading: transactionLoading,
-      },
-    ] = useWaitForTransaction({
+    const {
+      data: transactionData,
+      error: transactionError,
+      isLoading: transactionLoading,
+    } = useWaitForTransaction({
       hash: hash.hash,
     });
 

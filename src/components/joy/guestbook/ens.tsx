@@ -1,9 +1,9 @@
-import { useEnsLookup } from 'wagmi';
+import { useEnsName } from 'wagmi';
 
 export default function Ens({ address }: any) {
-  const [{ data: ens, loading }] = useEnsLookup({
+  const { data: ens, isLoading } = useEnsName({
     address: address,
   });
 
-  return loading ? address : ens ? ens : address;
+  return isLoading ? address : ens ? ens : address;
 }

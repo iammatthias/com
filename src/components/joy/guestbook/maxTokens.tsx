@@ -8,7 +8,7 @@ export default function MaxTokens() {
 
   const provider = useProvider();
 
-  const [{ data, loading }] = useContractRead(
+  const { data, isLoading } = useContractRead(
     {
       addressOrName: contractAddress,
       contractInterface: abi.abi,
@@ -20,5 +20,5 @@ export default function MaxTokens() {
     },
   );
 
-  return loading ? null : data && BigNumber.from(data._hex).toString();
+  return isLoading ? null : data && BigNumber.from(data._hex).toString();
 }

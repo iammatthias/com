@@ -88,7 +88,7 @@ export default function Modal({ children, images, imageKey }: any) {
   const [ref, bounds] = useMeasure({ options: { offset: false } } as any);
 
   function contentfulLoader({ src, width, quality }: any) {
-    return `${src}?w=${width || 1200}&q=${quality || 70}`;
+    return `${src}?w=${width || 1200}&q=${quality || 60}`;
   }
 
   const [i, setI] = useState(imageKey);

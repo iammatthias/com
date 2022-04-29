@@ -7,9 +7,9 @@ import {
   Chain,
   connectorsForWallets,
   wallet,
-  Wallet,
+  WalletList,
 } from '@rainbow-me/rainbowkit';
-import { WagmiProvider, chain } from 'wagmi';
+import { Provider, createClient, chain } from 'wagmi';
 import { providers } from 'ethers';
 
 // components
@@ -17,6 +17,7 @@ import { providers } from 'ethers';
 export default function Web3Provider({ children }: any) {
   const infuraId = process.env.NEXT_PUBLIC_INFURA;
   const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY;
+
   // Set up providers
   const ethProviders = {
     name: `rinkeby`,
@@ -39,26 +40,31 @@ export default function Web3Provider({ children }: any) {
     window.ethereum &&
     !window.ethereum.isMetaMask;
 
-  const wallets: Wallet[] = [
-    wallet.rainbow({ chains, infuraId }),
-    wallet.walletConnect({ chains, infuraId }),
-    wallet.metaMask({ chains, infuraId }),
-    ...(needsInjectedWalletFallback
-      ? [wallet.injected({ chains, infuraId })]
-      : []),
+  const wallets: WalletList = [
+    {
+      groupName: `Suggested`,
+      wallets: [
+        wallet.rainbow({ chains, infuraId }),
+        wallet.walletConnect({ chains, infuraId }),
+        wallet.metaMask({ chains, infuraId }),
+        ...(needsInjectedWalletFallback
+          ? [wallet.injected({ chains, infuraId })]
+          : []),
+      ],
+    },
   ];
 
   const connectors = connectorsForWallets(wallets);
 
+  const client = createClient({
+    autoConnect: true,
+    connectors: connectors,
+    provider,
+  });
+
   return (
     <RainbowKitProvider chains={chains}>
-      <WagmiProvider
-        autoConnect
-        connectors={connectors as any}
-        provider={provider}
-      >
-        {children}
-      </WagmiProvider>
+      <Provider client={client}>{children}</Provider>
     </RainbowKitProvider>
   );
 }
