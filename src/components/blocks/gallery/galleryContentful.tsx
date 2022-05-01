@@ -21,6 +21,7 @@ const QUERY = gql`
             title
             height
             width
+            contentType
           }
         }
       }
@@ -70,8 +71,12 @@ export default function GalleryContentful(props: any) {
                 src={image.url}
                 alt={image.title}
                 layout="responsive"
-                height={image.height}
-                width={image.width}
+                height={
+                  image.contentType === `image/svg+xml` ? 100 : image.height
+                }
+                width={
+                  image.contentType === `image/svg+xml` ? 100 : image.width
+                }
                 placeholder="blur"
                 blurDataURL={contentfulLoader({
                   src: image.url,

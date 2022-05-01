@@ -75,7 +75,7 @@ const DialogTrigger = DialogPrimitive.Trigger;
 const DialogContent = Content;
 const DialogClose = DialogPrimitive.Close;
 
-const ModalTrigger = styled(`button`, {
+const ModalTrigger = styled(`div`, {
   padding: 0,
   margin: 0,
   border: 0,
@@ -155,8 +155,12 @@ export default function Modal({ children, images, imageKey }: any) {
                 width: 5,
                 quality: 1,
               })}
-              width={image.width}
-              height={image.height}
+              height={
+                image.contentType === `image/svg+xml` ? maxHeight : image.height
+              }
+              width={
+                image.contentType === `image/svg+xml` ? maxHeight : image.width
+              }
               className="gallery"
               loader={contentfulLoader}
             />
