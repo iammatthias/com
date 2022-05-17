@@ -2,7 +2,7 @@ import { TriangleLeftIcon, TriangleRightIcon } from '@radix-ui/react-icons';
 import { Box } from '../primitives/box';
 import { Button } from '../primitives/button';
 import { useQuery, gql } from '@apollo/client';
-import client from '@/lib/apolloClient';
+import { contentfulClient } from '@/lib/apolloClient';
 import Link from 'next/link';
 import { isDev } from '@/utils/isDev';
 import Squiggle from '../joy/squiggle';
@@ -31,7 +31,7 @@ export default function PageFooter({ ...props }) {
       slug: props.slug,
       preview: isDev,
     },
-    client,
+    client: contentfulClient,
   });
 
   if (loading) {

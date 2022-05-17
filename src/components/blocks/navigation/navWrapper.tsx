@@ -1,4 +1,5 @@
 import { styled } from '@/styles/stitches.config';
+
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
 import NavQuery from './navQuery';
 import ThemeToggle from '@/components/joy/themeToggle';
@@ -12,13 +13,16 @@ import {
   ArrowRightIcon,
 } from '@radix-ui/react-icons';
 import Link from 'next/link';
+import { Box } from '@/components/primitives/box';
+import { Text } from '@/components/primitives/text';
+import Sparkle from '@/components/joy/sparkle';
 
 export default function NavWrapper() {
   // primitives
   const StyledMenu = styled(NavigationMenuPrimitive.Root, {
     position: `relative`,
     display: `flex`,
-    justifyContent: `start`,
+    justifyContent: `center`,
     zIndex: 89,
   });
 
@@ -28,7 +32,6 @@ export default function NavWrapper() {
     verticalAlign: `middle`,
     marginLeft: 0,
     padding: 4,
-    borderRadius: 6,
     listStyle: `none`,
     $$shadowColor: `$colors$primary`,
     boxShadow: `0 0 0 1px $$shadowColor`,
@@ -44,7 +47,6 @@ export default function NavWrapper() {
     userSelect: `none`,
     fontWeight: 500,
     lineHeight: 1,
-    borderRadius: 4,
     fontSize: 15,
     color: `$colors$primary`,
     $$shadowColor: `$colors$primary`,
@@ -87,7 +89,7 @@ export default function NavWrapper() {
     top: 0,
     left: 0,
     width: `100%`,
-    borderRadius: 6,
+
     backdropFilter: `blur(50px) saturate(618%)`,
 
     // background: `$colors$background`,
@@ -98,7 +100,7 @@ export default function NavWrapper() {
     marginTop: 10,
     marginBottom: 50,
     width: `100%`,
-    borderRadius: 6,
+
     overflow: `hidden`,
     height: `var(--radix-navigation-menu-viewport-height)`,
     $$shadowColor: `$colors$primary`,
@@ -136,6 +138,18 @@ export default function NavWrapper() {
 
   return (
     <Grid>
+      <Box
+        css={{
+          textAlign: `center`,
+          lineHeight: `1`,
+        }}
+      >
+        <Text as="h4">I am</Text>
+
+        <Text as="h1">
+          <Sparkle>Matthias</Sparkle>
+        </Text>
+      </Box>
       <StyledMenu>
         <StyledList>
           <NavigationMenuPrimitive.Item>
@@ -155,9 +169,7 @@ export default function NavWrapper() {
               <ContentList>
                 <NavQuery type="Gallery" limit="9" />
                 <Link href="/work" passHref>
-                  <a>
-                    <ArrowRightIcon />
-                  </a>
+                  <ArrowRightIcon />
                 </Link>
               </ContentList>
             </StyledContent>
@@ -173,9 +185,7 @@ export default function NavWrapper() {
                 <NavQuery type="Blog" limit="9" />
 
                 <Link href="/blog" passHref>
-                  <a>
-                    <ArrowRightIcon />
-                  </a>
+                  <ArrowRightIcon />
                 </Link>
               </ContentList>
             </StyledContent>

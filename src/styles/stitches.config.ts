@@ -152,7 +152,7 @@ export const globalStyles = globalCss({
     fontFamily: `Space Mono, monospace`,
     border: `1px solid`,
     borderColor: `inherit`,
-    borderRadius: `6px`,
+
     fontSize: `90%`,
   },
   pre: { padding: `0.35rem 0.65rem` },

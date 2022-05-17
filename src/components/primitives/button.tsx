@@ -5,7 +5,6 @@ export const Button = styled(`button`, {
   // styles
   margin: `1rem 0 0`,
   padding: `0.5rem 1rem`,
-  borderRadius: `6px`,
   border: `none`,
   textDecoration: `none`,
   lineHeight: `0`,

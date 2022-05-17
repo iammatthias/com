@@ -13,6 +13,7 @@ import '@fontsource/cormorant/700.css';
 import '@fontsource/crimson-text/400.css';
 import '@fontsource/crimson-text/700.css';
 import '@fontsource/space-mono';
+import '@fontsource/space-mono/700.css';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   globalStyles();
@@ -29,7 +30,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <Meta title={pageProps.pageTitle} />
       <NavWrapper />
       <Layout>
-        <MDX>
+        <MDX {...pageProps}>
           <Component {...pageProps} />
         </MDX>
       </Layout>

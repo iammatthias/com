@@ -20,6 +20,7 @@ import Squiggle from '@/components/joy/squiggle';
 import Spicy from '@/components/joy/spicy';
 import Vimeo from '@u-wave/react-vimeo';
 import NavQuery from '@/components/blocks/navigation/navQuery';
+import Thoughts from '@/components/joy/thoughts';
 
 const mdComponents = {
   // primitives
@@ -54,6 +55,7 @@ const mdComponents = {
   GalleryGrid: (props: any) => <GalleryGrid {...props} />,
 
   // etc
+  Thoughts: (props: any) => <Thoughts {...props} />,
   PageList: (props: any) => <NavQuery {...props} />,
   Sparkle: (props: any) => (
     <ClientOnly>

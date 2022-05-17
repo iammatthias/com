@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useQuery, gql } from '@apollo/client';
-import client from '@/lib/apolloClient';
+import { contentfulClient } from '@/lib/apolloClient';
 import { Box } from '@/components/primitives/box';
 import { useRouter } from 'next/router';
 import GalleryGrid from './galleryGrid';
@@ -38,7 +38,7 @@ export default function GalleryContentful(props: any) {
     variables: {
       title: props.imageset,
     },
-    client,
+    client: contentfulClient,
   });
 
   if (loading) {

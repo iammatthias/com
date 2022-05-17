@@ -1,5 +1,5 @@
 import { useQuery, gql } from '@apollo/client';
-import client from '@/lib/apolloClient';
+import { contentfulClient } from '@/lib/apolloClient';
 import { isDev } from '@/utils/isDev';
 import { styled } from '@stitches/react';
 import Link from 'next/link';
@@ -37,7 +37,7 @@ export default function NavQuery(props: any) {
     '&:focus': { position: `relative` },
   };
 
-  const StyledLink = styled(`a`, {
+  const StyledLink = styled(Link, {
     ...itemStyles,
     display: `block`,
     textDecoration: `none`,
@@ -65,7 +65,7 @@ export default function NavQuery(props: any) {
       limit: parseInt(props.limit),
       preview: isDev,
     },
-    client,
+    client: contentfulClient,
   });
 
   if (loading) {
@@ -81,8 +81,8 @@ export default function NavQuery(props: any) {
 
   return pageList.map((page: any, index: number) => (
     <ListItem key={index}>
-      <Link href={`/${page.slug}`} passHref>
-        <StyledLink>
+      <StyledLink href={`/${page.slug}`} passHref>
+        <a>
           <LinkTitle>{page.title}</LinkTitle>
           <LinkText>
             Published:{` `}
@@ -90,8 +90,8 @@ export default function NavQuery(props: any) {
               page.publishDate.replace(/-/g, `/`).replace(/T.+/, ``),
             ).toLocaleDateString(`en-us`)}
           </LinkText>
-        </StyledLink>
-      </Link>
+        </a>
+      </StyledLink>
     </ListItem>
   ));
 }

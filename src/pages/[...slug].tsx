@@ -2,7 +2,7 @@
 
 // apollo
 import { gql } from '@apollo/client';
-import client from '@/lib/apolloClient';
+import { contentfulClient } from '@/lib/apolloClient';
 
 // mdx
 import { serialize } from 'next-mdx-remote/serialize';
@@ -41,7 +41,7 @@ export default function Page({
 // We use getStaticPaths to get all the slugs at build time
 export async function getStaticPaths() {
   // We define our query here
-  const { data } = await client.query({
+  const { data } = await contentfulClient.query({
     query: gql`
       query SlugsIndex($preview: Boolean) {
         pageCollection(preview: $preview, where: { slug_not: "home" }) {
@@ -80,7 +80,7 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }: any) {
   // params contains the page `slug`.
   // We define our query here
-  const { data } = await client.query({
+  const { data } = await contentfulClient.query({
     query: gql`
       query ($preview: Boolean, $slug: String) {
         pageCollection(
