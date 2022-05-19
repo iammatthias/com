@@ -62,37 +62,37 @@ export default function Thoughts() {
       </Box>
       <Box css={{ border: `1px solid`, borderColor: `$text`, padding: `16px` }}>
         {data &&
-          data.repository.object.entries.map(({ index, object }: any) => (
-            <Box
-              key={index}
-              css={{
-                margin: `0 0 16px`,
-                '&:last-child': { position: `relative`, margin: `0` },
-              }}
-              id={matter(object.text).data.title}
-            >
-              <Text as="h6">{matter(object.text).data.title}</Text>
-              <Text>{matter(object.text).content}</Text>
+          data.repository.object.entries.map(
+            ({ index, object }: any) =>
+              matter(object.text).data.published && (
+                <Box
+                  key={index}
+                  css={{
+                    margin: `0 0 16px`,
+                    '&:last-child': { position: `relative`, margin: `0` },
+                  }}
+                  id={matter(object.text).data.title}
+                >
+                  <Text as="h6">{matter(object.text).data.title}</Text>
+                  <Text>{matter(object.text).content}</Text>
 
-              <Button
-                css={{
-                  position: `absolute`,
-                  bottom: `0`,
-                  right: `0`,
-                  lineHeight: `15px`,
-                }}
-                onClick={() =>
-                  copy(
-                    `https://iammatthias.com/#${
-                      matter(object.text).data.title
-                    }`,
-                  )
-                }
-              >
-                <Link2Icon />
-              </Button>
-            </Box>
-          ))}
+                  <Button
+                    css={{
+                      lineHeight: `15px`,
+                    }}
+                    onClick={() =>
+                      copy(
+                        `https://iammatthias.com/#${
+                          matter(object.text).data.title
+                        }`,
+                      )
+                    }
+                  >
+                    <Link2Icon />
+                  </Button>
+                </Box>
+              ),
+          )}
       </Box>
     </Box>
   );
