@@ -14,7 +14,7 @@ import { Link2Icon } from '@radix-ui/react-icons';
 
 import copy from 'copy-data-to-clipboard';
 
-// import { isDev } from '@/utils/isDev';
+import { isDev } from '@/utils/isDev';
 import { mdComponents } from '@/lib/mdxProvider';
 import remarkImages from 'remark-images';
 
@@ -78,69 +78,72 @@ export default function Thoughts() {
         <Box
           css={{ border: `1px solid`, borderColor: `$text`, padding: `16px` }}
         >
-          {sortedEntries.map((entry: any) => (
-            <Box
-              key={entry.name}
-              css={{
-                margin: `0 0 16px`,
-                padding: `0 0 16px`,
-                display: `flex`,
-                gap: `16px`,
-                alignItems: `end`,
-                justifyContent: `space-between`,
-                borderBottom: `1px solid`,
-                '&:last-child': {
-                  position: `relative`,
-                  margin: `0`,
-                  padding: `0`,
-                  border: `none`,
-                },
-              }}
-              id={matter(entry.object.text).data.title}
-            >
-              <Box>
-                <Text as="h6">{matter(entry.object.text).data.title}</Text>
-                <Remark
-                  remarkPlugins={[remarkImages] as any}
-                  rehypeReactOptions={{
-                    components: {
-                      p: (props: any) => <p {...props} />,
-                      strong: (props: any) => <strong {...props} />,
-                      em: (props: any) => <em {...props} />,
+          {sortedEntries.map(
+            (entry: any) =>
+              (isDev || matter(entry.object.text).data.published) && (
+                <Box
+                  key={entry.name}
+                  css={{
+                    margin: `0 0 16px`,
+                    padding: `0 0 16px`,
+                    display: `flex`,
+                    gap: `16px`,
+                    alignItems: `end`,
+                    justifyContent: `space-between`,
+                    borderBottom: `1px solid`,
+                    '&:last-child': {
+                      position: `relative`,
+                      margin: `0`,
+                      padding: `0`,
+                      border: `none`,
                     },
                   }}
+                  id={matter(entry.object.text).data.title}
                 >
-                  {matter(entry.object.text).content}
-                </Remark>
-              </Box>
-              <Button
-                css={{
-                  lineHeight: `15px`,
-                  height: `fit-content`,
-                  padding: `0`,
-                }}
-                onClick={() =>
-                  copy(
-                    `https://iammatthias.com/#${
-                      matter(entry.object.text).data.title
-                    }`,
-                  )
-                }
-              >
-                <Box
-                  css={{
-                    height: `30px`,
-                    width: `30px`,
-                    display: `flex`,
-                    alignItems: `center`,
-                    justifyContent: `center`,
-                  }}
-                >
-                  <Link2Icon />
+                  <Box>
+                    <Text as="h6">{matter(entry.object.text).data.title}</Text>
+                    <Remark
+                      remarkPlugins={[remarkImages] as any}
+                      rehypeReactOptions={{
+                        components: {
+                          p: (props: any) => <p {...props} />,
+                          strong: (props: any) => <strong {...props} />,
+                          em: (props: any) => <em {...props} />,
+                        },
+                      }}
+                    >
+                      {matter(entry.object.text).content}
+                    </Remark>
+                  </Box>
+                  <Button
+                    css={{
+                      lineHeight: `15px`,
+                      height: `fit-content`,
+                      padding: `0`,
+                    }}
+                    onClick={() =>
+                      copy(
+                        `https://iammatthias.com/#${
+                          matter(entry.object.text).data.title
+                        }`,
+                      )
+                    }
+                  >
+                    <Box
+                      css={{
+                        height: `30px`,
+                        width: `30px`,
+                        display: `flex`,
+                        alignItems: `center`,
+                        justifyContent: `center`,
+                      }}
+                    >
+                      <Link2Icon />
+                    </Box>
+                  </Button>
                 </Box>
-              </Button>
-            </Box>
-          ))}
+              ),
+          )}
         </Box>
       </Box>
     )
