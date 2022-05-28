@@ -59,14 +59,14 @@ export default function Thoughts() {
   return (
     sortedEntries && (
       <Box>
-        <Text as="h3">Fleets</Text>
+        <Text as="h3">Thoughts</Text>
         <Box
           css={{
             margin: `0 0 16px`,
           }}
         >
           <Text>
-            <Text as="code">Fleets</Text> are like tweets—digestible bits of
+            <Text as="code">Thoughts</Text> are like tweets—digestible bits of
             short form content that do not matter.
           </Text>
           <Text>
