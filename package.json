@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@apollo/client": "3.6.2",
+    "@fontsource/abril-fatface": "4.5.7",
     "@fontsource/cormorant": "4.5.7",
     "@fontsource/crimson-text": "4.5.2",
     "@fontsource/space-mono": "4.5.8",
@@ -40,6 +41,7 @@
     "@segment/snippet": "4.15.3",
     "@stitches/react": "1.2.8",
     "@u-wave/react-vimeo": "0.9.8",
+    "add": "2.0.6",
     "axios": "0.27.2",
     "copy-data-to-clipboard": "1.0.0",
     "ethers": "5.6.6",

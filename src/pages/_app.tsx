@@ -8,8 +8,7 @@ import Meta from '@/components/meta';
 // import Background from '@/components/joy/background/backgroundWrapper';
 
 // fonts
-import '@fontsource/cormorant/300.css';
-import '@fontsource/cormorant/700.css';
+import '@fontsource/abril-fatface';
 import '@fontsource/crimson-text/400.css';
 import '@fontsource/crimson-text/700.css';
 import '@fontsource/space-mono';

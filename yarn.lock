@@ -1587,6 +1587,11 @@
     "@ethersproject/properties" "^5.6.0"
     "@ethersproject/strings" "^5.6.0"
 
+"@fontsource/abril-fatface@4.5.7":
+  version "4.5.7"
+  resolved "https://registry.yarnpkg.com/@fontsource/abril-fatface/-/abril-fatface-4.5.7.tgz#0cc367e598ef4783586cdc6ccf0efa16e1485f49"
+  integrity sha512-aBVXzo7jA/af5Ke7WqMvF3xZS1APDovy5o0nqnmS6P4jQU24dvmz37nIcb6b4gHE3Z4RYAQQZof/tTBVeorzzw==
+
 "@fontsource/cormorant@4.5.7":
   version "4.5.7"
   resolved "https://registry.npmjs.org/@fontsource/cormorant/-/cormorant-4.5.7.tgz"
@@ -2815,6 +2820,11 @@ acorn@^8.0.0, acorn@^8.4.1, acorn@^8.5.0, acorn@^8.7.1:
   version "8.7.1"
   resolved "https://registry.npmjs.org/acorn/-/acorn-8.7.1.tgz"
   integrity sha512-Xx54uLJQZ19lKygFXOWsscKUbsBZW0CPykPhVQdhIeIwrbPmJzqeASDInc8nKBnp/JT6igTs82qPXz069H8I/A==
+
+add@2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/add/-/add-2.0.6.tgz#248f0a9f6e5a528ef2295dbeec30532130ae2235"
+  integrity sha512-j5QzrmsokwWWp6kUcJQySpbG+xfOBqqKnup3OIk1pz+kB/80SLorZ9V8zHFLO92Lcd+hbvq8bT+zOGoPkmBV0Q==
 
 aes-js@3.0.0:
   version "3.0.0"
@@ -9199,7 +9209,7 @@ yargs@^17.0.0:
 
 yarn@1.22.18:
   version "1.22.18"
-  resolved "https://registry.npmjs.org/yarn/-/yarn-1.22.18.tgz"
+  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.22.18.tgz#05b822ade8c672987bab8858635145da0850f78a"
   integrity sha512-oFffv6Jp2+BTUBItzx1Z0dpikTX+raRdqupfqzeMKnoh7WD6RuPAxcqDkMUy9vafJkrB0YaV708znpuMhEBKGQ==
 
 yn@3.1.1:

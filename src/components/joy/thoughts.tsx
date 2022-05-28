@@ -83,6 +83,7 @@ export default function Thoughts() {
               (isDev || matter(entry.object.text).data.published) && (
                 <Box
                   key={entry.name}
+                  className="mono"
                   css={{
                     margin: `0 0 16px`,
                     padding: `0 0 16px`,
@@ -101,7 +102,9 @@ export default function Thoughts() {
                   id={matter(entry.object.text).data.title}
                 >
                   <Box>
-                    <Text as="h6">{matter(entry.object.text).data.title}</Text>
+                    <Text as="small" css={{ fontWeight: `bold` }}>
+                      {matter(entry.object.text).data.title}
+                    </Text>
                     <Remark
                       remarkPlugins={[remarkImages] as any}
                       rehypeReactOptions={{
@@ -109,6 +112,48 @@ export default function Thoughts() {
                           p: (props: any) => <p {...props} />,
                           strong: (props: any) => <strong {...props} />,
                           em: (props: any) => <em {...props} />,
+                          h1: (props: any) => (
+                            <h1
+                              {...props}
+                              className="mono"
+                              style={{ fontWeight: `bold` }}
+                            />
+                          ),
+                          h2: (props: any) => (
+                            <h2
+                              {...props}
+                              className="mono"
+                              style={{ fontWeight: `bold` }}
+                            />
+                          ),
+                          h3: (props: any) => (
+                            <h3
+                              {...props}
+                              className="mono"
+                              style={{ fontWeight: `bold` }}
+                            />
+                          ),
+                          h4: (props: any) => (
+                            <h4
+                              {...props}
+                              className="mono"
+                              style={{ fontWeight: `bold` }}
+                            />
+                          ),
+                          h5: (props: any) => (
+                            <h5
+                              {...props}
+                              className="mono"
+                              style={{ fontWeight: `bold` }}
+                            />
+                          ),
+                          h6: (props: any) => (
+                            <h6
+                              {...props}
+                              className="mono"
+                              style={{ fontWeight: `bold` }}
+                            />
+                          ),
                         },
                       }}
                     >
