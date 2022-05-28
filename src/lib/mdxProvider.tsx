@@ -27,6 +27,10 @@ const mdComponents = {
   Box: (props: any) => <Box {...props} />,
 
   // text
+  // bold: (props: any) => <Text as="strong" {...props} />,
+  // italic: (props: any) => <Text as="em" {...props} />,
+  bold: (props: any) => <Text as="strong" {...props} />,
+  italic: (props: any) => <Text as="em" {...props} />,
   p: (props: any) => <Text as="p" {...props} />,
   P: (props: any) => <Text as="p" {...props} />,
   h1: (props: any) => <Text as="h1" {...props} />,
@@ -84,4 +88,4 @@ const mdComponents = {
 const MDX = ({ children }: any) => (
   <MDXProvider components={mdComponents}>{children}</MDXProvider>
 );
-export default MDX;
+export { MDX, mdComponents };
