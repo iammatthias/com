@@ -28,7 +28,7 @@ export default function Base() {
       </GuestbookText>
       <GuestbookText>
         This project is entirely on-chain. The metadata, and the SVG renderer
-        exist on Optimism.
+        exist on Optimism Kovan.
       </GuestbookText>
       <Notes>
         <GuestbookText as="ol" css={{ fontSize: `0.707rem` }}>
