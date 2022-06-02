@@ -1,5 +1,5 @@
 const mdComponents = {
-  p: (props: any) => <p {...props} />,
+  p: (props: any) => <p {...props} style={{ fontSize: `14px` }} />,
   strong: (props: any) => <strong {...props} />,
   em: (props: any) => <em {...props} />,
   img: (props: any) => (
@@ -29,7 +29,7 @@ const mdComponents = {
   h6: (props: any) => (
     <h6 {...props} className="mono" style={{ fontWeight: `bold` }} />
   ),
-  figure: (props: any) => <figure {...props} />,
+  figure: (props: any) => <figure {...props} style={{ fontSize: `14px` }} />,
 };
 
 export default mdComponents;

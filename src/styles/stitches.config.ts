@@ -153,13 +153,14 @@ export const globalStyles = globalCss({
   ':root': {
     fontFamily: `"Crimson Text", system-ui, sans-serif`,
     fontWeight: `400`,
-    fontSize: `16px`,
+    fontSize: `18px`,
     lineHeight: `1.618`,
   },
   body: {
     background: `$background`,
     color: `$primary`,
     minHeight: `100vh`,
+
     padding: `2rem 1rem 4rem`,
   },
   'h1, h2, h3, h4, h5, h6': {
