@@ -11,7 +11,7 @@ import * as snippet from '@segment/snippet';
 import { getCssText } from '@/styles/stitches.config';
 
 class MyDocument extends Document {
-  renderSnippet() {
+  segment() {
     const opts = {
       apiKey: process.env.NEXT_PUBLIC_SEGMENT,
       // note: the page option only covers SSR tracking.
@@ -36,7 +36,15 @@ class MyDocument extends Document {
     return (
       <Html lang="en-US">
         <Head>
-          <script dangerouslySetInnerHTML={{ __html: this.renderSnippet() }} />
+          <script dangerouslySetInnerHTML={{ __html: this.segment() }} />
+
+          <link
+            rel="preload"
+            href="/fonts/Mayes-Mayes.woff"
+            as="font"
+            type="font/woff"
+            crossOrigin="anonymous"
+          />
           <style
             id="stitches"
             dangerouslySetInnerHTML={{ __html: getCssText() }}

@@ -115,6 +115,24 @@ export const reset = {
 
 export const globalStyles = globalCss({
   ...reset,
+  // fonts
+  '@font-face': {
+    fontFamily: `mayes`,
+    src: `url('/fonts/Mayes-Regular.woff') format('woff supports')`,
+    fontWeight: `400`,
+    fontDisplay: `swap`,
+    fontStyle: `normal`,
+  },
+  '@supports (font-variation-settings: normal)': {
+    '@font-face': {
+      fontFamily: `mayes`,
+      src: `url('/fonts/Mayes-Mayes.woff')`,
+      fontWeight: `400 900`,
+      fontDisplay: `swap`,
+      fontStyle: `normal`,
+    },
+  },
+
   // dark mode
   '@dark': {
     // notice the `media` definition on the stitches.config.ts file
@@ -145,8 +163,8 @@ export const globalStyles = globalCss({
     padding: `2rem 1rem 4rem`,
   },
   'h1, h2, h3, h4, h5, h6': {
-    fontFamily: `"Abril Fatface", serif`,
-    fontWeight: `300`,
+    fontFamily: `"mayes", sans-serif`,
+    fontWeight: `900`,
   },
   '.mono': {
     fontFamily: `Space Mono, monospace`,

@@ -88,4 +88,5 @@ const mdComponents = {
 const MDX = ({ children }: any) => (
   <MDXProvider components={mdComponents}>{children}</MDXProvider>
 );
-export { MDX, mdComponents };
+
+export default MDX;

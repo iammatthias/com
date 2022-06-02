@@ -15,8 +15,10 @@ import { Link2Icon } from '@radix-ui/react-icons';
 import copy from 'copy-data-to-clipboard';
 
 import { isDev } from '@/utils/isDev';
-import { mdComponents } from '@/lib/mdxProvider';
-import remarkImages from 'remark-images';
+import remarkParse from 'remark-parse';
+import rehypeRaw from 'rehype-raw';
+import rehypeStringify from 'rehype-stringify';
+import mdComponents from '@/lib/mdProvider';
 
 const QUERY = gql`
   query ($owner: String!, $name: String!) {
@@ -53,8 +55,6 @@ export default function Thoughts() {
   const { entries } = data.repository.object;
 
   const sortedEntries = entries.slice().sort().reverse();
-
-  console.log(mdComponents);
 
   return (
     sortedEntries && (
@@ -105,56 +105,12 @@ export default function Thoughts() {
                     <Text as="small" css={{ fontWeight: `bold` }}>
                       {matter(entry.object.text).data.title}
                     </Text>
+
                     <Remark
-                      remarkPlugins={[remarkImages] as any}
+                      remarkToRehypeOptions={{ allowDangerousHtml: true }}
+                      rehypePlugins={[rehypeRaw] as any}
                       rehypeReactOptions={{
-                        components: {
-                          p: (props: any) => <p {...props} />,
-                          strong: (props: any) => <strong {...props} />,
-                          em: (props: any) => <em {...props} />,
-                          h1: (props: any) => (
-                            <h1
-                              {...props}
-                              className="mono"
-                              style={{ fontWeight: `bold` }}
-                            />
-                          ),
-                          h2: (props: any) => (
-                            <h2
-                              {...props}
-                              className="mono"
-                              style={{ fontWeight: `bold` }}
-                            />
-                          ),
-                          h3: (props: any) => (
-                            <h3
-                              {...props}
-                              className="mono"
-                              style={{ fontWeight: `bold` }}
-                            />
-                          ),
-                          h4: (props: any) => (
-                            <h4
-                              {...props}
-                              className="mono"
-                              style={{ fontWeight: `bold` }}
-                            />
-                          ),
-                          h5: (props: any) => (
-                            <h5
-                              {...props}
-                              className="mono"
-                              style={{ fontWeight: `bold` }}
-                            />
-                          ),
-                          h6: (props: any) => (
-                            <h6
-                              {...props}
-                              className="mono"
-                              style={{ fontWeight: `bold` }}
-                            />
-                          ),
-                        },
+                        components: mdComponents,
                       }}
                     >
                       {matter(entry.object.text).content}

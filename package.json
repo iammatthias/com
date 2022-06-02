@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "@apollo/client": "3.6.2",
-    "@fontsource/abril-fatface": "4.5.7",
     "@fontsource/cormorant": "4.5.7",
     "@fontsource/crimson-text": "4.5.2",
     "@fontsource/space-mono": "4.5.8",
@@ -60,8 +59,10 @@
     "react-masonry-css": "1.0.16",
     "react-remark": "2.1.0",
     "react-use-measure": "2.1.1",
-    "rehype-dom-parse": "4.0.2",
-    "remark-images": "3.1.0",
+    "rehype-raw": "6.1.1",
+    "rehype-remark": "9.1.2",
+    "rehype-stringify": "9.0.3",
+    "remark-parse": "10.0.1",
     "swr": "1.3.0",
     "wagmi": "0.3.5",
     "yarn": "1.22.18"
