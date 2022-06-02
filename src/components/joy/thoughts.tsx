@@ -15,9 +15,9 @@ import { Link2Icon } from '@radix-ui/react-icons';
 import copy from 'copy-data-to-clipboard';
 
 import { isDev } from '@/utils/isDev';
-import remarkParse from 'remark-parse';
+
 import rehypeRaw from 'rehype-raw';
-import rehypeStringify from 'rehype-stringify';
+
 import mdComponents from '@/lib/mdProvider';
 
 const QUERY = gql`

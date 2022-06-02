@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Box } from '@/components/primitives/box';
 import { Text } from '@/components/primitives/text';
 import Sparkle from '@/components/joy/sparkle';
@@ -31,8 +31,6 @@ export default function NavTitle() {
             (position.top - globalCoords.y) ** 2,
         ),
       );
-
-      console.log(distance);
 
       // The Longer The Distance The Lower The Font Weight
       element.setAttribute(

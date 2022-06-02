@@ -13,9 +13,6 @@ import {
   ArrowRightIcon,
 } from '@radix-ui/react-icons';
 import Link from 'next/link';
-import { Box } from '@/components/primitives/box';
-import { Text } from '@/components/primitives/text';
-import Sparkle from '@/components/joy/sparkle';
 import NavTitle from './navTitle';
 
 export default function NavWrapper() {
