@@ -153,64 +153,162 @@ export const globalStyles = globalCss({
   ':root': {
     fontFamily: `"Crimson Text", system-ui, sans-serif`,
     fontWeight: `400`,
-    fontSize: `18px`,
     lineHeight: `1.618`,
+  },
+  html: {
+    fontSize: `16px`,
   },
   body: {
     background: `$background`,
     color: `$primary`,
     minHeight: `100vh`,
-
+    fontSize: `1.125em`,
+    lineHeight: `1.6`,
     padding: `2rem 1rem 4rem`,
   },
   'h1, h2, h3, h4, h5, h6': {
     fontFamily: `"mayes", sans-serif`,
     fontWeight: `900`,
   },
-  '.mono': {
-    fontFamily: `Space Mono, monospace`,
-  },
-  'pre, code': {
-    fontFamily: `Space Mono, monospace`,
-    border: `1px solid`,
-    borderColor: `inherit`,
-
-    fontSize: `90%`,
-  },
-  pre: { padding: `0.35rem 0.65rem` },
-  code: { margin: `0`, padding: `0 0.25rem` },
-  'pre code': {
-    padding: `0.25rem 0.45rem`,
-    border: `none`,
-  },
   p: {
-    fontSize: `1rem`,
+    fontSize: `1.2292em`,
+    '@bp1': {
+      fontSize: `1.2083em`,
+    },
+    '@bp2': {
+      fontSize: `1.2083em`,
+    },
+    '@bp3': {
+      fontSize: `1.1667em`,
+    },
+    '@bp4': {
+      fontSize: `1.125em`,
+    },
   },
   h1: {
-    fontSize: `5.653rem`,
     marginBottom: `$4`,
+    fontSize: `3.7917em`,
+    '@bp1': {
+      fontSize: `4.3958em`,
+    },
+    '@bp2': {
+      fontSize: `5.3333em`,
+    },
+    '@bp3': {
+      fontSize: `7.0417em`,
+    },
+    '@bp4': {
+      fontSize: `9em`,
+    },
   },
   h2: {
-    fontSize: `3.998rem`,
     marginBottom: `$3`,
+    fontSize: `2.4583em`,
+    '@bp1': {
+      fontSize: `2.6667em`,
+    },
+    '@bp2': {
+      fontSize: `3em`,
+    },
+    '@bp3': {
+      fontSize: `3.5208em`,
+    },
+    '@bp4': {
+      fontSize: `4.5em`,
+    },
   },
   h3: {
-    fontSize: `2.827rem`,
     marginBottom: `$2`,
+    fontSize: `1.8958em`,
+    '@bp1': {
+      fontSize: `2em`,
+    },
+    '@bp2': {
+      fontSize: `2.125em`,
+    },
+    '@bp3': {
+      fontSize: `2.3333em`,
+    },
+    '@bp4': {
+      fontSize: `2.6667em`,
+    },
   },
   h4: {
-    fontSize: `1.999rem`,
     marginBottom: `$1`,
+    fontSize: `1.6042em`,
+    '@bp1': {
+      fontSize: `1.6458em`,
+    },
+    '@bp2': {
+      fontSize: `1.6875em`,
+    },
+    '@bp3': {
+      fontSize: `1.7708em`,
+    },
+    '@bp4': {
+      fontSize: `1.8958em`,
+    },
   },
   h5: {
-    fontSize: `1.414rem`,
     marginBottom: `$0`,
+    fontSize: `1.4583em`,
+    '@bp1': {
+      fontSize: `1.4792em`,
+    },
+    '@bp2': {
+      fontSize: `1.5em`,
+    },
+    '@bp3': {
+      fontSize: `1.5417em`,
+    },
+    '@bp4': {
+      fontSize: `1.6042em`,
+    },
   },
   h6: {
-    fontSize: `1rem`,
+    fontSize: `10.6667em`,
+    '@bp1': {
+      fontSize: `1.3333em`,
+    },
+    '@bp2': {
+      fontSize: `1.3333em`,
+    },
+    '@bp3': {
+      fontSize: `1.3333em`,
+    },
+    '@bp4': {
+      fontSize: `1.3333em`,
+    },
   },
   small: {
-    fontSize: `0.707rem`,
+    fontSize: `1.0417em`,
+    '@bp1': {
+      fontSize: `1em`,
+    },
+    '@bp2': {
+      fontSize: `0.9583em`,
+    },
+    '@bp3': {
+      fontSize: `0.8958em`,
+    },
+    '@bp4': {
+      fontSize: `0.8125em`,
+    },
+  },
+  figure: {
+    fontSize: `1.125em`,
+    '@bp1': {
+      fontSize: `1.1042em`,
+    },
+    '@bp2': {
+      fontSize: `1.0625em`,
+    },
+    '@bp3': {
+      fontSize: `1.0208em`,
+    },
+    '@bp4': {
+      fontSize: `0.9583em`,
+    },
   },
   a: {
     color: `inherit`,
@@ -238,10 +336,39 @@ export const globalStyles = globalCss({
     border: `2px solid $primary`,
     width: `100%`,
   },
+
   'blockquote, q': {
     borderLeft: `2px solid $primary`,
     marginBottom: `$3`,
     paddingLeft: `$3`,
+    fontSize: `10.6667em`,
+    '@bp1': {
+      fontSize: `10.6667em`,
+    },
+    '@bp2': {
+      fontSize: `10.6667em`,
+    },
+    '@bp3': {
+      fontSize: `7.0417em`,
+    },
+    '@bp4': {
+      fontSize: `1.3333em`,
+    },
+  },
+  '.mono': {
+    fontFamily: `Space Mono, monospace`,
+  },
+  'pre, code': {
+    fontFamily: `Space Mono, monospace`,
+    border: `1px solid`,
+    borderColor: `inherit`,
+    fontSize: `0.9583em`,
+  },
+  pre: { padding: `0.35rem 0.65rem` },
+  code: { margin: `0`, padding: `0 0.25rem` },
+  'pre code': {
+    padding: `0.25rem 0.45rem`,
+    border: `none`,
   },
 
   // etc

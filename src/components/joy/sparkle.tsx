@@ -72,12 +72,13 @@ const generateSparkle = () => {
   const sparkle = {
     id: String(random(10000, 99999)),
     createdAt: Date.now(),
-    color: `hsla(${Math.random() * (215 - 10) + 10}, 78%, 52%, .75)`,
-    size: random(4, 16),
+    color: `hsla(${Math.random() * 255}, 78%, 68%, .75)`,
+    size: random(4, 20),
     style: {
       top: random(0, 100) + `%`,
       left: random(0, 100) + `%`,
-      zIndex: random(0, 50),
+      zIndex: random(0, 10),
+      filter: `drop-shadow(0 0 2px rgb(0 0 0 / 0.3))`,
     },
   };
   return sparkle;
@@ -136,7 +137,7 @@ const Sparkles = ({ children }: any, { ...delegated }) => {
       const now = Date.now();
       const nextSparkles = sparkles.filter((sp) => {
         const delta = now - sp.createdAt;
-        return delta < 750;
+        return delta < 1000;
       });
       nextSparkles.push(sparkle);
       setSparkles(nextSparkles);

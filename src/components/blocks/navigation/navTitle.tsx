@@ -35,7 +35,7 @@ export default function NavTitle() {
       // The Longer The Distance The Lower The Font Weight
       element.setAttribute(
         `style`,
-        `font-variation-settings: 'wght' ${400 + distance * 2};`,
+        `font-variation-settings: 'wght' ${400 + distance * 1.618};`,
       );
     });
   }
