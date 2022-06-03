@@ -62,9 +62,7 @@ export default function PageFooter({ ...props }) {
 
   return (
     <Box>
-      <Box css={{ margin: `16px 0 32px` }}>
-        <Squiggle />
-      </Box>
+      <Squiggle squiggleWidth="8" height="24" />
 
       <Link href={nextSlug}>
         <a>

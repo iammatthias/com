@@ -33,7 +33,7 @@ export default function NavWrapper() {
     listStyle: `none`,
     $$shadowColor: `$colors$primary`,
     boxShadow: `0 0 0 1px $$shadowColor`,
-    backdropFilter: `blur(50px) saturate(618%)`,
+    backdropFilter: `blur(50px) saturate(382%)`,
     '&:hover': {
       boxShadow: `0 0 0 2px $$shadowColor`,
     },
@@ -88,7 +88,7 @@ export default function NavWrapper() {
     left: 0,
     width: `100%`,
 
-    backdropFilter: `blur(50px) saturate(618%)`,
+    backdropFilter: `blur(50px) saturate(382%)`,
 
     // background: `$colors$background`,
   });

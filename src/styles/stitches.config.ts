@@ -13,10 +13,10 @@ export const {
 } = createStitches({
   theme: {
     colors: {
-      black: `rgba(22, 22, 21, 1)`,
+      black: `rgba(4, 4, 0, 1)`,
       blackFade: `rgba(19, 19, 21, .2)`,
-      white: `rgba(253, 252, 252, 1)`,
-      whiteFade: `rgba(253, 252, 252, .2)`,
+      white: `rgba(249, 254, 255, 1)`,
+      whiteFade: `rgba(253, 255, 252, .2)`,
       gray: `rgba(128, 128, 128, 1)`,
       blue: `rgba(3, 136, 252, 1)`,
       red: `rgba(249, 16, 74, 1)`,
