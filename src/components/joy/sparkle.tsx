@@ -72,13 +72,13 @@ const generateSparkle = () => {
   const sparkle = {
     id: String(random(10000, 99999)),
     createdAt: Date.now(),
-    color: `hsla(${Math.random() * 255}, 78%, 68%, .75)`,
+    color: `hsla(${Math.random() * 255}, 78%, 58%, .75)`,
     size: random(4, 20),
     style: {
       top: random(0, 100) + `%`,
       left: random(0, 100) + `%`,
       zIndex: random(0, 10),
-      filter: `drop-shadow(0 0 2px rgb(0 0 0 / 0.3))`,
+      filter: `drop-shadow(0 0 2px rgb(0 0 0 / 0.05))`,
     },
   };
   return sparkle;
