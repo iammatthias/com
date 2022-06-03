@@ -5,7 +5,7 @@ import NavWrapper from '@/components/blocks/navigation/navWrapper';
 import Layout from '@/components/layout';
 import MDX from '@/lib/mdxProvider';
 import Meta from '@/components/meta';
-// import Background from '@/components/joy/background/backgroundWrapper';
+import { Background } from '@/components/joy/background';
 
 // fonts
 import '@fontsource/crimson-text/400.css';
@@ -26,13 +26,14 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <Meta title={pageProps.pageTitle} />
+
       <NavWrapper />
       <Layout>
         <MDX {...pageProps}>
           <Component {...pageProps} />
         </MDX>
       </Layout>
-      {/* <Background /> */}
+      <Background />
     </ThemeProvider>
   );
 }
