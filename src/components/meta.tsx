@@ -15,6 +15,16 @@ export default function Meta({
 }: any) {
   return (
     <Head>
+      <meta
+        name="viewport"
+        content="initial-scale=1, viewport-fit=cover, width=device-width"
+      />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent"
+      />
+
       <meta key="og_locale" property="og:locale" content="en_US" />
       <meta key="og_type" property="og:type" content="website" />
       <meta key="og_site" property="og:site_name" content={name} />
