@@ -11,6 +11,4 @@ export const Background = styled(`div`, {
   right: 0,
   bottom: 0,
   zIndex: -1,
-  minHeight: `calc(100% + env(safe-area-inset-top))`,
-  padding: `env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)`,
 });
