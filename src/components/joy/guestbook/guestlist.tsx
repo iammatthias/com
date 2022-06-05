@@ -1,5 +1,6 @@
 import { Box } from '@/components/primitives/box';
 import { GuestbookText } from './guestbookText';
+import GuestENS from './guestEns';
 import Squiggle from '../squiggle';
 import Link from 'next/link';
 
@@ -19,6 +20,7 @@ export default function Guestlist() {
     `getAllGuests`,
     {
       cacheOnBlock: true,
+      chainId: 10,
     },
   );
 
@@ -33,26 +35,6 @@ export default function Guestlist() {
             .map((guest) => (
               <Box key={guest} css={{ width: `100%`, margin: `16px 0` }}>
                 <Squiggle squiggleWidth="8" height="24" />
-                <GuestbookText
-                  as="p"
-                  css={{ margin: `8px 0`, wordBreak: `break-word` }}
-                >
-                  <GuestbookText as="small">
-                    <Link
-                      href={
-                        process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                        `address/` +
-                        guest[2]
-                      }
-                      passHref
-                    >
-                      <a>{guest[2]}</a>
-                    </Link>
-                  </GuestbookText>
-                </GuestbookText>
-                <GuestbookText as="p" css={{ margin: `8px 0` }}>
-                  {guest[3]}
-                </GuestbookText>
                 <Box
                   css={{
                     display: `flex`,
@@ -60,36 +42,53 @@ export default function Guestlist() {
                     justifyContent: `space-between`,
                   }}
                 >
-                  <GuestbookText as="p" css={{ margin: `8px 0` }}>
+                  <GuestbookText
+                    as="p"
+                    css={{ margin: `8px 0`, wordBreak: `break-word` }}
+                  >
                     <GuestbookText as="small">
-                      Guest # {BigNumber.from(guest[0]._hex).toNumber() + 1}
+                      <Link
+                        href={
+                          process.env.NEXT_PUBLIC_ETHERSCAN_URL +
+                          `address/` +
+                          guest[2]
+                        }
+                        passHref
+                      >
+                        <a>
+                          <GuestENS address={guest[1]} />
+                        </a>
+                      </Link>
                     </GuestbookText>
                   </GuestbookText>
                   <GuestbookText as="p" css={{ margin: `8px 0` }}>
                     <GuestbookText as="small">
-                      at{` `}
-                      <i>{guest[4]}</i>
+                      Guest # {BigNumber.from(guest[0]._hex).toNumber() + 1} at
+                      {` `}
+                      <i>{guest[3]}</i>
                     </GuestbookText>
                   </GuestbookText>
                 </Box>
-                {BigNumber.from(guest[0]._hex).toNumber() ==
-                  BigNumber.from(guest[1]._hex).toNumber() ||
-                BigNumber.from(guest[1]._hex).toNumber() > 0 ? (
-                  <GuestbookText>
+                <GuestbookText as="p" css={{ margin: `8px 0 16px` }}>
+                  {guest[2]}
+                </GuestbookText>
+
+                {guest[4] == `true` && (
+                  <GuestbookText as="p" css={{ margin: `8px 0` }}>
                     <GuestbookText as="small">
-                      View on{` `}
+                      View NFT on{` `}
                       <Link
                         href={`${
                           process.env.NEXT_PUBLIC_QUIXOTIC_URL
                         }asset/${contract}/${BigNumber.from(
-                          guest[1]._hex,
+                          guest[5]._hex,
                         ).toNumber()}`}
                       >
                         quixotic
                       </Link>
                     </GuestbookText>
                   </GuestbookText>
-                ) : null}
+                )}
               </Box>
             ))}
     </Box>

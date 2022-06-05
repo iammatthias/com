@@ -1,4 +1,3 @@
-import { Box } from './primitives/box';
 import Grid from './primitives/grid';
 
 export default function Layout({ children }: any) {

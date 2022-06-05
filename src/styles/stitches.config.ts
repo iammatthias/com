@@ -280,7 +280,7 @@ export const globalStyles = globalCss({
       fontSize: `1.3333em`,
     },
   },
-  small: {
+  'small, pre, code': {
     fontSize: `1.0417em`,
     '@bp1': {
       fontSize: `1em`,
@@ -336,7 +336,6 @@ export const globalStyles = globalCss({
     border: `2px solid $primary`,
     width: `100%`,
   },
-
   'blockquote, q': {
     borderLeft: `2px solid $primary`,
     marginBottom: `$3`,
@@ -362,7 +361,6 @@ export const globalStyles = globalCss({
     fontFamily: `Space Mono, monospace`,
     border: `1px solid`,
     borderColor: `inherit`,
-    fontSize: `0.9583em`,
   },
   pre: { padding: `0.35rem 0.65rem` },
   code: { margin: `0`, padding: `0 0.25rem` },

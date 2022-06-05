@@ -15,13 +15,14 @@ import {
 import Link from 'next/link';
 import NavTitle from './navTitle';
 
-export default function NavWrapper() {
+export default function NavWrapper(props: any) {
   // primitives
   const StyledMenu = styled(NavigationMenuPrimitive.Root, {
     position: `relative`,
     display: `flex`,
     justifyContent: `center`,
-    zIndex: 89,
+    zIndex: 10,
+    margin: `0 0 24px`,
   });
 
   const StyledList = styled(NavigationMenuPrimitive.List, {

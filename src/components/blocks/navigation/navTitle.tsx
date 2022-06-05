@@ -60,7 +60,7 @@ export default function NavTitle() {
       }}
     >
       <Text as="h4">{addSpan(`I am`)}</Text>
-      <Text as="h1">
+      <Text as="h1" css={{ margin: `0` }}>
         <Sparkle>{addSpan(`Matthias`)}</Sparkle>
       </Text>
     </Box>

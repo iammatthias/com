@@ -49,8 +49,18 @@ export default function Thoughts() {
     client: githubClient,
   });
 
-  if (loading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error!</Text>;
+  if (loading)
+    return (
+      <Box>
+        <Text>Loading...</Text>
+      </Box>
+    );
+  if (error)
+    return (
+      <Box>
+        <Text>Error!</Text>
+      </Box>
+    );
 
   const { entries } = data.repository.object;
 

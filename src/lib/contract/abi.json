@@ -205,11 +205,6 @@
               "type": "uint256"
             },
             {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            },
-            {
               "internalType": "string",
               "name": "guest",
               "type": "string"
@@ -223,6 +218,16 @@
               "internalType": "string",
               "name": "timestamp",
               "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "minted",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
             }
           ],
           "internalType": "struct TheGuestBook.Guest[]",
@@ -281,11 +286,6 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
           "internalType": "string",
           "name": "guest",
           "type": "string"
@@ -299,6 +299,16 @@
           "internalType": "string",
           "name": "timestamp",
           "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "minted",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -398,11 +408,6 @@
         {
           "internalType": "uint256",
           "name": "_guestId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_tokenId",
           "type": "uint256"
         },
         {

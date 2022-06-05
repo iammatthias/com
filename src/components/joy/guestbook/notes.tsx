@@ -34,11 +34,9 @@ export default function Notes({ children }: any) {
     <Collapsible open={open} onOpenChange={setOpen}>
       <Flex css={{ alignItems: `start` }}>
         <GuestbookText>
-          <GuestbookText as="small">
-            <b>
-              <i>Notes</i>
-            </b>
-          </GuestbookText>
+          <b>
+            <i>Notes</i>
+          </b>
         </GuestbookText>
         <CollapsibleTrigger asChild>
           <IconButton>{open ? <Cross2Icon /> : <RowSpacingIcon />}</IconButton>
