@@ -10,5 +10,5 @@ export default function GuestENS(props: any) {
   if (isError) return props.address;
 
   console.log(data);
-  return data;
+  return data || props.address;
 }
