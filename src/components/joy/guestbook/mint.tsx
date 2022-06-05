@@ -13,6 +13,7 @@ import { Box } from '@/components/primitives/box';
 import { Text } from '@/components/primitives/text';
 import { GuestbookText } from './guestbookText';
 import { GuestbookButton } from './guestbookButton';
+import GuestENS from './guestEns';
 import Sparkles from '../sparkle';
 import Link from 'next/link';
 
@@ -142,16 +143,18 @@ export default function Mint() {
                     css={{ margin: `8px 0`, wordBreak: `break-word` }}
                   >
                     <GuestbookText as="small">
-                      <Link
-                        href={
-                          process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                          `address/` +
-                          (accountData && accountData.address)
-                        }
-                        passHref
-                      >
-                        {accountData && accountData.address}
-                      </Link>
+                      {accountData && (
+                        <Link
+                          href={
+                            process.env.NEXT_PUBLIC_ETHERSCAN_URL +
+                            `address/` +
+                            accountData.address
+                          }
+                          passHref
+                        >
+                          <GuestENS address={accountData.address} />
+                        </Link>
+                      )}
                     </GuestbookText>
                   </GuestbookText>
                   <GuestbookText as="p" css={{ margin: `8px 0` }}>
