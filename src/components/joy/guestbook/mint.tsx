@@ -76,7 +76,7 @@ export default function Mint() {
     await writeWithMint({
       args: encodedMessage,
       overrides: {
-        value: ethers.utils.parseEther(`0.001`),
+        value: ethers.utils.parseEther(`0.01`),
       },
     });
   };
@@ -100,7 +100,7 @@ export default function Mint() {
                 <GuestbookButton onClick={handleWriteWithMint}>
                   {writeLoading
                     ? `Loading...`
-                    : `Write Message & Mint | 0.001 Ξ`}
+                    : `Write Message & Mint | 0.01 Ξ`}
                 </GuestbookButton>
               </>
             )}

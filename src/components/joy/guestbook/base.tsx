@@ -17,7 +17,7 @@ export default function Base() {
     <>
       <GuestbookText>Sign the guestbook, entirely on chain.</GuestbookText>
       <GuestbookText>
-        Commemorate signing the guestbook with a unique NFT for 0.001 Ξ.
+        Commemorate signing the guestbook with a unique NFT for 0.01 Ξ.
       </GuestbookText>
       <Notes>
         <GuestbookText as="ol">
