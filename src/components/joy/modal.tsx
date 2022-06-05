@@ -119,7 +119,12 @@ export default function Modal({ children, images, imageKey }: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <ModalTrigger onClick={() => setI(imageKey)}>{children}</ModalTrigger>
+        <ModalTrigger
+          onClick={() => setI(imageKey)}
+          className="umami--click--Modal-Opened"
+        >
+          {children}
+        </ModalTrigger>
       </DialogTrigger>
       <DialogContent>
         <Box
@@ -200,6 +205,7 @@ export default function Modal({ children, images, imageKey }: any) {
                 },
               }}
               onClick={() => setI(prev)}
+              className="umami--click--Modal-Prev"
             >
               <TriangleLeftIcon />
             </Button>
@@ -221,13 +227,18 @@ export default function Modal({ children, images, imageKey }: any) {
                 },
               }}
               onClick={() => setI(next)}
+              className="umami--click--Modal-Next"
             >
               <TriangleRightIcon />
             </Button>
           </Box>
         </Box>
 
-        <DialogClose asChild onClick={() => setI(imageKey)}>
+        <DialogClose
+          asChild
+          onClick={() => setI(imageKey)}
+          className="umami--click--Modal-Closed"
+        >
           <Button
             css={{
               position: `absolute`,

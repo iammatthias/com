@@ -24,7 +24,13 @@ export default function Glass(props: any) {
     <Box className={props.className} css={{ marginBottom: `2rem` }}>
       <GalleryGrid>
         {glassPosts.map((post: any, index: any) => (
-          <a href={post.share_url} key={index} target="_blank" rel="noreferrer">
+          <a
+            href={post.share_url}
+            key={index}
+            target="_blank"
+            rel="noreferrer"
+            className="umami--click--Glass-Gallery-Clicked"
+          >
             <Image
               src={post.image828x0}
               alt={post.id}

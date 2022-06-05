@@ -68,6 +68,7 @@ export default function GalleryContentful(props: any) {
           {imageSetImages.map((image: any, index: any) => (
             <GalleryModal key={index} imageKey={index} images={imageSetImages}>
               <Image
+                // className="umami--click--Gallery-Modal-Opened"
                 src={image.url}
                 alt={image.title}
                 layout="responsive"
