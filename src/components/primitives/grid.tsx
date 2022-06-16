@@ -1,10 +1,6 @@
 import { styled } from '@/styles/stitches.config';
 
-import { useAutoAnimate } from '@formkit/auto-animate/react';
-
 export default function Grid({ props, children }: any) {
-  const [parent] = useAutoAnimate({ duration: 1000, easing: `ease-in-out` });
-
   const Grid = styled(`article`, {
     position: `relative`,
     margin: `0 auto`,
@@ -39,9 +35,5 @@ export default function Grid({ props, children }: any) {
     },
   });
 
-  return (
-    <Grid ref={parent as any} {...props}>
-      {children}
-    </Grid>
-  );
+  return <Grid {...props}>{children}</Grid>;
 }

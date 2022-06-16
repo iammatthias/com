@@ -407,10 +407,10 @@ export const globalStyles = globalCss({
     '--gradient-color-5': `#fac7be`,
   },
   '.mBleed': {
-    gridColumn: `3 / 6`,
+    gridColumn: `3 / 6 !important`,
   },
   '.lBleed': {
-    gridColumn: `2 / 7`,
+    gridColumn: `2 / 7 !important`,
   },
   '.fullBleed': {
     gridColumn: `1 / 8 !important`,

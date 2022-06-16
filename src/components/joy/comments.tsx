@@ -8,10 +8,12 @@ export default function Comments({ ...props }: any) {
   const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
     `https://iammatthias.com/${props.slug}`,
   )}`;
+
+  console.log(props);
   return (
     <Link href={comments} passHref>
       <a>
-        <Button title="Discuss on Twitter">
+        <Button css={{ ...props.css }} title="Discuss on Twitter">
           <TwitterLogoIcon />
         </Button>
       </a>
