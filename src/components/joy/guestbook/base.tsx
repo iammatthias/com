@@ -15,17 +15,16 @@ export default function Base() {
   const { data: accountData } = useAccount();
   return (
     <>
-      <GuestbookText>Sign the guestbook, entirely on chain.</GuestbookText>
-      <GuestbookText>
-        Commemorate signing the guestbook with a unique NFT for 0.01 Ξ.
-      </GuestbookText>
+      <GuestbookText>GM, WAGMI, GN.</GuestbookText>
+      <GuestbookText>Sign the web3 guestbook!</GuestbookText>
       <Notes>
         <GuestbookText as="ol">
           <GuestbookText as="li">
-            There is no cost to sign the guestbook, but a nominal gas fee will
-            apply.
+            Signing the guestbook is free, but gas fees will apply.
           </GuestbookText>
-          <GuestbookText as="li">Minting the NFT is optional.</GuestbookText>
+          <GuestbookText as="li">
+            Minting the NFT is optional, and costs 0.01 Ξ.
+          </GuestbookText>
           <GuestbookText as="li">
             Minting will issue a unique NFT customized with colors derived from
             your ETH address.

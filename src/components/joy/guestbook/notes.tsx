@@ -35,7 +35,7 @@ export default function Notes({ children }: any) {
       <Flex css={{ alignItems: `start` }}>
         <GuestbookText>
           <b>
-            <i>Notes</i>
+            <i>FAQ</i>
           </b>
         </GuestbookText>
         <CollapsibleTrigger asChild>
