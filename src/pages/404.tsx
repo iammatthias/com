@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/primitives/button';
-import { Text } from '@/components/primitives/text';
+import Text from '@/components/primitives/text';
 
 // components
 
