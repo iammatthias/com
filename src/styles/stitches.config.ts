@@ -268,7 +268,7 @@ export const globalStyles = globalCss({
     },
   },
   h6: {
-    fontSize: `10.6667em`,
+    fontSize: `1.6667em`,
     '@bp1': {
       fontSize: `1.3333em`,
     },
@@ -342,12 +342,12 @@ export const globalStyles = globalCss({
     borderLeft: `2px solid $primary`,
     marginBottom: `$3`,
     paddingLeft: `$3`,
-    fontSize: `10.6667em`,
+    fontSize: `1.6667em`,
     '@bp1': {
-      fontSize: `10.6667em`,
+      fontSize: `1.6667em`,
     },
     '@bp2': {
-      fontSize: `10.6667em`,
+      fontSize: `1.6667em`,
     },
     '@bp3': {
       fontSize: `7.0417em`,
