@@ -1,9 +1,7 @@
 import Text from '@/components/primitives/text';
 const mdComponents = {
   // p: (props: any) => <p {...props} style={{ fontSize: `14px` }} />,
-  p: (props: any) => (
-    <Text as="small" {...props} style={{ display: `block` }} />
-  ),
+  p: (props: any) => <Text as="small" {...props} css={{ display: `block` }} />,
 
   strong: (props: any) => <strong {...props} />,
   em: (props: any) => <em {...props} />,
