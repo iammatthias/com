@@ -15,7 +15,7 @@ import {
 import Link from 'next/link';
 import NavTitle from './navTitle';
 
-export default function NavWrapper(props: any) {
+export default function NavWrapper() {
   // primitives
   const StyledMenu = styled(NavigationMenuPrimitive.Root, {
     position: `relative`,

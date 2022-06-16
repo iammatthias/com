@@ -9,7 +9,6 @@ export default function Comments({ ...props }: any) {
     `https://iammatthias.com/${props.slug}`,
   )}`;
 
-  console.log(props);
   return (
     <Link href={comments} passHref>
       <a>
