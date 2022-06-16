@@ -166,7 +166,7 @@ export const globalStyles = globalCss({
     minHeight: `100vh`,
     fontSize: `1.125em`,
     lineHeight: `1.6`,
-    padding: `2rem 1rem 4rem`,
+    padding: `0`,
   },
   'h1, h2, h3, h4, h5, h6': {
     fontFamily: `"mayes", sans-serif`,

@@ -47,7 +47,7 @@ export default function MagicHeaderCopy({ children }: any) {
   };
 
   if (typeof window !== `undefined`) {
-    window.addEventListener(`mousemove`, handleWindowMouseMove);
+    document.addEventListener(`mousemove`, handleWindowMouseMove);
   }
 
   return <>{addSpan(`${children}`)}</>;

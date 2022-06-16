@@ -1,14 +1,15 @@
 import { styled } from '@/styles/stitches.config';
 
-export default function Grid({ props, children }: any) {
+export default function Grid({ children, ...props }: any) {
   const Grid = styled(`article`, {
     position: `relative`,
     margin: `0 auto`,
     padding: `0`,
     display: `grid`,
     gridTemplateColumns: `1fr 1fr 1fr 6fr 1fr 1fr 1fr`,
-    gridTemplateRows: `auto`,
+    gridTemplateRows: `fit-content(100%)`,
     gridGap: `1rem`,
+    alignContent: `start`,
     '> *': {
       gridColumn: `1 / 8`,
     },
@@ -33,6 +34,7 @@ export default function Grid({ props, children }: any) {
         gridColumn: `4 / 5`,
       },
     },
+    ...props.css,
   });
 
   return <Grid {...props}>{children}</Grid>;

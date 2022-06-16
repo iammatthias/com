@@ -27,8 +27,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     >
       <Meta title={pageProps.pageTitle} />
 
-      <NavWrapper />
       <Layout>
+        <NavWrapper />
         <MDX {...pageProps}>
           <Component {...pageProps} />
         </MDX>

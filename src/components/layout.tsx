@@ -4,7 +4,8 @@ export default function Layout({ children }: any) {
   return (
     <Grid
       css={{
-        margin: `64px 0 0`,
+        padding: `2rem 1rem 2rem`,
+        height: `calc(100vh - 4rem)`,
       }}
     >
       {children}

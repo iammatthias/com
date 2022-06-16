@@ -10,18 +10,20 @@ import { MDXRemote } from 'next-mdx-remote';
 
 // helpers
 import { isDev } from '@/utils/isDev';
-import Squiggle from '@/components/joy/squiggle';
-import Thoughts from '@/components/joy/thoughts';
-
-// components
+import { Box } from '@/components/primitives/box';
 
 export default function Home({ contentfulMdx }: any) {
   return (
-    <>
+    <Box
+      css={{
+        display: `flex`,
+        flexDirection: `column`,
+        alignItems: `center`,
+        height: `100%`,
+      }}
+    >
       <MDXRemote {...contentfulMdx} />
-      <Squiggle squiggleWidth="8" height="24" />
-      <Thoughts />
-    </>
+    </Box>
   );
 }
 

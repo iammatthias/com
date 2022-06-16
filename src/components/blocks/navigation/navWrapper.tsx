@@ -3,7 +3,7 @@ import { styled } from '@/styles/stitches.config';
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
 import NavQuery from './navQuery';
 import ThemeToggle from '@/components/joy/themeToggle';
-import Grid from '@/components/primitives/grid';
+
 import {
   CaretDownIcon,
   HomeIcon,
@@ -11,6 +11,8 @@ import {
   FileTextIcon,
   FaceIcon,
   ArrowRightIcon,
+  Pencil2Icon,
+  MixIcon,
 } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import NavTitle from './navTitle';
@@ -21,15 +23,15 @@ export default function NavWrapper() {
     position: `relative`,
     display: `flex`,
     justifyContent: `center`,
+    width: `100%`,
     zIndex: 10,
     margin: `0 0 24px`,
   });
 
   const StyledList = styled(NavigationMenuPrimitive.List, {
+    all: `unset`,
     display: `flex`,
     justifyContent: `center`,
-    verticalAlign: `middle`,
-    marginLeft: 0,
     padding: 4,
     listStyle: `none`,
     $$shadowColor: `$colors$primary`,
@@ -56,14 +58,12 @@ export default function NavWrapper() {
   };
 
   const StyledTrigger = styled(NavigationMenuPrimitive.Trigger, {
+    all: `unset`,
     ...itemStyles,
     display: `flex`,
     alignItems: `center`,
     justifyContent: `space-between`,
     gap: 2,
-    border: `0`,
-    background: `none`,
-    margin: 0,
   });
 
   const StyledCaret = styled(CaretDownIcon, {
@@ -79,8 +79,7 @@ export default function NavWrapper() {
     ...itemStyles,
     display: `block`,
     textDecoration: `none`,
-    fontSize: 15,
-    lineHeight: `0`,
+    lineHeight: 1,
   });
 
   const StyledContent = styled(NavigationMenuPrimitive.Content, {
@@ -88,67 +87,80 @@ export default function NavWrapper() {
     top: 0,
     left: 0,
     width: `100%`,
-
     backdropFilter: `blur(50px) saturate(382%)`,
-
-    // background: `$colors$background`,
   });
 
   const StyledViewport = styled(NavigationMenuPrimitive.Viewport, {
     position: `relative`,
+    transformOrigin: `top center`,
     marginTop: 10,
-    marginBottom: 50,
     width: `100%`,
-
     overflow: `hidden`,
     height: `var(--radix-navigation-menu-viewport-height)`,
+    // width: `var(--radix-navigation-menu-viewport-width)`,
     $$shadowColor: `$colors$primary`,
     boxShadow: `0 0 0 2px $$shadowColor`,
   });
 
-  // Exports
+  const ListItem = styled(`li`);
+
+  const LinkTitle = styled(`p`, {
+    fontWeight: `Bold`,
+    lineHeight: 1.2,
+    margin: `0 0 8px`,
+    fontSize: `15px`,
+    wordWrap: `break-word`,
+  });
+
+  const LinkText = styled(`p`, {
+    fontSize: `12px`,
+    lineHeight: 1.4,
+  });
 
   // Your app...
-  const ContentList = styled(`div`, {
-    position: `relative`,
-    width: `calc(100% - 48px)`,
-    height: `100%`,
-    padding: 24,
-    margin: 0,
+  const ContentList = styled(`ul`, {
     display: `grid`,
-    gridTemplateColumns: `1fr`,
-    gridTemplateRows: `auto`,
-    gridGap: `1rem`,
-    '@bp1': {
-      gridTemplateColumns: `1fr 1fr`,
-    },
-    '@bp2': {
-      gridTemplateColumns: `1fr 1fr 1fr`,
-    },
+    padding: 22,
+    margin: 0,
+    columnGap: 10,
+    listStyle: `none`,
+    width: 600,
+    gridAutoFlow: `column`,
+    gridTemplateRows: `repeat(3, 1fr)`,
   });
 
   const ViewportPosition = styled(`div`, {
     position: `absolute`,
     display: `flex`,
+    justifyContent: `center`,
     width: `100%`,
     top: `100%`,
     left: 0,
+    perspective: `2000px`,
   });
 
+  const GalleryData = NavQuery({ type: `Gallery`, limit: 9 });
+
+  const BlogData = NavQuery({ type: `Blog`, limit: 9 });
+
   return (
-    <Grid>
+    <>
       <NavTitle />
 
       <StyledMenu>
         <StyledList>
+          {/* home */}
           <NavigationMenuPrimitive.Item>
             <Link href="/" passHref>
               <StyledLink>
-                <HomeIcon />
+                <a>
+                  <HomeIcon />
+                </a>
               </StyledLink>
             </Link>
           </NavigationMenuPrimitive.Item>
 
+          {/* galleries */}
           <NavigationMenuPrimitive.Item>
             <StyledTrigger>
               <CameraIcon />
@@ -156,14 +168,37 @@ export default function NavWrapper() {
             </StyledTrigger>
             <StyledContent>
               <ContentList>
-                <NavQuery type="Gallery" limit="9" />
-                <Link href="/work" passHref>
-                  <ArrowRightIcon />
-                </Link>
+                {GalleryData &&
+                  GalleryData.map((page: any, index: number) => (
+                    <ListItem key={index}>
+                      <Link href={`/${page.slug}`} passHref>
+                        <StyledLink>
+                          <LinkTitle>{page.title}</LinkTitle>
+                          <LinkText>
+                            Published:{` `}
+                            {new Date(
+                              page.publishDate
+                                .replace(/-/g, `/`)
+                                .replace(/T.+/, ``),
+                            ).toLocaleDateString(`en-us`)}
+                          </LinkText>
+                        </StyledLink>
+                      </Link>
+                    </ListItem>
+                  ))}
+                <ListItem>
+                  <Link href="/work" passHref>
+                    <StyledLink>
+                      {` `}
+                      <ArrowRightIcon />
+                    </StyledLink>
+                  </Link>
+                </ListItem>
               </ContentList>
             </StyledContent>
           </NavigationMenuPrimitive.Item>
 
+          {/* blog */}
           <NavigationMenuPrimitive.Item>
             <StyledTrigger>
               <FileTextIcon />
@@ -171,23 +206,69 @@ export default function NavWrapper() {
             </StyledTrigger>
             <StyledContent>
               <ContentList>
-                <NavQuery type="Blog" limit="9" />
+                {BlogData &&
+                  BlogData.map((page: any, index: number) => (
+                    <ListItem key={index}>
+                      <Link href={`/${page.slug}`} passHref>
+                        <StyledLink>
+                          <LinkTitle>{page.title}</LinkTitle>
+                          <LinkText>
+                            Published:{` `}
+                            {new Date(
+                              page.publishDate
+                                .replace(/-/g, `/`)
+                                .replace(/T.+/, ``),
+                            ).toLocaleDateString(`en-us`)}
+                          </LinkText>
+                        </StyledLink>
+                      </Link>
+                    </ListItem>
+                  ))}
 
-                <Link href="/blog" passHref>
-                  <ArrowRightIcon />
-                </Link>
+                <ListItem>
+                  <Link href="/blog" passHref>
+                    <StyledLink>
+                      <ArrowRightIcon />
+                    </StyledLink>
+                  </Link>
+                </ListItem>
               </ContentList>
             </StyledContent>
           </NavigationMenuPrimitive.Item>
 
+          {/* goodies */}
           <NavigationMenuPrimitive.Item>
-            <Link href="/guestbook" passHref>
-              <StyledLink>
-                <FaceIcon />
-              </StyledLink>
-            </Link>
+            <StyledTrigger>
+              <MixIcon />
+              <StyledCaret aria-hidden />
+            </StyledTrigger>
+            <StyledContent>
+              <ContentList>
+                {/* thoughts */}
+                <NavigationMenuPrimitive.Item>
+                  <Link href="/thoughts" passHref>
+                    <StyledLink>
+                      <LinkTitle>Thoughts</LinkTitle>
+                      <LinkText>Tiny bits of short form content</LinkText>
+                    </StyledLink>
+                  </Link>
+                </NavigationMenuPrimitive.Item>
+
+                {/* guestbook */}
+
+                <NavigationMenuPrimitive.Item>
+                  <Link href="/guestbook" passHref>
+                    <StyledLink>
+                      <LinkTitle>The Guestbook</LinkTitle>
+                      <LinkText>gm, wagmi, lfg</LinkText>
+                    </StyledLink>
+                  </Link>
+                </NavigationMenuPrimitive.Item>
+              </ContentList>
+            </StyledContent>
           </NavigationMenuPrimitive.Item>
 
+          {/* color mode */}
           <NavigationMenuPrimitive.Item>
             <StyledLink>
               <ThemeToggle />
@@ -199,6 +280,6 @@ export default function NavWrapper() {
           <StyledViewport />
         </ViewportPosition>
       </StyledMenu>
-    </Grid>
+    </>
   );
 }
