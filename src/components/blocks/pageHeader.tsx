@@ -1,6 +1,6 @@
 import { Box } from '../primitives/box';
 import Squiggle from '../joy/squiggle';
-import { Text } from '../primitives/text';
+import Text from '../primitives/text';
 import Comments from '../joy/comments';
 
 // page header

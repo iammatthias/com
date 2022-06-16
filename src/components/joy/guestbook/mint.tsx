@@ -10,7 +10,6 @@ import {
 import abi from '@/lib/contract/abi.json';
 import he from 'he';
 import { Box } from '@/components/primitives/box';
-import { Text } from '@/components/primitives/text';
 import { GuestbookText } from './guestbookText';
 import { GuestbookButton } from './guestbookButton';
 import GuestENS from './guestEns';
@@ -132,11 +131,11 @@ export default function Mint() {
             </form>
             {message && (
               <Sparkles>
-                <Text>
+                <GuestbookText>
                   <b>
                     <i>Preview:</i>
                   </b>
-                </Text>
+                </GuestbookText>
                 <Box css={{ width: `fit-content`, margin: `0 0 16px` }}>
                   <GuestbookText
                     as="p"

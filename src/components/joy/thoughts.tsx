@@ -4,7 +4,7 @@ import { Remark } from 'react-remark';
 
 import matter from 'gray-matter';
 
-import { Text } from '../primitives/text';
+import Text from '../primitives/text';
 import { Box } from '../primitives/box';
 import { Button } from '../primitives/button';
 
@@ -52,7 +52,7 @@ export default function Thoughts() {
   if (loading)
     return (
       <Box>
-        <Text>Loading...</Text>
+        <Text as="p">Loading...</Text>
       </Box>
     );
   if (error)

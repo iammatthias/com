@@ -5,7 +5,7 @@ import ClientOnly from '../utils/clientOnly';
 import { Box } from '@/components/primitives/box';
 
 // text
-import { Text } from '@/components/primitives/text';
+import Text from '@/components/primitives/text';
 import Link from 'next/link';
 
 // gallery

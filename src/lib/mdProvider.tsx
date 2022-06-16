@@ -1,4 +1,4 @@
-import { Text } from '@/components/primitives/text';
+import Text from '@/components/primitives/text';
 const mdComponents = {
   // p: (props: any) => <p {...props} style={{ fontSize: `14px` }} />,
   p: (props: any) => (
