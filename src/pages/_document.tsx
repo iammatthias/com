@@ -1,36 +1,26 @@
-import Document, {
-  DocumentContext,
-  Html,
-  Head,
-  Main,
-  NextScript,
-} from 'next/document';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
+import React from 'react';
+import { fontFiles } from '../styles/typography.css';
 
-import { getCssText } from '@/styles/stitches.config';
+export default class MyDocument extends Document {
+  static async getInitialProps(ctx: any) {
+    const initialProps = await Document.getInitialProps(ctx);
+    return { ...initialProps };
+  }
 
-class MyDocument extends Document {
   render() {
     return (
-      <Html lang="en-US">
+      <Html lang="en">
         <Head>
-          <script
-            async
-            defer
-            data-website-id="ce0e2219-dc16-47e7-9211-19554e397773"
-            src="https://a.iammatthias.com/umami.js"
-          />
-
-          <link
-            rel="preload"
-            href="/fonts/Mayes-Mayes.woff"
-            as="font"
-            type="font/woff"
-            crossOrigin="anonymous"
-          />
-          <style
-            id="stitches"
-            dangerouslySetInnerHTML={{ __html: getCssText() }}
-          />
+          {fontFiles.map((file: string) => (
+            <link
+              as="font"
+              crossOrigin="anonymous"
+              href={file}
+              key={file}
+              rel="preload"
+            />
+          ))}
         </Head>
         <body>
           <Main />
@@ -40,5 +30,3 @@ class MyDocument extends Document {
     );
   }
 }
-
-export default MyDocument;
