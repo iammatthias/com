@@ -1,4 +1,5 @@
 // sprinkles.css.ts
+// Language: typescript
 
 import { createTheme } from '@vanilla-extract/css';
 import { defineProperties, createSprinkles } from '@vanilla-extract/sprinkles';

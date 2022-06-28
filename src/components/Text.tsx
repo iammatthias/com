@@ -1,5 +1,6 @@
-// Box.tsx
+// Text.tsx
 // Language: typescript
+
 import React from 'react';
 import { fontStyles, TextVariants } from '@/styles/typography.css';
 

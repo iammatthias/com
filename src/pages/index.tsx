@@ -1,3 +1,6 @@
+// index.tsx
+// Language: typescript
+
 import Box from '@/components/Box';
 import Text from '@/components/Text';
 

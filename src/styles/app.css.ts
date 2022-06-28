@@ -1,3 +1,6 @@
+// app.css.ts
+// Language: typescript
+
 import { globalFontFace, globalStyle } from '@vanilla-extract/css';
 import { fonts } from './typography.css';
 

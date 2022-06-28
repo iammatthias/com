@@ -1,3 +1,6 @@
+// _app.tsx
+// Language: typescript
+
 import { AppProps } from 'next/app';
 import '@/styles/app.css';
 
