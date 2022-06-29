@@ -152,6 +152,13 @@ export const fontStyles = recipe({
       em: {
         fontStyle: `italic`,
       },
+      nav: [
+        calcFontCss({
+          id: `INTER`,
+          leading: 25,
+          size: 12,
+        }),
+      ],
     },
   },
 });

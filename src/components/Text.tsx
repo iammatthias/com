@@ -8,11 +8,12 @@ import Box from '@/components/Box';
 
 type Props = {
   children: React.ReactNode;
+  as?: React.ElementType;
 } & TextVariants;
 
-const Text = ({ kind, children }: Props) => {
+const Text = ({ kind, children, as }: Props) => {
   return (
-    <Box className={fontStyles({ kind })} as={kind}>
+    <Box className={fontStyles({ kind })} as={as || kind}>
       {children}
     </Box>
   );
