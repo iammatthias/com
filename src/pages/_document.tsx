@@ -2,7 +2,6 @@
 // Language: typescript
 
 import Document, { Head, Html, Main, NextScript } from 'next/document';
-import React from 'react';
 
 import { fontFiles } from '../styles/typography.css';
 

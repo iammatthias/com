@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Box from '@/components/Box';
 
 import { layoutRecipe, LayoutVariants } from './Layout.css';

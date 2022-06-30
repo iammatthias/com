@@ -1,7 +1,6 @@
 import { ArrowRightIcon, HomeIcon, MixIcon } from '@radix-ui/react-icons';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import Link from 'next/link';
-import React from 'react';
 
 import Box from '@/components/Box';
 import Text from '@/components/Text';
