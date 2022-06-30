@@ -53,9 +53,30 @@ globalStyle(`img, picture, video, canvas, svg, iframe`, {
 });
 
 // Avoid text overflow.
-globalStyle(`h1, h2, h3, h4, h5, h6, p, strong`, {
-  fontWeight: 400,
-  overflowWrap: `break-word`,
+globalStyle(
+  `h1, h2, h3, h4, h5, h6, p, strong, em, pre, code, blockquote, ul, ol, li`,
+  {
+    fontWeight: 400,
+    overflowWrap: `break-word`,
+  },
+);
+// Avoid text overflow.
+globalStyle(`pre`, {
+  whiteSpace: `pre-wrap`,
+  paddingTop: 8,
+  paddingLeft: 8,
+  paddingRight: 8,
+  borderTop: `2px solid black`,
+});
+
+globalStyle(`code`, {
+  paddingRight: 2,
+  paddingLeft: 2,
+  border: `2px solid black`,
+});
+
+globalStyle(`pre > code`, {
+  border: `none`,
 });
 
 globalStyle(`a`, {

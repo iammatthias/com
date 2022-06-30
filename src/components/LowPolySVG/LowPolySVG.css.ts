@@ -5,15 +5,11 @@ export const lowPolySVGRecipe = recipe({
     LowPolySVG: {
       footer: [
         {
-          position: `absolute`,
-          left: 0,
-          right: 0,
-          bottom: 64,
-          zIndex: 1,
-          // filter: `grayscale(1)`,
           height: `44px`,
           margin: `0 auto`,
           fill: `#131315`,
+          marginTop: `auto`,
+          marginBottom: `64px`,
         },
       ],
     },

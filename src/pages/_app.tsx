@@ -2,6 +2,7 @@
 // Language: typescript
 
 import '@/styles/app.css';
+import 'react-static-tweets/styles.css';
 
 import { AppProps } from 'next/app';
 

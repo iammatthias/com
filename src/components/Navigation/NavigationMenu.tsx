@@ -17,7 +17,11 @@ export const _NavigationMenu = () => {
       <NavigationMenu.List className={navigationRecipe({ nav: `menuList` })}>
         <NavigationMenu.Item>
           <Box className={navigationRecipe({ nav: `menuTrigger` })}>
-            <HomeIcon className={navigationRecipe({ nav: `menuIcon` })} />
+            <Link href="/" passHref={true}>
+              <a>
+                <HomeIcon className={navigationRecipe({ nav: `menuIcon` })} />
+              </a>
+            </Link>
           </Box>
         </NavigationMenu.Item>
         <NavigationMenu.Item>

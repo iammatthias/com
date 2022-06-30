@@ -1,21 +1,19 @@
 // Language: typescript
 // pages/[...slug].tsx
 
-// apollo
 import { gql } from '@apollo/client';
 import { MDXRemote } from 'next-mdx-remote';
-// mdx
 import { serialize } from 'next-mdx-remote/serialize';
 
+import Layout from '@/components/Layout';
 import { contentfulClient } from '@/utils/apolloProvider';
-// helpers
 import { isDev } from '@/utils/isDev';
 
 export default function Page({ mdx }: any) {
   return (
-    <>
+    <Layout as="main" layout="pageContent">
       <MDXRemote {...mdx} />
-    </>
+    </Layout>
   );
 }
 

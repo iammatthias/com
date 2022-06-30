@@ -1,24 +1,18 @@
 import { MDXProvider } from '@mdx-js/react';
+// import Spicy from '@/components/joy/spicy';
+import Vimeo from '@u-wave/react-vimeo';
 import Link from 'next/link';
+import { Tweet } from 'react-static-tweets';
 
 // import ClientOnly from '../utils/clientOnly';
-// primitives
 import Box from '@/components/Box';
-// text
+import Squiggle from '@/components/etc/Squiggle';
+import GalleryContentful from '@/components/Gallery/GalleryContentful';
+import Glass from '@/components/Gallery/GalleryGlass';
+import GalleryWrapper from '@/components/Gallery/GalleryWrapper';
+import PageList from '@/components/Navigation/PageList';
 import Text from '@/components/Text';
 
-// gallery
-// import GalleryContentful from '@/components/blocks/gallery/galleryContentful';
-// import GalleryGrid from '@/components/blocks/gallery/galleryGrid';
-// import Glass from '@/components/blocks/gallery/galleryGlass';
-
-// etc
-// import Sparkles from '@/components/joy/sparkle';
-// import Mono from '@/components/joy/mono';
-// import Squiggle from '@/components/joy/squiggle';
-// import Spicy from '@/components/joy/spicy';
-// import Vimeo from '@u-wave/react-vimeo';
-// import NavQuery from '@/components/blocks/navigation/navQuery';
 // import Thoughts from '@/components/joy/thoughts';
 
 const mdComponents = {
@@ -52,39 +46,36 @@ const mdComponents = {
       <a>{props.children}</a>
     </Link>
   ),
+  ul: (props: any) => <Text as="ul" kind="ul" {...props} />,
+  ol: (props: any) => <Text as="ol" kind="ol" {...props} />,
+  li: (props: any) => <Text as="li" kind="li" {...props} />,
   Anchor: (props: any) => <Link {...props} />,
 
   // galleries
-  //   Gallery: (props: any) => <GalleryContentful {...props} />,
-  //   Glass: (props: any) => <Glass {...props} />,
-  //   GalleryGrid: (props: any) => <GalleryGrid {...props} />,
+  Gallery: (props: any) => <GalleryContentful {...props} />,
+  Glass: (props: any) => <Glass {...props} />,
+  GalleryWrapper: (props: any) => <GalleryWrapper {...props} />,
+  GalleryGrid: (props: any) => <GalleryWrapper {...props} />,
 
   // etc
   //   Thoughts: (props: any) => <Thoughts {...props} />,
-  //   PageList: (props: any) => <NavQuery {...props} />,
-  //   Sparkle: (props: any) => (
-  //     <ClientOnly>
-  //       <Sparkles {...props} />
-  //     </ClientOnly>
-  //   ),
+  PageList: (props: any) => <PageList {...props} />,
   Sparkle: (props: any) => <Text as="span" kind="span" {...props} />,
-  //   Mono: (props: any) => <Mono {...props} />,
-  //   Squiggle: (props: any) => <Squiggle {...props} />,
-  //   Spicy: (props: any) => <Spicy {...props} />,
-  //   Vimeo: (props: any) => (
-  //     // @ts-ignore
-  //     <Vimeo
-  //       responsive
-  //       autoplay={true}
-  //       muted={true}
-  //       loop={true}
-  //       autopause={false}
-  //       showTitle={false}
-  //       showPortrait={false}
-  //       showByline={false}
-  //       {...props}
-  //     />
-  //   ),
+  Squiggle: (props: any) => <Squiggle {...props} />,
+  Vimeo: (props: any) => (
+    <Vimeo
+      responsive
+      autoplay={true}
+      muted={true}
+      loop={true}
+      autopause={false}
+      showTitle={false}
+      showPortrait={false}
+      showByline={false}
+      {...props}
+    />
+  ),
+  Tweet: (props: any) => <Tweet {...props} />,
 };
 
 const MDX = ({ children }: any) => (

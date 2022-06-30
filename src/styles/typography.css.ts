@@ -139,6 +139,7 @@ export const fontStyles = recipe({
         }),
         { fontWeight: `bold` },
       ],
+
       strong: {
         fontWeight: `bold`,
       },
@@ -151,6 +152,30 @@ export const fontStyles = recipe({
       span: {},
       pre: {},
       code: {},
+      ul: {
+        display: `grid`,
+        gap: `8px`,
+      },
+      ol: {
+        display: `grid`,
+        gap: `8px`,
+      },
+      li: [
+        calcFontCss({
+          id: `INTER`,
+          leading: 24,
+          size: typeScale.p,
+        }),
+        {
+          paddingLeft: `16px`,
+          textIndent: `-16px`,
+          display: `flex`,
+          ':before': {
+            content: `"⊙"`,
+            marginRight: `24px`,
+          },
+        },
+      ],
     },
   },
 });
