@@ -1,7 +1,6 @@
 // index.tsx
 // Language: typescript
 
-import Box from '@/components/Box';
 import Layout from '@/components/Layout';
 import Text from '@/components/Text';
 

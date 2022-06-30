@@ -5,8 +5,8 @@
 import { FontMetrics } from '@capsizecss/core';
 import interFontMetrics from '@capsizecss/metrics/inter';
 import { createTextStyle } from '@capsizecss/vanilla-extract';
-import { recipe } from '@vanilla-extract/recipes';
 import { style } from '@vanilla-extract/css';
+import { recipe } from '@vanilla-extract/recipes';
 
 interface Meta {
   fallback: string;
@@ -84,17 +84,10 @@ function calcFontCss({ id, leading, size }: Props) {
 export const fontStyles = recipe({
   variants: {
     kind: {
-      small: [
-        calcFontCss({
-          id: `INTER`,
-          leading: 16.5,
-          size: typeScale.s,
-        }),
-      ],
       p: [
         calcFontCss({
           id: `INTER`,
-          leading: 21,
+          leading: 24,
           size: typeScale.p,
         }),
       ],
@@ -152,13 +145,12 @@ export const fontStyles = recipe({
       em: {
         fontStyle: `italic`,
       },
-      nav: [
-        calcFontCss({
-          id: `INTER`,
-          leading: 25,
-          size: 12,
-        }),
-      ],
+      small: {
+        fontSize: typeScale.s,
+      },
+      span: {},
+      pre: {},
+      code: {},
     },
   },
 });

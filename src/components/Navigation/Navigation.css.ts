@@ -1,18 +1,25 @@
 import { recipe } from '@vanilla-extract/recipes';
+
 import { atoms } from '@/styles/sprinkles.css';
 
 export const navigationRecipe = recipe({
   variants: {
     nav: {
-      main: {
+      main: atoms({
         background: `black`,
         color: `white`,
         padding: 8,
-        fontSize: `15px`,
+        fontSize: 15,
         display: `flex`,
         alignItems: `center`,
         justifyContent: `space-between`,
-      },
+      }),
+      brand: atoms({
+        display: `flex`,
+        alignItems: `center`,
+        justifyContent: `space-between`,
+        gap: 16,
+      }),
       menu: {
         position: `absolute`,
         display: `flex`,
@@ -20,7 +27,8 @@ export const navigationRecipe = recipe({
         left: `0`,
         right: `0`,
         margin: `0 auto`,
-        width: `80%`,
+        width: `100%`,
+        maxWidth: `618px`,
       },
       menuIcon: {
         color: `white`,
@@ -43,27 +51,39 @@ export const navigationRecipe = recipe({
         lineHeight: 1,
         fontSize: 15,
         color: `black`,
-        '&:focus': { position: `relative`, background: `black` },
-        '&:hover': {
+        ':focus': { position: `relative`, background: `black` },
+        ':hover': {
           background: `$colors$faded`,
         },
       },
       menuContent: {
         width: `100%`,
         backdropFilter: `blur(50px) saturate(382%)`,
-        display: `flex`,
-        flexDirection: `row`,
-        flexWrap: `wrap`,
-        gap: 16,
-        padding: `16px`,
+        display: `grid`,
+        gap: `24px`,
+        color: `black`,
+        padding: 16,
+      },
+      menuPageList: {
+        width: `100%`,
+        display: `grid`,
+        gap: `24px`,
+        gridTemplateColumns: `repeat(3, 1fr)`,
       },
       menuItem: {
-        flex: `1 1 30%`,
+        flexBasis: `30%`,
+        borderTop: `2px solid black`,
+        paddingTop: 12,
+        paddingBottom: 12,
+        paddingLeft: 8,
+        paddingRight: 8,
+        display: `grid`,
+        gap: 12,
       },
       menuViewport: {
         position: `relative`,
         transformOrigin: `top center`,
-        width: `100%`,
+
         overflow: `hidden`,
         height: `calc(var(--radix-navigation-menu-viewport-height) + 4px)`,
         border: `2px solid black`,
@@ -71,8 +91,11 @@ export const navigationRecipe = recipe({
       menuViewportPosition: {
         position: `absolute`,
         justifyContent: `center`,
-        top: `100%`,
+        top: `29px`,
         perspective: `2000px`,
+        width: `100%`,
+        maxWidth: `1024px`,
+        padding: `0 16px`,
       },
     },
   },

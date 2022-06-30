@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export const Timestamp = () => {
   const [date, setDate] = useState(new Date());
@@ -15,7 +15,6 @@ export const Timestamp = () => {
       {date.toLocaleTimeString([], {
         hour: `2-digit`,
         minute: `2-digit`,
-        second: `2-digit`,
       })}
     </>
   );

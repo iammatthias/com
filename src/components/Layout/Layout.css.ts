@@ -5,20 +5,39 @@ export const layoutRecipe = recipe({
     layout: {
       list: {
         display: `grid`,
-        gridTemplateRows: `repeat(auto-fit, 1fr)`,
         gridTemplateColumns: `1fr`,
         gap: `16px`,
       },
       grid: {
         display: `grid`,
-        gridTemplateRows: `repeat(auto-fit, 1fr)`,
+
         gridTemplateColumns: `repeat(3, 1fr)`,
         gap: `16px`,
       },
       page: {
         display: `grid`,
-        grid: `auto 1fr auto`,
         gap: `32px`,
+      },
+      pageContent: {
+        display: `grid`,
+        gap: `24px`,
+        width: `100%`,
+        maxWidth: `618px`,
+        margin: `0 auto`,
+        padding: `16px`,
+      },
+      homePageContent: {
+        display: `flex`,
+        flexDirection: `column`,
+        flex: `1`,
+        justifyContent: `center`,
+        gap: `24px`,
+        width: `100%`,
+        height: `100%`,
+        minHeight: `80vh`,
+        maxWidth: `618px`,
+        margin: `0 auto`,
+        padding: `16px`,
       },
     },
   },

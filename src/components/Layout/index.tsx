@@ -1,14 +1,17 @@
 import React from 'react';
-import { layoutRecipe, LayoutVariants } from './Layout.css';
+
 import Box from '@/components/Box';
+
+import { layoutRecipe, LayoutVariants } from './Layout.css';
 
 type Props = {
   children: React.ReactNode;
+  as?: React.ElementType;
 } & LayoutVariants;
 
-export const Layout = ({ children, layout = `page` }: Props) => {
+export const Layout = ({ children, layout = `page`, as = `div` }: Props) => {
   return (
-    <Box as="section" className={layoutRecipe({ layout })}>
+    <Box as={as} className={layoutRecipe({ layout })}>
       {children}
     </Box>
   );

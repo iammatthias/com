@@ -1,26 +1,36 @@
 import Image from 'next/image';
-import { navigationRecipe } from './Navigation.css';
+
 import Box from '@/components/Box';
 import Text from '@/components/Text';
-import Icon from '../../../public/images/navBarIcon.png';
-import NavigationMenu from './NavigationMenu';
 import Timestamp from '@/utils/timestamp';
 
+import Icon from '../../../public/images/navBarIcon.png';
+import { navigationRecipe } from './Navigation.css';
+import NavigationMenu from './NavigationMenu';
+
 export const Navigation = () => {
-  // const timeStamp = new Date().toLocaleTimeString([], {
-  //   hour: `2-digit`,
-  //   minute: `2-digit`,
-  // });
   return (
     <>
-      <Box as="section" className={navigationRecipe({ nav: `main` })}>
-        <Image src={Icon} width={15} height={15} />
+      <Box as="nav" className={navigationRecipe({ nav: `main` })}>
+        <Box className={navigationRecipe({ nav: `brand` })}>
+          <Image src={Icon} width={15} height={15} alt="" />
 
-        <Text kind="nav">
-          <Timestamp />
+          <Text kind="p">
+            <Text as="small" kind="small">
+              <Text as="strong" kind="strong">
+                I AM MATTHIAS
+              </Text>
+            </Text>
+          </Text>
+        </Box>
+
+        <NavigationMenu />
+        <Text kind="p">
+          <Text as="small" kind="small">
+            <Timestamp />
+          </Text>
         </Text>
       </Box>
-      <NavigationMenu />
     </>
   );
 };

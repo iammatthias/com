@@ -2,13 +2,14 @@
 // Language: typescript
 
 import { createTheme } from '@vanilla-extract/css';
-import { defineProperties, createSprinkles } from '@vanilla-extract/sprinkles';
+import { createSprinkles, defineProperties } from '@vanilla-extract/sprinkles';
 
 const space = {
   0: `0px`,
   4: `4px`,
   8: `8px`,
   12: `12px`,
+  15: `15px`,
   16: `16px`,
   20: `20px`,
   24: `24px`,
@@ -51,15 +52,25 @@ const fontWeight = {
   900: `900`,
 };
 
+const colors = {
+  black: `rgba(4, 4, 0, 1)`,
+  blackFade: `rgba(19, 19, 21, .2)`,
+  white: `rgba(249, 254, 255, 1)`,
+  whiteFade: `rgba(253, 255, 252, .2)`,
+  gray: `rgba(128, 128, 128, 1)`,
+  blue: `rgba(3, 136, 252, 1)`,
+  red: `rgba(249, 16, 74, 1)`,
+  yellow: `rgba(255, 221, 0, 1)`,
+  pink: `rgba(232, 141, 163, 1)`,
+  turq: `rgba(0, 245, 196, 1)`,
+  orange: `rgba(255, 135, 31, 1)`,
+  bgGradient: `radial-gradient(circle at 50% 50%, rgba(249, 254, 255, 1), rgba(253, 255, 252, .2)), url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+};
+
 export const [themeClass, vars] = createTheme({
-  color: {
-    blue50: `#eff6ff`,
-    blue100: `#dbeafe`,
-    blue200: `#bfdbfe`,
-    yellow: `#aaff00`,
-  },
+  colors,
   font: {
-    body: `arial`,
+    body: `Inter, arial`,
   },
   fontSize: space,
   fontWeight: fontWeight,
@@ -74,16 +85,34 @@ const layoutStyles = defineProperties({
   },
   defaultCondition: `mobile`,
   properties: {
+    paddingTop: space,
+    paddingBottom: space,
+    paddingLeft: space,
+    paddingRight: space,
+    margin: space,
+    width: [`16px`, `100%`],
+    fontSize: space,
+    fontWeight: fontWeight,
+    gap: space,
+    alignItems: [
+      `flex-start`,
+      `center`,
+      `flex-end`,
+      `space-between`,
+      `space-around`,
+    ],
+    justifyContent: [
+      `flex-start`,
+      `center`,
+      `flex-end`,
+      `space-between`,
+      `space-around`,
+    ],
+    position: [`relative`, `absolute`, `fixed`],
     display: [`none`, `block`, `flex`],
     flexDirection: [`row`, `column`],
-    paddingTop: vars.space,
-    paddingBottom: vars.space,
-    paddingLeft: vars.space,
-    paddingRight: vars.space,
-    margin: vars.space,
-    width: [`16px`, `100%`],
-    fontSize: vars.fontSize,
-    fontWeight: vars.fontWeight,
+    background: colors,
+    backgroundImage: colors,
     // etc.
   },
   shorthands: {
@@ -95,9 +124,8 @@ const layoutStyles = defineProperties({
 
 const colorStyles = defineProperties({
   properties: {
-    color: vars.color,
-    background: vars.color,
-    // etc.
+    color: colors,
+    background: colors,
   },
 });
 

@@ -2,6 +2,7 @@
 // Language: typescript
 
 import { globalFontFace, globalStyle } from '@vanilla-extract/css';
+
 import { fonts } from './typography.css';
 
 // LOAD FONTS
@@ -58,6 +59,9 @@ globalStyle(`h1, h2, h3, h4, h5, h6, p, strong`, {
 });
 
 globalStyle(`a`, {
+  color: `inherit`,
+  fontFamily: `inherit`,
+  fontWeight: `bold`,
   textDecoration: `none`,
 });
 
