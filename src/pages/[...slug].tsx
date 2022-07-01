@@ -100,7 +100,7 @@ export async function getStaticProps({ params }: any) {
   return {
     props: {
       pageType: pageType,
-      pageTitle: pageTitle,
+      pageTitle: `IAM | ${pageTitle}`,
       publishDate: publishDate,
       mdx: mdxSource,
       slug: slug,

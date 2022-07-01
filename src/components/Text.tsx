@@ -9,12 +9,10 @@ type Props = {
   as?: React.ElementType;
 } & TextVariants;
 
-const Text = ({ kind, children, as = `p` }: Props) => {
+export default function Text({ kind, children, as = `p` }: Props) {
   return (
     <Box className={fontStyles({ kind })} as={as}>
       {children}
     </Box>
   );
-};
-
-export default Text;
+}
