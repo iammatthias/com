@@ -16,6 +16,7 @@ const mdComponents = {
         `https://cdn.statically.io/gh/iammatthias/Thoughts/main/Assets/` +
         props.src
       }
+      alt=""
       style={{ width: `50%` }}
     />
   ),

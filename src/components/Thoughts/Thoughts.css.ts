@@ -1,6 +1,9 @@
-import { recipe } from '@vanilla-extract/recipes';
+// Thought.css
+// Language: typescript
 
-import { atoms } from '@/styles/sprinkles.css';
+// Scoped styles for `Thoughts`.
+
+import { recipe } from '@vanilla-extract/recipes';
 
 export const thoughtRecipe = recipe({
   variants: {
@@ -11,7 +14,7 @@ export const thoughtRecipe = recipe({
         padding: `0 0 16px`,
         display: `flex`,
         gap: `16px`,
-        alignItems: `end`,
+        alignItems: `flex-end`,
         justifyContent: `space-between`,
         borderBottom: `1px solid`,
         ':last-child': {

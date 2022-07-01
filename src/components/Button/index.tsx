@@ -1,3 +1,8 @@
+// Button
+// Language: typescript
+
+// A reusable button component.
+
 import React from 'react';
 
 import Box from '@/components/Box';

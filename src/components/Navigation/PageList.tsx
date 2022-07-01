@@ -1,3 +1,8 @@
+// PageList
+// Language: typescript
+
+// Returns a list of pages of the correct type.
+
 import Link from 'next/link';
 
 import Box from '@/components/Box';

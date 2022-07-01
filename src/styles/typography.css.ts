@@ -1,6 +1,7 @@
 // typography.css.ts
 // Language: typescript
-// https://github.com/bradwoods/boilerplate-nextjs-typography
+
+// Typography styles + Capsize. See: https://github.com/bradwoods/boilerplate-nextjs-typography
 
 import { FontMetrics } from '@capsizecss/core';
 import interFontMetrics from '@capsizecss/metrics/inter';

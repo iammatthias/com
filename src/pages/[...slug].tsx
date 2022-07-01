@@ -1,5 +1,7 @@
+// [...slug]
 // Language: typescript
-// pages/[...slug].tsx
+
+// Dynamically creates pages when content is published on Contentful.
 
 import { gql } from '@apollo/client';
 import { MDXRemote } from 'next-mdx-remote';

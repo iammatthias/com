@@ -1,3 +1,8 @@
+// LowPolySVG
+// Language: typescript
+
+// A low poly SVG used as a `logo` at the end of a page.
+
 import { SVGProps } from 'react';
 
 import { lowPolySVGRecipe } from './LowPolySVG.css';

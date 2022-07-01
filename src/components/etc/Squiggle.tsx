@@ -1,4 +1,7 @@
-// squiggle
+// Squiggle
+// Language: typescript
+
+// A squiggle. Use this instead of `<hr/>` for a bit of character.
 
 import useMeasure from 'react-use-measure';
 

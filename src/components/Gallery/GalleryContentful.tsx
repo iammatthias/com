@@ -1,4 +1,7 @@
-// gallery
+// GalleryContentful
+// Language: typescript
+
+// Renders images in a grid, sourced from Contentful using GraphQL.
 
 import { gql, useQuery } from '@apollo/client';
 import Image from 'next/image';

@@ -1,6 +1,8 @@
 // index.tsx
 // Language: typescript
 
+// The homepage.
+
 // apollo
 import { gql } from '@apollo/client';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';

@@ -1,4 +1,7 @@
-// gallery
+// GalleryGlass
+// Language: typescript
+
+// Renders images in a grid, sourced from my public profile on Glass: https://glass.photo/iammatthias
 
 import Image, { ImageLoaderProps } from 'next/image';
 import useSWR from 'swr';

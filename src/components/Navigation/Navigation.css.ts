@@ -1,3 +1,8 @@
+// NavigationMenu.css
+// Language: typescript
+
+// Scoped styles for `NavigationMenu`.
+
 import { recipe } from '@vanilla-extract/recipes';
 
 import { atoms } from '@/styles/sprinkles.css';

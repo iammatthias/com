@@ -1,3 +1,8 @@
+// NavigationMenu
+// Language: typescript
+
+// A navigation menu component that renders a response from the page query.
+
 import Image from 'next/image';
 
 import Box from '@/components/Box';

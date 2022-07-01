@@ -1,3 +1,8 @@
+// Layout
+// Language: typescript
+
+// A layout component used to set `gap` values for various elements.
+
 import Box from '@/components/Box';
 
 import { layoutRecipe, LayoutVariants } from './Layout.css';

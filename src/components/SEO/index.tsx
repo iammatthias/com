@@ -1,6 +1,8 @@
 // SEO.tsx
 // Language: typescript
 
+// Dynamic SEO component that renders the correct title, description, and share image for the current page.
+
 import Head from 'next/head';
 
 type Props = {

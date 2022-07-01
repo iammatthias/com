@@ -1,3 +1,8 @@
+// LowPolySVG.css
+// Language: typescript
+
+// Scopeed styles for `LowPolySVG`.
+
 import { recipe } from '@vanilla-extract/recipes';
 
 export const lowPolySVGRecipe = recipe({

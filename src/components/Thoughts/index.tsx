@@ -1,8 +1,13 @@
+// Thoughts
+// Language: typescript
+
+// Loads and renders the `Thoughts` content  using GraphQL.
+// Thoughts are written in markdown, managed using Obsidian, and stored on GitHub.
+
 import { gql, useQuery } from '@apollo/client';
 import { Link2Icon } from '@radix-ui/react-icons';
 import copy from 'copy-data-to-clipboard';
 import matter from 'gray-matter';
-import Link from 'next/link';
 import { Remark } from 'react-remark';
 import rehypeRaw from 'rehype-raw';
 

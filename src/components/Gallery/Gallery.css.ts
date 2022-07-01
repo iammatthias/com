@@ -1,3 +1,8 @@
+// Gallery.css
+// Language: typescript
+
+// Scoped styles for `Gallery`.
+
 import { recipe } from '@vanilla-extract/recipes';
 
 export const galleryRecipe = recipe({

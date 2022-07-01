@@ -1,3 +1,8 @@
+// NavigationMenu
+// Language: typescript
+
+// Uses https://www.radix-ui.com/docs/primitives/components/navigation-menu
+
 import { ArrowRightIcon, HomeIcon, MixIcon } from '@radix-ui/react-icons';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import Link from 'next/link';
@@ -46,32 +51,7 @@ export const _NavigationMenu = () => {
           <NavigationMenu.Content
             className={navigationRecipe({ nav: `menuContent` })}
           >
-            <Text kind="h4">Etc</Text>
-            <Box className={navigationRecipe({ nav: `menuPageList` })}>
-              <Box className={navigationRecipe({ nav: `menuItem` })}>
-                <Link href="/thoughts" passHref={true}>
-                  <a>
-                    <Text as="p" kind="p">
-                      <Text as="small" kind="small">
-                        Thoughts
-                      </Text>
-                    </Text>
-                  </a>
-                </Link>
-              </Box>
-              <Box className={navigationRecipe({ nav: `menuItem` })}>
-                <Link href="/guestbook" passHref={true}>
-                  <a>
-                    <Text as="p" kind="p">
-                      <Text as="small" kind="small">
-                        The Guestbook
-                      </Text>
-                    </Text>
-                  </a>
-                </Link>
-              </Box>
-            </Box>
-            <Text kind="h4">Photography</Text>
+            <Text kind="h4">Work</Text>
             <Box className={navigationRecipe({ nav: `menuPageList` })}>
               {GalleryData &&
                 GalleryData.map((page: any, index: number) => (
@@ -136,6 +116,32 @@ export const _NavigationMenu = () => {
                 <Link href="/blog" passHref={true}>
                   <a>
                     <ArrowRightIcon />
+                  </a>
+                </Link>
+              </Box>
+            </Box>
+
+            <Text kind="h4">Etc</Text>
+            <Box className={navigationRecipe({ nav: `menuPageList` })}>
+              <Box className={navigationRecipe({ nav: `menuItem` })}>
+                <Link href="/thoughts" passHref={true}>
+                  <a>
+                    <Text as="p" kind="p">
+                      <Text as="small" kind="small">
+                        Thoughts
+                      </Text>
+                    </Text>
+                  </a>
+                </Link>
+              </Box>
+              <Box className={navigationRecipe({ nav: `menuItem` })}>
+                <Link href="/guestbook" passHref={true}>
+                  <a>
+                    <Text as="p" kind="p">
+                      <Text as="small" kind="small">
+                        The Guestbook
+                      </Text>
+                    </Text>
                   </a>
                 </Link>
               </Box>

@@ -1,5 +1,7 @@
-// Text.tsx
+// Text
 // Language: typescript
+
+// Text component that consumes a `kind` and `as prop to render the appropriate semantic text element.
 
 import Box from '@/components/Box';
 import { fontStyles, TextVariants } from '@/styles/typography.css';

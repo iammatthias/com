@@ -1,6 +1,8 @@
 // sprinkles.css.ts
 // Language: typescript
 
+// Provides sprinkles / atoms for recipes.
+
 import { createTheme } from '@vanilla-extract/css';
 import { createSprinkles, defineProperties } from '@vanilla-extract/sprinkles';
 

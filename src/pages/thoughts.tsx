@@ -1,4 +1,7 @@
-// pages/thoughts.tsx
+// Thoughts
+// Language: typescript
+
+// Describes what `Thoughts` are, and renders the content.
 
 // helpers
 import Link from 'next/link';

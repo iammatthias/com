@@ -1,4 +1,7 @@
-// gallery
+// GalleryWrapper
+// Language: typescript
+
+// Renders gallery images in a grid, but can be resused with inline assets.
 
 import { Children } from 'react';
 import Masonry from 'react-masonry-css';

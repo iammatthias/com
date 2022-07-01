@@ -1,3 +1,8 @@
+// Background.css
+// Language: typescript
+
+// Scoped styles for `Background`.
+
 import { recipe } from '@vanilla-extract/recipes';
 
 import { atoms } from '@/styles/sprinkles.css';

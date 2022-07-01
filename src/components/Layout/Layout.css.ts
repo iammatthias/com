@@ -1,3 +1,8 @@
+// Layout.css
+// Language: typescript
+
+// Scoped styles for `Layout`.
+
 import { recipe } from '@vanilla-extract/recipes';
 
 export const layoutRecipe = recipe({

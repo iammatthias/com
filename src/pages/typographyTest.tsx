@@ -1,6 +1,8 @@
 // index.tsx
 // Language: typescript
 
+// Useful for testing typography. List layout provides spacing.
+
 import Layout from '@/components/Layout';
 import Text from '@/components/Text';
 

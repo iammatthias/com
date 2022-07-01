@@ -1,3 +1,8 @@
+// glass.ts
+// Language: typescript
+
+// Queries last 100 images from https://glass.photo/iammatthias
+
 import axios from 'axios';
 
 export default async function getPosts(req: any, res: any) {

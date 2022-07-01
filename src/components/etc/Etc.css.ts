@@ -1,3 +1,8 @@
+// Etc.css
+// Language: typescript
+
+// Scoped styles for `Etc` components.
+
 import { recipe } from '@vanilla-extract/recipes';
 
 export const etcRecipe = recipe({
