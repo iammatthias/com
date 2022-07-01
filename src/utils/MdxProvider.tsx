@@ -46,10 +46,15 @@ const mdComponents = {
       <a>{props.children}</a>
     </Link>
   ),
+  Anchor: (props: any) => (
+    <Link {...props} passHref={true}>
+      <a>{props.children}</a>
+    </Link>
+  ),
+  Mono: (props: any) => <Text as="span" kind="mono" {...props} />,
   ul: (props: any) => <Text as="ul" kind="ul" {...props} />,
   ol: (props: any) => <Text as="ol" kind="ol" {...props} />,
   li: (props: any) => <Text as="li" kind="li" {...props} />,
-  Anchor: (props: any) => <Link {...props} />,
 
   // galleries
   Gallery: (props: any) => <GalleryContentful {...props} />,

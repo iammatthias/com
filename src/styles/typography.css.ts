@@ -176,6 +176,9 @@ export const fontStyles = recipe({
           },
         },
       ],
+      mono: {
+        fontFamily: `monospace`,
+      },
     },
   },
 });

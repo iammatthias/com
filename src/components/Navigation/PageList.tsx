@@ -1,4 +1,3 @@
-import { HomeIcon, MixIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 
 import Box from '@/components/Box';
