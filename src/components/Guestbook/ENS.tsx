@@ -9,6 +9,5 @@ export default function GuestENS(props: any) {
   if (isLoading) return props.address;
   if (isError) return props.address;
 
-  console.log(data);
   return data || props.address;
 }
