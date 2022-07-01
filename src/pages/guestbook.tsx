@@ -12,13 +12,12 @@ import Mint from '@/components/Guestbook/Mint';
 import Notes from '@/components/Guestbook/Notes';
 import Layout from '@/components/Layout';
 import Text from '@/components/Text';
-import Web3Provider from '@/utils/web3Provider';
 
 // components
 
 export default function Home() {
   const contract = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS;
-  const { address, isConnecting, isDisconnected } = useAccount();
+  const { address } = useAccount();
 
   return (
     <Layout as="main" layout="pageContent">
