@@ -17,7 +17,7 @@ export const backgroundRecipe = recipe({
           bottom: 0,
           zIndex: -1,
           filter: `grayscale(1)`,
-          height: `100vh`,
+          minHeight: `calc(100% + env(safe-area-inset-top))`,
           backgroundAttachment: `fixed`,
         },
       ],

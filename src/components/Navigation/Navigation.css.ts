@@ -5,9 +5,15 @@ import { atoms } from '@/styles/sprinkles.css';
 export const navigationRecipe = recipe({
   variants: {
     nav: {
+      mainWrapper: [
+        atoms({
+          paddingLeft: `safeLeft`,
+          paddingRight: `safeRight`,
+          background: `black`,
+        }),
+      ],
       main: [
         atoms({
-          background: `black`,
           color: `white`,
           padding: 8,
           fontSize: 15,

@@ -10,7 +10,7 @@ import NavigationMenu from './NavigationMenu';
 
 export const Navigation = () => {
   return (
-    <>
+    <Box as="nav" className={navigationRecipe({ nav: `mainWrapper` })}>
       <Box as="nav" className={navigationRecipe({ nav: `main` })}>
         <Box className={navigationRecipe({ nav: `brand` })}>
           <Image src={Icon} width={24} height={24} alt="" />
@@ -31,7 +31,7 @@ export const Navigation = () => {
           </Text>
         </Text>
       </Box>
-    </>
+    </Box>
   );
 };
 

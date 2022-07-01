@@ -38,6 +38,10 @@ const space = {
   116: `116px`,
   120: `120px`,
   124: `124px`,
+  safeTop: `env(safe-area-inset-top)`,
+  safeRight: `env(safe-area-inset-right)`,
+  safeBottom: `env(safe-area-inset-bottom)`,
+  safeLeft: `env(safe-area-inset-left)`,
 };
 
 const fontWeight = {
@@ -86,6 +90,7 @@ const layoutStyles = defineProperties({
   },
   defaultCondition: `mobile`,
   properties: {
+    padding: space,
     paddingTop: space,
     paddingBottom: space,
     paddingLeft: space,
