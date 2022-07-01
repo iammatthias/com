@@ -23,10 +23,7 @@ export default function SEO({
         content="initial-scale=1, viewport-fit=cover, width=device-width"
       />
       <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta
-        name="apple-mobile-web-app-status-bar-style"
-        content="black-translucent"
-      />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black" />
       <meta name="theme-color" content="rgba(4, 4, 0, 1)" />
 
       <meta key="og_locale" property="og:locale" content="en_US" />
@@ -44,22 +41,22 @@ export default function SEO({
       <link
         rel="apple-touch-icon"
         sizes="180x180"
-        href="/image/apple-touch-icon.png"
+        href="/images/apple-touch-icon.png"
       />
       <link
         rel="icon"
         type="image/png"
         sizes="32x32"
-        href="/image/favicon-32x32.png"
+        href="/images/favicon-32x32.png"
       />
       <link
         rel="icon"
         type="image/png"
         sizes="16x16"
-        href="/image/favicon-16x16.png"
+        href="/images/favicon-16x16.png"
       />
-      <link rel="mask-icon" href="/image/safari-pinned-tab.svg" />
-      <link rel="shortcut icon" href="/image/favicon.ico" />
+      <link rel="mask-icon" href="/images/safari-pinned-tab.svg" />
+      <link rel="shortcut icon" href="/images/favicon.ico" />
       <link key="manifest" rel="manifest" href="/manifest.json" />
 
       <title>{title}</title>

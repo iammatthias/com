@@ -33,6 +33,7 @@ globalStyle(`*`, {
 globalStyle(`html`, {
   textSizeAdjust: `none`,
   minHeight: `calc(100% + env(safe-area-inset-top))`,
+  padding: `env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0`,
 });
 
 // Allow percentage-based heights.
