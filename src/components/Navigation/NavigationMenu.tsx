@@ -1,6 +1,8 @@
 import { ArrowRightIcon, HomeIcon, MixIcon } from '@radix-ui/react-icons';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 import Box from '@/components/Box';
 import Text from '@/components/Text';
@@ -9,11 +11,22 @@ import PageQuery from '@/utils/gql/pageQuery';
 import { navigationRecipe } from './Navigation.css';
 
 export const _NavigationMenu = () => {
+  const [value, setValue] = useState(``);
+  const { asPath } = useRouter();
+
+  useEffect(() => {
+    setValue(``);
+  }, [asPath]);
+
   const GalleryData = PageQuery({ type: `Gallery`, limit: 9 });
   const BlogData = PageQuery({ type: `Blog`, limit: 9 });
 
   return (
-    <NavigationMenu.Root className={navigationRecipe({ nav: `menu` })}>
+    <NavigationMenu.Root
+      className={navigationRecipe({ nav: `menu` })}
+      value={value}
+      onValueChange={setValue}
+    >
       <NavigationMenu.List className={navigationRecipe({ nav: `menuList` })}>
         <NavigationMenu.Item>
           <Box className={navigationRecipe({ nav: `menuTrigger` })}>
@@ -33,31 +46,43 @@ export const _NavigationMenu = () => {
           <NavigationMenu.Content
             className={navigationRecipe({ nav: `menuContent` })}
           >
-            <Text kind="h2">Etc</Text>
+            <Text kind="h4">Etc</Text>
             <Box className={navigationRecipe({ nav: `menuPageList` })}>
               <Box className={navigationRecipe({ nav: `menuItem` })}>
                 <Link href="/thoughts" passHref={true}>
                   <a>
-                    <Text kind="p">Thoughts</Text>
+                    <Text as="p" kind="p">
+                      <Text as="small" kind="small">
+                        Thoughts
+                      </Text>
+                    </Text>
                   </a>
                 </Link>
               </Box>
               <Box className={navigationRecipe({ nav: `menuItem` })}>
                 <Link href="/guestbook" passHref={true}>
                   <a>
-                    <Text kind="p">The Guestbook</Text>
+                    <Text as="p" kind="p">
+                      <Text as="small" kind="small">
+                        The Guestbook
+                      </Text>
+                    </Text>
                   </a>
                 </Link>
               </Box>
             </Box>
-            <Text kind="h2">Photography</Text>
+            <Text kind="h4">Photography</Text>
             <Box className={navigationRecipe({ nav: `menuPageList` })}>
               {GalleryData &&
                 GalleryData.map((page: any, index: number) => (
                   <Box key={index}>
                     <Link href={`/${page.slug}`} passHref={true}>
                       <a className={navigationRecipe({ nav: `menuItem` })}>
-                        <Text kind="p">{page.title}</Text>
+                        <Text kind="p">
+                          <Text as="small" kind="small">
+                            {page.title}
+                          </Text>
+                        </Text>
                         <Text kind="p">
                           <Text as="small" kind="small">
                             Published:{` `}
@@ -81,14 +106,18 @@ export const _NavigationMenu = () => {
               </Box>
             </Box>
 
-            <Text kind="h2">Writing</Text>
+            <Text kind="h4">Writing</Text>
             <Box className={navigationRecipe({ nav: `menuPageList` })}>
               {BlogData &&
                 BlogData.map((page: any, index: number) => (
                   <Box key={index}>
                     <Link href={`/${page.slug}`} passHref={true}>
                       <a className={navigationRecipe({ nav: `menuItem` })}>
-                        <Text kind="p">{page.title}</Text>
+                        <Text kind="p">
+                          <Text as="small" kind="small">
+                            {page.title}
+                          </Text>
+                        </Text>
                         <Text kind="p">
                           <Text as="small" kind="small">
                             Published:{` `}

@@ -9,6 +9,11 @@ export const buttonRecipe = recipe({
       secondary: atoms({ background: `white`, color: `black` }),
       modalLeft: atoms({ background: `overlay`, color: `black` }),
       modalRight: atoms({ background: `overlay`, color: `black` }),
+      thought: {
+        lineHeight: `15px`,
+        height: `fit-content`,
+        padding: `0`,
+      },
     },
   },
 });

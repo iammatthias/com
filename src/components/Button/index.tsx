@@ -6,11 +6,12 @@ import { buttonRecipe, ButtonVariants } from './Button.css';
 
 type Props = {
   children: React.ReactNode;
+  onClick?: () => void;
 } & ButtonVariants;
 
-export const Button = ({ children, kind = `secondary` }: Props) => {
+export const Button = ({ children, onClick, kind = `secondary` }: Props) => {
   return (
-    <Box as="button" className={buttonRecipe({ kind })}>
+    <Box as="button" onClick={onClick} className={buttonRecipe({ kind })}>
       {children}
     </Box>
   );

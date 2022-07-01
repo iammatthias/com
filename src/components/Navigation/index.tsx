@@ -13,7 +13,7 @@ export const Navigation = () => {
     <>
       <Box as="nav" className={navigationRecipe({ nav: `main` })}>
         <Box className={navigationRecipe({ nav: `brand` })}>
-          <Image src={Icon} width={15} height={15} alt="" />
+          <Image src={Icon} width={24} height={24} alt="" />
 
           <Text kind="p">
             <Text as="small" kind="small">

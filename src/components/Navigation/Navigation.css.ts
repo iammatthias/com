@@ -5,15 +5,17 @@ import { atoms } from '@/styles/sprinkles.css';
 export const navigationRecipe = recipe({
   variants: {
     nav: {
-      main: atoms({
-        background: `black`,
-        color: `white`,
-        padding: 8,
-        fontSize: 15,
-        display: `flex`,
-        alignItems: `center`,
-        justifyContent: `space-between`,
-      }),
+      main: [
+        atoms({
+          background: `black`,
+          color: `white`,
+          padding: 8,
+          fontSize: 15,
+          display: `flex`,
+          alignItems: `center`,
+          justifyContent: `space-between`,
+        }),
+      ],
       brand: atoms({
         display: `flex`,
         alignItems: `center`,
@@ -32,19 +34,22 @@ export const navigationRecipe = recipe({
       },
       menuIcon: {
         color: `white`,
+        height: `18px`,
+        width: `18px`,
       },
       menuList: {
         all: `unset`,
         display: `flex`,
         justifyContent: `center`,
         listStyle: `none`,
+        gap: `32px`,
       },
       menuTrigger: {
         all: `unset`,
         display: `flex`,
         alignItems: `center`,
         justifyContent: `space-between`,
-        padding: `8px 12px`,
+
         outline: `none`,
         userSelect: `none`,
         fontWeight: 500,
@@ -56,14 +61,14 @@ export const navigationRecipe = recipe({
         width: `100%`,
         backdropFilter: `blur(50px) saturate(382%) grayscale(50%) brightness(1.35)`,
         display: `grid`,
-        gap: `24px`,
+        gap: `16px`,
         color: `black`,
         padding: 16,
       },
       menuPageList: {
         width: `100%`,
         display: `grid`,
-        gap: `24px`,
+        gap: `16px`,
         gridTemplateColumns: `repeat(3, 1fr)`,
       },
       menuItem: {
@@ -74,7 +79,7 @@ export const navigationRecipe = recipe({
         paddingLeft: 8,
         paddingRight: 8,
         display: `grid`,
-        gap: 12,
+        gap: `16px`,
       },
       menuViewport: {
         position: `relative`,
