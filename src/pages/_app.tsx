@@ -12,10 +12,11 @@ import LowPolySVG from '@/components/LowPolySVG';
 import Navigation from '@/components/Navigation';
 import SEO from '@/components/SEO';
 import MDX from '@/utils/MdxProvider';
+import Web3Provider from '@/utils/web3Provider';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <Web3Provider>
       <Layout as="section" layout="page">
         <SEO title={pageProps.pageTitle} />
         <Navigation />
@@ -27,6 +28,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <LowPolySVG />
       </Layout>
       <Background />
-    </>
+    </Web3Provider>
   );
 }

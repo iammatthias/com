@@ -20,7 +20,7 @@ type Props = {
 
 export default function Home({ contentfulMdx }: Props) {
   return (
-    <Layout as="main" layout="pageContent">
+    <Layout as="main" layout="homePageContent">
       <MDXRemote {...contentfulMdx} />
     </Layout>
   );
