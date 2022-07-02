@@ -8,13 +8,38 @@ import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 
 import Layout from '@/components/Layout';
+import PageFooter from '@/components/PageEnds/PageFooter';
+import PageHeader from '@/components/PageEnds/PageHeader';
 import { contentfulClient } from '@/utils/apolloProvider';
 import { isDev } from '@/utils/isDev';
 
-export default function Page({ mdx }: any) {
+type Props = {
+  mdx: any;
+  pageName: string;
+  pageType: string;
+  publishDate: string;
+  slug: string;
+};
+
+export default function Page({
+  mdx,
+  pageType,
+  pageName,
+  publishDate,
+  slug,
+}: Props) {
   return (
     <Layout as="main" layout="pageContent">
+      <PageHeader
+        pagetitle={pageName}
+        pagetype={pageType}
+        publishdate={publishDate}
+        slug={slug}
+      />
       <MDXRemote {...mdx} />
+      {(pageType === `Gallery` || pageType === `Blog`) && (
+        <PageFooter pagetype={pageType} slug={slug} />
+      )}
     </Layout>
   );
 }
@@ -103,6 +128,7 @@ export async function getStaticProps({ params }: any) {
     props: {
       pageType: pageType,
       pageTitle: `IAM | ${pageTitle}`,
+      pageName: pageTitle,
       publishDate: publishDate,
       mdx: mdxSource,
       slug: slug,

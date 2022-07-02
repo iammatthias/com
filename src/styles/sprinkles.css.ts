@@ -70,6 +70,7 @@ const colors = {
   pink: `rgba(232, 141, 163, 1)`,
   turq: `rgba(0, 245, 196, 1)`,
   orange: `rgba(255, 135, 31, 1)`,
+  transparent: `transparent`,
   bgGradient: `radial-gradient(circle at 50% 50%, rgba(249, 254, 255, 1), rgba(253, 255, 252, .2)), url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
   overlay: `blur(50px) saturate(382%) grayscale(50%) brightness(1.25)`,
 };
@@ -122,6 +123,22 @@ const layoutStyles = defineProperties({
     flexDirection: [`row`, `column`],
     background: colors,
     backgroundImage: colors,
+    textDecoration: [`none`, `underline`, `line-through`],
+    border: [`none`, `solid`, `dashed`, `dotted`],
+    verticalAlign: [
+      `baseline`,
+      `sub`,
+      `super`,
+      `top`,
+      `text-top`,
+      `middle`,
+      `bottom`,
+      `text-bottom`,
+    ],
+    boxShadow: [`none`, `0 0 0 1px black`, `0 0 0 2px black`],
+    backdropFilter: [`none`, `blur(50px) opacity(38.2%) saturate(2618%)`],
+    ':hover': {},
+    ':focus': {},
     // etc.
   },
   shorthands: {

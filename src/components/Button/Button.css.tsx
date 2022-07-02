@@ -10,15 +10,27 @@ import { atoms } from '@/styles/sprinkles.css';
 export const buttonRecipe = recipe({
   variants: {
     kind: {
-      primary: atoms({ background: `overlay`, color: `black` }),
+      primary: {
+        paddingTop: 8,
+        paddingBottom: 8,
+        paddingLeft: 16,
+        paddingRight: 16,
+        border: `none`,
+        textDecoration: `none`,
+        verticalAlign: `middle`,
+        background: `transparent`,
+        boxShadow: `0 0 0 1px black`,
+        backdropFilter: `blur(50px) opacity(38.2%) saturate(2618%)`,
+        color: `black`,
+        ':hover': {
+          boxShadow: `0 0 0 2px black`,
+        },
+        ':focus': { outline: `none` },
+      },
       secondary: atoms({ background: `white`, color: `black` }),
       modalLeft: atoms({ background: `overlay`, color: `black` }),
       modalRight: atoms({ background: `overlay`, color: `black` }),
-      thought: {
-        lineHeight: `15px`,
-        height: `fit-content`,
-        padding: `0`,
-      },
+
       icon: {
         all: `unset`,
         fontFamily: `inherit`,
@@ -41,9 +53,8 @@ export const buttonRecipe = recipe({
         fontFamily: `var(--rk-fonts-body)`,
         fontSize: `16px`,
         fontWeight: `700`,
-
         color: `var(--rk-colors-connectButtonText)`,
-        '&:hover': {
+        ':hover': {
           transform: `scale(1.025)`,
         },
       },

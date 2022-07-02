@@ -97,7 +97,7 @@ export default function Thoughts() {
                   </Remark>
                 </Box>
                 <Button
-                  kind="thought"
+                  kind="primary"
                   onClick={() =>
                     copy(
                       `https://iammatthias.com/#${
