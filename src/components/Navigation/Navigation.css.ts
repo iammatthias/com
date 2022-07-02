@@ -20,7 +20,7 @@ export const navigationRecipe = recipe({
       main: [
         atoms({
           color: `white`,
-          padding: 8,
+          padding: 12,
           fontSize: 15,
           display: `flex`,
           alignItems: `center`,
@@ -45,8 +45,13 @@ export const navigationRecipe = recipe({
       },
       menuIcon: {
         color: `white`,
-        height: `18px`,
-        width: `18px`,
+        height: `28px`,
+        width: `28px`,
+        padding: 4,
+        boxShadow: `0 0 0 1px white`,
+        ':hover': {
+          boxShadow: `0 0 0 2px white`,
+        },
       },
       menuList: {
         all: `unset`,
@@ -104,7 +109,7 @@ export const navigationRecipe = recipe({
       menuViewportPosition: {
         position: `absolute`,
         justifyContent: `center`,
-        top: `29px`,
+        top: `36px`,
         perspective: `2000px`,
         width: `100%`,
         maxWidth: `725px`,
