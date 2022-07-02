@@ -19,7 +19,6 @@ export const navigationRecipe = recipe({
           alignItems: `center`,
         }),
         {
-          height: 52,
           width: `100%`,
         },
       ],
@@ -33,6 +32,7 @@ export const navigationRecipe = recipe({
           justifyContent: `space-between`,
         }),
         {
+          height: 52,
           width: `100%`,
         },
       ],
