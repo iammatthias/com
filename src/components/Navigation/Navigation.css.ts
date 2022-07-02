@@ -51,11 +51,13 @@ export const navigationRecipe = recipe({
       menu: {
         position: `absolute`,
         display: `flex`,
+        alignItems: `center`,
         justifyContent: `center`,
         left: `0`,
         right: `0`,
         margin: `0 auto`,
         width: `100%`,
+        height: 30,
         maxWidth: `725px`,
         overflow: `show`,
       },
