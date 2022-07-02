@@ -99,6 +99,7 @@ export const navigationRecipe = recipe({
         overflow: `hidden`,
         height: `calc(var(--radix-navigation-menu-viewport-height) + 4px)`,
         border: `2px solid black`,
+        marginBottom: 64,
       },
       menuViewportPosition: {
         position: `absolute`,
