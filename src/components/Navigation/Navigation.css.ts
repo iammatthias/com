@@ -57,15 +57,15 @@ export const navigationRecipe = recipe({
         margin: `0 auto`,
         width: `100%`,
         maxWidth: `725px`,
-        overflow: `auto`,
+        overflow: `show`,
       },
       menuIcon: {
         color: `white`,
         height: `28px`,
         width: `28px`,
         padding: 4,
-        overflow: `auto`,
         outline: `1px solid white`,
+
         ':hover': {
           outline: `2px solid white`,
         },
