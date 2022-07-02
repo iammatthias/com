@@ -32,8 +32,9 @@ export const navigationRecipe = recipe({
           justifyContent: `space-between`,
         }),
         {
-          height: 52,
+          height: 54,
           width: `100%`,
+          overflow: `auto`,
         },
       ],
       brand: atoms({
