@@ -49,6 +49,7 @@ export const navigationRecipe = recipe({
         width: `30px`,
         padding: 4,
         boxShadow: `0 0 0 1px white`,
+        overflow: `show`,
         ':hover': {
           boxShadow: `0 0 0 2px white`,
         },
