@@ -63,10 +63,10 @@ export const navigationRecipe = recipe({
         height: `28px`,
         width: `28px`,
         padding: 4,
-        boxShadow: `0 0 0 1px white`,
+        outline: `1px solid white`,
 
         ':hover': {
-          boxShadow: `0 0 0 2px white`,
+          outline: `2px solid white`,
         },
       },
       menuList: {
