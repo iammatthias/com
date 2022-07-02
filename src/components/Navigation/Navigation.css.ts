@@ -15,7 +15,13 @@ export const navigationRecipe = recipe({
           paddingLeft: `safeLeft`,
           paddingRight: `safeRight`,
           background: `black`,
+          display: `flex`,
+          alignItems: `center`,
         }),
+        {
+          height: 52,
+          width: `100%`,
+        },
       ],
       main: [
         atoms({
@@ -26,12 +32,21 @@ export const navigationRecipe = recipe({
           alignItems: `center`,
           justifyContent: `space-between`,
         }),
+        {
+          width: `100%`,
+        },
       ],
       brand: atoms({
         display: `flex`,
         alignItems: `center`,
         justifyContent: `space-between`,
         gap: 16,
+      }),
+      title: atoms({
+        display: {
+          mobile: `none`,
+          tablet: `block`,
+        },
       }),
       menu: {
         position: `absolute`,
@@ -45,11 +60,11 @@ export const navigationRecipe = recipe({
       },
       menuIcon: {
         color: `white`,
-        height: `30px`,
-        width: `30px`,
+        height: `28px`,
+        width: `28px`,
         padding: 4,
         boxShadow: `0 0 0 1px white`,
-        overflow: `show`,
+
         ':hover': {
           boxShadow: `0 0 0 2px white`,
         },

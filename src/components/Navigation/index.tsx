@@ -22,14 +22,15 @@ export const Navigation = () => {
           <a>
             <Box className={navigationRecipe({ nav: `brand` })}>
               <Image src={Icon} width={24} height={24} alt="" />
-
-              <Text kind="p">
-                <Text as="small" kind="small">
-                  <Text as="strong" kind="strong">
-                    I AM MATTHIAS
+              <Box className={navigationRecipe({ nav: `title` })}>
+                <Text kind="p">
+                  <Text as="small" kind="small">
+                    <Text as="strong" kind="strong">
+                      I AM MATTHIAS
+                    </Text>
                   </Text>
                 </Text>
-              </Text>
+              </Box>
             </Box>
           </a>
         </Link>
