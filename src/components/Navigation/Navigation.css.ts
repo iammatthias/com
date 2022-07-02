@@ -45,8 +45,8 @@ export const navigationRecipe = recipe({
       },
       menuIcon: {
         color: `white`,
-        height: `28px`,
-        width: `28px`,
+        height: `30px`,
+        width: `30px`,
         padding: 4,
         boxShadow: `0 0 0 1px white`,
         ':hover': {
