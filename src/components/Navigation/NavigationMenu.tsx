@@ -34,13 +34,11 @@ export const _NavigationMenu = () => {
     >
       <NavigationMenu.List className={navigationRecipe({ nav: `menuList` })}>
         <NavigationMenu.Item>
-          <Box className={navigationRecipe({ nav: `menuTrigger` })}>
-            <Link href="/" passHref={true}>
-              <a>
-                <HomeIcon className={navigationRecipe({ nav: `menuIcon` })} />
-              </a>
-            </Link>
-          </Box>
+          <Link href="/" passHref={true}>
+            <a>
+              <HomeIcon className={navigationRecipe({ nav: `menuIcon` })} />
+            </a>
+          </Link>
         </NavigationMenu.Item>
         <NavigationMenu.Item>
           <NavigationMenu.Trigger

@@ -23,12 +23,8 @@ export const Navigation = () => {
             <Box className={navigationRecipe({ nav: `brand` })}>
               <Image src={Icon} width={24} height={24} alt="" />
               <Box className={navigationRecipe({ nav: `title` })}>
-                <Text kind="p">
-                  <Text as="small" kind="small">
-                    <Text as="strong" kind="strong">
-                      I AM MATTHIAS
-                    </Text>
-                  </Text>
+                <Text as="h1" kind="h6">
+                  I AM MATTHIAS
                 </Text>
               </Box>
             </Box>

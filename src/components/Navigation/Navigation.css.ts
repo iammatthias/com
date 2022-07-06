@@ -67,7 +67,6 @@ export const navigationRecipe = recipe({
         width: `28px`,
         padding: 4,
         outline: `1px solid white`,
-
         ':hover': {
           outline: `2px solid white`,
         },
@@ -128,7 +127,7 @@ export const navigationRecipe = recipe({
       menuViewportPosition: {
         position: `absolute`,
         justifyContent: `center`,
-        top: `36px`,
+        top: `40px`,
         perspective: `2000px`,
         width: `100%`,
         maxWidth: `725px`,
