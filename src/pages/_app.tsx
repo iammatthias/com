@@ -1,40 +1,38 @@
+// _app.tsx
+// Language: typescript
+
+import '@/styles/app.css';
+import 'react-static-tweets/styles.css';
+
 import { AppProps } from 'next/app';
-import { ThemeProvider } from 'next-themes';
-import { darkTheme, globalStyles } from '@/styles/stitches.config';
-import NavWrapper from '@/components/blocks/navigation/navWrapper';
-import Layout from '@/components/layout';
-import MDX from '@/lib/mdxProvider';
-import Meta from '@/components/meta';
-import { Background } from '@/components/joy/background';
+import Link from 'next/link';
 
-// fonts
-import '@fontsource/crimson-text/400.css';
-import '@fontsource/crimson-text/700.css';
-import '@fontsource/space-mono';
-import '@fontsource/space-mono/700.css';
-
-globalStyles();
+import Background from '@/components/Background';
+import Layout from '@/components/Layout';
+import LowPolySVG from '@/components/LowPolySVG';
+import Navigation from '@/components/Navigation';
+import SEO from '@/components/SEO';
+import MDX from '@/utils/MdxProvider';
+import Web3Provider from '@/utils/web3Provider';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      value={{
-        dark: darkTheme.className,
-        light: `light`,
-      }}
-    >
-      <Meta title={pageProps.pageTitle} />
+    <Web3Provider>
+      <Layout as="section" layout="page">
+        <SEO title={pageProps.pageTitle} />
+        <Navigation />
 
-      <Layout>
-        <NavWrapper />
-        <MDX {...pageProps}>
+        <MDX>
           <Component {...pageProps} />
         </MDX>
-      </Layout>
 
+        <Link href="/" passHref>
+          <a>
+            <LowPolySVG />
+          </a>
+        </Link>
+      </Layout>
       <Background />
-    </ThemeProvider>
+    </Web3Provider>
   );
 }

@@ -1,29 +1,28 @@
-// pages/index.tsx
+// index.tsx
+// Language: typescript
+
+// The homepage.
 
 // apollo
 import { gql } from '@apollo/client';
-import { contentfulClient } from '@/lib/apolloClient';
-
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 // mdx
 import { serialize } from 'next-mdx-remote/serialize';
-import { MDXRemote } from 'next-mdx-remote';
 
+import Layout from '@/components/Layout';
+import { contentfulClient } from '@/utils/apolloProvider';
 // helpers
 import { isDev } from '@/utils/isDev';
-import { Box } from '@/components/primitives/box';
 
-export default function Home({ contentfulMdx }: any) {
+type Props = {
+  contentfulMdx: MDXRemoteSerializeResult;
+};
+
+export default function Home({ contentfulMdx }: Props) {
   return (
-    <Box
-      css={{
-        display: `flex`,
-        flexDirection: `column`,
-        alignItems: `center`,
-        height: `100%`,
-      }}
-    >
+    <Layout as="main" layout="homePageContent">
       <MDXRemote {...contentfulMdx} />
-    </Box>
+    </Layout>
   );
 }
 
@@ -54,7 +53,7 @@ export async function getStaticProps() {
   // We return the result of the query as props to pass them above
   return {
     props: {
-      pageTitle: contentfulData.title ? contentfulData.title : `I Am Matthias`,
+      pageTitle: `I Am Matthias`,
       contentfulMdx: contentfulMdxSource,
     },
   };

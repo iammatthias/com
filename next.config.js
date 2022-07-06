@@ -1,6 +1,16 @@
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
+const withVanillaExtract = createVanillaExtractPlugin();
 const withPWA = require('next-pwa');
 
-module.exports = withPWA({
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx$/,
+});
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    domains: ['pbs.twimg.com'],
+  },
   reactStrictMode: true,
   pwa: {
     dest: 'public',
@@ -19,4 +29,6 @@ module.exports = withPWA({
       },
     ];
   },
-});
+};
+
+module.exports = withPWA(withVanillaExtract(withMDX(nextConfig)));

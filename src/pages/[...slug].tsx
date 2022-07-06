@@ -1,38 +1,49 @@
-// pages/[...slug].tsx
+// [...slug]
+// Language: typescript
 
-// apollo
+// Dynamically creates pages when content is published on Contentful.
+
 import { gql } from '@apollo/client';
-import { contentfulClient } from '@/lib/apolloClient';
-
-// mdx
-import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemote } from 'next-mdx-remote';
+import { serialize } from 'next-mdx-remote/serialize';
 
-// helpers
+import Layout from '@/components/Layout';
+import PageFooter from '@/components/PageEnds/PageFooter';
+import PageHeader from '@/components/PageEnds/PageHeader';
+import { contentfulClient } from '@/utils/apolloProvider';
 import { isDev } from '@/utils/isDev';
-import PageHeader from '@/components/blocks/pageHeader';
-import PageFooter from '@/components/blocks/pageFooter';
+
+type Props = {
+  mdx: any;
+  pageName: string;
+  pageType: string;
+  publishDate: string;
+  updateDate: string;
+  slug: string;
+};
 
 export default function Page({
   mdx,
   pageType,
-  pageTitle,
+  pageName,
   publishDate,
+  updateDate,
   slug,
-}: any) {
+}: Props) {
   return (
-    <>
+    <Layout as="main" layout="pageContent">
       <PageHeader
-        pagetitle={pageTitle}
+        pagetitle={pageName}
         pagetype={pageType}
         publishdate={publishDate}
+        updatedate={updateDate}
         slug={slug}
       />
       <MDXRemote {...mdx} />
       {(pageType === `Gallery` || pageType === `Blog`) && (
         <PageFooter pagetype={pageType} slug={slug} />
       )}
-    </>
+    </Layout>
   );
 }
 
@@ -94,6 +105,10 @@ export async function getStaticProps({ params }: any) {
             body
             slug
             pageType
+            sys {
+              publishedAt
+              firstPublishedAt
+            }
           }
         }
       }
@@ -108,19 +123,38 @@ export async function getStaticProps({ params }: any) {
   const mdxSource = await serialize(source);
   const pageType = data.pageCollection.items[0].pageType;
   const pageTitle = data.pageCollection.items[0].title;
-  const publishDate = new Date(
-    data.pageCollection.items[0].publishDate
-      .replace(/-/g, `/`)
-      .replace(/T.+/, ``),
-  ).toLocaleDateString(`en-us`);
+  const publishDate = data.pageCollection.items[0].publishDate
+    ? new Date(
+        data.pageCollection.items[0].publishDate
+          .replace(/-/g, `/`)
+          .replace(/T.+/, ``),
+      ).toLocaleDateString(`en-us`)
+    : new Date(
+        data.pageCollection.items[0].sys.firstPublishedAt
+          .replace(/-/g, `/`)
+          .replace(/T.+/, ``),
+      ).toLocaleDateString(`en-us`);
+  const updateDate = data.pageCollection.items[0].publishDate
+    ? new Date(
+        data.pageCollection.items[0].publishDate
+          .replace(/-/g, `/`)
+          .replace(/T.+/, ``),
+      ).toLocaleDateString(`en-us`)
+    : new Date(
+        data.pageCollection.items[0].sys.publishedAt
+          .replace(/-/g, `/`)
+          .replace(/T.+/, ``),
+      ).toLocaleDateString(`en-us`);
   const slug = data.pageCollection.items[0].slug;
 
   // We return the result of the query as props to pass them above
   return {
     props: {
       pageType: pageType,
-      pageTitle: pageTitle,
+      pageTitle: `IAM | ${pageTitle}`,
+      pageName: pageTitle,
       publishDate: publishDate,
+      updateDate: updateDate,
       mdx: mdxSource,
       slug: slug,
     },
