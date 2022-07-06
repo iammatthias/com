@@ -18,6 +18,7 @@ type Props = {
   pageName: string;
   pageType: string;
   publishDate: string;
+  updateDate: string;
   slug: string;
 };
 
@@ -26,6 +27,7 @@ export default function Page({
   pageType,
   pageName,
   publishDate,
+  updateDate,
   slug,
 }: Props) {
   return (
@@ -34,6 +36,7 @@ export default function Page({
         pagetitle={pageName}
         pagetype={pageType}
         publishdate={publishDate}
+        updatedate={updateDate}
         slug={slug}
       />
       <MDXRemote {...mdx} />
@@ -102,6 +105,10 @@ export async function getStaticProps({ params }: any) {
             body
             slug
             pageType
+            sys {
+              publishedAt
+              firstPublishedAt
+            }
           }
         }
       }
@@ -116,11 +123,28 @@ export async function getStaticProps({ params }: any) {
   const mdxSource = await serialize(source);
   const pageType = data.pageCollection.items[0].pageType;
   const pageTitle = data.pageCollection.items[0].title;
-  const publishDate = new Date(
-    data.pageCollection.items[0].publishDate
-      .replace(/-/g, `/`)
-      .replace(/T.+/, ``),
-  ).toLocaleDateString(`en-us`);
+  const publishDate = data.pageCollection.items[0].publishDate
+    ? new Date(
+        data.pageCollection.items[0].publishDate
+          .replace(/-/g, `/`)
+          .replace(/T.+/, ``),
+      ).toLocaleDateString(`en-us`)
+    : new Date(
+        data.pageCollection.items[0].sys.firstPublishedAt
+          .replace(/-/g, `/`)
+          .replace(/T.+/, ``),
+      ).toLocaleDateString(`en-us`);
+  const updateDate = data.pageCollection.items[0].publishDate
+    ? new Date(
+        data.pageCollection.items[0].publishDate
+          .replace(/-/g, `/`)
+          .replace(/T.+/, ``),
+      ).toLocaleDateString(`en-us`)
+    : new Date(
+        data.pageCollection.items[0].sys.publishedAt
+          .replace(/-/g, `/`)
+          .replace(/T.+/, ``),
+      ).toLocaleDateString(`en-us`);
   const slug = data.pageCollection.items[0].slug;
 
   // We return the result of the query as props to pass them above
@@ -130,6 +154,7 @@ export async function getStaticProps({ params }: any) {
       pageTitle: `IAM | ${pageTitle}`,
       pageName: pageTitle,
       publishDate: publishDate,
+      updateDate: updateDate,
       mdx: mdxSource,
       slug: slug,
     },

@@ -1,11 +1,15 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import {
+  Cross2Icon,
+  TriangleLeftIcon,
+  TriangleRightIcon,
+} from '@radix-ui/react-icons';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import useMeasure from 'react-use-measure';
 
 import Box from '@/components/Box';
-import Text from '@/components/Text';
 
 import { modalRecipe } from './Modal.css';
 
@@ -32,6 +36,9 @@ export default function Modal({ children, images, imageKey }: any) {
 
   const [i, setI] = useState(imageKey);
 
+  const next = i + 1 == images.length ? i : i + 1;
+  const prev = i - 1 == -1 ? 0 : i - 1;
+
   const image = images[i ? i : 0];
 
   useHotkeys(`left`, () => setI((i: any) => (i - 1 == -1 ? 0 : i - 1)), {
@@ -45,12 +52,12 @@ export default function Modal({ children, images, imageKey }: any) {
     },
   );
 
+  const showButtons = images.length > 1;
+
   const containerHeight = bounds?.height;
 
   const maxHeight = containerHeight * 0.8;
   const maxWidth = maxHeight * (image.width / image.height);
-
-  console.log(maxHeight, maxWidth);
 
   return (
     <DialogPrimitive.Root>
@@ -86,6 +93,27 @@ export default function Modal({ children, images, imageKey }: any) {
             loader={contentfulLoader}
           />
         </div>
+        {showButtons && (
+          <Box className={modalRecipe({ modal: `modalNav` })}>
+            <TriangleLeftIcon
+              onClick={() => setI(prev)}
+              className={modalRecipe({ modal: `modalIcon` })}
+            />
+            <TriangleRightIcon
+              onClick={() => setI(next)}
+              className={modalRecipe({ modal: `modalIcon` })}
+            />
+          </Box>
+        )}
+        <Box className={modalRecipe({ modal: `close` })}>
+          <DialogPrimitive.Close
+            asChild
+            onClick={() => setI(imageKey)}
+            className="umami--click--Modal-Closed"
+          >
+            <Cross2Icon />
+          </DialogPrimitive.Close>
+        </Box>
       </Content>
     </DialogPrimitive.Root>
   );

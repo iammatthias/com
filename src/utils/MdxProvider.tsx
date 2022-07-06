@@ -41,6 +41,9 @@ const mdComponents = {
   pre: (props: any) => <Text as="pre" kind="pre" {...props} />,
   code: (props: any) => <Text as="code" kind="code" {...props} />,
   Code: (props: any) => <Text as="code" kind="code" {...props} />,
+  blockquote: (props: any) => (
+    <Text as="blockquote" kind="blockquote" {...props} />
+  ),
   Link: (props: any) => (
     <Link {...props} passHref={true}>
       <a>{props.children}</a>

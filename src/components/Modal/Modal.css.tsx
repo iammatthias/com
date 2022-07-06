@@ -55,7 +55,28 @@ export const modalRecipe = recipe({
         width: `100%`,
         '&:focus': { outline: `none` },
       },
-
+      close: {
+        position: `fixed`,
+        top: `25px`,
+        right: `35px`,
+      },
+      modalNav: {
+        position: `absolute`,
+        top: `0`,
+        left: `0`,
+        bottom: `0`,
+        right: `0`,
+        height: `100%`,
+        width: `100%`,
+        display: `flex`,
+        justifyContent: `space-between`,
+        alignItems: `center`,
+        padding: `0 20px`,
+      },
+      modalIcon: {
+        height: `28px`,
+        width: `28px`,
+      },
       measure: {
         height: `100%`,
         width: `100%`,

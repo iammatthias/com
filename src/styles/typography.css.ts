@@ -177,6 +177,10 @@ export const fontStyles = recipe({
           },
         },
       ],
+      blockquote: {
+        padding: `8px 0 8px 16px`,
+        borderLeft: `2px solid black`,
+      },
       mono: {
         fontFamily: `monospace`,
       },

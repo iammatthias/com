@@ -15,6 +15,7 @@ type Props = {
   pagetitle?: string;
   pagetype?: string;
   publishdate?: string;
+  updatedate?: string;
   slug?: string;
 };
 
@@ -22,6 +23,7 @@ export const PageHeader = ({
   pagetitle,
   pagetype,
   publishdate,
+  updatedate,
   slug,
 }: Props) => {
   const comments = `https://mobile.twitter.com/search?q=${encodeURIComponent(
@@ -33,13 +35,15 @@ export const PageHeader = ({
         {pagetitle}
       </Text>
 
-      {pagetype === `Blog` && (
-        <Text as="p" kind="p">
-          <Text as="small" kind="small">
-            Published: {publishdate}
-          </Text>
+      <Text as="p" kind="p">
+        <Text as="small" kind="small">
+          Published: {publishdate}
+          {updatedate &&
+            publishdate !== updatedate &&
+            ` | Updated: ${updatedate}`}
         </Text>
-      )}
+      </Text>
+
       {(pagetype === `Blog` || pagetype === `Gallery`) && (
         <>
           <Link href={comments} passHref>
