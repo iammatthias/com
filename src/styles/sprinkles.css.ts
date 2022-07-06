@@ -93,6 +93,10 @@ const layoutStyles = defineProperties({
   },
   defaultCondition: `mobile`,
   properties: {
+    top: {},
+    right: {},
+    bottom: {},
+    left: {},
     padding: space,
     paddingTop: space,
     paddingBottom: space,

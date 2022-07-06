@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import Box from '@/components/Box';
+import Modal from '@/components/Modal';
 import Text from '@/components/Text';
 import { contentfulClient } from '@/utils/apolloProvider';
 
@@ -71,24 +72,28 @@ export default function GalleryContentful(props: any) {
       <Box className={props.className}>
         <GalleryWrapper>
           {imageSetImages.map((image: any, index: any) => (
-            <Image
-              key={index}
-              src={image.url}
-              alt={image.title}
-              layout="responsive"
-              height={
-                image.contentType === `image/svg+xml` ? 100 : image.height
-              }
-              width={image.contentType === `image/svg+xml` ? 100 : image.width}
-              placeholder="blur"
-              blurDataURL={contentfulLoader({
-                src: image.url,
-                width: 5,
-                quality: 1,
-              })}
-              objectFit="cover"
-              loader={contentfulLoader}
-            />
+            <Modal key={index} imageKey={index} images={imageSetImages}>
+              <Image
+                key={index}
+                src={image.url}
+                alt={image.title}
+                layout="responsive"
+                height={
+                  image.contentType === `image/svg+xml` ? 100 : image.height
+                }
+                width={
+                  image.contentType === `image/svg+xml` ? 100 : image.width
+                }
+                placeholder="blur"
+                blurDataURL={contentfulLoader({
+                  src: image.url,
+                  width: 5,
+                  quality: 1,
+                })}
+                objectFit="cover"
+                loader={contentfulLoader}
+              />
+            </Modal>
           ))}
         </GalleryWrapper>
       </Box>
