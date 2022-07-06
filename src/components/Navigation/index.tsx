@@ -8,6 +8,7 @@ import Link from 'next/link';
 
 import Box from '@/components/Box';
 import Text from '@/components/Text';
+import ClientOnly from '@/utils/clientOnly';
 import Timestamp from '@/utils/timestamp';
 
 import Icon from '../../../public/images/navBarIcon.png';
@@ -34,7 +35,9 @@ export const Navigation = () => {
         <NavigationMenu />
         <Text kind="p">
           <Text as="small" kind="small">
-            <Timestamp />
+            <ClientOnly>
+              <Timestamp />
+            </ClientOnly>
           </Text>
         </Text>
       </Box>
