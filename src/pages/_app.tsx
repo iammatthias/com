@@ -5,6 +5,7 @@ import '@/styles/app.css';
 import 'react-static-tweets/styles.css';
 
 import { AppProps } from 'next/app';
+import Link from 'next/link';
 
 import Background from '@/components/Background';
 import Layout from '@/components/Layout';
@@ -25,7 +26,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </MDX>
 
-        <LowPolySVG />
+        <Link href="/" passHref>
+          <a>
+            <LowPolySVG />
+          </a>
+        </Link>
       </Layout>
       <Background />
     </Web3Provider>
