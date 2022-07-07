@@ -19,7 +19,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Web3Provider>
       <Layout as="section" layout="page">
-        <SEO title={pageProps.pageTitle} />
+        <SEO title={pageProps.pageTitle} name={pageProps.pageName} />
         <Navigation />
 
         <MDX>

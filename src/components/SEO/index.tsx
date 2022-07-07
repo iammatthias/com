@@ -7,16 +7,18 @@ import Head from 'next/head';
 
 type Props = {
   title?: string;
+  name?: string;
   description?: string;
   image?: string;
 };
 
 export default function SEO({
   title = `I AM MATTHIAS`,
+  name = ``,
   description = `A personal portfolio project in a digital garden`,
-  image = `https://og.iammatthias.com/${encodeURIComponent(
-    title,
-  )}.png?theme=dark&md=0`,
+  image = `https://og.iammatthias.com/api/image/?title=${encodeURIComponent(
+    name ? name : title,
+  )}`,
 }: Props) {
   return (
     <Head>

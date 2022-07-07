@@ -53,7 +53,7 @@ export async function getStaticProps() {
   // We return the result of the query as props to pass them above
   return {
     props: {
-      pageTitle: `I Am Matthias`,
+      pageTitle: `I AM MATTHIAS`,
       contentfulMdx: contentfulMdxSource,
     },
   };
