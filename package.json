@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "postbuild": "next-sitemap",
+    "postbuild": "next-sitemap --config next-sitemap.config.mjs",
     "start": "next start",
     "type-check": "tsc",
     "lint": "eslint --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\"",
