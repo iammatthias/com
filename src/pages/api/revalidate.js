@@ -11,16 +11,16 @@ export default async function handleWebhook(req, res) {
 
   const jsonBody = JSON.parse(body);
 
-  console.log(jsonBody);
+  console.log({ jsonBody });
 
   const slug = jsonBody.fields.slug[0];
+
+  console.log({ slug });
 
   // secret
   const secret = process.env.NEXT_PUBLIC_REVALIDATION;
 
   if (req.query.secret === secret) {
-    console.log(slug);
-
     // issue opened or edited
     // comment created or edited
     console.log('[Next.js] Revalidating /');
