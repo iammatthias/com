@@ -12,10 +12,6 @@ const nextConfig = {
     domains: ['pbs.twimg.com'],
   },
   reactStrictMode: true,
-  pwa: {
-    dest: 'public',
-    disable: process.env.NODE_ENV === 'development',
-  },
   async headers() {
     return [
       {

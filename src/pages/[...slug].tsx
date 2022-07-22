@@ -11,6 +11,7 @@ import Layout from '@/components/Layout';
 import PageFooter from '@/components/PageEnds/PageFooter';
 import PageHeader from '@/components/PageEnds/PageHeader';
 import { contentfulClient } from '@/utils/apolloProvider';
+import dateFormat from '@/utils/dateFormat';
 import { isDev } from '@/utils/isDev';
 
 type Props = {
@@ -124,27 +125,11 @@ export async function getStaticProps({ params }: any) {
   const pageType = data.pageCollection.items[0].pageType;
   const pageTitle = data.pageCollection.items[0].title;
   const publishDate = data.pageCollection.items[0].publishDate
-    ? new Date(
-        data.pageCollection.items[0].publishDate
-          .replace(/-/g, `/`)
-          .replace(/T.+/, ``),
-      ).toLocaleDateString(`en-us`)
-    : new Date(
-        data.pageCollection.items[0].sys.firstPublishedAt
-          .replace(/-/g, `/`)
-          .replace(/T.+/, ``),
-      ).toLocaleDateString(`en-us`);
+    ? dateFormat(data.pageCollection.items[0].publishDate)
+    : dateFormat(data.pageCollection.items[0].sys.firstPublishedAt);
   const updateDate = data.pageCollection.items[0].publishDate
-    ? new Date(
-        data.pageCollection.items[0].publishDate
-          .replace(/-/g, `/`)
-          .replace(/T.+/, ``),
-      ).toLocaleDateString(`en-us`)
-    : new Date(
-        data.pageCollection.items[0].sys.publishedAt
-          .replace(/-/g, `/`)
-          .replace(/T.+/, ``),
-      ).toLocaleDateString(`en-us`);
+    ? dateFormat(data.pageCollection.items[0].publishDate)
+    : dateFormat(data.pageCollection.items[0].sys.publishedAt);
   const slug = data.pageCollection.items[0].slug;
 
   // We return the result of the query as props to pass them above
@@ -158,5 +143,6 @@ export async function getStaticProps({ params }: any) {
       mdx: mdxSource,
       slug: slug,
     },
+    revalidate: 10,
   };
 }

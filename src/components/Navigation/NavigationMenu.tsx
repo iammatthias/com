@@ -14,6 +14,7 @@ import Text from '@/components/Text';
 import PageQuery from '@/utils/gql/pageQuery';
 
 import { navigationRecipe } from './Navigation.css';
+import PageList from './PageList';
 
 export const _NavigationMenu = () => {
   const [value, setValue] = useState(``);
@@ -22,9 +23,6 @@ export const _NavigationMenu = () => {
   useEffect(() => {
     setValue(``);
   }, [asPath]);
-
-  const GalleryData = PageQuery({ type: `Gallery`, limit: 9 });
-  const BlogData = PageQuery({ type: `Blog`, limit: 9 });
 
   return (
     <NavigationMenu.Root
@@ -50,74 +48,32 @@ export const _NavigationMenu = () => {
             className={navigationRecipe({ nav: `menuContent` })}
           >
             <Text kind="h4">Work</Text>
-            <Box className={navigationRecipe({ nav: `menuPageList` })}>
-              {GalleryData &&
-                GalleryData.map((page: any, index: number) => (
-                  <Box key={index}>
-                    <Link href={`/${page.slug}`} passHref={true}>
-                      <a className={navigationRecipe({ nav: `menuItem` })}>
-                        <Text kind="p">
-                          <Text as="small" kind="small">
-                            {page.title}
-                          </Text>
-                        </Text>
-                        <Text kind="p">
-                          <Text as="small" kind="small">
-                            Published:{` `}
-                            {new Date(
-                              page.publishDate
-                                .replace(/-/g, `/`)
-                                .replace(/T.+/, ``),
-                            ).toLocaleDateString(`en-us`)}
-                          </Text>
-                        </Text>
-                      </a>
-                    </Link>
-                  </Box>
-                ))}
-              <Box className={navigationRecipe({ nav: `menuItem` })}>
-                <Link href="/work" passHref={true}>
-                  <a>
-                    <ArrowRightIcon />
-                  </a>
-                </Link>
+            <>
+              <PageList pageType="Gallery" limit={6} />
+              <Box className={navigationRecipe({ nav: `menuPageList` })}>
+                <Box className={navigationRecipe({ nav: `menuItem` })}>
+                  <Link href="/work" passHref={true}>
+                    <a>
+                      <ArrowRightIcon />
+                    </a>
+                  </Link>
+                </Box>
               </Box>
-            </Box>
+            </>
 
             <Text kind="h4">Writing</Text>
-            <Box className={navigationRecipe({ nav: `menuPageList` })}>
-              {BlogData &&
-                BlogData.map((page: any, index: number) => (
-                  <Box key={index}>
-                    <Link href={`/${page.slug}`} passHref={true}>
-                      <a className={navigationRecipe({ nav: `menuItem` })}>
-                        <Text kind="p">
-                          <Text as="small" kind="small">
-                            {page.title}
-                          </Text>
-                        </Text>
-                        <Text kind="p">
-                          <Text as="small" kind="small">
-                            Published:{` `}
-                            {new Date(
-                              page.publishDate
-                                .replace(/-/g, `/`)
-                                .replace(/T.+/, ``),
-                            ).toLocaleDateString(`en-us`)}
-                          </Text>
-                        </Text>
-                      </a>
-                    </Link>
-                  </Box>
-                ))}
-              <Box className={navigationRecipe({ nav: `menuItem` })}>
-                <Link href="/blog" passHref={true}>
-                  <a>
-                    <ArrowRightIcon />
-                  </a>
-                </Link>
+            <>
+              <PageList pageType="Blog" limit={6} />
+              <Box className={navigationRecipe({ nav: `menuPageList` })}>
+                <Box className={navigationRecipe({ nav: `menuItem` })}>
+                  <Link href="/blog" passHref={true}>
+                    <a>
+                      <ArrowRightIcon />
+                    </a>
+                  </Link>
+                </Box>
               </Box>
-            </Box>
+            </>
 
             <Text kind="h4">Etc</Text>
             <Box className={navigationRecipe({ nav: `menuPageList` })}>

@@ -8,8 +8,7 @@ import { gql, useQuery } from '@apollo/client';
 import { Link2Icon } from '@radix-ui/react-icons';
 import copy from 'copy-data-to-clipboard';
 import matter from 'gray-matter';
-import { Remark } from 'react-remark';
-import rehypeRaw from 'rehype-raw';
+import ReactMarkdown from 'react-markdown';
 
 import Box from '@/components/Box';
 import Button from '@/components/Button';
@@ -86,15 +85,9 @@ export default function Thoughts() {
                     </Text>
                   </Text>
 
-                  <Remark
-                    remarkToRehypeOptions={{ allowDangerousHtml: true }}
-                    rehypePlugins={[rehypeRaw] as any}
-                    rehypeReactOptions={{
-                      components: mdComponents,
-                    }}
-                  >
+                  <ReactMarkdown components={mdComponents}>
                     {matter(entry.object.text).content}
-                  </Remark>
+                  </ReactMarkdown>
                 </Box>
                 <Button
                   kind="primary"

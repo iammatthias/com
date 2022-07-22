@@ -5,7 +5,7 @@
 
 import axios from 'axios';
 
-export default async function getPosts(req: any, res: any) {
+export default async function getPosts(req, res) {
   const glassUser = `iammatthias`;
   const limit = `100`;
   const url = `https://glass.photo/api/v2/users/${glassUser}/posts?limit=${limit}`;

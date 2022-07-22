@@ -27,7 +27,7 @@ export const thoughtRecipe = recipe({
       contentGrid: {
         display: `flex`,
         flexDirection: `column`,
-        gap: `8px`,
+        gap: `16px`,
       },
     },
   },

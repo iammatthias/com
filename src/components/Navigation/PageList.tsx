@@ -7,16 +7,18 @@ import Link from 'next/link';
 
 import Box from '@/components/Box';
 import Text from '@/components/Text';
+import dateFormat from '@/utils/dateFormat';
 import PageQuery from '@/utils/gql/pageQuery';
 
 import { navigationRecipe } from './Navigation.css';
 
 type Props = {
   pageType: string;
+  limit: number;
 };
 
-export const PageList = (pageType: Props) => {
-  const ListData = PageQuery({ type: pageType.pageType });
+export const PageList = ({ pageType, limit = 1000 }: Props) => {
+  const ListData = PageQuery({ type: pageType, limit: limit });
 
   return (
     <Box className={navigationRecipe({ nav: `menuPageList` })}>
@@ -25,13 +27,16 @@ export const PageList = (pageType: Props) => {
           <Box key={index}>
             <Link href={`/${page.slug}`} passHref={true}>
               <a className={navigationRecipe({ nav: `menuItem` })}>
-                <Text kind="p">{page.title}</Text>
                 <Text kind="p">
                   <Text as="small" kind="small">
-                    Published:{` `}
-                    {new Date(
-                      page.publishDate.replace(/-/g, `/`).replace(/T.+/, ``),
-                    ).toLocaleDateString(`en-us`)}
+                    <Text as="strong" kind="strong">
+                      {page.title}
+                    </Text>
+                  </Text>
+                </Text>
+                <Text kind="p">
+                  <Text as="small" kind="small">
+                    Published: {dateFormat(page.publishDate)}
                   </Text>
                 </Text>
               </a>

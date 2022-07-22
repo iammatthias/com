@@ -17,7 +17,7 @@ const mdComponents = {
         props.src
       }
       alt=""
-      style={{ width: `50%` }}
+      style={{ width: `calc(100% - 16px)` }}
     />
   ),
   h1: (props: any) => <Text as="h1" kind="h1" {...props} />,
@@ -26,7 +26,6 @@ const mdComponents = {
   h4: (props: any) => <Text as="h4" kind="h4" {...props} />,
   h5: (props: any) => <Text as="h5" kind="h5" {...props} />,
   h6: (props: any) => <Text as="h6" kind="h6" {...props} />,
-  figure: (props: any) => <figure {...props} style={{ fontSize: `14px` }} />,
 };
 
 export default mdComponents;
