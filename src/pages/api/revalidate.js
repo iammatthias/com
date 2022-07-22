@@ -11,40 +11,27 @@ export default async function handleWebhook(req, res) {
 
   const jsonBody = JSON.parse(body);
 
-  // compute our signature from the raw body
+  // secret
   const secret = process.env.NEXT_PUBLIC_REVALIDATION;
-  const signature = req.headers['x-hub-signature-256'];
-  const computedSignature =
-    'sha256=' + createHmac('sha256', secret).update(body).digest('hex');
 
-  console.log(jsonBody);
+  if (req.query.secrete === secret) {
+    console.log(jsonBody.fields.slug.en - US);
 
-  // if (computedSignature === signature) {
-  //   console.log(
-  //     'event',
-  //     req.headers['x-github-event'],
-  //     'action',
-  //     jsonBody.action,
-  //     'issue',
-  //     jsonBody.issue?.title,
-  //     jsonBody.issue?.number
-  //   );
+    const slug = jsonBody.fields.slug.en - US;
 
-  //   const issueNumber = jsonBody.issue?.number;
+    // issue opened or edited
+    // comment created or edited
+    console.log('[Next.js] Revalidating /');
+    await res.revalidate('/');
+    if (slug) {
+      console.log(`[Next.js] Revalidating /${slug}`);
+      await res.revalidate(`/${slug}`);
+    }
 
-  //   // issue opened or edited
-  //   // comment created or edited
-  //   console.log('[Next.js] Revalidating /');
-  //   await res.revalidate('/');
-  //   if (issueNumber) {
-  //     console.log(`[Next.js] Revalidating /${issueNumber}`);
-  //     await res.revalidate(`/${issueNumber}`);
-  //   }
-
-  //   return res.status(200).send('Success!');
-  // } else {
-  //   return res.status(403).send('Forbidden');
-  // }
+    return res.status(200).send('Success!');
+  } else {
+    return res.status(403).send('Forbidden');
+  }
 }
 
 function getRawBody(req) {
