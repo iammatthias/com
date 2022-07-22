@@ -13,7 +13,7 @@ export default async function handleWebhook(req, res) {
 
   console.log({ jsonBody });
 
-  const slug = jsonBody.fields.slug[0];
+  const slug = jsonBody.fields.slug;
 
   console.log({ slug });
 
