@@ -17,7 +17,7 @@ export default async function handleWebhook(req, res) {
   const secret = process.env.NEXT_PUBLIC_REVALIDATION;
 
   if (req.query.secret === secret) {
-    const slug = jsonBody?.fields.slug + '.en-US';
+    const slug = jsonBody.fields?.slug[0];
 
     console.log(slug);
 
