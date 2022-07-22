@@ -1,35 +1,50 @@
+import { createHmac } from 'crypto';
+
 export default async function handleWebhook(req, res) {
-  // Check for secret to confirm this is a valid request
-  if (req.query.secret !== process.env.NEXT_PUBLIC_REVALIDATION) {
-    return res.status(401).json({ message: 'Invalid token' });
-  }
-  // Check if body is empty
+  // verify the webhook signature request against the
+  // unmodified, unparsed body
+  const body = await getRawBody(req);
   if (!body) {
     res.status(400).send('Bad request (no body)');
     return;
   }
 
-  // unmodified, unparsed body
-  const body = await getRawBody(req);
-
   const jsonBody = JSON.parse(body);
 
-  if (jsonBody.metadata?.fields.slug) {
-    console.log(jsonBody.metadata?.fields.slug);
+  // compute our signature from the raw body
+  const secret = process.env.NEXT_PUBLIC_REVALIDATION;
+  const signature = req.headers['x-hub-signature-256'];
+  const computedSignature =
+    'sha256=' + createHmac('sha256', secret).update(body).digest('hex');
 
-    const slug = jsonBody.metadata?.fields.slug;
+  console.log(jsonBody);
 
-    // revalidated page
-    console.log('[Next.js] Revalidating /');
-    await res.revalidate('/');
-    if (slug) {
-      console.log(`[Next.js] Revalidating /${slug}`);
-      await res.revalidate(`/${slug}`);
-    }
-    return res.status(200).send('Success!');
-  } else {
-    return res.status(403).send('Forbidden');
-  }
+  // if (computedSignature === signature) {
+  //   console.log(
+  //     'event',
+  //     req.headers['x-github-event'],
+  //     'action',
+  //     jsonBody.action,
+  //     'issue',
+  //     jsonBody.issue?.title,
+  //     jsonBody.issue?.number
+  //   );
+
+  //   const issueNumber = jsonBody.issue?.number;
+
+  //   // issue opened or edited
+  //   // comment created or edited
+  //   console.log('[Next.js] Revalidating /');
+  //   await res.revalidate('/');
+  //   if (issueNumber) {
+  //     console.log(`[Next.js] Revalidating /${issueNumber}`);
+  //     await res.revalidate(`/${issueNumber}`);
+  //   }
+
+  //   return res.status(200).send('Success!');
+  // } else {
+  //   return res.status(403).send('Forbidden');
+  // }
 }
 
 function getRawBody(req) {
