@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react';
 
 import Box from '@/components/Box';
 import Text from '@/components/Text';
-import PageQuery from '@/utils/gql/pageQuery';
 
 import { navigationRecipe } from './Navigation.css';
 import PageList from './PageList';
