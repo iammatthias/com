@@ -73,6 +73,11 @@ export const menuPageList = style({
   display: `grid`,
   gap: `16px`,
   gridTemplateColumns: `repeat(3, 1fr)`,
+  '@media': {
+    'screen and (max-width: 768px)': {
+      gridTemplateColumns: `repeat(1, 1fr)`,
+    },
+  },
 });
 
 export const menuItem = style({
