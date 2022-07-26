@@ -11,6 +11,9 @@ const nextConfig = {
   images: {
     domains: ['pbs.twimg.com'],
   },
+  pwa: {
+    dest: 'public',
+  },
   reactStrictMode: true,
   async headers() {
     return [
@@ -27,4 +30,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withPWA(withVanillaExtract(withMDX(nextConfig)));
+module.exports = withVanillaExtract(withMDX(withPWA(nextConfig)));
