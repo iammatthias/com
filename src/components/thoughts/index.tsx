@@ -15,7 +15,7 @@ import Button from '@/components/button';
 import Text from '@/components/text';
 import { githubClient } from '@/utils/apolloProvider';
 import { isDev } from '@/utils/isDev';
-import MD from '@/utils/MDprovider';
+import MD from '@/utils/_MDprovider';
 
 import { thoughtRecipe } from './thoughts.css';
 
