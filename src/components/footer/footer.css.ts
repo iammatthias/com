@@ -9,6 +9,7 @@ export const footer = style({
   justifyContent: `center`,
   alignItems: `center`,
   background: `#fdfcfc`,
+  marginTop: `auto`,
 });
 
 export const lowPolySVG = style({
