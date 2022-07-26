@@ -1,2 +1,2 @@
-declare module 'react-magic-grid';
+declare module 'react-responsive-masonry';
 declare module 'he';

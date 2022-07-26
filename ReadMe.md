@@ -1,80 +1,126 @@
-<!-- PROJECT LOGO -->
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/26466516/141659551-d7ba5630-7200-46fe-863b-87818dae970a.png" alt="Next.js TypeScript Starter">
+</p>
+
 <br />
+
+<div align="center"><strong>Non-opinionated TypeScript starter for Next.js</strong></div>
+<div align="center">Highly scalable foundation with the best DX. All the tools you need to build your next project.</div>
+
+<br />
+
 <div align="center">
-  <a href="https://github.com/iammatthias/.com">
-    <img src="public/image/android-chrome-512x512.png" alt="Logo" width="80" height="80">
+  <img src="https://img.shields.io/static/v1?label=PRs&message=welcome&style=flat-square&color=5e17eb&labelColor=000000" alt="PRs welcome!" />
+
+  <img alt="License" src="https://img.shields.io/github/license/jpedroschmitz/typescript-nextjs-starter?style=flat-square&color=5e17eb&labelColor=000000">
+
+  <a href="https://twitter.com/intent/follow?screen_name=jpedroschmitz">
+    <img src="https://img.shields.io/twitter/follow/jpedroschmitz?style=flat-square&color=5e17eb&labelColor=000000" alt="Follow @jpedroschmitz" />
   </a>
-
-<h3 align="center">I AM MATTHIAS</h3>
-
-  <p align="center">
-    A digital garden built with <a href="https://nextjs.org"><strong>Next.js</strong></a>.
-    <br />
-    <a href="https://github.com/iammatthias/.com/issues">Report Bugs</a>
-  </p>
 </div>
 
+<div align="center">
+  <sub>Created by <a href="https://twitter.com/jpedroschmitz">João Pedro</a> with the help of many <a href="https://github.com/jpedroschmitz/typescript-nextjs-starter/graphs/contributors">wonderful contributors</a>.</sub>
+</div>
 
+<br />
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ol>
-</details>
+## Features
 
+- ⚡️ Next.js 12
+- ⚛️ React 18
+- ⛑ TypeScript
+- 📏 ESLint — To find and fix problems in your code
+- 💖 Prettier — Code Formatter for consistent style
+- 🐶 Husky — For running scripts before committing
+- 📄 Commitizen — To define a standard way of committing rules
+- 🚓 Commitlint — To make sure your commit messages follow the convention
+- 🖌 Renovate — To keep your dependencies up to date
+- 🚫 lint-staged — Run ESLint and Prettier against staged Git files
+- 👷 PR Workflow — Run Type Check & Linters on Pull Requests
+- ⚙️ EditorConfig - Consistent coding styles across editors and IDEs
+- 🗂 Path Mapping — Import components or images using the `@` prefix
 
+## Quick Start
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
+The best way to start with this template is using [Create Next App](https://nextjs.org/docs/api-reference/create-next-app).
 
-This project started years ago as a pure photography portfolio. Over time it grew, and blossomed, and was pruned, and grew all over again. And somewhere along the way I started tending to it like a garden, planting new seeds and removing old growth. Ever evolving, ever challenging, and mine. 
+```
+yarn create next-app -e https://github.com/jpedroschmitz/typescript-nextjs-starter
+# or
+npx create-next-app -e https://github.com/jpedroschmitz/typescript-nextjs-starter
+```
 
-### Built With
+### Development
 
-* [next.js](https://nextjs.org)  
-* [next-pwa](https://www.npmjs.com/package/next-pwa)  
-* [mdx](https://mdxjs.com)  
-* [vanilla-extract](http://vanilla-extract.style)
-* [capsize](https://seek-oss.github.io/capsize/)
-* [radix](https://www.radix-ui.com)  
-* [contentful](https://www.contentful.com)  
-* [wagmi](https://wagmi-xyz.vercel.app)  
-* [rainbowkit](https://www.npmjs.com/package/@rainbow-me/rainbowkit)
-* [Next.js TypeScript Starter](https://github.com/jpedroschmitz/typescript-nextjs-starter)
+To start the project locally, run:
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+```bash
+yarn dev
+```
 
-<!-- CONTRIBUTING -->
-## Contributing
+Open `http://localhost:3000` with your browser to see the result.
 
-Contributions are welcome, but not expected. Limited support will be provided. 
+## Testimonials
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+> [**“This starter is by far the best TypeScript starter for Next.js. Feature packed but un-opinionated at the same time!”**](https://github.com/jpedroschmitz/typescript-nextjs-starter/issues/87#issue-789642190)<br>
+> — Arafat Zahan
 
+> [**“I can really recommend the Next.js Typescript Starter repo as a solid foundation for your future Next.js projects.”**](https://corfitz.medium.com/create-a-custom-create-next-project-command-2a6b35a1c8e6)<br>
+> — Corfitz
 
+> [**“Brilliant work!”**](https://github.com/jpedroschmitz/typescript-nextjs-starter/issues/87#issuecomment-769314539)<br>
+> — Soham Dasgupta
 
-<!-- LICENSE -->
+## Showcase
+
+List of websites that started off with Next.js TypeScript Starter:
+
+- [dowhile.io](https://dowhile.io)
+- [graphcms.com](https://graphcms.com)
+- [mobg.com.br](https://mobg.com.br)
+- [nextlevelweek.com](https://nextlevelweek.com)
+- [rocketseat.com.br](https://www.rocketseat.com.br)
+
+## Documentation
+
+### Requirements
+
+- Node.js >= 12.22.0
+- Yarn 1 (Classic)
+
+### Directory Structure
+
+- [`.github`](.github) — GitHub configuration including the CI workflow.<br>
+- [`.husky`](.husky) — Husky configuration and hooks.<br>
+- [`public`](./public) — Static assets such as robots.txt, images, and favicon.<br>
+- [`src`](./src) — Application source code, including pages, components, styles.
+
+### Scripts
+
+- `yarn dev` — Starts the application in development mode at `http://localhost:3000`.
+- `yarn build` — Creates an optimized production build of your application.
+- `yarn start` — Starts the application in production mode.
+- `yarn type-check` — Validate code using TypeScript compiler.
+- `yarn lint` — Runs ESLint for all files in the `src` directory.
+- `yarn format` — Runs Prettier for all files in the `src` directory.
+- `yarn commit` — Run commitizen. Alternative to `git commit`.
+
+### Path Mapping
+
+TypeScript are pre-configured with custom path mappings. To import components or files, use the `@` prefix.
+
+```tsx
+import { Button } from '@/components/Button';
+
+// To import images or other files from the public folder
+import avatar from '@/public/avatar.png';
+```
+
+### Switch to npm
+
+This starter uses Yarn 1 (Classic) by default, but this choice is yours. If you'd like to switch to npm, delete the `yarn.lock` file, install the dependencies with `npm i`, change the CI workflow, and Husky Git hooks to use npm commands.
+
 ## License
 
-There is no license. All rights are reserved. Be cool, don't steal, but feel free to poke around and see how things work. 
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-
-<!-- CONTACT -->
-## Contact
-
-[@iammatthias](https://twitter.com/iammatthias)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for more information.

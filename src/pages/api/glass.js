@@ -1,4 +1,4 @@
-// glass.ts
+// glass.js
 // Language: typescript
 
 // Queries last 100 images from https://glass.photo/iammatthias

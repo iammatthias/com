@@ -1,5 +1,3 @@
-import { createHmac } from 'crypto';
-
 export default async function handleWebhook(req, res) {
   // verify the webhook signature request against the
   // unmodified, unparsed body
