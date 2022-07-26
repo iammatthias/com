@@ -44,6 +44,12 @@ export default function Home() {
         >
           <a>quixotic</a>
         </Link>
+        <Link
+          href="https://github.com/iammatthias/.com/blob/main/src/utils/contract/solidity/TheGuestBook.sol"
+          passHref
+        >
+          <a>contract</a>
+        </Link>
       </Text>
       <Text as="h4" kind="p" font="mono">
         Drop a GM, WAGMI, GN, etc below.
