@@ -44,6 +44,7 @@ export default function Home() {
         >
           <a>quixotic</a>
         </Link>
+        {` | `}
         <Link
           href="https://github.com/iammatthias/.com/blob/main/src/utils/contract/solidity/TheGuestBook.sol"
           passHref
