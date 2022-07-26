@@ -7,8 +7,8 @@ import { gql } from '@apollo/client';
 import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 
-import ContentEnd from '@/components/contentEnd';
-import ContentStart from '@/components/contentStart';
+import ContentEnd from '@/_components/contentEnd';
+import ContentStart from '@/_components/contentStart';
 import { contentfulClient } from '@/utils/apolloProvider';
 import dateFormat from '@/utils/dateFormat';
 import { isDev } from '@/utils/isDev';

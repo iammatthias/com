@@ -1,4 +1,4 @@
-import Text from '@/components/text';
+import Text from '@/_components/text';
 
 const mdComponents = {
   p: (props: any) => <Text as="p" kind="p" mono={true} {...props} />,
