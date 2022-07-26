@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { Tweet } from 'react-static-tweets';
 
 // import ClientOnly from '../utils/clientOnly';
-import Box from '@/_components/Box';
-import Squiggle from '@/_components/squiggle';
-import GalleryContentful from '@/_components/gallery/galleryContentful';
-import GalleryGlass from '@/_components/gallery/galleryGlass';
-import GalleryWrapper from '@/_components/gallery/wrapper';
-import PageList from '@/_components/pageList';
-import Text from '@/_components/text';
+import Box from '@/components/Box';
+import Squiggle from '@/components/squiggle';
+import GalleryContentful from '@/components/gallery/galleryContentful';
+import GalleryGlass from '@/components/gallery/galleryGlass';
+import GalleryWrapper from '@/components/gallery/wrapper';
+import PageList from '@/components/pageList';
+import Text from '@/components/text';
 
 // import Thoughts from '@/components/joy/thoughts';
 

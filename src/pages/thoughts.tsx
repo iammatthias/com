@@ -6,8 +6,8 @@
 // helpers
 import Link from 'next/link';
 
-import Text from '@/_components/text';
-import Thoughts from '@/_components/thoughts';
+import Text from '@/components/text';
+import Thoughts from '@/components/thoughts';
 
 // components
 

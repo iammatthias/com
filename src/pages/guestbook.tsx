@@ -7,10 +7,10 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
 
-import Guestlist from '@/_components/guestbook/guestlist';
-import Mint from '@/_components/guestbook/mint';
-import Notes from '@/_components/guestbook/notes';
-import Text from '@/_components/text';
+import Guestlist from '@/components/guestbook/guestlist';
+import Mint from '@/components/guestbook/mint';
+import Notes from '@/components/guestbook/notes';
+import Text from '@/components/text';
 
 // components
 
