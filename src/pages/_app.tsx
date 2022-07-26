@@ -2,6 +2,7 @@ import { AppProps } from 'next/app';
 
 import '@/styles/reset.css';
 
+import SEO from '@/components/seo';
 import Layout from '@/components/layout';
 import Background from '@/components/background';
 import MDXProvider from '@/utils/MDXprovider';
@@ -12,6 +13,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <Web3Provider>
       <MDXProvider>
         <Layout>
+          <SEO title={pageProps.pageTitle} name={pageProps.pageName} />
           <Component {...pageProps} />
         </Layout>
         <Background />
