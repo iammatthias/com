@@ -3,7 +3,7 @@ import { style, globalStyle } from '@vanilla-extract/css';
 export const layout = style({
   display: `flex`,
   flexDirection: `column`,
-  justifyContent: `start`,
+  justifyContent: `flex-start`,
   alignItems: `center`,
   minHeight: `100vh`,
   gap: `32px`,

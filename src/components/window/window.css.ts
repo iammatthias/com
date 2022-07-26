@@ -46,7 +46,7 @@ export const windowOverlaySpanSmall = style({
   position: `relative`,
   fontSize: `25px`,
   float: `left`,
-  marginRight: `16px`,
+  marginRight: `8px`,
   fontFamily: `'Losta Bonita', serif`,
 });
 
@@ -70,7 +70,7 @@ export const windowOverlayHR = style({
   border: `1px solid`,
   borderColor: `inherit`,
   position: `relative`,
-  top: `28px`,
+  top: `22px`,
 });
 
 export const windowImage = style({

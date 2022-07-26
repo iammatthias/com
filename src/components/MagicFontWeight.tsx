@@ -32,7 +32,7 @@ export default function MagicFontWeight({ children }: any) {
       // The Longer The Distance The Lower The Font Weight
       element.setAttribute(
         `style`,
-        `font-variation-settings: 'wght' ${100 + distance * 1.618};`,
+        `font-variation-settings: 'wght' ${900 - distance * 2};`,
       );
     });
   }
@@ -40,8 +40,8 @@ export default function MagicFontWeight({ children }: any) {
   // 👇️ get global mouse coordinates
   const handleWindowMouseMove = (event: any) => {
     setGlobalCoords({
-      x: event.screenX,
-      y: event.screenY,
+      x: event.pageX,
+      y: event.pageY,
     });
     setFontWeight(document.querySelectorAll(`.letter`));
   };
