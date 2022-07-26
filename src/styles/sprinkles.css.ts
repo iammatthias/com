@@ -7,6 +7,7 @@ export const [themeClass, vars] = createTheme({
     blue100: `#dbeafe`,
     blue200: `#bfdbfe`,
     yellow: `#aaff00`,
+    black: `#1a1a1a`,
   },
   font: {
     body: `arial`,
