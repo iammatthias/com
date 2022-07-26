@@ -8,6 +8,7 @@ import {
   navContent,
   menuItem,
   menuPageList,
+  headerLink,
 } from './header.css';
 
 import { useRouter } from 'next/router';
@@ -39,7 +40,7 @@ export default function Header() {
       >
         <NavigationMenu.List className={`${navList}`}>
           <NavigationMenu.Item className={`${navListItem}`}>
-            <NavigationMenu.Link href="/">
+            <NavigationMenu.Link href="/" className={`${headerLink}`}>
               <Text as="h3" kind="h3" font="heading">
                 Home
               </Text>

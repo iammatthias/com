@@ -19,6 +19,12 @@ export const header = style({
   background: `#fdfcfc`,
 });
 
+export const headerLink = style({
+  fontFamily: `Losta Bonita`,
+  color: `#1a1a1a`,
+  ':visited': { color: `#1a1a1a` },
+});
+
 export const headerVR = style({
   borderLeft: `2px solid #1a1a1a`,
   minHeight: `16px`,

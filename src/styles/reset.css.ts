@@ -102,7 +102,7 @@ globalStyle(`body`, {
   fontSmooth: `antialiased`,
   // Prevent the rubber band scroll effect when the user hits the top or bottom of the document.
   overscrollBehavior: `none`,
-  color: `black`,
+  color: `#1a1a1a`,
   fontFamily: `Inter, sans-serif`,
 });
 
@@ -125,13 +125,13 @@ globalStyle(`pre`, {
   paddingTop: 8,
   paddingLeft: 8,
   paddingRight: 8,
-  borderTop: `2px solid black`,
+  borderTop: `2px solid #1a1a1a`,
 });
 
 globalStyle(`code`, {
   paddingRight: 2,
   paddingLeft: 2,
-  border: `2px solid black`,
+  border: `2px solid #1a1a1a`,
 });
 
 globalStyle(`pre > code`, {
