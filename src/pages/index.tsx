@@ -1,6 +1,4 @@
 // index.tsx
-// Language: typescript
-
 // The homepage.
 
 // apollo
@@ -9,7 +7,6 @@ import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 // mdx
 import { serialize } from 'next-mdx-remote/serialize';
 
-import Layout from '@/components/Layout';
 import { contentfulClient } from '@/utils/apolloProvider';
 // helpers
 import { isDev } from '@/utils/isDev';
@@ -19,11 +16,7 @@ type Props = {
 };
 
 export default function Home({ contentfulMdx }: Props) {
-  return (
-    <Layout as="main" layout="homePageContent">
-      <MDXRemote {...contentfulMdx} />
-    </Layout>
-  );
+  return <MDXRemote {...contentfulMdx} />;
 }
 
 //////////////// PAGE CONTENT /////////////////////

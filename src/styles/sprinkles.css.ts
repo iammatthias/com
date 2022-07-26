@@ -1,88 +1,39 @@
-// sprinkles.css.ts
-// Language: typescript
-
-// Provides sprinkles / atoms for recipes.
-
 import { createTheme } from '@vanilla-extract/css';
-import { createSprinkles, defineProperties } from '@vanilla-extract/sprinkles';
-
-const space = {
-  0: `0px`,
-  4: `4px`,
-  8: `8px`,
-  12: `12px`,
-  15: `15px`,
-  16: `16px`,
-  20: `20px`,
-  24: `24px`,
-  28: `28px`,
-  32: `32px`,
-  36: `36px`,
-  40: `40px`,
-  44: `44px`,
-  48: `48px`,
-  52: `52px`,
-  56: `56px`,
-  60: `60px`,
-  64: `64px`,
-  68: `68px`,
-  72: `72px`,
-  76: `76px`,
-  80: `80px`,
-  84: `84px`,
-  88: `88px`,
-  92: `92px`,
-  96: `96px`,
-  100: `100px`,
-  104: `104px`,
-  108: `108px`,
-  112: `112px`,
-  116: `116px`,
-  120: `120px`,
-  124: `124px`,
-  safeTop: `env(safe-area-inset-top)`,
-  safeRight: `env(safe-area-inset-right)`,
-  safeBottom: `env(safe-area-inset-bottom)`,
-  safeLeft: `env(safe-area-inset-left)`,
-};
-
-const fontWeight = {
-  100: `100`,
-  200: `200`,
-  300: `300`,
-  400: `400`,
-  500: `500`,
-  600: `600`,
-  700: `700`,
-  800: `800`,
-  900: `900`,
-};
-
-const colors = {
-  black: `rgba(4, 4, 0, 1)`,
-  blackFade: `rgba(19, 19, 21, .2)`,
-  white: `rgba(249, 254, 255, 1)`,
-  whiteFade: `rgba(253, 255, 252, .2)`,
-  gray: `rgba(128, 128, 128, 1)`,
-  blue: `rgba(3, 136, 252, 1)`,
-  red: `rgba(249, 16, 74, 1)`,
-  yellow: `rgba(255, 221, 0, 1)`,
-  pink: `rgba(232, 141, 163, 1)`,
-  turq: `rgba(0, 245, 196, 1)`,
-  orange: `rgba(255, 135, 31, 1)`,
-  transparent: `transparent`,
-  bgGradient: `radial-gradient(circle at 50% 50%, rgba(249, 254, 255, 1), rgba(253, 255, 252, .2)), url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-  overlay: `blur(50px) saturate(382%) grayscale(50%) brightness(1.25)`,
-};
+import { defineProperties, createSprinkles } from '@vanilla-extract/sprinkles';
 
 export const [themeClass, vars] = createTheme({
-  colors,
-  font: {
-    body: `Inter, arial`,
+  color: {
+    blue50: `#eff6ff`,
+    blue100: `#dbeafe`,
+    blue200: `#bfdbfe`,
+    yellow: `#aaff00`,
   },
-  fontSize: space,
-  fontWeight: fontWeight,
-  space: space,
+  font: {
+    body: `arial`,
+  },
+  fontSize: {
+    p: `16px`,
+    h1: `48.83px`,
+    h2: `39.06px`,
+    h3: `31.25px`,
+    h4: `25px`,
+    h5: `20px`,
+    h6: `12.8px`,
+    small: `10.24px`,
+  },
+  fontWeight: {
+    '400': `400`,
+    '600': `600`,
+    '700': `700`,
+    '900': `900`,
+  },
+  space: {
+    none: `0`,
+    small: `4px`,
+    medium: `8px`,
+    large: `16px`,
+    extraLarge: `32px`,
+  },
 });
 
 const layoutStyles = defineProperties({
@@ -93,64 +44,25 @@ const layoutStyles = defineProperties({
   },
   defaultCondition: `mobile`,
   properties: {
-    top: {},
-    right: {},
-    bottom: {},
-    left: {},
-    padding: space,
-    paddingTop: space,
-    paddingBottom: space,
-    paddingLeft: space,
-    paddingRight: space,
-    margin: space,
-    width: [`16px`, `100%`],
-    height: [`16px`, `100%`],
-    fontSize: space,
-    fontWeight: fontWeight,
-    gap: space,
-    alignItems: [
-      `flex-start`,
-      `center`,
-      `flex-end`,
-      `space-between`,
-      `space-around`,
-    ],
-    justifyContent: [
-      `flex-start`,
-      `center`,
-      `flex-end`,
-      `space-between`,
-      `space-around`,
-    ],
-    position: [`relative`, `absolute`, `fixed`],
-    display: [
-      `none`,
-      `block`,
-      `flex`,
-      `grid`,
-      `inline-block`,
-      `inline`,
-      `inline-flex`,
-    ],
+    display: [`none`, `block`, `flex`],
     flexDirection: [`row`, `column`],
-    background: colors,
-    backgroundImage: colors,
-    textDecoration: [`none`, `underline`, `line-through`],
-    border: [`none`, `solid`, `dashed`, `dotted`],
-    verticalAlign: [
-      `baseline`,
-      `sub`,
-      `super`,
-      `top`,
-      `text-top`,
-      `middle`,
-      `bottom`,
-      `text-bottom`,
+    paddingTop: vars.space,
+    paddingBottom: vars.space,
+    paddingLeft: vars.space,
+    paddingRight: vars.space,
+    margin: vars.space,
+    width: [`16px`, `100%`],
+    fontSize: vars.fontSize,
+    fontWeight: vars.fontWeight,
+    fontStyle: [`normal`, `italic`, `oblique`, `initial`, `inherit`],
+    fontFamily: [
+      `Losta Bonita`,
+      `Inter`,
+      `Inconsolata`,
+      `sans-serif`,
+      `serif`,
+      `monospace`,
     ],
-    boxShadow: [`none`, `0 0 0 1px black`, `0 0 0 2px black`],
-    backdropFilter: [`none`, `blur(50px) opacity(38.2%) saturate(2618%)`],
-    ':hover': {},
-    ':focus': {},
     // etc.
   },
   shorthands: {
@@ -162,8 +74,9 @@ const layoutStyles = defineProperties({
 
 const colorStyles = defineProperties({
   properties: {
-    color: colors,
-    background: colors,
+    color: vars.color,
+    background: vars.color,
+    // etc.
   },
 });
 

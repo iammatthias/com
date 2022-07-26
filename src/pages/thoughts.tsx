@@ -6,15 +6,14 @@
 // helpers
 import Link from 'next/link';
 
-import Layout from '@/components/Layout';
-import Text from '@/components/Text';
-import Thoughts from '@/components/Thoughts';
+import Text from '@/components/text';
+import Thoughts from '@/components/thoughts';
 
 // components
 
 export default function Home() {
   return (
-    <Layout as="main" layout="pageContent">
+    <>
       <Text as="h3" kind="h3">
         Thoughts
       </Text>
@@ -29,7 +28,7 @@ export default function Home() {
         GitHub.
       </Text>
       <Thoughts />
-    </Layout>
+    </>
   );
 }
 

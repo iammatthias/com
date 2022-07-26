@@ -8,11 +8,11 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import Box from '@/components/Box';
-import Modal from '@/components/Modal';
-import Text from '@/components/Text';
+import Modal from '@/components/modal';
+import Text from '@/components/text';
 import { contentfulClient } from '@/utils/apolloProvider';
 
-import GalleryWrapper from './GalleryWrapper';
+import Wrapper from './wrapper';
 
 const QUERY = gql`
   query ($title: String) {
@@ -62,15 +62,17 @@ export default function GalleryContentful(props: any) {
     return `${src}?w=${width || 1200}&q=${quality || 60}`;
   }
 
+  const showTitle = pathname.includes(`/work/`);
+
   return (
     <>
-      {!props.hideTitle && pathname.includes(`/work/`) ? (
-        <Text as="h3" kind="h3">
+      {showTitle && (
+        <Text as="h3" kind="h3" font="heading">
           {imageSetTitle}
         </Text>
-      ) : null}
+      )}
       <Box className={props.className}>
-        <GalleryWrapper>
+        <Wrapper>
           {imageSetImages.map((image: any, index: any) => (
             <Modal key={index} imageKey={index} images={imageSetImages}>
               <Image
@@ -95,7 +97,7 @@ export default function GalleryContentful(props: any) {
               />
             </Modal>
           ))}
-        </GalleryWrapper>
+        </Wrapper>
       </Box>
     </>
   );

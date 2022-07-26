@@ -7,9 +7,8 @@ import { gql } from '@apollo/client';
 import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 
-import Layout from '@/components/Layout';
-import PageFooter from '@/components/PageEnds/PageFooter';
-import PageHeader from '@/components/PageEnds/PageHeader';
+import ContentEnd from '@/components/contentEnd';
+import ContentStart from '@/components/contentStart';
 import { contentfulClient } from '@/utils/apolloProvider';
 import dateFormat from '@/utils/dateFormat';
 import { isDev } from '@/utils/isDev';
@@ -32,8 +31,8 @@ export default function Page({
   slug,
 }: Props) {
   return (
-    <Layout as="main" layout="pageContent">
-      <PageHeader
+    <>
+      <ContentStart
         pagetitle={pageName}
         pagetype={pageType}
         publishdate={publishDate}
@@ -42,9 +41,9 @@ export default function Page({
       />
       <MDXRemote {...mdx} />
       {(pageType === `Gallery` || pageType === `Blog`) && (
-        <PageFooter pagetype={pageType} slug={slug} />
+        <ContentEnd pagetype={pageType} slug={slug} />
       )}
-    </Layout>
+    </>
   );
 }
 
@@ -92,7 +91,7 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }: any) {
   // params contains the page `slug`.
   // We define our query here
-  const { data } = await contentfulClient.query({
+  const { data, loading, error } = await contentfulClient.query({
     query: gql`
       query ($preview: Boolean, $slug: String) {
         pageCollection(
@@ -119,6 +118,15 @@ export async function getStaticProps({ params }: any) {
       preview: isDev,
     },
   });
+
+  if (loading) {
+    return null;
+  }
+
+  if (error) {
+    console.error(error);
+    return { props: { error } };
+  }
 
   const source = data.pageCollection.items[0].body;
   const mdxSource = await serialize(source);

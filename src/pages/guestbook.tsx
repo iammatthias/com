@@ -7,11 +7,10 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
 
-import Guestlist from '@/components/Guestbook/Guestlist';
-import Mint from '@/components/Guestbook/Mint';
-import Notes from '@/components/Guestbook/Notes';
-import Layout from '@/components/Layout';
-import Text from '@/components/Text';
+import Guestlist from '@/components/guestbook/guestlist';
+import Mint from '@/components/guestbook/mint';
+import Notes from '@/components/guestbook/notes';
+import Text from '@/components/text';
 
 // components
 
@@ -20,35 +19,33 @@ export default function Home() {
   const { address } = useAccount();
 
   return (
-    <Layout as="main" layout="pageContent">
-      <Text as="h1" kind="mono">
+    <>
+      <Text as="p" kind="p" font="mono">
         ▀█▀ █░█ █▀▀
         <br />
         ░█░ █▀█ ██▄
       </Text>
-      <Text as="h1" kind="mono">
+      <Text as="p" kind="p" font="mono">
         █▀▀ █░█ █▀▀ █▀ ▀█▀ █▄▄ █▀█ █▀█ █▄▀
         <br />
         █▄█ █▄█ ██▄ ▄█ ░█░ █▄█ █▄█ █▄█ █░█
       </Text>
-      <Text as="p" kind="mono">
-        <Text as="small" kind="small">
-          <Link
-            href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}address/${contract}`}
-            passHref
-          >
-            <a>optimistic-etherscan</a>
-          </Link>
-          {` | `}
-          <Link
-            href={`${process.env.NEXT_PUBLIC_QUIXOTIC_URL}collection/${contract}`}
-            passHref
-          >
-            <a>quixotic</a>
-          </Link>
-        </Text>
+      <Text as="p" kind="p" font="mono">
+        <Link
+          href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}address/${contract}`}
+          passHref
+        >
+          <a>optimistic-etherscan</a>
+        </Link>
+        {` | `}
+        <Link
+          href={`${process.env.NEXT_PUBLIC_QUIXOTIC_URL}collection/${contract}`}
+          passHref
+        >
+          <a>quixotic</a>
+        </Link>
       </Text>
-      <Text as="h1" kind="mono">
+      <Text as="h4" kind="p" font="mono">
         Drop a GM, WAGMI, GN, etc below.
       </Text>
       <Notes />
@@ -59,7 +56,7 @@ export default function Home() {
       />
       {address && <Mint />}
       <Guestlist />
-    </Layout>
+    </>
   );
 }
 

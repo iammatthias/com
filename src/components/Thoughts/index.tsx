@@ -11,13 +11,13 @@ import matter from 'gray-matter';
 import ReactMarkdown from 'react-markdown';
 
 import Box from '@/components/Box';
-import Button from '@/components/Button';
-import Text from '@/components/Text';
+import Button from '@/components/button';
+import Text from '@/components/text';
 import { githubClient } from '@/utils/apolloProvider';
 import { isDev } from '@/utils/isDev';
-import mdComponents from '@/utils/MdProvider';
+import MD from '@/utils/MDprovider';
 
-import { thoughtRecipe } from './Thoughts.css';
+import { thoughtRecipe } from './thoughts.css';
 
 const QUERY = gql`
   query ($owner: String!, $name: String!) {
@@ -77,15 +77,11 @@ export default function Thoughts() {
                 id={matter(entry.object.text).data.title}
               >
                 <Box className={thoughtRecipe({ thought: `contentGrid` })}>
-                  <Text as="p" kind="p">
-                    <Text as="small" kind="small">
-                      <Text as="strong" kind="strong">
-                        {matter(entry.object.text).data.title}
-                      </Text>
-                    </Text>
+                  <Text as="p" kind="p" bold={true}>
+                    {matter(entry.object.text).data.title}
                   </Text>
 
-                  <ReactMarkdown components={mdComponents}>
+                  <ReactMarkdown components={MD}>
                     {matter(entry.object.text).content}
                   </ReactMarkdown>
                 </Box>

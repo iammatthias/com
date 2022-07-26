@@ -6,15 +6,15 @@
 import Image, { ImageLoaderProps } from 'next/image';
 import useSWR from 'swr';
 
-import GalleryWrapper from '@/components/Gallery/GalleryWrapper';
+import Wrapper from '@/components/gallery/wrapper';
 
 export default function Glass() {
   // data
   const fetcher = (url: any) => fetch(url).then((res) => res.json());
   const { data, error } = useSWR(`/api/glass`, fetcher);
 
-  if (error) return <div>failed to load</div>;
-  if (!data) return <div>loading...</div>;
+  if (error) return null;
+  if (!data) return null;
 
   // data result - images
   const glassPosts = data.data;
@@ -26,7 +26,7 @@ export default function Glass() {
   console.log(glassPosts.length);
 
   return (
-    <GalleryWrapper>
+    <Wrapper>
       {glassPosts.map((post: any, index: any) => (
         <a
           href={post.share_url}
@@ -50,6 +50,6 @@ export default function Glass() {
           />
         </a>
       ))}
-    </GalleryWrapper>
+    </Wrapper>
   );
 }

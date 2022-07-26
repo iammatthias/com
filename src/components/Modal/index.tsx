@@ -11,7 +11,7 @@ import useMeasure from 'react-use-measure';
 
 import Box from '@/components/Box';
 
-import { modalRecipe } from './Modal.css';
+import { modalRecipe } from './modal.css';
 
 function Content({ children, ...props }: any) {
   return (

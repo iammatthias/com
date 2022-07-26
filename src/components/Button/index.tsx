@@ -7,7 +7,7 @@ import React from 'react';
 
 import Box from '@/components/Box';
 
-import { buttonRecipe, ButtonVariants } from './Button.css';
+import { buttonRecipe, ButtonVariants } from './button.css';
 
 type Props = {
   children: React.ReactNode;

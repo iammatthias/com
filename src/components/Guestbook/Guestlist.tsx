@@ -8,12 +8,12 @@ import Link from 'next/link';
 import { useContractRead } from 'wagmi';
 
 import Box from '@/components/Box';
-import Squiggle from '@/components/etc/Squiggle';
-import Text from '@/components/Text';
+import Squiggle from '@/components/squiggle';
+import Text from '@/components/text';
 import abi from '@/utils/contract/abi.json';
 
-import GuestENS from './ENS';
-import { guestbookRecipe } from './Guestbook.css';
+import GuestENS from './ens';
+import { guestbookRecipe } from './guestbook.css';
 
 export default function Guestlist() {
   const contract = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS;
@@ -43,7 +43,7 @@ export default function Guestlist() {
                 <Box
                   className={guestbookRecipe({ guestbook: `guestlistMeta` })}
                 >
-                  <Text as="p" kind="mono">
+                  <Text as="p" kind="p" font="mono">
                     <Text as="small" kind="small">
                       <Link
                         href={
@@ -59,7 +59,7 @@ export default function Guestlist() {
                       </Link>
                     </Text>
                   </Text>
-                  <Text as="p" kind="mono">
+                  <Text as="p" kind="p" font="mono">
                     <Text as="small" kind="small">
                       Guest # {BigNumber.from(guest[0]._hex).toNumber() + 1} at
                       {` `}
@@ -68,12 +68,12 @@ export default function Guestlist() {
                   </Text>
                 </Box>
 
-                <Text as="p" kind="mono">
+                <Text as="p" kind="p" font="mono">
                   {guest[2]}
                 </Text>
 
                 {guest[4] == `true` && (
-                  <Text as="p" kind="mono">
+                  <Text as="p" kind="p" font="mono">
                     <Text as="small" kind="small">
                       View NFT on{` `}
                       <Link

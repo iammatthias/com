@@ -1,24 +1,12 @@
-// Gallery.css
-// Language: typescript
+import { style } from '@vanilla-extract/css';
 
-// Scoped styles for `Gallery`.
-
-import { recipe } from '@vanilla-extract/recipes';
-
-export const galleryRecipe = recipe({
-  variants: {
-    gallery: {
-      wrapper: {
-        display: `flex`,
-        gap: `8px`,
-      },
-      image: {
-        position: `relative`,
-        width: `100%`,
-        marginBottom: `8px`,
-      },
-    },
-  },
+export const wrapper = style({
+  display: `flex`,
+  gap: `16px`,
 });
 
-export type GalleryVariants = Parameters<typeof galleryRecipe>[0];
+export const image = style({
+  position: `relative`,
+  width: `100%`,
+  marginBottom: `16px`,
+});

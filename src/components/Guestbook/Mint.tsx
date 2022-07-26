@@ -11,13 +11,13 @@ import {
 } from 'wagmi';
 
 import Box from '@/components/Box';
-import Button from '@/components/Button';
-import Squiggle from '@/components/etc/Squiggle';
-import Text from '@/components/Text';
+import Button from '@/components/button';
+import Squiggle from '@/components/squiggle';
+import Text from '@/components/text';
 import abi from '@/utils/contract/abi.json';
 
-import GuestENS from './ENS';
-import { guestbookRecipe } from './Guestbook.css';
+import GuestENS from './ens';
+import { guestbookRecipe } from './guestbook.css';
 
 export default function Mint() {
   const contract = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS as string;
@@ -120,40 +120,34 @@ export default function Mint() {
           </form>
           {message && (
             <Box className={guestbookRecipe({ guestbook: `guestlistItem` })}>
-              <Text as="h2" kind="h2">
-                <Text as="span" kind="mono">
-                  Preview:
-                </Text>
+              <Text as="h2" kind="h2" font="mono">
+                Preview:
               </Text>
               <Squiggle squiggleWidth={8} height={24} />
 
               <Box className={guestbookRecipe({ guestbook: `guestlistMeta` })}>
-                <Text as="p" kind="mono">
-                  <Text as="small" kind="small">
-                    {address && (
-                      <Link
-                        href={
-                          process.env.NEXT_PUBLIC_ETHERSCAN_URL +
-                          `address/` +
-                          address
-                        }
-                        passHref
-                      >
-                        <a>
-                          <GuestENS address={address} />
-                        </a>
-                      </Link>
-                    )}
-                  </Text>
+                <Text as="p" kind="small" font="mono">
+                  {address && (
+                    <Link
+                      href={
+                        process.env.NEXT_PUBLIC_ETHERSCAN_URL +
+                        `address/` +
+                        address
+                      }
+                      passHref
+                    >
+                      <a>
+                        <GuestENS address={address} />
+                      </a>
+                    </Link>
+                  )}
                 </Text>
-                <Text as="p" kind="mono">
-                  <Text as="small" kind="small">
-                    New Guest at{` `}
-                    <i>{blockData}</i>
-                  </Text>
+                <Text as="p" kind="small" font="mono">
+                  New Guest at{` `}
+                  <i>{blockData}</i>
                 </Text>
               </Box>
-              <Text as="p" kind="mono">
+              <Text as="p" kind="p" font="mono">
                 {message}
               </Text>
             </Box>

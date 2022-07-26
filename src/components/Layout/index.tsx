@@ -1,23 +1,21 @@
-// Layout
-// Language: typescript
-
-// A layout component used to set `gap` values for various elements.
-
+import Header from '../header';
+import Footer from '../footer';
+import { themeClass } from '@/styles/sprinkles.css';
+import { layout, content } from './layout.css';
 import Box from '@/components/Box';
-
-import { layoutRecipe, LayoutVariants } from './Layout.css';
 
 type Props = {
   children: React.ReactNode;
-  as?: React.ElementType;
-} & LayoutVariants;
-
-export const Layout = ({ children, layout = `page`, as = `div` }: Props) => {
-  return (
-    <Box as={as} className={layoutRecipe({ layout })}>
-      {children}
-    </Box>
-  );
 };
 
-export default Layout;
+export default function Layout({ children }: Props) {
+  return (
+    <Box className={`${themeClass} ${layout}`}>
+      <Header />
+      <Box as="main" className={`${content}`}>
+        {children}
+      </Box>
+      <Footer />
+    </Box>
+  );
+}
