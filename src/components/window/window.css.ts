@@ -4,7 +4,7 @@ export const windowWrapper = style({
   height: `100%`,
   maxHeight: `538px`,
   width: `100%`,
-  maxWidth: `384px`,
+  maxWidth: `65ch`,
   display: `flex`,
   flexDirection: `column`,
   justifyContent: `center`,
