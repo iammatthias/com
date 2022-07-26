@@ -90,6 +90,15 @@ export default function Header() {
                     </a>
                   </Link>
                 </Box>
+                <Box className={menuItem}>
+                  <Link href="https://eeethers.xyz/" passHref={true}>
+                    <a>
+                      <Text as="h5" kind="h5" bold={true}>
+                        Eeethers
+                      </Text>
+                    </a>
+                  </Link>
+                </Box>
               </Box>
             </NavigationMenu.Content>
           </NavigationMenu.Item>
