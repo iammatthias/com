@@ -4,7 +4,7 @@ import '@/styles/reset.css';
 
 import Layout from '@/components/layout';
 import Background from '@/components/background';
-import MDXProvider from '@/utils/_MDXprovider';
+import MDXProvider from '@/utils/MDXprovider';
 import Web3Provider from '@/utils/web3Provider';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
