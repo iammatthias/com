@@ -6,9 +6,11 @@ import {
   useAccount,
   useBlockNumber,
   useContractWrite,
-  useSigner,
+  usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
+
+import { useIsMounted } from '@/utils/useIsMounted';
 
 import Box from '@/components/Box';
 import Button from '@/components/button';
@@ -22,10 +24,25 @@ import { guestbookRecipe } from './guestbook.css';
 export default function Mint() {
   const contract = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS as string;
 
-  const { data: signer } = useSigner();
-
   const { data: blockData } = useBlockNumber();
   const { address } = useAccount();
+
+  const isMounted = useIsMounted();
+
+  const [message, setMessage] = useState(``);
+
+  const encodedMessage = he.encode(message ? message : `gm`);
+
+  // write with mint
+  const { config: writeWithMintConfig } = usePrepareContractWrite({
+    addressOrName: contract,
+    contractInterface: abi.abi,
+    functionName: `signWithMint`,
+    args: [encodedMessage],
+    overrides: {
+      value: ethers.utils.parseEther(`0.01`),
+    },
+  });
 
   const {
     data: writeWithMintData,
@@ -33,11 +50,14 @@ export default function Mint() {
     isLoading: writeWithMintLoading,
     reset: writeWithMintReset,
     write: writeWithMint,
-  }: any = useContractWrite({
+  } = useContractWrite(writeWithMintConfig);
+
+  // write without mint
+  const { config: writeWithoutMintConfig } = usePrepareContractWrite({
     addressOrName: contract,
     contractInterface: abi.abi,
-    signerOrProvider: signer,
-    functionName: `writeWithMint`,
+    functionName: `signWithoutMint`,
+    args: [encodedMessage],
   });
 
   const {
@@ -46,13 +66,9 @@ export default function Mint() {
     isLoading: writeWithoutMintLoading,
     reset: writeWithoutMintReset,
     write: writeWithoutMint,
-  }: any = useContractWrite({
-    addressOrName: contract,
-    contractInterface: abi.abi,
-    signerOrProvider: signer,
-    functionName: `writeWithoutMint`,
-  });
+  } = useContractWrite(writeWithoutMintConfig);
 
+  // set consts
   const writeData = writeWithMintData || writeWithoutMintData;
   const writeError = writeWithMintError || writeWithoutMintError;
   const writeLoading = writeWithMintLoading || writeWithoutMintLoading;
@@ -60,52 +76,32 @@ export default function Mint() {
     ? writeWithMintReset
     : writeWithoutMintReset;
 
-  const writeHash = writeData?.hash;
+  const showButtons = !writeError && !writeLoading;
 
+  // transaction data
   const { data: transactionData } = useWaitForTransaction({
-    hash: writeHash,
+    hash: writeData?.hash,
   });
 
-  const [message, setMessage] = useState(``);
-
-  const encodedMessage = he.encode(message ? message : `gm`);
-
-  const handleWriteWithMint = async () => {
-    await writeWithMint({
-      args: encodedMessage,
-      overrides: {
-        value: ethers.utils.parseEther(`0.01`),
-      },
-    });
-  };
-
-  const handleWriteWithoutMint = async () => {
-    await writeWithoutMint({
-      args: encodedMessage,
-    });
-  };
-
-  return (
+  return isMounted() ? (
     <>
       {!writeData && (
         <>
-          <Box>
-            {!writeError && !writeLoading && (
-              <>
-                <Button kind="guestbook" onClick={handleWriteWithoutMint}>
-                  {writeLoading ? `Loading...` : `Write Message`}
+          <Box as="div">
+            {showButtons && (
+              <Box as="div">
+                <Button kind="guestbook" onClick={writeWithoutMint}>
+                  Write Message
                 </Button>
-                <Button kind="guestbook" onClick={handleWriteWithMint}>
-                  {writeLoading
-                    ? `Loading...`
-                    : `Write Message & Mint | 0.01 Ξ`}
+                <Button kind="guestbook" onClick={writeWithMint}>
+                  Write Message & Mint | 0.01 Ξ
                 </Button>
-              </>
+              </Box>
             )}
             {writeLoading && <>Loading...</>}
             {writeError && (
               <Button kind="guestbook" onClick={writeReset}>
-                Error - Reset
+                Canceled - Click to Reset
               </Button>
             )}
           </Box>
@@ -118,14 +114,21 @@ export default function Mint() {
               className={guestbookRecipe({ guestbook: `input` })}
             />
           </form>
+
           {message && (
-            <Box className={guestbookRecipe({ guestbook: `guestlistItem` })}>
+            <Box
+              as="div"
+              className={guestbookRecipe({ guestbook: `guestlistItem` })}
+            >
               <Text as="h2" kind="h2" font="mono">
                 Preview:
               </Text>
               <Squiggle squiggleWidth={8} height={24} />
 
-              <Box className={guestbookRecipe({ guestbook: `guestlistMeta` })}>
+              <Box
+                as="div"
+                className={guestbookRecipe({ guestbook: `guestlistMeta` })}
+              >
                 <Text as="p" kind="small" font="mono">
                   {address && (
                     <Link
@@ -144,7 +147,7 @@ export default function Mint() {
                 </Text>
                 <Text as="p" kind="small" font="mono">
                   New Guest at{` `}
-                  <i>{blockData}</i>
+                  <i>{blockData && blockData}</i>
                 </Text>
               </Box>
               <Text as="p" kind="p" font="mono">
@@ -172,5 +175,5 @@ export default function Mint() {
         </>
       )}
     </>
-  );
+  ) : null;
 }

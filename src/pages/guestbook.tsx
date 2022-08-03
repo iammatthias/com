@@ -5,7 +5,6 @@
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Link from 'next/link';
-import { useAccount } from 'wagmi';
 
 import Guestlist from '@/components/guestbook/guestlist';
 import Mint from '@/components/guestbook/mint';
@@ -14,9 +13,8 @@ import Text from '@/components/text';
 
 // components
 
-export default function Home() {
+export default function Guestbook() {
   const contract = process.env.NEXT_PUBLIC_TARGET_CONTRACT_ADDRESS;
-  const { address } = useAccount();
 
   return (
     <>
@@ -55,13 +53,13 @@ export default function Home() {
       <Text as="h4" kind="p" font="mono">
         Drop a GM, WAGMI, GN, etc below.
       </Text>
-      <Notes />
+      {/* <Notes /> */}
 
       <ConnectButton
         chainStatus={{ smallScreen: `full`, largeScreen: `full` }}
         showBalance={false}
       />
-      {address && <Mint />}
+      <Mint />
       <Guestlist />
     </>
   );

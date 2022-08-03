@@ -49,7 +49,7 @@ export const PageList = ({ pageType, limit = 1000 }: Props) => {
             </Link>
           </Box>
         ))}
-      {isListView && (
+      {!isListView && (
         <Box>
           <Link
             href={`/${pageType === `Gallery` ? `work` : `blog`}`}

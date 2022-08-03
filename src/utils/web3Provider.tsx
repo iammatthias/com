@@ -16,16 +16,16 @@ export default function Web3Provider({ children }: any) {
 
   const { chains } = configureChains(
     [chain.optimism],
-    [alchemyProvider({ alchemyId: alchemyId }), publicProvider()],
+    [alchemyProvider({ apiKey: process.env.ALCHEMY_ID }), publicProvider()],
   );
 
   const { connectors } = getDefaultWallets({
-    appName: `The Guestbook`,
+    appName: `My RainbowKit App`,
     chains,
   });
 
   const wagmiClient = createClient({
-    autoConnect: false,
+    autoConnect: true,
     connectors,
     provider(config) {
       return new providers.AlchemyProvider(config.chainId, alchemyId);
