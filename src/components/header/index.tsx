@@ -99,6 +99,15 @@ export default function Header() {
                     </a>
                   </Link>
                 </Box>
+                <Box className={menuItem}>
+                  <Link href="http://localhost:3000/tokens" passHref={true}>
+                    <a>
+                      <Text as="h5" kind="h5" bold={true}>
+                        Tokens
+                      </Text>
+                    </a>
+                  </Link>
+                </Box>
               </Box>
             </NavigationMenu.Content>
           </NavigationMenu.Item>

@@ -44,6 +44,12 @@ export const textRecipe = recipe({
         paddingRight: 2,
         paddingLeft: 2,
         border: `2px solid black`,
+        fontSize: `13px`,
+        selectors: {
+          'pre &': {
+            border: `none`,
+          },
+        },
       },
       ul: {
         display: `grid`,
