@@ -33,10 +33,11 @@ export default function Notes() {
       <CollapsiblePrimitive.Content>
         <Text as="ul" kind="ul">
           <Text as="li" kind="li" font="mono">
-            Signing the guestbook is free, but gas fees will apply.
+            Gas fees apply.
           </Text>
           <Text as="li" kind="li" font="mono">
-            Minting the NFT is optional, and costs 0.01 Ξ.
+            Signing the Guestbook is free. For 0.01 Ξ you can mint an optional
+            Guestbook NFT.
           </Text>
           <Text as="li" kind="li" font="mono">
             Minting will issue a unique NFT customized with colors derived from
@@ -49,10 +50,6 @@ export default function Notes() {
             An admin function exists for content moderation. In the case of
             inflammatory, hateful, or otherwise inappropriate content, the
             message can be replaced with &quot;gm&quot; (or something similar).
-            <br />
-            <br />
-            This is not an act that would happen lightly. This project is meant
-            to be exist as a form of friendly engagement with the community.
             <br />
             <br />
             Please be kind ✌️
