@@ -61,7 +61,10 @@ export const navViewport = style({
   background: `#fdfcfc`,
   border: `2px solid #1a1a1a`,
   zIndex: `2`,
+  margin: `0 8px`,
   padding: `32px`,
+  maxWidth: `900px`,
+  width: `100%`,
 });
 
 export const navArrow = style({

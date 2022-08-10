@@ -85,7 +85,7 @@ export default function Mint() {
 
   return isMounted() ? (
     <>
-      {!writeData && (
+      {address && !writeData && (
         <>
           <Box as="div">
             {showButtons && (

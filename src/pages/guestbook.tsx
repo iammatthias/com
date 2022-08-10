@@ -53,7 +53,7 @@ export default function Guestbook() {
       <Text as="h4" kind="p" font="mono">
         Drop a GM, WAGMI, GN, etc below.
       </Text>
-      {/* <Notes /> */}
+      <Notes />
 
       <ConnectButton
         chainStatus={{ smallScreen: `full`, largeScreen: `full` }}

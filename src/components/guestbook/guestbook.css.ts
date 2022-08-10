@@ -8,6 +8,9 @@ import { recipe } from '@vanilla-extract/recipes';
 export const guestbookRecipe = recipe({
   variants: {
     guestbook: {
+      guestbookWrapper: {
+        width: `calc(100% - 16px)`,
+      },
       collapsibleNotesWrapper: {
         width: `calc(100% - 16px)`,
       },
@@ -33,8 +36,7 @@ export const guestbookRecipe = recipe({
         color: `text`,
         background: `transparent`,
         display: `block`,
-
-        maxWidth: `400px`,
+        maxWidth: `618px`,
         width: `calc(100% - 16px)`,
       },
     },

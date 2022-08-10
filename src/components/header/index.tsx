@@ -56,11 +56,11 @@ export default function Header() {
               <Text as="h4" kind="h4" font="heading">
                 Photography
               </Text>
-              <PageList pageType="Gallery" limit={6} />
+              <PageList pageType="Gallery" limit={3} />
               <Text as="h4" kind="h4" font="heading">
                 Blog
               </Text>
-              <PageList pageType="Blog" limit={6} />
+              <PageList pageType="Blog" limit={3} />
             </NavigationMenu.Content>
           </NavigationMenu.Item>
 
