@@ -18,6 +18,8 @@ import './Renderer.sol';
 */
 
 contract TheGuestBook is ERC721, Ownable {
+  constructor() ERC721('The Guest Book', 'GUEST') {}
+
   // Emitted when we know that something about the token has changed
   event MetadataUpdated(uint256 indexed tokenId);
   event GuestUpdated(uint256 indexed guestId);
@@ -26,22 +28,19 @@ contract TheGuestBook is ERC721, Ownable {
   uint256 public tokenId;
   uint256 public guestId;
 
-  string _a = Strings.toHexString(uint256(uint160(msg.sender)));
-  string _timestamp = Strings.toString(block.number);
-
   // Store renderer as separate contract so we can update it if needed
   Renderer public renderer;
 
   // Store content for the nfts
   mapping(uint256 => string[]) _tokenMetadata;
 
-  constructor() ERC721('The Guest Book', 'GUEST') {}
-
   struct Guest {
     uint256 guestId; // Enumerated ID of the guest
     string guest; // The address of the guest.
     string message; // The message the guest sent.
     string timestamp; // The timestamp when the guest visited.
+    string minted; // boolean if minted
+    uint256 tokenId; // tokenId, set to 0 if `minted` is false
   }
 
   event NewGuest(
@@ -58,12 +57,25 @@ contract TheGuestBook is ERC721, Ownable {
     return guests;
   }
 
-  function addGuest(string memory _message) private {
+  function addGuest(
+    string memory _message,
+    string memory _minted,
+    uint256 _tokenId
+  ) private {
     // struct the guest values
-    Guest memory g = Guest(guestId, _a, _message, _timestamp);
-    guests.push(g);
+    string memory _a = Strings.toHexString(uint256(uint160(msg.sender)));
+    string memory _timestamp = Strings.toString(block.number);
 
     // emit event for new guest
+    Guest memory g = Guest(
+      guestId,
+      _a,
+      _message,
+      _timestamp,
+      _minted,
+      _tokenId
+    );
+    guests.push(g);
     emit NewGuest(guestId, _a, _message, _timestamp);
 
     // increment guestId
@@ -71,23 +83,25 @@ contract TheGuestBook is ERC721, Ownable {
   }
 
   /// @notice write a message to the blockchain
+  /// @notice recommend less than 280 characters
   function signWithoutMint(string memory _message) public {
     require(
       bytes(_message).length <= 280,
       'Message should be less than 280 characters.'
     );
-    addGuest(_message);
+    addGuest(_message, 'false', 0);
   }
 
   /// @notice write a message to the blockchain and get an nft
   /// @notice your message will be inscribed in an on-chain svg, recommend less than 280 characters
   function signWithMint(string memory _message) public payable {
-    require(msg.value >= 0.001 ether, 'Not enough ETH');
+    require(msg.value >= 0.01 ether, 'Not enough ETH');
     require(
       bytes(_message).length <= 280,
       'Message should be less than 280 characters.'
     );
-    addGuest(_message);
+    addGuest(_message, 'true', tokenId);
+    string memory _a = Strings.toHexString(uint256(uint160(msg.sender)));
     _tokenMetadata[tokenId] = [_a];
     _mint(msg.sender, tokenId);
     tokenId++;
@@ -103,8 +117,7 @@ contract TheGuestBook is ERC721, Ownable {
   }
 
   /* ADMIN */
-  // If a message contains any text that is hurtful, inflammatory, hateful, or otherwise unwanted language this allows for it to be changed.
-  // admins can rewrite at their discretion.
+  // @notice admin reserves the right to rewrite any message that contains hurtful or inflammatory language
   function rewriteMessage(uint256 _guestId, string calldata _message)
     external
     onlyOwner
