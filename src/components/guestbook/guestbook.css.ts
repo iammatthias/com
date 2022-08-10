@@ -32,8 +32,8 @@ export const guestbookRecipe = recipe({
       input: {
         padding: `8px`,
         border: `solid 1px`,
-        borderColor: `text`,
-        color: `text`,
+        borderColor: `black`,
+        color: `black`,
         background: `transparent`,
         display: `block`,
         maxWidth: `618px`,
