@@ -1,6 +1,7 @@
 import { AppProps } from 'next/app';
 
 import '@/styles/reset.css';
+import 'react-static-tweets/styles.css';
 
 import SEO from '@/components/seo';
 import Layout from '@/components/layout';
