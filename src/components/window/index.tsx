@@ -39,7 +39,6 @@ const QUERY = gql`
 
 export default function Window() {
   const [randomImageIndex, setRandomImageIndex] = useState(0);
-  const [scale, setScale] = useState(1);
 
   // data
   const { data, loading, error } = useQuery(QUERY, {
@@ -99,13 +98,14 @@ export default function Window() {
   }
   return (
     <Tilt
-      scale={scale}
-      perspective={2000}
-      gyroscope={true}
       glareEnable={true}
-      glareMaxOpacity={0.8}
-      glarePosition="bottom"
       glareBorderRadius="8px"
+      glareMaxOpacity={0.45}
+      glarePosition="bottom"
+      gyroscope={true}
+      perspective={1618}
+      scale={1}
+      trackOnWindow={true}
     >
       <Box className={`${windowWrapper}`}>
         <Box
