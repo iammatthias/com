@@ -98,6 +98,7 @@ export default function Window() {
   }
   return (
     <Tilt
+      className={`${windowWrapper}`}
       glareEnable={true}
       glareBorderRadius="8px"
       glareMaxOpacity={0.45}
@@ -107,28 +108,26 @@ export default function Window() {
       scale={1}
       trackOnWindow={true}
     >
-      <Box className={`${windowWrapper}`}>
-        <Box
-          className={`${window}`}
-          onMouseEnter={() => setRandomImageIndex(getRandomInt(imageSetLength))}
-          // onMouseLeave={() => setRandomImageIndex(getRandomInt(imageSetLength))}
-          onClick={() => handleImageClick()}
-        >
-          <Box className={`${windowOverlay}`}>
-            <Box className={`${windowOverlaySpanWrapper}`}>
-              <Box as="h1" className={`${windowOverlaySpanSmall}`}>
-                <MagicFontWeight>I am</MagicFontWeight>
-              </Box>
-              <Box as="hr" className={`${windowOverlayHR}`} />
+      <Box
+        className={`${window}`}
+        onMouseEnter={() => setRandomImageIndex(getRandomInt(imageSetLength))}
+        // onMouseLeave={() => setRandomImageIndex(getRandomInt(imageSetLength))}
+        onClick={() => handleImageClick()}
+      >
+        <Box className={`${windowOverlay}`}>
+          <Box className={`${windowOverlaySpanWrapper}`}>
+            <Box as="h1" className={`${windowOverlaySpanSmall}`}>
+              <MagicFontWeight>I am</MagicFontWeight>
             </Box>
+            <Box as="hr" className={`${windowOverlayHR}`} />
+          </Box>
 
-            <Box as="h1" className={`${windowOverlaySpanLarge}`}>
-              <MagicFontWeight>Matthias</MagicFontWeight>
-            </Box>
+          <Box as="h1" className={`${windowOverlaySpanLarge}`}>
+            <MagicFontWeight>Matthias</MagicFontWeight>
           </Box>
-          <Box className={`${windowImage}`}>
-            <Image image={imageSet[randomImageIndex]} />
-          </Box>
+        </Box>
+        <Box className={`${windowImage}`}>
+          <Image image={imageSet[randomImageIndex]} />
         </Box>
       </Box>
     </Tilt>

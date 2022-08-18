@@ -1,13 +1,14 @@
 import { style, globalStyle } from '@vanilla-extract/css';
 
 export const windowWrapper = style({
+  position: `relative`,
+  zIndex: `10`,
   height: `calc(100vh - 288px)`,
   width: `calc(100vw - 192px)`,
   display: `flex`,
   flexDirection: `column`,
   justifyContent: `center`,
   alignItems: `center`,
-
   overflow: `hidden`,
   borderRadius: `8px`,
   border: `2px solid #1a1a1a`,

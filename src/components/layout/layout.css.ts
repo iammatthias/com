@@ -1,6 +1,8 @@
 import { style, globalStyle } from '@vanilla-extract/css';
 
 export const layout = style({
+  position: `relative`,
+  zIndex: `1`,
   display: `flex`,
   flexDirection: `column`,
   justifyContent: `flex-start`,

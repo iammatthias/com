@@ -60,7 +60,7 @@ export const navViewport = style({
   top: `94px`,
   background: `#fdfcfc`,
   border: `2px solid #1a1a1a`,
-  zIndex: `2`,
+  zIndex: `9999`,
   margin: `0 8px`,
   padding: `32px`,
   maxWidth: `900px`,
