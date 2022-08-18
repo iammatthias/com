@@ -14,11 +14,11 @@ export const content = style({
   gridTemplateColumns: `1fr min(65ch, 100%) 1fr`,
   gridAutoRows: `minmax(min-content, max-content)`,
   gap: `16px`,
-  margin: `0 16px`,
+  padding: `0 16px`,
   width: `100%`,
   '@media': {
     'screen and (max-width: 768px)': {
-      gridTemplateColumns: `100%`,
+      gridTemplateColumns: `1fr`,
     },
   },
 });

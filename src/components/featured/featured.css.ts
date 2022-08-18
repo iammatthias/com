@@ -13,6 +13,7 @@ export const content = style({
   gridAutoRows: `minmax(min-content, max-content)`,
   gap: `16px`,
   width: `100%`,
+  padding: `0 16px`,
   '@media': {
     'screen and (max-width: 768px)': {
       gridTemplateColumns: `100%`,
