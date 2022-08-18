@@ -14,6 +14,7 @@ import { menuPageList, menuItem, menuPageListSingle } from './pageList.css';
 
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons';
 import { navArrow } from '../header/header.css';
+import Squiggle from '../squiggle';
 
 type Props = {
   pageType: string;
@@ -35,6 +36,7 @@ export const PageList = ({
           <Box key={index}>
             <Link href={`/${page.slug}`} passHref={true}>
               <a className={menuItem}>
+                <Squiggle height={8} squiggleWidth={8} />
                 <Text as="h5" kind="h5" bold={true}>
                   {page.title}
                 </Text>
