@@ -10,30 +10,26 @@ import Text from '@/components/text';
 import dateFormat from '@/utils/dateFormat';
 import PageQuery from '@/utils/pageQuery';
 
-import { menuPageList, menuItem } from './pageList.css';
+import { menuPageList, menuItem, menuPageListSingle } from './pageList.css';
 
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons';
 import { navArrow } from '../header/header.css';
 
-import { useRouter } from 'next/router';
-
 type Props = {
   pageType: string;
   limit: number;
+  showMore?: boolean;
 };
 
-export const PageList = ({ pageType, limit = 1000 }: Props) => {
-  const router = useRouter();
-  const pathname = router.asPath;
+export const PageList = ({
+  pageType,
+  showMore = false,
+  limit = 1000,
+}: Props) => {
   const ListData = PageQuery({ type: pageType, limit: limit });
 
-  const isBlogList = pathname === `/blog`;
-  const isGalleryList = pathname === `/gallery`;
-
-  const isListView = isBlogList || isGalleryList;
-
   return (
-    <Box className={menuPageList}>
+    <Box className={limit > 1 ? menuPageList : menuPageListSingle}>
       {ListData &&
         ListData.map((page: any, index: number) => (
           <Box key={index}>
@@ -49,7 +45,7 @@ export const PageList = ({ pageType, limit = 1000 }: Props) => {
             </Link>
           </Box>
         ))}
-      {!isListView && (
+      {showMore && (
         <Box>
           <Link
             href={`/${pageType === `Gallery` ? `work` : `blog`}`}

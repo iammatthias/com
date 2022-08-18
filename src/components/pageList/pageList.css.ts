@@ -12,6 +12,13 @@ export const menuPageList = style({
   },
 });
 
+export const menuPageListSingle = style({
+  width: `100%`,
+  display: `grid`,
+  gap: `16px`,
+  gridTemplateColumns: `1fr`,
+});
+
 export const menuItem = style({
   flexBasis: `30%`,
   borderTop: `2px solid black`,
