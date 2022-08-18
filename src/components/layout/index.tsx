@@ -6,6 +6,7 @@ import Box from '@/components/Box';
 import { useRouter } from 'next/router';
 import Window from '@/components/window';
 import Featured from '@/components/featured';
+import Squiggle from '../squiggle';
 
 type Props = {
   children: React.ReactNode;
@@ -17,11 +18,21 @@ export default function Layout({ children }: Props) {
   return (
     <Box className={`${themeClass} ${layout}`}>
       <Header />
-      {asPath === `/` && <Window />}
+      {asPath === `/` && (
+        <>
+          <Window />
+          <Squiggle />
+        </>
+      )}
       <Box as="main" className={`${content}`}>
         {children}
       </Box>
-      {asPath === `/` && <Featured />}
+      {asPath === `/` && (
+        <>
+          <Squiggle />
+          <Featured />
+        </>
+      )}
       <Footer />
     </Box>
   );

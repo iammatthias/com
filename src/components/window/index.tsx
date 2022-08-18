@@ -62,6 +62,16 @@ export default function Window() {
   const imageSet = data.galleryCollection.items[0].imagesCollection.items;
   const imageSetLength = imageSet.length;
 
+  // check if platform is iOS
+  const isIOS = () => {
+    const ua = navigator.userAgent;
+    if (/iPad|iPhone|iPod/.test(ua)) {
+      return true;
+    }
+    return false;
+  };
+
+  // get motion event permission
   function getAccel() {
     (DeviceMotionEvent as any).requestPermission().then((response: any) => {
       if (response == `granted`) {
@@ -79,8 +89,12 @@ export default function Window() {
     });
   }
 
+  // handle click event for image window
+  // if platform is iOS, get motion event permission
   function handleImageClick() {
-    getAccel();
+    if (isIOS() === true) {
+      getAccel();
+    }
     setRandomImageIndex(getRandomInt(imageSetLength));
   }
   return (
