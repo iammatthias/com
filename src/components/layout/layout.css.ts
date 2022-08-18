@@ -6,7 +6,7 @@ export const layout = style({
   justifyContent: `flex-start`,
   alignItems: `center`,
   minHeight: `100vh`,
-  gap: `32px`,
+  gap: `96px`,
 });
 
 export const content = style({

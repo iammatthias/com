@@ -1,28 +1,35 @@
 import { style, globalStyle } from '@vanilla-extract/css';
 
 export const windowWrapper = style({
-  height: `100%`,
-  maxHeight: `538px`,
-  width: `100%`,
-  maxWidth: `65ch`,
+  height: `calc(100vh - 288px)`,
+  width: `calc(100vw - 192px)`,
   display: `flex`,
   flexDirection: `column`,
   justifyContent: `center`,
   alignItems: `center`,
-  padding: `0 16px`,
+  margin: `0 16px`,
+  borderRadius: `8px`,
+  border: `2px solid #1a1a1a`,
+  boxShadow: `0px 0px 23.3px rgba(0, 0, 0, 0.064),
+  0px 0px 42.6px rgba(0, 0, 0, 0.068),
+  0px 0px 58.9px rgba(0, 0, 0, 0.069),
+  0px 0px 74.7px rgba(0, 0, 0, 0.07),
+  0px 0px 95.9px rgba(0, 0, 0, 0.07),
+  0px 0px 137px rgba(0, 0, 0, 0.07)`,
+  '@media': {
+    'screen and (max-width: 768px)': {
+      width: `calc(100vw - 96px)`,
+    },
+  },
 });
 
 export const window = style({
   position: `relative`,
-  height: `384px`,
+  height: `100%`,
   width: `100%`,
-  maxWidth: `384px`,
-  border: `2px solid #1a1a1a`,
-  borderRadius: `50% 50% 4px 4px`,
   display: `flex`,
   flexDirection: `column`,
   justifyContent: `center`,
-  alignItems: `center`,
   overflow: `hidden`,
   background: `#fdfcfc`,
   margin: `0 32px`,
@@ -30,8 +37,9 @@ export const window = style({
 
 export const windowOverlay = style({
   position: `absolute`,
-  bottom: `16px`,
-  left: `24px`,
+  bottom: `50%`,
+  left: `50%`,
+  transform: `translate(-50%, 50%)`,
   zIndex: `1`,
   mixBlendMode: `difference`,
   fontWeight: `bold`,
@@ -44,7 +52,7 @@ export const windowOverlaySpanWrapper = style({
 
 export const windowOverlaySpanSmall = style({
   position: `relative`,
-  fontSize: `25px`,
+  fontSize: `4vw`,
   float: `left`,
   marginRight: `8px`,
   fontFamily: `'Losta Bonita', serif`,
@@ -52,7 +60,7 @@ export const windowOverlaySpanSmall = style({
 
 export const windowOverlaySpanLarge = style({
   position: `relative`,
-  fontSize: `40px`,
+  fontSize: `12vw`,
   float: `left`,
   fontFamily: `'Losta Bonita', serif`,
   lineHeight: `1`,
@@ -70,7 +78,7 @@ export const windowOverlayHR = style({
   border: `1px solid`,
   borderColor: `inherit`,
   position: `relative`,
-  top: `22px`,
+  top: `3vw`,
 });
 
 export const windowImage = style({

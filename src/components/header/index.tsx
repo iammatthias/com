@@ -1,7 +1,6 @@
 import {
   headerWrapper,
   header,
-  headerVR,
   navList,
   navListItem,
   navViewport,
@@ -14,7 +13,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import Box from '@/components/Box';
-import Window from '../window';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 
 import PageList from '@/components/pageList';
@@ -117,13 +115,6 @@ export default function Header() {
 
         <NavigationMenu.Viewport className={`${navViewport}`} />
       </NavigationMenu.Root>
-
-      {asPath === `/` && (
-        <>
-          <Box className={`${headerVR}`} />
-          <Window />
-        </>
-      )}
     </Box>
   );
 }

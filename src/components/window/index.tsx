@@ -16,6 +16,7 @@ import Image from './image';
 import { gql, useQuery } from '@apollo/client';
 import { contentfulClient } from '@/utils/apolloProvider';
 import getRandomInt from '@/utils/getRandomInt';
+import Tilt from 'react-tilt';
 
 const QUERY = gql`
   query ($title: String) {
@@ -61,29 +62,31 @@ export default function Window() {
   const imageSetLength = imageSet.length;
 
   return (
-    <Box className={`${windowWrapper}`}>
-      <Box
-        className={`${window}`}
-        // onMouseEnter={() => setRandomImageIndex(getRandomInt(imageSetLength))}
-        onMouseLeave={() => setRandomImageIndex(getRandomInt(imageSetLength))}
-        onClick={() => setRandomImageIndex(getRandomInt(imageSetLength))}
-      >
-        <Box className={`${windowOverlay}`}>
-          <Box className={`${windowOverlaySpanWrapper}`}>
-            <Box as="p" className={`${windowOverlaySpanSmall}`}>
-              <MagicFontWeight>I am</MagicFontWeight>
+    <Tilt className="Tilt" options={{ max: 3.82, scale: 1 }}>
+      <Box className={`${windowWrapper}`}>
+        <Box
+          className={`${window}`}
+          onMouseEnter={() => setRandomImageIndex(getRandomInt(imageSetLength))}
+          // onMouseLeave={() => setRandomImageIndex(getRandomInt(imageSetLength))}
+          onClick={() => setRandomImageIndex(getRandomInt(imageSetLength))}
+        >
+          <Box className={`${windowOverlay}`}>
+            <Box className={`${windowOverlaySpanWrapper}`}>
+              <Box as="h1" className={`${windowOverlaySpanSmall}`}>
+                <MagicFontWeight>I am</MagicFontWeight>
+              </Box>
+              <Box as="hr" className={`${windowOverlayHR}`} />
             </Box>
-            <Box as="hr" className={`${windowOverlayHR}`} />
-          </Box>
 
-          <Box as="p" className={`${windowOverlaySpanLarge}`}>
-            <MagicFontWeight>Matthias</MagicFontWeight>
+            <Box as="h1" className={`${windowOverlaySpanLarge}`}>
+              <MagicFontWeight>Matthias</MagicFontWeight>
+            </Box>
           </Box>
-        </Box>
-        <Box className={`${windowImage}`}>
-          <Image image={imageSet[randomImageIndex]} />
+          <Box className={`${windowImage}`}>
+            <Image image={imageSet[randomImageIndex]} />
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </Tilt>
   );
 }
