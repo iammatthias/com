@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   windowWrapper,
   window,
@@ -62,6 +62,27 @@ export default function Window() {
   const imageSet = data.galleryCollection.items[0].imagesCollection.items;
   const imageSetLength = imageSet.length;
 
+  function getAccel() {
+    (DeviceMotionEvent as any).requestPermission().then((response: any) => {
+      if (response == `granted`) {
+        // Add a listener to get smartphone acceleration
+        // in the XYZ axes (units in m/s^2)
+        (window as any).addEventListener(`devicemotion`, (event: any) => {
+          console.log(event);
+        });
+        // Add a listener to get smartphone orientation
+        // in the alpha-beta-gamma axes (units in degrees)
+        (window as any).addEventListener(`deviceorientation`, (event: any) => {
+          console.log(event);
+        });
+      }
+    });
+  }
+
+  function handleImageClick() {
+    getAccel();
+    setRandomImageIndex(getRandomInt(imageSetLength));
+  }
   return (
     <Tilt
       scale={scale}
@@ -75,7 +96,7 @@ export default function Window() {
           className={`${window}`}
           onMouseEnter={() => setRandomImageIndex(getRandomInt(imageSetLength))}
           // onMouseLeave={() => setRandomImageIndex(getRandomInt(imageSetLength))}
-          onClick={() => setRandomImageIndex(getRandomInt(imageSetLength))}
+          onClick={() => handleImageClick()}
         >
           <Box className={`${windowOverlay}`}>
             <Box className={`${windowOverlaySpanWrapper}`}>
