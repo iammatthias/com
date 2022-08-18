@@ -105,8 +105,9 @@ export default function Window() {
       glarePosition="bottom"
       gyroscope={true}
       perspective={1618}
-      scale={1}
+      scale={0.8}
       trackOnWindow={true}
+      reset={false}
     >
       <Box
         className={`${window}`}
