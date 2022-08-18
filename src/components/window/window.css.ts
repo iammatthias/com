@@ -20,7 +20,7 @@ export const windowWrapper = style({
   '@media': {
     'screen and (max-width: 768px)': {
       width: `calc(100vw - 96px)`,
-      height: `calc(100vh - 288px - env(safe-area-inset-top))`,
+      height: `calc(100vh - 288px - env(safe-area-inset-bottom))`,
     },
   },
 });
