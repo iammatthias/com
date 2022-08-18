@@ -98,7 +98,15 @@ export default function Window() {
     setRandomImageIndex(getRandomInt(imageSetLength));
   }
   return (
-    <Tilt scale={scale} perspective={2000} gyroscope={true}>
+    <Tilt
+      scale={scale}
+      perspective={2000}
+      gyroscope={true}
+      glareEnable={true}
+      glareMaxOpacity={0.8}
+      glarePosition="bottom"
+      glareBorderRadius="8px"
+    >
       <Box className={`${windowWrapper}`}>
         <Box
           className={`${window}`}
