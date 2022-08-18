@@ -16,7 +16,7 @@ import Image from './image';
 import { gql, useQuery } from '@apollo/client';
 import { contentfulClient } from '@/utils/apolloProvider';
 import getRandomInt from '@/utils/getRandomInt';
-import Tilt from 'react-tilt';
+import Tilt from 'react-parallax-tilt';
 
 const QUERY = gql`
   query ($title: String) {
@@ -39,6 +39,7 @@ const QUERY = gql`
 
 export default function Window() {
   const [randomImageIndex, setRandomImageIndex] = useState(0);
+  const [scale, setScale] = useState(1);
 
   // data
   const { data, loading, error } = useQuery(QUERY, {
@@ -62,7 +63,13 @@ export default function Window() {
   const imageSetLength = imageSet.length;
 
   return (
-    <Tilt className="Tilt" options={{ max: 3.82, scale: 1 }}>
+    <Tilt
+      scale={scale}
+      perspective={2000}
+      glareEnable={true}
+      glareMaxOpacity={0.45}
+      gyroscope={true}
+    >
       <Box className={`${windowWrapper}`}>
         <Box
           className={`${window}`}

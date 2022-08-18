@@ -9163,6 +9163,11 @@ react-masonry-css@1.0.16:
   resolved "https://registry.yarnpkg.com/react-masonry-css/-/react-masonry-css-1.0.16.tgz#72b28b4ae3484e250534700860597553a10f1a2c"
   integrity sha512-KSW0hR2VQmltt/qAa3eXOctQDyOu7+ZBevtKgpNDSzT7k5LA/0XntNa9z9HKCdz3QlxmJHglTZ18e4sX4V8zZQ==
 
+react-parallax-tilt@1.7.57:
+  version "1.7.57"
+  resolved "https://registry.yarnpkg.com/react-parallax-tilt/-/react-parallax-tilt-1.7.57.tgz#57a76fb977b71cf03662a74a0d911e07a7576654"
+  integrity sha512-oM/JxG5eWrM25h0+ydyo75FiItiSPaMvGwUHb/+r3RjV5FtXCTxnsRiLbJUvMKVfRgYIEQdv6ifZvY9OtZDPjg==
+
 react-query@4.0.0-beta.23:
   version "4.0.0-beta.23"
   resolved "https://registry.yarnpkg.com/react-query/-/react-query-4.0.0-beta.23.tgz#76713547670ef1f991ae828b3d51df63ec6e035c"
@@ -9209,11 +9214,6 @@ react-style-singleton@^2.2.1:
     get-nonce "^1.0.0"
     invariant "^2.2.4"
     tslib "^2.0.0"
-
-react-tilt@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/react-tilt/-/react-tilt-0.1.4.tgz#0ac1f33674a3fff6c617cf411002d7ecdd2ebcb1"
-  integrity sha512-bVeRumg+RIn6QN8S92UmubGqX/BG6/QeQISBeAcrS/70dpo/jVj+sjikIawDl5wTuPdubFH8zH0EMulWIctsnw==
 
 react-use-measure@2.1.1:
   version "2.1.1"
