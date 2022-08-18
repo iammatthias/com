@@ -10,7 +10,7 @@ export default function Image({ image }: any) {
       key={image.index}
       src={image.url}
       alt={image.title}
-      layout="responsive"
+      layout="fill"
       height={image.height}
       width={image.width}
       placeholder="blur"
