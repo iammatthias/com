@@ -9,6 +9,11 @@ export const layout = style({
   alignItems: `center`,
   minHeight: `100vh`,
   gap: `96px`,
+  '@media': {
+    'screen and (max-width: 768px)': {
+      gap: `48px`,
+    },
+  },
 });
 
 export const content = style({
