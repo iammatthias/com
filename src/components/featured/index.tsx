@@ -10,8 +10,7 @@ export default function Featured() {
         <Text as="h1" kind="h1" font="heading">
           Featured
         </Text>
-        <PageList pageType="Gallery" limit={1} />
-        <PageList pageType="Blog" limit={1} />
+        <PageList featured={true} />
       </Box>
     </Box>
   );

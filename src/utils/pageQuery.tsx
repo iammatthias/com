@@ -4,10 +4,10 @@ import { contentfulClient } from '@/utils/apolloProvider';
 import { isDev } from '@/utils/isDev';
 
 const QUERY = gql`
-  query ($preview: Boolean, $type: String, $limit: Int) {
+  query ($preview: Boolean, $type: String, $featured: Boolean, $limit: Int) {
     pageCollection(
       preview: $preview
-      where: { pageType: $type }
+      where: { pageType: $type, featured: $featured }
       limit: $limit
       order: publishDate_DESC
     ) {
@@ -16,6 +16,7 @@ const QUERY = gql`
         pageType
         publishDate
         slug
+        featured
       }
     }
   }
@@ -26,6 +27,7 @@ export default function PageQuery(props: any) {
     variables: {
       type: props.type,
       limit: parseInt(props.limit),
+      featured: props.featured,
       preview: isDev,
     },
     client: contentfulClient,

@@ -1,22 +1,15 @@
 import { style } from '@vanilla-extract/css';
 
-export const headerWrapper = style({
-  width: `100%`,
-  display: `flex`,
-  flexDirection: `column`,
-  justifyContent: `center`,
-  alignItems: `center`,
-});
-
 export const header = style({
+  position: `relative`,
   height: `96px`,
   width: `100%`,
-  borderBottom: `2px solid #1a1a1a`,
   display: `flex`,
   flexDirection: `column`,
   justifyContent: `center`,
   alignItems: `center`,
   background: `#fdfcfc`,
+  borderBottom: `2px solid #1a1a1a`,
 });
 
 export const headerVR = style({
@@ -57,10 +50,11 @@ export const navContent = style({
 
 export const navViewport = style({
   position: `absolute`,
+  zIndex: 9999,
+  WebkitTransform: `translateZ(9999px)`,
   top: `94px`,
   background: `#fdfcfc`,
   border: `2px solid #1a1a1a`,
-  zIndex: `9999`,
   margin: `0 8px`,
   padding: `32px`,
   maxWidth: `900px`,
@@ -78,18 +72,15 @@ export const menuPageList = style({
   gridTemplateColumns: `repeat(3, 1fr)`,
   '@media': {
     'screen and (max-width: 768px)': {
-      gridTemplateColumns: `repeat(1, 1fr)`,
+      gridTemplateColumns: `repeat(2, 1fr)`,
     },
   },
 });
 
 export const menuItem = style({
   flexBasis: `30%`,
-  borderTop: `2px solid black`,
   paddingTop: 12,
   paddingBottom: 12,
-  paddingLeft: 8,
-  paddingRight: 8,
   display: `grid`,
   gap: `16px`,
 });

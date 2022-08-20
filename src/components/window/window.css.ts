@@ -2,7 +2,7 @@ import { style, globalStyle } from '@vanilla-extract/css';
 
 export const windowWrapper = style({
   position: `relative`,
-  zIndex: `10`,
+  zIndex: 2,
   height: `calc(100vh - 288px)`,
   width: `calc(100vw - 192px)`,
   display: `flex`,
@@ -12,16 +12,12 @@ export const windowWrapper = style({
   overflow: `hidden`,
   borderRadius: `8px`,
   border: `2px solid #1a1a1a`,
-  boxShadow: `0px 0px 11.6px -10px rgba(0, 0, 0, 0.109),
-  0px 0px 23.4px -10px rgba(0, 0, 0, 0.156),
-  0px 0px 38.4px -10px rgba(0, 0, 0, 0.176),
-  0px 0px 57.2px -10px rgba(0, 0, 0, 0.183),
-  0px 0px 80.7px -10px rgba(0, 0, 0, 0.186),
-  0px 0px 110.2px -10px rgba(0, 0, 0, 0.191),
-  0px 0px 148.3px -10px rgba(0, 0, 0, 0.205),
-  0px 0px 199.3px -10px rgba(0, 0, 0, 0.233),
-  0px 0px 275.1px -10px rgba(0, 0, 0, 0.287),
-  0px 0px 500px -10px rgba(0, 0, 0, 0.38)`,
+  boxShadow: `0px 0px 23.3px rgba(0, 0, 0, 0.064),
+  0px 0px 42.6px rgba(0, 0, 0, 0.068),
+  0px 0px 58.9px rgba(0, 0, 0, 0.069),
+  0px 0px 74.7px rgba(0, 0, 0, 0.07),
+  0px 0px 95.9px rgba(0, 0, 0, 0.07),
+  0px 0px 137px rgba(0, 0, 0, 0.07)`,
   '@media': {
     'screen and (max-width: 768px)': {
       width: `calc(100vw - 96px)`,
@@ -37,7 +33,6 @@ export const window = style({
   display: `flex`,
   flexDirection: `column`,
   justifyContent: `center`,
-  overflow: `hidden`,
   background: `#fdfcfc`,
   margin: `0 32px`,
 });
@@ -47,7 +42,7 @@ export const windowOverlay = style({
   bottom: `50%`,
   left: `50%`,
   transform: `translate(-50%, 50%)`,
-  zIndex: `1`,
+  zIndex: `2`,
   mixBlendMode: `difference`,
   fontWeight: `bold`,
   color: `#fdfcfc`,

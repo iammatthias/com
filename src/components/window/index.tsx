@@ -104,8 +104,7 @@ export default function Window() {
       glareMaxOpacity={0.45}
       glarePosition="bottom"
       gyroscope={true}
-      perspective={5000}
-      scale={1}
+      perspective={1618}
       trackOnWindow={true}
       reset={false}
     >

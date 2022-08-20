@@ -17,20 +17,29 @@ import { navArrow } from '../header/header.css';
 import Squiggle from '../squiggle';
 
 type Props = {
-  pageType: string;
-  limit: number;
+  pageType?: string;
+  limit?: number;
+  featured?: boolean;
   showMore?: boolean;
+  listStyle?: string;
 };
 
 export const PageList = ({
   pageType,
   showMore = false,
+  featured = false,
   limit = 1000,
+  listStyle,
 }: Props) => {
-  const ListData = PageQuery({ type: pageType, limit: limit });
+  const ListData = PageQuery({
+    type: pageType,
+    featured,
+    limit: limit,
+    listStyle,
+  });
 
   return (
-    <Box className={limit > 1 ? menuPageList : menuPageListSingle}>
+    <Box className={listStyle === `list` ? menuPageList : menuPageListSingle}>
       {ListData &&
         ListData.map((page: any, index: number) => (
           <Box key={index}>

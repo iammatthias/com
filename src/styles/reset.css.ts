@@ -95,6 +95,7 @@ globalStyle(`html`, {
 // Allow percentage-based heights.
 globalStyle(`html, body`, {
   height: `100%`,
+  position: `relative`,
 });
 
 globalStyle(`body`, {
