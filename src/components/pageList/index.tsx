@@ -63,6 +63,8 @@ export const PageList = ({
             passHref={true}
           >
             <a className={menuItem}>
+              <Squiggle height={8} squiggleWidth={8} />
+
               <Text as="h5" kind="h5" bold={true}>
                 More <DoubleArrowRightIcon className={navArrow} />
               </Text>
