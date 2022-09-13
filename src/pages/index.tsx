@@ -1,22 +1,21 @@
-// index.tsx
-// The homepage.
-
-// apollo
 import { gql } from '@apollo/client';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
-// mdx
 import { serialize } from 'next-mdx-remote/serialize';
-
 import { contentfulClient } from '@/utils/apolloProvider';
-// helpers
 import { isDev } from '@/utils/isDev';
+import Window from '@/components/window';
 
 type Props = {
   contentfulMdx: MDXRemoteSerializeResult;
 };
 
 export default function Home({ contentfulMdx }: Props) {
-  return <MDXRemote {...contentfulMdx} />;
+  return (
+    <>
+      <Window />
+      <MDXRemote {...contentfulMdx} />
+    </>
+  );
 }
 
 //////////////// PAGE CONTENT /////////////////////

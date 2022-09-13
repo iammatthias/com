@@ -1,25 +1,83 @@
 import React from 'react';
-import { textRecipe, TextVariants } from './text.css';
-import Box from '@/components/Box';
+import { figure, textRecipe, TextVariants } from './text.css';
+import Box from '@/components/box';
 
 type Props = {
   children: React.ReactNode;
   as?: React.ElementType;
+  href?: string;
+  figcaption?: string;
+  className?: string;
 } & TextVariants;
 
-const Text = ({
+export default function Text({
   as = `p`,
   kind = `p`,
-  font,
+  font = `body`,
   bold = false,
   italic = false,
+  highlight = false,
+  navBar = false,
+  mono = false,
+  center = false,
+  href = ``,
+  figcaption = ``,
+  className = ``,
   children,
-}: Props) => {
-  return (
-    <Box as={as} className={textRecipe({ font, kind, bold, italic })}>
-      {children}
-    </Box>
-  );
-};
+}: Props) {
+  if (as === `blockquote`) {
+    return (
+      <Box as="figure" className={`${figure}`}>
+        <Box
+          as={as}
+          className={textRecipe({
+            font,
+            kind,
+            bold,
+            italic,
 
-export default Text;
+            highlight,
+            navBar,
+            mono,
+            center,
+          })}
+          href={href}
+        >
+          {children}
+        </Box>
+        {figcaption && (
+          <Box
+            as="figcaption"
+            className={textRecipe({
+              font,
+              kind: `small`,
+              bold: true,
+              italic: true,
+            })}
+          >
+            ———{figcaption}
+          </Box>
+        )}
+      </Box>
+    );
+  } else
+    return (
+      <Box
+        as={as}
+        className={`${textRecipe({
+          font,
+          kind,
+          bold,
+          italic,
+
+          highlight,
+          navBar,
+          mono,
+          center,
+        })} ${className}`}
+        href={href}
+      >
+        {children}
+      </Box>
+    );
+}

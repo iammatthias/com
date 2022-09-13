@@ -1,28 +1,43 @@
+import { atoms } from '@/styles/atoms.css';
 import { style } from '@vanilla-extract/css';
 
 export const menuPageList = style({
   width: `100%`,
-  display: `grid`,
-  gap: `16px`,
-  gridTemplateColumns: `repeat(3, 1fr)`,
+  display: `flex`,
+  flexDirection: `column`,
+  gap: `32px`,
+  gridColumn: `1 / 6`,
   '@media': {
-    'screen and (max-width: 768px)': {
-      gridTemplateColumns: `repeat(2, 1fr)`,
+    'screen and (min-width: 768px)': {
+      gridColumn: `2 / 5 !important`,
     },
   },
 });
 
 export const menuPageListSingle = style({
   width: `100%`,
-  display: `grid`,
-  gap: `16px`,
-  gridTemplateColumns: `1fr`,
 });
 
 export const menuItem = style({
-  flexBasis: `30%`,
-  paddingTop: 12,
-  paddingBottom: 12,
-  display: `grid`,
-  gap: `16px`,
+  width: `100%`,
+  display: `flex`,
+  flexDirection: `column`,
+  justifyContent: `space-between`,
+  textAlign: `center`,
+  gap: `32px`,
+  '@media': {
+    'screen and (min-width: 768px)': {
+      textAlign: `unset`,
+      flexDirection: `row`,
+    },
+  },
+});
+
+export const menuItemWrapper = style({
+  width: `100%`,
+  display: `flex`,
+  flexDirection: `column`,
+  justifyContent: `space-between`,
+  textAlign: `center`,
+  gap: `32px`,
 });

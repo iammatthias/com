@@ -1,53 +1,106 @@
 import { recipe } from '@vanilla-extract/recipes';
-import { atoms } from '@/styles/sprinkles.css';
+import { atoms } from '@/styles/atoms.css';
+
+export const figure = atoms({
+  padding: `16`,
+  borderStyle: `solid`,
+  borderWidth: `2`,
+  borderColor: `black`,
+  display: `flex`,
+  flexDirection: `column`,
+  gap: `8`,
+});
 
 export const textRecipe = recipe({
   variants: {
     font: {
-      body: atoms({ fontFamily: `Inter` }),
-      heading: atoms({ fontFamily: `Losta Bonita` }),
-      mono: atoms({ fontFamily: `monospace` }),
+      body: atoms({ fontFamily: `GT-A` }),
+      heading: atoms({ fontFamily: `GT-A` }),
+      mono: atoms({ fontFamily: `GT-A Mono` }),
     },
     kind: {
-      p: atoms({
-        fontSize: `p`,
-        color: `black`,
-      }),
-      h1: atoms({
-        fontSize: `h1`,
-        color: `black`,
-      }),
-      h2: atoms({
-        fontSize: `h2`,
-        color: `black`,
-      }),
-      h3: atoms({
-        fontSize: `h3`,
-        color: `black`,
-      }),
-      h4: atoms({
-        fontSize: `h4`,
-        color: `black`,
-      }),
-      h5: atoms({ fontSize: `h5`, color: `black` }),
-      h6: atoms({ fontSize: `h6`, color: `black` }),
-      small: atoms({ fontSize: `small`, color: `black` }),
+      p: [
+        atoms({
+          fontSize: `p`,
+        }),
+        {
+          fontVariationSettings: `"wght" 200, "wdth" 0, "DISP" 0`,
+          lineHeight: `1.382`,
+        },
+      ],
+      h1: [
+        atoms({
+          fontSize: `h1`,
+        }),
+        {
+          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
+        },
+      ],
+      h2: [
+        atoms({
+          fontSize: `h2`,
+        }),
+        {
+          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
+        },
+      ],
+      h3: [
+        atoms({
+          fontSize: `h3`,
+        }),
+        {
+          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
+        },
+      ],
+      h4: [
+        atoms({
+          fontSize: `h4`,
+        }),
+        {
+          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
+        },
+      ],
+      h5: [
+        atoms({
+          fontSize: `h5`,
+        }),
+        {
+          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
+        },
+      ],
+      h6: [
+        atoms({
+          fontSize: `h6`,
+        }),
+        {
+          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
+        },
+      ],
+      small: atoms({ fontSize: `small` }),
+      xsmall: atoms({ fontSize: `disclaimer` }),
       span: {},
-      pre: {
-        whiteSpace: `pre-wrap`,
-        paddingTop: 8,
-        paddingLeft: 8,
-        paddingRight: 8,
-        borderTop: `2px solid black`,
-      },
+      pre: [
+        atoms({
+          background: `black`,
+          color: `white`,
+        }),
+        {
+          fontSize: `12px`,
+          whiteSpace: `pre-wrap`,
+          padding: 16,
+          borderTop: `2px solid black`,
+          // fontVariationSettings: `"wght" 400, "CASL" 0, "slnt" 0, "MONO" 1, "CRSV" 0`,
+        },
+      ],
       code: {
-        paddingRight: 2,
-        paddingLeft: 2,
         border: `2px solid black`,
-        fontSize: `13px`,
+        fontSize: `12px`,
+        padding: `2px`,
         selectors: {
           'pre &': {
             border: `none`,
+            background: `none`,
+            padding: 0,
           },
         },
       },
@@ -69,17 +122,23 @@ export const textRecipe = recipe({
           marginRight: `24px`,
         },
       },
-      blockquote: [
-        {
-          padding: `8px 0 8px 16px`,
-          borderLeft: `2px solid black`,
-          selectors: {
-            '&:nth-child(n)': {
-              fontFamily: `Inconsolata`,
-            },
-          },
-        },
-      ],
+
+      blockquote: {
+        // Wrapped in a figure to include caption
+        // See `figure` styles above
+      },
+      strong: atoms({
+        fontWeight: `900`,
+      }),
+      b: atoms({
+        fontWeight: `900`,
+      }),
+      em: atoms({
+        fontStyle: `italic`,
+      }),
+      i: atoms({
+        fontStyle: `italic`,
+      }),
     },
     bold: {
       true: atoms({
@@ -90,6 +149,33 @@ export const textRecipe = recipe({
       true: atoms({
         fontStyle: `italic`,
       }),
+    },
+
+    highlight: {
+      true: atoms({ background: `highlight`, paddingX: `2` }),
+    },
+    center: {
+      true: {
+        margin: `0 auto`,
+        textAlign: `center`,
+      },
+    },
+    navBar: {
+      true: [
+        {
+          fontFamily: `GT-A Mono`,
+          fontVariationSettings: `"wght" 200, "wdth" 0, "DISP" 0`,
+        },
+        atoms({
+          fontSize: `disclaimer`,
+        }),
+      ],
+    },
+    mono: {
+      true: {
+        fontFamily: `GT-A Mono`,
+        fontVariationSettings: `"wght" 200, "wdth" 0, "DISP" 0`,
+      },
     },
   },
 });

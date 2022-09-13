@@ -1,11 +1,6 @@
-// Squiggle
-// Language: typescript
-
-// A squiggle. Use this instead of `<hr/>` for a bit of character.
-
 import useMeasure from 'react-use-measure';
 
-import Box from '@/components/Box';
+import Box from '@/components/box';
 
 import { squiggle, squiggleContainer } from './squiggle.css';
 
@@ -68,7 +63,7 @@ export default function Squiggle({
 }
 
 Squiggle.defaultProps = {
-  squiggleWidth: 32,
-  height: 32,
+  squiggleWidth: 64,
+  height: 64,
   strokeColor: `currentColor`,
 };

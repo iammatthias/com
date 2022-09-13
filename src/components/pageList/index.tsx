@@ -1,19 +1,18 @@
-// PageList
-// Language: typescript
+// import Link from 'next/link';
+import Link from '@/components/link';
 
-// Returns a list of pages of the correct type.
-
-import Link from 'next/link';
-
-import Box from '@/components/Box';
+import Box from '@/components/box';
 import Text from '@/components/text';
 import dateFormat from '@/utils/dateFormat';
 import PageQuery from '@/utils/pageQuery';
 
-import { menuPageList, menuItem, menuPageListSingle } from './pageList.css';
+import {
+  menuPageList,
+  menuItem,
+  menuItemWrapper,
+  menuPageListSingle,
+} from './pageList.css';
 
-import { DoubleArrowRightIcon } from '@radix-ui/react-icons';
-import { navArrow } from '../header/header.css';
 import Squiggle from '../squiggle';
 
 type Props = {
@@ -38,42 +37,74 @@ export const PageList = ({
     listStyle,
   });
 
-  return (
-    <Box className={listStyle === `list` ? menuPageList : menuPageListSingle}>
-      {ListData &&
-        ListData.map((page: any, index: number) => (
-          <Box key={index}>
-            <Link href={`/${page.slug}`} passHref={true}>
-              <a className={menuItem}>
-                <Squiggle height={8} squiggleWidth={8} />
-                <Text as="h5" kind="h5" bold={true}>
-                  {page.title}
-                </Text>
-                <Text as="p" kind="h6">
-                  Published: {dateFormat(page.publishDate)}
-                </Text>
-              </a>
+  const etcData = [
+    {
+      title: `Thoughts`,
+      href: `/thoughts`,
+    },
+    {
+      title: `The Guestbook`,
+      href: `/guestbook`,
+    },
+    {
+      title: `Eeethers`,
+      href: `https://eeethers.xyz`,
+    },
+    {
+      title: `Tokens`,
+      href: `/tokens`,
+    },
+  ];
+
+  if (pageType === `Etc`) {
+    return (
+      <Box className={menuPageList}>
+        {etcData.map((page: any, index: number) => (
+          <Box key={index} className={`${menuItemWrapper}`}>
+            <Squiggle />
+            <Link href={page.href} className={`${menuItem}`}>
+              <Text as="h5" kind="h5" center={true}>
+                {page.title}
+              </Text>
             </Link>
           </Box>
         ))}
-      {showMore && (
-        <Box>
-          <Link
-            href={`/${pageType === `Gallery` ? `work` : `blog`}`}
-            passHref={true}
-          >
-            <a className={menuItem}>
-              <Squiggle height={8} squiggleWidth={8} />
-
-              <Text as="h5" kind="h5" bold={true}>
-                More <DoubleArrowRightIcon className={navArrow} />
+      </Box>
+    );
+  } else
+    return (
+      <Box className={listStyle === `list` ? menuPageList : menuPageListSingle}>
+        {ListData &&
+          ListData.map((page: any, index: number) => (
+            <Box key={index} className={`${menuItemWrapper}`}>
+              <Squiggle />
+              <Link href={`/${page.slug}`} className={`${menuItem}`}>
+                <>
+                  <Text as="h5" kind="h3">
+                    {page.title}
+                  </Text>
+                  <Text as="h6" kind="h6">
+                    Published: {dateFormat(page.publishDate)}
+                  </Text>
+                </>
+              </Link>
+            </Box>
+          ))}
+        {showMore && (
+          <Box className={`${menuItemWrapper}`}>
+            <Squiggle />
+            <Link
+              href={`/${pageType === `Gallery` ? `work` : `blog`}`}
+              className={`${menuItem}`}
+            >
+              <Text as="h5" kind="h5" center={true}>
+                More ➳
               </Text>
-            </a>
-          </Link>
-        </Box>
-      )}
-    </Box>
-  );
+            </Link>
+          </Box>
+        )}
+      </Box>
+    );
 };
 
 export default PageList;

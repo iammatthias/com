@@ -1,29 +1,24 @@
 import { style, globalStyle } from '@vanilla-extract/css';
 
 export const windowWrapper = style({
+  gridColumn: `1 / 6`,
+  margin: `0 0 32px`,
   position: `relative`,
   zIndex: 2,
-  height: `calc(100vh - 288px)`,
-  width: `calc(100vw - 192px)`,
+  height: `calc(100vh - 48px - 64px)`,
+  width: `100%`,
   display: `flex`,
   flexDirection: `column`,
   justifyContent: `center`,
   alignItems: `center`,
   overflow: `hidden`,
-  borderRadius: `8px`,
-  border: `2px solid #1a1a1a`,
+
   boxShadow: `0px 0px 23.3px rgba(0, 0, 0, 0.064),
   0px 0px 42.6px rgba(0, 0, 0, 0.068),
   0px 0px 58.9px rgba(0, 0, 0, 0.069),
   0px 0px 74.7px rgba(0, 0, 0, 0.07),
   0px 0px 95.9px rgba(0, 0, 0, 0.07),
   0px 0px 137px rgba(0, 0, 0, 0.07)`,
-  '@media': {
-    'screen and (max-width: 768px)': {
-      width: `calc(100vw - 96px)`,
-      height: `calc(100vh - 278px)`,
-    },
-  },
 });
 
 export const window = style({
@@ -34,7 +29,6 @@ export const window = style({
   flexDirection: `column`,
   justifyContent: `center`,
   background: `#fdfcfc`,
-  margin: `0 32px`,
 });
 
 export const windowOverlay = style({
@@ -56,16 +50,19 @@ export const windowOverlaySpanSmall = style({
   position: `relative`,
   fontSize: `4vw`,
   float: `left`,
-  marginRight: `8px`,
-  fontFamily: `'Losta Bonita', serif`,
+  marginLeft: `32px`,
+  marginRight: `32px`,
+  fontFamily: `GT-A, serif`,
+  fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
 });
 
 export const windowOverlaySpanLarge = style({
   position: `relative`,
-  fontSize: `12vw`,
+  fontSize: `24vw`,
   float: `left`,
-  fontFamily: `'Losta Bonita', serif`,
   lineHeight: `1`,
+  fontFamily: `GT-A, serif`,
+  fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
 });
 
 globalStyle(`${windowOverlaySpanSmall} > span`, {
@@ -77,10 +74,9 @@ globalStyle(`${windowOverlaySpanLarge} > span`, {
 });
 
 export const windowOverlayHR = style({
-  border: `1px solid`,
-  borderColor: `inherit`,
   position: `relative`,
-  top: `3vw`,
+  top: `2.5vw`,
+  marginRight: `36px`,
 });
 
 export const windowImage = style({

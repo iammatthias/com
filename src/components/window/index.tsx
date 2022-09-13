@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   windowWrapper,
   window,
@@ -9,8 +9,8 @@ import {
   windowOverlayHR,
   windowImage,
 } from './window.css';
-import Box from '@/components/Box';
-import MagicFontWeight from '@/components/MagicFontWeight';
+import Box from '@/components/box';
+import MagicFontWeight from '@/utils/magicFontWeight';
 import Image from './image';
 
 import { gql, useQuery } from '@apollo/client';
@@ -100,13 +100,13 @@ export default function Window() {
     <Tilt
       className={`${windowWrapper}`}
       glareEnable={true}
-      glareBorderRadius="8px"
       glareMaxOpacity={0.45}
       glarePosition="bottom"
       gyroscope={true}
       perspective={1618}
-      trackOnWindow={true}
       reset={false}
+      tiltMaxAngleX={0.618}
+      tiltMaxAngleY={0.618}
     >
       <Box
         className={`${window}`}
@@ -121,7 +121,6 @@ export default function Window() {
             </Box>
             <Box as="hr" className={`${windowOverlayHR}`} />
           </Box>
-
           <Box as="h1" className={`${windowOverlaySpanLarge}`}>
             <MagicFontWeight>Matthias</MagicFontWeight>
           </Box>
