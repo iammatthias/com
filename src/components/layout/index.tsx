@@ -5,9 +5,9 @@ import {
   layoutFooter,
   layoutHeader,
 } from './layout.css';
-import Box from '@/components/box';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
+import Box from '@/components/Box';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 type Props = {
   children: React.ReactNode;

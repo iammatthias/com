@@ -1,6 +1,6 @@
 import useMeasure from 'react-use-measure';
 
-import Box from '@/components/box';
+import Box from '@/components/Box';
 
 import { squiggle, squiggleContainer } from './squiggle.css';
 

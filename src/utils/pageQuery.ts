@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 
-import { contentfulClient } from '@/utils/apolloProvider';
-import { isDev } from '@/utils/isDev';
+import { contentfulClient } from '@/utils/ApolloProvider';
+import { isDev } from '@/utils/IsDev';
 
 const QUERY = gql`
   query ($preview: Boolean, $type: String, $featured: Boolean, $limit: Int) {

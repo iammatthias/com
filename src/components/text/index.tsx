@@ -1,6 +1,6 @@
 import React from 'react';
 import { figure, textRecipe, TextVariants } from './text.css';
-import Box from '@/components/box';
+import Box from '@/components/Box';
 
 type Props = {
   children: React.ReactNode;

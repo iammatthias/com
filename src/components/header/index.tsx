@@ -6,8 +6,8 @@ import {
   headerEnd,
   headerGrid,
 } from './header.css';
-import Box from '@/components/box';
-import Text from '@/components/text';
+import Box from '@/components/Box';
+import Text from '@/components/Text';
 import Time from './time';
 
 export default function Header() {

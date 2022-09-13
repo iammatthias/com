@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
-import { contentfulClient } from '@/utils/apolloProvider';
-import { isDev } from '@/utils/isDev';
-import Window from '@/components/window';
+import { contentfulClient } from '@/utils/ApolloProvider';
+import { isDev } from '@/utils/IsDev';
+import Window from '@/components/Window';
 
 type Props = {
   contentfulMdx: MDXRemoteSerializeResult;

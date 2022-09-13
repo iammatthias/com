@@ -1,17 +1,17 @@
 import { MDXProvider } from '@mdx-js/react';
 import Vimeo from '@u-wave/react-vimeo';
 // import Link from 'next/link';
-import Link from '@/components/link';
+import Link from '@/components/Link';
 import { Tweet } from 'react-static-tweets';
 
-import Box from '@/components/box';
-import SubGrid from '@/components/subGrid';
+import Box from '@/components/Box';
+import SubGrid from '@/components/SubGrid';
 // import Squiggle from '@/components/squiggle';
 // import GalleryContentful from '@/components/gallery/galleryContentful';
 // import GalleryGlass from '@/components/gallery/galleryGlass';
 // import GalleryWrapper from '@/components/gallery/wrapper';
-import PageList from '@/components/pageList';
-import Text from '@/components/text';
+import PageList from '@/components/PageList';
+import Text from '@/components/Text';
 
 // import Thoughts from '@/components/joy/thoughts';
 

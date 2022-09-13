@@ -9,13 +9,13 @@ import {
   windowOverlayHR,
   windowImage,
 } from './window.css';
-import Box from '@/components/box';
-import MagicFontWeight from '@/utils/magicFontWeight';
+import Box from '@/components/Box';
+import MagicFontWeight from '@/utils/MagicFontWeight';
 import Image from './image';
 
 import { gql, useQuery } from '@apollo/client';
-import { contentfulClient } from '@/utils/apolloProvider';
-import getRandomInt from '@/utils/getRandomInt';
+import { contentfulClient } from '@/utils/ApolloProvider';
+import getRandomInt from '@/utils/GetRandomInt';
 import Tilt from 'react-parallax-tilt';
 
 const QUERY = gql`
