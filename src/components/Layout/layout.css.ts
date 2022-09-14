@@ -12,6 +12,9 @@ export const layoutHeader = style({
   display: `flex`,
   alignItems: `center`,
   justifyContent: `center`,
+  zIndex: `999`,
+  position: `sticky`,
+  top: 0,
 });
 
 export const layoutContent = style([
@@ -41,6 +44,7 @@ export const layoutContent = style([
     gridAutoRows: `minmax(min-content, max-content)`,
     alignItems: `start`,
     position: `relative`,
+    zIndex: `1`,
     selectors: {
       '&:before': {
         content: ``,

@@ -13,8 +13,10 @@ import useIsClient from '@/utils/useIsClient';
 
 export default function Header() {
   const router = useRouter();
-  const { pathname } = router;
+  const { asPath } = router;
   const isClient = useIsClient();
+
+  console.log(router);
   return (
     <Box className={`${header} ${headerStart}`}>
       <Box className={`${headerGrid}`}>
@@ -25,7 +27,7 @@ export default function Header() {
         </Box>
         <Box className={`${headerCenter}`}>
           <Text as="p" kind="small" navBar={true}>
-            {pathname}
+            {asPath}
           </Text>
         </Box>
         <Box className={`${headerEnd}`}>

@@ -3,6 +3,7 @@ import '@/styles/reset.css';
 import '@/styles/app.css';
 import MDXProvider from '@/utils/MdxProvider';
 import Layout from '@/components/Layout';
+import Background from '@/components/Background';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -10,6 +11,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <Layout>
         <Component {...pageProps} />
       </Layout>
+      <Background />
     </MDXProvider>
   );
 }

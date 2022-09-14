@@ -6,7 +6,7 @@ import { Tweet } from 'react-static-tweets';
 
 import Box from '@/components/Box';
 import SubGrid from '@/components/SubGrid';
-// import Squiggle from '@/components/squiggle';
+import Squiggle from '@/components/Squiggle';
 // import GalleryContentful from '@/components/gallery/galleryContentful';
 // import GalleryGlass from '@/components/gallery/galleryGlass';
 // import GalleryWrapper from '@/components/gallery/wrapper';
@@ -64,7 +64,7 @@ const mdxComponents = {
   //   //   Thoughts: (props: any) => <Thoughts {...props} />,
   PageList: (props: any) => <PageList {...props} />,
   Sparkle: (props: any) => <Text as="span" kind="span" {...props} />,
-  // Squiggle: (props: any) => <Squiggle {...props} />,
+  Squiggle: (props: any) => <Squiggle {...props} />,
   Vimeo: (props: any) => (
     <Vimeo
       responsive
