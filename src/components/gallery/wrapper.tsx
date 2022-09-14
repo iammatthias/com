@@ -9,7 +9,7 @@ import useMeasure from 'react-use-measure';
 
 import Box from '@/components/box';
 
-import { wrapper, image } from './gallery.css';
+import { wrapper, image, masonry } from './gallery.css';
 
 export default function Wrapper({ children, ...props }: any) {
   // container width
@@ -30,11 +30,11 @@ export default function Wrapper({ children, ...props }: any) {
   const _columns = count >= columnLimit ? columnLimit : count;
 
   return (
-    <Box ref={ref} className={props.className}>
+    <Box ref={ref} className={wrapper}>
       <Masonry
         breakpointCols={_columns}
         // className="my-masonry-grid"
-        className={wrapper}
+        className={masonry}
       >
         {Children.map(children, (child, index) => {
           return (

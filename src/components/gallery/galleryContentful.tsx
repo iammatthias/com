@@ -67,38 +67,35 @@ export default function GalleryContentful(props: any) {
   return (
     <>
       {showTitle && (
-        <Text as="h3" kind="h3" font="heading">
+        <Text as="h3" kind="h3" center={true}>
           {imageSetTitle}
         </Text>
       )}
-      <Box className={props.className}>
-        <Wrapper>
-          {imageSetImages.map((image: any, index: any) => (
-            <Modal key={index} imageKey={index} images={imageSetImages}>
-              <Image
-                key={index}
-                src={image.url}
-                alt={image.title}
-                layout="responsive"
-                height={
-                  image.contentType === `image/svg+xml` ? 100 : image.height
-                }
-                width={
-                  image.contentType === `image/svg+xml` ? 100 : image.width
-                }
-                placeholder="blur"
-                blurDataURL={contentfulLoader({
-                  src: image.url,
-                  width: 5,
-                  quality: 1,
-                })}
-                objectFit="cover"
-                loader={contentfulLoader}
-              />
-            </Modal>
-          ))}
-        </Wrapper>
-      </Box>
+
+      <Wrapper>
+        {imageSetImages.map((image: any, index: any) => (
+          <Modal key={index} imageKey={index} images={imageSetImages}>
+            <Image
+              key={index}
+              src={image.url}
+              alt={image.title}
+              layout="responsive"
+              height={
+                image.contentType === `image/svg+xml` ? 100 : image.height
+              }
+              width={image.contentType === `image/svg+xml` ? 100 : image.width}
+              placeholder="blur"
+              blurDataURL={contentfulLoader({
+                src: image.url,
+                width: 5,
+                quality: 1,
+              })}
+              objectFit="cover"
+              loader={contentfulLoader}
+            />
+          </Modal>
+        ))}
+      </Wrapper>
     </>
   );
 }

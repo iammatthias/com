@@ -6,6 +6,8 @@ import { contentfulClient } from '@/utils/apolloProvider';
 import dateFormat from '@/utils/dateFormat';
 import { isDev } from '@/utils/isDev';
 import Subgrid from '@/components/subGrid';
+import PageEnd from '@/components/pageEnd';
+import PageStart from '@/components/pageStart';
 
 type Props = {
   mdx: any;
@@ -25,9 +27,21 @@ export default function Page({
   slug,
 }: Props) {
   return (
-    <Subgrid>
-      <MDXRemote {...mdx} />
-    </Subgrid>
+    <>
+      <PageStart
+        pagetitle={pageName}
+        pagetype={pageType}
+        publishdate={publishDate}
+        updatedate={updateDate}
+        slug={slug}
+      />
+      <Subgrid>
+        <MDXRemote {...mdx} />
+      </Subgrid>
+      {(pageType === `Gallery` || pageType === `Blog`) && (
+        <PageEnd pagetype={pageType} slug={slug} />
+      )}
+    </>
   );
 }
 
