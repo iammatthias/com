@@ -9,6 +9,7 @@ import PageQuery from '@/utils/pageQuery';
 import {
   menuPageList,
   menuItem,
+  menuItemSingle,
   menuItemWrapper,
   menuPageListSingle,
 } from './pageList.css';
@@ -62,7 +63,7 @@ export const PageList = ({
         {etcData.map((page: any, index: number) => (
           <Box key={index} className={`${menuItemWrapper}`}>
             <Squiggle />
-            <Link href={page.href} className={`${menuItem}`}>
+            <Link href={page.href} className={`${menuItemSingle}`}>
               <Text as="h3" kind="h3" center={true}>
                 {page.title}
               </Text>
@@ -95,7 +96,7 @@ export const PageList = ({
             <Squiggle />
             <Link
               href={`/${pageType === `Gallery` ? `work` : `blog`}`}
-              className={`${menuItem}`}
+              className={`${menuItemSingle}`}
             >
               <Text as="h3" kind="h3" center={true}>
                 More ➳

@@ -76,6 +76,7 @@ globalStyle(`${windowOverlaySpanLarge} > span`, {
 export const windowOverlayHR = style({
   position: `relative`,
   top: `2.5vw`,
+  border: `2px solid #fdfcfc`,
   marginRight: `36px`,
 });
 

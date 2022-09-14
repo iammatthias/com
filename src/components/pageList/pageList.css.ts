@@ -35,6 +35,15 @@ export const menuItem = style({
   },
 });
 
+export const menuItemSingle = style({
+  width: `100%`,
+  display: `flex`,
+  flexDirection: `column`,
+  justifyContent: `space-between`,
+  textAlign: `center`,
+  gap: `32px`,
+});
+
 export const menuItemWrapper = style({
   width: `100%`,
   display: `flex`,
