@@ -40,11 +40,16 @@ export const layoutContent = style([
     minHeight: `calc(100vh - 48px - 96px)`,
     border: `1px solid #000`,
     display: `grid`,
-    gridTemplateColumns: `1fr 1fr 600px 1fr 1fr`,
     gridAutoRows: `minmax(min-content, max-content)`,
     alignItems: `start`,
     position: `relative`,
     zIndex: `1`,
+    gridTemplateColumns: `1fr 1fr 1fr 1fr 1fr`,
+    '@media': {
+      'screen and (min-width: 768px)': {
+        gridTemplateColumns: `1fr 1fr 600px 1fr 1fr`,
+      },
+    },
     selectors: {
       '&:before': {
         content: ``,
@@ -70,7 +75,7 @@ export const layoutContent = style([
   },
 ]);
 
-globalStyle(`${layoutContent} *`, {
+globalStyle(`${layoutContent} > *`, {
   gridColumn: `1 / 6`,
   '@media': {
     'screen and (min-width: 768px)': {

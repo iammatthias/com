@@ -12,7 +12,7 @@ export const windowWrapper = style({
   justifyContent: `center`,
   alignItems: `center`,
   overflow: `hidden`,
-
+  border: `1px solid #000`,
   boxShadow: `0px 0px 23.3px rgba(0, 0, 0, 0.064),
   0px 0px 42.6px rgba(0, 0, 0, 0.068),
   0px 0px 58.9px rgba(0, 0, 0, 0.069),

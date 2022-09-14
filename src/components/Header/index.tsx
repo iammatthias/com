@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import {
   header,
   headerStart,
@@ -15,14 +16,14 @@ export default function Header() {
   const router = useRouter();
   const { asPath } = router;
   const isClient = useIsClient();
-
-  console.log(router);
   return (
     <Box className={`${header} ${headerStart}`}>
       <Box className={`${headerGrid}`}>
         <Box>
           <Text as="p" kind="small" navBar={true}>
-            Home | Galleries | Writing | Etc
+            <Link href="/" passHref={true}>
+              <a>Home</a>
+            </Link>
           </Text>
         </Box>
         <Box className={`${headerCenter}`}>

@@ -52,6 +52,7 @@ globalStyle(
 
 globalStyle(`a`, {
   textDecoration: `none`,
+  color: `inherit`,
 });
 
 globalStyle(`ul, ol`, {

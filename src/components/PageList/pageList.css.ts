@@ -27,7 +27,10 @@ export const menuItem = style({
   gap: `32px`,
   '@media': {
     'screen and (min-width: 768px)': {
-      textAlign: `unset`,
+      display: `grid`,
+      gridTemplateColumns: `2fr 1fr`,
+      gridTemplateRows: `1fr`,
+      textAlign: `left`,
       flexDirection: `row`,
     },
   },
