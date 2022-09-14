@@ -38,9 +38,15 @@ const mdxComponents = {
   H5: (props: any) => <Text as="h5" kind="h5" {...props} />,
   H6: (props: any) => <Text as="h6" kind="h6" {...props} />,
   span: (props: any) => <Text as="span" kind="span" {...props} />,
+  Span: (props: any) => <Text as="span" kind="span" {...props} />,
   pre: (props: any) => <Text as="pre" kind="pre" {...props} />,
+  Pre: (props: any) => <Text as="pre" kind="pre" {...props} />,
   code: (props: any) => <Text as="code" kind="code" {...props} />,
+  Code: (props: any) => <Text as="code" kind="code" {...props} />,
   blockquote: (props: any) => (
+    <Text as="blockquote" kind="blockquote" {...props} />
+  ),
+  Blockquote: (props: any) => (
     <Text as="blockquote" kind="blockquote" {...props} />
   ),
   Link: (props: any) => (
@@ -51,8 +57,11 @@ const mdxComponents = {
   Highlight: (props: any) => <Text as="span" highlight={true} {...props} />,
   Mono: (props: any) => <Text as="span" mono={true} {...props} />,
   ul: (props: any) => <Text as="ul" kind="ul" {...props} />,
+  Ul: (props: any) => <Text as="ul" kind="ul" {...props} />,
   ol: (props: any) => <Text as="ol" kind="ol" {...props} />,
+  Ol: (props: any) => <Text as="ol" kind="ol" {...props} />,
   li: (props: any) => <Text as="li" kind="li" {...props} />,
+  Li: (props: any) => <Text as="li" kind="li" {...props} />,
 
   // //   // galleries
   Gallery: (props: any) => <GalleryContentful {...props} />,
