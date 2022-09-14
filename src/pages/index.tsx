@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
-import { contentfulClient } from '@/utils/ApolloProvider';
+import { contentfulClient } from '@/utils/apolloProvider';
 import { isDev } from '@/utils/IsDev';
 import Window from '@/components/Window';
 

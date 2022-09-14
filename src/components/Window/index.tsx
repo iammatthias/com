@@ -14,7 +14,7 @@ import MagicFontWeight from '@/utils/MagicFontWeight';
 import Image from './image';
 
 import { gql, useQuery } from '@apollo/client';
-import { contentfulClient } from '@/utils/ApolloProvider';
+import { contentfulClient } from '@/utils/apolloProvider';
 import getRandomInt from '@/utils/GetRandomInt';
 import Tilt from 'react-parallax-tilt';
 

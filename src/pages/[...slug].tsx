@@ -2,9 +2,10 @@ import { gql } from '@apollo/client';
 import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 
-import { contentfulClient } from '@/utils/ApolloProvider';
+import { contentfulClient } from '@/utils/apolloProvider';
 import dateFormat from '@/utils/DateFormat';
 import { isDev } from '@/utils/IsDev';
+import Subgrid from '@/components/SubGrid';
 
 type Props = {
   mdx: any;
@@ -24,9 +25,9 @@ export default function Page({
   slug,
 }: Props) {
   return (
-    <>
+    <Subgrid>
       <MDXRemote {...mdx} />
-    </>
+    </Subgrid>
   );
 }
 

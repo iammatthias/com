@@ -7,9 +7,9 @@ import { Tweet } from 'react-static-tweets';
 import Box from '@/components/Box';
 import SubGrid from '@/components/SubGrid';
 import Squiggle from '@/components/Squiggle';
-// import GalleryContentful from '@/components/gallery/galleryContentful';
-// import GalleryGlass from '@/components/gallery/galleryGlass';
-// import GalleryWrapper from '@/components/gallery/wrapper';
+import GalleryContentful from '@/components/Gallery/galleryContentful';
+import GalleryGlass from '@/components/Gallery/galleryGlass';
+import GalleryWrapper from '@/components/Gallery/wrapper';
 import PageList from '@/components/PageList';
 import Text from '@/components/Text';
 
@@ -55,10 +55,10 @@ const mdxComponents = {
   li: (props: any) => <Text as="li" kind="li" {...props} />,
 
   // //   // galleries
-  // Gallery: (props: any) => <GalleryContentful {...props} />,
-  // Glass: (props: any) => <GalleryGlass {...props} />,
-  // GalleryWrapper: (props: any) => <GalleryWrapper {...props} />,
-  // GalleryGrid: (props: any) => <GalleryWrapper {...props} />,
+  Gallery: (props: any) => <GalleryContentful {...props} />,
+  Glass: (props: any) => <GalleryGlass {...props} />,
+  GalleryWrapper: (props: any) => <GalleryWrapper {...props} />,
+  GalleryGrid: (props: any) => <GalleryWrapper {...props} />,
 
   //   // etc
   //   //   Thoughts: (props: any) => <Thoughts {...props} />,

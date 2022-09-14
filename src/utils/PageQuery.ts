@@ -1,13 +1,13 @@
 import { gql, useQuery } from '@apollo/client';
 
-import { contentfulClient } from '@/utils/ApolloProvider';
+import { contentfulClient } from '@/utils/apolloProvider';
 import { isDev } from '@/utils/IsDev';
 
 const QUERY = gql`
-  query ($preview: Boolean, $type: String, $featured: Boolean, $limit: Int) {
+  query ($preview: Boolean, $type: String, $limit: Int) {
     pageCollection(
       preview: $preview
-      where: { pageType: $type, featured: $featured }
+      where: { pageType: $type }
       limit: $limit
       order: publishDate_DESC
     ) {

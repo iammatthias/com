@@ -1,5 +1,5 @@
 import React from 'react';
-import { figure, textRecipe, TextVariants } from './text.css';
+import { figure, textRecipe, TextVariants } from '@/components/Text/text.css';
 import Box from '@/components/Box';
 
 type Props = {
