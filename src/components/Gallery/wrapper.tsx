@@ -7,7 +7,7 @@ import { Children } from 'react';
 import Masonry from 'react-masonry-css';
 import useMeasure from 'react-use-measure';
 
-import Box from '@/components/Box';
+import Box from '@/components/box';
 
 import { wrapper, image } from './gallery.css';
 

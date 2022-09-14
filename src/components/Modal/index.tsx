@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import useMeasure from 'react-use-measure';
 
-import Box from '@/components/Box';
+import Box from '@/components/box';
 
 import { modalRecipe } from './modal.css';
 

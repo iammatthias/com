@@ -1,10 +1,10 @@
 // import Link from 'next/link';
-import Link from '@/components/Link';
+import Link from '@/components/link';
 
-import Box from '@/components/Box';
-import Text from '@/components/Text';
-import dateFormat from '@/utils/DateFormat';
-import PageQuery from '@/utils/PageQuery';
+import Box from '@/components/box';
+import Text from '@/components/text';
+import dateFormat from '@/utils/dateFormat';
+import PageQuery from '@/utils/pageQuery';
 
 import {
   menuPageList,
@@ -13,7 +13,7 @@ import {
   menuPageListSingle,
 } from './pageList.css';
 
-import Squiggle from '../Squiggle';
+import Squiggle from '../squiggle';
 
 type Props = {
   pageType?: string;

@@ -1,5 +1,5 @@
 import { subgrid } from './subgrid.css';
-import Box from '@/components/Box';
+import Box from '@/components/box';
 
 type Props = {
   children: React.ReactNode;

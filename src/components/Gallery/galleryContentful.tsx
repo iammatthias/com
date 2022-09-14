@@ -7,9 +7,9 @@ import { gql, useQuery } from '@apollo/client';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import Box from '@/components/Box';
-import Modal from '@/components/Modal';
-import Text from '@/components/Text';
+import Box from '@/components/box';
+import Modal from '@/components/modal';
+import Text from '@/components/text';
 import { contentfulClient } from '@/utils/apolloProvider';
 
 import Wrapper from './wrapper';

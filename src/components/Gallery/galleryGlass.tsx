@@ -6,7 +6,7 @@
 import Image, { ImageLoaderProps } from 'next/image';
 import useSWR from 'swr';
 
-import Wrapper from '@/components/Gallery/wrapper';
+import Wrapper from '@/components/gallery/wrapper';
 
 export default function Glass() {
   // data

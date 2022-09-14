@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { header, headerStart, headerEnd, headerGrid } from './header.css';
-import Box from '@/components/Box';
-import Text from '@/components/Text';
+import Box from '@/components/box';
+import Text from '@/components/text';
 import Time from './time';
 import useIsClient from '@/utils/useIsClient';
 

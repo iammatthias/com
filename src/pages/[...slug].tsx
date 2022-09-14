@@ -3,9 +3,9 @@ import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 
 import { contentfulClient } from '@/utils/apolloProvider';
-import dateFormat from '@/utils/DateFormat';
-import { isDev } from '@/utils/IsDev';
-import Subgrid from '@/components/SubGrid';
+import dateFormat from '@/utils/dateFormat';
+import { isDev } from '@/utils/isDev';
+import Subgrid from '@/components/subGrid';
 
 type Props = {
   mdx: any;
