@@ -63,7 +63,7 @@ export const PageList = ({
           <Box key={index} className={`${menuItemWrapper}`}>
             <Squiggle />
             <Link href={page.href} className={`${menuItem}`}>
-              <Text as="h5" kind="h5" center={true}>
+              <Text as="h3" kind="h3" center={true}>
                 {page.title}
               </Text>
             </Link>
@@ -80,7 +80,7 @@ export const PageList = ({
               <Squiggle />
               <Link href={`/${page.slug}`} className={`${menuItem}`}>
                 <>
-                  <Text as="h5" kind="h3">
+                  <Text as="h3" kind="h3">
                     {page.title}
                   </Text>
                   <Text as="h6" kind="h6">
@@ -97,7 +97,7 @@ export const PageList = ({
               href={`/${pageType === `Gallery` ? `work` : `blog`}`}
               className={`${menuItem}`}
             >
-              <Text as="h5" kind="h5" center={true}>
+              <Text as="h3" kind="h3" center={true}>
                 More ➳
               </Text>
             </Link>
