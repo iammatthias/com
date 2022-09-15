@@ -6,7 +6,6 @@ const withPWA = require('next-pwa');
 /** @type {import('next-sitemap').IConfig} */
 
 const nextConfig = {
-  generateRobotsTxt: true,
   reactStrictMode: true,
   swcMinify: true,
   images: {
