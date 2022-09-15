@@ -18,8 +18,9 @@ export default function Text({
   italic = false,
   highlight = false,
   navBar = false,
-  mono = false,
+  monospace = false,
   center = false,
+  singleLineHeight = false,
   href = ``,
   figcaption = ``,
   className = ``,
@@ -35,11 +36,11 @@ export default function Text({
             kind,
             bold,
             italic,
-
             highlight,
             navBar,
-            mono,
+            monospace,
             center,
+            singleLineHeight,
           })}
           href={href}
         >
@@ -69,11 +70,11 @@ export default function Text({
           kind,
           bold,
           italic,
-
           highlight,
           navBar,
-          mono,
+          monospace,
           center,
+          singleLineHeight,
         })} ${className}`}
         href={href}
       >

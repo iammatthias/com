@@ -1,17 +1,26 @@
-import React from 'react';
-
 import Box from '@/components/box';
 
 import { buttonRecipe, ButtonVariants } from './button.css';
 
 type Props = {
   children: React.ReactNode;
+  ref?: React.ForwardedRef<HTMLButtonElement>;
   onClick?: () => void;
 } & ButtonVariants;
 
-export const Button = ({ children, onClick, kind = `secondary` }: Props) => {
+export const Button = ({
+  children,
+  onClick,
+  ref,
+  kind = `secondary`,
+}: Props) => {
   return (
-    <Box as="button" onClick={onClick} className={buttonRecipe({ kind })}>
+    <Box
+      as="button"
+      onClick={onClick}
+      ref={ref}
+      className={buttonRecipe({ kind })}
+    >
       {children}
     </Box>
   );

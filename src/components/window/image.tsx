@@ -11,8 +11,6 @@ export default function Image({ image }: any) {
       src={image.url}
       alt={image.title}
       layout="fill"
-      height={image.height}
-      width={image.width}
       placeholder="blur"
       blurDataURL={contentfulLoader({
         src: image.url,

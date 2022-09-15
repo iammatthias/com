@@ -28,6 +28,7 @@
   "dependencies": {
     "@apollo/client": "3.6.9",
     "@dessert-box/react": "0.4.0",
+    "@radix-ui/react-collapsible": "1.0.0",
     "@radix-ui/react-dialog": "1.0.0",
     "@u-wave/react-vimeo": "0.9.8",
     "@vanilla-extract/css": "1.9.0",
@@ -35,8 +36,11 @@
     "@vanilla-extract/recipes": "0.2.5",
     "@vanilla-extract/sprinkles": "1.5.0",
     "axios": "0.27.2",
+    "connectkit": "0.0.2",
     "date-fns": "2.29.3",
+    "ethers": "5.7.1",
     "graphql": "16.6.0",
+    "he": "1.2.0",
     "next": "12.3.0",
     "next-mdx-remote": "4.1.0",
     "react": "18.2.0",
@@ -45,12 +49,14 @@
     "react-masonry-css": "1.0.16",
     "react-parallax-tilt": "1.7.63",
     "react-static-tweets": "0.8.0",
-    "react-use-measure": "2.1.1"
+    "react-use-measure": "2.1.1",
+    "static-tweets": "0.8.0",
+    "wagmi": "0.6.6"
   },
   "devDependencies": {
     "@commitlint/cli": "17.1.2",
     "@commitlint/config-conventional": "17.1.0",
-    "@types/node": "18.7.17",
+    "@types/node": "18.7.18",
     "@types/react": "18.0.20",
     "@types/react-dom": "18.0.6",
     "@typescript-eslint/eslint-plugin": "5.37.0",

@@ -11,5 +11,6 @@ export const link = [
   }),
   style({
     transition: `color 5.1618s ease-in-out`,
+    fontFamily: `inherit`,
   }),
 ];

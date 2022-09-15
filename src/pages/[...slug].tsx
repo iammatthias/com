@@ -28,13 +28,15 @@ export default function Page({
 }: Props) {
   return (
     <>
-      <PageStart
-        pagetitle={pageName}
-        pagetype={pageType}
-        publishdate={publishDate}
-        updatedate={updateDate}
-        slug={slug}
-      />
+      {(pageType === `Gallery` || pageType === `Blog`) && (
+        <PageStart
+          pagetitle={pageName}
+          pagetype={pageType}
+          publishdate={publishDate}
+          updatedate={updateDate}
+          slug={slug}
+        />
+      )}
       <Subgrid>
         <MDXRemote {...mdx} />
       </Subgrid>
@@ -124,6 +126,12 @@ export async function getStaticProps({ params }: any) {
   if (error) {
     console.error(error);
     return { props: { error } };
+  }
+
+  if (!data.pageCollection.items[0]) {
+    return {
+      notFound: true,
+    };
   }
 
   const source = data.pageCollection.items[0].body;

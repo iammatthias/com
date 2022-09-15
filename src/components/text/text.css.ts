@@ -14,96 +14,90 @@ export const figure = atoms({
 export const textRecipe = recipe({
   variants: {
     font: {
-      body: atoms({ fontFamily: `GT-A` }),
-      heading: atoms({ fontFamily: `GT-A` }),
-      mono: atoms({ fontFamily: `GT-A Mono` }),
-    },
-    kind: {
-      p: [
-        atoms({
-          fontSize: `p`,
-        }),
+      body: [
+        atoms({ fontFamily: `GT-A` }),
         {
           fontVariationSettings: `"wght" 200, "wdth" 0, "DISP" 0`,
           lineHeight: `1.382`,
         },
       ],
-      h1: [
-        atoms({
-          fontSize: `h1`,
-        }),
+      heading: [
+        atoms({ fontFamily: `GT-A` }),
         {
           fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
         },
       ],
-      h2: [
-        atoms({
-          fontSize: `h2`,
-        }),
+      typewriter: [
+        atoms({ fontFamily: `GT-A Mono` }),
         {
-          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
+          fontVariationSettings: `"wght" 200, "wdth" 0, "DISP" 0`,
         },
       ],
-      h3: [
-        atoms({
-          fontSize: `h3`,
-        }),
-        {
-          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
-        },
-      ],
-      h4: [
-        atoms({
-          fontSize: `h4`,
-        }),
-        {
-          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
-        },
-      ],
-      h5: [
-        atoms({
-          fontSize: `h5`,
-        }),
-        {
-          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
-        },
-      ],
-      h6: [
-        atoms({
-          fontSize: `h6`,
-        }),
-        {
-          fontVariationSettings: `"wght" 700, "wdth" 1000, "DISP" 1000`,
-        },
-      ],
-      small: atoms({ fontSize: `small` }),
-      xsmall: atoms({ fontSize: `disclaimer` }),
-      span: {},
+      mono: atoms({ fontFamily: `monospace` }),
+    },
+    kind: {
+      p: atoms({
+        fontSize: { mobile: `mobile-p`, tablet: `tablet-p` },
+      }),
+      h1: atoms({
+        fontSize: { mobile: `mobile-h1`, tablet: `tablet-h1` },
+      }),
+      h2: atoms({
+        fontSize: { mobile: `mobile-h2`, tablet: `tablet-h2` },
+      }),
+      h3: atoms({
+        fontSize: { mobile: `mobile-h3`, tablet: `tablet-h3` },
+      }),
+      h4: atoms({
+        fontSize: { mobile: `mobile-h4`, tablet: `tablet-h4` },
+      }),
+      h5: atoms({
+        fontSize: { mobile: `mobile-h5`, tablet: `tablet-h5` },
+      }),
+      h6: atoms({
+        fontSize: { mobile: `mobile-h6`, tablet: `tablet-h6` },
+      }),
+      small: atoms({
+        fontSize: { mobile: `mobile-small`, tablet: `tablet-small` },
+      }),
+      xsmall: atoms({
+        fontSize: { mobile: `mobile-xsmall`, tablet: `tablet-xsmall` },
+      }),
+      span: {
+        fontSize: `inherit`,
+        lineHeight: `inherit`,
+        fontWeight: `inherit`,
+        fontFamily: `inherit`,
+        color: `inherit`,
+      },
       pre: [
         atoms({
           background: `black`,
           color: `white`,
+          fontSize: { mobile: `mobile-small`, tablet: `tablet-small` },
         }),
         {
-          fontSize: `12px`,
           whiteSpace: `pre-wrap`,
           padding: 16,
           borderTop: `2px solid black`,
-          // fontVariationSettings: `"wght" 400, "CASL" 0, "slnt" 0, "MONO" 1, "CRSV" 0`,
         },
       ],
-      code: {
-        border: `2px solid black`,
-        fontSize: `12px`,
-        padding: `2px`,
-        selectors: {
-          'pre &': {
-            border: `none`,
-            background: `none`,
-            padding: 0,
+      code: [
+        atoms({
+          fontSize: { mobile: `mobile-small`, tablet: `tablet-small` },
+        }),
+        {
+          border: `2px solid black`,
+          padding: `0 2px`,
+          selectors: {
+            'pre &': {
+              border: `none`,
+              background: `none`,
+              padding: 0,
+            },
           },
         },
-      },
+      ],
       ul: {
         display: `grid`,
         gap: `8px`,
@@ -112,26 +106,30 @@ export const textRecipe = recipe({
         display: `grid`,
         gap: `8px`,
       },
-      li: {
-        paddingLeft: `16px`,
-        textIndent: `-16px`,
-        display: `flex`,
-
-        ':before': {
-          content: `"⊙"`,
-          marginRight: `24px`,
+      li: [
+        {
+          paddingLeft: `16px`,
+          textIndent: `-16px`,
+          display: `flex`,
+          ':before': {
+            content: `"⊙"`,
+            marginRight: `24px`,
+          },
         },
-      },
+        atoms({
+          fontSize: { mobile: `mobile-small`, tablet: `tablet-small` },
+        }),
+      ],
 
       blockquote: {
         // Wrapped in a figure to include caption
         // See `figure` styles above
       },
       strong: atoms({
-        fontWeight: `900`,
+        fontWeight: `700`,
       }),
       b: atoms({
-        fontWeight: `900`,
+        fontWeight: `700`,
       }),
       em: atoms({
         fontStyle: `italic`,
@@ -139,11 +137,14 @@ export const textRecipe = recipe({
       i: atoms({
         fontStyle: `italic`,
       }),
+      guestbookHeader: atoms({
+        fontSize: { mobile: `root`, tablet: `tablet-p` },
+      }),
     },
     bold: {
-      true: atoms({
-        fontWeight: `900`,
-      }),
+      true: {
+        fontVariationSettings: `"wght" 700`,
+      },
     },
     italic: {
       true: atoms({
@@ -162,19 +163,19 @@ export const textRecipe = recipe({
     },
     navBar: {
       true: [
-        {
-          fontFamily: `GT-A Mono`,
-          fontVariationSettings: `"wght" 200, "wdth" 0, "DISP" 0`,
-        },
         atoms({
-          fontSize: `disclaimer`,
+          fontSize: { mobile: `mobile-xsmall`, tablet: `tablet-xsmall` },
         }),
       ],
     },
-    mono: {
+    monospace: {
       true: {
-        fontFamily: `GT-A Mono`,
-        fontVariationSettings: `"wght" 200, "wdth" 0, "DISP" 0`,
+        fontFamily: `monospace`,
+      },
+    },
+    singleLineHeight: {
+      true: {
+        lineHeight: `1`,
       },
     },
   },

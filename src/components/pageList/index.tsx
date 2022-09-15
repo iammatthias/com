@@ -12,6 +12,7 @@ import {
   menuItemSingle,
   menuItemWrapper,
   menuPageListSingle,
+  rightAlign,
 } from './pageList.css';
 
 import Squiggle from '../squiggle';
@@ -39,10 +40,10 @@ export const PageList = ({
   });
 
   const etcData = [
-    {
-      title: `Thoughts`,
-      href: `/thoughts`,
-    },
+    // {
+    //   title: `Thoughts`,
+    //   href: `/thoughts`,
+    // },
     {
       title: `The Guestbook`,
       href: `/guestbook`,
@@ -84,7 +85,7 @@ export const PageList = ({
                   <Text as="h3" kind="h3">
                     {page.title}
                   </Text>
-                  <Text as="h6" kind="h6">
+                  <Text as="h6" kind="h6" className={`${rightAlign}`}>
                     Published: {dateFormat(page.publishDate)}
                   </Text>
                 </>

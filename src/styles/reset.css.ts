@@ -25,7 +25,7 @@ globalStyle(`html`, {
 // Allow percentage-based heights.
 globalStyle(`html, body`, {
   height: `100%`,
-  fontSize: `24px`,
+  fontSize: `16px`,
 });
 
 globalStyle(`body`, {

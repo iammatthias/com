@@ -27,11 +27,11 @@ export const ContentStart = ({
   )}`;
   return (
     <Box className={`${pageStart}`}>
-      <Text as="h1" kind="h1">
+      <Text as="h1" kind="h1" font="heading">
         {pagetitle}
       </Text>
 
-      <Text as="h6" kind="h6">
+      <Text as="h6" kind="h6" font="heading">
         Published: {publishdate}
         {updatedate &&
           publishdate !== updatedate &&

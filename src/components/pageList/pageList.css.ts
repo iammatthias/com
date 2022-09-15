@@ -35,6 +35,15 @@ export const menuItem = style({
   },
 });
 
+export const rightAlign = style({
+  textAlign: `center`,
+  '@media': {
+    'screen and (min-width: 768px)': {
+      textAlign: `right`,
+    },
+  },
+});
+
 export const menuItemSingle = style({
   width: `100%`,
   display: `flex`,

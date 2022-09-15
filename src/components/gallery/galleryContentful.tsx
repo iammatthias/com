@@ -67,7 +67,7 @@ export default function GalleryContentful(props: any) {
   return (
     <>
       {showTitle && (
-        <Text as="h3" kind="h3" center={true}>
+        <Text as="h3" kind="h3" font="heading" center={true}>
           {imageSetTitle}
         </Text>
       )}
