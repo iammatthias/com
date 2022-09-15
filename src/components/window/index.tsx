@@ -91,9 +91,6 @@ export default function Window() {
   // handle click event for image window
   // if platform is iOS, get motion event permission
   function handleImageClick() {
-    if (isIOS() === true) {
-      getAccel();
-    }
     setRandomImageIndex(getRandomInt(imageSetLength));
   }
   return (
@@ -102,7 +99,6 @@ export default function Window() {
       glareEnable={true}
       glareMaxOpacity={0.45}
       glarePosition="bottom"
-      gyroscope={true}
       perspective={1618}
       reset={false}
       tiltMaxAngleX={0.618}
