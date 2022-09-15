@@ -37,6 +37,7 @@ export default function Mint() {
   const { config: writeWithMintConfig } = usePrepareContractWrite({
     addressOrName: contract,
     contractInterface: abi.abi,
+    chainId: 10,
     functionName: `signWithMint`,
     args: [encodedMessage],
     overrides: {
@@ -56,6 +57,7 @@ export default function Mint() {
   const { config: writeWithoutMintConfig } = usePrepareContractWrite({
     addressOrName: contract,
     contractInterface: abi.abi,
+    chainId: 10,
     functionName: `signWithoutMint`,
     args: [encodedMessage],
   });

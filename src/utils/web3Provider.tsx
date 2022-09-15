@@ -8,7 +8,7 @@ type Props = {
 export default function Web3Provider({ children }: Props) {
   const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY;
 
-  const chains = [chain.mainnet, chain.optimism];
+  const chains = [chain.optimism];
 
   const client = createClient(
     getDefaultClient({
