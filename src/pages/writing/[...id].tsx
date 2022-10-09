@@ -67,26 +67,6 @@ export async function getStaticPaths() {
   };
 }
 
-// export async function getStaticProps({ params }: any) {
-//   const { id } = params;
-
-//   const res = await fetch(`https://arweave.net/${id}`);
-//   const post = await res.json();
-
-//   return {
-//     props: {
-//       id: params.id,
-//       title: post.title,
-//       slug: post.slug,
-//       content: post.text,
-//       published: post.published,
-//       publishedAt: post.publishedAt,
-//       updatedAt: post.updatedAt,
-//       transaction: id,
-//     },
-//   };
-// }
-
 export async function getStaticProps({ params }: any) {
   try {
     const { id } = params;
