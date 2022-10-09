@@ -1,21 +1,28 @@
 import type { AppProps } from 'next/app';
+
+// css
 import '@/styles/reset.css';
-import '@/styles/app.css';
-import 'react-static-tweets/styles.css';
-import MDXProvider from '@/utils/mdxProvider';
+import '@/styles/globals.css';
+
+// fonts
+import '@fontsource/space-grotesk';
+import '@fontsource/space-grotesk/700.css';
+import '@fontsource/space-mono';
+
+// components
 import Layout from '@/components/layout';
-import Web3Provider from '@/utils/web3Provider';
-import Background from '@/components/background';
+import Header from '@/components/header';
+import Main from '@/components/main';
+import Footer from '@/components/footer';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Web3Provider>
-      <MDXProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-        <Background />
-      </MDXProvider>
-    </Web3Provider>
+    <Layout>
+      <Header />
+      <Main>
+        <Component {...pageProps} />
+      </Main>
+      <Footer />
+    </Layout>
   );
 }

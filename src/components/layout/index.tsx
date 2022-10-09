@@ -1,30 +1,9 @@
-import { themeClass } from '@/styles/atoms.css';
-import {
-  layout,
-  layoutContent,
-  layoutFooter,
-  layoutHeader,
-} from './layout.css';
-import Box from '@/components/box';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
+import { layout } from './layout.css';
 
-type Props = {
+type LayoutProps = {
   children: React.ReactNode;
 };
 
-export default function Layout({ children }: Props) {
-  return (
-    <Box className={`${themeClass} ${layout}`}>
-      <Box className={`${layoutHeader}`}>
-        <Header />
-      </Box>
-      <Box className={`${layoutContent}`}>
-        {children}
-        <Box className={`${layoutFooter}`}>
-          <Footer />
-        </Box>
-      </Box>
-    </Box>
-  );
+export default function Layout({ children }: LayoutProps) {
+  return <div className={`${layout}`}>{children}</div>;
 }

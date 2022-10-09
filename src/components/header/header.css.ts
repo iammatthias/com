@@ -1,41 +1,35 @@
 import { style } from '@vanilla-extract/css';
-import { atoms } from '@/styles/atoms.css';
+
+export const height = style({
+  height: `48px`,
+});
+
+export const position = style({
+  position: `sticky`,
+  top: 0,
+  alignSelf: `start`,
+});
+
+export const display = style({
+  display: `flex`,
+  alignItems: `center`,
+  justifyContent: `space-between`,
+});
+
+export const text = style({
+  fontSize: `16px`,
+  fontWeight: `700`,
+  textTransform: `uppercase`,
+});
 
 export const header = style([
-  atoms({
-    background: `black`,
-    color: `white`,
-    paddingX: {
-      mobile: `16`,
-      tablet: `32`,
-    },
-  }),
+  height,
+  position,
+  display,
+  text,
   {
-    position: `relative`,
-    width: `100%`,
-    height: `100%`,
-    display: `flex`,
-    alignItems: `center`,
-    justifyContent: `center`,
+    background: `#282c34`,
+    color: `white`,
+    padding: `0 32px`,
   },
 ]);
-
-export const headerGrid = style({
-  width: `100%`,
-  display: `grid`,
-  gridTemplateColumns: `1fr 1fr`,
-});
-
-export const headerStart = style({
-  justifyContent: `flex-start`,
-});
-
-export const headerCenter = style({
-  display: `flex`,
-  justifyContent: `center`,
-});
-
-export const headerEnd = style({
-  display: `flex`,
-  justifyContent: `flex-end`,
-});
