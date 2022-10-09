@@ -18,8 +18,8 @@ type Props = {
 export default function Page({ post }: Props) {
   return (
     <>
-      <h1>{post.title}</h1>
-      <ReactMarkdown>{post.body}</ReactMarkdown>
+      <h1>{post?.title}</h1>
+      <ReactMarkdown>{post?.body}</ReactMarkdown>
     </>
   );
 }
