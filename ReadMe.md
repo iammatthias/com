@@ -15,6 +15,15 @@ We are publishing content on Paragraph, which stores content on Arweave. This ca
 
 An example can be viewed here: [https://uatlkfhduv557htv5luvhpacwp6asrkg33u4swwrpzxtsm6mt3ia.arweave.net/oCa1FOOle9-ederpU7wCs_wJRUbe6cla0X5vOTPMntA](https://uatlkfhduv557htv5luvhpacwp6asrkg33u4swwrpzxtsm6mt3ia.arweave.net/oCa1FOOle9-ederpU7wCs_wJRUbe6cla0X5vOTPMntA)
 
+### Planned Stack
+- [Next](https://nextjs.org/)
+- [RainbowKit](https://www.rainbowkit.com/)
+- [WAGMI](https://wagmi.sh/)
+- [Mirror](https://mirror.xyz/) or [Paragraph](https://paragraph.xyz/)
+- [Relay Receiver](https://github.com/relaycc/receiver)
+- [Umami](https://umami.is/)
+- [Vanilla Extract](https://vanilla-extract.style/)
+
 ### Demo
 - [root](https://com-owl3poftr-iammatthias-team.vercel.app/)
 - [Retrieving content from Arweave](https://com-owl3poftr-iammatthias-team.vercel.app/writing/oCa1FOOle9-ederpU7wCs_wJRUbe6cla0X5vOTPMntA)
