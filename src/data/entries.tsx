@@ -6,6 +6,20 @@ import fetchTransactions from '@/queries/fetchTransactions';
 import { calculateSizes } from '@/utils/images';
 // import { getConfig } from '@/hooks/getConfig'
 
+const formatEntry = async (entry: any) => ({
+  title: entry.title,
+  slug: slug(entry.title),
+  body: entry.text,
+  timestamp: entry.publishedAt,
+  postId: entry.id,
+  transaction: entry.arweaveId,
+  cover_image:
+    (entry.text
+      .split(`\n\n`)[0]
+      .match(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/m) || [])?.[1] || null,
+  image_sizes: await calculateSizes(entry.text),
+});
+
 export const getEntryPaths = async () => {
   const {
     data: {
@@ -29,7 +43,8 @@ export const getEntryPaths = async () => {
         slug: tags[`PostSlug`],
         id: tags[`PostId`],
         tx: node.id,
-        timestamp: node.block.timestamp,
+        timestamp: node.block?.timestamp,
+        contributor: tags[`Contributor`],
       };
     })
     .filter((entry: { id: string }) => entry.id && entry.id !== ``)
@@ -87,8 +102,6 @@ export const getEntry = async (postId: any) => {
     variables: { postId },
   });
 
-  console.log(transactionId);
-
   return formatEntry(
     JSON.parse(
       (await arweave.transactions.getData(transactionId, {
@@ -98,17 +111,3 @@ export const getEntry = async (postId: any) => {
     ),
   );
 };
-
-const formatEntry = async (entry: any) => ({
-  title: entry.title,
-  slug: slug(entry.title),
-  body: entry.text,
-  timestamp: entry.publishedAt,
-  postId: entry.id,
-  transaction: entry.arweaveId,
-  cover_image:
-    (entry.text
-      .split(`\n\n`)[0]
-      .match(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/m) || [])?.[1] || null,
-  image_sizes: await calculateSizes(entry.text),
-});

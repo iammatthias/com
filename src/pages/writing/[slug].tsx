@@ -4,11 +4,15 @@ import ReactMarkdown from 'react-markdown';
 import remarkStringify from 'remark-stringify';
 
 import { getEntry, getEntryPaths } from '@/data/entries';
+import TxMeta from '@/components/txMeta';
 
 type Props = {
   entry: {
+    postId: string;
     title: string;
     body: string;
+    tx: string;
+    contributor: string;
   };
 };
 
@@ -17,6 +21,7 @@ export default function Page({ entry }: Props) {
     <>
       <h1>{entry?.title}</h1>
       <ReactMarkdown>{entry?.body}</ReactMarkdown>
+      <TxMeta tx={entry.tx} contributor={entry.contributor} />
     </>
   );
 }
@@ -44,7 +49,12 @@ export async function getStaticProps({ params: { slug } }: any) {
 
   return {
     props: {
-      entry: { ...entry, body: String(body) },
+      entry: {
+        ...entry,
+        body: String(body),
+        tx: path.tx,
+        contributor: path.contributor,
+      },
     },
     revalidate: 1 * 60 * 60, // refresh article contents every hour
   };
