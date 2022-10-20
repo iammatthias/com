@@ -49,8 +49,6 @@ export async function getStaticProps({ params: { digest } }: any) {
   try {
     const [entry] = await Promise.all([getEntry(digest)]);
 
-    console.log(entry);
-
     const body = await unified()
       .use(remarkParse) // Parse markdown
       .use(remarkStringify) // Serialize markdown
