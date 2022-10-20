@@ -1,8 +1,13 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query FetchTransaction($postId: String!) {
-    transactions(tags: { name: "PostId", values: [$postId] }) {
+  query FetchTransaction($digest: String!) {
+    transactions(
+      tags: [
+        { name: "Original-Content-Digest", values: [$digest] }
+        { name: "App-Name", values: "MirrorXYZ" }
+      ]
+    ) {
       edges {
         node {
           id

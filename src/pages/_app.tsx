@@ -12,13 +12,14 @@ import '@fontsource/space-mono';
 // components
 import Layout from '@/components/layout';
 import Header from '@/components/header';
-import Main from '@/components/main';
 import Footer from '@/components/footer';
+import Main from '@/components/main';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Layout>
       <Header />
+
       <Main>
         <Component {...pageProps} />
       </Main>

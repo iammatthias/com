@@ -5,7 +5,7 @@ export default gql`
     transactions(
       first: 100
       tags: [
-        { name: "AppName", values: ["Paragraph"] }
+        { name: "App-Name", values: ["MirrorXYZ"] }
         { name: "Contributor", values: $addresses }
       ]
     ) {

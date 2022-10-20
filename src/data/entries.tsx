@@ -4,20 +4,29 @@ import { arweaveQL } from '@/lib/graphql';
 import fetchSingleTransaction from '@/queries/fetchSingleTransaction';
 import fetchTransactions from '@/queries/fetchTransactions';
 import { calculateSizes } from '@/utils/images';
-// import { getConfig } from '@/hooks/getConfig'
 
-const formatEntry = async (entry: any) => ({
-  title: entry.title,
-  slug: slug(entry.title),
-  body: entry.text,
-  timestamp: entry.publishedAt,
-  postId: entry.id,
-  transaction: entry.arweaveId,
+const formatEntry = async (
+  entry: {
+    content: { title: string; body: string };
+    originalDigest: any;
+    digest: any;
+    authorship: { contributor: any };
+  },
+  transactionId: any,
+  timestamp: any,
+) => ({
+  title: entry.content.title,
+  slug: slug(entry.content.title),
+  body: entry.content.body,
+  timestamp,
+  digest: entry.originalDigest ?? entry.digest,
+  contributor: entry.authorship.contributor,
+  transaction: transactionId,
   cover_image:
-    (entry.text
+    (entry.content.body
       .split(`\n\n`)[0]
       .match(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/m) || [])?.[1] || null,
-  image_sizes: await calculateSizes(entry.text),
+  image_sizes: await calculateSizes(entry.content.body),
 });
 
 export const getEntryPaths = async () => {
@@ -27,7 +36,7 @@ export const getEntryPaths = async () => {
     },
   } = await arweaveQL.query({
     query: fetchTransactions,
-    variables: { addresses: [`0x429f42fB5247e3a34D88D978b7491d4b2BEe6105`] },
+    variables: { addresses: `0x429f42fB5247e3a34D88D978b7491d4b2BEe6105` },
   });
 
   return edges
@@ -40,14 +49,12 @@ export const getEntryPaths = async () => {
       );
 
       return {
-        slug: tags[`PostSlug`],
-        id: tags[`PostId`],
-        tx: node.id,
-        timestamp: node.block?.timestamp,
-        contributor: tags[`Contributor`],
+        slug: tags[`Original-Content-Digest`],
+        path: node.id,
+        timestamp: node.block.timestamp,
       };
     })
-    .filter((entry: { id: string }) => entry.id && entry.id !== ``)
+    .filter((entry: { slug: string }) => entry.slug && entry.slug !== ``)
     .reduce((acc: any[], current: { slug: any; timestamp: any }) => {
       const x = acc.findIndex(
         (entry: { slug: any }) => entry.slug === current.slug,
@@ -66,40 +73,45 @@ export const getEntries = async () => {
 
   return (
     await Promise.all(
-      paths.map(async (entry: any) =>
+      paths.map(async (entry: { path: string; slug: any; timestamp: any }) =>
         formatEntry(
           JSON.parse(
-            (await arweave.transactions.getData(entry.tx, {
+            (await arweave.transactions.getData(entry.path, {
               decode: true,
               string: true,
-            })) as string,
+            })) as any,
           ),
+          entry.slug,
+          entry.timestamp,
         ),
       ),
     )
   )
     .sort((a, b) => b.timestamp - a.timestamp)
     .reduce((acc, current) => {
-      const x = acc.find((entry: any) => entry.slug === current.slug);
+      const x = acc.find((entry: { slug: any }) => entry.slug === current.slug);
       if (!x) return acc.concat([current]);
       else return acc;
     }, []);
 };
 
-export const getEntry = async (postId: any) => {
+export const getEntry = async (digest: any) => {
   const {
     data: {
       transactions: {
         edges: {
           0: {
-            node: { id: transactionId },
+            node: {
+              id: transactionId,
+              block: { timestamp },
+            },
           },
         },
       },
     },
   } = await arweaveQL.query({
     query: fetchSingleTransaction,
-    variables: { postId },
+    variables: { digest },
   });
 
   return formatEntry(
@@ -107,7 +119,9 @@ export const getEntry = async (postId: any) => {
       (await arweave.transactions.getData(transactionId, {
         decode: true,
         string: true,
-      })) as string,
+      })) as any,
     ),
+    transactionId,
+    timestamp,
   );
 };

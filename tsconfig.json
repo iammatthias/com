@@ -20,6 +20,6 @@
       "@/public/*": ["./public/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/utils/image.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/utils/image.js", "src/pages/api/getIP.js", "src/components/embeds/nft.jsx", "src/utils/uriTransformer.ts"],
   "exclude": ["node_modules"]
 }

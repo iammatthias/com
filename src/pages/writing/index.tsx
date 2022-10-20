@@ -2,22 +2,25 @@ import { getEntries } from '@/data/entries';
 import Link from 'next/link';
 
 type Props = {
-  sortedEntries: [{ postId: string; title: string; timestamp: string }];
+  sortedEntries: [
+    {
+      title: string;
+      slug: string;
+      timestamp: number;
+      digest: string;
+      transaction: string;
+    },
+  ];
 };
 
 export default function Page({ sortedEntries: entries }: Props) {
   return (
     <>
       {entries.map((post: any) => (
-        <div key={post.postId}>
-          <ul>
-            <li>
-              Post: <Link href={`/writing/${post.slug}`}>{post.title}</Link>
-            </li>
-            <li>
-              <small>Timestamp: {post?.timestamp}</small>
-            </li>
-          </ul>
+        <div key={post.digest} style={{ borderBottom: `1px solid black` }}>
+          Post: <Link href={`/writing/${post.transaction}`}>{post.title}</Link>
+          <br />
+          <small>Timestamp: {post?.timestamp}</small>
         </div>
       ))}
     </>
@@ -29,7 +32,7 @@ export async function getStaticProps() {
 
   const sortedEntries = entries.sort(
     (a: { timestamp: number }, b: { timestamp: number }) =>
-      a.timestamp - b.timestamp,
+      b.timestamp - a.timestamp,
   );
 
   return {
