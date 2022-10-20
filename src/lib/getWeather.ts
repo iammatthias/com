@@ -7,9 +7,11 @@ type Geo = {
 };
 
 export function GetWeather({ lat, lon }: Geo) {
-  const address = `https://api.lil.software/weather?latitude=${lat}&longitude=${lon}`;
+  // fetcher
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
+
+  const address = `https://api.lil.software/weather?latitude=${lat}&longitude=${lon}`;
   const { data, error } = useSWR(address, fetcher);
 
   if (error) return `error`;

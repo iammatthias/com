@@ -9,10 +9,21 @@ import { GetIPLocation } from '@/lib/getIPLocation';
 import { GetWeather } from '@/lib/getWeather';
 
 export default function Header() {
+  // get ip
   const ip = GetIP();
-  const { lat, lon } = GetIPLocation(ip);
+
+  // get ip location
+  const location = GetIPLocation(ip);
+
+  // split location into lat and lon
+  const _location = location.split(`,`);
+  const lat = _location[0];
+  const lon = _location[1];
+
+  // get weather
   const weather = GetWeather({ lat, lon });
-  const temp = weather ? weather.forecast[0].temperature : 0;
+
+  const temp = weather ? weather?.forecast[0].temperature : 0;
 
   return (
     <header className={`${header}`}>
