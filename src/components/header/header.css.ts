@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { style, globalStyle } from '@vanilla-extract/css';
 
 export const height = style({
   height: `48px`,
@@ -22,6 +22,10 @@ export const text = style({
   textTransform: `uppercase`,
 });
 
+globalStyle(`${text}  a`, {
+  textDecoration: `none`,
+});
+
 export const header = style([
   height,
   position,
@@ -33,3 +37,8 @@ export const header = style([
     padding: `0 32px`,
   },
 ]);
+
+export const headerInfo = style({
+  display: `flex`,
+  gap: `16px`,
+});

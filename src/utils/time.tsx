@@ -6,13 +6,15 @@ export default function Time() {
     setInterval(() => setDateState(new Date()), 60);
   }, []);
 
-  return (
-    <>
-      {dateState.toLocaleString(`en-US`, {
-        hour: `numeric`,
-        minute: `numeric`,
-        hour12: true,
-      })}
-    </>
-  );
+  const currentTime = dateState.toLocaleString(`en-US`, {
+    hour: `numeric`,
+    minute: `numeric`,
+    hour12: true,
+  });
+
+  if (currentTime !== undefined) {
+    return <span>{currentTime}</span>;
+  }
+
+  return null;
 }
