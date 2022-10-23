@@ -2,7 +2,7 @@
 
 import { header, headerInfo } from './header.css';
 import Time from '@/utils/time';
-import Temp from '@/utils/temp';
+// import Temp from '@/utils/temp';
 import Link from 'next/link';
 
 export default function Header() {
@@ -11,7 +11,7 @@ export default function Header() {
       <Link href="/">/</Link>
       <div className={`${headerInfo}`}>
         <Time />
-        <Temp />
+        {/* <Temp /> */}
       </div>
     </header>
   );
