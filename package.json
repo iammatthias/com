@@ -27,6 +27,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.0",
+    "@fontsource/space-grotesk": "^4.5.10",
+    "@fontsource/space-mono": "^4.5.10",
     "@vanilla-extract/css": "^1.9.1",
     "arweave": "^1.11.6",
     "graphql": "^16.6.0",

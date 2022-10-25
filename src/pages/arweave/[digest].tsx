@@ -16,12 +16,12 @@ type Props = {
 
 export default function Digest({ title, body }: Props) {
   return (
-    <div>
+    <>
       <h1>{title}</h1>
       <Article>
         <ReactMarkdown transformLinkUri={uriTransformer}>{body}</ReactMarkdown>
       </Article>
-    </div>
+    </>
   );
 }
 

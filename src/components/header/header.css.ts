@@ -9,4 +9,5 @@ export const header = style({
   alignSelf: `start`,
   background: `white`,
   boxShadow: `0 15px 15px -15px rgb(0 0 0 / 30%)`,
+  padding: `16px 0`,
 });
