@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 // export current date
 export default function CalendarDate() {
-  const [date, setDate] = useState(new Date().toLocaleDateString());
+  const [date, setDate] = useState("");
 
   useEffect(() => {
     const interval = setInterval(() => {
