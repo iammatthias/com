@@ -3,17 +3,21 @@
 
 import { arweaveQL } from "@/lib/graphql";
 import { gql } from "@apollo/client";
+import ReactMarkdown from "react-markdown";
 
 import arweave from "@/lib/arweave";
+import uriTransformer from "@/utils/uriTransformer";
 
 type Props = {
   title: string;
+  body: string;
 };
 
-export default function Digest({ title }: Props) {
+export default function Digest({ title, body }: Props) {
   return (
     <div>
       <h1>{title}</h1>
+      <ReactMarkdown transformLinkUri={uriTransformer}>{body}</ReactMarkdown>
     </div>
   );
 }
