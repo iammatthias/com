@@ -109,8 +109,6 @@ export async function getStaticProps({ params: { digest } }: any) {
 
   const entry = JSON.parse((await arweave.transactions.getData(transactionId, { decode: true, string: true })) as any);
 
-  console.log(entry);
-
   return {
     props: {
       title: entry.content.title,
