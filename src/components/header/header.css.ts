@@ -8,5 +8,5 @@ export const header = style({
   alignSelf: `start`,
   margin: `0 32px`,
   background: `white`,
-  boxShadow: `0 15px 15px -15px rgba(115,115,115,0.75)`,
+  boxShadow: `0 15px 15px -15px rgb(0 0 0 / 30%)`,
 });

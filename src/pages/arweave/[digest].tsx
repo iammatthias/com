@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 
 import arweave from "@/lib/arweave";
 import uriTransformer from "@/utils/uriTransformer";
+import Article from "@/components/article";
 
 type Props = {
   title: string;
@@ -17,7 +18,9 @@ export default function Digest({ title, body }: Props) {
   return (
     <div>
       <h1>{title}</h1>
-      <ReactMarkdown transformLinkUri={uriTransformer}>{body}</ReactMarkdown>
+      <Article>
+        <ReactMarkdown transformLinkUri={uriTransformer}>{body}</ReactMarkdown>
+      </Article>
     </div>
   );
 }
