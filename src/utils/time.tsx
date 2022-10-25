@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 // export current time in 24 hour format
 export default function Time() {
-  const [time, setTime] = useState(new Date().toLocaleTimeString("en-US", { hour12: false }));
+  const [time, setTime] = useState("");
 
   useEffect(() => {
     const interval = setInterval(() => {
