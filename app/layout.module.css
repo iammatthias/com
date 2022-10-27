@@ -16,6 +16,7 @@
   border: 1px solid #fff;
   border-bottom: 1px solid #1a1a1a;
   box-shadow: 0 15px 15px -15px rgb(0 0 0 / 30%);
+  background: white;
 }
 
 .footer {
@@ -28,6 +29,7 @@
   border: 1px solid #fff;
   border-top: 1px solid #1a1a1a;
   box-shadow: 0 -15px 15px -15px rgb(0 0 0 / 30%);
+  background: white;
 }
 
 .clock {
@@ -38,12 +40,20 @@
   margin: 16px 32px;
 }
 
-.main div {
+.main article {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.main > div > * {
+.main article > * {
   max-width: 60ch;
+}
+
+.main article > pre {
+  max-width: 60vw;
+  padding: 16px;
+  overflow-x: auto;
+  border: 1px solid #1a1a1a;
+  box-shadow: 0 4px 14px 9px rgb(0 0 0 / 3%);
 }
