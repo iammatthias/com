@@ -1,0 +1,49 @@
+.layout {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  margin: 0 16px;
+  gap: 16px;
+}
+
+.header {
+  position: sticky;
+  align-self: start;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border: 1px solid #fff;
+  border-bottom: 1px solid #1a1a1a;
+  box-shadow: 0 15px 15px -15px rgb(0 0 0 / 30%);
+}
+
+.footer {
+  position: sticky;
+  align-self: end;
+  display: flex;
+  justify-content: space-between;
+  bottom: 0;
+  padding: 16px 0;
+  border: 1px solid #fff;
+  border-top: 1px solid #1a1a1a;
+  box-shadow: 0 -15px 15px -15px rgb(0 0 0 / 30%);
+}
+
+.clock {
+  text-align: right;
+}
+
+.main {
+  margin: 16px 32px;
+}
+
+.main div {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.main > div > * {
+  max-width: 60ch;
+}

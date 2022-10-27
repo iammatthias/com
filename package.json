@@ -1,64 +1,25 @@
 {
-  "name": "typescript-nextjs-starter",
-  "description": "A TypeScript starter for Next.js that includes all you need to build amazing projects",
-  "version": "1.0.0",
+  "name": "my-app",
+  "version": "0.1.0",
   "private": true,
-  "author": "João Pedro Schmitz <hey@joaopedro.dev> (@jpedroschmitz)",
-  "license": "MIT",
-  "keywords": [
-    "nextjs",
-    "starter",
-    "typescript"
-  ],
   "scripts": {
-    "dev": "next",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc",
-    "lint": "eslint --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\"",
-    "format": "prettier --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\" --write",
-    "postinstall": "husky install"
-  },
-  "lint-staged": {
-    "./src/**/*.{ts,js,jsx,tsx}": [
-      "eslint --ignore-path .gitignore --fix",
-      "prettier --ignore-path .gitignore --write"
-    ]
+    "lint": "next lint"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.0",
-    "@fontsource/space-grotesk": "^4.5.10",
-    "@fontsource/space-mono": "^4.5.10",
-    "@vanilla-extract/css": "^1.9.1",
-    "arweave": "^1.11.6",
-    "graphql": "^16.6.0",
-    "next": "12.3.1",
+    "@next/font": "^13.0.0",
+    "next": "13.0.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-markdown": "^8.0.3",
-    "request-ip": "^3.3.0",
-    "slug": "^8.2.2",
-    "swr": "^1.3.0"
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "17.1.2",
-    "@commitlint/config-conventional": "17.1.0",
-    "@types/node": "16.11.68",
-    "@types/react": "18.0.21",
-    "@types/react-dom": "18.0.6",
-    "@types/slug": "^5.0.3",
-    "@typescript-eslint/eslint-plugin": "5.40.1",
-    "@typescript-eslint/parser": "5.40.1",
-    "@vanilla-extract/next-plugin": "^2.1.1",
-    "eslint": "8.25.0",
-    "eslint-config-next": "12.3.1",
-    "eslint-config-prettier": "8.5.0",
-    "eslint-import-resolver-typescript": "3.5.2",
-    "eslint-plugin-import": "2.26.0",
-    "eslint-plugin-prettier": "4.2.1",
-    "husky": "8.0.1",
-    "lint-staged": "13.0.3",
-    "prettier": "2.7.1",
+    "@types/node": "18.11.7",
+    "@types/react": "18.0.24",
+    "@types/react-dom": "18.0.8",
+    "eslint": "8.26.0",
+    "eslint-config-next": "13.0.0",
     "typescript": "4.8.4"
   }
 }
