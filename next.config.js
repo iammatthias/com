@@ -5,6 +5,9 @@ const withVanillaExtract = createVanillaExtractPlugin();
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  experimental: {
+    appDir: true,
+  },
 };
 
 module.exports = withVanillaExtract(nextConfig);

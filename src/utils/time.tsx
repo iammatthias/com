@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 
 // export current time in 24 hour format
