@@ -18,9 +18,10 @@
   box-shadow: 0 15px 15px -15px var(--shadow);
   background: var(--bg);
 }
-.header a {
+
+/* .header a {
   text-decoration: none;
-}
+} */
 
 .footer {
   position: sticky;
