@@ -1,0 +1,10 @@
+.transaction {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 4px 16px 8px var(--shadow);
+  padding: 16px;
+  border: 1px solid #1a1a1a;
+  font-family: monospace;
+  max-width: fit-content !important;
+}

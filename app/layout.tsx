@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Crimson_Pro } from "@next/font/google";
 
 import "./reset.css";
@@ -20,12 +21,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${layout.layout} ${crimson_pro.className}`}>
         <header className={layout.header}>
-          <p>hey, I am Matthias</p>
+          <p>
+            <Link href='/' title='hey, I am Matthias'>
+              hey, I am Matthias
+            </Link>
+          </p>
         </header>
 
         <main className={layout.main}>{children}</main>
         <footer className={layout.footer}>
-          <p>hey@iammatthias.com</p>
+          <p>
+            <Link href='mailto:hey@iammatthias.com?subject=Hello%20there!'>hey@iammatthias.com</Link>
+          </p>
           <div className={layout.clock}>
             <p>{date}</p>
             <p>{time}</p>
