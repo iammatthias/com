@@ -17,17 +17,11 @@
     "gray-matter": "^4.0.3",
     "image-size": "^1.0.2",
     "next": "13.0.0",
-    "notion-to-md": "^2.5.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.3",
     "remark": "^14.0.2",
-    "remark-frontmatter": "^4.0.1",
-    "remark-parse": "^10.0.1",
-    "remark-stringify": "^10.0.2",
-    "remark-yaml-config": "^6.0.1",
     "slug": "^8.2.2",
-    "to-vfile": "^7.2.3",
     "unified": "^10.1.2"
   },
   "devDependencies": {

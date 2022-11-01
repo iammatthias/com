@@ -9,8 +9,6 @@ export default async function Page({ params }: { params: { slug: string }; searc
 
   const entry = await getData(params.slug);
 
-  console.log(entry);
-
   return (
     <article>
       <h1>{entry.title}</h1>
