@@ -41,7 +41,7 @@ export default async function Page({ params }: { params: { slug: string }; searc
 export async function generateStaticParams() {
   const paths = await getArweaveEntryPaths();
 
-  return paths.map((post: { slug: string }) => ({
+  return paths.map((post: { slug: any }) => ({
     slug: post.slug,
   }));
 }
