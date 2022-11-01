@@ -2,7 +2,12 @@ import ReactMarkdown from "react-markdown";
 import { getObsidianEntry, getObsidianEntries } from "../../../data/obsidianEntries";
 import uriTransformer from "../../../utils/uriTransformer";
 
-export default async function Page({ params }: { params: { slug: any }; searchParams: { id: any } }) {
+export interface Props {
+  params: any;
+  searchParams?: any;
+}
+
+export default async function Page({ params, searchParams }: Props) {
   if (!params.slug) {
     return <>Loading...</>;
   }

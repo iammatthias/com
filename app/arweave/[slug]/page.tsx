@@ -7,7 +7,12 @@ import uriTransformer from "../../../utils/uriTransformer";
 import page from "./page.module.css";
 import Link from "next/link";
 
-export default async function Page({ params }: { params: { slug: any }; searchParams: { id: any } }) {
+export interface Props {
+  params: any;
+  searchParams?: any;
+}
+
+export default async function Page({ params, searchParams }: Props) {
   const entry = await getData(params.slug);
 
   return (
