@@ -8,10 +8,6 @@ import page from "./page.module.css";
 import Link from "next/link";
 
 export default async function Page({ params }: { params: { slug: string }; searchParams: { id: string } }) {
-  if (!params.slug) {
-    return <>Loading...</>;
-  }
-
   const entry = await getData(params.slug);
 
   return (
