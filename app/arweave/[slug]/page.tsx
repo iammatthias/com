@@ -7,7 +7,7 @@ import uriTransformer from "../../../utils/uriTransformer";
 import page from "./page.module.css";
 import Link from "next/link";
 
-export default async function Page({ params }: { params: { slug: string }; searchParams: { id: string } }) {
+export default async function Page({ params }: { params: { slug: any }; searchParams: { id: any } }) {
   const entry = await getData(params.slug);
 
   return (
