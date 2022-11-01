@@ -42,7 +42,7 @@
   /* color settings */
   --bg: var(--white);
   --primary: var(--black);
-  --shadow: rgb(0 0 0 / 30%);
+  --shadow: rgb(0 0 0 / 10%);
 }
 
 html,

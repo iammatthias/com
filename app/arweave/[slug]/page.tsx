@@ -2,8 +2,8 @@ import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkStringify from "remark-stringify";
 import ReactMarkdown from "react-markdown";
-import { getEntry, getEntryPaths } from "../../data/entries";
-import uriTransformer from "../../utils/uriTransformer";
+import { getArweaveEntry, getArweaveEntryPaths } from "../../../data/arweaveEntries";
+import uriTransformer from "../../../utils/uriTransformer";
 import page from "./page.module.css";
 import Link from "next/link";
 
@@ -39,15 +39,15 @@ export default async function Page({ params }: { params: { slug: string }; searc
 }
 
 export async function generateStaticParams() {
-  const paths = await getEntryPaths();
+  const paths = await getArweaveEntryPaths();
 
-  return paths.map((post: { slug: any }) => ({
+  return paths.map((post: { slug: string }) => ({
     slug: post.slug,
   }));
 }
 
 async function getData(digest: string) {
-  const entry = await getEntry(digest);
+  const entry = await getArweaveEntry(digest);
 
   const body = await unified()
     .use(remarkParse) // Parse markdown

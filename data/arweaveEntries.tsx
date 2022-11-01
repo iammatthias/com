@@ -1,8 +1,8 @@
 import slug from "slug";
 import arweave from "../lib/arweave";
 import { arweaveQL } from "../lib/graphql";
-import fetchSingleTransaction from "../queries/fetchSingleTransaction";
-import fetchTransactions from "../queries/fetchTransactions";
+import fetchSingleTransaction from "../queries/arweave/fetchSingleTransaction";
+import fetchTransactions from "../queries/arweave/fetchTransactions";
 import { calculateSizes } from "../utils/images";
 
 const formatEntry = async (
@@ -18,15 +18,16 @@ const formatEntry = async (
   title: entry.content.title,
   slug: slug(entry.content.title),
   body: entry.content.body,
-  timestamp,
+  timestamp: new Date(timestamp * 1000).toLocaleDateString("en-US"),
   digest: entry.originalDigest ?? entry.digest,
   contributor: entry.authorship.contributor,
   transaction: transactionId,
   cover_image: (entry.content.body.split(`\n\n`)[0].match(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/m) || [])?.[1] || null,
   image_sizes: await calculateSizes(entry.content.body),
+  source: `arweave`,
 });
 
-export const getEntryPaths = async () => {
+export const getArweaveEntryPaths = async () => {
   const {
     data: {
       transactions: { edges },
@@ -58,8 +59,8 @@ export const getEntryPaths = async () => {
     }, []);
 };
 
-export const getEntries = async () => {
-  const paths = await getEntryPaths();
+export const getArweaveEntries = async () => {
+  const paths = await getArweaveEntryPaths();
 
   return (
     await Promise.all(
@@ -85,7 +86,7 @@ export const getEntries = async () => {
     }, []);
 };
 
-export const getEntry = async (digest: any) => {
+export const getArweaveEntry = async (digest: any) => {
   const {
     data: {
       transactions: {
