@@ -31,7 +31,7 @@ export const getObsidianEntries = async () => {
       title: title,
       longform: longform,
       published: published,
-      timestamp: new Date(created * 1).toLocaleDateString("en-US"),
+      timestamp: created * 1,
       body: body,
       source: `obsidian`,
     };

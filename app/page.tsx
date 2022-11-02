@@ -1,6 +1,8 @@
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 import { getArweaveEntries } from "../data/arweaveEntries";
 import { getObsidianEntries } from "../data/obsidianEntries";
+import uriTransformer from "../utils/uriTransformer";
 import page from "./page.module.css";
 
 export default async function Home() {
@@ -14,26 +16,22 @@ export default async function Home() {
 
       <p>If you are interested in collaborating, please reach out at hey@iammatthias.com</p>
       {entries.sortedEntries.map((post: any) => {
-        return post.source === "arweave" ? (
-          <div key={post.digest} className={page.list}>
+        return (
+          <div key={post.timestamp} className={page.list}>
+            <div className={page.listTopRow}>
+              <p>
+                <small>{new Date(post.timestamp).toLocaleDateString("en-US")}</small>
+              </p>
+              <p>
+                <small>{post.source}</small>
+              </p>
+            </div>
             <p>
-              <small>{post.timestamp}</small>
+              <Link href={post.source === `obsidian` ? `/md/${post.slug}` : `/arweave/${post.transaction}`}>{post.title}</Link>
             </p>
-            <p>
-              <Link href={`/arweave/${post.transaction}`}>{post.title}</Link>
-            </p>
+            {post.longform === false && <ReactMarkdown transformLinkUri={uriTransformer}>{post.body}</ReactMarkdown>}
           </div>
-        ) : post.source === "obsidian" ? (
-          <div key={post.title} className={page.list}>
-            <p>
-              <small>{post.timestamp}</small>
-            </p>
-            <p>
-              <Link href={`/md/${post.slug}`}>{post.title}</Link>
-            </p>
-            {!post.longform && <p>{post.body}</p>}
-          </div>
-        ) : null;
+        );
       })}
     </article>
   );
@@ -46,7 +44,9 @@ async function getData() {
 
   const entries = [...arweaveEntries, ..._obsidianEntries];
 
-  const sortedEntries = entries.sort((a: { timestamp: number }, b: { timestamp: number }) => b.timestamp - a.timestamp);
+  const sortedEntries = entries.sort((a: any, b: any) => {
+    return b.timestamp - a.timestamp;
+  });
 
   return {
     sortedEntries,

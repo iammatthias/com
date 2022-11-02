@@ -18,7 +18,7 @@ const formatEntry = async (
   title: entry.content.title,
   slug: slug(entry.content.title),
   body: entry.content.body,
-  timestamp: new Date(timestamp * 1000).toLocaleDateString("en-US"),
+  timestamp: timestamp * 1000,
   digest: entry.originalDigest ?? entry.digest,
   contributor: entry.authorship.contributor,
   transaction: transactionId,
