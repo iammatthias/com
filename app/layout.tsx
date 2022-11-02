@@ -5,7 +5,7 @@ import "./reset.css";
 import "./global.css";
 import layout from "./layout.module.css";
 
-const crimson_pro = Crimson_Pro();
+const crimson_pro = Crimson_Pro({ subsets: ["latin"] });
 
 const date = new Date().toLocaleDateString();
 const time = new Date().toLocaleTimeString("en-US", { hour12: false });
