@@ -3,7 +3,7 @@ import { getObsidianEntry, getObsidianEntries } from "../../../data/obsidianEntr
 import uriTransformer from "../../../utils/uriTransformer";
 
 export interface Props {
-  params: any;
+  params?: any;
   searchParams?: any;
 }
 

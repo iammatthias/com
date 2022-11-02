@@ -8,7 +8,7 @@ import page from "./page.module.css";
 import Link from "next/link";
 
 export interface Props {
-  params: any;
+  params?: any;
   searchParams?: any;
 }
 
