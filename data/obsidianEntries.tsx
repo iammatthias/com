@@ -30,9 +30,9 @@ export const getObsidianEntries = async () => {
       slug: title,
       title: title,
       longform: longform,
-      published: published,
       timestamp: created * 1,
       body: body,
+      published: published,
       source: `obsidian`,
     };
   });

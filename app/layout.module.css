@@ -56,8 +56,6 @@
   margin: 16px 0;
   padding: 16px;
   overflow-x: auto;
-  border: 1px solid #1a1a1a;
-  box-shadow: 0 4px 16px 8px var(--shadow);
 }
 
 @media screen and (max-width: 768px) {

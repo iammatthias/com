@@ -94,6 +94,11 @@ small {
   font-size: 0.8rem;
 }
 
+pre {
+  border: 1px solid #1a1a1a;
+  box-shadow: 0 4px 16px 8px var(--shadow);
+}
+
 @media screen and (max-width: 768px) {
   p {
     font-size: 1rem;

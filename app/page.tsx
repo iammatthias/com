@@ -5,6 +5,8 @@ import { getObsidianEntries } from "../data/obsidianEntries";
 import uriTransformer from "../utils/uriTransformer";
 import page from "./page.module.css";
 
+export const revalidate = 0; // no-cache
+
 export default async function Home() {
   const entries: any = await getData();
 
@@ -17,20 +19,24 @@ export default async function Home() {
       <p>If you are interested in collaborating, please reach out at hey@iammatthias.com</p>
       {entries.sortedEntries.map((post: any) => {
         return (
-          <div key={post.timestamp} className={page.list}>
-            <div className={page.listTopRow}>
+          post.published && (
+            <div key={post.timestamp} className={page.list}>
+              <div className={page.listTopRow}>
+                <p>
+                  <small>{new Date(post.timestamp).toLocaleDateString("en-US")}</small>
+                </p>
+                <p>
+                  <small>
+                    <i>{post.source}</i>
+                  </small>
+                </p>
+              </div>
               <p>
-                <small>{new Date(post.timestamp).toLocaleDateString("en-US")}</small>
+                <Link href={post.source === `obsidian` ? `/md/${post.slug}` : `/arweave/${post.transaction}`}>{post.title}</Link>
               </p>
-              <p>
-                <small>{post.source}</small>
-              </p>
+              {post.longform === false && <ReactMarkdown transformLinkUri={uriTransformer}>{post.body}</ReactMarkdown>}
             </div>
-            <p>
-              <Link href={post.source === `obsidian` ? `/md/${post.slug}` : `/arweave/${post.transaction}`}>{post.title}</Link>
-            </p>
-            {post.longform === false && <ReactMarkdown transformLinkUri={uriTransformer}>{post.body}</ReactMarkdown>}
-          </div>
+          )
         );
       })}
     </article>
@@ -50,6 +56,6 @@ async function getData() {
 
   return {
     sortedEntries,
-    revalidate: 1 * 60 * 60, // refresh article contents every hour
+    revalidate: 10,
   };
 }

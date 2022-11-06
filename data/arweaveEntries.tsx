@@ -25,6 +25,7 @@ const formatEntry = async (
   cover_image: (entry.content.body.split(`\n\n`)[0].match(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/m) || [])?.[1] || null,
   image_sizes: await calculateSizes(entry.content.body),
   source: `arweave`,
+  published: true,
 });
 
 export const getArweaveEntryPaths = async () => {

@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Crimson_Pro } from "@next/font/google";
 
@@ -33,10 +34,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <p>
             <Link href='mailto:hey@iammatthias.com?subject=Hello%20there!'>hey@iammatthias.com</Link>
           </p>
-          <div className={layout.clock}>
+          {/* <div className={layout.clock}>
             <p>{date}</p>
             <p>{time}</p>
-          </div>
+          </div> */}
+          <p>
+            <Link href='https://nf.td/iam'>@iammatthias</Link>
+          </p>
         </footer>
       </body>
     </html>

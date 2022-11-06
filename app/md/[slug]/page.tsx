@@ -35,5 +35,8 @@ export async function generateStaticParams() {
 async function getData(slug: string) {
   const entry = await getObsidianEntry(slug);
 
-  return entry;
+  return {
+    ...entry,
+    revalidate: 10,
+  };
 }

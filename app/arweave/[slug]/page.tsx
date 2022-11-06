@@ -58,6 +58,6 @@ async function getData(digest: string) {
   return {
     ...entry,
     body: String(body),
-    revalidate: 1 * 60 * 60, // refresh article contents every hour
+    revalidate: 10,
   };
 }
