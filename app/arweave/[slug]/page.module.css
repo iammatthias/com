@@ -7,12 +7,12 @@
   padding: 16px;
   border: 1px solid #1a1a1a;
   font-family: monospace;
-  max-width: fit-content !important;
+  max-width: fit-content;
   overflow-x: auto;
 }
 
 @media screen and (max-width: 768px) {
   .transaction {
-    max-width: calc(100vw - 96px);
+    max-width: calc(100vw - 96px) !important;
   }
 }
