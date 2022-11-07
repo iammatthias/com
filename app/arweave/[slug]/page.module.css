@@ -8,4 +8,11 @@
   border: 1px solid #1a1a1a;
   font-family: monospace;
   max-width: fit-content !important;
+  overflow-x: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .transaction {
+    max-width: calc(100vw - 96px);
+  }
 }
