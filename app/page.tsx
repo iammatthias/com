@@ -10,6 +10,10 @@ export const revalidate = 0; // no-cache
 export default async function Home() {
   const entries: any = await getData();
 
+  const isDev = process.env.NODE_ENV === "development";
+
+  console.log(isDev);
+
   return (
     <article>
       <p>I'm a photographer & marketing technologist who builds sustainable growth systems.</p>
@@ -19,7 +23,7 @@ export default async function Home() {
       <p>If you are interested in collaborating, please reach out at hey@iammatthias.com</p>
       {entries.sortedEntries.map((post: any) => {
         return (
-          post.published && (
+          (isDev ? isDev : post.published) && (
             <div key={post.timestamp} className={page.list}>
               <div className={page.listTopRow}>
                 <p>
