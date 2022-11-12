@@ -1,33 +1,36 @@
-import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import { getArweaveEntries } from "../data/arweaveEntries";
-import { getObsidianEntries } from "../data/obsidianEntries";
-import uriTransformer from "../utils/uriTransformer";
-import page from "./page.module.css";
+import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import { getArweaveEntries } from '../data/arweaveEntries';
+import { getObsidianEntries } from '../data/obsidianEntries';
+import uriTransformer from '../utils/uriTransformer';
+import { components } from '../utils/markdown';
+import page from './page.module.css';
+import rehypeRaw from 'rehype-raw';
 
 export const revalidate = 0; // no-cache
 
 export default async function Home() {
   const entries: any = await getData();
 
-  const isDev = process.env.NODE_ENV === "development";
+  const isDev = process.env.NODE_ENV === 'development';
 
   console.log(isDev);
 
   return (
     <article>
-      <p>I'm a photographer & marketing technologist who builds sustainable growth systems.</p>
+      <p>
+        I'm a photographer & marketing technologist, and have worked with wonderful teams at Tornado, Aspiration, Surf
+        Air, and General Assembly.
+      </p>
 
-      <p>Currently at Tornado—an education-first investing platform focused on financial literacy. Previously I worked at Aspiration, Surf Air, and General Assembly.</p>
-
-      <p>If you are interested in collaborating, please reach out at hey@iammatthias.com</p>
+      <p>If you're interested in collaborating, please reach out at hey@iammatthias.com</p>
       {entries.sortedEntries.map((post: any) => {
         return (
           (isDev ? isDev : post.published) && (
             <div key={post.timestamp} className={page.list}>
               <div className={page.listTopRow}>
                 <p>
-                  <small>{new Date(post.timestamp).toLocaleDateString("en-US")}</small>
+                  <small>{new Date(post.timestamp).toLocaleDateString('en-US')}</small>
                 </p>
                 <p>
                   <small>
@@ -36,9 +39,22 @@ export default async function Home() {
                 </p>
               </div>
               <p>
-                <Link href={post.source === `obsidian` ? `/md/${post.slug}` : `/arweave/${post.transaction}`}>{post.title}</Link>
+                <Link href={post.source === `obsidian` ? `/md/${post.slug}` : `/arweave/${post.transaction}`}>
+                  {post.title}
+                </Link>
               </p>
-              {post.longform === false && <ReactMarkdown transformLinkUri={uriTransformer}>{post.body}</ReactMarkdown>}
+              {post.longform === false && (
+                <ReactMarkdown
+                  transformLinkUri={uriTransformer}
+                  components={{
+                    img: components.image as any,
+                    iframe: components.iframe,
+                    p: components.paragraph,
+                  }}
+                  rehypePlugins={[rehypeRaw]}
+                  children={post.body}
+                />
+              )}
             </div>
           )
         );

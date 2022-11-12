@@ -17,6 +17,7 @@
   border-bottom: 1px solid var(--primary);
   box-shadow: 0 15px 15px -15px var(--shadow);
   background: var(--bg);
+  z-index: 999;
 }
 
 .footer {
@@ -31,10 +32,11 @@
   border-top: 1px solid var(--primary);
   box-shadow: 0 -16px 16px -16px var(--shadow);
   background: var(--bg);
+  z-index: 999;
 }
 
 .clock {
-  text-align: right;
+  text-align: center;
 }
 
 .main {
@@ -51,6 +53,18 @@
   max-width: 60ch;
 }
 
+.main article > div {
+  max-width: unset;
+}
+
+.main article > div > * {
+  max-width: 60ch;
+}
+
+/* .main article > div > figure {
+  max-width: 50vw;
+} */
+
 .main article > pre {
   max-width: 80vw;
   margin: 16px 0;
@@ -59,6 +73,9 @@
 }
 
 @media screen and (max-width: 768px) {
+  .main article > div > figure {
+    max-width: unset;
+  }
   .main article > pre {
     max-width: calc(100vw - 96px);
   }
