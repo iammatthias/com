@@ -4,7 +4,7 @@ const nextConfig = {
     appDir: true,
   },
   images: {
-    domains: ["cdn.statically.io", "picsum.photos"],
+    domains: ['pub-8bcf4a42832e4273a5a34c696ccc1b55.r2.dev'],
   },
 };
 

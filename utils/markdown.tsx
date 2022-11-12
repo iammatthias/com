@@ -4,8 +4,7 @@ import axios from 'axios';
 import IFrame from './iFrame';
 
 function Image(props: any) {
-  //   const uri = `https://cdn.statically.io/gh/iammatthias/Obsidian/tree/main/Assets/${props.src}`
-  const uri = `https://picsum.photos/999/587`;
+  const uri = `https://pub-8bcf4a42832e4273a5a34c696ccc1b55.r2.dev/${props.src}`;
 
   const image = axios.get(uri, { responseType: 'arraybuffer' }).then((response) => {
     const dimensions = imageSize(response.data);

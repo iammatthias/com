@@ -14,8 +14,6 @@ export default async function Home() {
 
   const isDev = process.env.NODE_ENV === 'development';
 
-  console.log(isDev);
-
   return (
     <article>
       <p>

@@ -12,6 +12,7 @@
     "@apollo/client": "^3.7.1",
     "@next/font": "^13.0.3",
     "@notionhq/client": "^2.2.1",
+    "@relaycc/receiver": "^0.1.70",
     "arweave": "^1.11.6",
     "graphql": "^16.6.0",
     "gray-matter": "^4.0.3",

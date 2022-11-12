@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Crimson_Pro } from '@next/font/google';
 
 import DateTime from './components/dateTime';
+import Relay from './components/relay';
 
 import './reset.css';
 import './global.css';
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
 
         <main className={layout.main}>{children}</main>
+        {/* <Relay /> */}
         <footer className={layout.footer}>
           <p>
             <Link href="mailto:hey@iammatthias.com?subject=Hello%20there!">hey@iammatthias.com</Link>
