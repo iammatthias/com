@@ -1,9 +1,9 @@
-import slug from "slug";
-import arweave from "../lib/arweave";
-import { arweaveQL } from "../lib/graphql";
-import fetchSingleTransaction from "../queries/arweave/fetchSingleTransaction";
-import fetchTransactions from "../queries/arweave/fetchTransactions";
-import { calculateSizes } from "../utils/images";
+import slug from 'slug';
+import arweave from '../lib/arweave';
+import { arweaveQL } from '../lib/graphql';
+import fetchSingleTransaction from '../queries/arweave/fetchSingleTransaction';
+import fetchTransactions from '../queries/arweave/fetchTransactions';
+import { calculateSizes } from '../utils/images';
 
 const formatEntry = async (
   entry: {
@@ -13,7 +13,7 @@ const formatEntry = async (
     authorship: { contributor: any };
   },
   transactionId: any,
-  timestamp: any
+  timestamp: any,
 ) => ({
   title: entry.content.title,
   slug: slug(entry.content.title),
@@ -22,7 +22,8 @@ const formatEntry = async (
   digest: entry.originalDigest ?? entry.digest,
   contributor: entry.authorship.contributor,
   transaction: transactionId,
-  cover_image: (entry.content.body.split(`\n\n`)[0].match(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/m) || [])?.[1] || null,
+  cover_image:
+    (entry.content.body.split(`\n\n`)[0].match(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/m) || [])?.[1] || null,
   image_sizes: await calculateSizes(entry.content.body),
   source: `arweave`,
   published: true,
@@ -71,12 +72,12 @@ export const getArweaveEntries = async () => {
             (await arweave.transactions.getData(entry.path, {
               decode: true,
               string: true,
-            })) as any
+            })) as any,
           ),
           entry.slug,
-          entry.timestamp
-        )
-      )
+          entry.timestamp,
+        ),
+      ),
     )
   )
     .sort((a, b) => b.timestamp - a.timestamp)
@@ -111,9 +112,9 @@ export const getArweaveEntry = async (digest: any) => {
       (await arweave.transactions.getData(transactionId, {
         decode: true,
         string: true,
-      })) as any
+      })) as any,
     ),
     transactionId,
-    timestamp
+    timestamp,
   );
 };

@@ -15,7 +15,7 @@ function Image(props: any) {
           alt={props.alt}
           width={dimensions.width}
           height={dimensions.height}
-          style={{ objectFit: `contain`, height: `fit-content` }}
+          style={{ objectFit: `contain`, height: `fit-content`, width: `100%` }}
         />
         {props.alt && <figcaption>{props.alt}</figcaption>}
       </figure>

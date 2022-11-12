@@ -7,7 +7,7 @@
   padding: 16px;
   border: 1px solid #1a1a1a;
   font-family: monospace;
-  max-width: fit-content;
+  max-width: 60ch;
   overflow-x: auto;
 }
 

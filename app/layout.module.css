@@ -53,10 +53,6 @@
   max-width: 60ch;
 }
 
-.main article > div {
-  max-width: unset;
-}
-
 .main article > div > * {
   max-width: 60ch;
 }
