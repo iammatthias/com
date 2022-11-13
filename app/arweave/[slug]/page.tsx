@@ -25,7 +25,7 @@ export default async function Page({ params }: Props) {
 
     const renderCastThread = sortedCastThread.map((cast: any) => {
       const publishedAt = new Date(cast.body.publishedAt).toLocaleDateString('en-US');
-      console.log(cast);
+
       return (
         <div key={cast.merkleRoot} className={page.list}>
           <div className={page.listTopRow}>
