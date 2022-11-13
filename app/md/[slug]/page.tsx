@@ -1,8 +1,8 @@
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import { getObsidianEntry, getObsidianEntries } from "../../../data/obsidianEntries";
-import { components } from "../../../utils/markdown";
-import uriTransformer from "../../../utils/uriTransformer";
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import { getObsidianEntry, getObsidianEntries } from '../../../data/obsidianEntries';
+import { components } from '../../../utils/markdown';
+import uriTransformer from '../../../utils/uriTransformer';
 
 export interface Props {
   params?: any;
@@ -19,7 +19,16 @@ export default async function Page({ params, searchParams }: Props) {
   return (
     <article>
       <h1>{entry.title}</h1>
-      <ReactMarkdown transformLinkUri={uriTransformer} components={{ img: components.image as any, p: components.paragraph }} rehypePlugins={[rehypeRaw]} children={entry.body} />
+      <ReactMarkdown
+        transformLinkUri={uriTransformer}
+        components={{
+          img: components.image as any,
+          iframe: components.iframe,
+          p: components.paragraph,
+        }}
+        rehypePlugins={[rehypeRaw]}
+        children={entry.body}
+      />
     </article>
   );
 }

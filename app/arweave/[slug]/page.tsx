@@ -6,6 +6,8 @@ import { getArweaveEntry, getArweaveEntryPaths } from '../../../data/arweaveEntr
 import uriTransformer from '../../../utils/uriTransformer';
 import page from './page.module.css';
 import Link from 'next/link';
+import rehypeRaw from 'rehype-raw';
+import { components } from '../../../utils/markdown';
 
 export interface Props {
   params?: any;
@@ -49,7 +51,16 @@ export default async function Page({ params }: Props) {
   return (
     <article>
       <h1>{entry.title}</h1>
-      <ReactMarkdown transformLinkUri={uriTransformer}>{entry.body}</ReactMarkdown>
+      <ReactMarkdown
+        transformLinkUri={uriTransformer}
+        components={{
+          img: components.image as any,
+          iframe: components.iframe,
+          p: components.paragraph,
+        }}
+        rehypePlugins={[rehypeRaw]}
+        children={entry.body}
+      />
       <div className={page.transaction}>
         <small>
           Tx:{' '}
