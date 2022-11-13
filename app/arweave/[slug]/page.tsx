@@ -21,14 +21,22 @@ export default async function Page({ params }: Props) {
     const castThread = await Promise.all([CastThread]);
     const castThreadWithReplies = castThread[0];
 
-    const renderCastThread = castThreadWithReplies.map((cast: any) => {
+    const sortedCastThread = castThreadWithReplies.sort((a: any, b: any) => a.body.publishedAt - b.body.publishedAt);
+
+    const renderCastThread = sortedCastThread.map((cast: any) => {
+      const publishedAt = new Date(cast.body.publishedAt).toLocaleDateString('en-US');
       console.log(cast);
       return (
-        <div key={cast.merkleRoot}>
-          <p>{cast.body.publishedAt}</p>
+        <div key={cast.merkleRoot} className={page.list}>
+          <div className={page.listTopRow}>
+            <p>{publishedAt}</p>
+            <p>
+              <Link href={`https://www.discove.xyz/profiles/${cast.body.username}`}>@{cast.body.username}</Link>
+            </p>
+          </div>
           <p>{cast.body.data.text}</p>
           <p>
-            <Link href={cast.uri}>{cast.uri}</Link>
+            <Link href={cast.uri}>View on Farcaster</Link>
           </p>
         </div>
       );
@@ -58,7 +66,7 @@ export default async function Page({ params }: Props) {
           </small>
         </p>
       </div>
-      {renderCasts}
+      <div className={page.list}>{renderCasts}</div>
     </article>
   );
 }
