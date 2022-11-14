@@ -26,21 +26,26 @@ export default async function Home() {
         return (
           (isDev ? isDev : post.published) && (
             <div key={post.timestamp} className={page.list}>
-              <div className={page.listTopRow}>
+              <Link href={post.source === `obsidian` ? `/md/${post.slug}` : `/arweave/${post.transaction}`}>
+                <div className={page.listTopRow}>
+                  <p>
+                    <small>{new Date(post.timestamp).toLocaleDateString('en-US')}</small>
+                  </p>
+                  <p>
+                    <small>
+                      <i>{post.source}</i>
+                    </small>
+                  </p>
+                </div>
+              </Link>
+
+              {post.title != post.timestamp && (
                 <p>
-                  <small>{new Date(post.timestamp).toLocaleDateString('en-US')}</small>
+                  <Link href={post.source === `obsidian` ? `/md/${post.slug}` : `/arweave/${post.transaction}`}>
+                    {post.title}
+                  </Link>
                 </p>
-                <p>
-                  <small>
-                    <i>{post.source}</i>
-                  </small>
-                </p>
-              </div>
-              <p>
-                <Link href={post.source === `obsidian` ? `/md/${post.slug}` : `/arweave/${post.transaction}`}>
-                  {post.title}
-                </Link>
-              </p>
+              )}
               {post.longform === false && (
                 <ReactMarkdown
                   transformLinkUri={uriTransformer}
