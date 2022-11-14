@@ -52,7 +52,6 @@ export default async function Home() {
                   components={{
                     img: components.image as any,
                     iframe: components.iframe,
-                    p: components.paragraph,
                   }}
                   rehypePlugins={[rehypeRaw]}
                   children={post.body}

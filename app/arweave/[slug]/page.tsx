@@ -56,7 +56,6 @@ export default async function Page({ params }: Props) {
         components={{
           img: components.image as any,
           iframe: components.iframe,
-          p: components.paragraph,
         }}
         rehypePlugins={[rehypeRaw]}
         children={entry.body}

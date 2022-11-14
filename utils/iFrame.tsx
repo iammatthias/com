@@ -12,7 +12,6 @@ export default function IFrame(props: any) {
     <>
       <IframeResizer
         forwardRef={iframeRef}
-        checkOrigin={false}
         inPageLinks
         log={false}
         src={props.src}

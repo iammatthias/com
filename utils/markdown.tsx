@@ -31,20 +31,21 @@ function Frame(props: any) {
   return <IFrame src={uri} _src={props.src} />;
 }
 
-function Block(props: any) {
-  const block = props.children.map((child: any) => {
-    if (child.type) {
-      return child;
-    } else {
-      return <p>{child}</p>;
-    }
-  });
+// function Block(props: any) {
+//   console.log('props', props);
+//   const block = props.children.map((child: any) => {
+//     if (child.type === 'image') {
+//       return child;
+//     } else {
+//       return [child];
+//     }
+//   });
 
-  return block;
-}
+//   return [props.children];
+// }
 
 export const components = {
   image: Image,
   iframe: Frame,
-  paragraph: Block,
+  // paragraph: Block,
 };
