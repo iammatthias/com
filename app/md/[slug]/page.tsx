@@ -22,8 +22,9 @@ export default async function Page({ params, searchParams }: Props) {
       <ReactMarkdown
         transformLinkUri={uriTransformer}
         components={{
-          img: components.image as any,
+          // img: components.image as any,
           iframe: components.iframe,
+          p: components.paragraph as any,
         }}
         rehypePlugins={[rehypeRaw]}
         children={entry.body}

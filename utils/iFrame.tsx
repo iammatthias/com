@@ -17,6 +17,7 @@ export default function IFrame(props: any) {
         src={props.src}
         frameBorder="0"
         heightCalculationMethod="taggedElement"
+        checkOrigin={false}
       />
       {props._src.includes('zora') && (
         <p>
