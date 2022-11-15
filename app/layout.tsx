@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className={layout.header}>
           <p>
             <Link href="/" title="hey, I am Matthias">
-              hey, I am Matthias
+              Hey, I am Matthias
             </Link>
           </p>
           <DateTime />

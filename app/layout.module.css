@@ -50,11 +50,7 @@
 }
 
 .main article > * {
-  max-width: 60ch;
-}
-
-.main article > div > * {
-  max-width: 60ch;
+  max-width: 65ch;
 }
 
 /* .main article > div > figure {
@@ -62,7 +58,7 @@
 } */
 
 .main article > pre {
-  max-width: 80vw;
+  max-width: 130ch;
   margin: 16px 0;
   padding: 16px;
   overflow-x: auto;
