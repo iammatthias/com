@@ -21,7 +21,12 @@ export default async function Home() {
         Air, and General Assembly.
       </p>
 
-      <p>If you're interested in collaborating, please reach out at hey@iammatthias.com</p>
+      <p>
+        Want to collaborate? Reach out ⇝{' '}
+        <Link href="mailto:hey@iammatthias.com?subject=Collab&body=Hey%20Matthias%2C%0D%0A%0D%0A...">
+          hey@iammatthias.com
+        </Link>
+      </p>
       {entries.sortedEntries.map((post: any) => {
         return (
           (isDev ? isDev : post.published) && (
@@ -80,5 +85,6 @@ async function getData() {
   return {
     sortedEntries,
     revalidate: 10,
+    next: { revalidate: 60 },
   };
 }

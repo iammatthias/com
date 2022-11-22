@@ -16,9 +16,13 @@ export default async function Page({ params, searchParams }: Props) {
 
   const entry = await getData(params.slug);
 
+  console.log(entry);
+
+  const title = entry.title == entry.timestamp ? new Date(entry.timestamp).toLocaleDateString('en-US') : entry.title;
+
   return (
     <article>
-      <h1>{entry.title}</h1>
+      <h1>{title}</h1>
       <ReactMarkdown
         transformLinkUri={uriTransformer}
         components={{
@@ -40,6 +44,7 @@ export async function generateStaticParams() {
 
   return _paths.map((post: { slug: string }) => ({
     slug: post.slug,
+    next: { revalidate: 60 },
   }));
 }
 
