@@ -16,8 +16,6 @@ export default async function Page({ params, searchParams }: Props) {
 
   const entry = await getData(params.slug);
 
-  console.log(entry);
-
   const title = entry.title == entry.timestamp ? new Date(entry.timestamp).toLocaleDateString('en-US') : entry.title;
 
   return (
