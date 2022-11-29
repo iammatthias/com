@@ -1,22 +1,34 @@
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
-import { getObsidianEntry, getObsidianEntries } from '../../../data/obsidianEntries';
+import getObsidianEntries from '../../../data/obsidian/getObsidianEntries';
+import getObsidianEntry from '../../../data/obsidian/getObsidianEntry';
 import { components } from '../../../utils/markdown';
 import uriTransformer from '../../../utils/uriTransformer';
+
+async function getData(slug: string) {
+  const entry = await getObsidianEntry(slug);
+
+  return {
+    ...entry,
+  };
+}
 
 export interface Props {
   params?: any;
   searchParams?: any;
 }
 
-export default async function Page({ params, searchParams }: Props) {
+export default async function Page({ params }: Props) {
   if (!params.slug) {
     return <>Loading...</>;
   }
 
   const entry = await getData(params.slug);
 
-  const title = entry.title == entry.timestamp ? new Date(entry.timestamp).toLocaleDateString('en-US') : entry.title;
+  const title =
+    entry.title == entry.timestamp
+      ? new Date(entry.timestamp).toLocaleDateString(`en-US`)
+      : entry.title;
 
   return (
     <article>
@@ -29,8 +41,9 @@ export default async function Page({ params, searchParams }: Props) {
           p: components.paragraph as any,
         }}
         rehypePlugins={[rehypeRaw]}
-        children={entry.body}
-      />
+      >
+        {entry.body}
+      </ReactMarkdown>
     </article>
   );
 }
@@ -42,15 +55,5 @@ export async function generateStaticParams() {
 
   return _paths.map((post: { slug: string }) => ({
     slug: post.slug,
-    next: { revalidate: 60 },
   }));
-}
-
-async function getData(slug: string) {
-  const entry = await getObsidianEntry(slug);
-
-  return {
-    ...entry,
-    revalidate: 10,
-  };
 }

@@ -1,14 +1,21 @@
 export default function uriTransformer(uri: any) {
-  const allowedLinkProtocols = ["http", "https", "mailto", "tel", "ethereum", "crowdfund"];
+  const allowedLinkProtocols = [
+    `http`,
+    `https`,
+    `mailto`,
+    `tel`,
+    `ethereum`,
+    `crowdfund`,
+  ];
 
-  const url = (uri || "").trim();
+  const url = (uri || ``).trim();
   const first = url.charAt(0);
 
-  if (first === "#" || first === "/") {
+  if (first === `#` || first === `/`) {
     return url;
   }
 
-  const colon = url.indexOf(":");
+  const colon = url.indexOf(`:`);
   if (colon === -1) {
     return url;
   }
@@ -19,20 +26,23 @@ export default function uriTransformer(uri: any) {
   while (++index < length) {
     const protocol = allowedLinkProtocols[index];
 
-    if (colon === protocol.length && url.slice(0, protocol.length).toLowerCase() === protocol) {
+    if (
+      colon === protocol.length &&
+      url.slice(0, protocol.length).toLowerCase() === protocol
+    ) {
       return url;
     }
   }
 
-  index = url.indexOf("?");
+  index = url.indexOf(`?`);
   if (index !== -1 && colon > index) {
     return url;
   }
 
-  index = url.indexOf("#");
+  index = url.indexOf(`#`);
   if (index !== -1 && colon > index) {
     return url;
   }
 
-  return "#";
+  return `#`;
 }

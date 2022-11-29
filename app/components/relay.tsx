@@ -1,6 +1,6 @@
 'use client';
 
-import components from './components.module.css';
+// import components from './components.module.css';
 
 import { Window, Launcher } from '@relaycc/receiver';
 

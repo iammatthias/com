@@ -19,7 +19,7 @@ export default function IFrame(props: any) {
         heightCalculationMethod="taggedElement"
         checkOrigin={false}
       />
-      {props._src.includes('zora') && (
+      {props._src.includes(`zora`) && (
         <p>
           <Link href={props._src}>View on Zora</Link>
         </p>

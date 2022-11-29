@@ -34,27 +34,33 @@ function Frame(props: any) {
 function Paragraph(props: any) {
   const { node } = props;
 
-  if (node.children[0].tagName === 'img') {
+  if (node.children[0].tagName === `img`) {
     const image = node.children[0];
     const src = `https://pub-8bcf4a42832e4273a5a34c696ccc1b55.r2.dev/${image.properties.src}`;
     const alt = image.properties.alt;
 
-    const renderImage = axios.get(src, { responseType: 'arraybuffer' }).then((response) => {
-      const dimensions = imageSize(response.data);
-      return (
-        <figure style={{ position: `relative` }}>
-          <NextImage
-            priority
-            src={src}
-            alt={alt}
-            width={dimensions.width}
-            height={dimensions.height}
-            style={{ objectFit: `contain`, height: `fit-content`, width: `100%` }}
-          />
-          {alt && <figcaption>{alt}</figcaption>}
-        </figure>
-      );
-    });
+    const renderImage = axios
+      .get(src, { responseType: `arraybuffer` })
+      .then((response) => {
+        const dimensions = imageSize(response.data);
+        return (
+          <figure style={{ position: `relative` }}>
+            <NextImage
+              priority
+              src={src}
+              alt={alt}
+              width={dimensions.width}
+              height={dimensions.height}
+              style={{
+                objectFit: `contain`,
+                height: `fit-content`,
+                width: `100%`,
+              }}
+            />
+            {alt && <figcaption>{alt}</figcaption>}
+          </figure>
+        );
+      });
 
     return renderImage;
   }
