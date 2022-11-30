@@ -18,6 +18,7 @@ export default function IFrame(props: any) {
         frameBorder="0"
         heightCalculationMethod="taggedElement"
         checkOrigin={false}
+        title="iframe"
       />
       {props._src.includes(`zora`) && (
         <p>
