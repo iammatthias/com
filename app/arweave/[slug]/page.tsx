@@ -2,15 +2,18 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
 import ReactMarkdown from 'react-markdown';
-import getArweaveEntry from '../../../data/arweave/getArweaveEntry';
-import getArweavePaths from '../../../data/arweave/getArweavePaths';
-import uriTransformer from '../../../utils/uriTransformer';
+import getArweaveEntry from '@/data/arweave/getArweaveEntry';
+import getArweavePaths from '@/data/arweave/getArweavePaths';
+import uriTransformer from '@/utils/uriTransformer';
 import page from './page.module.css';
 import Link from 'next/link';
 import rehypeRaw from 'rehype-raw';
-import { components } from '../../../utils/markdown';
+import { components } from '@/utils/markdown';
+import getTopLevelCasts from '@/data/farcaster/getTopLevelCasts';
 
 async function getData(digest: string) {
+  const topLevelCasts = await getTopLevelCasts(digest);
+  console.log('topLevelCasts', topLevelCasts);
   const entry = await getArweaveEntry(digest);
 
   const body = await unified()
