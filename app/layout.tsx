@@ -11,11 +11,7 @@ import Head from './head';
 
 const crimson_pro = Crimson_Pro({ preload: true });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <Head />

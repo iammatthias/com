@@ -12,14 +12,9 @@ export const calculateImageSize = async (url: string) => {
 export const calculateSizes = async (markdown: any) => {
   return Object.fromEntries(
     await Promise.all(
-      [
-        ...markdown.matchAll(
-          /!\[[^\]]*\]\((?<url>.*?)\s*("(?:.*[^"])")?\s*\)/gm,
-        ),
-      ].map(async (match) => [
-        match.groups.url,
-        await calculateImageSize(match.groups.url),
-      ]),
+      [...markdown.matchAll(/!\[[^\]]*\]\((?<url>.*?)\s*("(?:.*[^"])")?\s*\)/gm)].map(
+        async (match) => [match.groups.url, await calculateImageSize(match.groups.url)],
+      ),
     ),
   );
 };

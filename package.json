@@ -11,6 +11,8 @@
     "typescript"
   ],
   "scripts": {
+    "turbo-dev": "turbo dev",
+    "tubo-build": "turbo build",
     "dev": "next",
     "build": "next build",
     "start": "next start",
@@ -61,6 +63,7 @@
     "husky": "8.0.2",
     "lint-staged": "13.0.4",
     "prettier": "2.8.0",
+    "turbo": "^1.6.3",
     "typescript": "4.9.3"
   }
 }

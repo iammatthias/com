@@ -63,39 +63,60 @@ export default async function Comments({ slug }: Props) {
 
   const _merkleRootComments = await Promise.all(merkleRootComments);
 
+  type CommentTopRowProps = {
+    username: string;
+    publishedAt: number;
+  };
+
+  function CommentTopRow({ username, publishedAt }: CommentTopRowProps) {
+    return (
+      <div className={`${components.commentTopRow}`}>
+        <small>
+          <Link href={`https://www.discove.xyz/profiles/${username}`}>@{username}</Link>
+        </small>
+
+        <small>{new Date(publishedAt).toLocaleDateString(`en-US`)}</small>
+      </div>
+    );
+  }
+
+  type ViewOnDiscoveProps = {
+    merkleRoot: string;
+  };
+
+  function ViewOnDiscove({ merkleRoot }: ViewOnDiscoveProps) {
+    return (
+      <small>
+        <Link href={`https://www.discove.xyz/casts/${merkleRoot}`}>
+          View on Discove ↝
+        </Link>
+      </small>
+    );
+  }
+
+  function CommentBody({ merkleRoot, username, publishedAt, text }: any) {
+    return (
+      <>
+        <CommentTopRow username={username} publishedAt={publishedAt} />
+        <p>{text}</p>
+        <ViewOnDiscove merkleRoot={merkleRoot} />
+      </>
+    );
+  }
+
   return (
     <div className={`${components.comments}`}>
       <p>
-        When a post URL is shared on Farcaster (a sufficiently decentralized
-        social network) the comments are displayed permissionessly, allowing
-        readers to participate contextually.
+        When a post URL is shared on Farcaster (a sufficiently decentralized social
+        network) the comments are displayed permissionessly, allowing readers to
+        participate contextually.
       </p>
       <ul className={`${components.commentList}`}>
         <>
           {_topLevelComments.map((comment) => {
             return (
               <li key={comment.merkleRoot} className={`${components.comment}`}>
-                <div className={`${components.commentTopRow}`}>
-                  <small>
-                    <Link
-                      href={`https://www.discove.xyz/profiles/${comment.username}`}
-                    >
-                      @{comment.username}
-                    </Link>
-                  </small>
-
-                  <small>
-                    {new Date(comment.publishedAt).toLocaleDateString(`en-US`)}
-                  </small>
-                </div>
-                <p>{comment.text}</p>
-                <small>
-                  <Link
-                    href={`https://www.discove.xyz/casts/${comment.merkleRoot}`}
-                  >
-                    View on Discove ↝
-                  </Link>
-                </small>
+                <CommentBody {...comment} />
                 {comment.numReplyChildren > 0 && (
                   <ul className={`${components.commentList}`}>
                     {_merkleRootComments[0]
@@ -105,29 +126,7 @@ export default async function Comments({ slug }: Props) {
                             key={comment.merkleRoot}
                             className={`${components.comment}`}
                           >
-                            <div className={`${components.commentTopRow}`}>
-                              <small>
-                                <Link
-                                  href={`https://www.discove.xyz/profiles/${comment.username}`}
-                                >
-                                  @{comment.username}
-                                </Link>
-                              </small>
-
-                              <small>
-                                {new Date(
-                                  comment.publishedAt,
-                                ).toLocaleDateString(`en-US`)}
-                              </small>
-                            </div>
-                            <p>{comment.text}</p>
-                            <small>
-                              <Link
-                                href={`https://www.discove.xyz/casts/${comment.merkleRoot}`}
-                              >
-                                View on Discove ↝
-                              </Link>
-                            </small>
+                            <CommentBody {...comment} />
                           </li>
                         );
                       })

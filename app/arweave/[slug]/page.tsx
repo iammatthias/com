@@ -4,7 +4,6 @@ import remarkStringify from 'remark-stringify';
 import ReactMarkdown from 'react-markdown';
 import getArweaveEntry from '@/data/arweave/getArweaveEntry';
 import getArweavePaths from '@/data/arweave/getArweavePaths';
-import getTopLevelCasts from '@/data/farcaster/getTopLevelCasts';
 import uriTransformer from '@/utils/uriTransformer';
 import page from './page.module.css';
 import Link from 'next/link';
@@ -33,11 +32,6 @@ export interface Props {
 
 export default async function Page({ params }: Props) {
   const entry = await getData(params.slug);
-
-  // const comments = await getTopLevelComments(params.slug).then(
-  //   (res) => res.casts,
-  // );
-  // console.log(comments);
 
   return (
     <article>

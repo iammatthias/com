@@ -34,8 +34,8 @@ export default async function Home() {
     <article>
       <p>Photographer & marketing technologist.</p>
       <p>
-        I have worked with wonderful teams at Tornado, Aspiration, Surf Air, and
-        General Assembly.
+        I have worked with wonderful teams at Tornado, Aspiration, Surf Air, and General
+        Assembly.
       </p>
 
       <p>
@@ -57,9 +57,7 @@ export default async function Home() {
               >
                 <div className={page.listTopRow}>
                   <p>
-                    <small>
-                      {new Date(post.timestamp).toLocaleDateString(`en-US`)}
-                    </small>
+                    <small>{new Date(post.timestamp).toLocaleDateString(`en-US`)}</small>
                   </p>
                   <p>
                     <small>

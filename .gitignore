@@ -19,6 +19,7 @@
 .DS_Store
 *.pem
 tsconfig.tsbuildinfo
+.vscode
 
 # debug
 npm-debug.log*
@@ -35,3 +36,6 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# turbo
+.turbo
