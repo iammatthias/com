@@ -1,3 +1,36 @@
 .clock {
   text-align: center;
 }
+
+.comments {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 16px;
+  border: 1px solid var(--bg);
+  border-top: 1px solid var(--primary);
+  box-shadow: 0 -16px 16px -16px var(--shadow);
+}
+
+.commentList {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comment {
+  border-left: 1px solid var(--primary);
+  padding-left: 1rem;
+}
+
+.comment ul {
+  margin-top: 1rem;
+}
+
+.commentTopRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

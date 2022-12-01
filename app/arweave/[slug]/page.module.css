@@ -19,12 +19,14 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  box-shadow: 0 4px 16px 8px var(--shadow);
+  width: 100%;
+  max-width: 65ch;
   margin: 16px 0;
-  padding: 16px;
-  border: 1px solid #1a1a1a;
+  padding-top: 16px;
+  border: 1px solid var(--bg);
+  border-top: 1px solid var(--primary);
+  box-shadow: 0 -16px 16px -16px var(--shadow);
   font-family: monospace;
-  max-width: 60ch;
   overflow-x: auto;
 }
 

@@ -5,13 +5,16 @@ import { components } from '../utils/markdown';
 import page from './page.module.css';
 import rehypeRaw from 'rehype-raw';
 
-import getUnifiedEntries from '../data/getUnifiedEntries';
+import getArweaveEntries from '@/data/arweave/getArweaveEntries';
+import getObsidianEntries from '@/data/obsidian/getObsidianEntries';
 
 async function getData() {
-  const entries = await getUnifiedEntries();
-  const _entries = await Promise.all(entries);
+  const arweaveEntries = await getArweaveEntries();
+  const obsidianEntries = await getObsidianEntries();
 
-  const sortedEntries = _entries.sort((a: any, b: any) => {
+  const entries = await Promise.all([...arweaveEntries, ...obsidianEntries]);
+
+  const sortedEntries = entries.sort((a: any, b: any) => {
     return b.timestamp - a.timestamp;
   });
 

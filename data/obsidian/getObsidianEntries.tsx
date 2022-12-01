@@ -41,7 +41,7 @@ export default async function getObsidianEntries() {
       },
     }),
     next: {
-      revalidate: 10,
+      revalidate: 1 * 30,
     },
   }).then((res) => res.json());
 

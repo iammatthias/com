@@ -40,7 +40,7 @@ export default async function getArweaveEntry(digest: string) {
       },
     }),
     next: {
-      revalidate: 10,
+      revalidate: 1 * 30,
     },
   }).then((res) => res.json());
 

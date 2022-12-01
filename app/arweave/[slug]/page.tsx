@@ -4,17 +4,16 @@ import remarkStringify from 'remark-stringify';
 import ReactMarkdown from 'react-markdown';
 import getArweaveEntry from '@/data/arweave/getArweaveEntry';
 import getArweavePaths from '@/data/arweave/getArweavePaths';
+import getTopLevelCasts from '@/data/farcaster/getTopLevelCasts';
 import uriTransformer from '@/utils/uriTransformer';
 import page from './page.module.css';
 import Link from 'next/link';
 import rehypeRaw from 'rehype-raw';
 import { components } from '@/utils/markdown';
-import getTopLevelCasts from '@/data/farcaster/getTopLevelCasts';
+import Comments from '@/app/components/comments';
 
-async function getData(digest: string) {
-  const topLevelCasts = await getTopLevelCasts(digest);
-  console.log('topLevelCasts', topLevelCasts);
-  const entry = await getArweaveEntry(digest);
+async function getData(slug: string) {
+  const entry = await getArweaveEntry(slug);
 
   const body = await unified()
     .use(remarkParse) // Parse markdown
@@ -35,6 +34,11 @@ export interface Props {
 export default async function Page({ params }: Props) {
   const entry = await getData(params.slug);
 
+  // const comments = await getTopLevelComments(params.slug).then(
+  //   (res) => res.casts,
+  // );
+  // console.log(comments);
+
   return (
     <article>
       <h1>{entry.title}</h1>
@@ -49,6 +53,8 @@ export default async function Page({ params }: Props) {
       >
         {entry.body}
       </ReactMarkdown>
+      {/* @ts-expect-error Server Component */}
+      <Comments slug={`${params.slug}`} />
       <div className={page.transaction}>
         <small>
           Tx:{` `}
@@ -78,23 +84,7 @@ export default async function Page({ params }: Props) {
 export async function generateStaticParams() {
   const paths = await getArweavePaths();
 
-  return paths.map((post: { slug: any }) => ({
+  return paths.map((post: { slug: string }) => ({
     slug: post.slug,
   }));
 }
-
-// async function getTopLevelCasts(digest: string) {
-//   const uri = `https://searchcaster.xyz/api/search?text=${digest}`;
-//   const res = await fetch(uri).then((res) => res.json());
-//   const casts = res.casts;
-
-//   return casts;
-// }
-
-// async function getCastThread(merkleRoot: string) {
-//   const uri = `https://searchcaster.xyz/api/search?merkleRoot=${merkleRoot}`;
-//   const res = await fetch(uri).then((res) => res.json());
-//   const casts = res.casts;
-
-//   return casts;
-// }

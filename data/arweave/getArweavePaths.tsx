@@ -32,7 +32,7 @@ export default async function getArweavePaths() {
       },
     }),
     next: {
-      revalidate: 10,
+      revalidate: 1 * 30,
     },
   }).then((res) => res.json());
 
