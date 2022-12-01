@@ -1,5 +1,5 @@
 {
-  "name": "iAmMatthias",
+  "name": "iammatthias",
   "description": "A digital garden",
   "version": "1.0.0",
   "private": true,
@@ -11,13 +11,16 @@
     "typescript"
   ],
   "scripts": {
-    "dev": "next dev --turbo",
+    "turbo-dev": "turbo dev",
+    "tubo-build": "turbo build",
+    "dev": "next",
     "build": "next build",
     "start": "next start",
     "type-check": "tsc",
-    "lint": "eslint --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\"",
-    "format": "prettier --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\" --write",
-    "postinstall": "husky install"
+    "lint": "eslint --ignore-path .gitignore \"./**/*.+(ts|js|tsx)\"",
+    "format": "prettier --ignore-path .gitignore \"./**/*.+(ts|js|tsx)\" --write",
+    "postinstall": "husky install",
+    "commit": "cz"
   },
   "lint-staged": {
     "./src/**/*.{ts,js,jsx,tsx}": [
@@ -27,35 +30,40 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.1",
-    "@fontsource/space-grotesk": "^4.5.10",
-    "@fontsource/space-mono": "^4.5.10",
-    "@next/font": "^13.0.0",
-    "@vanilla-extract/css": "^1.9.1",
-    "arweave": "^1.11.6",
+    "@next/font": "^13.0.5",
+    "@notionhq/client": "^2.2.1",
+    "@relaycc/receiver": "^0.1.71",
+    "arweave": "^1.11.8",
     "graphql": "^16.6.0",
-    "next": "^13.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-markdown": "^8.0.3"
+    "gray-matter": "^4.0.3",
+    "iframe-resizer-react": "^1.1.0",
+    "image-size": "^1.0.2",
+    "next": "13.0.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-markdown": "^8.0.3",
+    "rehype-raw": "^6.1.1",
+    "remark": "^14.0.2",
+    "slug": "^8.2.2",
+    "unified": "^10.1.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "17.1.2",
-    "@commitlint/config-conventional": "17.1.0",
-    "@types/node": "18.11.7",
-    "@types/react": "18.0.23",
-    "@types/react-dom": "18.0.7",
-    "@typescript-eslint/eslint-plugin": "5.41.0",
-    "@typescript-eslint/parser": "5.41.0",
-    "@vanilla-extract/next-plugin": "^2.1.1",
-    "eslint": "8.26.0",
-    "eslint-config-next": "^13.0.0",
+    "@commitlint/cli": "17.3.0",
+    "@commitlint/config-conventional": "17.3.0",
+    "@types/node": "18.11.10",
+    "@types/react": "18.0.25",
+    "@types/react-dom": "18.0.9",
+    "@typescript-eslint/eslint-plugin": "5.45.0",
+    "@typescript-eslint/parser": "5.45.0",
+    "eslint": "8.28.0",
+    "eslint-config-next": "13.0.5",
     "eslint-config-prettier": "8.5.0",
     "eslint-import-resolver-typescript": "3.5.2",
-    "eslint-plugin-import": "2.26.0",
     "eslint-plugin-prettier": "4.2.1",
-    "husky": "8.0.1",
-    "lint-staged": "13.0.3",
-    "prettier": "2.7.1",
-    "typescript": "4.8.4"
+    "husky": "8.0.2",
+    "lint-staged": "13.0.4",
+    "prettier": "2.8.0",
+    "turbo": "^1.6.3",
+    "typescript": "4.9.3"
   }
 }

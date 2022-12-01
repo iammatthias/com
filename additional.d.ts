@@ -1,1 +1,1 @@
-declare module "request-ip";
+declare module 'slug';
