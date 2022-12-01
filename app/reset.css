@@ -63,7 +63,7 @@ h5,
 h6,
 a,
 blockquote {
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   hyphens: auto;
 }
 /*
