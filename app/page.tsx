@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import uriTransformer from '../utils/uriTransformer';
@@ -44,59 +45,63 @@ export default async function Home() {
           hey@iammatthias.com
         </Link>
       </p>
-      {entries.map((post: any) => {
-        return (
-          (isDev ? isDev : post.published) && (
-            <div key={post.timestamp} className={page.list}>
-              <Link
-                href={
-                  post.source === `obsidian`
-                    ? `/md/${post.slug}`
-                    : `/arweave/${post.transaction}`
-                }
-              >
-                <div className={page.listTopRow}>
-                  <p>
-                    <small>{new Date(post.timestamp).toLocaleDateString(`en-US`)}</small>
-                  </p>
-                  <p>
-                    <small>
-                      <i>{post.source}</i>
-                    </small>
-                  </p>
-                </div>
-              </Link>
-
-              {post.title != post.timestamp && (
-                <p>
-                  <Link
-                    href={
-                      post.source === `obsidian`
-                        ? `/md/${post.slug}`
-                        : `/arweave/${post.transaction}`
-                    }
-                  >
-                    {post.title}
-                  </Link>
-                </p>
-              )}
-              {post.longform === false && (
-                <ReactMarkdown
-                  transformLinkUri={uriTransformer}
-                  components={{
-                    // img: components.image as any,
-                    iframe: components.iframe,
-                    p: components.paragraph as any,
-                  }}
-                  rehypePlugins={[rehypeRaw]}
+      <Suspense fallback={<p>Loading...</p>}>
+        {entries.map((post: any) => {
+          return (
+            (isDev ? isDev : post.published) && (
+              <div key={post.timestamp} className={page.list}>
+                <Link
+                  href={
+                    post.source === `obsidian`
+                      ? `/md/${post.slug}`
+                      : `/arweave/${post.transaction}`
+                  }
                 >
-                  {post.body}
-                </ReactMarkdown>
-              )}
-            </div>
-          )
-        );
-      })}
+                  <div className={page.listTopRow}>
+                    <p>
+                      <small>
+                        {new Date(post.timestamp).toLocaleDateString(`en-US`)}
+                      </small>
+                    </p>
+                    <p>
+                      <small>
+                        <i>{post.source}</i>
+                      </small>
+                    </p>
+                  </div>
+                </Link>
+
+                {post.title != post.timestamp && (
+                  <p>
+                    <Link
+                      href={
+                        post.source === `obsidian`
+                          ? `/md/${post.slug}`
+                          : `/arweave/${post.transaction}`
+                      }
+                    >
+                      {post.title}
+                    </Link>
+                  </p>
+                )}
+                {post.longform === false && (
+                  <ReactMarkdown
+                    transformLinkUri={uriTransformer}
+                    components={{
+                      // img: components.image as any,
+                      iframe: components.iframe,
+                      p: components.paragraph as any,
+                    }}
+                    rehypePlugins={[rehypeRaw]}
+                  >
+                    {post.body}
+                  </ReactMarkdown>
+                )}
+              </div>
+            )
+          );
+        })}
+      </Suspense>
     </article>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, Suspense } from 'react';
 
 import IframeResizer from 'iframe-resizer-react';
 import Link from 'next/link';
@@ -9,7 +9,7 @@ export default function IFrame(props: any) {
   const iframeRef = useRef(null);
 
   return (
-    <>
+    <Suspense fallback={<p>Loading...</p>}>
       <IframeResizer
         forwardRef={iframeRef}
         inPageLinks
@@ -19,12 +19,13 @@ export default function IFrame(props: any) {
         heightCalculationMethod="taggedElement"
         checkOrigin={false}
         title="iframe"
+        loading="lazy"
       />
       {props._src.includes(`zora`) && (
         <p>
           <Link href={props._src}>View on Zora</Link>
         </p>
       )}
-    </>
+    </Suspense>
   );
 }

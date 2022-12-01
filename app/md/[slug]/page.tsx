@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import getObsidianEntries from '../../../data/obsidian/getObsidianEntries';
@@ -33,17 +34,19 @@ export default async function Page({ params }: Props) {
   return (
     <article>
       <h1>{title}</h1>
-      <ReactMarkdown
-        transformLinkUri={uriTransformer}
-        components={{
-          // img: components.image as any,
-          iframe: components.iframe,
-          p: components.paragraph as any,
-        }}
-        rehypePlugins={[rehypeRaw]}
-      >
-        {entry.body}
-      </ReactMarkdown>
+      <Suspense fallback={<p>Loading...</p>}>
+        <ReactMarkdown
+          transformLinkUri={uriTransformer}
+          components={{
+            // img: components.image as any,
+            iframe: components.iframe,
+            p: components.paragraph as any,
+          }}
+          rehypePlugins={[rehypeRaw]}
+        >
+          {entry.body}
+        </ReactMarkdown>
+      </Suspense>
     </article>
   );
 }

@@ -26,7 +26,7 @@ import IFrame from './iFrame';
 // }
 
 function Frame(props: any) {
-  const uri = `${props.src}/frame?padding=20px&showDetails=false&theme=light&showPresale=true&showMedia=true&showCollectors=false`;
+  const uri = `${props.src}/frame?padding=20px&showDetails=false&theme=light&showPresale=false&showMedia=true&showCollectors=false`;
 
   return <IFrame src={uri} _src={props.src} />;
 }

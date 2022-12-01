@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
@@ -36,41 +37,47 @@ export default async function Page({ params }: Props) {
   return (
     <article>
       <h1>{entry.title}</h1>
-      <ReactMarkdown
-        transformLinkUri={uriTransformer}
-        components={{
-          // img: components.image as any,
-          iframe: components.iframe,
-          p: components.paragraph as any,
-        }}
-        rehypePlugins={[rehypeRaw]}
-      >
-        {entry.body}
-      </ReactMarkdown>
-      {/* @ts-expect-error Server Component */}
-      <Comments slug={`${params.slug}`} />
-      <div className={page.transaction}>
-        <small>
-          Tx:{` `}
-          <Link
-            href={`https://viewblock.io/arweave/tx/${entry.transaction}`}
-            target="_blank"
-          >
-            {entry.transaction}
-          </Link>
-        </small>
-        <p>
+      <Suspense fallback={<p>Loading...</p>}>
+        <ReactMarkdown
+          transformLinkUri={uriTransformer}
+          components={{
+            // img: components.image as any,
+            iframe: components.iframe,
+            p: components.paragraph as any,
+          }}
+          rehypePlugins={[rehypeRaw]}
+        >
+          {entry.body}
+        </ReactMarkdown>
+      </Suspense>
+      <Suspense fallback={<p>Loading...</p>}>
+        {/* @ts-expect-error Server Component */}
+        <Comments slug={`${params.slug}`} />
+      </Suspense>
+      <Suspense fallback={<p>Loading...</p>}>
+        <div className={page.transaction}>
           <small>
-            Contributor:{` `}
+            Tx:{` `}
             <Link
-              href={`https://etherscan.io/address/${entry.contributor}`}
+              href={`https://viewblock.io/arweave/tx/${entry.transaction}`}
               target="_blank"
             >
-              {entry.contributor}
+              {entry.transaction}
             </Link>
           </small>
-        </p>
-      </div>
+          <p>
+            <small>
+              Contributor:{` `}
+              <Link
+                href={`https://etherscan.io/address/${entry.contributor}`}
+                target="_blank"
+              >
+                {entry.contributor}
+              </Link>
+            </small>
+          </p>
+        </div>
+      </Suspense>
     </article>
   );
 }
