@@ -37,13 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
-<<<<<<< HEAD
 # turbo
 .turbo
-=======
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-.vscode
->>>>>>> main

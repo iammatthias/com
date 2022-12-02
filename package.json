@@ -29,11 +29,11 @@
     ]
   },
   "dependencies": {
-    "@apollo/client": "^3.7.1",
     "@next/font": "^13.0.5",
-    "@notionhq/client": "^2.2.1",
+    "@rainbow-me/rainbowkit": "^0.8.0",
     "@relaycc/receiver": "^0.1.71",
     "arweave": "^1.11.8",
+    "ethers": "^5.7.2",
     "graphql": "^16.6.0",
     "gray-matter": "^4.0.3",
     "iframe-resizer-react": "^1.1.0",
@@ -45,7 +45,8 @@
     "rehype-raw": "^6.1.1",
     "remark": "^14.0.2",
     "slug": "^8.2.2",
-    "unified": "^10.1.2"
+    "unified": "^10.1.2",
+    "wagmi": "^0.8.8"
   },
   "devDependencies": {
     "@commitlint/cli": "17.3.0",

@@ -35,6 +35,10 @@
   z-index: 999;
 }
 
+.footerMeta {
+  text-align: right;
+}
+
 .clock {
   text-align: center;
 }
