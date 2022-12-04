@@ -34,8 +34,8 @@ export default async function Home() {
   return (
     <article>
       <p>
-        I am a photographer & marketing technologist—and I have worked with wonderful
-        teams at groups like <Link href="https://tornado.com/">Tornado</Link>,{' '}
+        I am a photographer & marketing technologist—and have worked with wonderful teams
+        at groups like <Link href="https://tornado.com/">Tornado</Link>,{' '}
         <Link href="https://www.aspiration.com/">Aspiration</Link>,{' '}
         <Link href="https://www.surfair.com/">Surf Air</Link>, and{' '}
         <Link href="https://generalassemb.ly/">General Assembly</Link>.
@@ -49,8 +49,6 @@ export default async function Home() {
       </p>
       <Suspense fallback={<p>Loading...</p>}>
         {entries.map((post: any) => {
-          console.log(post.timestamp);
-
           const pstTimestamp = new Date(post.timestamp).toLocaleString(`en-US`, {
             timeZone: `America/Los_Angeles`,
           });
