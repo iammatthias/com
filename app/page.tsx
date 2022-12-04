@@ -33,10 +33,12 @@ export default async function Home() {
 
   return (
     <article>
-      <p>Photographer & marketing technologist.</p>
       <p>
-        I have worked with wonderful teams at Tornado, Aspiration, Surf Air, and General
-        Assembly.
+        I am a photographer & marketing technologist—and I have worked with wonderful
+        teams at groups like <Link href="https://tornado.com/">Tornado</Link>,{' '}
+        <Link href="https://www.aspiration.com/">Aspiration</Link>,{' '}
+        <Link href="https://www.surfair.com/">Surf Air</Link>, and{' '}
+        <Link href="https://generalassemb.ly/">General Assembly</Link>.
       </p>
 
       <p>
@@ -47,6 +49,12 @@ export default async function Home() {
       </p>
       <Suspense fallback={<p>Loading...</p>}>
         {entries.map((post: any) => {
+          console.log(post.timestamp);
+
+          const pstTimestamp = new Date(post.timestamp).toLocaleString(`en-US`, {
+            timeZone: `America/Los_Angeles`,
+          });
+
           return (
             (isDev ? isDev : post.published) && (
               <div key={post.timestamp} className={page.list}>
@@ -59,9 +67,7 @@ export default async function Home() {
                 >
                   <div className={page.listTopRow}>
                     <p>
-                      <small>
-                        {new Date(post.timestamp).toLocaleDateString(`en-US`)}
-                      </small>
+                      <small>{new Date(pstTimestamp).toLocaleDateString()}</small>
                     </p>
                     <p>
                       <small>

@@ -23,7 +23,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   });
 
   const wagmiClient = createClient({
-    autoConnect: true,
+    autoConnect: false,
     connectors,
     provider,
   });
