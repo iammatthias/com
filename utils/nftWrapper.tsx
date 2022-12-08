@@ -1,6 +1,7 @@
 'use client';
 
 import { useNFT } from '@zoralabs/nft-hooks';
+import Link from 'next/link';
 import RemoteImage from './remoteImage';
 
 type Props = {
@@ -42,14 +43,14 @@ export default function NFTWrapper(props: { node: Props }) {
 
       <p>
         {service == `zora` && (
-          <a href={nftServices.zora} target="_blank" rel="noreferrer">
+          <Link href={nftServices.zora} target="_blank" rel="noreferrer">
             Zora
-          </a>
-        )}{' '}
-        |{' '}
-        <a href={nftServices.etherscan} target="_blank" rel="noreferrer">
+          </Link>
+        )}
+        {` `}|{` `}
+        <Link href={nftServices.etherscan} target="_blank" rel="noreferrer">
           Etherscan
-        </a>
+        </Link>
       </p>
     </>
   );

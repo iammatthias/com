@@ -107,8 +107,13 @@ export default async function Comments({ slug }: Props) {
   return (
     <div className={`${components.comments}`}>
       <p>
-        When a post URL is shared on Farcaster (a sufficiently decentralized social
-        network) the comments are displayed permissionessly below.
+        When a post URL is shared on{` `}
+        <Link href="https://www.farcaster.xyz/" target="_blank" rel="noreferrer">
+          Farcaster
+        </Link>
+        {` `}
+        (a sufficiently decentralized social network) the comments are displayed
+        permissionessly below.
       </p>
       <ul className={`${components.commentList}`}>
         <>
