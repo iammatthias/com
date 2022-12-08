@@ -17,9 +17,7 @@ export default async function handler(req: NextRequest) {
 
     // ?title=<title>
     const hasTitle = searchParams.has(`title`);
-    const title = hasTitle
-      ? searchParams.get(`title`)?.slice(0, 100)
-      : `My default title`;
+    const title = hasTitle ? searchParams.get(`title`)?.slice(0, 100) : `I AM MATTHIAS`;
 
     return new ImageResponse(
       (
@@ -28,8 +26,10 @@ export default async function handler(req: NextRequest) {
             background: `white`,
             width: `100%`,
             height: `100%`,
-            paddingLeft: 16,
-            paddingRight: 16,
+            paddingLeft: 32,
+            paddingRight: 32,
+            paddingTop: 16,
+            paddingBottom: 16,
             display: `flex`,
             flexDirection: `column`,
             textAlign: `center`,
