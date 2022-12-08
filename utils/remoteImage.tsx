@@ -4,7 +4,7 @@ import NextImage from 'next/image';
 import { useImageSize } from 'react-image-size';
 
 export default function RemoteImage(props: any) {
-  const { src, alt } = props;
+  const { src, alt, caption } = props;
 
   const [data, { loading, error }] = useImageSize(src);
 
@@ -31,7 +31,7 @@ export default function RemoteImage(props: any) {
             width: `100%`,
           }}
         />
-        {alt && <figcaption>{alt}</figcaption>}
+        {alt && <figcaption>{caption}</figcaption>}
       </figure>
     );
   }

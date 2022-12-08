@@ -12,6 +12,15 @@ function NFT(props: any) {
   return <NFTWrapper {...props} />;
 }
 
+function Div(props: any) {
+  const { node } = props;
+
+  if (node.properties.type === `nft`) {
+    return <NFTWrapper {...props} />;
+  }
+  return <div {...props}>{props.children}</div>;
+}
+
 function Paragraph(props: any) {
   const { node } = props;
 
@@ -29,4 +38,5 @@ export const components = {
   iframe: Frame,
   nft: NFT,
   paragraph: Paragraph,
+  div: Div,
 };

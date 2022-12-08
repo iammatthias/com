@@ -49,8 +49,8 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
+    Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
 body {
@@ -96,10 +96,15 @@ small {
 }
 
 pre,
-img,
 iframe {
   border: 1px solid #1a1a1a;
   box-shadow: 0 4px 16px 8px var(--shadow);
+}
+
+figure {
+  border: 1px solid #1a1a1a;
+  box-shadow: 0 4px 16px 8px var(--shadow);
+  padding: 20px;
 }
 
 @media screen and (max-width: 768px) {
