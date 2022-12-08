@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Crimson_Pro } from '@next/font/google';
 
-import Providers from './providers';
+// import Providers from './providers';
 
 import DateTime from './components/dateTime';
 // import Relay from './components/relay';
@@ -19,35 +19,35 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <Head />
       <body className={`${layout.layout}  ${crimson_pro.className}`}>
-        <Providers>
-          <>
-            <header className={`${layout.header} `}>
+        {/* <Providers> */}
+        <>
+          <header className={`${layout.header} `}>
+            <p>
+              <Link href="/" title="hey, I am Matthias">
+                Hey, I am Matthias
+              </Link>
+            </p>
+            <DateTime />
+          </header>
+
+          <main className={layout.main}>{children}</main>
+          {/* <Relay /> */}
+          <footer className={`${layout.footer} `}>
+            {/* <WalletButton /> */}
+
+            <div className={`${layout.footerMeta} `}>
               <p>
-                <Link href="/" title="hey, I am Matthias">
-                  Hey, I am Matthias
+                <Link href="https://nf.td/iam">@iammatthias</Link>
+              </p>
+              <p>
+                <Link href="mailto:hey@iammatthias.com?subject=Hello%20there!">
+                  hey@iammatthias.com
                 </Link>
               </p>
-              <DateTime />
-            </header>
-
-            <main className={layout.main}>{children}</main>
-            {/* <Relay /> */}
-            <footer className={`${layout.footer} `}>
-              <WalletButton />
-
-              <div className={`${layout.footerMeta} `}>
-                <p>
-                  <Link href="https://nf.td/iam">@iammatthias</Link>
-                </p>
-                <p>
-                  <Link href="mailto:hey@iammatthias.com?subject=Hello%20there!">
-                    hey@iammatthias.com
-                  </Link>
-                </p>
-              </div>
-            </footer>
-          </>
-        </Providers>
+            </div>
+          </footer>
+        </>
+        {/* </Providers> */}
       </body>
     </html>
   );

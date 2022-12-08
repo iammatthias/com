@@ -1,10 +1,8 @@
 import { Suspense } from 'react';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import getObsidianEntries from '../../../data/obsidian/getObsidianEntries';
-import getObsidianEntry from '../../../data/obsidian/getObsidianEntry';
-import { components } from '../../../utils/markdown';
-import uriTransformer from '../../../utils/uriTransformer';
+import getObsidianEntries from '@/data/obsidian/getObsidianEntries';
+import getObsidianEntry from '@//data/obsidian/getObsidianEntry';
+import MarkdownProvider from '@/utils/markdownProvider';
+import Comments from '@/app/components/comments';
 
 async function getData(slug: string) {
   const entry = await getObsidianEntry(slug);
@@ -35,17 +33,11 @@ export default async function Page({ params }: Props) {
     <article>
       <h1>{title}</h1>
       <Suspense fallback={<p>Loading...</p>}>
-        <ReactMarkdown
-          transformLinkUri={uriTransformer}
-          components={{
-            // img: components.image as any,
-            iframe: components.iframe,
-            p: components.paragraph as any,
-          }}
-          rehypePlugins={[rehypeRaw]}
-        >
-          {entry.body}
-        </ReactMarkdown>
+        <MarkdownProvider>{entry.body}</MarkdownProvider>
+      </Suspense>
+      <Suspense fallback={<p>Loading...</p>}>
+        {/* @ts-expect-error Server Component */}
+        <Comments slug={`${params.slug}`} />
       </Suspense>
     </article>
   );

@@ -2,14 +2,11 @@ import { Suspense } from 'react';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
-import ReactMarkdown from 'react-markdown';
 import getArweaveEntry from '@/data/arweave/getArweaveEntry';
 import getArweavePaths from '@/data/arweave/getArweavePaths';
-import uriTransformer from '@/utils/uriTransformer';
 import page from './page.module.css';
 import Link from 'next/link';
-import rehypeRaw from 'rehype-raw';
-import { components } from '@/utils/markdown';
+import MarkdownProvider from '@/utils/markdownProvider';
 import Comments from '@/app/components/comments';
 
 async function getData(slug: string) {
@@ -38,17 +35,7 @@ export default async function Page({ params }: Props) {
     <article>
       <h1>{entry.title}</h1>
       <Suspense fallback={<p>Loading...</p>}>
-        <ReactMarkdown
-          transformLinkUri={uriTransformer}
-          components={{
-            // img: components.image as any,
-            iframe: components.iframe,
-            p: components.paragraph as any,
-          }}
-          rehypePlugins={[rehypeRaw]}
-        >
-          {entry.body}
-        </ReactMarkdown>
+        <MarkdownProvider>{entry.body}</MarkdownProvider>
       </Suspense>
       <Suspense fallback={<p>Loading...</p>}>
         {/* @ts-expect-error Server Component */}

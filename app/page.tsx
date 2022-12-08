@@ -1,10 +1,9 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import ReactMarkdown from 'react-markdown';
-import uriTransformer from '../utils/uriTransformer';
-import { components } from '../utils/markdown';
+
 import page from './page.module.css';
-import rehypeRaw from 'rehype-raw';
+
+import MarkdownProvider from '@/utils/markdownProvider';
 
 import getArweaveEntries from '@/data/arweave/getArweaveEntries';
 import getObsidianEntries from '@/data/obsidian/getObsidianEntries';
@@ -35,9 +34,9 @@ export default async function Home() {
     <article>
       <p>
         I am a photographer & marketing technologist—and have worked with wonderful teams
-        at groups like <Link href="https://tornado.com/">Tornado</Link>,{' '}
-        <Link href="https://www.aspiration.com/">Aspiration</Link>,{' '}
-        <Link href="https://www.surfair.com/">Surf Air</Link>, and{' '}
+        at groups like <Link href="https://tornado.com/">Tornado</Link>,{` `}
+        <Link href="https://www.aspiration.com/">Aspiration</Link>,{` `}
+        <Link href="https://www.surfair.com/">Surf Air</Link>, and{` `}
         <Link href="https://generalassemb.ly/">General Assembly</Link>.
       </p>
 
@@ -89,17 +88,7 @@ export default async function Home() {
                   </p>
                 )}
                 {post.longform === false && (
-                  <ReactMarkdown
-                    transformLinkUri={uriTransformer}
-                    components={{
-                      // img: components.image as any,
-                      iframe: components.iframe,
-                      p: components.paragraph as any,
-                    }}
-                    rehypePlugins={[rehypeRaw]}
-                  >
-                    {post.body}
-                  </ReactMarkdown>
+                  <MarkdownProvider>{post.body}</MarkdownProvider>
                 )}
               </div>
             )
