@@ -1,6 +1,5 @@
 'use client';
 
-import components from './components.module.css';
 import { useEffect, useState } from 'react';
 
 export default function DateTime(): any {
@@ -20,10 +19,9 @@ export default function DateTime(): any {
     minute: `2-digit`,
   });
   return (
-    <div className={components.clock}>
-      <p>
-        {date} ~ {time}
-      </p>
+    <div>
+      <p>~ {date}</p>
+      <p>~ {time}</p>
     </div>
   );
 }

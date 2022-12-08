@@ -28,13 +28,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 Hey, I am Matthias
               </Link>
             </p>
-            <DateTime />
           </header>
 
           <main className={layout.main}>{children}</main>
           {/* <Relay /> */}
           <footer className={`${layout.footer} `}>
             {/* <WalletButton /> */}
+            <DateTime />
 
             <div className={`${layout.footerMeta} `}>
               <p>

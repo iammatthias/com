@@ -12,7 +12,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 0;
+  padding: 16px;
   border: 1px solid var(--bg);
   border-bottom: 1px solid var(--primary);
   box-shadow: 0 16px 16px -16px var(--shadow);
@@ -27,7 +27,7 @@
   justify-content: space-between;
   align-items: center;
   bottom: 0;
-  padding: 16px 0;
+  padding: 16px;
   border: 1px solid var(--bg);
   border-top: 1px solid var(--primary);
   box-shadow: 0 -16px 16px -16px var(--shadow);
