@@ -15,7 +15,7 @@
   padding: 16px 0;
   border: 1px solid var(--bg);
   border-bottom: 1px solid var(--primary);
-  box-shadow: 0 15px 15px -15px var(--shadow);
+  box-shadow: 0 16px 16px -16px var(--shadow);
   background: var(--bg);
   z-index: 999;
 }

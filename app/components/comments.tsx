@@ -4,8 +4,8 @@ import components from './components.module.css';
 import Link from 'next/link';
 
 // get merkleroot for all top level casts
-async function getTopLevelComments(slug: string) {
-  const casts = await getTopLevelCasts(slug);
+async function getTopLevelComments(path: string, slug: string) {
+  const casts = await getTopLevelCasts(path, slug);
   const comments = await Promise.all(casts);
 
   return comments.map((comment) => {
@@ -46,12 +46,13 @@ async function getMerkleRootComments(merkleRoot: string) {
 }
 
 type Props = {
+  path: string;
   slug: string;
 };
 
-export default async function Comments({ slug }: Props) {
+export default async function Comments({ path, slug }: Props) {
   // merkle roots for top level comments
-  const topLevelComments = await getTopLevelComments(slug);
+  const topLevelComments = await getTopLevelComments(path, slug);
   // get casts by merkle root
   const _topLevelComments = await Promise.all(topLevelComments);
 

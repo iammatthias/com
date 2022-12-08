@@ -37,7 +37,7 @@ export default async function Page({ params }: Props) {
       </Suspense>
       <Suspense fallback={<p>Loading...</p>}>
         {/* @ts-expect-error Server Component */}
-        <Comments slug={`${params.slug}`} />
+        <Comments path={`md/`} slug={`${params.slug}`} />
       </Suspense>
     </article>
   );
