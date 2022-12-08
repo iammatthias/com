@@ -67,8 +67,8 @@ export default async function handler(req: NextRequest) {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
               style={{
-                height: `64px`,
-                width: `64px`,
+                height: `128px`,
+                width: `128px`,
                 fill: `#000`,
               }}
             >
