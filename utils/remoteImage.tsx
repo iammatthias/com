@@ -4,7 +4,7 @@ import NextImage from 'next/image';
 import { useImageSize } from 'react-image-size';
 
 export default function RemoteImage(props: any) {
-  const { src, alt, ...rest } = props;
+  const { src, alt } = props;
 
   const [data, { loading, error }] = useImageSize(src);
 

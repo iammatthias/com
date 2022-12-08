@@ -10,7 +10,7 @@ import './reset.css';
 import './global.css';
 import layout from './layout.module.css';
 import Head from './head';
-import WalletButton from './components/walletButton';
+// import WalletButton from './components/walletButton';
 
 const crimson_pro = Crimson_Pro({ preload: true });
 
