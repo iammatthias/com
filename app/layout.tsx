@@ -17,6 +17,7 @@ const crimson_pro = Crimson_Pro({ preload: true });
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      {/* @ts-expect-error Server Component */}
       <Head />
       <body className={`${layout.layout}  ${crimson_pro.className}`}>
         {/* <Providers> */}

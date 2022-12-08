@@ -25,7 +25,7 @@ async function getPage(slug: any) {
   return page;
 }
 
-export default async function Head({ params }: any) {
+export default async function Head({ params }: { params: { slug: string } }) {
   console.log(`params`, params);
 
   const ogImgBaseURL = `https://portfolio.iammatthias.com/api/og`;
