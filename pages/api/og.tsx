@@ -2,11 +2,11 @@ import { ImageResponse } from '@vercel/og';
 import { NextRequest } from 'next/server';
 
 export const config = {
-  runtime: 'experimental-edge',
+  runtime: `experimental-edge`,
 };
 
 // Make sure the font exists in the specified path:
-const font = fetch(new URL('../../assets/fonts/CrimsonPro.ttf', import.meta.url)).then(
+const font = fetch(new URL(`../../assets/fonts/CrimsonPro.ttf`, import.meta.url)).then(
   (res) => res.arrayBuffer(),
 );
 
@@ -16,33 +16,33 @@ export default async function handler(req: NextRequest) {
     const { searchParams } = new URL(req.url);
 
     // ?title=<title>
-    const hasTitle = searchParams.has('title');
+    const hasTitle = searchParams.has(`title`);
     const title = hasTitle
-      ? searchParams.get('title')?.slice(0, 100)
-      : 'My default title';
+      ? searchParams.get(`title`)?.slice(0, 100)
+      : `My default title`;
 
     return new ImageResponse(
       (
         <div
           style={{
-            background: 'white',
-            width: '100%',
-            height: '100%',
+            background: `white`,
+            width: `100%`,
+            height: `100%`,
             paddingLeft: 16,
             paddingRight: 16,
-            display: 'flex',
-            flexDirection: 'column',
-            textAlign: 'center',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            display: `flex`,
+            flexDirection: `column`,
+            textAlign: `center`,
+            alignItems: `center`,
+            justifyContent: `space-between`,
           }}
         >
           <div
             style={{
-              width: '100%',
+              width: `100%`,
               padding: 16,
-              borderBottom: '1px solid #000',
-              boxShadow: '0 16px 16px -16px rgba(0 0 0 0.1)',
+              borderBottom: `1px solid #000`,
+              boxShadow: `0 16px 16px -16px rgba(0 0 0 0.1)`,
               fontSize: 24,
             }}
           >
@@ -51,12 +51,12 @@ export default async function handler(req: NextRequest) {
           {hasTitle ? (
             <div
               style={{
-                width: '70%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                width: `70%`,
+                display: `flex`,
+                alignItems: `center`,
+                justifyContent: `center`,
                 padding: 16,
-                justifySelf: 'flex-end',
+                justifySelf: `flex-end`,
                 fontSize: 48,
               }}
             >
@@ -77,10 +77,10 @@ export default async function handler(req: NextRequest) {
           )}
           <div
             style={{
-              width: '100%',
+              width: `100%`,
               padding: 16,
-              borderTop: '1px solid #000',
-              boxShadow: '0 -16px 16px -16px rgba(0 0 0 0.1)',
+              borderTop: `1px solid #000`,
+              boxShadow: `0 -16px 16px -16px rgba(0 0 0 0.1)`,
               fontSize: 24,
             }}
           >
@@ -93,9 +93,9 @@ export default async function handler(req: NextRequest) {
         height: 630,
         fonts: [
           {
-            name: 'CrimsonPRo',
+            name: `CrimsonPRo`,
             data: fontData,
-            style: 'normal',
+            style: `normal`,
           },
         ],
       },

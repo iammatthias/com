@@ -26,13 +26,13 @@ async function getPage(slug: any) {
 }
 
 export default async function Head({ params }: any) {
-  console.log('params', params);
+  console.log(`params`, params);
 
-  let ogImgBaseURL = 'https://portfolio.iammatthias.com/api/og';
+  const ogImgBaseURL = `https://portfolio.iammatthias.com/api/og`;
 
   if (params?.slug) {
     const page = await getPage(params.slug);
-    console.log('page', page);
+    console.log(`page`, page);
     // ogImgBaseURL = `https://portfolio.iammatthias.com/api/og?title=${page.title}&description=${page.description}`;
   }
 
