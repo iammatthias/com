@@ -8,22 +8,16 @@ import RemoteImage from './remoteImage';
 export default function NFTWrapper(props: any) {
   const { dataAddress, dataToken } = props.node.properties;
 
-  if (!dataAddress || !dataToken) {
-    return null;
-  }
-
   const { data, error } = useNFT(dataAddress, dataToken);
 
   if (error) {
-    console.log('error', error);
+    console.log(`error`, error);
     return <p>Error loading NFT</p>;
   }
 
   if (!data) {
     return <p>Loading NFT...</p>;
   }
-
-  console.log(data);
 
   const src = data.media?.poster?.uri as any;
   const alt = data.metadata?.description as any;
