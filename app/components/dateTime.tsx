@@ -20,8 +20,8 @@ export default function DateTime(): any {
   });
   return (
     <div>
-      <p>~ {date}</p>
-      <p>~ {time}</p>
+      <p>❍ {date}</p>
+      <p>❍ {time}</p>
     </div>
   );
 }
