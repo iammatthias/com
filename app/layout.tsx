@@ -9,7 +9,7 @@ import DateTime from './components/dateTime';
 import './reset.css';
 import './global.css';
 import layout from './layout.module.css';
-import Head from './head';
+
 // import WalletButton from './components/walletButton';
 
 const crimson_pro = Crimson_Pro({ preload: true });
@@ -17,7 +17,6 @@ const crimson_pro = Crimson_Pro({ preload: true });
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <Head />
       <body className={`${layout.layout}  ${crimson_pro.className}`}>
         {/* <Providers> */}
         <>

@@ -2,7 +2,8 @@
 
 import { useNFT } from '@zoralabs/nft-hooks';
 import Link from 'next/link';
-import RemoteImage from './remoteImage';
+import RemoteImage from '../../utils/remoteImage';
+import components from './components.module.css';
 
 type Props = {
   properties: {
@@ -36,10 +37,10 @@ export default function NFTWrapper(props: { node: Props }) {
   };
 
   return (
-    <>
-      <h3>{data.metadata?.raw?.properties.name}</h3>
-
+    <div className={`${components.nftWrapper}`}>
       <RemoteImage src={src} alt={alt} />
+
+      <h3>{data.metadata?.raw?.properties.name}</h3>
 
       <p>
         {service == `zora` && (
@@ -52,6 +53,6 @@ export default function NFTWrapper(props: { node: Props }) {
           Etherscan
         </Link>
       </p>
-    </>
+    </div>
   );
 }

@@ -30,3 +30,12 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
+.nftWrapper {
+  border: 1px solid #1a1a1a;
+  box-shadow: 0 4px 16px 8px var(--shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

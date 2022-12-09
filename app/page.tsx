@@ -46,55 +46,55 @@ export default async function Home() {
           hey@iammatthias.com
         </Link>
       </p>
-      <Suspense fallback={<p>Loading...</p>}>
-        {entries.map((post: any) => {
-          const pstTimestamp = new Date(post.timestamp).toLocaleString(`en-US`, {
-            timeZone: `America/Los_Angeles`,
-          });
+      {/* <Suspense fallback={<p>Loading...</p>}> */}
+      {entries.map((post: any) => {
+        const pstTimestamp = new Date(post.timestamp).toLocaleString(`en-US`, {
+          timeZone: `America/Los_Angeles`,
+        });
 
-          return (
-            (isDev ? isDev : post.published) && (
-              <div key={post.timestamp} className={page.list}>
-                <Link
-                  href={
-                    post.source === `obsidian`
-                      ? `/md/${post.slug}`
-                      : `/arweave/${post.transaction}`
-                  }
-                >
-                  <div className={page.listTopRow}>
-                    <p>
-                      <small>{new Date(pstTimestamp).toLocaleDateString()}</small>
-                    </p>
-                    <p>
-                      <small>
-                        <i>{post.source}</i>
-                      </small>
-                    </p>
-                  </div>
-                </Link>
-
-                {post.title != post.timestamp && (
+        return (
+          (isDev ? isDev : post.published) && (
+            <div key={post.timestamp} className={page.list}>
+              <Link
+                href={
+                  post.source === `obsidian`
+                    ? `/md/${post.slug}`
+                    : `/arweave/${post.transaction}`
+                }
+              >
+                <div className={page.listTopRow}>
                   <p>
-                    <Link
-                      href={
-                        post.source === `obsidian`
-                          ? `/md/${post.slug}`
-                          : `/arweave/${post.transaction}`
-                      }
-                    >
-                      {post.title}
-                    </Link>
+                    <small>{new Date(pstTimestamp).toLocaleDateString()}</small>
                   </p>
-                )}
-                {post.longform === false && (
-                  <MarkdownProvider>{post.body}</MarkdownProvider>
-                )}
-              </div>
-            )
-          );
-        })}
-      </Suspense>
+                  <p>
+                    <small>
+                      <i>{post.source}</i>
+                    </small>
+                  </p>
+                </div>
+              </Link>
+
+              {post.title != post.timestamp && (
+                <p>
+                  <Link
+                    href={
+                      post.source === `obsidian`
+                        ? `/md/${post.slug}`
+                        : `/arweave/${post.transaction}`
+                    }
+                  >
+                    {post.title}
+                  </Link>
+                </p>
+              )}
+              {post.longform === false && (
+                <MarkdownProvider>{post.body}</MarkdownProvider>
+              )}
+            </div>
+          )
+        );
+      })}
+      {/* </Suspense> */}
     </article>
   );
 }

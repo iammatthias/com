@@ -1,5 +1,5 @@
 import IFrame from './iFrame';
-import NFTWrapper from './nftWrapper';
+import NFTWrapper from '@/app/components/nftWrapper';
 import RemoteImage from './remoteImage';
 
 function Frame(props: any) {
