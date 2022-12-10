@@ -53,24 +53,17 @@
 }
 
 .main article > * {
-  max-width: 65ch;
+  max-width: clamp(45ch, 50%, 75ch);
 }
 
-/* .main article > div > figure {
-  max-width: 50vw;
-} */
-
 .main article > pre {
-  max-width: 130ch;
+  max-width: 87ch;
   margin: 16px 0;
   padding: 16px;
   overflow-x: auto;
 }
 
 @media screen and (max-width: 768px) {
-  .main article > div > figure {
-    max-width: unset;
-  }
   .main article > pre {
     max-width: calc(100vw - 96px);
   }

@@ -1,5 +1,5 @@
 import getTopLevelCasts from '@/data/farcaster/getTopLevelCasts';
-import getMerkleRoot from '@/data/farcaster/getMerkleRoot';
+import getMerkleRoot from '@/data/farcaster/getMerkleRootCasts';
 import components from './components.module.css';
 import Link from 'next/link';
 

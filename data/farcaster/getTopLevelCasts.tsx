@@ -1,5 +1,5 @@
 export default async function getTopLevelCasts(path: string, slug: string) {
-  const uri = `https://searchcaster.xyz/api/search?text=iammatthias.com/` + path + slug;
+  const uri = `https://searchcaster.xyz/api/search?text=iammatthias.com/${path}/${slug}`;
 
   const res = await fetch(uri, {
     next: {
