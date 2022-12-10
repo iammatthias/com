@@ -16,9 +16,13 @@ export default async function Head({ params }: any) {
 
   if (params?.slug) {
     const data = await getData(params.slug);
+
+    const pstTimestamp = new Date(data.timestamp).toLocaleString(`en-US`, {
+      timeZone: `America/Los_Angeles`,
+    });
     title =
       data.title == data.timestamp
-        ? new Date(data.timestamp).toLocaleDateString(`en-US`)
+        ? new Date(pstTimestamp).toLocaleDateString(`en-US`)
         : data.title;
     ogImgBaseURL = `https://portfolio.iammatthias.com/api/og?title=${encodeURI(title)}`;
   }

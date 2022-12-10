@@ -24,9 +24,13 @@ export default async function Page({ params }: Props) {
 
   const entry = await getData(params.slug);
 
+  const pstTimestamp = new Date(entry.timestamp).toLocaleString(`en-US`, {
+    timeZone: `America/Los_Angeles`,
+  });
+
   const title =
     entry.title == entry.timestamp
-      ? new Date(entry.timestamp).toLocaleDateString(`en-US`)
+      ? new Date(pstTimestamp).toLocaleDateString(`en-US`)
       : entry.title;
 
   return (
