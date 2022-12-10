@@ -17,11 +17,12 @@ export default function DateTime(): any {
     hour12: false,
     hour: `2-digit`,
     minute: `2-digit`,
+    timeZoneName: `short`,
   });
   return (
     <div>
-      <p>❍ {date}</p>
       <p>❍ {time}</p>
+      <p>❍ {date}</p>
     </div>
   );
 }

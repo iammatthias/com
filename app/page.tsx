@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import Link from 'next/link';
 
 import page from './page.module.css';
@@ -47,19 +46,19 @@ export default async function Home() {
         </Link>
       </p>
       {/* <Suspense fallback={<p>Loading...</p>}> */}
-      {entries.map((post: any) => {
-        const pstTimestamp = new Date(post.timestamp).toLocaleString(`en-US`, {
+      {entries.map((entry: any) => {
+        const pstTimestamp = new Date(entry.timestamp).toLocaleString(`en-US`, {
           timeZone: `America/Los_Angeles`,
         });
 
         return (
-          (isDev ? isDev : post.published) && (
-            <div key={post.timestamp} className={page.list}>
+          (isDev ? isDev : entry.published) && (
+            <div key={entry.timestamp} className={page.list}>
               <Link
                 href={
-                  post.source === `obsidian`
-                    ? `/md/${post.slug}`
-                    : `/arweave/${post.transaction}`
+                  entry.source === `obsidian`
+                    ? `/md/${entry.slug}`
+                    : `/arweave/${entry.transaction}`
                 }
               >
                 <div className={page.listTopRow}>
@@ -68,27 +67,27 @@ export default async function Home() {
                   </p>
                   <p>
                     <small>
-                      <i>{post.source}</i>
+                      <i>{entry.source}</i>
                     </small>
                   </p>
                 </div>
               </Link>
 
-              {post.title != post.timestamp && (
+              {entry.title != entry.timestamp && (
                 <p>
                   <Link
                     href={
-                      post.source === `obsidian`
-                        ? `/md/${post.slug}`
-                        : `/arweave/${post.transaction}`
+                      entry.source === `obsidian`
+                        ? `/md/${entry.slug}`
+                        : `/arweave/${entry.transaction}`
                     }
                   >
-                    {post.title}
+                    {entry.title}
                   </Link>
                 </p>
               )}
-              {post.longform === false && (
-                <MarkdownProvider>{post.body}</MarkdownProvider>
+              {entry.longform === false && (
+                <MarkdownProvider>{entry.body}</MarkdownProvider>
               )}
             </div>
           )

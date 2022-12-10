@@ -70,9 +70,9 @@ export default async function Page({ params }: Props) {
 }
 
 export async function generateStaticParams() {
-  const paths = await getArweavePaths();
+  const entries = await getArweavePaths();
 
-  return paths.map((post: { slug: string }) => ({
-    slug: post.slug,
+  return entries.map((entry: { slug: string }) => ({
+    slug: entry.slug,
   }));
 }
