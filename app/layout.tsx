@@ -9,6 +9,7 @@ import DateTime from './components/dateTime';
 import './reset.css';
 import './global.css';
 import layout from './layout.module.css';
+import { Suspense } from 'react';
 
 // import WalletButton from './components/walletButton';
 
@@ -32,7 +33,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* <Relay /> */}
           <footer className={`${layout.footer} `}>
             {/* <WalletButton /> */}
-            <DateTime />
+            <Suspense>
+              <DateTime />
+            </Suspense>
 
             <div className={`${layout.footerMeta} `}>
               <p>
