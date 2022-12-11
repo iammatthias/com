@@ -14,7 +14,6 @@ function NFT(props: any) {
 
 function Div(props: any) {
   const { node } = props;
-
   if (node.properties.type === `nft`) {
     return <NFTWrapper {...props} />;
   }
