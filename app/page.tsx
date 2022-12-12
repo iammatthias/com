@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import Link from 'next/link';
 
 import page from './page.module.css';
@@ -6,6 +8,9 @@ import MarkdownProvider from '@/utils/markdownProvider';
 
 import getArweaveEntries from '@/data/arweave/getArweaveEntries';
 import getObsidianEntries from '@/data/obsidian/getObsidianEntries';
+
+import formatedDateTime from '@/utils/formatedDateTime';
+import FormatedDateTime from '../utils/formatedDateTime';
 
 async function getData() {
   const arweaveEntries = await getArweaveEntries();
@@ -47,10 +52,6 @@ export default async function Home() {
       </p>
       {/* <Suspense fallback={<p>Loading...</p>}> */}
       {entries.map((entry: any) => {
-        const pstTimestamp = new Date(entry.timestamp).toLocaleString(`en-US`, {
-          timeZone: `America/Los_Angeles`,
-        });
-
         return (
           (isDev ? isDev : entry.published) && (
             <div key={entry.timestamp} className={page.list}>
@@ -63,7 +64,9 @@ export default async function Home() {
               >
                 <div className={page.listTopRow}>
                   <p>
-                    <small>{new Date(pstTimestamp).toLocaleDateString()}</small>
+                    <small>
+                      <FormatedDateTime dateTime={entry.timestamp} />
+                    </small>
                   </p>
                   <p>
                     <small>
