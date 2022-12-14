@@ -2,6 +2,7 @@ import getTopLevelCasts from '@/data/farcaster/getTopLevelCasts';
 import getMerkleRoot from '@/data/farcaster/getMerkleRootCasts';
 import components from './components.module.css';
 import Link from 'next/link';
+import { cp } from 'fs';
 
 // get merkleroot for all top level casts
 async function getTopLevelComments(path: string, slug: string) {
@@ -17,8 +18,9 @@ async function getTopLevelComments(path: string, slug: string) {
       },
       meta: { numReplyChildren },
       merkleRoot,
+      uri,
     } = comment;
-    return { merkleRoot, numReplyChildren, username, publishedAt, text };
+    return { merkleRoot, uri, numReplyChildren, username, publishedAt, text };
   });
 }
 
@@ -95,12 +97,65 @@ export default async function Comments({ path, slug }: Props) {
     );
   }
 
-  function CommentBody({ merkleRoot, username, publishedAt, text }: any) {
+  type ViewOnFarcasterProps = {
+    uri: string;
+  };
+
+  function ViewOnFarcaster({ uri }: ViewOnFarcasterProps) {
+    return (
+      <small>
+        <Link href={`${uri}`}>View on Farcaster ↝</Link>
+      </small>
+    );
+  }
+
+  type CommentBottomRowProps = {
+    merkleRoot: string;
+    uri: string;
+  };
+
+  function CommentBottomRow({ merkleRoot, uri }: CommentBottomRowProps) {
+    return (
+      <div className={`${components.commentBottomRow}`}>
+        <ViewOnFarcaster uri={uri} />
+        <ViewOnDiscove merkleRoot={merkleRoot} />
+      </div>
+    );
+  }
+
+  async function CommentDescendants({ merkleRoot }: any) {
+    const comments = await getMerkleRootComments(merkleRoot);
+    const _comments = await Promise.all(comments);
+    return (
+      <ul key={merkleRoot} className={`${components.commentList}`}>
+        {_comments
+          .map((comment) => {
+            return (
+              <li key={comment.merkleRoot} className={`${components.comment}`}>
+                <CommentBody {...comment} />
+              </li>
+            );
+          })
+          .slice(0, -1)}
+      </ul>
+    );
+  }
+
+  function CommentBody({
+    merkleRoot,
+    uri,
+    username,
+    publishedAt,
+    text,
+    numReplyChildren,
+  }: any) {
     return (
       <>
         <CommentTopRow username={username} publishedAt={publishedAt} />
         <p>{text}</p>
-        <ViewOnDiscove merkleRoot={merkleRoot} />
+        <CommentBottomRow merkleRoot={merkleRoot} uri={uri} />
+        {/* @ts-expect-error Server Component */}
+        {numReplyChildren > 0 && <CommentDescendants merkleRoot={merkleRoot} />}
       </>
     );
   }
@@ -118,12 +173,15 @@ export default async function Comments({ path, slug }: Props) {
       </p>
       <ul className={`${components.commentList}`}>
         <>
-          {_topLevelComments.map((comment) => {
+          {/* {_topLevelComments.map((comment) => {
             return (
-              <li key={comment.merkleRoot} className={`${components.comment}`}>
+              <li
+                key={comment.merkleRoot + comment.publishedAt}
+                className={`${components.comment}`}
+              >
                 <CommentBody {...comment} />
                 {comment.numReplyChildren > 0 && (
-                  <ul className={`${components.commentList}`}>
+                  <ul key={comment.merkleRoot} className={`${components.commentList}`}>
                     {_merkleRootComments[0]
                       .map((comment) => {
                         return (
@@ -138,6 +196,16 @@ export default async function Comments({ path, slug }: Props) {
                       .slice(0, -1)}
                   </ul>
                 )}
+              </li>
+            );
+          })} */}
+          {_topLevelComments.map((comment) => {
+            return (
+              <li
+                key={comment.merkleRoot + comment.publishedAt}
+                className={`${components.comment}`}
+              >
+                <CommentBody {...comment} />
               </li>
             );
           })}
