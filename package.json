@@ -29,8 +29,8 @@
     ]
   },
   "dependencies": {
-    "@next/font": "^13.0.6",
-    "@rainbow-me/rainbowkit": "^0.8.0",
+    "@next/font": "^13.0.7",
+    "@rainbow-me/rainbowkit": "^0.8.1",
     "@relaycc/receiver": "^0.1.71",
     "@vercel/og": "^0.0.21",
     "@zoralabs/nft-hooks": "^1.1.10",
@@ -40,7 +40,7 @@
     "gray-matter": "^4.0.3",
     "iframe-resizer-react": "^1.1.0",
     "image-size": "^1.0.2",
-    "next": "13.0.6",
+    "next": "13.0.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-image-size": "^2.0.0",
@@ -49,18 +49,18 @@
     "remark": "^14.0.2",
     "slug": "^8.2.2",
     "unified": "^10.1.2",
-    "wagmi": "^0.9.2"
+    "wagmi": "^0.9.3"
   },
   "devDependencies": {
     "@commitlint/cli": "17.3.0",
     "@commitlint/config-conventional": "17.3.0",
-    "@types/node": "18.11.13",
+    "@types/node": "18.11.15",
     "@types/react": "18.0.26",
     "@types/react-dom": "18.0.9",
-    "@typescript-eslint/eslint-plugin": "5.46.0",
-    "@typescript-eslint/parser": "5.46.0",
+    "@typescript-eslint/eslint-plugin": "5.46.1",
+    "@typescript-eslint/parser": "5.46.1",
     "eslint": "8.29.0",
-    "eslint-config-next": "13.0.6",
+    "eslint-config-next": "13.0.7",
     "eslint-config-prettier": "8.5.0",
     "eslint-import-resolver-typescript": "3.5.2",
     "eslint-plugin-prettier": "4.2.1",
