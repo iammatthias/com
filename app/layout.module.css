@@ -3,7 +3,7 @@
   grid-template-rows: auto 1fr auto;
   margin: 0 16px;
   gap: 16px;
-  height: auto;
+  height: 100%;
 }
 
 .header {
