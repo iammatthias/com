@@ -8,7 +8,7 @@ export default function MarkdownProvider({ children }: any) {
       transformLinkUri={uriTransformer}
       rehypePlugins={[rehypeRaw]}
       components={{
-        // iframe: components.iframe,
+        iframe: components.iframe,
         p: components.paragraph as any,
         div: components.div as any,
       }}
