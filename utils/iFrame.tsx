@@ -10,7 +10,7 @@ export default function IFrame(props: any) {
 
   return (
     <Suspense fallback={<p>Loading...</p>}>
-      <IframeResizer
+      {/* <IframeResizer
         forwardRef={iframeRef}
         inPageLinks
         log={false}
@@ -20,12 +20,8 @@ export default function IFrame(props: any) {
         checkOrigin={false}
         title="iframe"
         loading="lazy"
-      />
-      {props._src.includes(`zora`) && (
-        <p>
-          <Link href={props._src}>View on Zora</Link>
-        </p>
-      )}
+      /> */}
+      <iframe {...props} />
     </Suspense>
   );
 }
