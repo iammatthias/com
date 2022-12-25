@@ -1,7 +1,7 @@
 import Script from 'next/script';
 
 export default function Head() {
-  const ogImgBaseURL = `https://portfolio.iammatthias.com/api/og`;
+  const ogImgBaseURL = `https://iammatthias.com/api/og`;
 
   return (
     <>
@@ -13,7 +13,7 @@ export default function Head() {
       <Script
         async
         defer
-        data-website-id="e4c8b068-8ea2-4efc-9553-18d0fbfb7521"
+        data-website-id="ce0e2219-dc16-47e7-9211-19554e397773"
         src="https://a.iammatthias.com/umami.js"
       />
     </>
