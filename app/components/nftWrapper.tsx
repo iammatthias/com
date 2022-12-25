@@ -35,6 +35,7 @@ export default function NFTWrapper(props: { node: Props }) {
 
   const nftServices = {
     zora: `https://create.zora.co/collections/${address}`,
+    mint: `https://mint.fun/${address}/`,
     etherscan: `https://etherscan.io/address/${address}`,
   };
 
@@ -50,6 +51,10 @@ export default function NFTWrapper(props: { node: Props }) {
             Zora
           </Link>
         )}
+        {` `}|{` `}
+        <Link href={nftServices.mint} target="_blank" rel="noreferrer">
+          Mint.fun
+        </Link>
         {` `}|{` `}
         <Link href={nftServices.etherscan} target="_blank" rel="noreferrer">
           Etherscan
