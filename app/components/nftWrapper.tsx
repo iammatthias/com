@@ -28,8 +28,6 @@ export default function NFTWrapper(props: { node: Props }) {
     return <p>Loading NFT...</p>;
   }
 
-  console.log(data.media);
-
   const src = data.media?.large?.uri as string;
   const alt = data.metadata?.description as string;
 
