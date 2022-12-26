@@ -14,7 +14,7 @@
     "turbo-dev": "turbo dev",
     "tubo-build": "turbo build",
     "dev": "next",
-    "build": "next build --force",
+    "build": "next build",
     "start": "next start",
     "type-check": "tsc",
     "lint": "eslint --ignore-path .gitignore \"./**/*.+(ts|js|tsx)\"",
