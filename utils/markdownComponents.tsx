@@ -1,6 +1,7 @@
 import IFrame from './iFrame';
 import NFTWrapper from '@/app/components/nftWrapper';
 import RemoteImage from './remoteImage';
+import Link from 'next/link';
 
 function Frame(props: any) {
   const uri = `${props.src}/frame?padding=0px&mediaPadding=20px&showDetails=false&theme=light&showMedia=true&showCollectors=false&showMintingUI=false`;
@@ -12,6 +13,10 @@ function NFT(props: any) {
   return <NFTWrapper {...props} />;
 }
 
+function A(props: any) {
+  return <Link href={props.href}>{props.children}</Link>;
+}
+
 function Div(props: any) {
   const { node } = props;
   if (node.properties.type === `nft`) {
@@ -20,7 +25,7 @@ function Div(props: any) {
   return <div {...props}>{props.children}</div>;
 }
 
-function Paragraph(props: any) {
+function P(props: any) {
   const { node } = props;
 
   if (node.children[0].tagName === `img`) {
@@ -36,6 +41,7 @@ function Paragraph(props: any) {
 export const components = {
   iframe: Frame,
   nft: NFT,
-  paragraph: Paragraph,
+  paragraph: P,
+  a: A,
   div: Div,
 };

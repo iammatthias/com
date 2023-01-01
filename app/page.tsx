@@ -1,5 +1,3 @@
-import { Suspense } from 'react';
-
 import Link from 'next/link';
 
 import page from './page.module.css';
@@ -9,7 +7,6 @@ import MarkdownProvider from '@/utils/markdownProvider';
 import getArweaveEntries from '@/data/arweave/getArweaveEntries';
 import getObsidianEntries from '@/data/obsidian/getObsidianEntries';
 
-import formatedDateTime from '@/utils/formatedDateTime';
 import FormatedDateTime from '../utils/formatedDateTime';
 
 async function getData() {

@@ -3,7 +3,6 @@
 import { useRef, Suspense } from 'react';
 
 import IframeResizer from 'iframe-resizer-react';
-import Link from 'next/link';
 
 export default function IFrame(props: any) {
   const iframeRef = useRef(null);
@@ -21,7 +20,7 @@ export default function IFrame(props: any) {
         title="iframe"
         loading="lazy"
       />
-      {/* <iframe {...props} /> */}
+      {/* <iframe loading="lazy" {...props} frameBorder="0" /> */}
     </Suspense>
   );
 }

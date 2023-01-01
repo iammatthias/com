@@ -2,7 +2,6 @@ import getTopLevelCasts from '@/data/farcaster/getTopLevelCasts';
 import getMerkleRoot from '@/data/farcaster/getMerkleRootCasts';
 import components from './components.module.css';
 import Link from 'next/link';
-import { cp } from 'fs';
 
 // get merkleroot for all top level casts
 async function getTopLevelComments(path: string, slug: string) {
@@ -57,14 +56,6 @@ export default async function Comments({ path, slug }: Props) {
   const topLevelComments = await getTopLevelComments(path, slug);
   // get casts by merkle root
   const _topLevelComments = await Promise.all(topLevelComments);
-
-  const merkleRootComments = _topLevelComments.map(async (comment) => {
-    const merkleRoot = await getMerkleRootComments(comment.merkleRoot);
-    const _merkleRoot = await Promise.all(merkleRoot);
-    return _merkleRoot;
-  });
-
-  const _merkleRootComments = await Promise.all(merkleRootComments);
 
   type CommentTopRowProps = {
     username: string;
@@ -123,24 +114,6 @@ export default async function Comments({ path, slug }: Props) {
     );
   }
 
-  async function CommentDescendants({ merkleRoot }: any) {
-    const comments = await getMerkleRootComments(merkleRoot);
-    const _comments = await Promise.all(comments);
-    return (
-      <ul key={merkleRoot} className={`${components.commentList}`}>
-        {_comments
-          .map((comment) => {
-            return (
-              <li key={comment.merkleRoot} className={`${components.comment}`}>
-                <CommentBody {...comment} />
-              </li>
-            );
-          })
-          .slice(0, -1)}
-      </ul>
-    );
-  }
-
   function CommentBody({
     merkleRoot,
     uri,
@@ -157,6 +130,24 @@ export default async function Comments({ path, slug }: Props) {
         {/* @ts-expect-error Server Component */}
         {numReplyChildren > 0 && <CommentDescendants merkleRoot={merkleRoot} />}
       </>
+    );
+  }
+
+  async function CommentDescendants({ merkleRoot }: any) {
+    const comments = await getMerkleRootComments(merkleRoot);
+    const _comments = await Promise.all(comments);
+    return (
+      <ul key={merkleRoot} className={`${components.commentList}`}>
+        {_comments
+          .map((comment) => {
+            return (
+              <li key={comment.merkleRoot} className={`${components.comment}`}>
+                <CommentBody {...comment} />
+              </li>
+            );
+          })
+          .slice(0, -1)}
+      </ul>
     );
   }
 

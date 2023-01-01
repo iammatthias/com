@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 export default function FormatedDateTime({ dateTime }: any) {
-  const [formattedDateTime, setFormattedDateTime] = useState('');
+  const [formattedDateTime, setFormattedDateTime] = useState(``);
 
   useEffect(() => {
     const pstTimestamp = new Date(dateTime).toLocaleString(`en-US`, {
