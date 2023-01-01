@@ -6,7 +6,7 @@ export default function Head() {
   return (
     <>
       <title>I AM MATTHIAS</title>
-      <meta name="description" content="A digital garden" />
+      <meta name="description" content="My digital garden" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta property="og:image" content={ogImgBaseURL} />
       <link rel="icon" href="/favicon.ico" />
