@@ -105,6 +105,10 @@ pre,
   box-shadow: 0 4px 16px 8px var(--shadow);
 }
 
+hr {
+  border-top: 1px solid var(--moon-gray);
+}
+
 @media screen and (max-width: 768px) {
 }
 
