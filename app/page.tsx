@@ -4,6 +4,11 @@ import page from './page.module.css';
 
 import MarkdownProvider from '@/utils/markdownProvider';
 
+import { unified } from 'unified';
+import strip from 'strip-markdown';
+import remarkParse from 'remark-parse';
+import remarkStringify from 'remark-stringify';
+
 import getArweaveEntries from '@/data/arweave/getArweaveEntries';
 import getObsidianEntries from '@/data/obsidian/getObsidianEntries';
 
@@ -21,17 +26,28 @@ async function getData() {
     return b.timestamp - a.timestamp;
   });
 
-  await rss(sortedEntries);
+  const feed = sortedEntries.map((entry: any) => ({
+    ...entry,
+    summary: String(
+      unified()
+        .use(remarkParse)
+        .use(strip)
+        .use(remarkStringify)
+        .processSync(entry.body.split('\n\n')[entry.cover_image ? 1 : 0]),
+    ).slice(0, -1),
+  }));
+
+  await rss(feed);
 
   return {
-    sortedEntries,
+    feed,
   };
 }
 
 export default async function Home() {
   const data: any = await getData();
 
-  const entries = data.sortedEntries;
+  const entries = data.feed;
 
   const isDev = process.env.NODE_ENV === `development`;
 
@@ -90,8 +106,10 @@ export default async function Home() {
                   </Link>
                 </p>
               )}
-              {entry.longform === false && (
+              {entry.longform === false ? (
                 <MarkdownProvider>{entry.body}</MarkdownProvider>
+              ) : (
+                <p>{entry.summary}</p>
               )}
             </div>
           )

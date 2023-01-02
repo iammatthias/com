@@ -50,6 +50,7 @@
     "remark": "^14.0.2",
     "remark-gfm": "^3.0.1",
     "slug": "^8.2.2",
+    "strip-markdown": "^5.0.0",
     "unified": "^10.1.2",
     "wagmi": "^0.10.2"
   },
