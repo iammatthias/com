@@ -40,7 +40,7 @@ export default async function rss(entries: any[]) {
         entry.source == 'obsidian' ? 'md' : entry.source == 'arweave' ? 'arweave' : 'blog'
       }/${entry.slug}`;
       feed.addItem({
-        title: entry.title,
+        title: entry.title != entry.timestamp ? entry.title : entry.summary,
         id: url,
         link: url,
         description: entry.summary,
