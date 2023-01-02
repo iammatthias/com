@@ -30,12 +30,15 @@ export default async function rss(entries: any[]) {
 
   entries.forEach(
     (entry: {
+      [x: string]: any;
       slug: any;
       title: any;
       summary: any;
       timestamp: string | number | Date;
     }) => {
-      const url = `${siteURL}/blog/${entry.slug}`;
+      const url = `${siteURL}/${
+        entry.source == 'obsidian' ? 'md' : entry.source == 'arweave' ? 'arweave' : 'blog'
+      }/${entry.slug}`;
       feed.addItem({
         title: entry.title,
         id: url,
