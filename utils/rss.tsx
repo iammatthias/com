@@ -28,8 +28,6 @@ export default async function rss(entries: any[]) {
     author,
   });
 
-  console.log(entries);
-
   entries.forEach(
     (entry: {
       slug: any;
