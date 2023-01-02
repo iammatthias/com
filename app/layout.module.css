@@ -58,7 +58,7 @@
 }
 
 .main article > * {
-  max-width: clamp(45ch, 50%, 75ch);
+  max-width: clamp(45ch, 50%, 65ch);
 }
 
 .main article > pre {
