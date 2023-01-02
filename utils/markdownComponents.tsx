@@ -4,9 +4,7 @@ import RemoteImage from './remoteImage';
 import Link from 'next/link';
 
 function Frame(props: any) {
-  const uri = `${props.src}/frame?padding=0px&mediaPadding=20px&showDetails=false&theme=light&showMedia=true&showCollectors=false&showMintingUI=false`;
-
-  return <IFrame src={uri} _src={props.src} />;
+  return <IFrame {...props} />;
 }
 
 function NFT(props: any) {

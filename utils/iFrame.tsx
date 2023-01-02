@@ -1,15 +1,18 @@
 'use client';
 
-import { useRef, Suspense } from 'react';
+import {
+  // useRef,
+  Suspense,
+} from 'react';
 
-import IframeResizer from 'iframe-resizer-react';
+// import IframeResizer from 'iframe-resizer-react';
 
 export default function IFrame(props: any) {
-  const iframeRef = useRef(null);
+  // const iframeRef = useRef(null);
 
   return (
     <Suspense fallback={<p>Loading...</p>}>
-      <IframeResizer
+      {/* <IframeResizer
         forwardRef={iframeRef}
         inPageLinks
         log={false}
@@ -19,8 +22,8 @@ export default function IFrame(props: any) {
         checkOrigin={false}
         title="iframe"
         loading="lazy"
-      />
-      {/* <iframe loading="lazy" {...props} frameBorder="0" /> */}
+      /> */}
+      <iframe loading="lazy" {...props} />
     </Suspense>
   );
 }
