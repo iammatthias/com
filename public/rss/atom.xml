@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://iammatthias.com</id>
+    <title>I AM MATTHIAS</title>
+    <updated>2023-01-02T21:48:45.221Z</updated>
+    <generator>Feed for Node.js</generator>
+    <author>
+        <name>Matthias Jordan</name>
+        <email>author@iammatthias.com</email>
+        <uri>https://iammatthias.com</uri>
+    </author>
+    <link rel="alternate" href="https://iammatthias.com"/>
+    <link rel="self" href="https://iammatthias.com/rss/atom.xml"/>
+    <subtitle>A digital garden of thoughts, ideas, and projects.</subtitle>
+    <logo>https://iammatthias.com/logo.svg</logo>
+    <icon>https://iammatthias.com/favicon.png</icon>
+    <rights>All rights reserved 2023, Matthias Jordan</rights>
+    <entry>
+        <title type="html"><![CDATA[The Sovereign Feed]]></title>
+        <id>https://iammatthias.com/blog/1672682867112</id>
+        <link href="https://iammatthias.com/blog/1672682867112"/>
+        <updated>2023-01-02T18:07:47.112Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[The best Live Albums, according to Farcaster]]></title>
+        <id>https://iammatthias.com/blog/1672639537932</id>
+        <link href="https://iammatthias.com/blog/1672639537932"/>
+        <updated>2023-01-02T06:05:37.932Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[1672603164174]]></title>
+        <id>https://iammatthias.com/blog/1672603164174</id>
+        <link href="https://iammatthias.com/blog/1672603164174"/>
+        <updated>2023-01-01T19:59:24.174Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[2022 was weird]]></title>
+        <id>https://iammatthias.com/blog/1672535190201</id>
+        <link href="https://iammatthias.com/blog/1672535190201"/>
+        <updated>2023-01-01T01:06:30.201Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[1671988981055]]></title>
+        <id>https://iammatthias.com/blog/1671988981055</id>
+        <link href="https://iammatthias.com/blog/1671988981055"/>
+        <updated>2022-12-25T17:23:01.055Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[2022: Best Albums]]></title>
+        <id>https://iammatthias.com/blog/1671404546841</id>
+        <link href="https://iammatthias.com/blog/1671404546841"/>
+        <updated>2022-12-18T23:02:26.841Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Obsidian as a CMS]]></title>
+        <id>https://iammatthias.com/blog/1670714294926</id>
+        <link href="https://iammatthias.com/blog/1670714294926"/>
+        <updated>2022-12-10T23:18:14.926Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Farcaster as a comment system]]></title>
+        <id>https://iammatthias.com/blog/1670705920366</id>
+        <link href="https://iammatthias.com/blog/1670705920366"/>
+        <updated>2022-12-10T20:58:40.366Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[This is a digital garden]]></title>
+        <id>https://iammatthias.com/blog/1670693956722</id>
+        <link href="https://iammatthias.com/blog/1670693956722"/>
+        <updated>2022-12-10T17:39:16.722Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[1670383930024]]></title>
+        <id>https://iammatthias.com/blog/1670383930024</id>
+        <link href="https://iammatthias.com/blog/1670383930024"/>
+        <updated>2022-12-07T03:32:10.024Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Eggnog]]></title>
+        <id>https://iammatthias.com/blog/1670131707868</id>
+        <link href="https://iammatthias.com/blog/1670131707868"/>
+        <updated>2022-12-04T05:28:27.868Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Building in the open]]></title>
+        <id>https://iammatthias.com/blog/1669667358023</id>
+        <link href="https://iammatthias.com/blog/1669667358023"/>
+        <updated>2022-11-28T20:29:18.023Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[1668300273757]]></title>
+        <id>https://iammatthias.com/blog/1668300273757</id>
+        <link href="https://iammatthias.com/blog/1668300273757"/>
+        <updated>2022-11-13T00:44:33.757Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[gm]]></title>
+        <id>https://iammatthias.com/blog/gm</id>
+        <link href="https://iammatthias.com/blog/gm"/>
+        <updated>2022-11-12T18:36:49.000Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Retrieving content from Arweave]]></title>
+        <id>https://iammatthias.com/blog/retrieving-content-from-arweave</id>
+        <link href="https://iammatthias.com/blog/retrieving-content-from-arweave"/>
+        <updated>2022-11-12T03:28:17.000Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[1668223035821]]></title>
+        <id>https://iammatthias.com/blog/1668223035821</id>
+        <link href="https://iammatthias.com/blog/1668223035821"/>
+        <updated>2022-11-12T03:17:15.821Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[1668201965800]]></title>
+        <id>https://iammatthias.com/blog/1668201965800</id>
+        <link href="https://iammatthias.com/blog/1668201965800"/>
+        <updated>2022-11-11T21:26:05.800Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[1667833213341]]></title>
+        <id>https://iammatthias.com/blog/1667833213341</id>
+        <link href="https://iammatthias.com/blog/1667833213341"/>
+        <updated>2022-11-07T15:00:13.341Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Markdown Test - Do Not Publish]]></title>
+        <id>https://iammatthias.com/blog/1667254065383</id>
+        <link href="https://iammatthias.com/blog/1667254065383"/>
+        <updated>2022-10-31T22:07:45.383Z</updated>
+        <author>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </author>
+        <contributor>
+            <name>Matthias Jordan</name>
+            <email>author@iammatthias.com</email>
+            <uri>https://iammatthias.com</uri>
+        </contributor>
+    </entry>
+</feed>

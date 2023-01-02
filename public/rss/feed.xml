@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>I AM MATTHIAS</title>
+        <link>https://iammatthias.com</link>
+        <description>A digital garden of thoughts, ideas, and projects.</description>
+        <lastBuildDate>Mon, 02 Jan 2023 21:48:45 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>Feed for Node.js</generator>
+        <image>
+            <title>I AM MATTHIAS</title>
+            <url>https://iammatthias.com/logo.svg</url>
+            <link>https://iammatthias.com</link>
+        </image>
+        <copyright>All rights reserved 2023, Matthias Jordan</copyright>
+        <item>
+            <title><![CDATA[The Sovereign Feed]]></title>
+            <link>https://iammatthias.com/blog/1672682867112</link>
+            <guid>https://iammatthias.com/blog/1672682867112</guid>
+            <pubDate>Mon, 02 Jan 2023 18:07:47 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[The best Live Albums, according to Farcaster]]></title>
+            <link>https://iammatthias.com/blog/1672639537932</link>
+            <guid>https://iammatthias.com/blog/1672639537932</guid>
+            <pubDate>Mon, 02 Jan 2023 06:05:37 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[1672603164174]]></title>
+            <link>https://iammatthias.com/blog/1672603164174</link>
+            <guid>https://iammatthias.com/blog/1672603164174</guid>
+            <pubDate>Sun, 01 Jan 2023 19:59:24 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[2022 was weird]]></title>
+            <link>https://iammatthias.com/blog/1672535190201</link>
+            <guid>https://iammatthias.com/blog/1672535190201</guid>
+            <pubDate>Sun, 01 Jan 2023 01:06:30 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[1671988981055]]></title>
+            <link>https://iammatthias.com/blog/1671988981055</link>
+            <guid>https://iammatthias.com/blog/1671988981055</guid>
+            <pubDate>Sun, 25 Dec 2022 17:23:01 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[2022: Best Albums]]></title>
+            <link>https://iammatthias.com/blog/1671404546841</link>
+            <guid>https://iammatthias.com/blog/1671404546841</guid>
+            <pubDate>Sun, 18 Dec 2022 23:02:26 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[Obsidian as a CMS]]></title>
+            <link>https://iammatthias.com/blog/1670714294926</link>
+            <guid>https://iammatthias.com/blog/1670714294926</guid>
+            <pubDate>Sat, 10 Dec 2022 23:18:14 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[Farcaster as a comment system]]></title>
+            <link>https://iammatthias.com/blog/1670705920366</link>
+            <guid>https://iammatthias.com/blog/1670705920366</guid>
+            <pubDate>Sat, 10 Dec 2022 20:58:40 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[This is a digital garden]]></title>
+            <link>https://iammatthias.com/blog/1670693956722</link>
+            <guid>https://iammatthias.com/blog/1670693956722</guid>
+            <pubDate>Sat, 10 Dec 2022 17:39:16 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[1670383930024]]></title>
+            <link>https://iammatthias.com/blog/1670383930024</link>
+            <guid>https://iammatthias.com/blog/1670383930024</guid>
+            <pubDate>Wed, 07 Dec 2022 03:32:10 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[Eggnog]]></title>
+            <link>https://iammatthias.com/blog/1670131707868</link>
+            <guid>https://iammatthias.com/blog/1670131707868</guid>
+            <pubDate>Sun, 04 Dec 2022 05:28:27 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[Building in the open]]></title>
+            <link>https://iammatthias.com/blog/1669667358023</link>
+            <guid>https://iammatthias.com/blog/1669667358023</guid>
+            <pubDate>Mon, 28 Nov 2022 20:29:18 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[1668300273757]]></title>
+            <link>https://iammatthias.com/blog/1668300273757</link>
+            <guid>https://iammatthias.com/blog/1668300273757</guid>
+            <pubDate>Sun, 13 Nov 2022 00:44:33 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[gm]]></title>
+            <link>https://iammatthias.com/blog/gm</link>
+            <guid>https://iammatthias.com/blog/gm</guid>
+            <pubDate>Sat, 12 Nov 2022 18:36:49 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[Retrieving content from Arweave]]></title>
+            <link>https://iammatthias.com/blog/retrieving-content-from-arweave</link>
+            <guid>https://iammatthias.com/blog/retrieving-content-from-arweave</guid>
+            <pubDate>Sat, 12 Nov 2022 03:28:17 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[1668223035821]]></title>
+            <link>https://iammatthias.com/blog/1668223035821</link>
+            <guid>https://iammatthias.com/blog/1668223035821</guid>
+            <pubDate>Sat, 12 Nov 2022 03:17:15 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[1668201965800]]></title>
+            <link>https://iammatthias.com/blog/1668201965800</link>
+            <guid>https://iammatthias.com/blog/1668201965800</guid>
+            <pubDate>Fri, 11 Nov 2022 21:26:05 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[1667833213341]]></title>
+            <link>https://iammatthias.com/blog/1667833213341</link>
+            <guid>https://iammatthias.com/blog/1667833213341</guid>
+            <pubDate>Mon, 07 Nov 2022 15:00:13 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+        <item>
+            <title><![CDATA[Markdown Test - Do Not Publish]]></title>
+            <link>https://iammatthias.com/blog/1667254065383</link>
+            <guid>https://iammatthias.com/blog/1667254065383</guid>
+            <pubDate>Mon, 31 Oct 2022 22:07:45 GMT</pubDate>
+            <author>author@iammatthias.com (Matthias Jordan)</author>
+        </item>
+    </channel>
+</rss>

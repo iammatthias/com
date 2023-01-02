@@ -7,6 +7,8 @@ import MarkdownProvider from '@/utils/markdownProvider';
 import getArweaveEntries from '@/data/arweave/getArweaveEntries';
 import getObsidianEntries from '@/data/obsidian/getObsidianEntries';
 
+import rss from '@/utils/rss';
+
 import FormatedDateTime from '../utils/formatedDateTime';
 
 async function getData() {
@@ -18,6 +20,8 @@ async function getData() {
   const sortedEntries = entries.sort((a: any, b: any) => {
     return b.timestamp - a.timestamp;
   });
+
+  await rss(sortedEntries);
 
   return {
     sortedEntries,
