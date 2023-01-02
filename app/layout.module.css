@@ -3,7 +3,7 @@
   grid-template-rows: auto 1fr auto;
   margin: 0 16px;
   gap: 16px;
-  height: 100%;
+  height: auto;
 }
 
 .header {
@@ -32,6 +32,11 @@
   box-shadow: 0 -16px 16px -16px var(--shadow);
   background: var(--bg);
   z-index: 999;
+}
+
+.header *,
+.footer * {
+  font-size: 16px;
 }
 
 .footerMeta {
