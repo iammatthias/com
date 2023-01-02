@@ -37,7 +37,7 @@ async function getData() {
     ).slice(0, -1),
   }));
 
-  await rss(feed);
+  rss(feed);
 
   return {
     feed,
