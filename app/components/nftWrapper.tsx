@@ -28,8 +28,9 @@ export default function NFTWrapper(props: { node: Props }) {
     return <p>Loading NFT...</p>;
   }
 
-  const src = data.media?.large?.uri as string;
-  const alt = data.metadata?.description as string;
+  const src = data.rawData.APIIndexer.image.mediaEncoding.original as string;
+  const title = data.rawData.APIIndexer.tokenContract.name as string;
+  const alt = data.rawData.APIIndexer.description as string;
 
   const nftServices = {
     zora: `https://create.zora.co/collections/${address}`,
@@ -41,7 +42,9 @@ export default function NFTWrapper(props: { node: Props }) {
     <div className={`${components.nftWrapper}`}>
       <RemoteImage src={src} alt={alt} />
 
-      <h3>{data.metadata?.raw?.properties.name}</h3>
+      <h3>{title}</h3>
+
+      {/* <p>{alt}</p> */}
 
       <p>
         {service == `zora` && (

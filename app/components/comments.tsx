@@ -164,32 +164,6 @@ export default async function Comments({ path, slug }: Props) {
       </p>
       <ul className={`${components.commentList}`}>
         <>
-          {/* {_topLevelComments.map((comment) => {
-            return (
-              <li
-                key={comment.merkleRoot + comment.publishedAt}
-                className={`${components.comment}`}
-              >
-                <CommentBody {...comment} />
-                {comment.numReplyChildren > 0 && (
-                  <ul key={comment.merkleRoot} className={`${components.commentList}`}>
-                    {_merkleRootComments[0]
-                      .map((comment) => {
-                        return (
-                          <li
-                            key={comment.merkleRoot}
-                            className={`${components.comment}`}
-                          >
-                            <CommentBody {...comment} />
-                          </li>
-                        );
-                      })
-                      .slice(0, -1)}
-                  </ul>
-                )}
-              </li>
-            );
-          })} */}
           {_topLevelComments.map((comment) => {
             return (
               <li
