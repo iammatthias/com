@@ -1,0 +1,20 @@
+.artMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  white-space: pre-wrap;
+  > * {
+    max-width: 70%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+}
+
+@media (max-width: 768px) {
+  .artMeta {
+    > * {
+      max-width: 100%;
+    }
+  }
+}

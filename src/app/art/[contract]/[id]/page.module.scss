@@ -1,0 +1,14 @@
+.art {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: auto;
+  gap: 32px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .art {
+    grid-template-columns: 1fr;
+  }
+}

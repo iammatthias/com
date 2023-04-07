@@ -1,0 +1,38 @@
+.comments {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 16px;
+}
+
+.commentList {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comment {
+  padding-left: 1rem;
+  border-left: var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comment ul {
+  margin-top: 1rem;
+}
+
+.commentTopRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.commentBottomRow {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}

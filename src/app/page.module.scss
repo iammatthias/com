@@ -1,0 +1,19 @@
+.page {
+  height: 100%;
+}
+
+/* flex container with 2 columns that stack on mobile */
+.history {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  gap: 32px;
+  position: relative;
+  > * {
+    border: var(--border);
+    padding: 16px;
+  }
+}
