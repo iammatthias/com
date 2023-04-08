@@ -159,10 +159,8 @@ export default async function Comments({ path, slug }: Props) {
         <>
           {_topLevelComments.map((comment) => {
             return (
-              <Suspense>
-                <li
-                  key={comment.merkleRoot + comment.publishedAt}
-                  className={`${styles.comment}`}>
+              <Suspense key={comment.merkleRoot + comment.publishedAt}>
+                <li className={`${styles.comment}`}>
                   <CommentBody {...comment} />
                 </li>
               </Suspense>
