@@ -29,10 +29,9 @@ export default function Token(props: {
   const metadata = parser
     .fetchMetadata(props.address, props.token)
     .then((data) => {
-      const imgURL = data.imageURL;
+      const imgURL = data.metadata.image;
       const contentURL = data.contentURL;
       const contentURLMimeType = data.contentURLMimeType;
-
       const name = data.name;
       const description = data.description;
 
