@@ -1,0 +1,33 @@
+{
+  "links": [
+    {
+      "type": "link",
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "type": "link",
+      "label": "About",
+      "href": "/about"
+    },
+    {
+      "type": "dropdown",
+      "label": "Services",
+      "items": [
+        {
+          "label": "Service 1",
+          "href": "/services/service-1"
+        },
+        {
+          "label": "Service 2",
+          "href": "/services/service-2"
+        }
+      ]
+    },
+    {
+      "type": "link",
+      "label": "Contact",
+      "href": "/contact"
+    }
+  ]
+}

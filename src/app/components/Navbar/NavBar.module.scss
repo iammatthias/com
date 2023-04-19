@@ -1,0 +1,90 @@
+// components/NavBar.module.scss
+.nav {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  justify-content: center;
+  background-color: #333;
+  padding: 0.5rem;
+}
+
+.navList {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navItem {
+  margin: 0 1rem;
+  position: relative;
+}
+
+.navLink {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.navLink:hover {
+  color: #ccc;
+}
+
+.dropdown {
+  cursor: pointer;
+}
+
+.dropdownMenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 160px;
+  background-color: #333;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown:hover .dropdownMenu {
+  display: block;
+}
+
+.dropdownItem {
+  padding: 0.5rem 1rem;
+}
+
+.dropdownLink {
+  color: white;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdownLink:hover {
+  color: #ccc;
+}
+
+// Responsive styles for tablet and mobile views
+@media (max-width: 768px) {
+  .navList {
+    flex-direction: column;
+  }
+
+  .navItem {
+    margin: 0.5rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav {
+    padding: 0.5rem;
+  }
+
+  .navLink {
+    font-size: 1rem;
+  }
+}
