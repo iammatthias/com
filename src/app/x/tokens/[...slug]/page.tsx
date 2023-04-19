@@ -1,6 +1,7 @@
 import Comments from "@/app/components/Comments";
 import Token from "@/app/components/Token";
 import fetchTokenData from "@/app/data/fetch/onchain/fetchTokenData";
+import { Suspense } from "react";
 
 export interface Props {
   params?: any;
@@ -29,10 +30,10 @@ export default async function TokenPage({ params }: Props) {
     <>
       <Token tokenData={data} showCaption />
       {params.slug[0] !== "0xa6bf594bbb86fa36ea9b835a50c4cacc3c0e3288" && (
-        <>
+        <Suspense>
           {/* @ts-expect-error Server Component */}
           <Comments slug={`${params.slug[0]}`} />
-        </>
+        </Suspense>
       )}
     </>
   );

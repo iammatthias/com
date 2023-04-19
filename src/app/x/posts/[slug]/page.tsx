@@ -1,5 +1,6 @@
 import Comments from "@/app/components/Comments";
 import fetchMarkdownEntry from "@/app/data/fetch/github/fetchMarkdownEntry";
+import { Suspense } from "react";
 
 export interface Props {
   params?: any;
@@ -30,8 +31,10 @@ export default async function PostPage({ params }: Props) {
       <h2>{new Date(data.created).toLocaleDateString()}</h2>
       <hr />
       {data.fields.content}
-      {/* @ts-expect-error Server Component */}
-      <Comments slug={`${params.slug}`} />
+      <Suspense>
+        {/* @ts-expect-error Server Component */}
+        <Comments slug={`${params.slug}`} />
+      </Suspense>
     </>
   );
 }
