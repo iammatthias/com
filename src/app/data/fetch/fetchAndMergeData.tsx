@@ -91,6 +91,7 @@ export default async function fetchAndMergeData() {
           conditionals: {
             isArweave: true,
             isLongform: true,
+            isPublished: true,
             isToken: false,
             isWalletGated: false,
           },
