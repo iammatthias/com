@@ -92,6 +92,7 @@ export default async function fetchAndMergeData() {
             isArweave: true,
             isLongform: true,
             isToken: false,
+            isWalletGated: false,
           },
           fields: {
             name: arweaveData.title,
