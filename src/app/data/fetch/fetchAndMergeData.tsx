@@ -2,6 +2,8 @@ import fetchTokenData from "@/app/data/fetch/onchain/fetchTokenData";
 import fetchAirtableTokens from "@/app/data/fetch/airtable/fetchAirtableTokens";
 import fetchMarkdownEntries from "@/app/data/fetch/github/fetchMarkdownEntries";
 import fetchMarkdownEntry from "@/app/data/fetch/github/fetchMarkdownEntry";
+import fetchArweaveEntries from "@/app/data/fetch/arweave/fetchArweaveEntries";
+import fetchArweaveEntry from "@/app/data/fetch/arweave/fetchArweaveEntry";
 
 interface GithubEntry {
   name: string;
@@ -18,6 +20,10 @@ interface AirtableEntry {
   fields: any;
 }
 
+interface ArweaveEntry {
+  path: string;
+}
+
 type MergedEntry = {
   created: number;
   id: string;
@@ -30,6 +36,7 @@ export default async function fetchAndMergeData() {
   try {
     const markdownEntries: GithubEntry[] = await fetchMarkdownEntries();
     const airtableTokens: AirtableEntry[] = await fetchAirtableTokens();
+    const arweaveEntries: ArweaveEntry[] = await fetchArweaveEntries();
 
     const mergedDataPromises: Promise<MergedEntry>[] = [];
 
@@ -72,6 +79,26 @@ export default async function fetchAndMergeData() {
             },
           })
         )
+      );
+    }
+
+    for (const entry of arweaveEntries) {
+      mergedDataPromises.push(
+        fetchArweaveEntry(entry.path).then((arweaveData) => ({
+          created: arweaveData.publishedAt,
+          id: entry.path,
+          name: arweaveData.title,
+          conditionals: {
+            isArweave: true,
+            isLongform: true,
+            isToken: false,
+          },
+          fields: {
+            name: arweaveData.title,
+            description: arweaveData.subtitle,
+            source: "Arweave",
+          },
+        }))
       );
     }
 

@@ -15,6 +15,7 @@
     "@types/react-dom": "18.0.11",
     "@zoralabs/nft-hooks": "^1.2.1",
     "@zoralabs/nft-metadata": "^1.2.6",
+    "arweave": "^1.13.7",
     "connectkit": "^1.2.2",
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",

@@ -62,8 +62,18 @@ export default async function Home() {
           shouldDisplayContent && (
             <Cell span={entry.fields.span} key={entry.id}>
               <Link
-                href={`/x/${entry.conditionals.isToken ? "tokens" : "posts"}/${
-                  entry.conditionals.isToken ? entry.fields.address : entry.id
+                href={`/x/${
+                  entry.conditionals.isToken
+                    ? "t"
+                    : entry.conditionals.isArweave
+                    ? "a"
+                    : "o"
+                }/${
+                  entry.conditionals.isToken
+                    ? entry.fields.address
+                    : entry.conditionals.isArweave
+                    ? entry.id
+                    : entry.id
                 }${
                   entry.conditionals.isToken ? "/" + entry.fields.token : ""
                 }`}>

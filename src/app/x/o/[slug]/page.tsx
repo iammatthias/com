@@ -7,7 +7,7 @@ export interface Props {
   searchParams?: any;
 }
 
-export default async function PostPage({ params }: Props) {
+export default async function MarkdownPage({ params }: Props) {
   if (!params.slug) {
     return <>Loading...</>;
   }
