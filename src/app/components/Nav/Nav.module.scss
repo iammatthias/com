@@ -1,25 +1,20 @@
 // components/NavBar.module.scss
 .nav {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  right: 15px;
-  display: flex;
-  justify-content: center;
-  background-color: #333;
-  padding: 0.5rem;
+  position: relative;
+  width: 100%;
 }
 
 .navList {
   display: flex;
+  width: 100%;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .navItem {
-  margin: 0 1rem;
   position: relative;
+  text-align: center;
 }
 
 .navLink {
@@ -41,31 +36,36 @@
   position: absolute;
   top: 100%;
   left: 0;
-  min-width: 160px;
-  background-color: #333;
+  background-color: hsla(var(--foreground-hsl), 1);
   list-style: none;
-  padding: 0;
+  padding: 16px 0;
   margin: 0;
   z-index: 1;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow);
+  border-radius: 4px;
 }
 
 .dropdown:hover .dropdownMenu {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .dropdownItem {
-  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdownLink {
   color: white;
   text-decoration: none;
+  text-align: center;
   display: block;
 }
 
 .dropdownLink:hover {
-  color: #ccc;
+  color: hsla(var(--gold), 1);
 }
 
 // Responsive styles for tablet and mobile views

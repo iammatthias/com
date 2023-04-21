@@ -6,6 +6,7 @@ import DateAndTime from "@/app/components/Helpers/DateTime";
 import Weather from "@/app/components/Helpers/Weather";
 import Link from "next/link";
 import fetchAndMergeData from "@/app/data/fetch/fetchAndMergeData";
+import Nav from "@/app/components/Nav";
 
 export default async function Home() {
   const data = await fetchAndMergeData();
@@ -13,7 +14,7 @@ export default async function Home() {
   return (
     <Grid>
       <Cell span={1} center invert>
-        <p>☾ ☼ ☽</p>
+        <Nav />
       </Cell>
       <Cell span={1} center invert>
         <Suspense>

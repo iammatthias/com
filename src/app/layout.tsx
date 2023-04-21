@@ -1,7 +1,6 @@
 import "./styles/reset.css";
 import "./styles/globals.scss";
-import NavBar from "./components/Navbar";
-import navigationData from "./data/navigation.json";
+import Providers from "@/app/lib/providers";
 
 export const metadata = {
   title: "IAM",
@@ -16,8 +15,10 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        {/* <NavBar items={navigationData.links} /> */}
-        <main>{children}</main>
+        <Providers>
+          {/* <NavBar items={navigationData.links} /> */}
+          <main>{children}</main>
+        </Providers>
       </body>
     </html>
   );
