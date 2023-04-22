@@ -7,6 +7,7 @@ import Weather from "@/app/components/Helpers/Weather";
 import Link from "next/link";
 import fetchAndMergeData from "@/app/data/fetch/fetchAndMergeData";
 import Nav from "@/app/components/Nav";
+import IsConnected from "@/app/lib/isConnected";
 
 export default async function Home() {
   const data = await fetchAndMergeData();
@@ -14,7 +15,7 @@ export default async function Home() {
   return (
     <Grid>
       <Cell span={1} center invert>
-        <Nav />
+        <Nav inverted />
       </Cell>
       <Cell span={1} center invert>
         <Suspense>
@@ -54,45 +55,15 @@ export default async function Home() {
       {data.map((entry) => {
         // Check if the content should be displayed
         const shouldDisplayContent =
-          ((entry.conditionals.isPublished ||
-            process.env.NODE_ENV === "development") &&
-            !entry.conditionals.isWalletGated) ||
+          entry.conditionals.isPublished ||
           process.env.NODE_ENV === "development";
 
         return (
           shouldDisplayContent && (
-            <Cell span={entry.fields.span} key={entry.id}>
-              <Link
-                href={`/x/${
-                  entry.conditionals.isToken
-                    ? "t"
-                    : entry.conditionals.isArweave
-                    ? "a"
-                    : "o"
-                }/${
-                  entry.conditionals.isToken
-                    ? entry.fields.address
-                    : entry.conditionals.isArweave
-                    ? entry.id
-                    : entry.id
-                }${
-                  entry.conditionals.isToken ? "/" + entry.fields.token : ""
-                }`}>
-                <SubGrid
-                  title={entry.name}
-                  id={entry.id}
-                  created={`${entry.created}`}
-                  isLongform={entry.conditionals.isLongform}
-                  isToken={entry.conditionals.isToken}
-                  tokenType={entry.fields.tokenType}
-                  contentUrl={entry.fields.contentURL}
-                  contentUrlMimeType={entry.fields.contentURLMimeType}
-                  source={entry.fields.source}
-                  description={entry.fields.description}
-                  content={entry.fields.content}
-                />
-              </Link>
-            </Cell>
+            // // @ts-expect-error
+            // <IsConnected key={entry.id} isWalletGated={entry.conditionals.isWalletGated}>
+            <ContentCell key={entry.id} entry={entry} />
+            // </IsConnected>
           )
         );
       })}
@@ -100,5 +71,62 @@ export default async function Home() {
         <></>
       </Cell>
     </Grid>
+  );
+}
+
+interface ContentCellProps {
+  id: string;
+  name: string;
+  created: number;
+  fields: {
+    address: string;
+    span: number;
+    token: string;
+    tokenType: string;
+    contentURL: string;
+    contentURLMimeType: string;
+    source: string;
+    description: string;
+    content: any;
+  };
+  conditionals: {
+    isToken: boolean;
+    isArweave: boolean;
+    isLongform: boolean;
+  };
+}
+
+function ContentCell({ entry }: { entry: ContentCellProps }) {
+  return (
+    <Cell span={entry.fields.span} key={entry.id}>
+      <Link
+        href={`/x/${
+          entry.conditionals.isToken
+            ? "t" // t for token
+            : entry.conditionals.isArweave
+            ? "a" // a for arweave
+            : "o" // o is for obsidian (markdown)
+        }/${
+          entry.conditionals.isToken
+            ? entry.fields.address
+            : entry.conditionals.isArweave
+            ? entry.id
+            : entry.id
+        }${entry.conditionals.isToken ? "/" + entry.fields.token : ""}`}>
+        <SubGrid
+          title={entry.name}
+          id={entry.id}
+          created={`${entry.created}`}
+          isLongform={entry.conditionals.isLongform}
+          isToken={entry.conditionals.isToken}
+          tokenType={entry.fields.tokenType}
+          contentUrl={entry.fields.contentURL}
+          contentUrlMimeType={entry.fields.contentURLMimeType}
+          source={entry.fields.source}
+          description={entry.fields.description}
+          content={entry.fields.content}
+        />
+      </Link>
+    </Cell>
   );
 }

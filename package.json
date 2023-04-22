@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/mdx": "^13.3.1",
+    "@rainbow-me/rainbowkit": "^0.12.9",
     "@types/node": "18.15.13",
     "@types/react": "18.0.38",
     "@types/react-dom": "18.0.11",

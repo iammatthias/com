@@ -20,16 +20,21 @@ export type NavItem = {
   }[];
 };
 
-export default function Nav() {
+export default function Nav({ inverted = false }: { inverted?: boolean }) {
   return (
-    <nav className={styles.nav}>
+    <nav className={`${styles.nav}`}>
       <ul className={styles.navList}>
         {navigation.links.map((item: NavItem, index: number) => {
           // Add types for item and index
           if (item.type === "link") {
             return (
               <li key={index} className={styles.navItem}>
-                <Link href={item.href!} passHref className={styles.navLink}>
+                <Link
+                  href={item.href!}
+                  passHref
+                  className={`${styles.navLink} ${
+                    inverted ? styles.inverted : ""
+                  }`}>
                   {item.label}
                 </Link>
               </li>
@@ -39,7 +44,12 @@ export default function Nav() {
               <li
                 key={index}
                 className={`${styles.navItem} ${styles.dropdown}`}>
-                <span className={styles.navLink}>{item.label}</span>
+                <span
+                  className={`${styles.navLink} ${
+                    inverted && styles.inverted
+                  }`}>
+                  {item.label}
+                </span>
                 <ul className={styles.dropdownMenu}>
                   {item.items!.map(
                     (

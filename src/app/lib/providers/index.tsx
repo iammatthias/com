@@ -1,61 +1,35 @@
 "use client";
 
-import { WagmiConfig, createClient, configureChains } from "wagmi";
-import { mainnet } from "wagmi/chains";
-
-import { ConnectKitProvider } from "connectkit";
-
-import { InjectedConnector } from "@wagmi/core";
-import { MetaMaskConnector } from "@wagmi/core/connectors/metaMask";
-import { CoinbaseWalletConnector } from "@wagmi/core/connectors/coinbaseWallet";
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
-
+import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { configureChains, createClient, WagmiConfig } from "wagmi";
+import { mainnet, polygon, optimism, arbitrum } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
+import { publicProvider } from "wagmi/providers/public";
 
-const alchemyId = process.env.ALCHEMY_ID;
-const alchemyRpc = process.env.ALCHEMY_RPC;
-
-const { provider, chains } = configureChains(
-  [mainnet],
-  [alchemyProvider({ apiKey: alchemyId! })]
+const { chains, provider } = configureChains(
+  [mainnet, polygon, optimism, arbitrum],
+  [
+    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID as string }),
+    publicProvider(),
+  ]
 );
 
-const client = createClient({
-  autoConnect: false,
-  connectors: [
-    new InjectedConnector(),
-    new CoinbaseWalletConnector({
-      options: {
-        appName: "IAM",
-        jsonRpcUrl: alchemyRpc,
-      },
-    }),
-    new MetaMaskConnector({
-      chains: [mainnet],
-    }),
-    new WalletConnectConnector({
-      chains: chains,
-      options: {
-        projectId: "IAM",
-        showQrModal: false,
-      },
-    }),
-  ],
+const { connectors } = getDefaultWallets({
+  appName: "IAM",
+  projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID as string,
+  chains,
+});
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
   provider,
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiConfig client={client}>
-      <ConnectKitProvider
-        theme='auto'
-        mode='light'
-        customTheme={{
-          "--ck-font-family":
-            "-apple-system-ui-serif, ui-serif, 'Georgia', serif",
-        }}>
-        {children}
-      </ConnectKitProvider>
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
     </WagmiConfig>
   );
 }

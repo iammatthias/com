@@ -1,5 +1,6 @@
 import "@/app/styles/reset.css";
 import "@/app/styles/globals.scss";
+import Nav from "@/app/components/Nav";
 
 export const metadata = {
   title: "IAM",
@@ -11,5 +12,10 @@ export default function TokenLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <section className='token'>{children}</section>;
+  return (
+    <>
+      <Nav />
+      <section className='token'>{children}</section>
+    </>
+  );
 }

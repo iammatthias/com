@@ -18,13 +18,13 @@
 }
 
 .navLink {
-  color: white;
+  color: hsla(var(--foreground-hsl), 1);
   text-decoration: none;
   font-size: 1.2rem;
 }
 
-.navLink:hover {
-  color: #ccc;
+.inverted {
+  color: hsla(var(--background-hsl), 1);
 }
 
 .dropdown {
@@ -34,15 +34,17 @@
 .dropdownMenu {
   display: none;
   position: absolute;
-  top: 100%;
-  left: 0;
+  top: calc(100%);
+  left: 50%;
+  transform: translateX(-50%);
   background-color: hsla(var(--foreground-hsl), 1);
   list-style: none;
   padding: 16px 0;
-  margin: 0;
+  margin: 0 auto;
   z-index: 1;
   box-shadow: var(--shadow);
   border-radius: 4px;
+  max-width: var(--max-width);
 }
 
 .dropdown:hover .dropdownMenu {
@@ -58,10 +60,10 @@
 }
 
 .dropdownLink {
-  color: white;
   text-decoration: none;
   text-align: center;
   display: block;
+  color: hsla(var(--background-hsl), 1);
 }
 
 .dropdownLink:hover {

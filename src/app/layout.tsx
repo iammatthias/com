@@ -1,5 +1,6 @@
 import "./styles/reset.css";
 import "./styles/globals.scss";
+import "@rainbow-me/rainbowkit/styles.css";
 import Providers from "@/app/lib/providers";
 
 export const metadata = {
@@ -16,7 +17,6 @@ export default function RootLayout({
     <html lang='en'>
       <body>
         <Providers>
-          {/* <NavBar items={navigationData.links} /> */}
           <main>{children}</main>
         </Providers>
       </body>
