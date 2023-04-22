@@ -73,17 +73,9 @@
   .navList {
     flex-direction: column;
   }
-
-  .navItem {
-    margin: 0.5rem 0;
-  }
 }
 
 @media (max-width: 480px) {
-  .nav {
-    padding: 0.5rem;
-  }
-
   .navLink {
     font-size: 1rem;
   }
