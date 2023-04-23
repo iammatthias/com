@@ -18,7 +18,6 @@
   }
 
   & .cell {
-    min-width: 10rem;
     grid-column: span 2;
     background-color: hsla(var(--foreground-hsl), 0.021618);
     padding: 1rem;
@@ -36,6 +35,7 @@
     }
     &:first-child {
       padding: 8px 0;
+      min-width: 15rem;
     }
   }
 
