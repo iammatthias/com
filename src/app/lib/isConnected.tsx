@@ -16,23 +16,26 @@ export default function IsConnected({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let unwatch: (() => void) | null = null;
+
     async function fetchAccount() {
       const account = await getAccount();
       setIsConnected(account.isConnected);
       setLoading(false);
+
+      if (!unwatch) {
+        unwatch = watchAccount((account) => {
+          setIsConnected(account.isConnected);
+        });
+      }
     }
 
     fetchAccount();
-  }, []);
 
-  useEffect(() => {
-    const unwatch = watchAccount((account) => {
-      setIsConnected(account.isConnected);
-    });
-
-    // Cleanup function to unsubscribe from account changes when component unmounts
     return () => {
-      unwatch();
+      if (unwatch) {
+        unwatch();
+      }
     };
   }, []);
 
