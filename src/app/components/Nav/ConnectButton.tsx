@@ -3,5 +3,5 @@
 import { ConnectButton as ConnectKitButton } from "@rainbow-me/rainbowkit";
 
 export default function ConnectButton() {
-  return <ConnectKitButton />;
+  return <ConnectKitButton accountStatus='avatar' chainStatus='none' />;
 }
