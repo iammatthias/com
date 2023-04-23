@@ -14,42 +14,30 @@ export default function IsConnected({
 }: IsConnectedProps) {
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     async function fetchAccount() {
-      try {
-        const account = await getAccount();
-        setIsConnected(account.isConnected);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
+      const account = await getAccount();
+      setIsConnected(account.isConnected);
+      setLoading(false);
     }
 
     fetchAccount();
   }, []);
 
   useEffect(() => {
-    if (!loading) {
-      const unwatch = watchAccount((account) => {
-        setIsConnected(account.isConnected);
-      });
+    const unwatch = watchAccount((account) => {
+      setIsConnected(account.isConnected);
+    });
 
-      // Cleanup function to unsubscribe from account changes when component unmounts
-      return () => {
-        unwatch();
-      };
-    }
-  }, [loading]);
+    // Cleanup function to unsubscribe from account changes when component unmounts
+    return () => {
+      unwatch();
+    };
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
   }
 
   if (isWalletGated) {
