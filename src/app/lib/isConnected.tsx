@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useAccount } from "wagmi";
+import { useRouter } from "next/navigation";
 
 interface IsConnectedProps {
   children: React.ReactNode;
@@ -13,15 +14,20 @@ export default function IsConnected({
   isWalletGated,
 }: IsConnectedProps) {
   const { isConnected, isConnecting } = useAccount();
+  const router = useRouter();
 
-  // If the item is not wallet-gated, always show content.
+  useEffect(() => {
+    if (!isConnecting) {
+      router.refresh();
+    }
+  }, [isConnected, isConnecting, router]);
+
   if (!isWalletGated) {
     return <>{children}</>;
   }
 
-  // If the item is wallet-gated, show content based on the account connection status.
   if (isConnecting) {
-    return <div>Connecting...</div>;
+    return <></>;
   } else if (isConnected) {
     return <>{children}</>;
   } else {
