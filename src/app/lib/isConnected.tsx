@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { getAccount, watchAccount } from "@wagmi/core";
+import React from "react";
+import { useAccount } from "wagmi";
 
 interface IsConnectedProps {
   children: React.ReactNode;
@@ -12,44 +12,19 @@ export default function IsConnected({
   children,
   isWalletGated,
 }: IsConnectedProps) {
-  const [isConnected, setIsConnected] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { isConnected, isConnecting } = useAccount();
 
-  useEffect(() => {
-    let unwatch: (() => void) | null = null;
-
-    async function fetchAccount() {
-      const account = await getAccount();
-      setIsConnected(account.isConnected);
-      setLoading(false);
-
-      if (!unwatch) {
-        unwatch = watchAccount((account) => {
-          setIsConnected(account.isConnected);
-        });
-      }
-    }
-
-    fetchAccount();
-
-    return () => {
-      if (unwatch) {
-        unwatch();
-      }
-    };
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
+  // If the item is not wallet-gated, always show content.
+  if (!isWalletGated) {
+    return <>{children}</>;
   }
 
-  if (isWalletGated) {
-    if (isConnected) {
-      return <>{children}</>;
-    } else {
-      return <></>;
-    }
-  } else {
+  // If the item is wallet-gated, show content based on the account connection status.
+  if (isConnecting) {
+    return <div>Connecting...</div>;
+  } else if (isConnected) {
     return <>{children}</>;
+  } else {
+    return <></>;
   }
 }
