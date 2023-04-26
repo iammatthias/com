@@ -14,6 +14,8 @@ export default function IsConnected({
 }: IsConnectedProps) {
   const { isConnected, isConnecting } = useAccount();
 
+  console.log(isConnected);
+
   if (isConnecting) {
     return <div>Loading...</div>;
   }
