@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 
 interface IsConnectedProps {
@@ -13,15 +13,20 @@ export default function IsConnected({
   isWalletGated,
 }: IsConnectedProps) {
   const { isConnected, isConnecting } = useAccount();
+  const [clientIsConnected, setClientIsConnected] = useState(isConnected);
 
-  console.log(isConnected);
+  useEffect(() => {
+    setClientIsConnected(isConnected);
+  }, [isConnected]);
+
+  console.log(clientIsConnected);
 
   if (isConnecting) {
     return <div>Loading...</div>;
   }
 
   if (isWalletGated) {
-    if (isConnected) {
+    if (clientIsConnected) {
       return <>{children}</>;
     } else {
       return <></>;
