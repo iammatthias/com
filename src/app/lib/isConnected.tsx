@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useAccount } from "wagmi";
-import { useRouter } from "next/navigation";
 
 interface IsConnectedProps {
   children: React.ReactNode;
@@ -14,23 +13,18 @@ export default function IsConnected({
   isWalletGated,
 }: IsConnectedProps) {
   const { isConnected, isConnecting } = useAccount();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isConnecting) {
-      router.refresh();
-    }
-  }, [isConnected, isConnecting, router]);
-
-  if (!isWalletGated) {
-    return <>{children}</>;
-  }
 
   if (isConnecting) {
-    return <></>;
-  } else if (isConnected) {
-    return <>{children}</>;
+    return <div>Loading...</div>;
+  }
+
+  if (isWalletGated) {
+    if (isConnected) {
+      return <>{children}</>;
+    } else {
+      return <></>;
+    }
   } else {
-    return <></>;
+    return <>{children}</>;
   }
 }
