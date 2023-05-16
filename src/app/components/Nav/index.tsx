@@ -66,9 +66,9 @@ export default function Nav({ inverted = false }: { inverted?: boolean }) {
                       </li>
                     )
                   )}
-                  <li className={styles.dropdownItem}>
+                  {/* <li className={styles.dropdownItem}>
                     <ConnectButton />
-                  </li>
+                  </li> */}
                 </ul>
               </li>
             );

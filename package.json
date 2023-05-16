@@ -9,25 +9,25 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/mdx": "^13.3.1",
-    "@rainbow-me/rainbowkit": "^0.12.9",
-    "@types/node": "18.16.0",
-    "@types/react": "18.0.38",
-    "@types/react-dom": "18.0.11",
+    "@next/mdx": "^13.4.2",
+    "@rainbow-me/rainbowkit": "^1.0.0",
+    "@types/node": "20.1.7",
+    "@types/react": "18.2.6",
+    "@types/react-dom": "18.2.4",
     "@zoralabs/nft-hooks": "^1.2.1",
     "@zoralabs/nft-metadata": "^1.2.6",
     "arweave": "^1.13.7",
-    "eslint": "8.39.0",
-    "eslint-config-next": "13.3.1",
-    "ethers": "^5",
-    "next": "13.3.1",
+    "eslint": "8.40.0",
+    "eslint-config-next": "13.4.2",
+    "next": "13.4.2",
     "next-mdx-remote": "^4.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-image-size": "^2.0.2",
     "react-spring": "^9.7.1",
-    "sass": "^1.62.0",
+    "sass": "^1.62.1",
     "typescript": "5.0.4",
-    "wagmi": "^0.12.12"
+    "viem": "^0.3.26",
+    "wagmi": "^1.0.5"
   }
 }

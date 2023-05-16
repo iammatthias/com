@@ -33,11 +33,7 @@
 
 .dropdownMenu {
   display: none;
-  position: absolute;
-  top: calc(100%);
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: hsla(var(--foreground-hsl), 1);
+  position: relative;
   list-style: none;
   padding: 16px 0;
   margin: 0 auto;
@@ -63,7 +59,6 @@
   text-decoration: none;
   text-align: center;
   display: block;
-  color: hsla(var(--background-hsl), 1);
 }
 
 .dropdownLink:hover {

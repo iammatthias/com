@@ -1,7 +1,7 @@
 import "./styles/reset.css";
 import "./styles/globals.scss";
 import "@rainbow-me/rainbowkit/styles.css";
-import Providers from "@/app/lib/providers";
+// import Providers from "@/app/lib/providers";
 
 export const metadata = {
   title: "IAM",
@@ -16,9 +16,9 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        <Providers>
-          <main>{children}</main>
-        </Providers>
+        {/* <Providers> */}
+        <main>{children}</main>
+        {/* </Providers> */}
       </body>
     </html>
   );

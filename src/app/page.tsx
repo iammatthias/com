@@ -60,11 +60,12 @@ export default async function Home() {
 
         return (
           shouldDisplayContent && (
-            <IsConnected
-              key={entry.id}
-              isWalletGated={entry.conditionals.isWalletGated}>
-              <ContentCell key={entry.id} entry={entry} />
-            </IsConnected>
+            // <IsConnected
+            //   key={entry.id}
+            //   isWalletGated={entry.conditionals.isWalletGated}>
+            //   <ContentCell key={entry.id} entry={entry} />
+            // </IsConnected>
+            <ContentCell key={entry.id} entry={entry} />
           )
         );
       })}
