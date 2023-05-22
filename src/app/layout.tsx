@@ -1,11 +1,18 @@
-import "./styles/reset.css";
-import "./styles/globals.scss";
-import "@rainbow-me/rainbowkit/styles.css";
-// import Providers from "@/app/lib/providers";
+import "./reset.scss";
+import "./globals.scss";
+import "./typography.scss";
+
+import Link from "next/link";
+
+import {
+  CurrentDate,
+  CurrentTime,
+  CurrentWeather,
+} from "@/app/components/current";
 
 export const metadata = {
   title: "IAM",
-  description: "IAM IAM IAM",
+  description: "a digital garden",
 };
 
 export default function RootLayout({
@@ -16,9 +23,15 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        {/* <Providers> */}
-        <main>{children}</main>
-        {/* </Providers> */}
+        <main className={`main`}>
+          <Link href='/' className={`solar`}>
+            ☾ ☼ ☽
+          </Link>
+          <div>
+            <CurrentTime /> <CurrentDate /> <CurrentWeather />
+          </div>
+          {children}
+        </main>
       </body>
     </html>
   );
