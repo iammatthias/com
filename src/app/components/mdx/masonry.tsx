@@ -1,5 +1,6 @@
 "use client";
 import { Masonry } from "react-plock";
+import RemoteImage from "./remoteImage";
 
 export default function MasonryComponent({ items }: { items: string[] }) {
   return (
@@ -11,11 +12,12 @@ export default function MasonryComponent({ items }: { items: string[] }) {
         media: [640, 768, 1024],
       }}
       render={(item, idx) => (
-        <img
-          key={idx}
-          src={item as string}
-          style={{ width: "100%", height: "auto" }}
-        />
+        // <img
+        //   key={idx}
+        //   src={item as string}
+        //   style={{ width: "100%", height: "auto" }}
+        // />
+        <RemoteImage key={idx} src={item as string} />
       )}
     />
   );

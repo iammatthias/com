@@ -124,6 +124,12 @@ iframe {
   height: 100%;
 }
 
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 // Media Queries
 /* Tablet and Smaller Desktop */
 @media (max-width: 701px) {

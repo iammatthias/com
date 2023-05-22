@@ -3321,6 +3321,11 @@ react-fast-compare@^3.0.1:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.2.tgz#929a97a532304ce9fee4bcae44234f1ce2c21d49"
   integrity sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==
 
+react-image-size@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/react-image-size/-/react-image-size-2.0.2.tgz#5f90e4b2659269eefebd139aa1882aef4f48250e"
+  integrity sha512-j2ZhFsY5n8HAU43ZrhvDOkGBhAY0IJX2DjajmwF+TdXuZ/lGHuhmqj5/88o1M+yL8Un5oNSLjBRH5XikWiiHlA==
+
 react-is@^16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"

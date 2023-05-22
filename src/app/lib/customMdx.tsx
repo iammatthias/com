@@ -3,6 +3,7 @@ import remarkGfm from "remark-gfm";
 import Iframe from "@/app/components/mdx/iframe";
 import Video from "@/app/components/mdx/video";
 import MasonryComponent from "../components/mdx/masonry";
+import RemoteImage from "../components/mdx/remoteImage";
 
 const components = {
   Iframe: (props: any) => {
@@ -13,6 +14,9 @@ const components = {
   },
   Masonry: (props: any) => {
     return <MasonryComponent items={props.items} />;
+  },
+  Image: (props: any) => {
+    return <RemoteImage {...props} />;
   },
 };
 

@@ -113,7 +113,7 @@ n2m.setCustomTransformer("image", async (block) => {
   // The new URL for the image on your domain
   const newImageUrl = `https://pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev/${key}`;
 
-  return `<img src='${newImageUrl}' />`;
+  return `<Image src='${newImageUrl}' />`;
 });
 
 // video transformer
