@@ -11,7 +11,7 @@ export type LinkItemProps = {
 };
 
 const LinkItem = ({ href, name, handle }: LinkItemProps) => (
-  <Link href={href} className={styles.section__links__item}>
+  <Link href={href} className={styles.section__links__item} target='_blank'>
     <p className={styles.hideOnHover}>{name}</p>
 
     <p className={styles.showOnHover}>{handle}</p>
