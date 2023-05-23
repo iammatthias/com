@@ -77,3 +77,9 @@ table th {
   border: 1px solid rgb(var(--gold-rgb));
   padding: 0.5rem;
 }
+
+blockquote {
+  border-left: 4px solid rgb(var(--gold-rgb));
+  padding-left: 1rem;
+  margin-left: 1rem;
+}
