@@ -1,0 +1,157 @@
+:root {
+  --max-width: 1100px;
+  --border-radius: 12px;
+  --font-serif: -apple-system-ui-serif, ui-serif, Georgia, Cambria,
+    "Times New Roman", Times, serif;
+  --font-sans-serif: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+    "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
+    "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+
+  --font-size-small: clamp(0.86rem, 0.93vw + 0.63rem, 1rem);
+  --font-size-p: clamp(1rem, 0vw + 1rem, 1rem);
+  --font-size-h6: clamp(1.16rem, -1.08vw + 1.43rem, 1rem);
+  --font-size-h5: clamp(1.35rem, -2.33vw + 1.93rem, 1rem);
+  --font-size-h4: clamp(1.57rem, -3.79vw + 2.52rem, 1rem);
+  --font-size-h3: clamp(1.82rem, -5.48vw + 3.19rem, 1rem);
+  --font-size-h2: clamp(2.12rem, -7.44vw + 3.98rem, 1rem);
+  --font-size-h1: clamp(2.46rem, -9.73vw + 4.89rem, 1rem);
+
+  --foreground-rgb: 28, 28, 28;
+  --background-start-rgb: 234, 239, 240;
+  --background-end-rgb: 255, 255, 255;
+  --light-gold-rgb: 229, 207, 135;
+  --gold-rgb: 212, 175, 55;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 28, 28, 28;
+    --background-end-rgb: 28, 28, 28;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.618;
+  &:after {
+    content: "";
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    right: 2rem;
+    bottom: 2rem;
+    width: calc(100vw - 4rem);
+    max-height: calc(100vh - 31px);
+    z-index: 999;
+    box-shadow: 0 0 0 1px rgb(var(--gold-rgb)),
+      0 0 0 3rem rgb(var(--background-start-rgb));
+    border-radius: 4px;
+    background: transparent;
+    pointer-events: none;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 4rem;
+  min-height: 100vh;
+}
+
+.main > * {
+  max-width: 40rem;
+}
+
+.solar {
+  transition: transform 0.6s ease-in-out;
+  text-decoration: none;
+  font-style: normal;
+  color: inherit;
+
+  &:hover {
+    transform: rotate(720deg);
+  }
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+  width: 100%;
+  align-items: center;
+}
+
+// Helpers
+.max_width_unset {
+  max-width: unset;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Media Queries
+/* Tablet and Smaller Desktop */
+@media (max-width: 701px) {
+  body {
+    &:after {
+      top: 1rem;
+      left: 1rem;
+      right: 1rem;
+      bottom: 1rem;
+      width: calc(100vw - 2rem);
+      box-shadow: 0 0 0 1px rgb(var(--gold-rgb)),
+        0 0 0 2rem rgb(var(--background-start-rgb));
+    }
+  }
+
+  .main {
+    padding: 2rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}

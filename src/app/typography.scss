@@ -1,0 +1,85 @@
+p {
+  font-size: var(--font-size-p);
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+}
+
+h3 {
+  font-size: var(--font-size-h3);
+}
+
+h4 {
+  font-size: var(--font-size-h4);
+}
+
+h5 {
+  font-size: var(--font-size-h5);
+}
+
+h6 {
+  font-size: var(--font-size-h6);
+}
+
+small {
+  font-size: var(--font-size-small);
+}
+
+a {
+  color: rgb(var(--gold-rgb));
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  font-style: italic;
+}
+
+.highlight {
+  font-weight: bold;
+  font-style: italic;
+}
+
+hr {
+  background-color: transparent;
+  border-top: 2px dotted rgb(var(--gold-rgb));
+  width: 100%;
+}
+
+pre {
+  background-color: rgb(var(--background-rgb));
+  color: rgb(var(--foreground-rgb));
+  border: 1px solid rgb(var(--gold-rgb));
+  border-radius: 4px;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow: none;
+  width: 100%;
+  white-space: pre-line;
+}
+
+ul,
+ol {
+  padding-left: 2rem;
+}
+
+// basic table styles
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+table td,
+table th {
+  border: 1px solid rgb(var(--gold-rgb));
+  padding: 0.5rem;
+}
+
+blockquote {
+  border-left: 4px solid rgb(var(--gold-rgb));
+  padding-left: 1rem;
+  margin-left: 1rem;
+}

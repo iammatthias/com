@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    appDir: true,
-    fontLoaders: [{ loader: '@next/font/google', options: { subsets: ['latin'] } }],
+    mdxRs: true,
   },
   images: {
-    domains: ['pub-8bcf4a42832e4273a5a34c696ccc1b55.r2.dev', 'api.zora.co'],
+    domains: ["pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev"],
   },
 };
 
-module.exports = nextConfig;
+const withMDX = require("@next/mdx")({});
+module.exports = withMDX(nextConfig);
