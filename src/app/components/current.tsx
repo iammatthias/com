@@ -33,14 +33,7 @@ export function CurrentDate(): ReactElement {
 
   useEffect(() => {
     const timer = setInterval(
-      () =>
-        setDate(
-          new Date().toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })
-        ),
+      () => setDate(new Date().toLocaleDateString()),
       1000
     );
     return () => clearInterval(timer);

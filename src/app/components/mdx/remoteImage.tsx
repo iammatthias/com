@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import NextImage from "next/image";
 import { useImageSize } from "react-image-size";
 
@@ -22,21 +23,24 @@ export default function RemoteImage(props: any) {
 
   if (data) {
     return (
-      <figure style={{ position: `relative` }}>
-        <NextImage
-          loader={imageLoader}
-          src={src}
-          alt={alt ? alt : ``}
-          width={data.width}
-          height={data.height}
-          style={{
-            objectFit: `contain`,
-            height: `fit-content`,
-            width: `100%`,
-          }}
-        />
-        {alt && <figcaption>{caption}</figcaption>}
-      </figure>
+      <Suspense>
+        <figure style={{ position: `relative` }}>
+          <NextImage
+            priority
+            loader={imageLoader}
+            src={src}
+            alt={alt ? alt : ``}
+            width={data.width}
+            height={data.height}
+            style={{
+              objectFit: `contain`,
+              height: `fit-content`,
+              width: `100%`,
+            }}
+          />
+          {alt && <figcaption>{caption}</figcaption>}
+        </figure>
+      </Suspense>
     );
   }
   return null;

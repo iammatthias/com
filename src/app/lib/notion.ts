@@ -94,14 +94,6 @@ n2m.setCustomTransformer("embed", async (block) => {
 });
 
 // image transformer
-// n2m.setCustomTransformer("image", async (block) => {
-//   const { image } = block as any;
-//   if (!image.file.url) return "";
-//   const imageUrl = image.file.url;
-//   return `<img src='${imageUrl}' />`;
-// });
-
-// image transformer
 n2m.setCustomTransformer("image", async (block) => {
   const { image } = block as any;
   if (!image.file.url) return "";

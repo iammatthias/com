@@ -1,9 +1,22 @@
+import dynamic from "next/dynamic";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
-import Iframe from "@/app/components/mdx/iframe";
-import Video from "@/app/components/mdx/video";
-import MasonryComponent from "../components/mdx/masonry";
-import RemoteImage from "../components/mdx/remoteImage";
+
+const Iframe = dynamic(() => import("@/app/components/mdx/iframe"), {
+  loading: () => <p>Loading...</p>,
+});
+
+const Video = dynamic(() => import("@/app/components/mdx/video"), {
+  loading: () => <p>Loading...</p>,
+});
+
+const MasonryComponent = dynamic(() => import("@/app/components/mdx/masonry"), {
+  loading: () => <p>Loading...</p>,
+});
+
+const RemoteImage = dynamic(() => import("@/app/components/mdx/remoteImage"), {
+  loading: () => <p>Loading...</p>,
+});
 
 const components = {
   Iframe: (props: any) => {

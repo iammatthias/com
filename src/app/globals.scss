@@ -124,7 +124,13 @@ iframe {
   height: 100%;
 }
 
+figure {
+  margin: 0;
+  width: 100%;
+}
+
 .loading {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
