@@ -2,6 +2,8 @@ import Link from "next/link";
 import NotionPosts from "./components/notionPosts";
 import styles from "./page.module.scss";
 
+export const revalidate = 60; // revalidate this page every 60 seconds
+
 export type LinkItemProps = {
   href: string;
   name: string;
