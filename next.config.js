@@ -18,6 +18,16 @@ const nextConfig = {
         destination: "/feed/json.json",
         permanent: true,
       },
+      {
+        source: "/md/1670705920366",
+        destination: "/content/8e38c961-fd4a-4fcf-a6cc-030303e7b85f",
+        permanent: true,
+      },
+      {
+        source: "/md/1670714294926",
+        destination: "/content/46df966a-19d5-488a-b727-72f423d6d616",
+        permanent: true,
+      },
     ];
   },
 };
