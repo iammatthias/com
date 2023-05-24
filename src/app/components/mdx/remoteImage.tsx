@@ -32,7 +32,11 @@ export default function RemoteImage(props: any) {
   const [data, { loading, error }] = useImageSize(src);
 
   if (loading) {
-    return <div className='loading'>≋</div>;
+    return (
+      <div className='loading'>
+        <p>≋</p>
+      </div>
+    );
   }
 
   if (error) {

@@ -1,8 +1,11 @@
 import { getAllPublished } from "@/app/lib/notion";
 import styles from "./notion.module.scss";
+import rss from "@/app/lib/feed";
 
 export default async function NotionPosts() {
   const posts = await getAllPublished();
+
+  await rss(posts);
 
   return (
     <section className={`${styles.posts}`}>
