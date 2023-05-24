@@ -9,8 +9,13 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/rss/:path*",
-        destination: "/feed/:path*",
+        source: "/rss/feed.xml",
+        destination: "/feed/rss.xml",
+        permanent: true,
+      },
+      {
+        source: "/rss/feed.json",
+        destination: "/feed/json.json",
         permanent: true,
       },
     ];
