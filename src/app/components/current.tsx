@@ -12,15 +12,16 @@ export function CurrentTime() {
     []
   );
 
-  const [time, setTime] = useState(
-    new Date().toLocaleTimeString("en-US", timeOptions)
-  );
+  const [time, setTime] = useState("");
 
   useEffect(() => {
+    setTime(new Date().toLocaleTimeString("en-US", timeOptions));
+
     const timer = setInterval(
       () => setTime(new Date().toLocaleTimeString("en-US", timeOptions)),
       60000
     );
+
     return () => clearInterval(timer);
   }, [timeOptions]);
 
@@ -28,13 +29,16 @@ export function CurrentTime() {
 }
 
 export function CurrentDate() {
-  const [date, setDate] = useState(new Date().toLocaleDateString());
+  const [date, setDate] = useState("");
 
   useEffect(() => {
+    setDate(new Date().toLocaleDateString());
+
     const timer = setInterval(
       () => setDate(new Date().toLocaleDateString()),
       86400000
     );
+
     return () => clearInterval(timer);
   }, []);
 
