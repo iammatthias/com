@@ -4,7 +4,7 @@ const nextConfig = {
     mdxRs: true,
   },
   images: {
-    domains: ["pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev"],
+    domains: ["pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev", "wsrv.nl"],
   },
 };
 

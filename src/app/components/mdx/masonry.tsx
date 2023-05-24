@@ -17,7 +17,8 @@ export default function MasonryComponent({ items }: { items: string[] }) {
         //   src={item as string}
         //   style={{ width: "100%", height: "auto" }}
         // />
-        <RemoteImage key={idx} src={item as string} />
+        // <RemoteImage key={idx} src={item as string} />
+        <>{item}</>
       )}
     />
   );

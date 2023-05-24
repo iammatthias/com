@@ -18,17 +18,19 @@ export default function RemoteImage(props: any) {
   }
 
   const imageLoader = ({ src }: any) => {
-    return `${src}?w=200&q=${1}`;
+    return `https://wsrv.nl/?w=50&q=1&url=${src}`;
   };
+
+  const wsrv = `https://wsrv.nl/?w=600&url=${src}`;
 
   if (data) {
     return (
       <Suspense>
         <figure style={{ position: `relative` }}>
           <NextImage
-            priority
-            loader={imageLoader}
-            src={src}
+            // priority
+            // loader={imageLoader}
+            src={wsrv}
             alt={alt ? alt : ``}
             width={data.width}
             height={data.height}

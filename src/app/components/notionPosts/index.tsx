@@ -5,7 +5,7 @@ export default async function NotionPosts() {
   const posts = await getAllPublished();
 
   return (
-    <div className={`${styles.posts}`}>
+    <section className={`${styles.posts}`}>
       {posts.map((post) => (
         <div className={`${styles.post}`} key={post.id}>
           <p className={`${styles.post__title}`}>
@@ -14,6 +14,6 @@ export default async function NotionPosts() {
           <p className={`${styles.post__type}`}>{post.type}</p>
         </div>
       ))}
-    </div>
+    </section>
   );
 }
