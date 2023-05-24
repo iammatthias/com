@@ -1,35 +1,52 @@
 "use client";
 
-import { Suspense } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import NextImage from "next/image";
 import { useImageSize } from "react-image-size";
 
+function useAboveTheFold(): [React.RefObject<HTMLElement>, boolean] {
+  const ref = useRef<HTMLElement>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsInView(entry.isIntersecting);
+    });
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, []);
+
+  return [ref, isInView];
+}
+
 export default function RemoteImage(props: any) {
   const { src, alt, caption } = props;
+  const [ref, isInView] = useAboveTheFold();
 
   const [data, { loading, error }] = useImageSize(src);
 
   if (loading) {
-    return <div className='loading'>☾ ☼ ☽</div>;
+    return <div className='loading'>≋</div>;
   }
 
   if (error) {
     return <p>Error loading image</p>;
   }
 
-  const imageLoader = ({ src }: any) => {
-    return `https://wsrv.nl/?w=50&q=1&url=${src}`;
-  };
-
   const wsrv = `https://wsrv.nl/?w=600&url=${src}`;
 
   if (data) {
     return (
       <Suspense>
-        <figure style={{ position: `relative` }}>
+        <figure ref={ref} style={{ position: `relative` }}>
           <NextImage
-            // priority
-            // loader={imageLoader}
+            priority={isInView as boolean}
             src={wsrv}
             alt={alt ? alt : ``}
             width={data.width}
