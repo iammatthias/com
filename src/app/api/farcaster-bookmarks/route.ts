@@ -1,7 +1,4 @@
 import { NextResponse } from "next/server";
-
-export const runtime = "edge";
-
 import { createClient } from "@supabase/supabase-js";
 
 // Create a Supabase client
@@ -9,7 +6,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_KEY as string;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-export default async function handler() {
+export async function GET() {
   try {
     // Fetch data from the first API
     const response1 = await fetch(
