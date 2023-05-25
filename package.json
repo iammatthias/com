@@ -33,6 +33,7 @@
     "react-plock": "^3.0.2",
     "react-tiny-oembed": "^1.1.0",
     "remark-gfm": "^3.0.1",
+    "remark-unwrap-images": "^3.0.1",
     "sass": "^1.62.1",
     "typescript": "5.0.4"
   }

@@ -49,21 +49,18 @@ export default function RemoteImage(props: any) {
   if (data) {
     return (
       <Suspense>
-        <figure ref={ref} style={{ position: `relative` }}>
-          <NextImage
-            priority={isInView as boolean}
-            src={wsrv}
-            alt={alt ? alt : ``}
-            width={data.width}
-            height={data.height}
-            style={{
-              objectFit: `contain`,
-              height: `fit-content`,
-              width: `100%`,
-            }}
-          />
-          {alt && <figcaption>{caption}</figcaption>}
-        </figure>
+        <NextImage
+          priority={isInView as boolean}
+          src={wsrv}
+          alt={alt ? alt : ``}
+          width={data.width}
+          height={data.height}
+          style={{
+            objectFit: `contain`,
+            height: `fit-content`,
+            width: `100%`,
+          }}
+        />
       </Suspense>
     );
   }

@@ -1,6 +1,8 @@
 import dynamic from "next/dynamic";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
+import remarkUnwrapImages from "remark-unwrap-images";
+import Link from "next/link";
 
 const Iframe = dynamic(() => import("@/app/components/mdx/iframe"), {
   loading: () => <p>Loading...</p>,
@@ -31,6 +33,12 @@ const components = {
   Image: (props: any) => {
     return <RemoteImage {...props} />;
   },
+  a: (props: any) => {
+    if (props.href.includes("imgur")) {
+      return <RemoteImage src={props.href} />;
+    }
+    return <Link href={props.href}>{props.children}</Link>;
+  },
 };
 
 export function CustomMDX(props: any) {
@@ -42,7 +50,7 @@ export function CustomMDX(props: any) {
         components={{ ...components }}
         options={{
           mdxOptions: {
-            remarkPlugins: [remarkGfm],
+            remarkPlugins: [remarkGfm, remarkUnwrapImages],
           },
         }}
       />
