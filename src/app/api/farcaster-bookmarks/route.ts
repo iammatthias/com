@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-export const revalidate = 60 * 60; // revalidate this page every hour
+// export const revalidate = 60 * 60; // revalidate this page every hour
 
 // Create a Supabase client
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
