@@ -1,8 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "/api/farcaster-bookmarks/route.ts",
-      "schedule": "1 * * * *"
-    }
-  ]
-}
