@@ -8,71 +8,70 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export async function GET() {
   try {
-    // Fetch data from the first API
-    const response1 = await fetch(
-      "https://searchcaster.xyz/api/search?text=@perl&username=iammatthias"
+    // Fetch data from the API
+    const response = await fetch(
+      "https://www.discove.xyz/api/feeds/iammatthias/old-perls?p=1"
     );
-    const data1 = await response1.json();
-
-    // Use Promise.all to fetch data from the second API in parallel
-    const data2Promises = data1.casts.map(
-      (cast: { body: { data: { replyParentMerkleRoot: any } } }) => {
-        const replyParentMerkleRoot = cast.body.data.replyParentMerkleRoot;
-
-        // Fetch data from the second API using replyParentMerkleRoot from the first API response
-        return fetch(
-          `https://searchcaster.xyz/api/search?merkleRoot=${replyParentMerkleRoot}&count=1`
-        ).then((response2) => response2.json());
-      }
-    );
-
-    const data2Results = await Promise.all(data2Promises);
+    const data = await response.json();
 
     const records: {
-      publishedat: any;
-      username: any;
-      text: any;
-      image: any;
-      replyparentmerkleroot: any;
-      threadmerkleroot: any;
-      displayname: any;
-      avatar: any;
-      isverifiedavatar: any;
-      numreplychildren: any;
-      reactionscount: any;
-      recastscount: any;
-      watchescount: any;
-      merkleroot: any;
-      uri: any;
+      hash: string;
+      text: string | null;
+      username: string | null;
+      thread_hash: string | null;
+      display_name: string | null;
+      published_at: string | null;
+      bookmarked_at: string | null;
     }[] = [];
 
-    data2Results.forEach((data2) => {
-      for (let cast2 of data2.casts) {
+    // Get existing hashes in the database
+    const { data: existingRecords, error: fetchError } = await supabase
+      .from("bookmark_casts")
+      .select("hash");
+
+    if (fetchError) {
+      console.error("Error fetching existing records: ", fetchError);
+    }
+
+    const existingHashes = existingRecords?.map((record) => record.hash) || [];
+
+    // Extract the data from the response
+    data.feed.results.forEach(
+      (cast: {
+        reply_to_data: {
+          hash: any;
+          text: any;
+          username: any;
+          thread_hash: any;
+          display_name: any;
+          published_at: any;
+        };
+        published_at: any;
+      }) => {
+        // Check if the cast already exists in the database and skip if it does
+        if (existingHashes.includes(cast.reply_to_data?.hash)) {
+          return;
+        }
+
         // Prepare the data for insertion into Supabase
         const record = {
-          publishedat: cast2.body.publishedAt,
-          username: cast2.body.username,
-          text: cast2.body.data.text,
-          image: cast2.body.data.image,
-          replyparentmerkleroot: cast2.body.data.replyParentMerkleRoot,
-          threadmerkleroot: cast2.body.data.threadMerkleRoot,
-          displayname: cast2.meta.displayName,
-          avatar: cast2.meta.avatar,
-          isverifiedavatar: cast2.meta.isVerifiedAvatar,
-          numreplychildren: cast2.meta.numReplyChildren,
-          reactionscount: cast2.meta.reactions.count,
-          recastscount: cast2.meta.recasts.count,
-          watchescount: cast2.meta.watches.count,
-          merkleroot: cast2.merkleRoot,
-          uri: cast2.uri,
+          hash: cast.reply_to_data?.hash || null,
+          text: cast.reply_to_data?.text || null,
+          username: cast.reply_to_data?.username || null,
+          thread_hash: cast.reply_to_data?.thread_hash || null,
+          display_name: cast.reply_to_data?.display_name || null,
+          published_at: cast.reply_to_data?.published_at || null,
+          bookmarked_at: cast.published_at || null,
         };
 
         records.push(record);
       }
-    });
+    );
 
     // Insert the data into Supabase
-    const { error: insertError } = await supabase.from("casts").insert(records);
+    const { error: insertError } = await supabase
+      .from("bookmark_casts")
+      .insert(records);
 
     // Check for errors
     if (insertError) {
