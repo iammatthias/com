@@ -14,18 +14,39 @@ export async function GET() {
     );
     const data1 = await response1.json();
 
-    // Array to hold all records
-    let recordsToInsert = [];
+    // Use Promise.all to fetch data from the second API in parallel
+    const data2Promises = data1.casts.map(
+      (cast: { body: { data: { replyParentMerkleRoot: any } } }) => {
+        const replyParentMerkleRoot = cast.body.data.replyParentMerkleRoot;
 
-    for (let cast of data1.casts) {
-      const replyParentMerkleRoot = cast.body.data.replyParentMerkleRoot;
+        // Fetch data from the second API using replyParentMerkleRoot from the first API response
+        return fetch(
+          `https://searchcaster.xyz/api/search?merkleRoot=${replyParentMerkleRoot}&count=1`
+        ).then((response2) => response2.json());
+      }
+    );
 
-      // Fetch data from the second API using replyParentMerkleRoot from the first API response
-      const response2 = await fetch(
-        `https://searchcaster.xyz/api/search?merkleRoot=${replyParentMerkleRoot}&count=1`
-      );
-      const data2 = await response2.json();
+    const data2Results = await Promise.all(data2Promises);
 
+    const records: {
+      publishedat: any;
+      username: any;
+      text: any;
+      image: any;
+      replyparentmerkleroot: any;
+      threadmerkleroot: any;
+      displayname: any;
+      avatar: any;
+      isverifiedavatar: any;
+      numreplychildren: any;
+      reactionscount: any;
+      recastscount: any;
+      watchescount: any;
+      merkleroot: any;
+      uri: any;
+    }[] = [];
+
+    data2Results.forEach((data2) => {
       for (let cast2 of data2.casts) {
         // Prepare the data for insertion into Supabase
         const record = {
@@ -45,29 +66,13 @@ export async function GET() {
           merkleroot: cast2.merkleRoot,
           uri: cast2.uri,
         };
-        // Check if the record already exists
-        const { data: existingData, error: existingError } = await supabase
-          .from("casts")
-          .select("merkleroot")
-          .eq("merkleroot", record.merkleroot);
 
-        if (existingError) {
-          console.error("Error fetching existing data: ", existingError);
-        } else if (existingData && existingData.length > 0) {
-          console.log(
-            `Data with merkleroot ${record.merkleroot} already exists`
-          );
-        } else {
-          // Add the record to the array
-          recordsToInsert.push(record);
-        }
+        records.push(record);
       }
-    }
+    });
 
     // Insert the data into Supabase
-    const { error: insertError } = await supabase
-      .from("casts")
-      .insert(recordsToInsert);
+    const { error: insertError } = await supabase.from("casts").insert(records);
 
     // Check for errors
     if (insertError) {
