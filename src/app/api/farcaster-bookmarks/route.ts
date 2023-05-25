@@ -14,6 +14,9 @@ export async function GET() {
     );
     const data1 = await response1.json();
 
+    // Array to hold all records
+    let recordsToInsert = [];
+
     for (let cast of data1.casts) {
       const replyParentMerkleRoot = cast.body.data.replyParentMerkleRoot;
 
@@ -42,7 +45,6 @@ export async function GET() {
           merkleroot: cast2.merkleRoot,
           uri: cast2.uri,
         };
-
         // Check if the record already exists
         const { data: existingData, error: existingError } = await supabase
           .from("casts")
@@ -56,17 +58,20 @@ export async function GET() {
             `Data with merkleroot ${record.merkleroot} already exists`
           );
         } else {
-          // Insert the data into Supabase
-          const { error: insertError } = await supabase
-            .from("casts")
-            .insert(record);
-
-          // Check for errors
-          if (insertError) {
-            console.error("Error inserting data: ", insertError);
-          }
+          // Add the record to the array
+          recordsToInsert.push(record);
         }
       }
+    }
+
+    // Insert the data into Supabase
+    const { error: insertError } = await supabase
+      .from("casts")
+      .insert(recordsToInsert);
+
+    // Check for errors
+    if (insertError) {
+      console.error("Error inserting data: ", insertError);
     }
 
     return NextResponse.json({
