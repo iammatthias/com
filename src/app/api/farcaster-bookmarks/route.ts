@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// export const revalidate = 60 * 60; // revalidate this page every hour
-
 // Create a Supabase client
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
@@ -38,37 +36,25 @@ export async function GET() {
     const existingHashes = existingRecords?.map((record) => record.hash) || [];
 
     // Extract the data from the response
-    data.feed.results.forEach(
-      (cast: {
-        reply_to_data: {
-          hash: any;
-          text: any;
-          username: any;
-          thread_hash: any;
-          display_name: any;
-          published_at: any;
-        };
-        published_at: any;
-      }) => {
-        // Check if the cast already exists in the database and skip if it does
-        if (existingHashes.includes(cast.reply_to_data?.hash)) {
-          return;
-        }
-
-        // Prepare the data for insertion into Supabase
-        const record = {
-          hash: cast.reply_to_data?.hash || null,
-          text: cast.reply_to_data?.text || null,
-          username: cast.reply_to_data?.username || null,
-          thread_hash: cast.reply_to_data?.thread_hash || null,
-          display_name: cast.reply_to_data?.display_name || null,
-          published_at: cast.reply_to_data?.published_at || null,
-          bookmarked_at: cast.published_at || null,
-        };
-
-        records.push(record);
+    data.feed.results.forEach((cast: any) => {
+      // Check if the cast already exists in the database and skip if it does
+      if (existingHashes.includes(cast.hash)) {
+        return;
       }
-    );
+
+      // Prepare the data for insertion into Supabase
+      const record = {
+        hash: cast.hash || null,
+        text: cast.text || null,
+        username: cast.username || null,
+        thread_hash: cast.thread_hash || null,
+        display_name: cast.display_name || null,
+        published_at: cast.published_at || null,
+        bookmarked_at: cast.reply_to_data?.published_at || null,
+      };
+
+      records.push(record);
+    });
 
     // Insert the data into Supabase
     const { error: insertError } = await supabase
