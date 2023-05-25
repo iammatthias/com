@@ -10,7 +10,7 @@ export async function GET() {
   try {
     // Fetch data from the API
     const response = await fetch(
-      "https://www.discove.xyz/api/feeds/iammatthias/old-perls?p=1"
+      "https://www.discove.xyz/api/feeds/iammatthias/bookmarks?p=1"
     );
     const data = await response.json();
 
