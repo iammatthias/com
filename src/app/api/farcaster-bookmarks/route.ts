@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-export const revalidate = 60 * 10; // revalidate this page every 60 seconds
-
 // Create a Supabase client
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
@@ -12,7 +10,8 @@ export async function GET() {
   try {
     // Fetch data from the API
     const response = await fetch(
-      "https://www.discove.xyz/api/feeds/iammatthias/bookmarks?p=1"
+      "https://www.discove.xyz/api/feeds/iammatthias/bookmarks?p=1",
+      { next: { revalidate: 60 } }
     );
     const data = await response.json();
 
