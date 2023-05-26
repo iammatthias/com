@@ -35,34 +35,42 @@ const components = {
     return <RemoteImage {...props} />;
   },
   a: (props: any) => {
-    if (props.href.includes("imgur")) {
-      return <>{props.children}</>;
-    }
-    // if (props.href.includes("youtube.com")) {
-    //   return (
-    //     <>
-    //       <Video {...props} />
-    //     </>
-    //   );
-    // }
     return <Link href={props.href}>{props.children}</Link>;
   },
   img: (props: any) => {
     return <RemoteImage {...props} />;
   },
   p: (props: any) => {
-    // if props.children is an array of objects we map through them and unwrap them
-    if (Array.isArray(props.children)) {
-      return props.children.map((child: any) => {
-        return <>{child}</>;
-      });
-    }
+    // console.log({ props });
+
+    // if props.children is an array, it means that there are nested elements
+    // if the nested element is an imgur link (a) then we want to unwrap it
 
     return <p>{props.children}</p>;
   },
 };
 
-export function CustomMDX(props: any) {
+export function CustomMDX(originalProps: any) {
+  const imgurRegex = /(https:\/\/i\.imgur\.com\/\S+)/g;
+
+  // Clone the original props to avoid modifying the original object
+  let props = JSON.parse(JSON.stringify(originalProps));
+
+  // Recursively process the object to look for `source` keys and modify them if necessary
+  const processData = (obj: any) => {
+    for (let key in obj) {
+      if (typeof obj[key] === "object" && obj[key] !== null) {
+        processData(obj[key]);
+      } else if (key === "source" && typeof obj[key] === "string") {
+        obj[key] = obj[key].replace(imgurRegex, "\n\n$1");
+      }
+    }
+  };
+
+  processData(props);
+
+  console.log({ props });
+
   return (
     <>
       {/* @ts-expect-error Async Server Component */}

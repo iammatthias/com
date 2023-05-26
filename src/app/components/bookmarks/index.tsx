@@ -7,18 +7,6 @@ import FormatDateTime from "@/app/lib/formatDateTime";
 export default async function NotionPosts() {
   const data = await fetchSupabaseData();
 
-  // {
-  //   hash: '0x2ae7e0530024bea1d2c18bc756a83c76737c8cc9',
-  //   text: 'http://zora.energy https://i.imgur.com/pPXmqkm.jpg',
-  //   username: 'ccarella',
-  //   thread_hash: '0x2ae7e0530024bea1d2c18bc756a83c76737c8cc9',
-  //   display_name: 'Chris Carella 🛡️',
-  //   published_at: '2023-05-25T21:17:31+00:00',
-  //   bookmarked_at: '2023-05-25T21:34:20+00:00'
-  // }
-
-  // reverse the data
-
   const _data = data?.reverse();
 
   return (
