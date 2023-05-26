@@ -1,10 +1,16 @@
-/** @type {import('next').NextConfig} */
+import nextMdx from "@next/mdx";
+
+const withMDX = nextMdx({});
+
+/** @type {import('next').NextConfig} nextConfig */
 const nextConfig = {
+  pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
+  images: {
+    dangerouslyAllowSVG: true,
+    domains: ["pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev", "wsrv.nl"],
+  },
   experimental: {
     mdxRs: true,
-  },
-  images: {
-    domains: ["pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev", "wsrv.nl"],
   },
   async redirects() {
     return [
@@ -32,5 +38,9 @@ const nextConfig = {
   },
 };
 
-const withMDX = require("@next/mdx")({});
-module.exports = withMDX(nextConfig);
+const configExport = () => {
+  const plugins = [withMDX];
+  return plugins.reduce((acc, next) => next(acc), nextConfig);
+};
+
+export default configExport;

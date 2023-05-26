@@ -1,34 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef, Suspense } from "react";
+import { Suspense } from "react";
 import NextImage from "next/image";
 import { useImageSize } from "react-image-size";
 
-function useAboveTheFold(): [React.RefObject<HTMLElement>, boolean] {
-  const ref = useRef<HTMLElement>(null);
-  const [isInView, setIsInView] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsInView(entry.isIntersecting);
-    });
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, []);
-
-  return [ref, isInView];
-}
-
 export default function RemoteImage(props: any) {
   const { src, alt, caption } = props;
-  const [ref, isInView] = useAboveTheFold();
 
   const [data, { loading, error }] = useImageSize(src);
 
@@ -50,7 +27,8 @@ export default function RemoteImage(props: any) {
     return (
       <Suspense>
         <NextImage
-          priority={isInView as boolean}
+          loading='eager'
+          priority={true}
           src={wsrv}
           alt={alt ? alt : ``}
           width={data.width}

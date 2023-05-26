@@ -110,27 +110,29 @@ export default function Comments({ slug }: Props) {
   }, [slug]);
 
   return (
-    <div className={`${styles.comments}`}>
-      <hr />
-      <p>
-        Comments are displayed when relevant content is shared on{" "}
-        <Link
-          href='https://www.farcaster.xyz/'
-          target='_blank'
-          rel='noreferrer'>
-          Farcaster
-        </Link>
-        .
-      </p>
-      <ul className={`${styles.commentList}`}>
-        {comments.map((comment: any) => (
-          <li
-            className={`${styles.comment}`}
-            key={comment.merkleRoot + comment.publishedAt}>
-            <CommentBody {...comment} />
-          </li>
-        ))}
-      </ul>
-    </div>
+    comments && (
+      <div className={`${styles.comments}`}>
+        <hr />
+        <p>
+          Comments are displayed when relevant content is shared on{" "}
+          <Link
+            href='https://www.farcaster.xyz/'
+            target='_blank'
+            rel='noreferrer'>
+            Farcaster
+          </Link>
+          .
+        </p>
+        <ul className={`${styles.commentList}`}>
+          {comments.map((comment: any) => (
+            <li
+              className={`${styles.comment}`}
+              key={comment.merkleRoot + comment.publishedAt}>
+              <CommentBody {...comment} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
   );
 }

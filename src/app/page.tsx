@@ -8,10 +8,14 @@ export type LinkItemProps = {
   href: string;
   name: string;
   handle: string;
+  newTab?: boolean;
 };
 
-const LinkItem = ({ href, name, handle }: LinkItemProps) => (
-  <Link href={href} className={styles.section__links__item} target='_blank'>
+const LinkItem = ({ href, name, handle, newTab }: LinkItemProps) => (
+  <Link
+    href={href}
+    className={styles.section__links__item}
+    target={`${newTab ? "_blank" : ""}`}>
     <p className={styles.hideOnHover}>{name}</p>
 
     <p className={styles.showOnHover}>{handle}</p>
@@ -38,6 +42,12 @@ export default async function Home() {
       <h2>Online & Onchain</h2>
       <nav className={styles.section__links}>
         <LinkItem
+          href='/bookmarks'
+          name='bookmarks'
+          handle='bookmarks'
+          newTab={false}
+        />
+        <LinkItem
           href='https://warpcast.com/iammatthias'
           name='farcaster'
           handle='@iammatthias'
@@ -46,6 +56,7 @@ export default async function Home() {
           href='https://staging.bsky.app/profile/iam.bsky.social'
           name='bluesky'
           handle='@iam.bsky.social'
+          newTab={true}
         />
         <LinkItem href='https://read.cv/iam' name='read.cv' handle='@iam' />
         {/* https://gallery.so/iam */}
@@ -53,11 +64,13 @@ export default async function Home() {
           href='https://gallery.so/iam'
           name='gallery.so'
           handle='@iam'
+          newTab={true}
         />
         <LinkItem
           href='https://theguestbook.xyz/'
           name='the guestbook'
           handle='the guestbook'
+          newTab={true}
         />
         {/* <div className={`${styles.section__links__item} disabled`}>
           attn token

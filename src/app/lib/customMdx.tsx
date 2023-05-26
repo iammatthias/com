@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
+import remarkImages from "remark-images";
 import remarkUnwrapImages from "remark-unwrap-images";
 import Link from "next/link";
 
@@ -35,9 +36,22 @@ const components = {
   },
   a: (props: any) => {
     if (props.href.includes("imgur")) {
-      return <RemoteImage src={props.href} />;
+      return <>{props.children}</>;
     }
     return <Link href={props.href}>{props.children}</Link>;
+  },
+  img: (props: any) => {
+    return <RemoteImage {...props} />;
+  },
+  p: (props: any) => {
+    // if props.children is an array of objects we map through them and unwrap them
+    if (Array.isArray(props.children)) {
+      return props.children.map((child: any) => {
+        return <>{child}</>;
+      });
+    }
+
+    return <p>{props.children}</p>;
   },
 };
 
@@ -50,7 +64,7 @@ export function CustomMDX(props: any) {
         components={{ ...components }}
         options={{
           mdxOptions: {
-            remarkPlugins: [remarkGfm, remarkUnwrapImages],
+            remarkPlugins: [remarkGfm, remarkImages, remarkUnwrapImages],
           },
         }}
       />
