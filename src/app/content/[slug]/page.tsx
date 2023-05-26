@@ -1,9 +1,19 @@
 import { CustomMDX } from "@/app/lib/customMdx";
-import { getSinglePost } from "@/app/lib/notion";
+import { getSinglePost, getAllPublished } from "@/app/lib/notion";
 import styles from "./page.module.scss";
 import Comments from "@/app/components/comments";
 
-export const revalidate = 60; // revalidate this page every 60 seconds
+// revalidate every 60 seconds
+export const revalidate = 60;
+
+// Return a list of `params` to populate the [slug] dynamic segment
+export async function generateStaticParams() {
+  const posts = await getAllPublished();
+
+  return posts.map((post: any) => ({
+    slug: post.slug,
+  }));
+}
 
 export interface Props {
   params: {

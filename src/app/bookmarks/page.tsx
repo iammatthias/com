@@ -1,6 +1,7 @@
 import Bookmarks from "@/app/components/bookmarks";
 
-export const revalidate = 60; // revalidate this page every 60 seconds
+// revalidate every 20 min
+export const revalidate = 1200;
 
 export default async function BookmarksPage() {
   return (
