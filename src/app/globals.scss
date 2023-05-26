@@ -90,13 +90,13 @@ body {
 }
 
 .solar {
-  transition: transform 0.6s ease-in-out;
   text-decoration: none;
   font-style: normal;
   color: inherit;
+  animation: rotation 30s infinite linear;
 
   &:hover {
-    transform: rotate(720deg);
+    animation: rotationHover 0.6s infinite linear;
   }
 }
 
@@ -160,5 +160,23 @@ figure {
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+  }
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+@keyframes rotationHover {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(719deg);
   }
 }

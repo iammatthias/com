@@ -38,6 +38,13 @@ const components = {
     if (props.href.includes("imgur")) {
       return <>{props.children}</>;
     }
+    // if (props.href.includes("youtube.com")) {
+    //   return (
+    //     <>
+    //       <Video {...props} />
+    //     </>
+    //   );
+    // }
     return <Link href={props.href}>{props.children}</Link>;
   },
   img: (props: any) => {

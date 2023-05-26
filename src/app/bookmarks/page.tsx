@@ -5,8 +5,6 @@ export const revalidate = 60; // revalidate this page every 60 seconds
 export default async function BookmarksPage() {
   return (
     <>
-      {/* Intro */}
-      <h1>≋</h1>
       <p>
         When I reply to a cast with `≋`, it gets is archived and displayed here.
       </p>
