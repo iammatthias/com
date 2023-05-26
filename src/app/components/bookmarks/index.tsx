@@ -13,10 +13,6 @@ export default async function NotionPosts() {
     <section className={`${styles.bookmarks}`}>
       {_data?.map((bookmark: any) => (
         <div key={bookmark.hash} className={`${styles.bookmark}`}>
-          <p>
-            Bookmarked at{" "}
-            <FormatDateTime inputDate={bookmark.bookmarked_at} format='FULL' />
-          </p>
           <div className={`${styles.bookmark__meta}`}>
             <p>
               <Link href={``}>@{bookmark.username}</Link>
@@ -29,6 +25,22 @@ export default async function NotionPosts() {
           <>
             <CustomMDX source={bookmark.text} />
           </>
+          <div className={`${styles.bookmark__meta}`}>
+            <small>
+              Bookmarked at{" "}
+              <FormatDateTime
+                inputDate={bookmark.bookmarked_at}
+                format='FULL'
+              />
+            </small>
+            <small>
+              View on{" "}
+              <Link
+                href={`https://warpcast.com/${bookmark.username}/${bookmark.hash}`}>
+                Warpcast
+              </Link>
+            </small>
+          </div>
         </div>
       ))}
     </section>
