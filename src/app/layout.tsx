@@ -46,8 +46,11 @@ export default function RootLayout({
 
       <body>
         <main className={`main`}>
-          <Link href='/' className={`solar`}>
+          {/* <Link href='/' className={`solar`}>
             ☾ ☼ ☽
+          </Link> */}
+          <Link href='/' className={`solar`}>
+            / /
           </Link>
           <div>
             <CurrentTime /> <CurrentDate /> <CurrentWeather />
