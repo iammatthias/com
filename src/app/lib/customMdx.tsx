@@ -69,8 +69,6 @@ export function CustomMDX(originalProps: any) {
 
   processData(props);
 
-  console.log({ props });
-
   return (
     <>
       {/* @ts-expect-error Async Server Component */}
