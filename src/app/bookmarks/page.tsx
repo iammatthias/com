@@ -7,12 +7,12 @@ export default async function BookmarksPage() {
   return (
     <>
       <p>
-        When I reply to a cast with `≋`, it gets is archived and displayed here.
+        When I reply to a cast with `≋`, it gets archived and displayed here.
       </p>
       <p>
         This happens permisionlessly on the sufficiently decentralized social
         protocol <a href='https://www.farcaster.xyz//'>Farcaster</a>.
-      </p>
+      </p> 
       <hr />
 
       {/* @ts-expect-error */}

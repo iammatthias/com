@@ -25,6 +25,7 @@ export default async function NotionPosts() {
           <>
             <CustomMDX source={bookmark.text} />
           </>
+          <hr />
           <div className={`${styles.bookmark__meta}`}>
             <small>
               Bookmarked at{" "}
