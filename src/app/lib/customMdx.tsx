@@ -23,21 +23,26 @@ const RemoteImage = dynamic(() => import("@/app/components/mdx/remoteImage"), {
 
 const components = {
   Iframe: (props: any) => {
+    // @ts-expect-error
     return <Iframe {...props} />;
   },
   Video: (props: any) => {
+    // @ts-expect-error
     return <Video {...props} />;
   },
   Masonry: (props: any) => {
+    // @ts-expect-error
     return <MasonryComponent items={props.items} />;
   },
   Image: (props: any) => {
+    // @ts-expect-error
     return <RemoteImage {...props} />;
   },
   a: (props: any) => {
     return <Link href={props.href}>{props.children}</Link>;
   },
   img: (props: any) => {
+    // @ts-expect-error
     return <RemoteImage {...props} />;
   },
   p: (props: any) => {

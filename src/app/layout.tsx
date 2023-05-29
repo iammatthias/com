@@ -12,7 +12,7 @@ import {
 } from "@/app/components/current";
 
 export const metadata = {
-  title: "IAM",
+  title: "IAM ☾ ☼ ☽",
   description: "a digital garden",
 };
 
