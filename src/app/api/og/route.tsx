@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     (res) => res.arrayBuffer()
   );
 
-  const { searchParams } = new URL(request.url);
+  // const { searchParams } = new URL(request.url);
 
   return new ImageResponse(
     (
