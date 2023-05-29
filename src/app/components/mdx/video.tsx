@@ -12,6 +12,7 @@ export default function Video({ src }: { src: string }) {
 
   return isLoaded ? (
     <>
+      {/* @ts-expect-error */}
       <ReactPlayer
         url={src}
         playing={true}
