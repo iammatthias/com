@@ -4,27 +4,22 @@ import { ImageResponse } from "next/server";
 
 export const runtime = "edge";
 
-// Image metadata
-export const siteTitle = "I AM MATTHIAS";
-export const siteDescription = "A digital garden";
+export async function GET() {
+  // Image metadata
+  const siteTitle = "I AM MATTHIAS";
+  const siteDescription = "A digital garden";
+  const size = {
+    width: 1200,
+    height: 630,
+  };
 
-export const size = {
-  width: 1200,
-  height: 630,
-};
-
-export const contentType = "image/png";
-
-export async function GET(request: Request) {
+  // fonts
   const fontNewYork = fetch(new URL("./NewYork.ttf", import.meta.url)).then(
     (res) => res.arrayBuffer()
   );
-
   const fontSubset = fetch(new URL("./subset.ttf", import.meta.url)).then(
     (res) => res.arrayBuffer()
   );
-
-  // const { searchParams } = new URL(request.url);
 
   return new ImageResponse(
     (
@@ -79,17 +74,6 @@ export async function GET(request: Request) {
                 {siteDescription}
               </p>
             )}
-            {/* {publishedAt && (
-              <p
-                style={{
-                  margin: 0,
-                  padding: 0,
-                  fontSize: 24,
-                  fontFamily: "NewYork",
-                }}>
-                {publishedAt}
-              </p>
-            )} */}
           </div>
         </div>
       </div>
@@ -97,7 +81,6 @@ export async function GET(request: Request) {
     {
       width: size.width,
       height: size.height,
-      emoji: "twemoji",
       fonts: [
         {
           name: "NewYork",

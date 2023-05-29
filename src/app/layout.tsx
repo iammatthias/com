@@ -42,20 +42,6 @@ export default function RootLayout({
           title='iammatthias.com json feed'
           href='feed/json.json'
         />
-
-        {/* og images */}
-
-        <meta property='og:image' content='<generated>' />
-        <meta property='og:image:type' content='<generated>' />
-        <meta property='og:image:width' content='<generated>' />
-        <meta property='og:image:height' content='<generated>' />
-
-        {/* twitter images */}
-
-        <meta name='twitter:image' content='<generated>' />
-        <meta name='twitter:image:type' content='<generated>' />
-        <meta name='twitter:image:width' content='<generated>' />
-        <meta name='twitter:image:height' content='<generated>' />
       </Head>
 
       <body>
