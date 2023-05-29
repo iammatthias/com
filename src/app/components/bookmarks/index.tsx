@@ -14,12 +14,14 @@ export default async function NotionPosts() {
       {_data?.map((bookmark: any) => (
         <div key={bookmark.hash} className={`${styles.bookmark}`}>
           <div className={`${styles.bookmark__meta}`}>
-            <p>
-              <Link href={``}>@{bookmark.username}</Link>
-            </p>
-            <p>
+            <small>
+              <Link href={`https://warpcast.com/${bookmark.username}`}>
+                @{bookmark.username}
+              </Link>
+            </small>
+            <small>
               <FormatDateTime inputDate={bookmark.published_at} format='FULL' />
-            </p>
+            </small>
           </div>
           <hr />
           <>

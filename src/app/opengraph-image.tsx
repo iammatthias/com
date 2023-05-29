@@ -1,10 +1,13 @@
 import { ImageResponse } from "next/server";
+// App router includes @vercel/og.
+// No need to install it.
 
-// Route segment config
 export const runtime = "edge";
 
 // Image metadata
-export const alt = "I AM MATTHIAS";
+export const title = "I AM MATTHIAS";
+export const description = "A digital garden";
+export const alt = "A digital portfolio";
 export const size = {
   width: 1200,
   height: 630,
@@ -12,43 +15,50 @@ export const size = {
 
 export const contentType = "image/png";
 
-// Image generation
-export default function Image() {
+// Make sure the font exists in the specified path:
+const font = fetch(new URL("../../assets/NewYork.ttf", import.meta.url)).then(
+  (res) => res.arrayBuffer()
+);
+
+export async function GET() {
+  const fontData = await font;
+
   return new ImageResponse(
     (
       <div
         style={{
           backgroundColor: "#EAEFF0",
-          backgroundSize: "150px 150px",
-          height: "100%",
           width: "100%",
+          height: "100%",
+          padding: "31px",
           display: "flex",
-          textAlign: "center",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-          flexWrap: "nowrap",
         }}>
         <div
           style={{
-            fontSize: 60,
-            fontStyle: "normal",
-            letterSpacing: "-0.025em",
-            color: "#1c1c1c",
-            marginTop: 30,
-            padding: "0 120px",
-            lineHeight: 1.4,
-            whiteSpace: "pre-wrap",
+            width: "100%",
+            height: "100%",
+            border: "1px solid #d4af37",
+            borderRadius: "4px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontFamily: "NewYork",
           }}>
-          I AM MATTHIAS
+          <h1>{title}</h1>
+          <p>{description}</p>
         </div>
       </div>
     ),
-    // ImageResponse options
     {
-      // For convenience, we can re-use the exported opengraph-image
-      // size config to also set the ImageResponse's width and height.
-      ...size,
+      width: size.width,
+      height: size.height,
+      fonts: [
+        {
+          name: "NewYork",
+          data: fontData,
+          style: "normal",
+        },
+      ],
     }
   );
 }

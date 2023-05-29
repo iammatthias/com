@@ -1,6 +1,6 @@
 :root {
   --max-width: 1100px;
-  --border-radius: 12px;
+  --border-radius: 8px;
   --font-serif: -apple-system-ui-serif, ui-serif, Georgia, Cambria,
     "Times New Roman", Times, serif;
   --font-sans-serif: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -29,6 +29,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --border-radius: 4px;
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 28, 28, 28;
     --background-end-rgb: 28, 28, 28;
@@ -70,7 +71,7 @@ body {
     z-index: 999;
     box-shadow: 0 0 0 1px rgb(var(--gold-rgb)),
       0 0 0 3rem rgb(var(--background-start-rgb));
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     background: transparent;
     pointer-events: none;
   }

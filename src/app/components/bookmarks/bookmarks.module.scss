@@ -7,7 +7,7 @@
 .bookmark {
   width: 100%;
   border: 1px solid rgb(var(--gold-rgb));
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius);
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -19,4 +19,5 @@
   justify-content: space-between;
   flex-direction: row;
   flex-wrap: wrap;
+  gap: 0.5rem;
 }
