@@ -12,7 +12,7 @@ export default async function BookmarksPage() {
       </p>
       <p>
         This happens permisionlessly on the sufficiently decentralized social
-        protocol <a href='https://www.farcaster.xyz//'>Farcaster</a>.
+        protocol <Link href='https://www.farcaster.xyz//'>Farcaster</Link>.
       </p>
       <hr />
 
