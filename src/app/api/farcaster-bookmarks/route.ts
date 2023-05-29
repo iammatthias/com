@@ -1,21 +1,27 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-export const revalidate = 60 * 20; // 20 minutes, ~ when discove coves update
-
 // Create a Supabase client
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export async function GET() {
+  console.log("Starting data fetch..."); // Start logging
   try {
     // Fetch data from the API
     const response = await fetch(
       "https://www.discove.xyz/api/feeds/iammatthias/bookmarks?p=1",
-      { next: { revalidate: 60 } }
+      {
+        next: {
+          // 20 minutes, ~ when discove coves update
+          revalidate: 60 * 20,
+        },
+      }
     );
     const data = await response.json();
+
+    console.log("Data fetched from API, processing..."); // Data fetched log
 
     const records: {
       hash: string;
@@ -34,7 +40,10 @@ export async function GET() {
 
     if (fetchError) {
       console.error("Error fetching existing records: ", fetchError);
+      throw fetchError;
     }
+
+    console.log("Existing records fetched from Supabase, processing..."); // Data fetched from Supabase log
 
     const existingHashes = existingRecords?.map((record) => record.hash) || [];
 
@@ -64,6 +73,8 @@ export async function GET() {
       records.push(record);
     });
 
+    console.log("Data prepared for Supabase, inserting..."); // Data prepared for Supabase log
+
     // Insert the data into Supabase
     const { error: insertError } = await supabase
       .from("bookmark_casts")
@@ -72,17 +83,23 @@ export async function GET() {
     // Check for errors
     if (insertError) {
       console.error("Error inserting data: ", insertError);
+      throw insertError;
     }
+
+    console.log("Data successfully processed and inserted into Supabase"); // Successful insertion logquote("import { NextResponse } from", "Data successfully processed and inserted into Supabase'); // Successful insertion log")
 
     return NextResponse.json({
       status: 200,
-      body: { message: "Data successfully processed" },
+      body: { message: "Data successfully processed", data: records },
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
     return NextResponse.json({
       status: 500,
-      body: { error: "An error occurred while fetching data" },
+      body: {
+        error: "An error occurred while fetching data",
+        errorDetails: error,
+      },
     });
   }
 }
