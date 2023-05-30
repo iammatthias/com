@@ -42,6 +42,38 @@ export default function RootLayout({
           title='iammatthias.com json feed'
           href='feed/json.json'
         />
+
+        {/* og images */}
+
+        <meta property='og:image' content='https://iammatthias.com/api/og' />
+        <meta
+          property='og:image:type'
+          content='https://iammatthias.com/api/og'
+        />
+        <meta
+          property='og:image:width'
+          content='https://iammatthias.com/api/og'
+        />
+        <meta
+          property='og:image:height'
+          content='https://iammatthias.com/api/og'
+        />
+
+        {/* twitter images */}
+
+        <meta name='twitter:image' content='https://iammatthias.com/api/og' />
+        <meta
+          name='twitter:image:type'
+          content='https://iammatthias.com/api/og'
+        />
+        <meta
+          name='twitter:image:width'
+          content='https://iammatthias.com/api/og'
+        />
+        <meta
+          name='twitter:image:height'
+          content='https://iammatthias.com/api/og'
+        />
       </Head>
 
       <body>
