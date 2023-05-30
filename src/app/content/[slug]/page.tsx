@@ -1,3 +1,4 @@
+import slugify from "slugify";
 import { CustomMDX } from "@/app/lib/customMdx";
 import { getSinglePost, getAllPublished } from "@/app/lib/notion";
 import styles from "./page.module.scss";
@@ -18,6 +19,41 @@ export async function generateStaticParams() {
 export interface Props {
   params: {
     slug: string;
+  };
+}
+
+export async function generateMetadata({ params }: Props) {
+  const post = await getSinglePost(params.slug);
+
+  return {
+    openGraph: {
+      locale: "en_US",
+      url: "https://iammatthias.com",
+      title: `IAM ☾ ☼ ☽ // ${post.metadata.name}`,
+      description: `${post.metadata.name}`,
+      images: [
+        {
+          url: `api/og?title=${slugify(post.metadata.name)}`,
+          width: 1200,
+          height: 630,
+          alt: "iammatthias.com/bookmarks",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `IAM ☾ ☼ ☽ // ${post.metadata.name}`,
+      description: `${post.metadata.name}`,
+      creator: "@iammatthias",
+      images: [
+        {
+          url: `api/og?title=${slugify(post.metadata.name)}`,
+          width: 1200,
+          height: 630,
+          alt: "iammatthias.com/bookmarks",
+        },
+      ],
+    },
   };
 }
 

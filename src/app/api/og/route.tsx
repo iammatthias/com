@@ -4,7 +4,7 @@ import { ImageResponse } from "next/server";
 
 export const runtime = "edge";
 
-export async function GET() {
+export async function GET(request: Request) {
   // Image metadata
   const siteTitle = "I AM MATTHIAS";
   const siteDescription = "A digital garden";
@@ -20,6 +20,12 @@ export async function GET() {
   const fontSubset = fetch(new URL("./subset.ttf", import.meta.url)).then(
     (res) => res.arrayBuffer()
   );
+
+  const { searchParams } = new URL(request.url);
+  // ?title=<title>
+  const hasTitle = searchParams.has("title");
+  const title =
+    hasTitle && searchParams.get("title")?.slice(0, 100).replaceAll("-", " ");
 
   return new ImageResponse(
     (
@@ -59,21 +65,15 @@ export async function GET() {
               style={{
                 margin: 0,
                 padding: 0,
-                fontSize: 48,
-                letterSpacing: 2,
+                fontSize: 24,
+                letterSpacing: 8,
               }}>
               {siteTitle}
             </h1>
-            {siteDescription && (
-              <p
-                style={{
-                  margin: 0,
-                  padding: 0,
-                  fontSize: 32,
-                }}>
-                {siteDescription}
-              </p>
-            )}
+            <h2
+              style={{ margin: 0, padding: 0, fontSize: 48, letterSpacing: 4 }}>
+              {title ? title : siteDescription}
+            </h2>
           </div>
         </div>
       </div>

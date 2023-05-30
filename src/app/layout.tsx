@@ -14,6 +14,60 @@ import {
 export const metadata = {
   title: "IAM ☾ ☼ ☽",
   description: "a digital garden",
+  openGraph: {
+    locale: "en_US",
+    url: "https://iammatthias.com",
+    title: "IAM ☾ ☼ ☽",
+    description: "a digital garden",
+    images: [
+      {
+        url: "api/og",
+        width: 1200,
+        height: 630,
+        alt: "iammatthias.com",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IAM ☾ ☼ ☽",
+    description: "a digital garden",
+    creator: "@iammatthias",
+    images: [
+      {
+        url: "api/og",
+        width: 1200,
+        height: 630,
+        alt: "iammatthias.com",
+      },
+    ],
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  robots: {
+    index: false,
+    follow: true,
+    nocache: true,
+    googleBot: {
+      index: true,
+      follow: false,
+      noimageindex: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    types: {
+      "application/rss+xml": "feed/rss.xml",
+      "application/atom+xml": "feed/atom.xml",
+      "application/json": "feed/json.json",
+    },
+  },
+  themeColor: "#d4af37",
 };
 
 export default function RootLayout({
@@ -23,59 +77,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <Head>
-        <link
-          rel='alternate'
-          type='application/rss+xml'
-          title='iammatthias.com rss feed'
-          href='feed/rss.xml'
-        />
-        <link
-          rel='alternate'
-          type='application/atom+xml'
-          title='iammatthias.com atom feed'
-          href='feed/atom.xml'
-        />
-        <link
-          rel='alternate'
-          type='application/json'
-          title='iammatthias.com json feed'
-          href='feed/json.json'
-        />
-
-        {/* og images */}
-
-        <meta property='og:image' content='https://iammatthias.com/api/og' />
-        <meta
-          property='og:image:type'
-          content='https://iammatthias.com/api/og'
-        />
-        <meta
-          property='og:image:width'
-          content='https://iammatthias.com/api/og'
-        />
-        <meta
-          property='og:image:height'
-          content='https://iammatthias.com/api/og'
-        />
-
-        {/* twitter images */}
-
-        <meta name='twitter:image' content='https://iammatthias.com/api/og' />
-        <meta
-          name='twitter:image:type'
-          content='https://iammatthias.com/api/og'
-        />
-        <meta
-          name='twitter:image:width'
-          content='https://iammatthias.com/api/og'
-        />
-        <meta
-          name='twitter:image:height'
-          content='https://iammatthias.com/api/og'
-        />
-      </Head>
-
       <body>
         <main className={`main`}>
           <Link href='/' className={`solar`}>
