@@ -12,6 +12,7 @@ import {
 } from "@/app/components/current";
 
 export const metadata = {
+  metadataBase: new URL("https://iammatthias.com"),
   title: "IAM ☾ ☼ ☽",
   description: "a digital garden",
   openGraph: {
