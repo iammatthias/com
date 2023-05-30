@@ -95,7 +95,7 @@ body {
   font-style: normal;
   color: inherit;
   &:hover {
-    animation: rotationHover 0.6s infinite linear;
+    animation: rotation 1s infinite linear;
   }
 }
 
@@ -168,14 +168,5 @@ figure {
   }
   to {
     transform: rotate(359deg);
-  }
-}
-
-@keyframes rotationHover {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(719deg);
   }
 }

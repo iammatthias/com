@@ -1,4 +1,4 @@
-import Head from "next/head";
+import Script from "next/script";
 import "./reset.scss";
 import "./globals.scss";
 import "./typography.scss";
@@ -90,6 +90,10 @@ export default function RootLayout({
           {children}
         </main>
       </body>
+      <Script
+        src='https://analytics.umami.is/script.js'
+        data-website-id='e00518e8-b927-407a-bc4c-3ee75648f3bb'
+      />
     </html>
   );
 }
