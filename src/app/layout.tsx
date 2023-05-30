@@ -93,6 +93,7 @@ export default function RootLayout({
       <Script
         src='https://analytics.umami.is/script.js'
         data-website-id='e00518e8-b927-407a-bc4c-3ee75648f3bb'
+        data-do-not-track='true'
       />
     </html>
   );

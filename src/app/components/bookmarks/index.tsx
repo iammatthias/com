@@ -12,7 +12,7 @@ export default async function NotionPosts() {
   return (
     <section className={`${styles.bookmarks}`}>
       {_data?.map((bookmark: any) => (
-        <div key={bookmark.hash} className={`${styles.bookmark}`}>
+        <div key={bookmark.hash} className={`${styles.bookmark} break_all`}>
           <div className={`${styles.bookmark__meta}`}>
             <small>
               <Link href={`https://warpcast.com/${bookmark.username}`}>
