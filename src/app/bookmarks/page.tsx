@@ -1,9 +1,6 @@
 import Bookmarks from "@/app/components/bookmarks";
 import Link from "next/link";
 
-// revalidate every 20 min
-export const revalidate = 1200;
-
 export const metadata = {
   openGraph: {
     locale: "en_US",
