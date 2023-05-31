@@ -8,7 +8,7 @@ export default function ZoraEmbed({ address }: { address: string }) {
   return (
     <>
       <hr />
-      <h3>Collect this piece on Zora</h3>
+      <h4>Collect this piece on Zora</h4>
       <IframeResizer
         forwardRef={iframeRef}
         heightCalculationMethod='lowestElement'
