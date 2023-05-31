@@ -3,6 +3,7 @@ import { CustomMDX } from "@/app/lib/customMdx";
 import { getSinglePost, getAllPublished } from "@/app/lib/notion";
 import styles from "./page.module.scss";
 import Comments from "@/app/components/comments";
+import ZoraEmbed from "@/app/components/mdx/zora";
 
 // revalidate every 60 seconds
 export const revalidate = 60;
@@ -91,6 +92,10 @@ export default async function Post({ params }: Props) {
       </div>
 
       <CustomMDX source={post.markdown.parent} />
+
+      {post.metadata.tokenAddress && (
+        <ZoraEmbed address={`${post.metadata.tokenAddress}`} />
+      )}
 
       <Comments slug={post.metadata.slug} />
     </>

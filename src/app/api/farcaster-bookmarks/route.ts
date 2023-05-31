@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "edge";
+export const revalidate = 60;
 
 // Create a Supabase client
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
@@ -13,13 +14,7 @@ export async function GET() {
   try {
     // Fetch data from the API
     const response = await fetch(
-      "https://www.discove.xyz/api/feeds/iammatthias/bookmarks?p=1",
-      {
-        next: {
-          // 20 minutes, ~ when discove coves update
-          revalidate: 60 * 20,
-        },
-      }
+      "https://www.discove.xyz/api/feeds/iammatthias/bookmarks?p=1"
     );
     const data = await response.json();
 

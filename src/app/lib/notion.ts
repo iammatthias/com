@@ -87,8 +87,8 @@ const getPageMetaData = (post: any) => ({
   updated: post.last_edited_time,
   type: post.properties.Type.select.name,
   stage: post.properties.Stage.select.name,
-  tokenAddress: post.properties.TokenAddress.plain_text,
-  tokenId: post.properties.TokenID.number,
+  tokenAddress: post.properties.TokenAddress.rich_text[0]?.plain_text,
+  tokenId: post.properties.TokenID.rich_text[0]?.plain_text,
   slug: post.properties.Slug.formula.string,
 });
 

@@ -48,6 +48,12 @@ export default async function Home() {
           newTab={false}
         />
         <LinkItem
+          href='https://theguestbook.xyz/'
+          name='the guestbook'
+          handle='the guestbook'
+          newTab={true}
+        />
+        <LinkItem
           href='https://warpcast.com/iammatthias'
           name='farcaster'
           handle='@iammatthias'
@@ -66,12 +72,7 @@ export default async function Home() {
           handle='@iam'
           newTab={true}
         />
-        <LinkItem
-          href='https://theguestbook.xyz/'
-          name='the guestbook'
-          handle='the guestbook'
-          newTab={true}
-        />
+
         {/* <div className={`${styles.section__links__item} disabled`}>
           attn token
         </div> */}
