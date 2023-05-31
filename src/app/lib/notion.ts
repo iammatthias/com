@@ -83,7 +83,9 @@ const getPageMetaData = (post: any) => ({
   name: post.properties.Name.title[0].plain_text,
   tags: getTags(post.properties.Tags.multi_select),
   published: post.properties.Published.checkbox,
-  created: post.created_time,
+  created: post.properties.Created.date.start
+    ? post.properties.Created.date.start
+    : post.created_time,
   updated: post.last_edited_time,
   type: post.properties.Type.select.name,
   stage: post.properties.Stage.select.name,
