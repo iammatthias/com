@@ -44,7 +44,6 @@ export default async function rss(posts: any[]) {
     });
   });
 
-  fs.mkdirSync("./public/feed", { recursive: true });
   fs.writeFileSync("./public/feed/rss.xml", feed.rss2());
   fs.writeFileSync("./public/feed/atom.xml", feed.atom1());
   fs.writeFileSync("./public/feed/json.json", feed.json1());
