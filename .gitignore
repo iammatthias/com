@@ -35,4 +35,4 @@ yarn-error.log*
 next-env.d.ts
 
 # feeds
-public/feed
+public/feed/*
