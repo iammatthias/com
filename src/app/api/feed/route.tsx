@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
     feed.addItem({
       title: post.name,
       id: post.slug,
-      link: post.slug,
+      link: `${siteURL}/content/${post.slug}`,
       author: [
         {
           name: "Matthias Jordan",
