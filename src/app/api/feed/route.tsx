@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     description: "A digital garden of thoughts, ideas, and projects.",
     id: siteURL,
     link: siteURL,
-    image: `${siteURL}/logo.svg`,
+    image: `${siteURL}/api/og`,
     favicon: `${siteURL}/favicon.png`,
     copyright: `All rights reserved ${date.getFullYear()}, Matthias Jordan`,
     updated: date,
