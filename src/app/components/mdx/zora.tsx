@@ -14,7 +14,7 @@ export default function ZoraEmbed({ address }: { address: string }) {
         heightCalculationMethod='lowestElement'
         inPageLinks
         log
-        src={`https://zora.co/editions/${address}/frame?padding=20px&mediaPadding=20px&showDetails=false&theme=light&showMedia=false&showCollectors=false&showMintingUI=true`}
+        src={`https://zora.co/editions/${address}/frame?padding=20px&mediaPadding=20px&showDetails=true&theme=light&showMedia=false&showCollectors=false&showMintingUI=true`}
       />
     </>
   );
