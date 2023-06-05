@@ -5,7 +5,9 @@ import rss from "@/app/lib/feed";
 export default async function NotionPosts() {
   const posts = await getAllPublished();
 
-  await rss(posts);
+  setImmediate(async () => {
+    await rss(posts);
+  });
 
   return (
     <section className={`${styles.posts}`}>
