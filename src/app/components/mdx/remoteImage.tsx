@@ -21,7 +21,7 @@ export default function RemoteImage(props: any) {
     return <p>Error loading image</p>;
   }
 
-  const wsrv = `https://wsrv.nl/?w=600&url=${src}`;
+  const wsrv = `https://wsrv.nl/?w=1200&url=${src}`;
 
   if (data) {
     return (
