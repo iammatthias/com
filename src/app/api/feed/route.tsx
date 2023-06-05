@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { Feed } from "feed";
 import { getAllPublished } from "@/app/lib/notion";
 
+export const revalidate = 86400; // 24 hours
+
 export async function GET(req: NextRequest) {
   const siteURL = "https://iammatthias.com";
   const date = new Date();
