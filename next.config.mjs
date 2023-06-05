@@ -16,12 +16,17 @@ const nextConfig = {
     return [
       {
         source: "/rss/feed.xml",
-        destination: "/feed/rss.xml",
+        destination: "/api/rss",
         permanent: true,
       },
       {
         source: "/rss/feed.json",
-        destination: "/feed/json.json",
+        destination: "/api/json",
+        permanent: true,
+      },
+      {
+        source: "/rss/atom.xml",
+        destination: "/api/atom",
         permanent: true,
       },
       {

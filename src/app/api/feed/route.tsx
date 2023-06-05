@@ -52,22 +52,29 @@ export async function GET(req: NextRequest) {
 
   // Generate the correct feed type based on query parameter
   let output;
+  let contentType;
+
   switch (type) {
     case "rss":
       output = feed.rss2();
+      contentType = "application/rss+xml";
       break;
     case "json":
       output = feed.json1();
+      contentType = "application/json";
       break;
     case "atom":
       output = feed.atom1();
+      contentType = "application/atom+xml";
       break;
     default:
       output = feed.rss2();
+      contentType = "application/rss+xml";
       break;
   }
 
-  // Set content type header and return response
-  const headers = { "Content-Type": "text/xml" };
-  return NextResponse.rewrite(output, { headers });
+  const headers = { "Content-Type": contentType };
+
+  // Use new Response to send the response
+  return new Response(output, { headers });
 }
