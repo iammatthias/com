@@ -35,7 +35,6 @@ export async function GET(req: NextRequest) {
   });
 
   posts.forEach((post) => {
-    console.log(post);
     feed.addItem({
       title: post.name,
       id: post.slug,
