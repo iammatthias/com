@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Feed } from "feed";
 import { getAllPublished } from "@/app/lib/notion";
+import slugify from "slugify";
 
 export const revalidate = 86400; // 24 hours
 
@@ -34,10 +35,12 @@ export async function GET(req: NextRequest) {
   });
 
   posts.forEach((post) => {
+    console.log(post);
     feed.addItem({
       title: post.name,
       id: post.slug,
       link: `${siteURL}/content/${post.slug}`,
+      image: `${siteURL}/api/og?title=${slugify(post.name)}`,
       author: [
         {
           name: "Matthias Jordan",
@@ -45,7 +48,7 @@ export async function GET(req: NextRequest) {
           link: "https://iammatthias.com",
         },
       ],
-      date: new Date(post.published),
+      date: new Date(post.created),
     });
   });
 
