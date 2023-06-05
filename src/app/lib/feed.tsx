@@ -35,9 +35,9 @@ export default async function rss(posts: any[]) {
       link: post.slug,
       author: [
         {
-          name: "Jane Doe",
-          email: "janedoe@example.com",
-          link: "https://example.com/janedoe",
+          name: "Matthias Jordan",
+          email: "hey@iammatthias.com",
+          link: "https://iammatthias.com",
         },
       ],
       date: new Date(post.published),
