@@ -1,7 +1,8 @@
-import fs from "fs";
+import { NextRequest, NextResponse } from "next/server";
 import { Feed } from "feed";
+import { getAllPublished } from "@/app/lib/notion";
 
-export default async function rss(posts: any[]) {
+export async function GET(req: NextRequest) {
   const siteURL = "https://iammatthias.com";
   const date = new Date();
   const author = {
@@ -9,6 +10,8 @@ export default async function rss(posts: any[]) {
     email: "author@iammatthias.com",
     link: "https://iammatthias.com",
   };
+
+  const posts = await getAllPublished();
 
   const feed = new Feed({
     title: "I AM MATTHIAS",
@@ -44,10 +47,27 @@ export default async function rss(posts: any[]) {
     });
   });
 
-  fs.mkdirSync("./public/feed", { recursive: true });
-  fs.writeFileSync("./public/feed/rss.xml", feed.rss2());
-  fs.writeFileSync("./public/feed/atom.xml", feed.atom1());
-  fs.writeFileSync("./public/feed/json.json", feed.json1());
+  // Determine feed type from a query parameter
+  const type = req.nextUrl.searchParams.get("type");
 
-  return null;
+  // Generate the correct feed type based on query parameter
+  let output;
+  switch (type) {
+    case "rss":
+      output = feed.rss2();
+      break;
+    case "json":
+      output = feed.json1();
+      break;
+    case "atom":
+      output = feed.atom1();
+      break;
+    default:
+      output = feed.rss2();
+      break;
+  }
+
+  // Set content type header and return response
+  const headers = { "Content-Type": "text/xml" };
+  return NextResponse.rewrite(output, { headers });
 }
