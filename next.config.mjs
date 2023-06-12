@@ -7,7 +7,11 @@ const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   images: {
     dangerouslyAllowSVG: true,
-    domains: ["pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev", "wsrv.nl"],
+    domains: [
+      "pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev",
+      "wsrv.nl",
+      "i.imgur.com",
+    ],
   },
   experimental: {
     mdxRs: true,

@@ -23,13 +23,15 @@ export default function RemoteImage(props: any) {
 
   const wsrv = `https://wsrv.nl/?w=1200&url=${src}`;
 
+  const _src = src.includes(`imgur`) ? src : wsrv;
+
   if (data) {
     return (
       <Suspense>
         <NextImage
           loading='eager'
           priority={true}
-          src={wsrv}
+          src={_src}
           alt={alt ? alt : ``}
           width={data.width}
           height={data.height}
