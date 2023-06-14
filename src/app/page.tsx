@@ -47,12 +47,8 @@ export default async function Home() {
           handle='bookmarks'
           newTab={false}
         />
-        <LinkItem
-          href='https://theguestbook.xyz/'
-          name='the guestbook'
-          handle='the guestbook'
-          newTab={true}
-        />
+        <LinkItem href='https://read.cv/iam' name='read.cv' handle='@iam' />
+
         <LinkItem
           href='https://warpcast.com/iammatthias'
           name='farcaster'
@@ -64,14 +60,19 @@ export default async function Home() {
           handle='@iam.bsky.social'
           newTab={true}
         />
-        <LinkItem href='https://read.cv/iam' name='read.cv' handle='@iam' />
-        {/* https://gallery.so/iam */}
         <LinkItem
+          href='https://theguestbook.xyz/'
+          name='the guestbook'
+          handle='the guestbook'
+          newTab={true}
+        />
+
+        {/* <LinkItem
           href='https://gallery.so/iam'
           name='gallery.so'
           handle='@iam'
           newTab={true}
-        />
+        /> */}
 
         {/* <div className={`${styles.section__links__item} disabled`}>
           attn token
