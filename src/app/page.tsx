@@ -39,7 +39,7 @@ export default async function Home() {
       </p>
       <hr />
       {/* External Links */}
-      <h2>Online & Onchain</h2>
+      <h2>Online</h2>
       <nav className={styles.section__links}>
         <LinkItem
           href='/bookmarks'
