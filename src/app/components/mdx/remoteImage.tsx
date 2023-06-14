@@ -53,46 +53,21 @@ export default function RemoteImage(props: any) {
   if (data) {
     return (
       <Suspense>
-        {isSvg ? (
-          <div
-            style={{
-              position: "relative",
-              aspectRatio: "1 / 1",
-              overflow: "hidden",
-            }}>
-            <NextImage
-              loading='eager'
-              priority={true}
-              src={imageSrc || src}
-              alt={alt ? alt : ``}
-              width={data.width == 300 ? 1200 : data.width}
-              height={data.height == 150 ? 1200 : data.height}
-              style={{
-                maxWidth: "100%",
-                maxHeight: "100%",
-                objectFit: "cover",
-                objectPosition: "center center",
-              }}
-              unoptimized={true}
-            />
-          </div>
-        ) : (
-          <NextImage
-            loading='eager'
-            priority={true}
-            src={imageSrc || src}
-            alt={alt ? alt : ``}
-            width={data.width == 300 ? 900 : data.width}
-            height={data.height == 150 ? 900 : data.height}
-            style={{
-              objectFit: `contain`,
-              objectPosition: `center`,
-              height: `fit-content`,
-              width: `100%`,
-            }}
-            unoptimized={true}
-          />
-        )}
+        <NextImage
+          loading='eager'
+          priority={true}
+          src={imageSrc || src}
+          alt={alt ? alt : ``}
+          width={data.width == 300 ? 900 : data.width}
+          height={data.height == 150 ? 900 : data.height}
+          style={{
+            objectFit: `contain`,
+            objectPosition: `center`,
+            height: `fit-content`,
+            width: `100%`,
+          }}
+          unoptimized={true}
+        />
       </Suspense>
     );
   }
