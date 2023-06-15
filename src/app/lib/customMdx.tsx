@@ -3,6 +3,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import remarkImages from "remark-images";
 import remarkUnwrapImages from "remark-unwrap-images";
+import rehypePrism from "@mapbox/rehype-prism";
 import Link from "next/link";
 
 const Iframe = dynamic(() => import("@/app/components/mdx/iframe"), {
@@ -83,6 +84,7 @@ export function CustomMDX(originalProps: any) {
         options={{
           mdxOptions: {
             remarkPlugins: [remarkGfm, remarkImages, remarkUnwrapImages],
+            // rehypePlugins: [rehypePrism],
           },
         }}
       />

@@ -18,7 +18,7 @@
 
 .comment {
   padding-left: 1rem;
-  border-left: var(--border);
+  border-left: 1px solid rgb(var(--gold-rgb));
   display: flex;
   flex-direction: column;
   gap: 8px;

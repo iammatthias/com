@@ -10,11 +10,64 @@ import styles from "./comments.module.scss";
 import Link from "next/link";
 
 async function getCommentsByMerkleRoot(merkleRoot: string) {
-  // ... function code ...
+  const casts = await fetchMerkleRootCasts(merkleRoot);
+
+  if (!Array.isArray(casts)) {
+    return [];
+  }
+
+  const comments = await Promise.all(casts);
+
+  const sortedComments = comments.sort((a, b) => {
+    return b.body.publishedAt - a.body.publishedAt;
+  });
+
+  return sortedComments.map((comment) => {
+    const {
+      body: {
+        username,
+        publishedAt,
+        data: { text },
+      },
+      meta: { numReplyChildren },
+      merkleRoot,
+    } = comment;
+    return { merkleRoot, numReplyChildren, username, publishedAt, text };
+  });
 }
 
 async function getCommentData(slug: string) {
-  // ... function code ...
+  const topLevelCasts = await fetchTopLevelCasts(slug);
+  const topLevelComments = await Promise.all(topLevelCasts);
+
+  const comments = await Promise.all(
+    topLevelComments.map(async (comment) => {
+      const {
+        body: {
+          username,
+          publishedAt,
+          data: { text },
+        },
+        meta: { numReplyChildren },
+        merkleRoot,
+        uri,
+      } = comment;
+
+      const replyComments = await getCommentsByMerkleRoot(merkleRoot);
+
+      return {
+        merkleRoot,
+        uri,
+        numReplyChildren,
+        username,
+        publishedAt,
+        text,
+        replyComments,
+      };
+    })
+  );
+
+  return comments;
 }
 
 const CommentTopRow = memo(function CommentTopRow({
@@ -44,14 +97,13 @@ CommentLink.displayName = "CommentLink";
 
 const CommentBottomRow = memo(function CommentBottomRow({
   merkleRoot,
-  uri,
+  username,
 }: any) {
   return (
     <div className={`${styles.commentBottomRow}`}>
-      <CommentLink type='Farcaster' href={uri} />
       <CommentLink
-        type='Discove'
-        href={`https://www.discove.xyz/casts/${merkleRoot}`}
+        type='Warpcast'
+        href={`https://warpcast.com/${username}/${merkleRoot}`}
       />
     </div>
   );
@@ -61,7 +113,6 @@ CommentBottomRow.displayName = "CommentBottomRow";
 const CommentBody = memo(function CommentBody(comment: any) {
   const {
     merkleRoot,
-    uri,
     username,
     publishedAt,
     text,
@@ -73,7 +124,7 @@ const CommentBody = memo(function CommentBody(comment: any) {
     <>
       <CommentTopRow username={username} publishedAt={publishedAt} />
       <AutoLink text={text} />
-      <CommentBottomRow merkleRoot={merkleRoot} uri={uri} />
+      <CommentBottomRow merkleRoot={merkleRoot} username={username} />
       {numReplyChildren > 0 && <CommentDescendants comments={replyComments} />}
     </>
   );
@@ -114,14 +165,14 @@ export default function Comments({ slug }: Props) {
       <div className={`${styles.comments}`}>
         <hr />
         <p>
-          Comments are displayed when relevant content is shared on{" "}
+          Comments are displayed when content is shared on the{" "}
           <Link
             href='https://www.farcaster.xyz/'
             target='_blank'
             rel='noreferrer'>
             Farcaster
-          </Link>
-          .
+          </Link>{" "}
+          protocol .
         </p>
         <ul className={`${styles.commentList}`}>
           {comments.map((comment: any) => (

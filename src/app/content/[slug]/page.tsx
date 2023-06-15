@@ -97,7 +97,7 @@ export default async function Post({ params }: Props) {
         <ZoraEmbed address={`${post.metadata.tokenAddress}`} />
       )}
 
-      <Comments slug={post.metadata.slug} />
+      <Comments slug={params.slug} />
     </>
   );
 }
