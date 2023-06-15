@@ -172,7 +172,7 @@ export default function Comments({ slug }: Props) {
             rel='noreferrer'>
             Farcaster
           </Link>{" "}
-          protocol .
+          protocol.
         </p>
         <ul className={`${styles.commentList}`}>
           {comments.map((comment: any) => (
