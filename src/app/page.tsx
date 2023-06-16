@@ -81,7 +81,6 @@ export default async function Home() {
       <hr />
       {/* Content */}
 
-      {/* @ts-expect-error */}
       <NotionPosts />
     </>
   );
