@@ -44,7 +44,6 @@ export default async function BookmarksPage() {
       </p>
       <hr />
 
-      {/* @ts-expect-error */}
       <Bookmarks />
     </>
   );
