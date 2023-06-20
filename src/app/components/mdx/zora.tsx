@@ -8,13 +8,12 @@ export default function ZoraEmbed({ address }: { address: string }) {
   return (
     <>
       <hr />
-      <h4>Collect this piece on Zora</h4>
       <IframeResizer
         forwardRef={iframeRef}
         heightCalculationMethod='lowestElement'
         inPageLinks
         log
-        src={`https://zora.co/editions/${address}/frame?padding=20px&mediaPadding=20px&showDetails=true&theme=light&showMedia=false&showCollectors=false&showMintingUI=true`}
+        src={`https://zora.co/editions/${address}/frame?padding=20px&mediaPadding=20px&showDetails=true&theme=light&showMedia=true&showCollectors=false&showMintingUI=true`}
       />
     </>
   );
