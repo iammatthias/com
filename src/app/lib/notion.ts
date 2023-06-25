@@ -112,6 +112,21 @@ export const getSinglePost = async (slug: string) => {
   return { page, metadata, markdown: mdString };
 };
 
+export const getSingleMedia = async (database_id: string, slug: string) => {
+  const _database_id = database_id.replace(/-/g, "");
+  const _slug = slug.replace(/-/g, "");
+  const response = await notion.databases.query({
+    database_id: _database_id,
+    filter: { property: "Slug", formula: { string: { equals: _slug } } },
+  });
+
+  const page = response.results[0];
+  const mdblocks = await n2m.pageToMarkdown(page.id);
+  const mdString = n2m.toMarkdownString(mdblocks);
+
+  return { page, markdown: mdString };
+};
+
 // Initialize NotionToMarkdown
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
@@ -133,6 +148,8 @@ n2m.setCustomTransformer("image", async (block: any) => {
   const key = extractKey(imageUrl);
   await uploadImageToR2(imageUrl, key);
 
+  // console.log(block);
+
   return `<Image src='https://pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev/${key}' />`;
 });
 
@@ -152,11 +169,13 @@ n2m.setCustomTransformer("child_database", async (block: any) => {
   if (!block.child_database.title.includes("Gallery")) return "<></>";
 
   const gallery = await Promise.all(
-    metadata.results.map(async (item) => {
+    metadata.results.map(async (item: any) => {
       const mdblocks = await n2m.pageToMarkdown(item.id);
-      return mdblocks[0].parent;
+
+      return `<a href="/media/${item.parent.database_id}/${item.id}" target="_blank">${mdblocks[0].parent}</a>`;
     })
   );
 
   return `<div className="max_width_unset"><Masonry items={[${gallery}]} /></div>`;
+  // return `<div className="max_width_unset">${gallery}</div>`;
 });

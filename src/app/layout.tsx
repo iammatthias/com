@@ -84,7 +84,7 @@ export default function RootLayout({
             ☾ ☼ ☽
           </Link>
 
-          <div>
+          <div className={`localMeta`}>
             <CurrentTime /> <CurrentDate /> <CurrentWeather />
           </div>
           {children}

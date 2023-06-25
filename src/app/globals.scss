@@ -59,6 +59,7 @@ body {
   font-family: var(--font-serif);
   font-size: 16px;
   line-height: 1.618;
+  min-height: 100vh;
   &:after {
     content: "";
     position: fixed;
@@ -83,7 +84,6 @@ body {
   align-items: flex-start;
   gap: 2rem;
   padding: 4rem 4rem 6rem;
-  min-height: 100vh;
 }
 
 .main > * {
@@ -107,8 +107,14 @@ body {
   width: 100%;
   align-items: center;
 }
+.localMeta {
+  border: 1px solid rgb(var(--gold-rgb));
+  border-radius: var(--border-radius);
+  padding: 8px 12px;
+}
 
 // Helpers
+
 .max_width_unset {
   max-width: unset;
 }
@@ -121,7 +127,6 @@ body {
 iframe {
   border: none;
   width: 100%;
-  height: 100%;
 }
 
 figure {

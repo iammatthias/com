@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import NextImage from "next/image";
 import { useImageSize } from "react-image-size";
 
@@ -52,23 +52,20 @@ export default function RemoteImage(props: any) {
 
   if (data) {
     return (
-      <Suspense>
-        <NextImage
-          loading='eager'
-          priority={true}
-          src={imageSrc || src}
-          alt={alt ? alt : ``}
-          width={data.width == 300 ? 900 : data.width}
-          height={data.height == 150 ? 900 : data.height}
-          style={{
-            objectFit: `contain`,
-            objectPosition: `center`,
-            height: `fit-content`,
-            width: `100%`,
-          }}
-          // unoptimized={true}
-        />
-      </Suspense>
+      <NextImage
+        loading='eager'
+        priority={true}
+        src={imageSrc || src}
+        alt={alt ? alt : ``}
+        width={data.width == 300 ? 900 : data.width}
+        height={data.height == 150 ? 900 : data.height}
+        style={{
+          objectFit: `contain`,
+          objectPosition: `center`,
+          height: `fit-content`,
+          width: `100%`,
+        }}
+      />
     );
   }
   return null;
