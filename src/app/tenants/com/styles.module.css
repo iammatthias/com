@@ -1,0 +1,14 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  gap: 32px;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+.section p {
+  line-height: 1.5;
+  max-width: 600px;
+}

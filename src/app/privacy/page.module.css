@@ -1,0 +1,27 @@
+.main {
+  width: 100vw;
+  overflow: scroll;
+  height: 100vh;
+  scroll-snap-points-y: repeat(100vh);
+  scroll-snap-type: y;
+  padding: 64px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+.section > * {
+  max-width: 600px;
+}
+
+@media screen and (max-width: 600px) {
+  .main {
+    padding: 32px;
+  }
+}

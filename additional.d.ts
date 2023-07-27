@@ -1,6 +1,3 @@
-declare module "markdown-link-extractor";
-declare module "@mapbox/rehype-prism";
+declare module "uuid";
 
-interface Window {
-  umami: any;
-}
+declare module "lodash.debounce";

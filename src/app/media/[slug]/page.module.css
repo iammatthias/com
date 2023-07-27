@@ -1,0 +1,36 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  position: relative;
+  padding: 32px;
+}
+
+.main {
+  width: 100vw;
+  overflow: scroll;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.main > * {
+  line-height: 1.5;
+  text-align: left;
+  max-width: 800px;
+  text-decoration: none;
+}
+
+.main img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+@media screen and (max-width: 600px) {
+  .section {
+    padding: 16px;
+  }
+}

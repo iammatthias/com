@@ -1,0 +1,68 @@
+.contact__form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 600px;
+  padding: 12px;
+  background: var(--background));
+  box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+  border-radius: 24px;
+}
+
+.contact__form div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact__form label {
+  display: none;
+}
+
+.contact__form input,
+.contact__form textarea,
+.contact__form button {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 24px;
+  background: rgb(var(--pure-white-rgb));
+  font-family: "Necto Mono";
+}
+
+.contact__form textarea {
+  min-height: 100px;
+  resize: none;
+}
+
+.contact__form button {
+  color: var(--foreground);
+  background: var(--orange);
+  width: calc(100% - 32px);
+  margin: 0 16px;
+  padding: 16px;
+  min-width: 250px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.contact__form__optin {
+  flex-direction: row !important;
+}
+
+.contact__form__optin label {
+  font-size: 12px;
+  display: block;
+}
+
+.contact__form__optin input {
+  width: auto;
+  margin: 0 16px;
+}
+
+@media screen and (max-width: 600px) {
+  .contact__form {
+    padding: 16px;
+  }
+}
