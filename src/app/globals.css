@@ -59,6 +59,15 @@ body {
 
 body {
   padding: 32px;
+  overflow: scroll;
+  height: 100vh;
+  scroll-snap-points-y: repeat(100vh);
+  scroll-snap-type: y;
+  scroll-behavior: smooth;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 a {

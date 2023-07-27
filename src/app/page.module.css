@@ -1,8 +1,0 @@
-.main {
-  scroll-snap-points-y: repeat(100vh);
-  scroll-snap-type: y;
-  scroll-behavior: smooth;
-  /* display: flex;
-  flex-direction: column;
-  gap: 32px; */
-}

@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import styles from "./page.module.css";
+
 import Art from "./tenants/art";
 import Com from "./tenants/com";
 import Posts from "./tenants/posts";
@@ -11,13 +11,13 @@ export default function Home() {
   const host = headersList.get("host");
 
   return (
-    <main className={styles.main}>
+    <>
       {/* Show if on localhost or iammatthias.com */}
       {(host == "localhost:3000" || host == "iammatthias.com") && <Com />}
       {/* Show if on localhost or iammatthias.xyz */}
       {(host == "localhost:3000" || host == "iammatthias.xyz") && <Posts />}
       {/* Show if on localhost or iammatthias.art */}
       {(host == "localhost:3000" || host == "iammatthias.art") && <Art />}
-    </main>
+    </>
   );
 }
