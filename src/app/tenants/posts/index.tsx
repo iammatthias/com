@@ -46,35 +46,34 @@ export default async function Posts() {
           <Link href='https://iammatthias.art'>check out some of my art</Link>.
         </p>
       </section>
-      <Suspense fallback={<article>Loading...</article>}>
-        {allPosts.map((post: any) => (
-          <article className={styles.article} key={post.slug}>
-            <Link href={`/post/${post.slug}`}>
-              <>
-                <Squiggle />
-                <h1>{post.name}</h1>
-                <div className={styles.article__dates}>
-                  <p className={styles.date}>
-                    This post was published {post.created}
-                  </p>
-                  {post.updated !== post.created && (
-                    <p className={styles.date}>& last updated {post.updated}</p>
-                  )}
-                </div>
-                {post.tags && (
-                  <div className={styles.pill_box}>
-                    {post.tags.map((item: string, i: any) => (
-                      <span className={styles.pill} key={i}>
-                        {item}
-                      </span>
-                    ))}
-                  </div>
+
+      {allPosts.map((post: any) => (
+        <article className={styles.article} key={post.slug}>
+          <Link href={`/post/${post.slug}`}>
+            <>
+              <Squiggle />
+              <h1>{post.name}</h1>
+              <div className={styles.article__dates}>
+                <p className={styles.date}>
+                  This post was published {post.created}
+                </p>
+                {post.updated !== post.created && (
+                  <p className={styles.date}>& last updated {post.updated}</p>
                 )}
-              </>
-            </Link>
-          </article>
-        ))}
-      </Suspense>
+              </div>
+              {post.tags && (
+                <div className={styles.pill_box}>
+                  {post.tags.map((item: string, i: any) => (
+                    <span className={styles.pill} key={i}>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </>
+          </Link>
+        </article>
+      ))}
     </>
   );
 }
