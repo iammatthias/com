@@ -50,7 +50,6 @@ body {
   height: 100vh;
   overflow-x: hidden;
   overflow-y: hidden;
-  scroll-behavior: smooth;
   /* background: rgb(var(--background-rgb));
   color: rgb(var(--foreground-rgb)); */
 

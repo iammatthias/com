@@ -44,5 +44,5 @@ export default function RouteUpdater({ children }: RouteUpdaterProps) {
     };
   }, [children]);
 
-  return <div>{children}</div>;
+  return <>{children}</>;
 }
