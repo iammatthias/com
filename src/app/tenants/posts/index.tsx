@@ -46,10 +46,8 @@ export default async function Posts() {
           <Link href='https://iammatthias.art'>check out some of my art</Link>.
         </p>
       </section>
-      {allPosts.map((post: any) => (
-        <Suspense fallback={<article>Loading...</article>}>
-          {/* <Post slug={post.slug} key={post.id} /> */}
-
+      <Suspense fallback={<article>Loading...</article>}>
+        {allPosts.map((post: any) => (
           <article className={styles.article} key={post.slug}>
             <Link href={`/post/${post.slug}`}>
               <>
@@ -75,8 +73,8 @@ export default async function Posts() {
               </>
             </Link>
           </article>
-        </Suspense>
-      ))}
+        ))}
+      </Suspense>
     </>
   );
 }
