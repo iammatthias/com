@@ -72,7 +72,7 @@
 }
 
 @media screen and (max-width: 600px) {
-  .media__link {
+  .art {
     text-decoration: none;
     display: grid;
     grid-template-columns: 1fr;
