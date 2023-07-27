@@ -24,33 +24,29 @@ h2,
 h3,
 h4,
 h5 {
-  font-weight: 400;
+  font-weight: 800;
   line-height: 1.3;
 }
 
 h1 {
-  font-size: 4.209rem;
+  margin-top: 0;
+  font-size: 2.488rem;
 }
 
 h2 {
-  font-size: 3.157rem;
+  font-size: 2.074rem;
 }
 
 h3 {
-  font-size: 2.369rem;
+  font-size: 1.728rem;
 }
 
 h4 {
-  font-size: 1.777rem;
+  font-size: 1.44rem;
 }
 
 h5 {
-  font-size: 1.333rem;
-}
-
-small,
-.text_small {
-  font-size: 0.75rem;
+  font-size: 1.2rem;
 }
 
 ul {
