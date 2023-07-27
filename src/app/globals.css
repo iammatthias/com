@@ -57,6 +57,10 @@ body {
   line-height: 1.5;
 }
 
+body {
+  padding: 32px;
+}
+
 a {
   color: var(--orange);
   text-decoration: underline wavy var(--orange);
@@ -65,5 +69,11 @@ a {
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  body {
+    padding: 16px;
   }
 }

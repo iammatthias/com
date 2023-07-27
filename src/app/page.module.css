@@ -1,14 +1,8 @@
 .main {
-  width: 100vw;
-  overflow: scroll;
-  height: 100vh;
   scroll-snap-points-y: repeat(100vh);
   scroll-snap-type: y;
   scroll-behavior: smooth;
-}
-
-@media screen and (max-width: 600px) {
-  .main {
-    padding: 32px;
-  }
+  /* display: flex;
+  flex-direction: column;
+  gap: 32px; */
 }

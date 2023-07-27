@@ -6,14 +6,10 @@
   width: 100%;
   position: relative;
   scroll-snap-align: start;
-  padding: 32px;
 }
 
-.section *,
-.article * {
-  font-size: 18px;
-  line-height: 1.5;
-  text-align: left;
+.section > *,
+.article > * {
   max-width: 800px;
 }
 
@@ -45,13 +41,4 @@
   background: rgb(var(--background-rgb));
   border: 1px solid var(--orange);
   width: fit-content;
-}
-
-@media screen and (max-width: 600px) {
-  .section {
-    height: calc(100vh - 64px);
-  }
-  .section p {
-    font-size: 24px;
-  }
 }

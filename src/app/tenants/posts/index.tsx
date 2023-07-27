@@ -55,11 +55,15 @@ export default async function Posts() {
                 <h1>{post.name}</h1>
                 <div className={styles.article__dates}>
                   <p className={styles.date}>
-                    This post was published {post.created}
+                    This post was published{" "}
+                    {new Date(post.created)
+                      .toLocaleDateString("sv-SE")
+                      .replace(/-/g, "/")}{" "}
+                    {post.updated !== post.created &&
+                      `& last updated ${new Date(post.updated)
+                        .toLocaleDateString("sv-SE")
+                        .replace(/-/g, "/")}`}
                   </p>
-                  {post.updated !== post.created && (
-                    <p className={styles.date}>& last updated {post.updated}</p>
-                  )}
                 </div>
                 {post.tags && (
                   <div className={styles.pill_box}>

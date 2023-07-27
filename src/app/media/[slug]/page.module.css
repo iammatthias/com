@@ -4,7 +4,6 @@
   gap: 24px;
   width: 100%;
   position: relative;
-  padding: 32px;
 }
 
 .main {
@@ -27,10 +26,4 @@
   width: 100%;
   height: auto;
   object-fit: contain;
-}
-
-@media screen and (max-width: 600px) {
-  .section {
-    padding: 16px;
-  }
 }

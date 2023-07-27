@@ -4,7 +4,6 @@
   gap: 24px;
   width: 100%;
   position: relative;
-  padding: 32px;
 }
 
 .main,
@@ -46,10 +45,4 @@
   border: 1px solid var(--orange);
   border-radius: 32px;
   padding: 4px 8px;
-}
-
-@media screen and (max-width: 600px) {
-  .main {
-    padding: 32px;
-  }
 }
