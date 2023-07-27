@@ -47,7 +47,9 @@
 html,
 body {
   max-width: 100vw;
+  height: 100vh;
   overflow-x: hidden;
+  overflow-y: hidden;
   scroll-behavior: smooth;
   /* background: rgb(var(--background-rgb));
   color: rgb(var(--foreground-rgb)); */
@@ -58,7 +60,6 @@ body {
 }
 
 body {
-  padding: 32px;
   overflow: scroll;
   height: 100vh;
   scroll-snap-points-y: repeat(100vh);
@@ -68,6 +69,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+body > section,
+body > article {
+  padding: 32px;
 }
 
 a {
@@ -82,7 +88,12 @@ a {
 }
 
 @media screen and (max-width: 600px) {
-  body {
+  /* body {
+    overflow: unset;
+  } */
+
+  body > section,
+  body > article {
     padding: 16px;
   }
 }
