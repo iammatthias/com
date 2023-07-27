@@ -14,7 +14,7 @@ export default async function Media({ params }: Props) {
   const record = (await base("Art").find(params.slug)) as any;
 
   const media = record.fields.Media.map((media: any, index: number) => (
-    <MediaComponent media={media} record={record} index={index} />
+    <MediaComponent media={media} record={record} index={index} key={index} />
   ));
 
   return (

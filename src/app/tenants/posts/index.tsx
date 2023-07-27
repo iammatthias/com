@@ -22,7 +22,7 @@ export default async function Posts() {
     <>
       <section className={styles.section}>
         <MoonSunMoon />
-        <p>Hi, I am Matthias — here are some things I've written.</p>
+        <p>Hi, I am Matthias — here are some things I&apos;ve written.</p>
 
         <p>
           There is this sense that your presence on the web needs to be
@@ -30,13 +30,14 @@ export default async function Posts() {
         </p>
         <p>
           This is an attempt at getting away from that. An open-ended collection
-          of thoughts, ideas, and things I've worked on, created, or found
+          of thoughts, ideas, and things I&apos;ve worked on, created, or found
           interesting.
         </p>
 
         <p>
-          While I hope you enjoy it, these thoughts are my own. They'll grow and
-          shift over time. Some may take root. Others might be pruned away.
+          While I hope you enjoy it, these thoughts are my own. They&apos;ll
+          grow and shift over time. Some may take root. Others might be pruned
+          away.
         </p>
 
         <p>
@@ -49,7 +50,7 @@ export default async function Posts() {
         <Suspense fallback={<article>Loading...</article>}>
           {/* <Post slug={post.slug} key={post.id} /> */}
 
-          <article className={styles.article}>
+          <article className={styles.article} key={post.slug}>
             <Link href={`/post/${post.slug}`}>
               <>
                 <Squiggle />

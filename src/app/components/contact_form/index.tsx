@@ -109,7 +109,7 @@ export default function ContactForm({}: ContactFormProps) {
         onSubmit={handleSubmit}
         className={styles.contact__form}>
         {submitted ? (
-          <p>Thank you! We'll be in touch.</p>
+          <p>Thank you! We&apos;ll be in touch.</p>
         ) : (
           <>
             <div>
