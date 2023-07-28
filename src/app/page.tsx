@@ -10,14 +10,43 @@ export default function Home() {
   const headersList = headers();
   const host = headersList.get("host");
 
-  return (
-    <>
-      {/* Show if on localhost or iammatthias.com */}
-      {(host == "localhost:3000" || host == "iammatthias.com") && <Com />}
-      {/* Show if on localhost or iammatthias.xyz */}
-      {(host == "localhost:3000" || host == "iammatthias.xyz") && <Posts />}
-      {/* Show if on localhost or iammatthias.art */}
-      {(host == "localhost:3000" || host == "iammatthias.art") && <Art />}
-    </>
-  );
+  if (!host) {
+    return <p>loading</p>;
+  }
+
+  if (host == "localhost:3000") {
+    return (
+      <>
+        <Com />
+        <Posts />
+        <Art />
+      </>
+    );
+  }
+
+  if (host == "iammatthias.com") {
+    return (
+      <>
+        <Com />
+      </>
+    );
+  }
+
+  if (host == "iammatthias.xyz") {
+    return (
+      <>
+        <Posts />
+      </>
+    );
+  }
+
+  if (host == "iammatthias.art") {
+    return (
+      <>
+        <Art />
+      </>
+    );
+  }
+
+  return <p>loading</p>;
 }

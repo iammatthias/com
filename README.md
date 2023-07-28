@@ -1,34 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+   ___   ___                              
+      / /                                 
+     / /           ___        _   __      
+    / /          //   ) )   // ) )  ) )   
+   / /          //   / /   // / /  / /    
+__/ /___       ((___( (   // / /  / /     
+                                                                                      
+                                                                                      
+    /|    //| |                                                                       
+   //|   // | |     ___     __  ___  __  ___    / __       ( )      ___        ___    
+  // |  //  | |   //   ) )   / /      / /      //   ) )   / /     //   ) )   ((   ) ) 
+ //  | //   | |  //   / /   / /      / /      //   / /   / /     //   / /     \ \     
+//   |//    | | ((___( (   / /      / /      //   / /   / /     ((___( (   //   ) )   
 
-## Getting Started
 
-First, run the development server:
+### hi
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+The current iteration of my personal website is a multi-tenant experiment. 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+One code base, one deployment, multiple websites with unique content. 
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- iammatthias.com
+- iammatthias.xyz
+- iammatthias.art
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+The beauty of this system is that I can add new `tenants` at any point. Specific endpoints tied to specific domains for specific content.
 
-## Learn More
+It is rough around the edges, but perfectly serviceable for my needs at the moment. 
 
-To learn more about Next.js, take a look at the following resources:
+### how it works
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+We are using NextJS and the App directory. Within our root `page.tsx` we are checking the `host` header and rendering the appropriate tenant dynamically. This adds a slight delay to the initial load, but in practice it is not noticeable due to caching. Downstream data fetching is handled within `<Suspense />`. 
