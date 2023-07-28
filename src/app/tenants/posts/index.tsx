@@ -1,10 +1,10 @@
 import styles from "./styles.module.css";
 
 import Link from "next/link";
-import MoonSunMoon from "@/app/components/moon_sun_moon";
 import { getObsidianEntries } from "@/app/lib/github";
 import Squiggle from "@/app/components/squiggle";
 import { Suspense } from "react";
+import MoonSunMoon from "@/app/components/moon_sun_moon";
 
 export default async function Posts() {
   let allPosts = await getObsidianEntries();
@@ -21,7 +21,9 @@ export default async function Posts() {
   return (
     <>
       <section className={styles.section}>
-        <MoonSunMoon />
+        <Link href='/'>
+          <MoonSunMoon />
+        </Link>
         <p>Hi, I am Matthias — here are some things I&apos;ve written.</p>
 
         <p>

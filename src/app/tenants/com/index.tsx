@@ -1,12 +1,15 @@
 import styles from "./styles.module.css";
-import MoonSunMoon from "../../components/moon_sun_moon";
 import ContactForm from "../../components/contact_form";
+import MoonSunMoon from "@/app/components/moon_sun_moon";
+import Link from "next/link";
 
 export default async function Com() {
   return (
     <>
       <section className={styles.section}>
-        <MoonSunMoon />
+        <Link href='/'>
+          <MoonSunMoon />
+        </Link>
         <p>
           Hi, I am Matthias — a growth technologist with a focus on the
           practical application of AI and LLMs for novel marketing operations
