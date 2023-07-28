@@ -5,19 +5,9 @@ import { getObsidianEntries } from "@/app/lib/github";
 import Squiggle from "@/app/components/squiggle";
 import { Suspense } from "react";
 import MoonSunMoon from "@/app/components/moon_sun_moon";
+import AllPostsList from "@/app/components/all_posts_list";
 
 export default async function Posts() {
-  let allPosts = await getObsidianEntries();
-
-  allPosts = allPosts.reverse();
-
-  // if in a dev enviroment show all posts
-  // if in a prod enviroment show only public posts
-
-  if (process.env.NODE_ENV === "production") {
-    allPosts = allPosts.filter((post: any) => post.public === true);
-  }
-
   return (
     <>
       <section className={styles.section}>
@@ -49,37 +39,7 @@ export default async function Posts() {
         </p>
       </section>
       <Suspense fallback={<article>Loading...</article>}>
-        {allPosts.map((post: any) => (
-          <article className={styles.article} key={post.slug}>
-            <Link href={`/post/${post.slug}`}>
-              <>
-                <Squiggle />
-                <h1>{post.name}</h1>
-                <div className={styles.article__dates}>
-                  <p className={styles.date}>
-                    This post was published{" "}
-                    {new Date(post.created)
-                      .toLocaleDateString("sv-SE")
-                      .replace(/-/g, "/")}{" "}
-                    {post.updated !== post.created &&
-                      `& last updated ${new Date(post.updated)
-                        .toLocaleDateString("sv-SE")
-                        .replace(/-/g, "/")}`}
-                  </p>
-                </div>
-                {post.tags && (
-                  <div className={styles.pill_box}>
-                    {post.tags.map((item: string, i: any) => (
-                      <span className={styles.pill} key={i}>
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </>
-            </Link>
-          </article>
-        ))}
+        <AllPostsList />
       </Suspense>
     </>
   );

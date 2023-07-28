@@ -8,37 +8,6 @@
   scroll-snap-align: start;
 }
 
-.section > *,
-.article > * {
+.section > * {
   max-width: 800px;
-}
-
-.article * {
-  text-decoration: none;
-  color: var(--foreground);
-}
-
-.article__dates,
-.pill_box {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 16px;
-}
-
-.pill,
-.date {
-  font-size: 12px;
-}
-
-.pill {
-  text-align: center;
-  min-width: 48px;
-  padding: 4px 8px;
-  border-radius: 24px;
-  background: rgb(var(--background-rgb));
-  border: 1px solid var(--orange);
-  width: fit-content;
 }

@@ -6,7 +6,7 @@
   gap: 48px;
   width: 100%;
   min-height: 100vh;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   position: relative;
 }
 
