@@ -5,6 +5,7 @@
   width: 100%;
   min-height: 100vh;
   position: relative;
+  scroll-snap-align: start;
 }
 
 .section p {
