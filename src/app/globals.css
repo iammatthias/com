@@ -46,8 +46,9 @@
 
 html,
 body {
-  max-width: 100vw;
-  height: 100vh;
+  /* max-width: 100vw;
+  height: 100vh; */
+  height: fit-content;
   overflow-x: hidden;
   overflow-y: hidden;
   /* background: rgb(var(--background-rgb));
