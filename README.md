@@ -30,4 +30,4 @@ It is rough around the edges, but perfectly serviceable for my needs at the mome
 
 ### how it works
 
-We are using NextJS and the App directory. Within our root `page.tsx` we are checking the `host` header and rendering the appropriate tenant dynamically. This adds a slight delay to the initial load, but in practice it is not noticeable due to caching. Downstream data fetching is handled within `<Suspense />`.
+Within our root `page.tsx` we are checking the `host` header and rendering the appropriate tenant dynamically. This adds a slight delay to the initial load, but in practice it is not noticeable due to caching. Downstream data fetching is handled within `<Suspense />`.

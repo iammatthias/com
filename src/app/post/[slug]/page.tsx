@@ -21,12 +21,18 @@ export default async function Post({ params }: Props) {
       </Link>
       <main className={styles.main}>
         <h1>{post.name}</h1>
-        <div className={styles.article__dates}>
-          <p className={styles.date}>This post was published {post.created}</p>
-          {post.updated !== post.created && (
-            <p className={styles.date}>& last updated {post.updated}</p>
-          )}
-        </div>
+
+        <p className={styles.date}>
+          This post was published{" "}
+          {new Date(post.created)
+            .toLocaleDateString("sv-SE")
+            .replace(/-/g, "/")}{" "}
+          {post.updated !== post.created &&
+            `& last updated ${new Date(post.updated)
+              .toLocaleDateString("sv-SE")
+              .replace(/-/g, "/")}`}
+        </p>
+
         {/* {post.tokenAddress && (
           <p>
             {post.tokenAddress} / {post.tokenId}

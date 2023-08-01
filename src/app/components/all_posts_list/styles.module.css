@@ -16,7 +16,6 @@
   color: var(--foreground);
 }
 
-.section__dates,
 .pill_box {
   display: flex;
   flex-direction: row;

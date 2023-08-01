@@ -21,18 +21,18 @@ export default async function AllPostsList() {
         <>
           <Squiggle />
           <h1>{post.name}</h1>
-          <div className={styles.section__dates}>
-            <p className={styles.date}>
-              This post was published{" "}
-              {new Date(post.created)
+
+          <p className={styles.date}>
+            This post was published{" "}
+            {new Date(post.created)
+              .toLocaleDateString("sv-SE")
+              .replace(/-/g, "/")}{" "}
+            {post.updated !== post.created &&
+              `& last updated ${new Date(post.updated)
                 .toLocaleDateString("sv-SE")
-                .replace(/-/g, "/")}{" "}
-              {post.updated !== post.created &&
-                `& last updated ${new Date(post.updated)
-                  .toLocaleDateString("sv-SE")
-                  .replace(/-/g, "/")}`}
-            </p>
-          </div>
+                .replace(/-/g, "/")}`}
+          </p>
+
           {post.tags && (
             <div className={styles.pill_box}>
               {post.tags.map((item: string, i: any) => (

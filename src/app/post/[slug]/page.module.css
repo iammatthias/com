@@ -25,7 +25,6 @@
   text-decoration: underline wavy var(--orange);
 }
 
-.article__dates,
 .pill_box {
   display: flex;
   flex-direction: row;
