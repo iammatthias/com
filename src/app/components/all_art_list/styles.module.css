@@ -85,6 +85,6 @@
     width: 100%;
   }
   .art img {
-    max-height: 60vh;
+    max-height: unset;
   }
 }
