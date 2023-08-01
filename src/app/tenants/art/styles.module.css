@@ -13,3 +13,9 @@
 .section p {
   text-align: center;
 }
+
+@media screen and (max-width: 600px) {
+  .section {
+    padding-bottom: 96px;
+  }
+}

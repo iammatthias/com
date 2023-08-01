@@ -16,12 +16,12 @@ export default async function AllPostsList() {
   }
 
   return allPosts.map((post: any) => (
-    <article className={styles.article} key={post.slug}>
+    <section className={styles.section} key={post.slug}>
       <Link href={`/post/${post.slug}`}>
         <>
           <Squiggle />
           <h1>{post.name}</h1>
-          <div className={styles.article__dates}>
+          <div className={styles.section__dates}>
             <p className={styles.date}>
               This post was published{" "}
               {new Date(post.created)
@@ -44,6 +44,6 @@ export default async function AllPostsList() {
           )}
         </>
       </Link>
-    </article>
+    </section>
   ));
 }

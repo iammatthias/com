@@ -1,4 +1,4 @@
-.article > a {
+.section > a {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -7,16 +7,16 @@
   scroll-snap-align: start;
 }
 
-.article > * {
-  max-width: 800px;
+.section > * {
+  max-width: 600px;
 }
 
-.article * {
+.section * {
   text-decoration: none;
   color: var(--foreground);
 }
 
-.article__dates,
+.section__dates,
 .pill_box {
   display: flex;
   flex-direction: row;
