@@ -33,13 +33,13 @@ export default async function Com() {
           <b>
             <i>Surf Air</i>
           </b>
-          , where I've focused on leading strategic transitions and fine-tuning
-          systems.
+          , where I&apos;ve focused on leading strategic transitions and
+          fine-tuning systems.
         </p>
 
         <p>
           In a past life I was a photographer, specializing in weddings and real
-          estate. Even today, you'll often find me with a camera in hand.
+          estate. Even today, you&apos;ll often find me with a camera in hand.
         </p>
 
         <p>Lets build build something meaningful together ✌️</p>
