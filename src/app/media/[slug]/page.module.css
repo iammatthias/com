@@ -27,3 +27,9 @@
   height: auto;
   object-fit: contain;
 }
+
+@media screen and (max-width: 600px) {
+  .section {
+    padding-bottom: 96px;
+  }
+}
