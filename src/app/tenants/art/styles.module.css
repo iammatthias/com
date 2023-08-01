@@ -3,7 +3,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 48px;
+  gap: 32px;
   width: 100%;
   min-height: 100vh;
   scroll-snap-align: center;
@@ -17,5 +17,7 @@
 @media screen and (max-width: 600px) {
   .section {
     padding-bottom: 96px;
+    min-height: unset;
+    scroll-snap-align: unset;
   }
 }
