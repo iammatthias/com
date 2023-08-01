@@ -71,6 +71,11 @@
 }
 
 @media screen and (max-width: 600px) {
+  .section {
+    padding-bottom: 96px;
+    min-height: unset;
+    scroll-snap-align: unset;
+  }
   .art {
     text-decoration: none;
     display: grid;
