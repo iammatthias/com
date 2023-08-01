@@ -16,8 +16,7 @@
 
 @media screen and (max-width: 600px) {
   .section {
-    padding-bottom: 96px;
-    min-height: unset;
+    padding-bottom: 128px;
     scroll-snap-align: unset;
   }
 }
