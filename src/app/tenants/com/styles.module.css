@@ -3,11 +3,17 @@
   flex-direction: column;
   gap: 32px;
   width: 100%;
-  min-height: 100vh;
+  height: fit-content;
   position: relative;
 }
 
 .section p {
   line-height: 1.5;
   max-width: 600px;
+}
+
+@media screen and (max-width: 600px) {
+  .section {
+    padding-bottom: env(safe-area-inset-bottom, 64px);
+  }
 }

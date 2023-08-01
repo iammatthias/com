@@ -18,8 +18,8 @@ export default function Home() {
     return (
       <>
         <Com />
-        <Posts />
-        <Art />
+        {/* <Posts />
+        <Art /> */}
       </>
     );
   }
