@@ -11,13 +11,13 @@ export default async function Com() {
           <MoonSunMoon />
         </Link>
         <p>
-          Hi, I am Matthias — a growth technologist with a focus on the
-          practical application of AI and LLMs for novel marketing operations
-          and audacious teams.
+          Hi, I am Matthias — a growth technologist with a penchant for
+          harnessing advanced tools to enhance marketing operations for
+          ambitious teams.
         </p>
 
         <p>
-          Previously I have worked with{" "}
+          My adventures have taken me to{" "}
           <b>
             <i>Revance (Opul)</i>
           </b>
@@ -33,15 +33,16 @@ export default async function Com() {
           <b>
             <i>Surf Air</i>
           </b>
-          .
+          , where I've focused on leading strategic transitions and fine-tuning
+          systems.
         </p>
 
         <p>
-          In a past life I was a photographer who shot a lot of weddings and
-          real estate. I can still be found with a camera in my hand most days.
+          In a past life I was a photographer, specializing in weddings and real
+          estate. Even today, you'll often find me with a camera in hand.
         </p>
 
-        <p>Lets build together ✌️</p>
+        <p>Lets build build something meaningful together ✌️</p>
         <ContactForm />
       </section>
     </>
