@@ -15,7 +15,7 @@ export default function RemoteImage(props: any) {
 
   const [data, { loading, error }] = useImageSize(_src);
 
-  const wsrv = `https://wsrv.nl/?w=1200&n=-1&url=${_src}`;
+  const wsrv = `https://wsrv.nl/?w=900&dpr=2&n=-1&url=${_src}`;
 
   if (loading) {
     return (

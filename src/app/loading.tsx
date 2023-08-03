@@ -1,10 +1,5 @@
-import MoonSunMoon from "@/app/components/moon_sun_moon";
-import styles from "./loading.module.css";
+import Loader from "@/app/components/loader";
 
 export default function Loading() {
-  return (
-    <div className={styles.loading}>
-      <MoonSunMoon />
-    </div>
-  );
+  return <Loader />;
 }

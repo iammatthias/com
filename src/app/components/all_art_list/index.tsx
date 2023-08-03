@@ -1,24 +1,13 @@
+import { Suspense } from "react";
 import Airtable from "airtable";
 import Image from "next/image";
-import { getPlaiceholder } from "plaiceholder";
 import Video from "@/app/components/video";
 import Squiggle from "@/app/components/squiggle";
 import Link from "next/link";
 import RouteUpdater from "@/app/lib/route_updater";
 import styles from "./styles.module.css";
 
-async function getPlaceholder(src: string) {
-  try {
-    const buffer = await fetch(src).then(async (res) =>
-      Buffer.from(await res.arrayBuffer())
-    );
-    const { base64 } = await getPlaiceholder(buffer);
-    return base64;
-  } catch (err) {
-    console.error(err);
-    return "";
-  }
-}
+import Loader from "@/app/components/loader";
 
 async function fetchRecords() {
   const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE as string;
@@ -33,32 +22,20 @@ async function fetchRecords() {
     .all();
   const recordsJson = records.map((record) => record._rawJson);
 
-  const placeholders = await Promise.all(
-    recordsJson.flatMap((record) =>
-      record.fields.Media.map((media: any) =>
-        media.type.includes("image")
-          ? getPlaceholder(media.thumbnails.small.url)
-          : null
-      )
-    )
-  );
-
-  return { recordsJson, placeholders };
+  return { recordsJson };
 }
 
-const MediaComponent = ({ media, record, index, placeholder }: any) => {
-  if (media.type.includes("image") && placeholder) {
+const MediaComponent = ({ media, record, index }: any) => {
+  if (media.type.includes("image")) {
     return (
       <section className={styles.section} key={index} id={index}>
         <div className={styles.art}>
           <Link href={`/media/${record.id}`} className={styles.media__link}>
             <Image
-              src={`https://wsrv.nl/?url=${media.thumbnails.full.url}`}
+              src={`https://wsrv.nl/?w=900&dpr=2&url=${media.thumbnails.full.url}`}
               alt={record.fields.Name + " " + index}
               width={media.thumbnails.full.width}
               height={media.thumbnails.full.height}
-              placeholder='blur'
-              blurDataURL={placeholder}
             />
           </Link>
           <RecordMeta record={record} />
@@ -104,51 +81,18 @@ const RecordMeta = ({ record }: any) => (
 );
 
 export default async function AllArtList() {
-  const { recordsJson: records, placeholders } = await fetchRecords();
+  const { recordsJson: records } = await fetchRecords();
   return (
     <RouteUpdater>
-      {/* {records.map((record, recordIndex) =>
-            record.fields.Media.map((media: any, mediaIndex: number) => {
-              const placeholderIndex =
-                recordIndex * record.fields.Media.length + mediaIndex;
-              const placeholder = placeholders[placeholderIndex];
-
-              return (
-                <MediaComponent
-                  media={media}
-                  record={record}
-                  index={`${recordIndex}-${mediaIndex}`}
-                  placeholder={placeholder}
-                />
-              );
-            })
-          )} */}
-      {/* {records.map((record, recordIndex) => {
-            const media = record.fields.Media[0];
-            const placeholder = placeholders[recordIndex];
-
-            return media ? (
-              <MediaComponent
-                media={media}
-                record={record}
-                index={`${recordIndex}-0`}
-                placeholder={placeholder}
-              />
-            ) : null;
-          })} */}
       {records.map((record, recordIndex) => {
         const mediaArray = record.fields.Media;
         const randomIndex = Math.floor(Math.random() * mediaArray.length);
         const media = mediaArray[randomIndex];
-        const placeholder = placeholders[recordIndex];
 
         return media ? (
-          <MediaComponent
-            media={media}
-            record={record}
-            index={`${recordIndex}-${randomIndex}`}
-            placeholder={placeholder}
-          />
+          <Suspense key={recordIndex} fallback={<Loader />}>
+            <MediaComponent media={media} record={record} index={recordIndex} />
+          </Suspense>
         ) : null;
       })}
     </RouteUpdater>

@@ -1,11 +1,9 @@
 import { headers } from "next/headers";
 
-import MoonSunMoon from "@/app/components/moon_sun_moon";
-import styles from "./loading.module.css";
-
 import Art from "./tenants/art";
 import Com from "./tenants/com";
 import Posts from "./tenants/posts";
+import Loader from "./components/loader";
 
 export default function Home() {
   // we'll come back to this later
@@ -20,8 +18,8 @@ export default function Home() {
   if (host == "localhost:3000") {
     return (
       <>
-        <Com />
-        <Posts />
+        {/* <Com />
+        <Posts /> */}
         <Art />
       </>
     );
@@ -51,9 +49,5 @@ export default function Home() {
     );
   }
 
-  return (
-    <div className={styles.loading}>
-      <MoonSunMoon />
-    </div>
-  );
+  return <Loader />;
 }
