@@ -1,5 +1,8 @@
 import { headers } from "next/headers";
 
+import MoonSunMoon from "@/app/components/moon_sun_moon";
+import styles from "./loading.module.css";
+
 import Art from "./tenants/art";
 import Com from "./tenants/com";
 import Posts from "./tenants/posts";
@@ -48,5 +51,9 @@ export default function Home() {
     );
   }
 
-  return <p>loading</p>;
+  return (
+    <div className={styles.loading}>
+      <MoonSunMoon />
+    </div>
+  );
 }
