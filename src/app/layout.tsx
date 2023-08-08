@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import "./globals.css";
 import "./typography.css";
 import type { Metadata } from "next";
 
 import { Source_Code_Pro } from "next/font/google";
+import Loading from "./loading";
 
 export const metadata: Metadata = {
   title: "I AM MATTHIAS",
@@ -18,7 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className={`${sourceCodePro.className}`}>{children}</body>
+      <body className={`${sourceCodePro.className}`}>
+        <Suspense fallback={<Loading />}>{children}</Suspense>
+      </body>
     </html>
   );
 }

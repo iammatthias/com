@@ -36,6 +36,7 @@ const MediaComponent = ({ media, record, index }: any) => {
               alt={record.fields.Name + " " + index}
               width={media.thumbnails.full.width}
               height={media.thumbnails.full.height}
+              priority={true}
             />
           </Link>
           <RecordMeta record={record} />

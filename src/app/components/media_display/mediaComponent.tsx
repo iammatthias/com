@@ -10,6 +10,7 @@ export default function MediaComponent({ media, record, index }: any) {
         alt={record.fields.Name + " " + index}
         width={media.thumbnails.full.width}
         height={media.thumbnails.full.height}
+        priority={true}
       />
     );
   } else if (media.type.includes("video")) {

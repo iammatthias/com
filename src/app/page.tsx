@@ -11,10 +11,6 @@ export default function Home() {
   const headersList = headers();
   const host = headersList.get("host");
 
-  if (!host) {
-    return <p>loading</p>;
-  }
-
   if (host == "localhost:3000") {
     return (
       <>
