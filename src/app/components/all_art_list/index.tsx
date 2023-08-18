@@ -65,10 +65,7 @@ const RecordMeta = ({ record }: any) => (
       <Squiggle />
     </div>
     <p className={styles.date}>
-      Last updated:{" "}
-      {new Date(record.fields.Updated)
-        .toLocaleDateString("sv-SE")
-        .replace(/-/g, "/")}
+      Last updated: {new Date(record.fields.Updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}
     </p>
     <div className={styles.pill__box}>
       {record.fields.Collection.map((collection: any) => (
@@ -77,7 +74,6 @@ const RecordMeta = ({ record }: any) => (
         </p>
       ))}
     </div>
-    {/* <p>{record.fields.Description}</p> */}
   </div>
 );
 
@@ -87,14 +83,13 @@ export default async function AllArtList() {
     <RouteUpdater>
       {records.map((record, recordIndex) => {
         const mediaArray = record.fields.Media;
-        const randomIndex = Math.floor(Math.random() * mediaArray.length);
-        const media = mediaArray[randomIndex];
+        const media = mediaArray[0];
 
-        return media ? (
+        return (
           <Suspense key={recordIndex} fallback={<Loader />}>
             <MediaComponent media={media} record={record} index={recordIndex} />
           </Suspense>
-        ) : null;
+        );
       })}
     </RouteUpdater>
   );
