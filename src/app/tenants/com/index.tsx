@@ -10,10 +10,10 @@ export default async function Com() {
         <Link href='/'>
           <MoonSunMoon />
         </Link>
+
         <p>
-          Hi, I am Matthias — a growth technologist with a penchant for
-          harnessing advanced tools to enhance marketing operations for
-          ambitious teams.
+          Hi, I am Matthias — a growth technologist with a penchant for harnessing advanced tools to enhance marketing
+          operations for ambitious teams.
         </p>
 
         <p>
@@ -33,13 +33,12 @@ export default async function Com() {
           <b>
             <i>Surf Air</i>
           </b>
-          , where I&apos;ve focused on leading strategic transitions and
-          fine-tuning systems.
+          , where I&apos;ve focused on leading strategic transitions and fine-tuning systems.
         </p>
 
         <p>
-          In a past life I was a photographer, specializing in weddings and real
-          estate. Even today, you&apos;ll often find me with a camera in hand.
+          In a past life I was a photographer, specializing in weddings and real estate. Even today, you&apos;ll often
+          find me with a camera in hand.
         </p>
 
         <p>Lets build build something meaningful together ✌️</p>
