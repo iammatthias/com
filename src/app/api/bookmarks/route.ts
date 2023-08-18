@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Airtable from "airtable";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 export const revalidate = 60;
 
 // Create an Airtable client
