@@ -9,9 +9,7 @@ export default function RemoteImage(props: any) {
 
   // if source is just a filename, add the full url
 
-  const _src = src.includes(`http`)
-    ? src
-    : `https://pub-8bcf4a42832e4273a5a34c696ccc1b55.r2.dev/${src}`;
+  const _src = src.includes(`http`) ? src : `https://pub-8bcf4a42832e4273a5a34c696ccc1b55.r2.dev/${src}`;
 
   const [data, { loading, error }] = useImageSize(_src);
 
@@ -29,12 +27,15 @@ export default function RemoteImage(props: any) {
     return <p>Error loading image</p>;
   }
 
+  // if _src is imgur, skip wsrv
+  const imageSrc = _src.includes(`imgur`) ? _src : wsrv;
+
   if (data) {
     return (
       <NextImage
         loading='eager'
         priority={true}
-        src={wsrv}
+        src={imageSrc}
         alt={alt ? alt : ``}
         width={data.width == 300 ? 900 : data.width}
         height={data.height == 150 ? 900 : data.height}

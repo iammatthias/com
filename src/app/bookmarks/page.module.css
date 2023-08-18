@@ -1,0 +1,11 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  position: relative;
+}
+
+.section > * {
+  max-width: 600px;
+}

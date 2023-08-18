@@ -1,0 +1,24 @@
+.ul_bookmarks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.li_bookmark {
+  width: 100%;
+  border: 1px solid var(--orange);
+  margin: 0;
+  padding: 0;
+}
+
+.li_bookmark > ul {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

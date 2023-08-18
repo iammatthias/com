@@ -7,17 +7,13 @@ export const revalidate = 60;
 // Create an Airtable client
 const AIRTABLE_API_KEY = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY as string;
 const AIRTABLE_BASE_ID = process.env.NEXT_PUBLIC_AIRTABLE_BASE as string;
-const airtable = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(
-  AIRTABLE_BASE_ID
-);
+const airtable = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID);
 
 export async function GET() {
   console.log("Starting data fetch..."); // Start logging
   try {
     // Fetch data from the API
-    const response = await fetch(
-      "https://www.discove.xyz/api/feeds/iammatthias/bookmarks?p=1"
-    );
+    const response = await fetch("https://www.discove.xyz/api/feeds/iammatthias/bookmarks?p=1");
     const data = await response.json();
 
     console.log("Data fetched from API, processing..."); // Data fetched log
