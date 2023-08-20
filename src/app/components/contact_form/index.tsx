@@ -69,10 +69,7 @@ export default function ContactForm({}: ContactFormProps) {
       ]);
 
       // Link message to contact
-      const existingMessages =
-        ((contact as Airtable.Records<FieldSet>)[0].fields[
-          "Messages"
-        ] as string[]) || [];
+      const existingMessages = ((contact as Airtable.Records<FieldSet>)[0].fields["Messages"] as string[]) || [];
       await airtable("Contacts").update([
         {
           id: (contact as Airtable.Records<FieldSet>)[0].id,
@@ -96,18 +93,13 @@ export default function ContactForm({}: ContactFormProps) {
     }
   }
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
     <>
-      <form
-        method='post'
-        onSubmit={handleSubmit}
-        className={styles.contact__form}>
+      <form method='post' onSubmit={handleSubmit} className={styles.contact__form}>
         {submitted ? (
           <p>Thank you! We&apos;ll be in touch.</p>
         ) : (
@@ -152,13 +144,10 @@ export default function ContactForm({}: ContactFormProps) {
                 name='optin'
                 type='checkbox'
                 checked={formData.optIn}
-                onChange={(e) =>
-                  setFormData({ ...formData, optIn: e.target.checked })
-                }
+                onChange={(e) => setFormData({ ...formData, optIn: e.target.checked })}
               />
               <label htmlFor='optin'>
-                By submitting this form you agree to receive the occasional
-                email from us. <Link href='/privacy'>Learn More</Link>.
+                By submitting this form you agree to <Link href='/privacy'>these terms</Link>.
               </label>
             </div>
             <button type='submit' disabled={submitting}>
