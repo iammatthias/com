@@ -3,7 +3,7 @@ import MoonSunMoon from "../components/moon_sun_moon";
 import styles from "./page.module.css";
 import BookmarkList from "../components/bookmark_list";
 
-export default function Privacy() {
+export default function Bookmarks() {
   return (
     <section className={styles.section}>
       <Link href='/'>
