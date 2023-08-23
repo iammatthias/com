@@ -4,8 +4,7 @@ import styles from "./page.module.css";
 import RecordMeta from "@/app/components/media_display/recordMeta";
 import Mason from "@/app/components/masonry";
 import MediaComponent from "@/app/components/media_display/mediaComponent";
-import MoonSunMoon from "@/app/components/moon_sun_moon";
-import Link from "next/link";
+import Nav from "@/app/components/nav";
 
 export default async function Media({ params }: Props) {
   const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE as string;
@@ -19,9 +18,7 @@ export default async function Media({ params }: Props) {
 
   return (
     <section className={styles.section}>
-      <Link href='/'>
-        <MoonSunMoon />
-      </Link>
+      <Nav />
       <main className={styles.main}>
         <RecordMeta record={record} />
         <Suspense

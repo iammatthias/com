@@ -11,16 +11,6 @@ export default function Home() {
   const headersList = headers();
   const host = headersList.get("host");
 
-  if (host == "localhost:3000") {
-    return (
-      <>
-        {/* <Com />
-        <Posts /> */}
-        <Art />
-      </>
-    );
-  }
-
   if (host == "iammatthias.com") {
     return (
       <>
@@ -45,5 +35,11 @@ export default function Home() {
     );
   }
 
-  return <Loader />;
+  return (
+    <>
+      <Com />
+      <Posts />
+      <Art />
+    </>
+  );
 }

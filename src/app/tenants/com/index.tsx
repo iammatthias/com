@@ -1,15 +1,12 @@
 import styles from "./styles.module.css";
 import ContactForm from "../../components/contact_form";
-import MoonSunMoon from "@/app/components/moon_sun_moon";
-import Link from "next/link";
+import Nav from "@/app/components/nav";
 
 export default async function Com() {
   return (
     <>
       <section className={styles.section}>
-        <Link href='/'>
-          <MoonSunMoon />
-        </Link>
+        <Nav />
 
         <p>
           Hi, I am Matthias — a growth technologist with a penchant for harnessing advanced tools to enhance marketing

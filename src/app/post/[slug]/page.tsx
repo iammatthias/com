@@ -3,8 +3,8 @@ import { CustomMDX } from "@/app/lib/custom_mdx";
 
 import styles from "./page.module.css";
 import { getObsidianEntry, getObsidianEntries } from "@/app/lib/github";
-import MoonSunMoon from "@/app/components/moon_sun_moon";
-import Link from "next/link";
+
+import Nav from "@/app/components/nav";
 
 // revalidate every 60 seconds
 export const revalidate = 60;
@@ -16,21 +16,14 @@ export default async function Post({ params }: Props) {
 
   return (
     <section className={styles.section}>
-      <Link href='/'>
-        <MoonSunMoon />
-      </Link>
+      <Nav />
       <main className={styles.main}>
         <h1>{post.name}</h1>
 
         <p className={styles.date}>
-          This post was published{" "}
-          {new Date(post.created)
-            .toLocaleDateString("sv-SE")
-            .replace(/-/g, "/")}{" "}
+          This post was published {new Date(post.created).toLocaleDateString("sv-SE").replace(/-/g, "/")}{" "}
           {post.updated !== post.created &&
-            `& last updated ${new Date(post.updated)
-              .toLocaleDateString("sv-SE")
-              .replace(/-/g, "/")}`}
+            `& last updated ${new Date(post.updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}`}
         </p>
 
         {/* {post.tokenAddress && (

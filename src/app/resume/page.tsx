@@ -1,13 +1,12 @@
 import Link from "next/link";
 import MoonSunMoon from "../components/moon_sun_moon";
 import styles from "./page.module.css";
+import Nav from "../components/nav";
 
 export default function Resume() {
   return (
     <section className={styles.section}>
-      <Link href='/'>
-        <MoonSunMoon />
-      </Link>
+      <Nav />
       <p>
         <b>Work</b>
       </p>

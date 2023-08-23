@@ -1,13 +1,10 @@
-import Link from "next/link";
-import MoonSunMoon from "../components/moon_sun_moon";
 import styles from "./page.module.css";
+import Nav from "../components/nav";
 
 export default function Privacy() {
   return (
     <section className={styles.section}>
-      <Link href='/'>
-        <MoonSunMoon />
-      </Link>
+      <Nav />
       <h1>Privacy Policy</h1>
 
       <p>Last updated: August 20, 2023</p>
