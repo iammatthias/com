@@ -3,7 +3,6 @@ import styles from "./styles.module.css";
 import { CustomMDX } from "@/app/lib/custom_mdx";
 
 export default function RecordMeta({ record }: any) {
-  console.log(record.fields);
   return (
     <div className={styles.record__meta}>
       <div className={styles.record__meta__name}>

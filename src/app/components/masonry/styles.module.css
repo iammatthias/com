@@ -1,9 +1,3 @@
 .masonry__wrapper {
-  max-width: calc(100% - 64px) !important;
-}
-
-@media screen and (max-width: 600px) {
-  .masonry__wrapper {
-    max-width: calc(100% - 32px) !important;
-  }
+  max-width: 100% !important;
 }

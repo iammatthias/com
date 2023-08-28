@@ -60,7 +60,7 @@ body {
 }
 
 body {
-  overflow: scroll;
+  overflow-y: auto;
   height: 100vh;
   scroll-snap-type: y proximity;
   scroll-behavior: smooth;
