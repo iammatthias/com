@@ -32,6 +32,7 @@
   font-family: inherit;
   width: 62px;
   border: none;
+  background: none;
 }
 
 .iconButton:focus {
