@@ -23,17 +23,12 @@ export default async function AllPostsList() {
           <h1>{post.name}</h1>
 
           <p className={styles.date}>
-            This post was published{" "}
-            {new Date(post.created)
-              .toLocaleDateString("sv-SE")
-              .replace(/-/g, "/")}{" "}
+            This post was published {new Date(post.created).toLocaleDateString("sv-SE").replace(/-/g, "/")}{" "}
             {post.updated !== post.created &&
-              `& last updated ${new Date(post.updated)
-                .toLocaleDateString("sv-SE")
-                .replace(/-/g, "/")}`}
+              `& last updated ${new Date(post.updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}`}
           </p>
 
-          {post.tags && (
+          {/* {post.tags && (
             <div className={styles.pill_box}>
               {post.tags.map((item: string, i: any) => (
                 <span className={styles.pill} key={i}>
@@ -41,7 +36,7 @@ export default async function AllPostsList() {
                 </span>
               ))}
             </div>
-          )}
+          )} */}
         </>
       </Link>
     </section>
