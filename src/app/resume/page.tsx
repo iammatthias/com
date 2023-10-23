@@ -6,10 +6,10 @@ import Nav from "../components/nav";
 export default function Resume() {
   return (
     <section className={styles.section}>
-      <Nav />
-      <p>
-        <b>Work</b>
-      </p>
+      {/* <Nav /> */}
+      <Link href='/'>
+        <MoonSunMoon />
+      </Link>
       <p>
         <b>
           <i>2012-Current — Photographer</i>

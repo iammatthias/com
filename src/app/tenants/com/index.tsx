@@ -3,11 +3,15 @@ import styles from "./styles.module.css";
 import Link from "next/link";
 import AllPostsList from "@/app/components/all_posts_list";
 import Glass from "@/app/components/glass";
+import MoonSunMoon from "@/app/components/moon_sun_moon";
 
 export default async function Com() {
   return (
     <>
       <section className={styles.section}>
+        <Link href='/'>
+          <MoonSunMoon />
+        </Link>
         <h1>Hi, I am Matthias</h1>
 
         <p>I am a photographer and growth technologist based in Southern California.</p>

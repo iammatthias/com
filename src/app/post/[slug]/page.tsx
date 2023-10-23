@@ -6,6 +6,8 @@ import { getObsidianEntry, getObsidianEntries } from "@/app/lib/github";
 
 // import Nav from "@/app/components/nav";
 import Back from "@/app/components/back";
+import MoonSunMoon from "@/app/components/moon_sun_moon";
+import Link from "next/link";
 
 // revalidate every 60 seconds
 export const revalidate = 60;
@@ -17,6 +19,9 @@ export default async function Post({ params }: Props) {
 
   return (
     <section className={styles.section}>
+      <Link href='/'>
+        <MoonSunMoon />
+      </Link>
       {/* <Nav /> */}
 
       <main className={styles.main}>
