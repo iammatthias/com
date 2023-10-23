@@ -1,20 +1,19 @@
+import { Suspense } from "react";
 import styles from "./styles.module.css";
-import ContactForm from "../../components/contact_form";
-import Nav from "@/app/components/nav";
+import Link from "next/link";
+import AllPostsList from "@/app/components/all_posts_list";
+import Glass from "@/app/components/glass";
 
 export default async function Com() {
   return (
     <>
       <section className={styles.section}>
-        <Nav />
+        <h1>Hi, I am Matthias</h1>
+
+        <p>I am a photographer and growth technologist based in Southern California.</p>
 
         <p>
-          Hi, I am Matthias — a growth technologist with a penchant for harnessing advanced tools to enhance marketing
-          operations for ambitious teams.
-        </p>
-
-        <p>
-          My adventures have taken me to{" "}
+          My work has taken me to{" "}
           <b>
             <i>Revance (Opul)</i>
           </b>
@@ -30,16 +29,30 @@ export default async function Com() {
           <b>
             <i>Surf Air</i>
           </b>
-          , where I&apos;ve focused on leading strategic transitions and fine-tuning systems.
+          , where I&apos;ve worked on design systems, led strategic growth initiatives, and built marketing operations.
         </p>
 
         <p>
-          In a past life I was a photographer, specializing in weddings and real estate. Even today, you&apos;ll often
-          find me with a camera in hand.
+          Let's work together ~{" "}
+          <Link href='ma&#105;lto&#58;&#37;&#54;&#56;%65&#121;%40i%61mm&#97;&#116;%7&#52;hias&#46;&#99;om'>
+            h&#101;y&#64;&#105;amm&#97;&#116;thias&#46;com
+          </Link>
         </p>
-
-        <p>Lets build build something meaningful together ✌️</p>
-        <ContactForm />
+      </section>
+      {/* <section className={styles.section}>
+        <p>
+          <Link href='https://iammatthias.com'>Learn a bit more about me</Link>, or{" "}
+          <Link href='https://iammatthias.art'>check out some of my art</Link>.
+        </p>
+      </section> */}
+      <section className={styles.section}>
+        <Glass limit={9} />
+      </section>
+      <Suspense fallback={<section className={styles.section}>Loading...</section>}>
+        <AllPostsList />
+      </Suspense>
+      <section className={styles.section}>
+        <Glass limit={9} offset={9} />
       </section>
     </>
   );

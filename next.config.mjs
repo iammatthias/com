@@ -8,7 +8,13 @@ const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   images: {
     dangerouslyAllowSVG: true,
-    domains: ["pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev", "wsrv.nl", "i.imgur.com"],
+    domains: [
+      "pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev",
+      "wsrv.nl",
+      "i.imgur.com",
+      "v5.airtableusercontent.com",
+      "cdn.glass.photo",
+    ],
   },
   experimental: {
     mdxRs: true,

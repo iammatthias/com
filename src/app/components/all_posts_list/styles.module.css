@@ -1,14 +1,23 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  width: 100%;
+  position: relative;
+}
+
 .section > a {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  width: 100%;
   position: relative;
-  scroll-snap-align: start;
 }
 
 .section > * {
   max-width: 600px;
+  width: 100%;
 }
 
 .section * {

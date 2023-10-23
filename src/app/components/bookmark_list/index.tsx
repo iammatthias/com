@@ -1,7 +1,6 @@
 import Airtable from "airtable";
 import styles from "./styles.module.css";
 import { CustomMDX } from "@/app/lib/custom_mdx";
-import Squiggle from "../squiggle";
 
 export const revalidate = 60;
 
@@ -32,12 +31,11 @@ export default async function BookmarkList() {
             <li>
               <strong>{record.fields.username}</strong> {record.fields.display_name}
             </li>
-            <Squiggle strokeColor={"#f06900"} />
 
             <li>
               <CustomMDX source={record.fields.text} />
             </li>
-            <Squiggle />
+
             <li>
               Posted: {new Date(record.fields.published_at).toLocaleDateString()}, Bookmarked:{" "}
               {new Date(record.fields.bookmarked_at).toLocaleDateString()}

@@ -1,15 +1,16 @@
 .section {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 32px;
   width: 100%;
-  height: fit-content;
   position: relative;
 }
 
-.section p {
-  line-height: 1.5;
+.section * {
   max-width: 600px;
+  width: 100%;
 }
 
 @media screen and (max-width: 600px) {

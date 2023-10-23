@@ -1,9 +1,16 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
   width: 100%;
   position: relative;
+}
+
+.section > * {
+  max-width: 600px;
+  width: 100%;
 }
 
 .main,
@@ -15,7 +22,6 @@
 
 .main * {
   text-align: left;
-  max-width: 800px;
   color: var(--foreground);
   text-decoration: none;
 }

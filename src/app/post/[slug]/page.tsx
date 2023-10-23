@@ -4,7 +4,8 @@ import { CustomMDX } from "@/app/lib/custom_mdx";
 import styles from "./page.module.css";
 import { getObsidianEntry, getObsidianEntries } from "@/app/lib/github";
 
-import Nav from "@/app/components/nav";
+// import Nav from "@/app/components/nav";
+import Back from "@/app/components/back";
 
 // revalidate every 60 seconds
 export const revalidate = 60;
@@ -16,7 +17,8 @@ export default async function Post({ params }: Props) {
 
   return (
     <section className={styles.section}>
-      <Nav />
+      {/* <Nav /> */}
+      <Back />
       <main className={styles.main}>
         <h1>{post.name}</h1>
 

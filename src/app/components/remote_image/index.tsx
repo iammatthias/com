@@ -1,52 +1,29 @@
-"use client";
+import Image from "next/image";
+import { getPlaiceholder } from "plaiceholder";
 
-import { useState, useEffect } from "react";
-import NextImage from "next/image";
-import { useImageSize } from "react-image-size";
+export default async function RemoteImage({ src, alt }: { src: string; alt: string }) {
+  //  if source is just a filename we need to add the url and fetch it from the Cloudflare bucket
+  src = src.includes(`http`) ? src : `https://pub-8bcf4a42832e4273a5a34c696ccc1b55.r2.dev/${src}`;
 
-export default function RemoteImage(props: any) {
-  const { src, alt } = props;
+  const buffer = await fetch(src).then(async (res) => {
+    return Buffer.from(await res.arrayBuffer());
+  });
 
-  // if source is just a filename, add the full url
+  const { base64, metadata } = await getPlaiceholder(buffer);
 
-  const _src = src.includes(`http`) ? src : `https://pub-8bcf4a42832e4273a5a34c696ccc1b55.r2.dev/${src}`;
+  const wsrv = `https://wsrv.nl/?w=900&dpr=2&n=-1&url=${src}`;
 
-  const [data, { loading, error }] = useImageSize(_src);
+  const imageSrc = src.includes(`imgur`) || src.includes(`cdn.glass.photo`) ? src : wsrv;
 
-  const wsrv = `https://wsrv.nl/?w=900&dpr=2&n=-1&url=${_src}`;
-
-  if (loading) {
-    return (
-      <div className='loading'>
-        <p>≋</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return <p>Error loading image</p>;
-  }
-
-  // if _src is imgur, skip wsrv
-  const imageSrc = _src.includes(`imgur`) ? _src : wsrv;
-
-  if (data) {
-    return (
-      <NextImage
-        loading='eager'
-        priority={true}
-        src={imageSrc}
-        alt={alt ? alt : ``}
-        width={data.width == 300 ? 900 : data.width}
-        height={data.height == 150 ? 900 : data.height}
-        style={{
-          objectFit: `contain`,
-          objectPosition: `center`,
-          height: `fit-content`,
-          width: `100%`,
-        }}
-      />
-    );
-  }
-  return null;
+  return (
+    <Image
+      src={imageSrc}
+      alt={alt}
+      height={metadata.height}
+      width={metadata.width}
+      placeholder='blur'
+      blurDataURL={base64}
+      priority={false}
+    />
+  );
 }

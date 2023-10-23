@@ -1,3 +1,7 @@
 .svg {
   max-width: 62px !important;
 }
+
+.svg path {
+  fill: var(--foreground);
+}

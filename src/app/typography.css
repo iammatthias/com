@@ -16,7 +16,11 @@ a,
 blockquote,
 small,
 pre {
-  text-wrap: pretty;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 h1,
@@ -64,6 +68,13 @@ pre {
   overflow-x: auto;
   padding: 1.714rem;
   white-space: pre-wrap;
+}
+
+a {
+  color: var(--orange);
+  font-weight: 800;
+  /* text-decoration: underline wavy var(--orange); */
+  text-decoration: none;
 }
 
 @media screen and (max-width: 600px) {
