@@ -5,22 +5,21 @@
   justify-content: center;
   gap: 32px;
   width: 100%;
-  position: relative;
 }
 
-.section > a {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  position: relative;
-}
-
-.section > * {
+.section * {
   max-width: 600px;
   width: 100%;
 }
 
-.section * {
+.section > div > a {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.section > a * {
   text-decoration: none;
   color: var(--foreground);
 }

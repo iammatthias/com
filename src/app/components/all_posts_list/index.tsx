@@ -15,20 +15,21 @@ export default async function AllPostsList() {
     allPosts = allPosts.filter((post: any) => post.public === true);
   }
 
-  return allPosts.map((post: any) => (
-    <section className={styles.section} key={post.slug}>
-      <Link href={`/post/${post.slug}`}>
-        <>
-          <Squiggle />
-          <h1>{post.name}</h1>
+  return (
+    <section className={styles.section}>
+      {allPosts.map((post: any) => (
+        <Link href={`/post/${post.slug}`} key={post.slug}>
+          <>
+            <Squiggle />
+            <h1>{post.name}</h1>
 
-          <p className={styles.date}>
-            This post was published {new Date(post.created).toLocaleDateString("sv-SE").replace(/-/g, "/")}{" "}
-            {post.updated !== post.created &&
-              `& last updated ${new Date(post.updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}`}
-          </p>
+            <p className={styles.date}>
+              This post was published {new Date(post.created).toLocaleDateString("sv-SE").replace(/-/g, "/")}{" "}
+              {post.updated !== post.created &&
+                `& last updated ${new Date(post.updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}`}
+            </p>
 
-          {/* {post.tags && (
+            {/* {post.tags && (
             <div className={styles.pill_box}>
               {post.tags.map((item: string, i: any) => (
                 <span className={styles.pill} key={i}>
@@ -37,8 +38,10 @@ export default async function AllPostsList() {
               ))}
             </div>
           )} */}
-        </>
-      </Link>
+          </>
+        </Link>
+      ))}
+      <Squiggle />
     </section>
-  ));
+  );
 }

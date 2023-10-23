@@ -33,7 +33,7 @@ export default async function Com() {
         </p>
 
         <p>
-          Let's work together ~{" "}
+          Let&apos;s work together ~{" "}
           <Link href='ma&#105;lto&#58;&#37;&#54;&#56;%65&#121;%40i%61mm&#97;&#116;%7&#52;hias&#46;&#99;om'>
             h&#101;y&#64;&#105;amm&#97;&#116;thias&#46;com
           </Link>
