@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import styles from "./styles.module.css";
 import Link from "next/link";
-import AllPostsList from "@/app/components/all_posts_list";
-import Glass from "@/app/components/glass";
-import MoonSunMoon from "@/app/components/moon_sun_moon";
+import AllPostsList from "@/components/all_posts_list";
+import Glass from "@/components/glass";
+import MoonSunMoon from "@/components/moon_sun_moon";
 
 export default async function Com() {
   return (

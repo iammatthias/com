@@ -1,6 +1,6 @@
 import Airtable from "airtable";
 import styles from "./styles.module.css";
-import { CustomMDX } from "@/app/lib/custom_mdx";
+import { CustomMDX } from "@/lib/custom_mdx";
 
 export const revalidate = 60;
 

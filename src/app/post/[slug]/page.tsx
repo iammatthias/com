@@ -1,12 +1,12 @@
-import Squiggle from "@/app/components/squiggle";
-import { CustomMDX } from "@/app/lib/custom_mdx";
+import Squiggle from "@/components/squiggle";
+import { CustomMDX } from "@/lib/custom_mdx";
 
 import styles from "./page.module.css";
-import { getObsidianEntry, getObsidianEntries } from "@/app/lib/github";
+import { getObsidianEntry, getObsidianEntries } from "@/lib/github";
 
 // import Nav from "@/app/components/nav";
-import Back from "@/app/components/back";
-import MoonSunMoon from "@/app/components/moon_sun_moon";
+import Back from "@/components/back";
+import MoonSunMoon from "@/components/moon_sun_moon";
 import Link from "next/link";
 
 // revalidate every 60 seconds

@@ -1,4 +1,4 @@
-import { getGlassPosts } from "@/app/lib/glass";
+import { getGlassPosts } from "@/lib/glass";
 import Masonry from "../masonry";
 import Link from "next/link";
 import RemoteImage from "../remote_image";

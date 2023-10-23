@@ -1,7 +1,7 @@
 import Link from "next/link";
-import MoonSunMoon from "../components/moon_sun_moon";
+import MoonSunMoon from "../../components/moon_sun_moon";
 import styles from "./page.module.css";
-import BookmarkList from "../components/bookmark_list";
+import BookmarkList from "../../components/bookmark_list";
 
 export default function Bookmarks() {
   return (

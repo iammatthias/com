@@ -1,6 +1,6 @@
-import { getObsidianEntries } from "@/app/lib/github";
+import { getObsidianEntries } from "@/lib/github";
 import Link from "next/link";
-import Squiggle from "@/app/components/squiggle";
+import Squiggle from "@/components/squiggle";
 import styles from "./styles.module.css";
 
 export default async function AllPostsList() {
