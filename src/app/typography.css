@@ -70,6 +70,7 @@ a {
   color: var(--orange);
   font-weight: 800;
   /* text-decoration: underline wavy var(--orange); */
+  text-decoration: none;
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-all;

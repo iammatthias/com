@@ -18,7 +18,7 @@ export default async function Post({ params }: Props) {
   return (
     <section className={styles.section}>
       {/* <Nav /> */}
-      <Back />
+
       <main className={styles.main}>
         <h1>{post.name}</h1>
 
@@ -46,6 +46,7 @@ export default async function Post({ params }: Props) {
         <article className={styles.article}>
           <CustomMDX source={post.body} />
         </article>
+        <Back />
       </main>
     </section>
   );
