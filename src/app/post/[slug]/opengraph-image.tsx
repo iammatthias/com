@@ -54,6 +54,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
             opacity: 0.6,
           }}
         />
+
         <div
           style={{
             position: "absolute",

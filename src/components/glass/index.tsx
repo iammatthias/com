@@ -10,7 +10,7 @@ export default async function Glass({ limit = 25, offset = 0 }: { limit?: number
   const posts = await Promise.all(
     glassPosts.map(async (post: any) => {
       return (
-        <Link href={post.post.share_url} target='_blank'>
+        <Link href={post.post.share_url} target='_blank' key={post.post.id}>
           <RemoteImage alt={post.post.description} src={post.post.image640x640} className={styles.img} />
         </Link>
       );
