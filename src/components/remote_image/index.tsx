@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { getPlaiceholder } from "plaiceholder";
 
-export default async function RemoteImage({ src, alt }: { src: string; alt: string }) {
+export default async function RemoteImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
   //  if source is just a filename we need to add the url and fetch it from the Cloudflare bucket
   src = src.includes(`http`) ? src : `https://pub-8bcf4a42832e4273a5a34c696ccc1b55.r2.dev/${src}`;
 
@@ -17,6 +17,7 @@ export default async function RemoteImage({ src, alt }: { src: string; alt: stri
 
   return (
     <Image
+      className={className}
       src={imageSrc}
       alt={alt}
       height={metadata.height}

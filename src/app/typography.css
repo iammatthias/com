@@ -29,20 +29,18 @@ a {
   text-decoration: none;
   font-weight: bold;
   background-image: linear-gradient(var(--orange), var(--orange-1)), linear-gradient(var(--orange-2), var(--orange-3));
-  background-size: 100% 4px, 0 4px;
+  background-size: 100% 1rem, 0 1rem;
   background-position: 100% 100%, 0 100%;
   background-repeat: no-repeat;
   transition: background-size 0.3s linear;
-  overflow-wrap: break-word;
   word-wrap: break-word;
-  word-break: break-all;
-  word-break: break-word;
-  hyphens: auto;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 /* Hover effect for links */
 a:hover {
-  background-size: 0 4px, 100% 4px;
+  background-size: 0 1rem, 100% 1rem;
 }
 
 /* Specific link styles when not the only child */
@@ -54,17 +52,16 @@ a:not(:only-child) {
 /* Nested h1 within specific links */
 a:not(:only-child) h1 span {
   word-break: normal;
-  background-image: linear-gradient(rgb(var(--orange)), rgb(var(--orange-1))),
-    linear-gradient(rgb(var(--orange-2)), rgb(var(--orange-3)));
-  background-size: 100% 1rem;
-  background-position: 100% 100%, 0 100%;
+  background-image: linear-gradient(var(--orange), var(--orange-1)), linear-gradient(var(--orange-2), var(--orange-3));
+  background-size: 100% 2rem, 0 2rem;
+  background-position: 100% 85%, 0 85%;
   background-repeat: no-repeat;
   transition: background-size 0.3s linear;
 }
 
 /* Hover effect for nested h1 within specific links */
 a:not(:only-child) h1 span:hover {
-  background-size: 0 1rem, 100% 1rem;
+  background-size: 0 2rem, 100% 2rem;
 }
 
 /* Header styles */

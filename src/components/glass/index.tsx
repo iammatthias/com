@@ -2,6 +2,7 @@ import { getGlassPosts } from "@/lib/glass";
 import Masonry from "../masonry";
 import Link from "next/link";
 import RemoteImage from "../remote_image";
+import styles from "./styles.module.css";
 
 export default async function Glass({ limit = 25, offset = 0 }: { limit?: number; offset?: number }) {
   const glassPosts = await getGlassPosts({ limit, offset });
@@ -9,8 +10,8 @@ export default async function Glass({ limit = 25, offset = 0 }: { limit?: number
   const posts = await Promise.all(
     glassPosts.map(async (post: any) => {
       return (
-        <Link href={post.post.share_url} key={post.post.id} target='_blank'>
-          <RemoteImage alt={post.post.description} src={post.post.image640x640} />
+        <Link href={post.post.share_url} target='_blank'>
+          <RemoteImage alt={post.post.description} src={post.post.image640x640} className={styles.img} />
         </Link>
       );
     })

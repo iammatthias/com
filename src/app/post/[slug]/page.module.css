@@ -13,7 +13,7 @@
 }
 
 .pill {
-  background: rgb(var(--background-rgb));
+  background: var(--background);
   border: 1px solid var(--orange);
   border-radius: 32px;
   padding: 4px 8px;

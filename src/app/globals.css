@@ -1,18 +1,8 @@
 :root {
-  --max-width: 1100px;
-
-  --pure-white-rgb: 255, 255, 255;
-  --pure-black-rgb: 0, 0, 0;
-  --white-rgb: 253, 248, 240;
-  --grey-rgb: 229, 229, 229;
-  --black-rgb: 29, 29, 29;
   --red-rgb: 211, 78, 36;
   --gold-rgb: 245, 171, 0;
   --green-rgb: 74, 124, 89;
   --blue-rgb: 5, 74, 145;
-
-  --background-rgb: var(--white-rgb);
-  --foreground-rgb: var(--black-rgb);
 
   --white: #eeeeee;
   --grey-light: #dbdee5;
@@ -30,19 +20,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-rgb: var(--black-rgb);
-    --foreground-rgb: var(--white-rgb);
-
     --background: var(--black);
     --foreground: var(--white);
-  }
-}
-
-/* Dark mode variables */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground: 255, 255, 255;
-    --background: 28, 28, 28;
   }
 }
 
@@ -67,8 +46,8 @@ body {
 
 /* Body styles */
 body {
-  color: rgb(var(--foreground));
-  background: rgb(var(--background));
+  color: var(--foreground);
+  background: var(--background);
   padding: 8rem;
   display: flex;
   flex-direction: column;

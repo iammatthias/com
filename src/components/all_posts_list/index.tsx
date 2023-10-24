@@ -21,13 +21,17 @@ export default async function AllPostsList() {
         <Link href={`/post/${post.slug}`} key={post.slug} className='post'>
           <>
             <Squiggle />
-            <h1>{post.name}</h1>
+            <div>
+              <h1>
+                <span>{post.name}</span>
+              </h1>
 
-            <p className={styles.date}>
-              This post was published {new Date(post.created).toLocaleDateString("sv-SE").replace(/-/g, "/")}{" "}
-              {post.updated !== post.created &&
-                `& last updated ${new Date(post.updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}`}
-            </p>
+              <p className={styles.date}>
+                This post was published {new Date(post.created).toLocaleDateString("sv-SE").replace(/-/g, "/")}{" "}
+                {post.updated !== post.created &&
+                  `& last updated ${new Date(post.updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}`}
+              </p>
+            </div>
 
             {/* {post.tags && (
             <div className={styles.pill_box}>

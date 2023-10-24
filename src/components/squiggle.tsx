@@ -1,15 +1,9 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 
-const range = (start: number, end: number) =>
-  Array.from({ length: end - start }, (v, k) => k + start);
+const range = (start: number, end: number) => Array.from({ length: end - start }, (v, k) => k + start);
 
-function Squiggle({
-  height = 24,
-  strokeColor = "currentColor",
-  squiggleWidth = 8,
-  ...props
-}) {
+function Squiggle({ height = 24, strokeColor = "currentColor", squiggleWidth = 8, ...props }) {
   const svgContainerRef = useRef<HTMLDivElement>(null); // <--- specify the type here
   const [bounds, setBounds] = useState({ width: 0, height: 0 });
 
@@ -22,9 +16,7 @@ function Squiggle({
     }
   }, []);
 
-  const numOfSquiggles = squiggleWidth
-    ? Math.floor(bounds.width / squiggleWidth)
-    : Math.round(bounds.width / 16);
+  const numOfSquiggles = squiggleWidth ? Math.floor(bounds.width / squiggleWidth) : Math.round(bounds.width / 16);
 
   const roundedSquiggleWidth = bounds.width / numOfSquiggles;
   const svgWidth = numOfSquiggles * roundedSquiggleWidth;
@@ -38,8 +30,7 @@ function Squiggle({
 
     const lastPointX = i * roundedSquiggleWidth;
     const controlPointX = lastPointX + roundedSquiggleWidth / 2;
-    const controlPointY =
-      linePositionY + (roundedSquiggleWidth / 2) * sideMultiplier;
+    const controlPointY = linePositionY + (roundedSquiggleWidth / 2) * sideMultiplier;
     const x = lastPointX + roundedSquiggleWidth;
     const y = linePositionY;
 
@@ -56,7 +47,7 @@ function Squiggle({
         style={{
           display: "block",
           overflow: "visible",
-          stroke: "rgb(var(--foreground-rgb))",
+          stroke: "var(--foreground)",
           textAlign: "center",
           strokeWidth: "2",
         }}>
