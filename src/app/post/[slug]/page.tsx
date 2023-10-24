@@ -6,8 +6,6 @@ import { getObsidianEntry, getObsidianEntries } from "@/lib/github";
 
 // import Nav from "@/app/components/nav";
 import Back from "@/components/back";
-import MoonSunMoon from "@/components/moon_sun_moon";
-import Link from "next/link";
 
 // revalidate every 60 seconds
 export const revalidate = 60;
@@ -18,41 +16,34 @@ export default async function Post({ params }: Props) {
   const post = await getObsidianEntry(params.slug);
 
   return (
-    <section className={styles.section}>
-      <Link href='/'>
-        <MoonSunMoon />
-      </Link>
-      {/* <Nav /> */}
+    <section>
+      <h1>{post.name}</h1>
 
-      <main className={styles.main}>
-        <h1>{post.name}</h1>
+      <p className={styles.date}>
+        This post was published {new Date(post.created).toLocaleDateString("sv-SE").replace(/-/g, "/")}{" "}
+        {post.updated !== post.created &&
+          `& last updated ${new Date(post.updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}`}
+      </p>
 
-        <p className={styles.date}>
-          This post was published {new Date(post.created).toLocaleDateString("sv-SE").replace(/-/g, "/")}{" "}
-          {post.updated !== post.created &&
-            `& last updated ${new Date(post.updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}`}
-        </p>
-
-        {/* {post.tokenAddress && (
+      {/* {post.tokenAddress && (
           <p>
             {post.tokenAddress} / {post.tokenId}
           </p>
         )} */}
-        {post.tags && (
-          <div className={styles.pill_box}>
-            {post.tags.map((item: string, i: any) => (
-              <span className={styles.pill} key={i}>
-                {item}
-              </span>
-            ))}
-          </div>
-        )}
-        <Squiggle />
-        <article className={styles.article}>
-          <CustomMDX source={post.body} />
-        </article>
-        <Back />
-      </main>
+      {post.tags && (
+        <div className={styles.pill_box}>
+          {post.tags.map((item: string, i: any) => (
+            <span className={styles.pill} key={i}>
+              {item}
+            </span>
+          ))}
+        </div>
+      )}
+      <Squiggle />
+      <article>
+        <CustomMDX source={post.body} />
+      </article>
+      <Back />
     </section>
   );
 }

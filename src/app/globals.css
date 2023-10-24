@@ -38,50 +38,66 @@
   }
 }
 
+/* Dark mode variables */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground: 255, 255, 255;
+    --background: 28, 28, 28;
+  }
+}
+
+/* Global styles */
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-html,
-body {
-  background: var(--background);
-  color: var(--foreground);
-  line-height: 1.5;
+/* Base HTML styles */
+html {
+  font-size: 4px;
 }
 
+/* Prevent horizontal overflow */
+html,
 body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Body styles */
+body {
+  color: rgb(var(--foreground));
+  background: rgb(var(--background));
+  padding: 8rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  gap: 8rem;
+}
+/* Limit width for direct children of .main */
+body > * {
+  max-width: 600px;
+  width: 100%;
 }
 
 body > section,
-body > article {
-  padding: 32px;
+body > section > article,
+body > section > .post {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
 }
 
 /* Image styles */
 img {
   max-width: 100%;
   height: auto;
+  border-radius: 2rem;
 }
 
-button {
-  width: fit-content;
-  padding: 0.5rem 1rem;
-  color: var(--foreground);
-  background: var(--orange);
-  border: 2px solid var(--foreground);
-  border-radius: 24px;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-/* button:hover {
-  background: var(--orange-1);
-} */
-
+/* Dark mode HTML styles */
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
@@ -89,12 +105,8 @@ button {
 }
 
 @media screen and (max-width: 600px) {
-  /* body {
-    overflow: unset;
-  } */
-
-  body > section,
-  body > article {
-    padding: 16px;
+  body {
+    padding: 4rem;
+    gap: 4rem;
   }
 }

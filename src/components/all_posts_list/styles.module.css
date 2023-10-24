@@ -1,29 +1,3 @@
-.section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-  width: 100%;
-}
-
-.section * {
-  max-width: 600px;
-  width: 100%;
-}
-
-.section > div > a {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.section > a * {
-  text-decoration: none;
-  color: var(--foreground);
-}
-
 .pill_box {
   display: flex;
   flex-direction: row;

@@ -1,41 +1,19 @@
-.ul_bookmarks {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-}
-
-.li_bookmark {
+.bookmark {
   width: 100%;
   border: 1px solid var(--orange);
-  margin: 0;
-  padding: 0;
-}
-
-.li_bookmark > ul {
-  list-style: none;
-  margin: 0;
   padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.li_bookmark > ul > li:nth-child(2) {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto;
   gap: 8px;
 }
 
-.li_bookmark > ul > li:nth-child(2) > * {
+.bookmark > * {
   grid-column: 1 / 3;
 }
 
-.li_bookmark > ul > li:nth-child(2) > img:last-child,
-.li_bookmark > ul > li:nth-child(2) > img:nth-last-child(2) {
+.bookmark > img:nth-last-child(2),
+.bookmark > img:nth-last-child(3) {
   max-width: 100%;
   width: 100%;
   height: auto;
@@ -43,6 +21,6 @@
 }
 
 /* When there's only one image following another element */
-.li_bookmark > ul > li:nth-child(2) > :not(img) + img:last-child {
+.bookmark > :not(img) + img:nth-last-child(2) {
   grid-column: auto / span 2;
 }

@@ -23,26 +23,17 @@ async function fetchRecords() {
 export default async function BookmarkList() {
   const records = await fetchRecords();
 
-  return (
-    <ul className={styles.ul_bookmarks}>
-      {records.recordsJson.map((record) => (
-        <li key={record.id} className={styles.li_bookmark}>
-          <ul>
-            <li>
-              <strong>{record.fields.username}</strong> {record.fields.display_name}
-            </li>
+  return records.recordsJson.map((record) => (
+    <div key={record.id} className={styles.bookmark}>
+      <p>
+        <strong>{record.fields.username}</strong> {record.fields.display_name}
+      </p>
+      <CustomMDX source={record.fields.text} />
 
-            <li>
-              <CustomMDX source={record.fields.text} />
-            </li>
-
-            <li>
-              Posted: {new Date(record.fields.published_at).toLocaleDateString()}, Bookmarked:{" "}
-              {new Date(record.fields.bookmarked_at).toLocaleDateString()}
-            </li>
-          </ul>
-        </li>
-      ))}
-    </ul>
-  );
+      <p>
+        Posted: {new Date(record.fields.published_at).toLocaleDateString()}, Bookmarked:{" "}
+        {new Date(record.fields.bookmarked_at).toLocaleDateString()}
+      </p>
+    </div>
+  ));
 }

@@ -1,76 +1,38 @@
-html {
-  font-size: 100%;
-} /*16px*/
-
-body {
-  font-weight: 400;
-  line-height: 1.75;
-}
-
-div,
-p,
-ul,
-ol,
-li,
-a,
-blockquote,
-small,
-pre {
-  text-wrap: pretty;
-}
-
+/* Reset styles for text elements */
 h1,
 h2,
 h3,
 h4,
-h5 {
-  font-weight: 800;
-  line-height: 1.3;
+h5,
+h6,
+p,
+ul,
+ol,
+pre,
+code,
+blockquote,
+figure {
+  margin: 0;
+  padding: 0;
 }
 
-h1 {
-  margin-top: 0;
-  font-size: 2.488rem;
+/* Global body styles */
+body {
+  font-family: "New York", "Georgia", Times, serif;
+  line-height: 1.6;
+  font-size: 16px;
 }
 
-h2 {
-  font-size: 2.074rem;
-}
-
-h3 {
-  font-size: 1.728rem;
-}
-
-h4 {
-  font-size: 1.44rem;
-}
-
-h5 {
-  font-size: 1.2rem;
-}
-
-ul {
-  margin-left: 1.5rem;
-}
-
-ol {
-  margin-left: 2.25rem;
-}
-
-pre {
-  background: rgb(var(--background-rgb));
-  border: 1px solid var(--orange);
-  border-radius: 32px;
-  overflow-x: auto;
-  padding: 1.714rem;
-  white-space: pre-wrap;
-}
-
+/* Global link styles */
 a {
-  color: var(--orange);
-  font-weight: 800;
-  /* text-decoration: underline wavy var(--orange); */
+  color: inherit;
   text-decoration: none;
+  font-weight: bold;
+  background-image: linear-gradient(var(--orange), var(--orange-1)), linear-gradient(var(--orange-2), var(--orange-3));
+  background-size: 100% 4px, 0 4px;
+  background-position: 100% 100%, 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s linear;
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-all;
@@ -78,36 +40,123 @@ a {
   hyphens: auto;
 }
 
-@media screen and (max-width: 600px) {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5 {
-    line-height: 1.3;
-  }
+/* Hover effect for links */
+a:hover {
+  background-size: 0 4px, 100% 4px;
+}
 
-  h1 {
-    font-size: 1.802rem;
-  }
+/* Specific link styles when not the only child */
+a:not(:only-child) {
+  background-image: none;
+  font-weight: normal;
+}
 
-  h2 {
-    font-size: 1.602rem;
-  }
+/* Nested h1 within specific links */
+a:not(:only-child) h1 span {
+  word-break: normal;
+  background-image: linear-gradient(rgb(var(--orange)), rgb(var(--orange-1))),
+    linear-gradient(rgb(var(--orange-2)), rgb(var(--orange-3)));
+  background-size: 100% 1rem;
+  background-position: 100% 100%, 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s linear;
+}
 
-  h3 {
-    font-size: 1.424rem;
-  }
+/* Hover effect for nested h1 within specific links */
+a:not(:only-child) h1 span:hover {
+  background-size: 0 1rem, 100% 1rem;
+}
 
-  h4 {
-    font-size: 1.266rem;
-  }
+/* Header styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
 
-  h5 {
-    font-size: 1.125rem;
-  }
+/* Specific header sizes */
+h1 {
+  font-size: 10rem;
+}
+h2 {
+  font-size: 8rem;
+}
+h3 {
+  font-size: 6rem;
+}
+h4 {
+  font-size: 4.8rem;
+}
 
-  small {
-    font-size: 0.889rem;
-  }
+/* List styles */
+ul,
+ol {
+  margin-left: 6rem;
+  padding-left: 6rem;
+}
+
+/* Code and pre-formatted text styles */
+code,
+pre {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+/* Pre-formatted text block styles */
+pre {
+  overflow-x: auto;
+  padding: 4rem;
+  border: 0.25rem solid #ccc;
+  border-radius: 2rem;
+}
+
+/* Blockquote styles */
+blockquote {
+  margin-left: 6rem;
+  padding-left: 6rem;
+  border-left: 1rem solid #ccc;
+}
+
+/* Blog homepage specific styles */
+.title,
+.author,
+.date,
+.tagline {
+  line-height: 1;
+}
+.title {
+  font-size: 8rem;
+}
+.author {
+  font-size: 4rem;
+}
+.date {
+  font-size: 3.2rem;
+}
+.tagline {
+  font-size: 4rem;
+  font-style: italic;
+}
+
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 4rem 0;
+}
+
+/* Table cell styles */
+th,
+td {
+  padding: 2rem 4rem;
+  border: 0.25rem solid #ccc;
+  text-align: left;
+}
+
+/* Table header styles */
+th {
+  background-color: #f4f4f4;
+  color: rgb(var(--background));
 }

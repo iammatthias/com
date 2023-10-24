@@ -1,15 +1,6 @@
-import Link from "next/link";
-import MoonSunMoon from "../../components/moon_sun_moon";
-import styles from "./page.module.css";
-import Nav from "../../components/nav";
-
 export default function Resume() {
   return (
-    <section className={styles.section}>
-      {/* <Nav /> */}
-      <Link href='/'>
-        <MoonSunMoon />
-      </Link>
+    <section>
       <p>
         <b>
           <i>2012-Current — Photographer</i>

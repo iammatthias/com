@@ -1,36 +1,3 @@
-.section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-  width: 100%;
-  position: relative;
-}
-
-.section > * {
-  max-width: 600px;
-  width: 100%;
-}
-
-.main,
-.article {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.main * {
-  text-align: left;
-  color: var(--foreground);
-  text-decoration: none;
-}
-
-.article a {
-  color: var(--orange);
-  text-decoration: underline wavy var(--orange);
-}
-
 .pill_box {
   display: flex;
   flex-direction: row;
@@ -50,10 +17,4 @@
   border: 1px solid var(--orange);
   border-radius: 32px;
   padding: 4px 8px;
-}
-
-@media screen and (max-width: 600px) {
-  .section {
-    padding-bottom: 96px;
-  }
 }
