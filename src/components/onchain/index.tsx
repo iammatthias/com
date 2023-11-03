@@ -1,5 +1,7 @@
 import Link from "next/link";
 import RemoteImage from "../remote_image";
+import Loading from "@/app/loading";
+import { Suspense } from "react";
 
 // Helper function to make API requests
 async function makeApiRequest(url: string, body: any) {
@@ -69,33 +71,18 @@ async function fetchTokenData(address: string, tokenId: number) {
 }
 
 async function fetchMetadata(hash: string) {
-  // Check if the hash is a base64-encoded data object
+  // Use only the primary IPFS gateway
   if (hash.startsWith("data:")) {
-    // Extract the base64 part and decode it
     const base64Data = hash.split(",")[1];
     return decodeBase64Json(base64Data);
   } else {
-    // It's an IPFS hash, proceed with existing logic
-    const gateways = [
-      "https://ipfs.io/ipfs/",
-      "https://gateway.pinata.cloud/ipfs/",
-      "https://gateway.ipfs.io/ipfs/",
-      "https://cf-ipfs.com/ipfs/",
-    ];
-
-    for (const gateway of gateways) {
-      try {
-        const response = await fetch(`${gateway}${hash}`);
-        if (response.ok) {
-          return response.json();
-        }
-      } catch (error) {
-        console.error(`Error with ${gateway}:`, error);
-      }
+    // Remove loop, use a single IPFS gateway
+    const response = await fetch(`https://ipfs.io/ipfs/${hash}`);
+    if (!response.ok) {
+      throw new Error(`Error with IPFS gateway: ${response.statusText}`);
     }
+    return response.json();
   }
-
-  throw new Error(`All IPFS gateways failed for hash: ${hash}`);
 }
 
 // Optimized function to fetch all token metadata in parallel
@@ -141,7 +128,7 @@ export default async function Onchain({ address }: { address: string }) {
         <>
           <p>{contractMetadataDescription}</p>
           {tokenMetadataArray.map((tokenMetadata, i) => (
-            <>
+            <Suspense>
               <Link href={`https://zora.co/collect/zora:${address}/${i + 1}`}>
                 <RemoteImage
                   src={tokenMetadata.image.replace("ipfs://", "https://ipfs.io/ipfs/")}
@@ -149,7 +136,7 @@ export default async function Onchain({ address }: { address: string }) {
                 />
               </Link>
               <p>{tokenMetadata.description}</p>
-            </>
+            </Suspense>
           ))}
         </>
       );

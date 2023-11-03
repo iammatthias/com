@@ -7,6 +7,8 @@ import { getObsidianEntry, getObsidianEntries } from "@/lib/github";
 // import Nav from "@/app/components/nav";
 import Back from "@/components/back";
 import Onchain from "@/components/onchain";
+import { Suspense } from "react";
+import Loader from "@/components/loader";
 
 // revalidate every 60 seconds
 export const revalidate = 60;
@@ -37,9 +39,9 @@ export default async function Post({ params }: Props) {
       <article>
         <CustomMDX source={post.body} />
         {post.address && (
-          <>
+          <Suspense fallback={<Loader />}>
             <Onchain address={post.address} />
-          </>
+          </Suspense>
         )}
       </article>
 
