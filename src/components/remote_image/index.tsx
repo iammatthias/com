@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getPlaiceholder } from "plaiceholder";
+import { Suspense } from "react";
 
 export default async function RemoteImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
   //  if source is just a filename we need to add the url and fetch it from the Cloudflare bucket
@@ -16,15 +17,17 @@ export default async function RemoteImage({ src, alt, className }: { src: string
   const imageSrc = src.includes(`imgur`) || src.includes(`cdn.glass.photo`) ? src : wsrv;
 
   return (
-    <Image
-      className={className}
-      src={imageSrc}
-      alt={alt}
-      height={metadata.height}
-      width={metadata.width}
-      placeholder='blur'
-      blurDataURL={base64}
-      priority={false}
-    />
+    <Suspense>
+      <Image
+        className={className}
+        src={imageSrc}
+        alt={alt}
+        height={metadata.height}
+        width={metadata.width}
+        placeholder='blur'
+        blurDataURL={base64}
+        priority={false}
+      />
+    </Suspense>
   );
 }

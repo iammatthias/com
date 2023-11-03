@@ -128,7 +128,7 @@ export default async function Onchain({ address }: { address: string }) {
         <>
           <p>{contractMetadataDescription}</p>
           {tokenMetadataArray.map((tokenMetadata, i) => (
-            <Suspense>
+            <Suspense key={i}>
               <Link href={`https://zora.co/collect/zora:${address}/${i + 1}`}>
                 <RemoteImage
                   src={tokenMetadata.image.replace("ipfs://", "https://ipfs.io/ipfs/")}
