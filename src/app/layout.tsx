@@ -6,6 +6,7 @@ import Link from "next/link";
 import MoonSunMoon from "@/components/moon_sun_moon";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://iammatthias.com"),
   title: "I AM MATTHIAS",
   description: "a branch of the internet",
   openGraph: {
