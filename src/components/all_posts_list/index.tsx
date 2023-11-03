@@ -19,7 +19,7 @@ export default async function AllPostsList() {
     <section>
       {allPosts.map((post: any) => (
         <Link href={`/post/${post.slug}`} key={post.slug} className='post'>
-          <>
+          <a>
             <Squiggle />
             <div>
               <h1>
@@ -42,7 +42,7 @@ export default async function AllPostsList() {
               ))}
             </div>
           )} */}
-          </>
+          </a>
         </Link>
       ))}
       <Squiggle />
