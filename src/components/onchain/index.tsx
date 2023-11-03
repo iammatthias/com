@@ -2,8 +2,6 @@ import Link from "next/link";
 import RemoteImage from "../remote_image";
 import { Suspense } from "react";
 
-export const maxDuration = 25;
-
 // Helper function to make API requests
 async function makeApiRequest(url: string, body: any) {
   const response = await fetch(url, {
@@ -11,6 +9,9 @@ async function makeApiRequest(url: string, body: any) {
     headers: {
       accept: "application/json",
       "Content-Type": "application/json",
+    },
+    next: {
+      revalidate: 1 * 30,
     },
     body: JSON.stringify(body),
   });

@@ -13,6 +13,8 @@ import Loader from "@/components/loader";
 // revalidate every 60 seconds
 export const revalidate = 60;
 
+export const maxDuration = 30;
+
 export default async function Post({ params }: Props) {
   const post = await getObsidianEntry(params.slug);
 
