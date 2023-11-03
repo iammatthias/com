@@ -6,13 +6,12 @@ import { getObsidianEntry, getObsidianEntries } from "@/lib/github";
 
 // import Nav from "@/app/components/nav";
 import Back from "@/components/back";
+import Onchain from "@/components/onchain";
 
 // revalidate every 60 seconds
 export const revalidate = 60;
 
 export default async function Post({ params }: Props) {
-  console.log("params", params);
-
   const post = await getObsidianEntry(params.slug);
 
   return (
@@ -25,11 +24,6 @@ export default async function Post({ params }: Props) {
           `& last updated ${new Date(post.updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}`}
       </p>
 
-      {/* {post.tokenAddress && (
-          <p>
-            {post.tokenAddress} / {post.tokenId}
-          </p>
-        )} */}
       {post.tags && (
         <div className={styles.pill_box}>
           {post.tags.map((item: string, i: any) => (
@@ -42,7 +36,13 @@ export default async function Post({ params }: Props) {
       <Squiggle />
       <article>
         <CustomMDX source={post.body} />
+        {post.address && (
+          <>
+            <Onchain address={post.address} />
+          </>
+        )}
       </article>
+
       <Back />
     </section>
   );

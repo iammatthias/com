@@ -1,11 +1,12 @@
 .bookmark {
   width: 100%;
-  border: 1px solid var(--orange);
-  padding: 8px;
+  border: 1px solid var(--midground);
+  padding: 4rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto;
   gap: 8px;
+  border-radius: 2rem;
 }
 
 .bookmark > * {

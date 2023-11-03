@@ -14,6 +14,7 @@ const nextConfig = {
       "i.imgur.com",
       "v5.airtableusercontent.com",
       "cdn.glass.photo",
+      "https://ipfs.io/ipfs/",
     ],
   },
   experimental: {

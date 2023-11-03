@@ -16,12 +16,14 @@
 
   --background: var(--white);
   --foreground: var(--black);
+  --midground: var(--grey-light);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: var(--black);
     --foreground: var(--white);
+    --midground: var(--grey-dark);
   }
 }
 

@@ -21,6 +21,7 @@ async function fetchRecords() {
 }
 
 export default async function BookmarkList() {
+  await fetch(`https://iammatthias.com/api/bookmarks`);
   const records = await fetchRecords();
 
   return records.recordsJson.map((record) => (

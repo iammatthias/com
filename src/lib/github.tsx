@@ -52,7 +52,7 @@ export async function getObsidianEntries() {
       const parsedContent = matter(content);
 
       const {
-        data: { id, name, public: isPublic, tags, created, updated },
+        data: { id, name, public: isPublic, tags, created, updated, address },
         content: body,
       } = parsedContent;
 
@@ -64,6 +64,7 @@ export async function getObsidianEntries() {
         body: body,
         public: isPublic,
         tags: tags,
+        address: address,
       };
     })
   );
