@@ -12,10 +12,12 @@ export default async function Onchain({ address }: { address: string }) {
 
   if (tokenStandard === "ERC721") {
     const metadata = tokens.nodes[0].token.metadata;
+    const image = tokens.nodes[0].token.image.url.replace("ipfs://", "https://ipfs.io/ipfs/");
+
     return (
       <Suspense>
         <Link href={`https://zora.co/collect/zora:${address}`}>
-          <RemoteImage src={metadata.image} alt={metadata.name} />
+          <RemoteImage src={image} alt={metadata.name} />
         </Link>
         <p>{metadata.description}</p>
       </Suspense>
@@ -26,7 +28,9 @@ export default async function Onchain({ address }: { address: string }) {
         {tokens.nodes.map(({ token, i }: any) => {
           console.log(token);
           const metadata = token.metadata;
-          const image = metadata.image.replace("ipfs://", "https://ipfs.io/ipfs/");
+          const image = token.image.url.replace("ipfs://", "https://ipfs.io/ipfs/");
+
+          // const image = metadata.image.replace("ipfs://", "https://ipfs.io/ipfs/");
           return (
             <>
               <Link href={`https://zora.co/collect/zora:${address}/i`}>

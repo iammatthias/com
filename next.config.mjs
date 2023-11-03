@@ -8,13 +8,31 @@ const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   images: {
     dangerouslyAllowSVG: true,
-    domains: [
-      "pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev",
-      "wsrv.nl",
-      "i.imgur.com",
-      "v5.airtableusercontent.com",
-      "cdn.glass.photo",
-      "https://ipfs.io/ipfs/",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "pub-bad9d477a78045ea9f8c0d6fdad56d87.r2.dev",
+      },
+      {
+        protocol: "https",
+        hostname: "wsrv.nl",
+      },
+      {
+        protocol: "https",
+        hostname: "i.imgur.com",
+      },
+      {
+        protocol: "https",
+        hostname: "v5.airtableusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.glass.photo",
+      },
+      {
+        protocol: "https",
+        hostname: "ipfs.io",
+      },
     ],
   },
   experimental: {

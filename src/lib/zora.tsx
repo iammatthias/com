@@ -22,6 +22,10 @@ export async function getOnchainData(address: string) {
           nodes {
             token {
               metadata
+              image {
+                url
+                mimeType
+              }
             }
           }
         }
