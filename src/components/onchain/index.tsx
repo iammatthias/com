@@ -1,7 +1,8 @@
 import Link from "next/link";
 import RemoteImage from "../remote_image";
-import Loading from "@/app/loading";
 import { Suspense } from "react";
+
+export const maxDuration = 25;
 
 // Helper function to make API requests
 async function makeApiRequest(url: string, body: any) {
