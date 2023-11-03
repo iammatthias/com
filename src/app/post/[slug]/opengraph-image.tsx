@@ -1,12 +1,12 @@
 import MoonSunMoon from "@/components/moon_sun_moon";
 import { getObsidianEntry } from "@/lib/github";
-import { ImageResponse } from "next/server";
+import { ImageResponse } from "next/og";
 
 // Route segment config
 export const runtime = "edge";
 
 // Image metadata
-export const alt = "About Acme";
+export const alt = "Posts";
 export const size = {
   width: 1200,
   height: 630,

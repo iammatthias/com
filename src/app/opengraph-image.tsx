@@ -1,6 +1,6 @@
 import MoonSunMoon from "@/components/moon_sun_moon";
 
-import { ImageResponse } from "next/server";
+import { ImageResponse } from "next/og";
 
 // Route segment config
 export const runtime = "edge";
