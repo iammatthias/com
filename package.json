@@ -29,7 +29,7 @@
     "react-dom": "^18.2.0",
     "react-player": "^2.13.0",
     "react-plock": "^3.0.2",
-    "remark-gfm": "^4.0.0",
+    "remark-gfm": "^3.0.1",
     "remark-images": "^4.0.0",
     "remark-unwrap-images": "^4.0.0",
     "sass": "^1.69.5",
