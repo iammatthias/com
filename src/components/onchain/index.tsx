@@ -38,7 +38,7 @@ export default async function Onchain({ address }: { address: string }) {
           // const image = metadata.image.replace("ipfs://", "https://ipfs.io/ipfs/");
           return (
             <>
-              <Link href={`https://zora.co/collect/zora:${address}/i`} target='_blank'>
+              <Link href={`https://zora.co/collect/zora:${address}/${i}`} target='_blank'>
                 <RemoteImage src={image} alt={metadata.name} />
               </Link>
               {metadata.description && <p>{metadata.description}</p>}
