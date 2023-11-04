@@ -2,8 +2,6 @@ import Airtable from "airtable";
 import styles from "./styles.module.css";
 import { CustomMDX } from "@/lib/custom_mdx";
 
-export const revalidate = 60;
-
 async function fetchRecords() {
   const baseId = process.env.NEXT_PUBLIC_AIRTABLE_BASE as string;
   const airtableApiKey = process.env.NEXT_PUBLIC_AIRTABLE_API_KEY as string;
@@ -21,7 +19,6 @@ async function fetchRecords() {
 }
 
 export default async function BookmarkList() {
-  await fetch(`https://iammatthias.com/api/bookmarks`);
   const records = await fetchRecords();
 
   return records.recordsJson.map((record) => (

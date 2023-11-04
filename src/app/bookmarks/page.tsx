@@ -2,7 +2,10 @@ import Link from "next/link";
 
 import BookmarkList from "../../components/bookmark_list";
 
-export default function Bookmarks() {
+export const revalidate = 60;
+
+export default async function Bookmarks() {
+  await fetch(`https://iammatthias.com/api/bookmarks`);
   return (
     <section>
       <h1>Bookmarks</h1>
