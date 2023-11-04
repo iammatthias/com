@@ -39,12 +39,12 @@ export default async function Post({ params }: Props) {
       )}
       <Squiggle />
       <article>
-        <CustomMDX source={post.body} />
         {post.address && (
           <Suspense fallback={<Loader />}>
             <Onchain address={post.address} />
           </Suspense>
         )}
+        <CustomMDX source={post.body} />
       </article>
 
       <Back />
