@@ -18,7 +18,7 @@ export default async function AllPostsList() {
   return (
     <section>
       {allPosts.map((post: any) => (
-        <Link href={`/post/${post.slug}`} key={post.slug} className='post'>
+        <Link href={`/post/${post.slug}`} key={post.slug} className='post' target='_blank'>
           <>
             <Squiggle />
             <div>
