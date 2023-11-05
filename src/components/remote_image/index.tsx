@@ -11,7 +11,7 @@ export default async function RemoteImage({ src, alt, className }: { src: string
 
   // Try to get cached base64 and metadata
   let base64, metadata;
-  const cachedData = await redisClient.get(cacheKey);
+  const cachedData = redisClient.get(cacheKey);
 
   if (cachedData && typeof cachedData === "string") {
     try {
@@ -28,7 +28,7 @@ export default async function RemoteImage({ src, alt, className }: { src: string
     metadata = placeholderData.metadata;
 
     // Cache the base64 and metadata
-    await redisClient.set(cacheKey, JSON.stringify({ base64, metadata }), { ex: 60 * 60 * 24 }); // Expires in 24 hours
+    redisClient.set(cacheKey, JSON.stringify({ base64, metadata }), { ex: 60 * 60 * 24 }); // Expires in 24 hours
   }
 
   const imageSrc =
