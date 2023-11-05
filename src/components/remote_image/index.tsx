@@ -1,6 +1,14 @@
 import Image from "next/image";
-import { redisClient } from "@/lib/redis-client";
+import { kvClient } from "@/lib/redis-client";
 import { getPlaceholder } from "@/lib/getPlaceholder";
+
+interface CachedData {
+  base64: string;
+  metadata: {
+    height: number;
+    width: number;
+  };
+}
 
 export default async function RemoteImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
   // Adjust the source URL if needed
@@ -10,14 +18,13 @@ export default async function RemoteImage({ src, alt, className }: { src: string
   const cacheKey = `image-base64:${src}`;
 
   // Try to get cached base64 and metadata
-  let base64, metadata;
-  const cachedData = redisClient.get(cacheKey);
+  let base64: string, metadata: { height: number; width: number };
+  const cachedData: CachedData | null = await kvClient.get(cacheKey);
 
-  if (cachedData && typeof cachedData === "string") {
+  if (cachedData) {
     try {
-      const parsedData = JSON.parse(cachedData);
-      base64 = parsedData.base64;
-      metadata = parsedData.metadata;
+      base64 = cachedData.base64;
+      metadata = cachedData.metadata;
     } catch (error) {
       console.error("Error parsing cachedData:", error);
     }
@@ -28,7 +35,7 @@ export default async function RemoteImage({ src, alt, className }: { src: string
     metadata = placeholderData.metadata;
 
     // Cache the base64 and metadata
-    redisClient.set(cacheKey, JSON.stringify({ base64, metadata }), { ex: 60 * 60 * 24 }); // Expires in 24 hours
+    await kvClient.set(cacheKey, JSON.stringify({ base64, metadata }), { ex: 60 * 60 * 24 }); // Expires in 24 hours
   }
 
   const imageSrc =
@@ -39,10 +46,10 @@ export default async function RemoteImage({ src, alt, className }: { src: string
       className={className}
       src={imageSrc}
       alt={alt}
-      height={metadata.height}
-      width={metadata.width}
+      height={metadata!.height}
+      width={metadata!.width}
       placeholder='blur'
-      blurDataURL={base64}
+      blurDataURL={base64!}
       priority={false}
     />
   );
