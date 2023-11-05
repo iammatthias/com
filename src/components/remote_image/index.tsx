@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { getPlaiceholder } from "plaiceholder";
 import { redisClient } from "@/lib/redis-client";
+import { getPlaceholder } from "@/lib/getPlaceholder";
 
 export default async function RemoteImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
   // Adjust the source URL if needed
@@ -23,13 +23,12 @@ export default async function RemoteImage({ src, alt, className }: { src: string
     }
   } else {
     // Fetch image buffer if not cached
-    const buffer = await fetch(src).then(async (res) => Buffer.from(await res.arrayBuffer()));
-    const plaiceholderData = await getPlaiceholder(buffer);
-    base64 = plaiceholderData.base64;
-    metadata = plaiceholderData.metadata;
+    const placeholderData = await getPlaceholder(src);
+    base64 = placeholderData.base64;
+    metadata = placeholderData.metadata;
 
     // Cache the base64 and metadata
-    await redisClient.set(cacheKey, JSON.stringify({ base64, metadata }), { ex: 60 * 60 * 24 }); // Expires in 24 hours Expires in 24 hours
+    await redisClient.set(cacheKey, JSON.stringify({ base64, metadata }), { ex: 60 * 60 * 24 }); // Expires in 24 hours
   }
 
   const imageSrc =
