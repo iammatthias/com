@@ -13,11 +13,14 @@ export async function getOnchainData(address: string) {
         ) {
           nodes {
             tokenStandard
+            name
+            description
           }
         }
         tokens(
           networks: {network: ZORA, chain: ZORA_MAINNET}
           where: {collectionAddresses: $address}
+          pagination: {limit: 100}
         ) {
           nodes {
             token {

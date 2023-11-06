@@ -16,7 +16,9 @@ export default async function Onchain({ address }: { address: string }) {
 
     return (
       <Suspense>
-        <Link href={`https://zora.co/collect/zora:${address}`} target='_blank'>
+        <Link
+          href={`https://zora.co/collect/zora:${address}?referrer=0x429f42fB5247e3a34D88D978b7491d4b2BEe6105`}
+          target='_blank'>
           <RemoteImage src={image} alt={metadata.name} />
         </Link>
         {metadata.description && <p>{metadata.description}</p>}
@@ -34,7 +36,9 @@ export default async function Onchain({ address }: { address: string }) {
 
       return (
         <Suspense key={tokenId}>
-          <Link href={`https://zora.co/collect/zora:${address}/${tokenId}`} target='_blank'>
+          <Link
+            href={`https://zora.co/collect/zora:${address}/${tokenId}?referrer=0x429f42fB5247e3a34D88D978b7491d4b2BEe6105`}
+            target='_blank'>
             <RemoteImage src={image} alt={name} />
           </Link>
           {description && <p>{description}</p>}
