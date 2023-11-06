@@ -7,17 +7,16 @@
   gap: 16px;
 }
 
-.pill,
 .date {
-  font-size: 12px;
+  font-size: 3rem;
 }
 
 .pill {
   text-align: center;
-  min-width: 48px;
-  padding: 4px 8px;
-  border-radius: 24px;
+  padding: 1rem 2rem;
+  border-radius: 8rem;
   background: var(--background);
   border: 1px solid var(--orange);
   width: fit-content;
+  font-size: 2rem;
 }

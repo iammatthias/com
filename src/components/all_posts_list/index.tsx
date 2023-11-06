@@ -32,6 +32,15 @@ export default async function AllPostsList() {
                   `& last updated ${new Date(post.updated).toLocaleDateString("sv-SE").replace(/-/g, "/")}`}
               </p>
             </div>
+            {post.tags && (
+              <div className={styles.pill_box}>
+                {post.tags.map((item: string, i: any) => (
+                  <span className={styles.pill} key={i}>
+                    {item}
+                  </span>
+                ))}
+              </div>
+            )}
           </>
         </Link>
       ))}

@@ -78,6 +78,9 @@ h6 {
 h1 {
   font-size: 10rem;
 }
+.post h1 {
+  font-size: 8rem;
+}
 h2 {
   font-size: 8rem;
 }
