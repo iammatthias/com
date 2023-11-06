@@ -29,8 +29,7 @@ export async function kvGet<T>(key: string): Promise<T | null> {
 
 export async function kvSet<T>(key: string, value: T): Promise<void> {
   // The expiration time is set directly in the array, following the Redis command syntax for `SET`.
-  // const body = JSON.stringify(["SET", key, value, "EX", 60 * 60 * 24]); // Expires in 24 hours
-  const body = JSON.stringify(["SET", key, value, "EX", 1]);
+  const body = JSON.stringify(["SET", key, value, "EX", 60 * 60 * 24]); // Expires in 24 hours
 
   const response = await fetch(`${process.env.KV_REST_API_URL}/`, {
     method: "POST",
