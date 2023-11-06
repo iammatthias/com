@@ -1,13 +1,11 @@
 import Image from "next/image";
-import { kvClient } from "@/lib/redis-client";
+import { kvGet, kvSet } from "@/lib/redis-client";
 import { getPlaceholder } from "@/lib/getPlaceholder";
 
 interface CachedData {
   base64: string;
-  metadata: {
-    height: number;
-    width: number;
-  };
+  height: number;
+  width: number;
 }
 
 export default async function RemoteImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
@@ -18,13 +16,18 @@ export default async function RemoteImage({ src, alt, className }: { src: string
   const cacheKey = `image-base64:${src}`;
 
   // Try to get cached base64 and metadata
-  let base64: string, metadata: { height: number; width: number };
-  const cachedData: CachedData | null = await kvClient.get(cacheKey);
+  let base64: string,
+    height: number = 0,
+    width: number = 0;
+  const cachedData: CachedData | null = await kvGet(cacheKey);
 
   if (cachedData) {
     try {
-      base64 = cachedData.base64;
-      metadata = cachedData.metadata;
+      const data = JSON.parse(cachedData.toString()) || cachedData;
+
+      base64 = data.base64;
+      width = data.width || data.metadata.width;
+      height = data.height || data.metadata.height;
     } catch (error) {
       console.error("Error parsing cachedData:", error);
     }
@@ -32,10 +35,15 @@ export default async function RemoteImage({ src, alt, className }: { src: string
     // Fetch image buffer if not cached
     const placeholderData = await getPlaceholder(src);
     base64 = placeholderData.base64;
-    metadata = placeholderData.metadata;
+    width = placeholderData.metadata.width;
+    height = placeholderData.metadata.height;
 
     // Cache the base64 and metadata
-    await kvClient.set(cacheKey, JSON.stringify({ base64, metadata }), { ex: 60 * 60 * 24 }); // Expires in 24 hours
+    const setResult = await kvSet(cacheKey, {
+      base64,
+      width,
+      height,
+    });
   }
 
   const imageSrc =
@@ -46,8 +54,8 @@ export default async function RemoteImage({ src, alt, className }: { src: string
       className={className}
       src={imageSrc}
       alt={alt}
-      height={metadata!.height}
-      width={metadata!.width}
+      height={height!}
+      width={width!}
       placeholder='blur'
       blurDataURL={base64!}
       priority={false}

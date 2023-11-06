@@ -1,7 +1,47 @@
-// src/lib/vercel-kv-client.ts
-import { createClient } from "@vercel/kv";
+export async function kvGet<T>(key: string): Promise<T | null> {
+  const body = JSON.stringify(["GET", key]);
 
-export const kvClient = createClient({
-  url: process.env.KV_REST_API_URL!, // Non-null assertion here
-  token: process.env.KV_REST_API_TOKEN!, // And here
-});
+  const response = await fetch(`${process.env.KV_REST_API_URL}/`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+      "Content-Type": "application/json", // Make sure to specify the content type.
+    },
+    body,
+  });
+
+  if (!response.ok) {
+    console.error(`Error fetching key ${key}: ${response.statusText}`);
+    return null;
+  }
+
+  try {
+    // Get the response and parse the first layer of JSON.
+    const wrapper = await response.json();
+    // Check if 'result' is a property and then parse the inner JSON.
+    const data = wrapper && wrapper.result ? JSON.parse(wrapper.result) : null;
+    return data as T;
+  } catch (error) {
+    console.error(`Error parsing response for key ${key}:`, error);
+    return null;
+  }
+}
+
+export async function kvSet<T>(key: string, value: T): Promise<void> {
+  // The expiration time is set directly in the array, following the Redis command syntax for `SET`.
+  // const body = JSON.stringify(["SET", key, value, "EX", 60 * 60 * 24]); // Expires in 24 hours
+  const body = JSON.stringify(["SET", key, value, "EX", 1]);
+
+  const response = await fetch(`${process.env.KV_REST_API_URL}/`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+      "Content-Type": "application/json", // Ensure the server expects JSON.
+    },
+    body,
+  });
+
+  if (!response.ok) {
+    console.error(`Error setting key ${key}: ${response.statusText}`);
+  }
+}
