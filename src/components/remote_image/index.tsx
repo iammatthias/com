@@ -21,7 +21,7 @@ export default async function RemoteImage({ src, alt, className }: { src: string
 
   // Check if cached data has necessary width and height
   let shouldFetchPlaceholder = !cachedData;
-  console.log("shouldFetchPlaceholder:", shouldFetchPlaceholder);
+
   if (cachedData) {
     try {
       const data = cachedData as CachedData;
@@ -31,7 +31,6 @@ export default async function RemoteImage({ src, alt, className }: { src: string
 
       // If width or height are missing, set flag to fetch placeholder
       if (typeof width === "undefined" || typeof height === "undefined") {
-        console.log("width or height are undefined");
         shouldFetchPlaceholder = true;
       }
     } catch (error) {
@@ -42,7 +41,6 @@ export default async function RemoteImage({ src, alt, className }: { src: string
 
   // Fetch and cache if needed
   if (shouldFetchPlaceholder) {
-    console.log("Fetching placeholder");
     const placeholderData = await getPlaceholder(src);
     base64 = placeholderData.base64;
     width = placeholderData.metadata.width;
