@@ -37,7 +37,13 @@ function parseMarkdownContent(content: string) {
 
 // Function to get all entries
 export async function getObsidianEntries() {
-  const jsonResponse = await fetchFromGitHubGraphQL(
+  const {
+    data: {
+      repository: {
+        object: { entries },
+      },
+    },
+  } = await fetchFromGitHubGraphQL(
     `
       query fetchEntries($owner: String!, $name: String!) {
         repository(owner: $owner, name: $name) {
@@ -64,18 +70,16 @@ export async function getObsidianEntries() {
   );
 
   // Check for errors in the JSON response
-  if (jsonResponse.errors) {
-    console.error("GraphQL Error:", jsonResponse.errors);
+  if (entries.errors) {
+    console.error("GraphQL Error:", entries.errors);
     return [];
   }
 
   // Ensure that the necessary data is present
-  if (!jsonResponse || !jsonResponse.data || !jsonResponse.data.repository || !jsonResponse.data.repository.object) {
+  if (!entries) {
     console.error("No data returned from the GraphQL query.");
     return [];
   }
-
-  const entries = jsonResponse.data.repository.object.entries;
 
   // Process the entries
   return Promise.all(
