@@ -1,4 +1,4 @@
-import { getObsidianEntries } from "@/lib/github";
+import { getObsidianEntries } from "@/lib/obsidian";
 import Rss from "rss";
 
 const URL = "https://iammatthias.com";

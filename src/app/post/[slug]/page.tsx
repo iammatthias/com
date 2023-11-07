@@ -2,7 +2,7 @@ import Squiggle from "@/components/squiggle";
 import { CustomMDX } from "@/lib/custom_mdx";
 
 import styles from "./page.module.css";
-import { getObsidianEntry, getObsidianEntries } from "@/lib/github";
+import { getObsidianEntry, getObsidianEntries } from "@/lib/obsidian";
 
 // import Nav from "@/app/components/nav";
 import Back from "@/components/back";

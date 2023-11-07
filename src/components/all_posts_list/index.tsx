@@ -1,4 +1,4 @@
-import { getObsidianEntries } from "@/lib/github";
+import { getObsidianEntries } from "@/lib/obsidian";
 import Link from "next/link";
 import Squiggle from "@/components/squiggle";
 import styles from "./styles.module.css";

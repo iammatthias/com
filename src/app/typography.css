@@ -56,7 +56,7 @@ a:not(:only-child) h1 span {
   background-size: 100% 2rem, 0 2rem;
   background-position: 100% 85%, 0 85%;
   background-repeat: no-repeat;
-  transition: background-size 0.3s linear;
+  transition: background-size 0.15s linear;
 }
 
 /* Hover effect for nested h1 within specific links */
@@ -80,6 +80,7 @@ h1 {
 }
 .post h1 {
   font-size: 8rem;
+  line-height: 1.2;
 }
 h2 {
   font-size: 8rem;

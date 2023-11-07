@@ -1,5 +1,5 @@
 import MoonSunMoon from "@/components/moon_sun_moon";
-import { getObsidianEntry } from "@/lib/github";
+import { getObsidianEntry } from "@/lib/obsidian";
 import { ImageResponse } from "next/og";
 
 // Route segment config

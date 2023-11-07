@@ -1,4 +1,4 @@
-import { getObsidianEntries } from "@/lib/github";
+import { getObsidianEntries } from "@/lib/obsidian";
 import { MetadataRoute } from "next";
 
 const URL = "https://iammatthias.com";
