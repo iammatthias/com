@@ -20,7 +20,11 @@ export default async function Image({ params }: { params: { slug: string } }) {
 
   // const post = await getObsidianEntry(params.slug);
 
-  const { name } = slug ? await getObsidianEntry(slug) : "";
+  let name = "";
+  if (slug) {
+    const entry = await getObsidianEntry(slug);
+    name = entry ? entry.name : "";
+  }
 
   // Font
   const NewYork = fetch(new URL("./../../fonts/NewYork.ttf", import.meta.url)).then((res) => res.arrayBuffer());

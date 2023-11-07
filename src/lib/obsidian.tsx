@@ -88,7 +88,7 @@ export async function getObsidianEntries() {
 
 // Function to get a single entry
 export async function getObsidianEntry(slug: string) {
-  const data = await fetchFromGitHubGraphQL(
+  const { data } = await fetchFromGitHubGraphQL(
     `
       query fetchSingleEntry($owner: String!, $name: String!, $entryName: String!) {
         repository(owner: $owner, name: $name) {
@@ -112,5 +112,6 @@ export async function getObsidianEntry(slug: string) {
   }
 
   const text = data.repository.object.text;
+
   return parseMarkdownContent(text);
 }
