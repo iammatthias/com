@@ -27,7 +27,9 @@ export default async function Image({ params }: { params: { slug: string } }) {
   }
 
   // Font
-  const NewYork = fetch(new URL("./../../fonts/NewYork.ttf", import.meta.url)).then((res) => res.arrayBuffer());
+  const NewYork = fetch(new URL("../../../styles/font_files/NewYork.ttf", import.meta.url)).then((res) =>
+    res.arrayBuffer()
+  );
 
   return new ImageResponse(
     (

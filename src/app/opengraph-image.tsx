@@ -17,7 +17,12 @@ export const contentType = "image/png";
 // Image generation
 export default async function Image() {
   // Font
-  const NewYork = fetch(new URL("./fonts/NewYork.ttf", import.meta.url)).then((res) => res.arrayBuffer());
+
+  const NewYork = fetch(new URL("../styles/font_files/NewYork.ttf", import.meta.url)).then((res) => res.arrayBuffer());
+
+  // const Xenon = fetch(new URL("../styles/font_files/MonaspaceXenonVarVF[wght,wdth,slnt].ttf", import.meta.url)).then(
+  //   (res) => res.arrayBuffer()
+  // );
 
   return new ImageResponse(
     (
@@ -97,6 +102,10 @@ export default async function Image() {
           style: "normal",
           weight: 400,
         },
+        // {
+        //   name: "Xenon",
+        //   data: await Xenon,
+        // },
       ],
     }
   );

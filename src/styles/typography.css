@@ -18,9 +18,10 @@ figure {
 
 /* Global body styles */
 body {
-  font-family: "New York", "Georgia", Times, serif;
+  font-family: var(--monaspace-xenon), "New York", "Georgia", Times, serif;
   line-height: 1.6;
   font-size: 16px;
+  font-weight: 200;
 }
 
 /* Global link styles */
@@ -71,7 +72,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: bold;
+  font-weight: 800;
 }
 
 /* Specific header sizes */
@@ -101,8 +102,15 @@ ol {
 
 /* Code and pre-formatted text styles */
 code,
-pre {
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+pre,
+table {
+  font-family: var(--monaspace-krypton), "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+code {
+  padding: 0.5rem 1rem;
+  border: 0.25rem solid #ccc;
+  border-radius: 2rem;
 }
 
 /* Pre-formatted text block styles */
@@ -113,11 +121,28 @@ pre {
   border-radius: 2rem;
 }
 
+pre code {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
 /* Blockquote styles */
 blockquote {
   margin-left: 6rem;
   padding-left: 6rem;
   border-left: 1rem solid #ccc;
+}
+
+em,
+i,
+blockquote p {
+  font-family: var(--monaspace-radon);
+}
+
+em,
+i {
+  font-style: oblique 5deg;
 }
 
 /* Blog homepage specific styles */

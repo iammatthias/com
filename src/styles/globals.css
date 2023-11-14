@@ -17,6 +17,13 @@
   --background: var(--white);
   --foreground: var(--black);
   --midground: var(--grey-light);
+
+  --texture-healing: 1;
+  --ligatures: 1;
+
+  font-feature-settings: "calt" var(--texture-healing, 1), "dlig" var(--ligatures, 1), "ss01" var(--ligatures, 1),
+    "ss02" var(--ligatures, 1), "ss03" var(--ligatures, 1), "ss04" var(--ligatures, 1), "ss05" var(--ligatures, 1),
+    "ss06" var(--ligatures, 1), "ss07" var(--ligatures, 1), "ss08" var(--ligatures, 1);
 }
 
 @media (prefers-color-scheme: dark) {

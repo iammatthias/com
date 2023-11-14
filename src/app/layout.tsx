@@ -1,5 +1,6 @@
-import "./globals.css";
-import "./typography.css";
+import { MonaspaceArgon, MonaspaceKrypton, MonaspaceRadon, MonaspaceXenon } from "@/styles/fonts";
+import "@/styles/globals.css";
+import "@/styles/typography.css";
 import type { Metadata } from "next";
 
 import Link from "next/link";
@@ -22,7 +23,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='en'>
-      <body>
+      <body
+        className={`${MonaspaceArgon.variable}, ${MonaspaceKrypton.variable} ${MonaspaceRadon.variable} ${MonaspaceXenon.variable}`}>
         <Link href='/'>
           <MoonSunMoon />
         </Link>
