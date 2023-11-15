@@ -8,7 +8,7 @@ function fetchFigmaFile() {
 async function fetchFigmaNodes({ node }: { node: string }) {
   const uri = `https://api.figma.com/v1/files/VXPXDshaN3pmPK1lhxfNV0/nodes?ids=${node}`;
   const response = await fetch(uri, {
-    headers: { "X-Figma-Token": "figd_jmPM7Qr4Fk1Y-aziyBlTaNjt15OJhexSqlbbSSZ6" },
+    headers: { "X-Figma-Token": "" },
   });
   const data = await response.json();
   const nodes = data.nodes;
