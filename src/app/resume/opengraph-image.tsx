@@ -17,7 +17,7 @@ export const contentType = "image/png";
 // Image generation
 export default async function Image() {
   // Font
-  const NewYork = fetch(new URL("../../styles/font_files/NewYork.ttf", import.meta.url)).then((res) =>
+  const Xenon = fetch(new URL("../../styles/font_files/MonaspaceXenon-ExtraLight.woff", import.meta.url)).then((res) =>
     res.arrayBuffer()
   );
 
@@ -73,7 +73,7 @@ export default async function Image() {
             }}
           />
 
-          <MoonSunMoon />
+          {/* <MoonSunMoon /> */}
           <div
             style={{
               display: "flex",
@@ -107,10 +107,8 @@ export default async function Image() {
       ...size,
       fonts: [
         {
-          name: "NewYork",
-          data: await NewYork,
-          style: "normal",
-          weight: 400,
+          name: "Xenon",
+          data: await Xenon,
         },
       ],
     }
