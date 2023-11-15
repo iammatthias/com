@@ -17,7 +17,7 @@ export const contentType = "image/png";
 // Image generation
 export default async function Image() {
   // Font
-  const NewYork = fetch(new URL("../../../styles/font_files/NewYork.ttf", import.meta.url)).then((res) =>
+  const NewYork = fetch(new URL("../../styles/font_files/NewYork.ttf", import.meta.url)).then((res) =>
     res.arrayBuffer()
   );
 

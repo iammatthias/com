@@ -2,33 +2,43 @@ export default function Resume() {
   return (
     <section>
       <p>
-        <b>
-          <i>2012-Current — Photographer</i>
-        </b>{" "}
+        <i>
+          2012 {"|>"} Current
+          <br />
+          Photographer
+        </i>{" "}
         Fine art & freelance
       </p>
       <p>
-        <b>
-          <i>2022-Current — Revance</i>
-        </b>{" "}
+        <i>
+          2022 {"|>"} Current
+          <br />
+          Revance
+        </i>{" "}
         Design System Engineer
       </p>
       <p>
-        <b>
-          <i>2021-2022 — Tornado</i>
-        </b>{" "}
+        <i>
+          2021 {"|>"} 2022
+          <br />
+          Tornado
+        </i>{" "}
         Growth Engineer
       </p>
       <p>
-        <b>
-          <i>2018-2021 — Aspiration</i>
-        </b>{" "}
+        <i>
+          2018 {"|>"} 2021
+          <br />
+          Aspiration
+        </i>{" "}
         CRM Architect
       </p>
       <p>
-        <b>
-          <i>2016-2018 — Surf Air</i>
-        </b>{" "}
+        <i>
+          2016 {"|>"} 2018
+          <br />
+          Surf Air
+        </i>{" "}
         Product & Marketing Coordinator
       </p>
 
@@ -38,8 +48,13 @@ export default function Resume() {
 
       <p>
         <b>
-          <i>2010-2014 — Brooks Institute</i>
-        </b>{" "}
+          <i>
+            2010 {"|>"} 2014
+            <br />
+            Brooks Institute
+          </i>
+        </b>
+        <br />
         Bachelors Degree, Commercial Photography
       </p>
     </section>
