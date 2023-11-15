@@ -79,10 +79,12 @@ h6 {
 h1 {
   font-size: 10rem;
 }
+
 .post h1 {
   font-size: 8rem;
   line-height: 1.2;
 }
+
 h2 {
   font-size: 8rem;
 }
@@ -152,6 +154,7 @@ i {
 .tagline {
   line-height: 1;
 }
+
 .title {
   font-size: 8rem;
 }
@@ -173,7 +176,6 @@ table {
   margin: 4rem 0;
 }
 
-/* Table cell styles */
 th,
 td {
   padding: 2rem 4rem;
@@ -181,7 +183,6 @@ td {
   text-align: left;
 }
 
-/* Table header styles */
 th {
   background-color: #f4f4f4;
   color: rgb(var(--background));

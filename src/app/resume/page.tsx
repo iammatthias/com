@@ -47,13 +47,11 @@ export default function Resume() {
       </p>
 
       <p>
-        <b>
-          <i>
-            2010 {"|>"} 2014
-            <br />
-            Brooks Institute
-          </i>
-        </b>
+        <i>
+          2010 {"|>"} 2014
+          <br />
+          Brooks Institute
+        </i>
         <br />
         Bachelors Degree, Commercial Photography
       </p>

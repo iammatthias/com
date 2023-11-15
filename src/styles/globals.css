@@ -32,13 +32,17 @@
     --foreground: var(--white);
     --midground: var(--grey-dark);
   }
+
+  html {
+    color-scheme: dark;
+  }
 }
 
 /* Global styles */
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 /* Base HTML styles */
@@ -46,30 +50,27 @@ html {
   font-size: 4px;
 }
 
-/* Prevent horizontal overflow */
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
 /* Body styles */
 body {
   color: var(--foreground);
   background: var(--background);
-  padding: 8rem;
+  padding: 8rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
   gap: 8rem;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
-/* Limit width for direct children of .main */
+
+/* Limit width for direct children */
 body > * {
   max-width: 600px;
   width: 100%;
 }
 
+/* Section and article styles */
 body > section,
 body > section > article,
 body > section > .post {
@@ -85,16 +86,9 @@ img {
   border-radius: 2rem;
 }
 
-/* Dark mode HTML styles */
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
-
 @media screen and (max-width: 600px) {
   body {
-    padding: 4rem;
+    padding: 4rem 0;
     gap: 4rem;
   }
 }
