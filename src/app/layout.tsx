@@ -6,6 +6,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import MoonSunMoon from "@/components/moon_sun_moon";
 
+import figmaStyles from "@/lib/figma";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://iammatthias.com"),
   title: "I AM MATTHIAS",
@@ -21,6 +23,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  figmaStyles();
   return (
     <html lang='en'>
       <body
