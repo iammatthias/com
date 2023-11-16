@@ -13,7 +13,7 @@ export default async function Onchain({ address }: { address: string }) {
   if (tokenStandard === "ERC721") {
     const metadata = tokens.nodes[0].token.metadata;
     const image = tokens.nodes[0].token.metadata.image.replace("ipfs://", "https://ipfs.io/ipfs/");
-    const video = tokens.nodes[0].token.metadata.animation_url.replace("ipfs://", "https://ipfs.io/ipfs/");
+    // const video = tokens.nodes[0].token.metadata.animation_url.replace("ipfs://", "https://ipfs.io/ipfs/");
 
     return (
       <Suspense>
@@ -30,17 +30,18 @@ export default async function Onchain({ address }: { address: string }) {
       return tokens.nodes.findIndex((item: any) => item.token.metadata.name === token.token.metadata.name) === i;
     });
     return filteredTokens.map(({ token }: any) => {
-      console.log(token);
       const name = token.name;
       const description = token.description;
-      // const image = token.metadata.image.replace("ipfs://", "https://ipfs.io/ipfs/");
-      // const video = token.metadata.animation_url?.replace("ipfs://", "https://ipfs.io/ipfs/");
-      // if prod use silver-bitter-junglefowl-364.mypinata.cloud instead of ipfs.io
-      const isProd = process.env.NODE_ENV === "production";
-      const ipfsUrl = isProd ? "https://silver-bitter-junglefowl-364.mypinata.cloud/ipfs/" : "https://ipfs.io/ipfs/";
-      const image = token.metadata.image.replace("ipfs://", ipfsUrl);
-      const video = token.metadata.animation_url?.replace("ipfs://", ipfsUrl);
-      const mime = token.metadata.content.mime;
+      const image = token.metadata.image.replace(
+        "ipfs://",
+        "https://silver-bitter-junglefowl-364.mypinata.cloud/ipfs/"
+      );
+      const video = token.metadata.animation_url?.replace(
+        "ipfs://",
+        "https://silver-bitter-junglefowl-364.mypinata.cloud/ipfs/"
+      );
+
+      const mime = token.metadata.content?.mime;
       const tokenId = token.tokenId;
 
       return (
