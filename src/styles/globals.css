@@ -80,15 +80,11 @@ body > section > .post {
 }
 
 /* Image styles */
-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 2rem;
-}
-
+img,
 video {
   max-width: 100%;
   height: auto;
+  border-radius: 2rem;
 }
 
 @media screen and (max-width: 600px) {
