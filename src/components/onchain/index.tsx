@@ -66,7 +66,7 @@ export default async function Onchain({ address }: OnchainProps) {
       return <TokenRenderer token={tokens.nodes[0]} address={address} />;
     } else {
       // Render all tokens for ERC1155
-      return tokens.nodes.map((token: Token) => <TokenRenderer token={token} address={address} />);
+      return tokens.nodes.map((token: Token) => <TokenRenderer key={token.tokenId} token={token} address={address} />);
     }
   } catch (error) {
     console.error("Error fetching on-chain data:", error);
