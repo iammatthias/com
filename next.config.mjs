@@ -33,6 +33,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "ipfs.io",
       },
+      {
+        protocol: "https",
+        hostname: "silver-bitter-junglefowl-364.mypinata.cloud",
+      },
     ],
   },
   experimental: {

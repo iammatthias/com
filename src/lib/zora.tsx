@@ -20,6 +20,7 @@ export async function getOnchainData(address: string) {
         tokens(
           networks: {network: ZORA, chain: ZORA_MAINNET}
           where: {collectionAddresses: $address}
+          sort: {sortKey: MINTED, sortDirection: DESC}
           pagination: {limit: 100}
         ) {
           nodes {
@@ -28,10 +29,6 @@ export async function getOnchainData(address: string) {
               description
               tokenId
               metadata
-              image {
-                url
-                mimeType
-              }
             }
           }
         }

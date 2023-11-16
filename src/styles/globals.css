@@ -86,6 +86,11 @@ img {
   border-radius: 2rem;
 }
 
+video {
+  max-width: 100%;
+  height: auto;
+}
+
 @media screen and (max-width: 600px) {
   body {
     padding: 4rem 0;

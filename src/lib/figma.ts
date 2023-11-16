@@ -1,6 +1,6 @@
 function fetchFigmaFile() {
   const data = fetch(`https://api.figma.com/v1/files/VXPXDshaN3pmPK1lhxfNV0`, {
-    headers: { "X-Figma-Token": "figd_jmPM7Qr4Fk1Y-aziyBlTaNjt15OJhexSqlbbSSZ6" },
+    headers: { "X-Figma-Token": "" },
   }).then((response) => response.json());
   return data;
 }
@@ -15,7 +15,7 @@ async function fetchFigmaNodes({ node }: { node: string }) {
 
   // Get the first node's document object
   const document = Object.values(nodes as { [key: string]: { document: any } })[0].document;
-  console.log(document, document.type, document.name, document.style, document.fills);
+  // console.log(document, document.type, document.name, document.style, document.fills);
 
   return document;
 }
