@@ -29,9 +29,8 @@ const replaceIpfsUrl = (url: string) => {
 };
 
 const TokenRenderer = ({ token, address }: { token: Token; address: string }) => {
-  console.log("token: ", token);
   const { metadata } = token.token;
-  console.log(metadata);
+
   const image = replaceIpfsUrl(metadata.image);
   const imageSrc = `https://wsrv.nl/?w=10&dpr=2&n=-1&url=${image}`;
   const video = metadata.animation_url ? replaceIpfsUrl(metadata.animation_url) : undefined;
