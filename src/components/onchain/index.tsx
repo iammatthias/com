@@ -3,65 +3,73 @@ import RemoteImage from "../remote_image";
 import { Suspense } from "react";
 import { getOnchainData } from "@/lib/zora";
 
-export default async function Onchain({ address }: { address: string }) {
-  const data = await getOnchainData(address);
+interface TokenMetadata {
+  name: string;
+  description?: string;
+  image: string;
+  animation_url?: string;
+  content?: {
+    mime: string;
+  };
+}
 
-  const { collections, tokens } = data.data;
+interface Token {
+  tokenId: string;
+  token: {
+    metadata: TokenMetadata;
+  };
+}
 
-  const tokenStandard = collections.nodes[0].tokenStandard;
+interface OnchainProps {
+  address: string;
+}
 
-  if (tokenStandard === "ERC721") {
-    const metadata = tokens.nodes[0].token.metadata;
-    const image = tokens.nodes[0].token.metadata.image.replace("ipfs://", "https://ipfs.io/ipfs/");
-    // const video = tokens.nodes[0].token.metadata.animation_url.replace("ipfs://", "https://ipfs.io/ipfs/");
+const replaceIpfsUrl = (url: string) => {
+  return url.replace("ipfs://", "https://silver-bitter-junglefowl-364.mypinata.cloud/ipfs/");
+};
 
-    return (
-      <Suspense>
-        <Link
-          href={`https://zora.co/collect/zora:${address}?referrer=0x429f42fB5247e3a34D88D978b7491d4b2BEe6105`}
-          target='_blank'>
+const TokenRenderer = ({ token, address }: { token: Token; address: string }) => {
+  console.log("token: ", token);
+  const { metadata } = token.token;
+  console.log(metadata);
+  const image = replaceIpfsUrl(metadata.image);
+  const imageSrc = `https://wsrv.nl/?w=10&dpr=2&n=-1&url=${image}`;
+  const video = metadata.animation_url ? replaceIpfsUrl(metadata.animation_url) : undefined;
+
+  return (
+    <Suspense key={token.tokenId} fallback={<div>Loading...</div>}>
+      <Link
+        href={`https://zora.co/collect/zora:${address}/${token.tokenId}?referrer=0x429f42fB5247e3a34D88D978b7491d4b2BEe6105`}
+        target='_blank'>
+        {metadata.content?.mime === "video/mp4" ? (
+          <video autoPlay muted playsInline poster={imageSrc} preload='none'>
+            <source src={video} type={metadata.content.mime} />
+          </video>
+        ) : (
           <RemoteImage src={image} alt={metadata.name} />
-        </Link>
-        {metadata.description && <p>{metadata.description}</p>}
-      </Suspense>
-    );
-  } else if (tokenStandard === "ERC1155") {
-    const filteredTokens = tokens.nodes.filter((token: any, i: any) => {
-      return tokens.nodes.findIndex((item: any) => item.token.metadata.name === token.token.metadata.name) === i;
-    });
-    return filteredTokens.map(({ token }: any) => {
-      const name = token.name;
-      const description = token.description;
-      const image = token.metadata.image.replace(
-        "ipfs://",
-        "https://silver-bitter-junglefowl-364.mypinata.cloud/ipfs/"
-      );
-      const video = token.metadata.animation_url?.replace(
-        "ipfs://",
-        "https://silver-bitter-junglefowl-364.mypinata.cloud/ipfs/"
-      );
+        )}
+      </Link>
+      {metadata.description && <p>{metadata.description}</p>}
+    </Suspense>
+  );
+};
 
-      const mime = token.metadata.content?.mime;
-      const tokenId = token.tokenId;
+export default async function Onchain({ address }: OnchainProps) {
+  try {
+    const data = await getOnchainData(address);
+    const { collections, tokens } = data.data;
 
-      return (
-        <Suspense key={tokenId}>
-          <Link
-            href={`https://zora.co/collect/zora:${address}/${tokenId}?referrer=0x429f42fB5247e3a34D88D978b7491d4b2BEe6105`}
-            target='_blank'>
-            {mime === "video/mp4" ? (
-              <video autoPlay muted playsInline poster={image} preload='none'>
-                <source src={video} type={mime} />
-              </video>
-            ) : (
-              <RemoteImage src={image} alt={name} />
-            )}
-          </Link>
-          {description && <p>{description}</p>}
-        </Suspense>
-      );
-    });
+    const tokenStandard = collections.nodes[0].tokenStandard;
+
+    if (tokenStandard === "ERC721") {
+      // Render only the first token for ERC721
+      return <TokenRenderer token={tokens.nodes[0]} address={address} />;
+    } else {
+      // Render all tokens for ERC1155
+      return tokens.nodes.map((token: Token) => <TokenRenderer token={token} address={address} />);
+    }
+  } catch (error) {
+    console.error("Error fetching on-chain data:", error);
+    return <div>Error loading data</div>;
   }
-
-  return <>{address}</>;
 }
