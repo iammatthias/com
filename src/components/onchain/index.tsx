@@ -32,7 +32,6 @@ const TokenRenderer = ({ token, address }: { token: Token; address: string }) =>
   const { metadata } = token.token;
 
   const image = replaceIpfsUrl(metadata.image);
-  const imageSrc = `https://wsrv.nl/?w=10&dpr=2&n=-1&url=${image}`;
   const video = metadata.animation_url ? replaceIpfsUrl(metadata.animation_url) : undefined;
 
   return (
@@ -41,7 +40,7 @@ const TokenRenderer = ({ token, address }: { token: Token; address: string }) =>
         href={`https://zora.co/collect/zora:${address}/${token.tokenId}?referrer=0x429f42fB5247e3a34D88D978b7491d4b2BEe6105`}
         target='_blank'>
         {metadata.content?.mime === "video/mp4" ? (
-          <video autoPlay muted playsInline poster={imageSrc} preload='none'>
+          <video autoPlay muted playsInline preload='none'>
             <source src={video} type={metadata.content.mime} />
           </video>
         ) : (
