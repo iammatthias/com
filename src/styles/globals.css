@@ -87,6 +87,10 @@ video {
   border-radius: 2rem;
 }
 
+video {
+  object-fit: cover;
+}
+
 @media screen and (max-width: 600px) {
   body {
     padding: 4rem 0;
