@@ -93,7 +93,7 @@ video {
 
 @media screen and (max-width: 600px) {
   body {
-    padding: 4rem 0;
+    padding: 6rem 4rem;
     gap: 4rem;
   }
 }
