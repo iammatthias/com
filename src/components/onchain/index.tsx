@@ -14,8 +14,8 @@ interface TokenMetadata {
 }
 
 interface Token {
-  tokenId: string;
   token: {
+    tokenId: string;
     metadata: TokenMetadata;
   };
 }
@@ -34,10 +34,12 @@ const TokenRenderer = ({ token, address }: { token: Token; address: string }) =>
   const image = replaceIpfsUrl(metadata.image);
   const video = metadata.animation_url ? replaceIpfsUrl(metadata.animation_url) : undefined;
 
+  console.log("token", token);
+
   return (
-    <Suspense key={token.tokenId} fallback={<div>Loading...</div>}>
+    <Suspense key={token.token.tokenId} fallback={<div>Loading...</div>}>
       <Link
-        href={`https://zora.co/collect/zora:${address}/${token.tokenId}?referrer=0x429f42fB5247e3a34D88D978b7491d4b2BEe6105`}
+        href={`https://zora.co/collect/zora:${address}/${token.token.tokenId}?referrer=0x429f42fB5247e3a34D88D978b7491d4b2BEe6105`}
         target='_blank'>
         {metadata.content?.mime === "video/mp4" ? (
           <video autoPlay muted playsInline preload='none'>
@@ -64,7 +66,9 @@ export default async function Onchain({ address }: OnchainProps) {
       return <TokenRenderer token={tokens.nodes[0]} address={address} />;
     } else {
       // Render all tokens for ERC1155
-      return tokens.nodes.map((token: Token) => <TokenRenderer key={token.tokenId} token={token} address={address} />);
+      return tokens.nodes.map((token: Token) => (
+        <TokenRenderer key={token.token.tokenId} token={token} address={address} />
+      ));
     }
   } catch (error) {
     console.error("Error fetching on-chain data:", error);
