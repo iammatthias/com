@@ -42,8 +42,8 @@ function CommentBody({ comment }: { comment: any }) {
   return (
     <li>
       <p className={styles.meta}>
-        {comment.meta.displayName} //{" "}
-        <Link href={`https://warpcast.com/${comment.body.username}`}>@{comment.body.username} </Link> //{" "}
+        {comment.meta.displayName} =~{" "}
+        <Link href={`https://warpcast.com/${comment.body.username}`}>@{comment.body.username} </Link> =~{" "}
         {elapsedTime(comment.body.publishedAt)}
       </p>
       <CustomMDX source={comment.body.data.text} />
