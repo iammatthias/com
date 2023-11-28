@@ -107,10 +107,11 @@ code,
 pre,
 table {
   font-family: var(--monaspace-krypton), "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 3rem;
 }
 
 code {
-  padding: 0.5rem 1rem;
+  padding: 1rem 1rem 0.75rem;
   border: 0.25rem solid #ccc;
   border-radius: 2rem;
 }

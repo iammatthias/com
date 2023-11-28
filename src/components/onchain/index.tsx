@@ -34,8 +34,6 @@ const TokenRenderer = ({ token, address }: { token: Token; address: string }) =>
   const image = replaceIpfsUrl(metadata.image);
   const video = metadata.animation_url ? replaceIpfsUrl(metadata.animation_url) : undefined;
 
-  console.log("token", token);
-
   return (
     <Suspense key={token.token.tokenId} fallback={<div>Loading...</div>}>
       <Link

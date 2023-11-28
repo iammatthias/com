@@ -7,6 +7,7 @@ import { getObsidianEntry, getObsidianEntries } from "@/lib/obsidian";
 // import Nav from "@/app/components/nav";
 import Back from "@/components/back";
 import Onchain from "@/components/onchain";
+import CommentsContainer from "@/components/comments";
 
 // revalidate every 60 seconds
 export const revalidate = 60;
@@ -47,6 +48,9 @@ export default async function Post({ params }: Props) {
       </article>
 
       <Back />
+
+      <CommentsContainer slug={params.slug} />
+      {/* <CommentsContainer slug={post!.address ? post!.address : params.slug} /> */}
     </section>
   );
 }
