@@ -64,9 +64,11 @@ function CommentBody({ comment }: { comment: any }) {
 export default async function Comments({ slug }: { slug: string }) {
   const topLevelCasts = await getCastThreads(slug);
 
-  if (!topLevelCasts) {
+  if (topLevelCasts.length === 0) {
     return null;
   }
+
+  console.log(topLevelCasts);
 
   return (
     <>
