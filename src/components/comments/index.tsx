@@ -35,12 +35,12 @@ function ChildComment({ children }: { children: any }) {
     return null;
   }
 
-  return children.map((comment: any) => <CommentBody comment={comment} />);
+  return children.map((comment: any) => <CommentBody key={comment.merkleRoot} comment={comment} />);
 }
 
 function CommentBody({ comment }: { comment: any }) {
   return (
-    <li key={comment.merkleRoot}>
+    <li>
       <p className={styles.meta}>
         {comment.meta.displayName} //{" "}
         <Link href={`https://warpcast.com/${comment.body.username}`}>@{comment.body.username} </Link> //{" "}
