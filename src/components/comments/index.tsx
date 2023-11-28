@@ -29,13 +29,13 @@ function ParentComment({ comment }: { comment: any }) {
   return <CommentBody comment={comment} />;
 }
 
-function ChildComment({ children }: { children: any }) {
-  if (!Array.isArray(children)) {
+function ChildComment({ childComments }: { childComments: any }) {
+  if (!Array.isArray(childComments)) {
     // Handle the case where children is not an array (including undefined)
     return null;
   }
 
-  return children.map((comment: any) => <CommentBody key={comment.merkleRoot} comment={comment} />);
+  return childComments.map((comment: any) => <CommentBody key={comment.merkleRoot} comment={comment} />);
 }
 
 function CommentBody({ comment }: { comment: any }) {
@@ -54,7 +54,7 @@ function CommentBody({ comment }: { comment: any }) {
       </p>
       {comment?.children > 0 && (
         <ul>
-          <ChildComment children={comment.children} />
+          <ChildComment childComments={comment.children} />
         </ul>
       )}
     </li>
