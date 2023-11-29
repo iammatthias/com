@@ -2,6 +2,10 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import remarkImages from "remark-images";
 import remarkUnwrapImages from "remark-unwrap-images";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import rehypePrism from "@mapbox/rehype-prism";
+import rehypeStringify from "rehype-stringify";
 import Link from "next/link";
 import Iframe from "../components/iframe";
 import MasonryComponent from "../components/masonry";
@@ -61,6 +65,7 @@ export function CustomMDX(originalProps: any) {
       options={{
         mdxOptions: {
           remarkPlugins: [remarkGfm, remarkImages, remarkUnwrapImages],
+          rehypePlugins: [rehypePrism, rehypeStringify],
         },
       }}
     />

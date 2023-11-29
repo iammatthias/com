@@ -1,18 +1,33 @@
 :root {
-  --red-rgb: 211, 78, 36;
-  --gold-rgb: 245, 171, 0;
-  --green-rgb: 74, 124, 89;
-  --blue-rgb: 5, 74, 145;
+  /* Gold */
+  --gold: #f5ab00;
+  --gold-lighter: #ffcd00;
+  --gold-darker: #c48800;
 
-  --white: #eeeeee;
-  --grey-light: #dbdee5;
-  --grey-dark: #888b93;
-  --black: #020202;
-
+  /* Orange */
   --orange: #f06900;
-  --orange-1: #cd783e;
-  --orange-2: #db8d53;
-  --orange-3: #dea067;
+  --orange-lighter: #ff7e00;
+  --orange-darker: #c05400;
+
+  /* White */
+  --white: #eeeeee;
+  --white-lighter: #ffffff; /* Pure white */
+  --white-darker: #bebebe;
+
+  /* Grey-Light */
+  --grey-light: #dbdee5;
+  --grey-light-lighter: #ffffff; /* Merging with white */
+  --grey-light-darker: #afb1b7;
+
+  /* Grey-Dark */
+  --grey-dark: #888b93;
+  --grey-dark-lighter: #a3a6b0;
+  --grey-dark-darker: #6c6f75;
+
+  /* Black */
+  --black: #020202;
+  --black-lighter: #020202; /* Same as primary, minimal room for lightening */
+  --black-darker: #010101; /* Almost black */
 
   --background: var(--white);
   --foreground: var(--black);

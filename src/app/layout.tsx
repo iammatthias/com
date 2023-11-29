@@ -1,6 +1,7 @@
 import { MonaspaceArgon, MonaspaceKrypton, MonaspaceRadon, MonaspaceXenon } from "@/styles/fonts";
 import "@/styles/globals.css";
 import "@/styles/typography.css";
+import "@/styles/prism-theme.css";
 import type { Metadata } from "next";
 
 import Link from "next/link";

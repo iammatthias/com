@@ -53,7 +53,7 @@ a:not(:only-child) {
 /* Nested h1 within specific links */
 a:not(:only-child) h1 span {
   word-break: normal;
-  background-image: linear-gradient(var(--orange), var(--orange-1)), linear-gradient(var(--orange-2), var(--orange-3));
+  background-image: linear-gradient(var(--orange), var(--orange-lighter)), linear-gradient(var(--orange-darker));
   background-size: 100% 2rem, 0 2rem;
   background-position: 100% 85%, 0 85%;
   background-repeat: no-repeat;
@@ -112,7 +112,7 @@ table {
 
 code {
   padding: 1rem 1rem 0.75rem;
-  border: 0.25rem solid #ccc;
+  border: 0.25rem solid var(--midground);
   border-radius: 2rem;
 }
 
@@ -120,7 +120,7 @@ code {
 pre {
   overflow-x: auto;
   padding: 4rem;
-  border: 0.25rem solid #ccc;
+  border: 0.25rem solid var(--midground);
   border-radius: 2rem;
 }
 
@@ -134,7 +134,7 @@ pre code {
 blockquote {
   margin-left: 6rem;
   padding-left: 6rem;
-  border-left: 1rem solid #ccc;
+  border-left: 1rem solid var(--midground);
 }
 
 em,
@@ -180,7 +180,7 @@ table {
 th,
 td {
   padding: 2rem 4rem;
-  border: 0.25rem solid #ccc;
+  border: 0.25rem solid var(--midground);
   text-align: left;
 }
 

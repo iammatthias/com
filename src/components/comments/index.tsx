@@ -68,8 +68,6 @@ export default async function Comments({ slug }: { slug: string }) {
     return null;
   }
 
-  console.log(topLevelCasts);
-
   return (
     <>
       <p>
