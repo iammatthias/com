@@ -7,11 +7,11 @@ export default function Home() {
   return (
     <>
       <section>
-        <h1>Hi, I am Matthias</h1>
+        {/* <h1>Hi, I am Matthias</h1> */}
 
-        <p>I am a photographer and growth technologist based in Southern California.</p>
+        {/* <p>I am a photographer and growth technologist based in Southern California.</p> */}
 
-        <p>
+        {/* <p>
           My work has taken me to{" "}
           <b>
             <i>Revance (Opul)</i>
@@ -29,7 +29,7 @@ export default function Home() {
             <i>Surf Air</i>
           </b>
           , where I&apos;ve worked on design systems, led strategic growth initiatives, and built marketing operations.
-        </p>
+        </p> */}
 
         {/* <p>
           Let&apos;s work together ~{" "}
@@ -39,14 +39,14 @@ export default function Home() {
         </p> */}
       </section>
       <section>
-        <Glass limit={6} />
+        <Glass limit={12} />
       </section>
       {/* <Suspense fallback={<section>Loading...</section>}>
         <AllPostsList />
       </Suspense> */}
-      <section>
+      {/* <section>
         <Glass limit={6} offset={6} />
-      </section>
+      </section> */}
     </>
   );
 }
