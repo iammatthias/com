@@ -49,7 +49,7 @@ export default async function Post({ params }: Props) {
 
       <Back />
 
-      <CommentsContainer slug={params.slug} />
+      {/* <CommentsContainer slug={params.slug} /> */}
       {/* <CommentsContainer slug={post!.address ? post!.address : params.slug} /> */}
     </section>
   );

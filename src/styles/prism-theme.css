@@ -47,13 +47,13 @@ pre[class*="language-"] {
   padding: 1em;
   margin: 0.5em 0;
   overflow: auto;
-  background: #eeeeee;
+  background: var(--background);
 }
 :not(pre) > code[class*="language-"] {
   padding: 0.1em 0.3em;
   border-radius: 0.3em;
   color: #888b93;
-  background: #eeeeee;
+  background: var(--background);
 }
 /*********************************************************
 * Tokens
@@ -93,7 +93,7 @@ pre[class*="language-"] {
 .language-css .token.string,
 .style .token.string {
   color: #020202;
-  background: #eeeeee;
+  background: var(--background);
 }
 .token.atrule,
 .token.attr-value,

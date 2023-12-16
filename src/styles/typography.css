@@ -98,8 +98,14 @@ h4 {
 /* List styles */
 ul,
 ol {
-  margin-left: 6rem;
-  padding-left: 6rem;
+  margin: 0;
+  padding: 0;
+}
+
+ul > li,
+ol > li {
+  margin-left: 4rem;
+  padding-left: 4rem;
 }
 
 /* Code and pre-formatted text styles */

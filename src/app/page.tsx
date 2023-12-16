@@ -31,19 +31,19 @@ export default function Home() {
           , where I&apos;ve worked on design systems, led strategic growth initiatives, and built marketing operations.
         </p>
 
-        <p>
+        {/* <p>
           Let&apos;s work together ~{" "}
           <Link href='ma&#105;lto&#58;&#37;&#54;&#56;%65&#121;%40i%61mm&#97;&#116;%7&#52;hias&#46;&#99;om'>
             h&#101;y&#64;&#105;amm&#97;&#116;thias&#46;com
           </Link>
-        </p>
+        </p> */}
       </section>
       <section>
         <Glass limit={6} />
       </section>
-      <Suspense fallback={<section>Loading...</section>}>
+      {/* <Suspense fallback={<section>Loading...</section>}>
         <AllPostsList />
-      </Suspense>
+      </Suspense> */}
       <section>
         <Glass limit={6} offset={6} />
       </section>

@@ -42,6 +42,15 @@ const nextConfig = {
   experimental: {
     mdxRs: true,
   },
+  async redirects() {
+    return [
+      {
+        source: "/md/:slug*",
+        destination: "/", // Matched parameters can be used in the destination
+        permanent: true,
+      },
+    ];
+  },
 };
 
 const configExport = () => {

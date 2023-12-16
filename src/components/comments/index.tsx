@@ -21,10 +21,10 @@ function elapsedTime(timestamp: number) {
 function ParentComment({ comment }: { comment: any }) {
   console.log(comment);
 
-  // If the comment has a parent, it's not a top-level comment
-  if (comment.body.data.replyParentMerkleRoot !== null) {
-    return null;
-  }
+  // // If the comment has a parent, it's not a top-level comment
+  // if (comment.body.data.replyParentMerkleRoot !== null) {
+  //   return null;
+  // }
 
   return <CommentBody comment={comment} />;
 }
@@ -52,11 +52,15 @@ function CommentBody({ comment }: { comment: any }) {
           View on Warpcast -&gt;{" "}
         </Link>
       </p>
-      {comment?.children > 0 && (
+      {/* {comment?.children > 0 && (
         <ul>
           <ChildComment childComments={comment.children} />
         </ul>
-      )}
+      )} */}
+
+      <ul>
+        <ChildComment childComments={comment.children} />
+      </ul>
     </li>
   );
 }
