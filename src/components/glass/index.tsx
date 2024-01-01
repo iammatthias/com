@@ -12,10 +12,9 @@ export default async function Glass({ limit = 25, offset = 0 }: { limit?: number
     glassPosts.map(async (post: any) => {
       return (
         <Suspense key={post.post.id}>
-          {/* <Link href={post.post.share_url} target='_blank'>
+          <Link href={post.post.share_url} target='_blank'>
             <RemoteImage alt={post.post.description} src={post.post.image640x640} className={styles.img} />
-          </Link> */}
-          <RemoteImage alt={post.post.description} src={post.post.image640x640} className={styles.img} />
+          </Link>
         </Suspense>
       );
     })
