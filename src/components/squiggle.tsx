@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 
 const range = (start: number, end: number) => Array.from({ length: end - start }, (v, k) => k + start);
 
-function Squiggle({ height = 24, strokeColor = "currentColor", squiggleWidth = 8, ...props }) {
+function Squiggle({ height = 24, strokeColor = "currentColor", squiggleWidth = 36, ...props }) {
   const svgContainerRef = useRef<HTMLDivElement>(null); // <--- specify the type here
   const [bounds, setBounds] = useState({ width: 0, height: 0 });
 
@@ -30,7 +30,7 @@ function Squiggle({ height = 24, strokeColor = "currentColor", squiggleWidth = 8
 
     const lastPointX = i * roundedSquiggleWidth;
     const controlPointX = lastPointX + roundedSquiggleWidth / 2;
-    const controlPointY = linePositionY + (roundedSquiggleWidth / 2) * sideMultiplier;
+    const controlPointY = linePositionY + (roundedSquiggleWidth / 3) * sideMultiplier;
     const x = lastPointX + roundedSquiggleWidth;
     const y = linePositionY;
 

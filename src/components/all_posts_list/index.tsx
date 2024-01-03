@@ -44,7 +44,6 @@ export default async function AllPostsList() {
           </>
         </Link>
       ))}
-      <Squiggle />
     </section>
   );
 }

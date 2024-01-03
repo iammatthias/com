@@ -29,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en'>
       <body
         className={`${MonaspaceArgon.variable}, ${MonaspaceKrypton.variable} ${MonaspaceRadon.variable} ${MonaspaceXenon.variable}`}>
+        <div className='noise' />
         <Link href='/'>
           <MoonSunMoon />
         </Link>
