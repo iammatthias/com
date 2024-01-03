@@ -22,9 +22,9 @@ export default async function AllPostsList() {
           <>
             <Squiggle />
             <div>
-              <h1>
+              <h2>
                 <span>{post.name}</span>
-              </h1>
+              </h2>
 
               <p className={styles.date}>
                 This post was published {new Date(post.created).toLocaleDateString("sv-SE").replace(/-/g, "/")}{" "}
