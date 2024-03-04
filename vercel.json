@@ -3,9 +3,9 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/node",
+      "use": "@vercel/static-build",
       "config": {
-        "buildCommand": "bun run build",
+        "buildCommand": "astro build",
         "outputDirectory": ".vercel/output"
       }
     }
