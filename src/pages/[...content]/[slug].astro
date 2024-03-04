@@ -11,19 +11,14 @@ export async function getStaticPaths() {
     const accum = await prevPromise;
     const entries = await getObsidianEntries(contentType);
 
-    const newPaths = entries.map(
-      (entry) => (
-        console.log(entry),
-        {
-          params: { content: contentType, slug: entry.frontmatter.slug },
-          props: {
-            body: entry.body,
-            frontmatter: entry.frontmatter,
-            contentType,
-          },
-        }
-      )
-    );
+    const newPaths = entries.map((entry) => ({
+      params: { content: contentType, slug: entry.frontmatter.slug },
+      props: {
+        body: entry.body,
+        frontmatter: entry.frontmatter,
+        contentType,
+      },
+    }));
 
     return [...accum, ...newPaths];
   }, Promise.resolve([]));
