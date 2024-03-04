@@ -1,0 +1,70 @@
+---
+import MSM from "./MSM.astro";
+---
+
+<nav>
+  <p><a href='/'>Home</a></p>
+  <p><a href='/posts'>Posts</a></p>
+  <p><a href='/recipes'>Recipes</a></p>
+  <p><a href='/notes'>Notes</a></p>
+</nav>
+
+<style>
+  nav {
+    left: 50%;
+    transform: translate(-50%, 0);
+    bottom: 2rem;
+    margin: 0 auto;
+    position: fixed;
+    width: fit-content;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    align-self: center;
+    border: 1px solid #1a1a1a;
+    border-radius: 10rem;
+    background-color: rgb(243, 244, 246);
+    z-index: 1000;
+  }
+
+  nav::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 1;
+    border-radius: 10rem;
+    box-shadow:
+      0px 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0px 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  a {
+    margin: 0;
+    padding: 0;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: inherit;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: none;
+  }
+
+  @media (max-width: 1024px) {
+    nav {
+      padding: 0.75rem 1.5rem;
+      gap: 1.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    nav {
+      padding: 0.5rem 1rem;
+      gap: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,14 @@
+---
+import fs from "node:fs";
+export const partial = true;
+
+let count = +fs.readFileSync("/tmp/count.txt", "utf-8").trim();
+if (count > 0) {
+  count -= 1;
+}
+fs.writeFileSync("/tmp/count.txt", count.toString());
+---
+
+<span id='count' hx-swap-oob='true'>
+  {count}
+</span>

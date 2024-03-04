@@ -1,0 +1,100 @@
+:root {
+  /* Primary Palette */
+  --gold: #f5ab00;
+  --gold-lighter: #ffcd00;
+  --gold-darker: #c48800;
+
+  --orange: #f06900;
+  --orange-lighter: #ff7e00;
+  --orange-darker: #c05400;
+
+  --white: #eeeeee;
+  --white-lighter: #ffffff;
+  --white-darker: #bebebe;
+
+  /* Grey Palette */
+  --grey-light: #dbdee5;
+  --grey-light-lighter: #ffffff;
+  --grey-light-darker: #afb1b7;
+
+  --grey-dark: #888b93;
+  --grey-dark-lighter: #a3a6b0;
+  --grey-dark-darker: #6c6f75;
+
+  /* Black Palette */
+  --black: #020202;
+  --black-lighter: #020202;
+  --black-darker: #010101;
+
+  /* Layout Colors */
+  --background: var(--white);
+  --foreground: var(--black);
+  --midground: var(--grey-light);
+
+  /* Typography Colors */
+  --text-primary: var(--foreground); /* Main text color */
+  --text-secondary: var(--orange-lighter); /* Lighter for less intensity */
+  --text-link: var(--orange-darker); /* Darker orange for links */
+  --text-title: var(--foreground); /* Main title color */
+
+  --noise-opacity: 0.7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--black);
+    --foreground: var(--white);
+    --midground: var(--grey-dark);
+
+    --text-primary: var(--grey-light); /* Lighter text for dark mode */
+    --text-secondary: var(--orange-lighter); /* Keep lighter orange for contrast */
+    --text-link: var(--orange); /* Standard orange for visibility */
+    --text-title: var(--white); /* White titles for contrast */
+
+    --noise-opacity: 0.2;
+  }
+}
+
+body {
+  position: relative;
+  background: var(--background);
+  color: var(--foreground);
+  min-height: 100svh;
+}
+
+body > main {
+  min-height: calc(100vh);
+}
+
+body > main,
+footer {
+  padding: 4rem;
+}
+
+.noise {
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="a"><feTurbulence type="fractalNoise" baseFrequency=".618" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23a)"/></svg>');
+  background-repeat: repeat;
+  background-size: 182px;
+  filter: brightness(6);
+  opacity: var(--noise-opacity);
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  inset: 0;
+  height: auto; /* Adjusted to auto */
+}
+
+@media (max-width: 1024px) {
+  body > main,
+  footer {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  body > main,
+  footer {
+    padding: 1rem;
+  }
+}

@@ -1,196 +1,170 @@
-/* Reset styles for text elements */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-ul,
-ol,
-pre,
-code,
-blockquote,
-figure {
-  margin: 0;
-  padding: 0;
+/* Typography */
+/* Fluid font size variables, for browsers that support clamp */
+@supports (font-size: clamp(1rem, 1vw, 1rem)) {
+  :root {
+    --fs-sm: clamp(1rem, 0vw + 1rem, 1rem);
+    --fs-p: clamp(1.13rem, 0.14vw + 1.09rem, 1.2rem);
+    --fs-h6: clamp(1.27rem, 0.32vw + 1.19rem, 1.44rem);
+    --fs-h5: clamp(1.42rem, 0.55vw + 1.29rem, 1.73rem);
+    --fs-h4: clamp(1.6rem, 0.86vw + 1.39rem, 2.07rem);
+    --fs-h3: clamp(1.8rem, 1.25vw + 1.49rem, 2.49rem);
+    --fs-h2: clamp(2.03rem, 1.74vw + 1.59rem, 2.99rem);
+    --fs-h1: clamp(2.28rem, 2.37vw + 1.69rem, 3.58rem);
+  }
+}
+/* Fallback variables for browsers that don't support clamp */
+@supports not (font-size: clamp(1rem, 1vw, 1rem)) {
+  :root {
+    --fs-sm: 1rem;
+    --fs-p: 1.13rem;
+    --fs-h6: 1.27rem;
+    --fs-h5: 1.42rem;
+    --fs-h4: 1.6rem;
+    --fs-h3: 1.8rem;
+    --fs-h2: 2.03rem;
+    --fs-h1: 2.28rem;
+  }
+  @media screen and (min-width: 1280px) {
+    :root {
+      --fs-sm: 1rem;
+      --fs-p: 1.2rem;
+      --fs-h6: 1.44rem;
+      --fs-h5: 1.73rem;
+      --fs-h4: 2.07rem;
+      --fs-h3: 2.49rem;
+      --fs-h2: 2.99rem;
+      --fs-h1: 3.58rem;
+    }
+  }
 }
 
-/* Global body styles */
-body {
-  font-family: var(--monaspace-xenon), "New York", "Georgia", Times, serif;
-  line-height: 1.6;
+html {
   font-size: 16px;
-  font-weight: 200;
+  font-family: -apple-system-ui-serif, ui-serif, "Georgia", serif;
+  color: var(--text-primary);
+  background-color: var(--background);
 }
 
-/* Global link styles */
-a {
-  color: inherit;
-  text-decoration: none;
-  font-weight: bold;
-  background-image: linear-gradient(var(--orange), var(--orange-1)), linear-gradient(var(--orange-2), var(--orange-3));
-  background-size: 100% 1rem, 0 1rem;
-  background-position: 100% 100%, 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 0.3s linear;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-}
-
-/* Hover effect for links */
-a:hover {
-  background-size: 0 1rem, 100% 1rem;
-}
-
-/* Specific link styles when not the only child */
-a:not(:only-child) {
-  background-image: none;
-  font-weight: normal;
-}
-
-/* Nested h1 within specific links */
-a:not(:only-child) h1 span {
-  word-break: normal;
-  background-image: linear-gradient(var(--orange), var(--orange-lighter)), linear-gradient(var(--orange-darker));
-  background-size: 100% 2rem, 0 2rem;
-  background-position: 100% 85%, 0 85%;
-  background-repeat: no-repeat;
-  transition: background-size 0.15s linear;
-}
-
-/* Hover effect for nested h1 within specific links */
-a:not(:only-child) h1 span:hover {
-  background-size: 0 2rem, 100% 2rem;
-}
-
-/* Header styles */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-weight: 800;
+  color: var(--text-title);
+
+  width: fit-content;
 }
 
-/* Specific header sizes */
+a {
+  color: var(--text-link);
+  font-weight: bold;
+  text-decoration: none;
+  border-bottom: 2px solid var(--text-link);
+}
+
 h1 {
-  font-size: 10rem;
-}
-
-.post h1 {
-  font-size: 8rem;
-  line-height: 1.2;
+  font-size: var(--fs-h1);
 }
 
 h2 {
-  font-size: 8rem;
+  font-size: var(--fs-h2);
 }
+
 h3 {
-  font-size: 6rem;
+  font-size: var(--fs-h3);
 }
+
 h4 {
-  font-size: 4.8rem;
+  font-size: var(--fs-h4);
 }
 
-/* List styles */
-ul,
-ol {
-  margin: 0;
-  padding: 0;
+h5 {
+  font-size: var(--fs-h5);
 }
 
-ul > li,
-ol > li {
-  margin-left: 4rem;
-  padding-left: 4rem;
+h6 {
+  font-size: var(--fs-h6);
 }
 
-/* Code and pre-formatted text styles */
-code,
+li,
+p {
+  font-size: var(--fs-p);
+  color: var(--foreground); /* Main text color */
+}
+
+small {
+  font-size: var(--fs-sm);
+  color: var(--grey-dark); /* Less emphasized text */
+}
+
 pre,
-table {
-  font-family: var(--monaspace-krypton), "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  font-size: 3rem;
-}
-
 code {
-  padding: 1rem 1rem 0.75rem;
-  border: 0.25rem solid var(--midground);
-  border-radius: 2rem;
+  font-family: ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
 }
 
-/* Pre-formatted text block styles */
 pre {
-  overflow-x: auto;
-  padding: 4rem;
-  border: 0.25rem solid var(--midground);
-  border-radius: 2rem;
+  border: 1px solid var(--grey-light);
+  background-color: var(--grey-light-lighter); /* Light background for preformatted text */
+  padding: 1rem;
+  overflow-x: scroll;
 }
 
-pre code {
-  padding: 0;
-  border: none;
-  background-color: transparent;
+.shadow-text {
+  text-shadow: 2px 2px 4px var(--black-darker); /* Enhanced shadow for contrast */
 }
 
-/* Blockquote styles */
-blockquote {
-  margin-left: 6rem;
-  padding-left: 6rem;
-  border-left: 1rem solid var(--midground);
+.gradient-text {
+  background: linear-gradient(45deg, var(--orange), var(--gold)); /* Custom gradient text */
+  background-clip: text;
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-em,
-i,
-blockquote p {
-  font-family: var(--monaspace-radon);
-}
-
-em,
-i {
-  font-style: oblique 5deg;
-}
-
-/* Blog homepage specific styles */
-.title,
-.author,
-.date,
-.tagline {
-  line-height: 1;
-}
-
-.title {
-  font-size: 8rem;
-}
-.author {
-  font-size: 4rem;
-}
-.date {
-  font-size: 3.2rem;
-}
-.tagline {
-  font-size: 4rem;
-  font-style: italic;
-}
-
-/* Table styles */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 4rem 0;
+  font-size: var(--fs-p);
+  box-shadow: 0 0 10px var(--grey-light-darker);
 }
 
 th,
 td {
-  padding: 2rem 4rem;
-  border: 0.25rem solid var(--midground);
+  padding: 12px 15px;
   text-align: left;
+  border: 1px solid var(--grey-light);
 }
 
 th {
-  background-color: #f4f4f4;
-  color: rgb(var(--background));
+  background-color: var(--grey-light);
+  color: var(--black);
+}
+
+td:hover {
+  background-color: var(--orange-lighter);
+  color: var(--white);
+}
+
+@media screen and (max-width: 600px) {
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  th,
+  td {
+    padding: 12px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-align: center;
+  }
 }

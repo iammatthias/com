@@ -1,0 +1,32 @@
+---
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/reset.css";
+import "../styles/typography.css";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!-- something --><!-- will --><!-- go --><!-- here -->
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='description' content='Astro description' />
+    <meta name='viewport' content='width=device-width' />
+    <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+    <meta name='generator' content={Astro.generator} />
+    <title>{title ? `@iammatthias | ${title}` : "@iammatthias"}</title>
+  </head>
+  <>
+    <div class='noise'></div>
+    <Nav />
+    <slot />
+    <Footer />
+  </>
+  <script src='https://unpkg.com/htmx.org@1'></script>
+</html>
