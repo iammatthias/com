@@ -5,7 +5,8 @@
       "src": "package.json",
       "use": "@vercel/node",
       "config": {
-        "buildCommand": "bun run build"
+        "buildCommand": "bun run build",
+        "outputDirectory": ".vercel/output"
       }
     }
   ]
