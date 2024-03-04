@@ -1,6 +1,7 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import { getObsidianEntries } from "../../lib/github";
+export const prerender = true;
+import Layout from "@layouts/Layout.astro";
+import { getObsidianEntries } from "@lib/github";
 
 export async function getStaticPaths() {
   const contentTypes = ["posts", "recipes", "notes" /* add other content types here */];
