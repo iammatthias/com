@@ -1,14 +1,26 @@
 ---
+interface Post {
+  image1024x1024: string;
+  description: string;
+  friendly_id: string;
+  width: number;
+  height: number;
+}
+
 const response = await fetch("https://glass.photo/api/v2/users/iam/posts?limit=5");
 const data = await response.json();
-const posts = data.map((post) => {
-  const { image1024x1024: cover_image, description, friendly_id: id, width, height } = post;
-  return { cover_image, description, id, width, height };
+const posts = data.map((post: Post) => {
+  const { image1024x1024, description, friendly_id, width, height } = post;
+  return { image1024x1024, description, friendly_id, width, height };
 });
 ---
 
 <div class='masonry' x-data x-masonry>
-  {posts.map((post) => <img src={post.cover_image} alt={post.description ? post.description : post.id} />)}
+  {
+    posts.map((post: Post) => (
+      <img src={post.image1024x1024} alt={post.description ? post.description : post.friendly_id} />
+    ))
+  }
 </div>
 
 <script>

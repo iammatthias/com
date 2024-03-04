@@ -23,6 +23,7 @@
     "vercel": "^33.5.3"
   },
   "devDependencies": {
+    "@types/bun": "^1.0.8",
     "alpinejs-masonry": "^1.0.12"
   }
 }

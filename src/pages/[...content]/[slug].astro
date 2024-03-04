@@ -1,6 +1,6 @@
 ---
 export const prerender = true;
-import Layout from "@layouts/Layout.astro";
+import Layout from "@layouts/layout.astro";
 import { getObsidianEntries } from "@lib/github";
 import { Markdown } from "astro-remote";
 
@@ -54,7 +54,7 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
     {
       frontmatter.tags && frontmatter.tags.length > 0 && (
         <div class='tags'>
-          {frontmatter.tags.map((tag) => (
+          {frontmatter.tags.map((tag: string) => (
             <span>
               <small>#{tag}</small>
             </span>

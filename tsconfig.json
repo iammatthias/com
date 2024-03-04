@@ -2,12 +2,15 @@
   "extends": "astro/tsconfigs/base",
   "compilerOptions": {
     "moduleResolution": "node",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
       "@layouts/*": ["src/layouts/*"],
       "@lib/*": ["src/lib/*"],
-      "@styles/*": ["src/styles/*"]
+      "@data/*": ["src/data/*"],
+      "@styles/*": ["src/styles/*"],
+      "@src/*": ["src/*"]
     }
-  }
+  },
+  "include": ["*.astro", "*.ts", "additional.d.ts"]
 }
