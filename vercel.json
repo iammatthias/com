@@ -1,5 +1,5 @@
 {
   "framework": "astro",
   "installCommand": "bun install",
-  "buildCommand": "bun run build"
+  "buildCommand": "bun run astro build"
 }
