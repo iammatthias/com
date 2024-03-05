@@ -6,7 +6,21 @@ const { content: contentType } = Astro.params;
 
 const contentTypes = ["posts", "recipes", "notes" /* add other content types here */];
 
+if (!contentType || !contentTypes.includes(contentType)) {
+  return {
+    status: 404,
+    error: "Content type not found",
+  };
+}
+
 let entries = await getObsidianEntries(contentType);
+
+if (!entries || entries.length === 0) {
+  return {
+    status: 404,
+    error: "Entries not found",
+  };
+}
 
 // Sort entries based on the 'created' field
 entries = entries.sort((a, b) => new Date(b.frontmatter.created).getTime() - new Date(a.frontmatter.created).getTime());

@@ -64,6 +64,9 @@ body {
 
 body > main {
   min-height: calc(100vh);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 body > main,
