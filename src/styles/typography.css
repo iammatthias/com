@@ -158,7 +158,7 @@ td:hover {
   }
 }
 
-@media screen and (max-width: 768px) {
+/* @media screen and (max-width: 768px) {
   h1,
   h2,
   h3,
@@ -167,4 +167,4 @@ td:hover {
   h6 {
     text-align: center;
   }
-}
+} */
