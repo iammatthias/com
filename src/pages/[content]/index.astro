@@ -1,0 +1,84 @@
+---
+import Layout from "@layouts/layout.astro";
+import { getObsidianEntries } from "@lib/github";
+
+const { content: contentType } = Astro.params;
+
+const contentTypes = ["posts", "recipes", "notes" /* add other content types here */];
+
+let entries = await getObsidianEntries(contentType);
+
+// Sort entries based on the 'created' field
+entries = entries.sort((a, b) => new Date(b.frontmatter.created).getTime() - new Date(a.frontmatter.created).getTime());
+
+// export async function getStaticPaths() {
+//   const contentTypes = ["posts", "recipes", "notes" /* add other content types here */];
+
+//   const paths = await Promise.all(
+//     contentTypes.map(async (contentType) => {
+//       let entries = await getObsidianEntries(contentType);
+
+//       // Sort entries based on the 'created' field
+//       entries = entries.sort(
+//         (a, b) => new Date(b.frontmatter.created).getTime() - new Date(a.frontmatter.created).getTime()
+//       );
+
+//       return {
+//         params: { content: contentType },
+//         props: { entries },
+//       };
+//     })
+//   );
+
+//   return paths;
+// }
+
+// const { content } = Astro.params;
+// const { entries } = Astro.props;
+---
+
+<Layout>
+  <main>
+    <h1>{contentType}</h1>
+    <ul>
+      {
+        entries.map((entry) => (
+          <li>
+            <h1>
+              <a href={`/${contentType}/${entry.frontmatter.slug}`}>{entry.frontmatter.title}</a>
+            </h1>
+            <p>
+              <small>{entry.frontmatter.created}</small>
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</Layout>
+
+<style>
+  h1 {
+    font-size: var(--fs-h2);
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    ul {
+      gap: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    ul {
+      gap: 1rem;
+    }
+  }
+</style>
