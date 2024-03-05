@@ -8,6 +8,11 @@ export default defineConfig({
   integrations: [alpine()],
   output: "server",
   adapter: vercel({
-    isr: true,
+    isr: {
+      // A secret random string that you create.
+      // bypassToken: "005556d774a8",
+      // expiration: 60 * 60 * 24,
+      expiration: 60,
+    },
   }),
 });
