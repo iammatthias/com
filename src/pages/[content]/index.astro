@@ -7,19 +7,25 @@ const { content: contentType } = Astro.params;
 const contentTypes = ["posts", "recipes", "notes" /* add other content types here */];
 
 if (!contentType || !contentTypes.includes(contentType)) {
-  return {
-    status: 404,
-    error: "Content type not found",
-  };
+  return (
+    {
+      status: 404,
+      error: "Content type not found",
+    },
+    Astro.redirect("/404")
+  );
 }
 
 let entries = await getObsidianEntries(contentType);
 
 if (!entries || entries.length === 0) {
-  return {
-    status: 404,
-    error: "Entries not found",
-  };
+  return (
+    {
+      status: 404,
+      error: "Entries not found",
+    },
+    Astro.redirect("/404")
+  );
 }
 
 // Sort entries based on the 'created' field

@@ -8,21 +8,37 @@ const { content: contentType, slug } = Astro.params;
 const contentTypes = ["posts", "recipes", "notes" /* add other content types here */];
 
 if (!contentType || !contentTypes.includes(contentType)) {
-  return {
-    status: 404,
-    error: "Content type not found",
-  };
+  return (
+    {
+      status: 404,
+      error: "Content type not found",
+    },
+    Astro.redirect("/404")
+  );
 }
 
 const entries = await getObsidianEntries(contentType);
 
+if (!entries) {
+  return (
+    {
+      status: 404,
+      error: "Entries not found",
+    },
+    Astro.redirect("/404")
+  );
+}
+
 const entry = entries.find((entry) => entry.frontmatter.slug === slug);
 
 if (!entry) {
-  return {
-    status: 404,
-    error: "Entry not found",
-  };
+  return (
+    {
+      status: 404,
+      error: "Entry not found",
+    },
+    Astro.redirect("/404")
+  );
 }
 
 const { body, frontmatter } = entry;
