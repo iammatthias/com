@@ -1,7 +1,7 @@
 {
   "extends": "astro/tsconfigs/base",
   "exclude": ["node_modules"],
-  "include": ["**/*.ts"],
+  "include": ["additional.d.ts"],
   "compilerOptions": {
     "moduleResolution": "node",
     "baseUrl": ".",

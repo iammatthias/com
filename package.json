@@ -16,6 +16,7 @@
     "@astrojs/vercel": "^7.3.4",
     "@types/alpinejs": "^3.13.6",
     "alpinejs": "^3.13.3",
+    "alpinejs-masonry": "^1.0.12",
     "astro": "^4.0.9",
     "astro-remote": "^0.3.2",
     "gray-matter": "^4.0.3",
@@ -23,7 +24,6 @@
     "vercel": "^33.5.3"
   },
   "devDependencies": {
-    "@types/bun": "^1.0.8",
-    "alpinejs-masonry": "^1.0.12"
+    "@types/bun": "^1.0.8"
   }
 }

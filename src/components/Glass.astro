@@ -20,7 +20,12 @@ const posts = data.map((post: Post) => {
 <div class='masonry' x-data x-masonry>
   {
     posts.map((post: Post) => (
-      <Image src={post.image1024x1024} inferSize alt={post.description ? post.description : post.friendly_id} />
+      <Image
+        src={post.image1024x1024}
+        inferSize
+        alt={post.description ? post.description : post.friendly_id}
+        loading='eager'
+      />
     ))
   }
 </div>
