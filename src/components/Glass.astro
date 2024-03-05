@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+
 interface Post {
   image1024x1024: string;
   description: string;
@@ -18,7 +20,7 @@ const posts = data.map((post: Post) => {
 <div class='masonry' x-data x-masonry>
   {
     posts.map((post: Post) => (
-      <img src={post.image1024x1024} alt={post.description ? post.description : post.friendly_id} />
+      <Image src={post.image1024x1024} inferSize alt={post.description ? post.description : post.friendly_id} />
     ))
   }
 </div>
