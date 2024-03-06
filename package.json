@@ -19,7 +19,9 @@
     "alpinejs-masonry": "^1.0.12",
     "astro": "^4.0.9",
     "astro-remote": "^0.3.2",
+    "aws-sdk": "^2.1571.0",
     "gray-matter": "^4.0.3",
+    "redis": "^4.6.13",
     "sass": "^1.69.7",
     "vercel": "^33.5.3"
   },

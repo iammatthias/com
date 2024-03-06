@@ -41,7 +41,7 @@
 html {
   font-size: 16px;
   font-family: -apple-system-ui-serif, ui-serif, "Georgia", serif;
-  color: var(--text-primary);
+  color: var(--foreground); /* Main text color */
   background-color: var(--background);
 }
 
@@ -90,12 +90,10 @@ h6 {
 li,
 p {
   font-size: var(--fs-p);
-  color: var(--foreground); /* Main text color */
 }
 
 small {
   font-size: var(--fs-sm);
-  color: var(--grey-dark); /* Less emphasized text */
 }
 
 pre,

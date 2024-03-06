@@ -1,13 +1,14 @@
 ---
 import Layout from "@layouts/layout.astro";
 import { getObsidianEntries } from "@lib/github";
+import Image from "@components/img.astro";
 import { Markdown } from "astro-remote";
 
-const { content: contentType, slug } = Astro.params;
+const { path, slug } = Astro.params;
 
-const contentTypes = ["posts", "recipes", "notes" /* add other content types here */];
+const paths = ["posts", "recipes", "notes" /* add other content types here */];
 
-if (!contentType || !contentTypes.includes(contentType)) {
+if (!path || !paths.includes(path)) {
   return (
     {
       status: 404,
@@ -17,7 +18,7 @@ if (!contentType || !contentTypes.includes(contentType)) {
   );
 }
 
-const entries = await getObsidianEntries(contentType);
+const entries = await getObsidianEntries(path);
 
 if (!entries) {
   return (
@@ -54,31 +55,35 @@ const difference = updatedAtDate.getTime() - createdAtDate.getTime();
 const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
 ---
 
-<Layout title={`${contentType} | ${frontmatter.title}`}>
+<Layout title={`${path} | ${frontmatter.title}`}>
   <main>
-    <h1>{frontmatter.title}</h1>
-    <p>
-      <small>
-        This post was first published at <time datetime={frontmatter.created}>{frontmatter.created}</time>. {
-          isUpdatedAfter24Hours && (
-            <time datetime={frontmatter.updated}>It was last updated at {frontmatter.updated}</time>
-          )
-        }
-      </small>
-    </p>
-    {
-      frontmatter.tags && frontmatter.tags.length > 0 && (
-        <div class='tags'>
-          {frontmatter.tags.map((tag: string) => (
-            <span>
-              <small>#{tag}</small>
-            </span>
-          ))}
-        </div>
-      )
-    }
+    <div class='meta'>
+      <h1>{frontmatter.title}</h1>
+      <p>
+        <small>
+          This post was first published at <time datetime={frontmatter.created}>{frontmatter.created}</time>. {
+            isUpdatedAfter24Hours && (
+              <time datetime={frontmatter.updated}>It was last updated at {frontmatter.updated}</time>
+            )
+          }
+        </small>
+      </p>
+      {
+        frontmatter.tags && frontmatter.tags.length > 0 && (
+          <div class='tags'>
+            {frontmatter.tags.map((tag: string) => (
+              <span>
+                <small>
+                  <a href={`/tags/${tag}`}>#{tag}</a>
+                </small>
+              </span>
+            ))}
+          </div>
+        )
+      }
+    </div>
     <article>
-      <Markdown>{body}</Markdown>
+      <Markdown components={{ img: Image }}>{body}</Markdown>
     </article>
   </main>
 </Layout>

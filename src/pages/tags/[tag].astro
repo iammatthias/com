@@ -1,0 +1,77 @@
+---
+import Layout from "@layouts/layout.astro";
+import Glass from "@components/glass.astro";
+
+const { tag } = Astro.params;
+
+interface SlugPathPair {
+  slug: string;
+  path: string;
+  title: string;
+}
+
+interface Tags {
+  [key: string]: SlugPathPair[];
+}
+
+// Assuming 'tags' is being fetched and processed as shown in your script
+let tags: Tags = await fetch("https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json").then((res) => res.json());
+
+// using the tag parameter to filter the tags
+if (tag) {
+  tags = Object.fromEntries(Object.entries(tags).filter(([key, value]) => key === tag));
+}
+
+console.log(tags);
+---
+
+<Layout>
+  <main>
+    <h1>Tag: {tag}</h1>
+
+    {
+      Object.entries(tags).map(([tag, slugs]) =>
+        slugs.map(({ slug, path, title }) => (
+          <p>
+            <a href={`/${path}/${slug}`}>{title}</a>
+          </p>
+        ))
+      )
+    }
+
+    <p><a href='/tags'>View all Tags</a></p>
+    <Glass limit='5' offset='5' />
+  </main>
+</Layout>
+
+<style>
+  ul,
+  li {
+    list-style: none;
+    padding: 0;
+  }
+
+  .grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .subgrid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .grid {
+      gap: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .grid {
+      gap: 1rem;
+    }
+  }
+</style>

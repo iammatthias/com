@@ -1,13 +1,25 @@
 import matter from "gray-matter";
+import { parseAndMergeTags } from "./tags";
+
+const github = import.meta.env.github;
+
+// Updated parseMarkdownContent to incorporate tag, slug, and path extraction
+async function parseMarkdownContent(content: string, path: string) {
+  const { data, content: body } = matter(content);
+
+  // Add the path to the frontmatter
+  const frontmatter = { ...data, path };
+
+  return { frontmatter, body };
+}
 
 // Helper function to fetch data from GitHub GraphQL API
 async function fetchFromGitHubGraphQL(query: string, variables: any) {
-  const token = import.meta.env.github;
   const response = await fetch("https://api.github.com/graphql", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${github}`,
     },
     body: JSON.stringify({ query, variables }),
   });
@@ -18,12 +30,6 @@ async function fetchFromGitHubGraphQL(query: string, variables: any) {
   }
 
   return response.json(); // Return the parsed JSON response
-}
-
-// Helper function to parse markdown content and structure the response
-function parseMarkdownContent(content: string) {
-  const { data, content: body } = matter(content);
-  return { frontmatter: data, body };
 }
 
 // Function to get all entries
@@ -74,40 +80,44 @@ export async function getObsidianEntries(path: string) {
   }
 
   // Process the entries
-  return Promise.all(
+  const parsedEntries = await Promise.all(
     entries.map((entry: { object: { text: any } }) => {
       const content = entry.object.text;
-      return parseMarkdownContent(content);
+      return parseMarkdownContent(content, path);
     })
   );
+
+  const parsedTags = parseAndMergeTags(parsedEntries);
+
+  return parsedEntries;
 }
 
-// Function to get a single entry
-export async function getObsidianEntry(slug: string) {
-  const { data } = await fetchFromGitHubGraphQL(
-    `
-      query fetchSingleEntry($owner: String!, $name: String!, $entryName: String!) {
-        repository(owner: $owner, name: $name) {
-          object(expression: $entryName) {
-            ... on Blob {
-              text
-            }
-          }
-        }
-      }
-    `,
-    {
-      owner: "iammatthias",
-      name: "obsidian_cms",
-      entryName: `HEAD:Content/${slug}.md`,
-    }
-  );
+// // Function to get a single entry
+// export async function getObsidianEntry(slug: string) {
+//   const { data } = await fetchFromGitHubGraphQL(
+//     `
+//       query fetchSingleEntry($owner: String!, $name: String!, $entryName: String!) {
+//         repository(owner: $owner, name: $name) {
+//           object(expression: $entryName) {
+//             ... on Blob {
+//               text
+//             }
+//           }
+//         }
+//       }
+//     `,
+//     {
+//       owner: "iammatthias",
+//       name: "obsidian_cms",
+//       entryName: `HEAD:Content/${slug}.md`,
+//     }
+//   );
 
-  if (!data || !data.repository || !data.repository.object) {
-    return null; // Return null if there's no data
-  }
+//   if (!data || !data.repository || !data.repository.object) {
+//     return null; // Return null if there's no data
+//   }
 
-  const text = data.repository.object.text;
+//   const text = data.repository.object.text;
 
-  return parseMarkdownContent(text);
-}
+//   return parseMarkdownContent(text);
+// }

@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import Image from "@components/img.astro";
 
 interface Post {
   image1024x1024: string;
@@ -9,7 +9,7 @@ interface Post {
   height: number;
 }
 
-const { limit, offset } = Astro.props;
+const { limit, offset, loading } = Astro.props;
 
 const response = await fetch(
   `https://glass.photo/api/v2/users/iam/posts?limit=${limit ? limit : 5}&offset=${offset ? offset : 0}`
@@ -26,9 +26,8 @@ const posts = data.map((post: Post) => {
     posts.map((post: Post) => (
       <Image
         src={post.image1024x1024}
-        inferSize
         alt={post.description ? post.description : post.friendly_id}
-        loading='eager'
+        loading={loading ? loading : "eager"}
       />
     ))
   }
@@ -52,7 +51,6 @@ const posts = data.map((post: Post) => {
       display: block;
       border: 1px solid #1a1a1a;
       border-radius: 1rem;
-      z-index: 1;
     }
   }
 

@@ -1,0 +1,132 @@
+---
+import Layout from "@layouts/layout.astro";
+import Glass from "@components/glass.astro";
+
+interface SlugPathPair {
+  slug: string;
+  path: string;
+  title: string;
+}
+
+interface Tags {
+  [key: string]: SlugPathPair[];
+}
+
+// Assuming 'tags' is being fetched and processed as shown in your script
+let tags: Tags = await fetch("https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json").then((res) => res.json());
+
+// remove the "test" tag from the object
+delete tags["test"];
+
+// remove slug-path pairs that reference '1546329600000-markdown-test'
+for (let tag in tags) {
+  tags[tag] = tags[tag].filter((pair) => pair.slug !== "1546329600000-markdown-test");
+
+  // remove the tag if it's empty
+  if (tags[tag].length === 0) {
+    delete tags[tag];
+  }
+}
+
+console.log(tags);
+---
+
+<Layout>
+  <main>
+    <h1>Tags</h1>
+    <ul class='masonry' x-data x-masonry>
+      {
+        Object.entries(tags).map(([tag, slugs]) => (
+          <div>
+            <h2>
+              <a href={`/tags/${tag}`}>{tag}</a>
+            </h2>
+
+            {slugs.map(({ slug, path, title }) => (
+              <p>
+                <small>
+                  <a href={`/${path}/${slug}`}>{title}</a>
+                </small>
+              </p>
+            ))}
+          </div>
+        ))
+      }
+    </ul>
+
+    <Glass limit='5' offset='5' loading='lazy' />
+  </main>
+</Layout>
+
+<script>
+  import Alpine from "alpinejs";
+  import masonry from "alpinejs-masonry";
+
+  Alpine.plugin(masonry);
+</script>
+
+<style>
+  h2 {
+    font-size: var(--fs-h5);
+  }
+  h2 a {
+    color: inherit;
+  }
+
+  p a {
+    color: inherit;
+  }
+  ul,
+  li {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    padding-left: 0.5rem;
+  }
+
+  .masonry {
+    display: grid;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  .masonry > div {
+    border: 1px solid var(--foreground);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Large devices (desktops, 992px and up) */
+  @media (min-width: 992px) {
+    .masonry {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  /* Medium devices (tablets, 768px and up) */
+  @media (min-width: 768px) and (max-width: 991px) {
+    .masonry {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* Small devices (landscape phones, 576px and up) */
+  @media (min-width: 576px) and (max-width: 767px) {
+    .masonry {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Extra small devices (portrait phones, less than 576px) */
+  @media (max-width: 575px) {
+    .masonry {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      grid-gap: 1rem;
+    }
+  }
+</style>

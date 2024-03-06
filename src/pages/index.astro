@@ -5,6 +5,86 @@ import Glass from "@components/glass.astro";
 
 <Layout>
   <main>
+    <h1>
+      I am Matthias—a photographer turned technologist based in Southern California. I help companies build and grow.
+    </h1><h1>
+      You can find me behind a camera, cooking, or building things online <details
+        x-data='{ open: false }'
+        @mouseover='open = true'
+        @mouseout='open = false'
+        x-bind:open='open'
+        aria-label='Social media links'
+      >
+        <summary>@ iammatthias</summary>
+        <div>
+          <p>
+            <a href='https://github.com/iammatthias' title="Matthias's GitHub" aria-label="Matthias's GitHub">github</a>
+          </p>
+          <p><a href='https://glass.photo/iam' title="Matthias's Glass" aria-label="Matthias's Glass">glass</a></p>
+          <p>
+            <a
+              href='https://www.instagram.com/iammatthias/'
+              title="Matthias's Instagram"
+              aria-label="Matthias's Instagram">instagram</a
+            >
+          </p>
+          <p>
+            <a
+              href='https://www.linkedin.com/in/iammatthias/'
+              title="Matthias's LinkedIn"
+              aria-label="Matthias's LinkedIn">linkedin</a
+            >
+          </p>
+          <!-- <p><a href="https://twitter.com/iammatthias" title="Matthias's Twitter" aria-label="Matthias's Twitter">twitter</a></p> -->
+          <!-- <p><a href="https://warpcast.com/iammatthias" title="Matthias's Warpcast" aria-label="Matthias's Warpcast">warpcast</a></p> -->
+        </div>
+      </details>
+    </h1>
+
     <Glass limit='5' offset='0' />
   </main>
 </Layout>
+
+<script>
+  import Alpine from "alpinejs";
+</script>
+
+<style>
+  details {
+    display: inline-block;
+    vertical-align: top; /* Keeps the details aligned at the top when inline */
+    text-align: right;
+    list-style: none; /* Removes the list style */
+    padding: 0; /* Removes the padding */
+  }
+
+  details summary {
+    list-style: none; /* Removes the list style */
+    padding: 0; /* Removes the padding */
+  }
+
+  details:hover {
+    cursor: pointer;
+  }
+
+  details[open] summary ~ * {
+    animation: open 0.3s ease-in-out;
+  }
+
+  details div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: fit-content;
+    margin-left: auto;
+  }
+
+  @keyframes open {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+</style>

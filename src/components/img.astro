@@ -1,0 +1,18 @@
+---
+import { Image } from "astro:assets";
+const { src, alt, loading } = Astro.props;
+---
+
+<Image src={src} inferSize alt={alt} loading={loading ? loading : "lazy"} />
+
+<style>
+  img {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 1px solid #1a1a1a;
+    border-radius: 1rem;
+    z-index: 1;
+  }
+</style>

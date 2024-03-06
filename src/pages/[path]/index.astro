@@ -2,11 +2,11 @@
 import Layout from "@layouts/layout.astro";
 import { getObsidianEntries } from "@lib/github";
 
-const { content: contentType } = Astro.params;
+const { path } = Astro.params;
 
-const contentTypes = ["posts", "recipes", "notes" /* add other content types here */];
+const paths = ["posts", "recipes", "notes" /* add other content types here */];
 
-if (!contentType || !contentTypes.includes(contentType)) {
+if (!path || !paths.includes(path)) {
   return (
     {
       status: 404,
@@ -16,7 +16,7 @@ if (!contentType || !contentTypes.includes(contentType)) {
   );
 }
 
-let entries = await getObsidianEntries(contentType);
+let entries = await getObsidianEntries(path);
 
 if (!entries || entries.length === 0) {
   return (
@@ -59,14 +59,25 @@ entries = entries.sort((a, b) => new Date(b.frontmatter.created).getTime() - new
 
 <Layout>
   <main>
-    <h1>{contentType}</h1>
+    <h1>{path}</h1>
     <ul>
       {
         entries.map((entry) => (
           <li>
-            <h1>
-              <a href={`/${contentType}/${entry.frontmatter.slug}`}>{entry.frontmatter.title}</a>
-            </h1>
+            <h2>
+              <a href={`/${path}/${entry.frontmatter.slug}`}>{entry.frontmatter.title}</a>
+            </h2>
+            {entry.frontmatter.tags && entry.frontmatter.tags.length > 0 && (
+              <div class='tags'>
+                {entry.frontmatter.tags.map((tag: string) => (
+                  <span>
+                    <small>
+                      <a href={`/tags/${tag}`}>#{tag}</a>
+                    </small>
+                  </span>
+                ))}
+              </div>
+            )}
             <p>
               <small>{entry.frontmatter.created}</small>
             </p>
@@ -79,7 +90,15 @@ entries = entries.sort((a, b) => new Date(b.frontmatter.created).getTime() - new
 
 <style>
   h1 {
+    text-transform: capitalize;
+  }
+  h2 {
     font-size: var(--fs-h2);
+  }
+
+  h2 a {
+    color: var(--color-text);
+    border: none;
   }
 
   ul {
@@ -100,5 +119,10 @@ entries = entries.sort((a, b) => new Date(b.frontmatter.created).getTime() - new
     ul {
       gap: 1rem;
     }
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.5rem;
   }
 </style>
