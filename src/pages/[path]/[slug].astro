@@ -32,6 +32,16 @@ if (!entries) {
 
 const entry = entries.find((entry) => entry.frontmatter.slug === slug);
 
+if (!entry || (process.env.NODE_ENV === "production" && entry.frontmatter.published === false)) {
+  return (
+    {
+      status: 404,
+      error: "Entry not found",
+    },
+    Astro.redirect("/404")
+  );
+}
+
 if (!entry) {
   return (
     {

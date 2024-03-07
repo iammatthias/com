@@ -31,30 +31,10 @@ if (!entries || entries.length === 0) {
 // Sort entries based on the 'created' field
 entries = entries.sort((a, b) => new Date(b.frontmatter.created).getTime() - new Date(a.frontmatter.created).getTime());
 
-// export async function getStaticPaths() {
-//   const contentTypes = ["posts", "recipes", "notes" /* add other content types here */];
-
-//   const paths = await Promise.all(
-//     contentTypes.map(async (contentType) => {
-//       let entries = await getObsidianEntries(contentType);
-
-//       // Sort entries based on the 'created' field
-//       entries = entries.sort(
-//         (a, b) => new Date(b.frontmatter.created).getTime() - new Date(a.frontmatter.created).getTime()
-//       );
-
-//       return {
-//         params: { content: contentType },
-//         props: { entries },
-//       };
-//     })
-//   );
-
-//   return paths;
-// }
-
-// const { content } = Astro.params;
-// const { entries } = Astro.props;
+// Filter out entries where frontmatter.published is false only in production
+if (process.env.NODE_ENV === "production") {
+  entries = entries.filter((entry) => entry.frontmatter.published !== false);
+}
 ---
 
 <Layout>
