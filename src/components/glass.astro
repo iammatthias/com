@@ -5,6 +5,7 @@ interface Post {
   image640x640: string;
   description: string;
   friendly_id: string;
+  share_url: string;
   width: number;
   height: number;
 }
@@ -16,17 +17,18 @@ const response = await fetch(
 );
 const data = await response.json();
 
-console.log(data);
 const posts = data.map((post: Post) => {
-  const { image640x640, description, friendly_id, width, height } = post;
-  return { image640x640, description, friendly_id, width, height };
+  const { image640x640, description, friendly_id, share_url, width, height } = post;
+  return { image640x640, description, friendly_id, share_url, width, height };
 });
 ---
 
 <div class='masonry' x-data x-masonry>
   {
     posts.map((post: Post) => (
-      <Image src={post.image640x640} alt={post.description ? post.description : post.friendly_id} />
+      <a href={post.share_url} target='_blank' rel='noopener noreferrer' class='masonry-item'>
+        <Image src={post.image640x640} alt={post.description} width={post.width} height={post.height} />
+      </a>
     ))
   }
 </div>
@@ -39,6 +41,16 @@ const posts = data.map((post: Post) => {
 </script>
 
 <style>
+  a {
+    text-decoration: none;
+    border: none;
+  }
+
+  .masonry-item {
+    display: block;
+    margin-bottom: 2rem;
+  }
+
   .masonry {
     display: grid;
     grid-gap: 2rem;

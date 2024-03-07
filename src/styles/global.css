@@ -1,30 +1,30 @@
 :root {
   /* Primary Palette */
-  --gold: #f5ab00;
-  --gold-lighter: #ffcd00;
-  --gold-darker: #c48800;
+  --gold: rgba(245, 171, 0, 1);
+  --gold-lighter: rgba(255, 205, 0, 1);
+  --gold-darker: rgba(196, 136, 0, 1);
 
-  --orange: #f06900;
-  --orange-lighter: #ff7e00;
-  --orange-darker: #c05400;
+  --orange: rgba(240, 105, 0, 1);
+  --orange-lighter: rgba(255, 126, 0, 1);
+  --orange-darker: rgba(192, 84, 0, 1);
 
-  --white: #eeeeee;
-  --white-lighter: #ffffff;
-  --white-darker: #bebebe;
+  --white: rgba(238, 238, 238, 1);
+  --white-lighter: rgba(255, 255, 255, 1);
+  --white-darker: rgba(190, 190, 190, 1);
 
   /* Grey Palette */
-  --grey-light: #dbdee5;
-  --grey-light-lighter: #ffffff;
-  --grey-light-darker: #afb1b7;
+  --grey-light: rgba(219, 222, 229, 1);
+  --grey-light-lighter: rgba(255, 255, 255, 1);
+  --grey-light-darker: rgba(175, 177, 183, 1);
 
-  --grey-dark: #888b93;
-  --grey-dark-lighter: #a3a6b0;
-  --grey-dark-darker: #6c6f75;
+  --grey-dark: rgba(136, 139, 147, 1);
+  --grey-dark-lighter: rgba(163, 166, 176, 1);
+  --grey-dark-darker: rgba(108, 111, 117, 1);
 
   /* Black Palette */
-  --black: #020202;
-  --black-lighter: #020202;
-  --black-darker: #010101;
+  --black: rgba(2, 2, 2, 1);
+  --black-lighter: rgba(2, 2, 2, 1);
+  --black-darker: rgba(1, 1, 1, 1);
 
   /* Layout Colors */
   --background: var(--white);
@@ -33,8 +33,8 @@
 
   /* Typography Colors */
   --text-primary: var(--foreground); /* Main text color */
-  --text-secondary: var(--orange-lighter); /* Lighter for less intensity */
-  --text-link: var(--orange-darker); /* Darker orange for links */
+  --text-secondary: var(--grey-dark); /* Lighter for less intensity */
+  --text-link: var(--grey-dark-darker); /* Darker grey for links */
   --text-title: var(--foreground); /* Main title color */
 
   --noise-opacity: 0.7;
@@ -48,7 +48,7 @@
 
     --text-primary: var(--grey-light); /* Lighter text for dark mode */
     --text-secondary: var(--orange-lighter); /* Keep lighter orange for contrast */
-    --text-link: var(--orange); /* Standard orange for visibility */
+    --text-link: var(--grey-light); /* Lighter grey for visibility in dark mode */
     --text-title: var(--white); /* White titles for contrast */
 
     --noise-opacity: 0.2;
@@ -78,7 +78,7 @@ footer {
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="a"><feTurbulence type="fractalNoise" baseFrequency=".618" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23a)"/></svg>');
   background-repeat: repeat;
   background-size: 182px;
-  filter: brightness(6);
+  filter: brightness(5);
   opacity: var(--noise-opacity);
   pointer-events: none;
   position: absolute;

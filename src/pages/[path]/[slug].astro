@@ -2,13 +2,13 @@
 import Layout from "@layouts/layout.astro";
 import { getObsidianEntries } from "@lib/github";
 import Image from "@components/img.astro";
+import Paragraph from "@components/paragraph.astro";
 
 import { Markdown } from "astro-remote";
-import { AnyArn } from "aws-sdk/clients/groundstation";
 
 const { path, slug } = Astro.params;
 
-const paths = ["posts", "recipes", "notes" /* add other content types here */];
+const paths = ["photographs", "posts", "recipes", "notes" /* add other content types here */];
 
 if (!path || !paths.includes(path)) {
   return (
@@ -94,7 +94,7 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
     </div>
     <article>
       <Markdown
-        components={{ img: Image }}
+        components={{ img: Image, p: Paragraph }}
         sanitize={{
           dropElements: ["head", "style"],
           allowCustomElements: true,
@@ -112,6 +112,19 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
+
+  article:has(.masonry) {
+    max-width: unset;
+    grid-gap: 2rem;
+  }
+
+  /* Extra small devices (portrait phones, less than 576px) */
+  @media (max-width: 575px) {
+    article:has(.masonry) {
+      max-width: unset;
+      grid-gap: 1rem;
+    }
   }
 
   .tags {

@@ -52,7 +52,6 @@ h4,
 h5,
 h6 {
   color: var(--text-title);
-
   width: fit-content;
 }
 
@@ -99,17 +98,24 @@ small {
 pre,
 code {
   font-family: ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  color: var(--text-primary);
 }
 
 pre {
   border: 1px solid var(--grey-light);
-  background-color: var(--grey-light-lighter); /* Light background for preformatted text */
+  border-radius: 1rem;
   padding: 1rem;
-  overflow-x: scroll;
+  overflow-x: auto;
+}
+
+code:not(pre > code) {
+  border: 1px solid var(--grey-light);
+  padding: 0.1rem 0.4rem;
+  border-radius: 1rem;
 }
 
 .shadow-text {
-  text-shadow: 2px 2px 4px var(--black-darker); /* Enhanced shadow for contrast */
+  text-shadow: 2px 2px 4px var(--grey-dark-darker); /* Enhanced shadow for contrast */
 }
 
 .gradient-text {
@@ -120,11 +126,19 @@ pre {
   -webkit-text-fill-color: transparent;
 }
 
+blockquote {
+  border-left: 4px solid var(--grey-light);
+  padding-left: 1rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--fs-p);
   box-shadow: 0 0 10px var(--grey-light-darker);
+  table-layout: fixed; /* New property */
 }
 
 th,
@@ -132,16 +146,17 @@ td {
   padding: 12px 15px;
   text-align: left;
   border: 1px solid var(--grey-light);
+  word-wrap: break-word; /* Ensures content fits within the cell */
 }
 
 th {
-  background-color: var(--grey-light);
+  background-color: var(--foreground);
   color: var(--black);
 }
 
 td:hover {
-  background-color: var(--orange-lighter);
-  color: var(--white);
+  background-color: var(--grey-light-lighter);
+  color: var(--black);
 }
 
 @media screen and (max-width: 600px) {
@@ -156,13 +171,6 @@ td:hover {
   }
 }
 
-/* @media screen and (max-width: 768px) {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    text-align: center;
-  }
-} */
+p:has(> img:nth-of-type(2)) img {
+  border: 10px solid red;
+}

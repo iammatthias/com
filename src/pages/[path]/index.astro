@@ -4,7 +4,7 @@ import { getObsidianEntries } from "@lib/github";
 
 const { path } = Astro.params;
 
-const paths = ["posts", "recipes", "notes" /* add other content types here */];
+const paths = ["photographs", "posts", "recipes", "notes" /* add other content types here */];
 
 if (!path || !paths.includes(path)) {
   return (
