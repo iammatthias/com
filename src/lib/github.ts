@@ -10,6 +10,13 @@ async function parseMarkdownContent(content: string, path: string) {
   // Add the path to the frontmatter
   const frontmatter = { ...data, path };
 
+  if (import.meta.env.MODE === "development") {
+    return { frontmatter, body };
+  } else {
+    if (frontmatter.published) {
+      return { frontmatter, body };
+    }
+  }
   return { frontmatter, body };
 }
 
@@ -87,7 +94,7 @@ export async function getObsidianEntries(path: string) {
     })
   );
 
-  const parsedTags = parseAndMergeTags(parsedEntries);
+  parseAndMergeTags(parsedEntries);
 
   return parsedEntries;
 }
