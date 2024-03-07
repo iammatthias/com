@@ -33,18 +33,19 @@ async function fetchFromGitHubGraphQL(query: string, variables: any) {
 }
 
 // Function to get all entries
-export async function getObsidianEntries(path: string) {
+export async function getObsidianEntries(path: string, slug?: string) {
+  // Adjust the expression based on whether a slug is provided
+  const expression = slug ? `HEAD:content/${path}/${slug}.md` : `HEAD:content/${path}`;
+
   const {
     data: {
-      repository: {
-        object: { entries },
-      },
+      repository: { object },
     },
   } = await fetchFromGitHubGraphQL(
     `
-      query fetchEntries($owner: String!, $name: String!, $path: String!) {
+      query fetchEntries($owner: String!, $name: String!, $expression: String!) {
         repository(owner: $owner, name: $name) {
-          object(expression: $path) {
+          object(expression: $expression) {
             ... on Tree {
               entries {
                 name
@@ -55,6 +56,9 @@ export async function getObsidianEntries(path: string) {
                 }
               }
             }
+            ... on Blob {
+              text
+            }
           }
         }
       }
@@ -62,62 +66,33 @@ export async function getObsidianEntries(path: string) {
     {
       owner: "iammatthias",
       name: "obsidian_cms",
-      first: 100, // 'first' parameter is not necessary as there's no pagination implemented
-      path: `HEAD:content/${path}`,
+      expression,
     }
   );
 
-  // Check for errors in the JSON response
-  if (entries.errors) {
-    console.error("GraphQL Error:", entries.errors);
+  // For single entry (when slug is provided)
+  if (slug) {
+    if (!object || !object.text) {
+      console.error("No data returned from the GraphQL query for the single entry.");
+      return null;
+    }
+    return parseMarkdownContent(object.text, path); // assuming parseMarkdownContent can handle individual entries
+  }
+
+  // For multiple entries (when no slug is provided)
+  if (!object || !object.entries) {
+    console.error("No data returned from the GraphQL query for multiple entries.");
     return [];
   }
 
-  // Ensure that the necessary data is present
-  if (!entries) {
-    console.error("No data returned from the GraphQL query.");
-    return [];
-  }
-
-  // Process the entries
   const parsedEntries = await Promise.all(
-    entries.map((entry: { object: { text: any } }) => {
+    object.entries.map((entry: { object: { text: any } }) => {
       const content = entry.object.text;
       return parseMarkdownContent(content, path);
     })
   );
 
-  parseAndMergeTags(parsedEntries);
+  parseAndMergeTags(parsedEntries); // Assuming this is for bulk entries
 
   return parsedEntries;
 }
-
-// // Function to get a single entry
-// export async function getObsidianEntry(slug: string) {
-//   const { data } = await fetchFromGitHubGraphQL(
-//     `
-//       query fetchSingleEntry($owner: String!, $name: String!, $entryName: String!) {
-//         repository(owner: $owner, name: $name) {
-//           object(expression: $entryName) {
-//             ... on Blob {
-//               text
-//             }
-//           }
-//         }
-//       }
-//     `,
-//     {
-//       owner: "iammatthias",
-//       name: "obsidian_cms",
-//       entryName: `HEAD:Content/${slug}.md`,
-//     }
-//   );
-
-//   if (!data || !data.repository || !data.repository.object) {
-//     return null; // Return null if there's no data
-//   }
-
-//   const text = data.repository.object.text;
-
-//   return parseMarkdownContent(text);
-// }

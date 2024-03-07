@@ -2,7 +2,9 @@
 import Layout from "@layouts/layout.astro";
 import { getObsidianEntries } from "@lib/github";
 import Image from "@components/img.astro";
+
 import { Markdown } from "astro-remote";
+import { AnyArn } from "aws-sdk/clients/groundstation";
 
 const { path, slug } = Astro.params;
 
@@ -18,19 +20,17 @@ if (!path || !paths.includes(path)) {
   );
 }
 
-const entries = await getObsidianEntries(path);
+const entry = await getObsidianEntries(path, slug);
 
-if (!entries) {
+if (!entry) {
   return (
     {
       status: 404,
-      error: "Entries not found",
+      error: "Entry not found",
     },
     Astro.redirect("/404")
   );
 }
-
-const entry = entries.find((entry) => entry.frontmatter.slug === slug);
 
 if (!entry || (process.env.NODE_ENV === "production" && entry.frontmatter.published === false)) {
   return (
@@ -93,7 +93,15 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
       }
     </div>
     <article>
-      <Markdown components={{ img: Image }}>{body}</Markdown>
+      <Markdown
+        components={{ img: Image }}
+        sanitize={{
+          dropElements: ["head", "style"],
+          allowCustomElements: true,
+        }}
+      >
+        {body}
+      </Markdown>
     </article>
   </main>
 </Layout>

@@ -86,6 +86,7 @@ footer {
   bottom: 0;
   inset: 0;
   height: auto; /* Adjusted to auto */
+  z-index: 1;
 }
 
 @media (max-width: 1024px) {
