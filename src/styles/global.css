@@ -95,10 +95,3 @@ footer {
     padding: 2rem;
   }
 }
-
-@media (max-width: 768px) {
-  body > main,
-  footer {
-    padding: 1rem;
-  }
-}

@@ -54,7 +54,7 @@ const posts = data.map((post: Post) => {
 
   .masonry-item {
     display: block;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
   }
 
   .masonry {
@@ -82,6 +82,7 @@ const posts = data.map((post: Post) => {
     .masonry {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+
     .masonry-item:nth-child(4),
     .masonry-item:nth-child(5) {
       display: none;
@@ -111,6 +112,10 @@ const posts = data.map((post: Post) => {
     .masonry-item:nth-child(4),
     .masonry-item:nth-child(5) {
       display: none;
+    }
+
+    .masonry-item {
+      margin-bottom: 0;
     }
   }
 </style>
