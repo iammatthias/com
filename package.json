@@ -22,6 +22,7 @@
     "astro-remote": "^0.3.2",
     "aws-sdk": "^2.1571.0",
     "gray-matter": "^4.0.3",
+    "medium-zoom": "^1.1.0",
     "redis": "^4.6.13",
     "sass": "^1.69.7",
     "vercel": "^33.5.3"

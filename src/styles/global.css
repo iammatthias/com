@@ -60,6 +60,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   min-height: 100svh;
+  z-index: -10;
 }
 
 body > main {
@@ -86,7 +87,7 @@ footer {
   bottom: 0;
   inset: 0;
   height: auto; /* Adjusted to auto */
-  z-index: 1;
+  z-index: 0;
 }
 
 @media (max-width: 1024px) {
