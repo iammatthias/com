@@ -4,7 +4,7 @@
 
 <nav x-data='{ open: false }' @mouseover='open = true' @mouseout='open = false'>
   <details x-bind:open='open'>
-    <summary><p>Menu</p></summary>
+    <summary><p>&</p></summary>
     <p><a href='/'>Home</a></p>
     <p><a href='/photographs'>Photographs</a></p>
     <p><a href='/posts'>Posts</a></p>
@@ -43,6 +43,7 @@
     color: inherit;
     text-decoration: none;
     text-transform: uppercase;
+    border-bottom: none;
   }
 
   details {
@@ -58,6 +59,18 @@
     list-style: none;
   }
 
+  details[open] summary {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 0%);
+  }
+
+  details[open] {
+    padding-bottom: 2.5rem;
+  }
+
   details summary p {
     font-family: "Kalnia Variable";
     font-weight: 900;
@@ -67,16 +80,12 @@
     display: none;
   }
 
+  details[open] > p:not(:first-of-type) {
+    margin-top: 1rem;
+  }
+
   details[open] summary ~ * {
     animation: open 0.3s ease-in-out;
-  }
-
-  details[open] summary {
-    border-bottom: 2px solid var(--text-link);
-  }
-
-  details > *:not(summary) {
-    margin-top: 1rem;
   }
 
   @keyframes open {
