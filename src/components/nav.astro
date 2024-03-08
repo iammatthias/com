@@ -2,12 +2,23 @@
 
 ---
 
-<nav>
+<nav class='desktop'>
   <p><a href='/'>Home</a></p>
   <p><a href='/photographs'>Photographs</a></p>
   <p><a href='/posts'>Posts</a></p>
   <p><a href='/recipes'>Recipes</a></p>
   <p><a href='/notes'>Notes</a></p>
+</nav>
+
+<nav class='mobile'>
+  <details>
+    <summary><p>Menu</p></summary>
+    <p><a href='/'>Home</a></p>
+    <p><a href='/photographs'>Photographs</a></p>
+    <p><a href='/posts'>Posts</a></p>
+    <p><a href='/recipes'>Recipes</a></p>
+    <p><a href='/notes'>Notes</a></p>
+  </details>
 </nav>
 
 <style>
@@ -45,6 +56,7 @@
       0px 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 
+  p,
   a {
     margin: 0;
     padding: 0;
@@ -56,10 +68,27 @@
     border: none;
   }
 
+  .desktop {
+    display: flex;
+  }
+
+  .mobile {
+    display: none;
+    text-align: center;
+    vertical-align: bottom;
+  }
+
   @media (max-width: 1024px) {
     nav {
       padding: 0.75rem 1.5rem;
       gap: 1.5rem;
+    }
+    .desktop {
+      display: none;
+    }
+
+    .mobile {
+      display: flex;
     }
   }
 
@@ -68,5 +97,41 @@
       padding: 0.5rem 1rem;
       gap: 1rem;
     }
+  }
+
+  details {
+    vertical-align: top;
+    list-style: none;
+    padding: 0;
+    inset: 0;
+
+    position: relative;
+  }
+
+  details summary {
+    list-style: none;
+    padding: 0;
+    cursor: pointer;
+    bottom: 0;
+  }
+
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  details:hover {
+    cursor: pointer;
+  }
+
+  details[open] summary ~ * {
+    animation: open 0.3s ease-in-out;
+  }
+
+  details[open] summary {
+    border-bottom: 2px solid var(--text-link);
+  }
+
+  details > *:not(summary) {
+    margin-top: 1rem;
   }
 </style>
