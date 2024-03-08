@@ -2,16 +2,8 @@
 
 ---
 
-<nav class='desktop'>
-  <p><a href='/'>Home</a></p>
-  <p><a href='/photographs'>Photographs</a></p>
-  <p><a href='/posts'>Posts</a></p>
-  <p><a href='/recipes'>Recipes</a></p>
-  <p><a href='/notes'>Notes</a></p>
-</nav>
-
-<nav class='mobile'>
-  <details>
+<nav>
+  <details x-data='{ open: false }' @mouseover='open = true' @mouseout='open = false' x-bind:open='open'>
     <summary><p>Menu</p></summary>
     <p><a href='/'>Home</a></p>
     <p><a href='/photographs'>Photographs</a></p>
@@ -39,6 +31,8 @@
     background-color: var(--background);
     color: var(--foreground);
     z-index: 1000;
+    text-align: center;
+    vertical-align: bottom;
   }
 
   nav::before {
@@ -68,27 +62,10 @@
     border: none;
   }
 
-  .desktop {
-    display: flex;
-  }
-
-  .mobile {
-    display: none;
-    text-align: center;
-    vertical-align: bottom;
-  }
-
   @media (max-width: 1024px) {
     nav {
       padding: 0.75rem 1.5rem;
       gap: 1.5rem;
-    }
-    .desktop {
-      display: none;
-    }
-
-    .mobile {
-      display: flex;
     }
   }
 
@@ -133,5 +110,14 @@
 
   details > *:not(summary) {
     margin-top: 1rem;
+  }
+
+  @keyframes open {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 </style>
