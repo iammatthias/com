@@ -1,5 +1,15 @@
 /* Typography */
-/* Fluid font size variables, for browsers that support clamp */
+:root {
+  --fs-sm: 1rem;
+  --fs-p: 1.13rem;
+  --fs-h6: 1.27rem;
+  --fs-h5: 1.42rem;
+  --fs-h4: 1.6rem;
+  --fs-h3: 1.8rem;
+  --fs-h2: 2.03rem;
+  --fs-h1: 2.28rem;
+}
+
 @supports (font-size: clamp(1rem, 1vw, 1rem)) {
   :root {
     --fs-sm: clamp(1rem, 0vw + 1rem, 1rem);
@@ -12,36 +22,23 @@
     --fs-h1: clamp(2.28rem, 2.37vw + 1.69rem, 3.58rem);
   }
 }
-/* Fallback variables for browsers that don't support clamp */
-@supports not (font-size: clamp(1rem, 1vw, 1rem)) {
+
+@media screen and (min-width: 1280px) {
   :root {
-    --fs-sm: 1rem;
-    --fs-p: 1.13rem;
-    --fs-h6: 1.27rem;
-    --fs-h5: 1.42rem;
-    --fs-h4: 1.6rem;
-    --fs-h3: 1.8rem;
-    --fs-h2: 2.03rem;
-    --fs-h1: 2.28rem;
-  }
-  @media screen and (min-width: 1280px) {
-    :root {
-      --fs-sm: 1rem;
-      --fs-p: 1.2rem;
-      --fs-h6: 1.44rem;
-      --fs-h5: 1.73rem;
-      --fs-h4: 2.07rem;
-      --fs-h3: 2.49rem;
-      --fs-h2: 2.99rem;
-      --fs-h1: 3.58rem;
-    }
+    --fs-p: 1.2rem;
+    --fs-h6: 1.44rem;
+    --fs-h5: 1.73rem;
+    --fs-h4: 2.07rem;
+    --fs-h3: 2.49rem;
+    --fs-h2: 2.99rem;
+    --fs-h1: 3.58rem;
   }
 }
 
 html {
   font-size: 16px;
   font-family: -apple-system-ui-serif, ui-serif, "Georgia", serif;
-  color: var(--foreground); /* Main text color */
+  color: var(--foreground);
   background-color: var(--background);
 }
 
@@ -52,46 +49,46 @@ h4,
 h5,
 h6 {
   color: var(--text-title);
-  width: fit-content;
-}
-
-a {
-  color: var(--text-link);
-  font-weight: bold;
-  text-decoration: none;
-  border-bottom: 2px solid var(--text-link);
+  font-family: "Kalnia Variable";
+  font-weight: 500;
 }
 
 h1 {
   font-size: var(--fs-h1);
 }
-
 h2 {
   font-size: var(--fs-h2);
 }
-
 h3 {
   font-size: var(--fs-h3);
 }
-
 h4 {
   font-size: var(--fs-h4);
 }
-
 h5 {
   font-size: var(--fs-h5);
 }
-
 h6 {
   font-size: var(--fs-h6);
 }
 
-li,
-p {
+p,
+li {
   font-size: var(--fs-p);
 }
-
 small {
+  font-size: var(--fs-sm);
+}
+
+a {
+  color: var(--text-link);
+  font-family: "Kalnia Variable";
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 2px solid var(--text-link);
+}
+
+p > a {
   font-size: var(--fs-sm);
 }
 
@@ -99,6 +96,7 @@ pre,
 code {
   font-family: ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
   color: var(--text-primary);
+  font-size: var(--fs-sm);
 }
 
 pre {
@@ -115,11 +113,11 @@ code:not(pre > code) {
 }
 
 .shadow-text {
-  text-shadow: 2px 2px 4px var(--grey-dark-darker); /* Enhanced shadow for contrast */
+  text-shadow: 2px 2px 4px var(--grey-dark-darker);
 }
 
 .gradient-text {
-  background: linear-gradient(45deg, var(--orange), var(--gold)); /* Custom gradient text */
+  background: linear-gradient(45deg, var(--orange), var(--gold));
   background-clip: text;
   color: transparent;
   -webkit-background-clip: text;
@@ -138,7 +136,7 @@ table {
   border-collapse: collapse;
   font-size: var(--fs-p);
   box-shadow: 0 0 10px var(--grey-light-darker);
-  table-layout: fixed; /* New property */
+  table-layout: fixed;
 }
 
 th,
@@ -146,7 +144,7 @@ td {
   padding: 12px 15px;
   text-align: left;
   border: 1px solid var(--grey-light);
-  word-wrap: break-word; /* Ensures content fits within the cell */
+  word-wrap: break-word;
 }
 
 th {

@@ -26,6 +26,7 @@
     border-radius: 3rem;
     background-color: var(--background);
     color: var(--foreground);
+
     text-align: center;
     z-index: 1000;
     box-shadow:
@@ -57,6 +58,11 @@
     list-style: none;
   }
 
+  details summary p {
+    font-family: "Kalnia Variable";
+    font-weight: 900;
+  }
+
   details summary::-webkit-details-marker {
     display: none;
   }
@@ -71,6 +77,14 @@
 
   details > *:not(summary) {
     margin-top: 1rem;
+  }
+
+  details:not([open]) a {
+    pointer-events: none;
+  }
+
+  details[open] a {
+    pointer-events: auto;
   }
 
   @keyframes open {
