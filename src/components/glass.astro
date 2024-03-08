@@ -76,6 +76,10 @@ const posts = data.map((post: Post) => {
     .masonry {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+    .masonry-item:nth-child(4),
+    .masonry-item:nth-child(5) {
+      display: none;
+    }
   }
 
   /* Small devices (landscape phones, 576px and up) */
@@ -83,13 +87,24 @@ const posts = data.map((post: Post) => {
     .masonry {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+    .masonry-item:nth-child(3),
+    .masonry-item:nth-child(4),
+    .masonry-item:nth-child(5) {
+      display: none;
+    }
   }
 
   /* Extra small devices (portrait phones, less than 576px) */
   @media (max-width: 575px) {
     .masonry {
       grid-template-columns: repeat(1, minmax(0, 1fr));
-      grid-gap: 1rem;
+      grid-gap: 2rem;
+    }
+    .masonry-item:nth-child(2),
+    .masonry-item:nth-child(3),
+    .masonry-item:nth-child(4),
+    .masonry-item:nth-child(5) {
+      display: none;
     }
   }
 </style>
