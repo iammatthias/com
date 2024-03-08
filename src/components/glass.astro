@@ -26,7 +26,13 @@ const posts = data.map((post: Post) => {
 <div class='masonry' x-data x-masonry>
   {
     posts.map((post: Post) => (
-      <a href={post.share_url} target='_blank' rel='noopener noreferrer' class='masonry-item'>
+      <a
+        href={post.share_url}
+        target='_blank'
+        rel='noopener noreferrer'
+        class='masonry-item'
+        title={post.friendly_id}
+        aria-label={post.friendly_id}>
         <Image src={post.image640x640} alt={post.description} width={post.width} height={post.height} />
       </a>
     ))

@@ -5,13 +5,12 @@ import Glass from "@components/glass.astro";
 
 <Layout>
   <main>
-    <h1>
-      I am Matthias—a photographer turned technologist based in Southern California. I help companies build and grow.
-    </h1><h1>
+    <h1>I am Matthias—a photographer and growth technologist based in Southern California.</h1><h1>
       You can find me behind a camera, cooking, or building things online <details
         x-data='{ open: false }'
         @mouseover='open = true'
         @mouseout='open = false'
+        @touchstart='open = !open'
         x-bind:open='open'
         aria-label='Social media links'
       >
@@ -54,6 +53,9 @@ import Glass from "@components/glass.astro";
 </Layout>
 
 <style>
+  main {
+    justify-content: end;
+  }
   h1 {
     text-align: center;
     line-height: 1.25;
