@@ -51,6 +51,8 @@ h6 {
   color: var(--text-title);
   font-family: "Kalnia Variable";
   font-weight: 500;
+  mix-blend-mode: difference;
+  filter: invert(100%);
 }
 
 h1 {

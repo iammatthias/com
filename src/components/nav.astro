@@ -14,6 +14,23 @@
 </nav>
 
 <style>
+  nav,
+  p,
+  a,
+  summary {
+    mix-blend-mode: difference;
+    filter: invert(100%);
+  }
+
+  @supports (-webkit-appearance: none) {
+    nav,
+    p,
+    a,
+    summary {
+      mix-blend-mode: normal;
+    }
+  }
+
   nav {
     position: fixed;
     bottom: 2rem;
@@ -24,7 +41,6 @@
     align-self: center;
     border: 1px solid var(--foreground);
     border-radius: 2rem;
-    backdrop-filter: blur(10px);
     color: var(--foreground);
     text-align: center;
     z-index: 1;
@@ -32,6 +48,8 @@
       0px 10px 15px -3px rgba(0, 0, 0, 0.1),
       0px 4px 6px -2px rgba(0, 0, 0, 0.05);
     pointer-events: auto;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px) invert(1);
   }
 
   p,

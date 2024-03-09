@@ -4,12 +4,10 @@ import Layout from "@layouts/layout.astro";
 
 <Layout>
   <main>
-    <h1>I am Matthias—a photographer and growth technologist based in Southern California.</h1><h1>
+    <h1>I am Matthias—a photographer and growth technologist based in Southern California.</h1>
+    <h1>
       You can find me behind a camera, cooking, or building things online @ <details
         x-data='{ open: false }'
-        @mouseover='open = true'
-        @mouseout='open = false'
-        @touchstart='open = !open'
         x-bind:open='open'
         aria-label='Social media links'
       >
@@ -77,9 +75,10 @@ import Layout from "@layouts/layout.astro";
     text-align: center;
     line-height: 1.25;
   }
+
   details {
     position: relative;
-    display: inline-block;
+    display: inline;
     vertical-align: top; /* Keeps the details aligned at the top when inline */
     list-style: none; /* Removes the list style */
     padding: 0; /* Removes the padding */
@@ -91,14 +90,14 @@ import Layout from "@layouts/layout.astro";
     border-radius: 1rem;
     width: 100%; /* Or set a specific width */
     max-width: 100%; /* Limits the width */
-    /* background-color: var(--background); */
-    backdrop-filter: blur(10px);
     color: var(--foreground);
     padding: 1rem; /* Add some padding */
-
     box-shadow:
       0px 10px 15px -3px rgba(0, 0, 0, 0.1),
       0px 4px 6px -2px rgba(0, 0, 0, 0.05);
+    -webkit-backdrop-filter: blur(5px) invert(0);
+    backdrop-filter: blur(5px) invert(1);
+    mix-blend-mode: screen;
   }
 
   details summary {
@@ -122,7 +121,7 @@ import Layout from "@layouts/layout.astro";
 
   details div {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
     width: fit-content;
     margin-left: auto;
