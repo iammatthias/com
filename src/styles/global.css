@@ -60,7 +60,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   min-height: 100svh;
-  z-index: -10;
+  z-index: -100;
 }
 
 body > main {
@@ -72,7 +72,14 @@ body > main {
 
 body > main,
 footer {
-  padding: 4rem;
+  padding: 8rem;
+}
+
+@media (max-width: 1024px) {
+  body > main,
+  footer {
+    padding: 2rem;
+  }
 }
 
 .noise {
@@ -87,12 +94,13 @@ footer {
   bottom: 0;
   inset: 0;
   height: auto; /* Adjusted to auto */
-  z-index: 0;
+  z-index: 5;
 }
 
-@media (max-width: 1024px) {
-  body > main,
-  footer {
-    padding: 2rem;
-  }
+.medium-zoom-image--opened {
+  z-index: 6;
+}
+
+.medium-zoom-overlay {
+  z-index: 4;
 }

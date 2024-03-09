@@ -8,7 +8,8 @@ const { src, alt } = Astro.props;
 <script>
   import mediumZoom from "medium-zoom";
   mediumZoom("[data-zoomable]", {
-    background: "#EEEEEE",
+    // background: "#EEEEEE",
+    background: "var(--background)",
     margin: 64,
     scrollOffset: 0,
   });

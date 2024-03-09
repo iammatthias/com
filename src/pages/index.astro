@@ -1,12 +1,11 @@
 ---
 import Layout from "@layouts/layout.astro";
-import Glass from "@components/glass.astro";
 ---
 
 <Layout>
   <main>
     <h1>I am Matthias—a photographer and growth technologist based in Southern California.</h1><h1>
-      You can find me behind a camera, cooking, or building things online <details
+      You can find me behind a camera, cooking, or building things online @ <details
         x-data='{ open: false }'
         @mouseover='open = true'
         @mouseout='open = false'
@@ -14,7 +13,7 @@ import Glass from "@components/glass.astro";
         x-bind:open='open'
         aria-label='Social media links'
       >
-        <summary>@ iammatthias</summary>
+        <summary>iammatthias</summary>
         <div>
           <p>
             <a href='https://github.com/iammatthias' title="Matthias's GitHub" aria-label="Matthias's GitHub">github</a>
@@ -47,14 +46,33 @@ import Glass from "@components/glass.astro";
         </div>
       </details>
     </h1>
-
-    <Glass limit='5' offset='0' />
   </main>
+  <div class='background'>
+    <img
+      src='https://wsrv.nl/?url=https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/assets/3c2b662eee2940e019212ab9d40c16d9.png'
+    />
+  </div>
 </Layout>
 
 <style>
+  .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+  }
+  .background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: brightness(0.5);
+  }
   main {
-    justify-content: end;
+    justify-content: center;
   }
   h1 {
     text-align: center;
@@ -66,20 +84,19 @@ import Glass from "@components/glass.astro";
     vertical-align: top; /* Keeps the details aligned at the top when inline */
     list-style: none; /* Removes the list style */
     padding: 0; /* Removes the padding */
-    inset: 0;
   }
 
   details[open] > *:not(summary) {
     position: absolute;
     border: 1px solid var(--foreground);
     border-radius: 1rem;
-    background-color: var(--background);
-    color: var(--foreground);
     width: 100%; /* Or set a specific width */
     max-width: 100%; /* Limits the width */
+    /* background-color: var(--background); */
+    backdrop-filter: blur(10px);
+    color: var(--foreground);
     padding: 1rem; /* Add some padding */
-    z-index: 1;
-    right: 0;
+
     box-shadow:
       0px 10px 15px -3px rgba(0, 0, 0, 0.1),
       0px 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -90,7 +107,6 @@ import Glass from "@components/glass.astro";
     list-style: none; /* Removes the list style */
     padding: 0; /* Removes the padding */
     cursor: pointer; /* Add a pointer to the cursor */
-    z-index: -1;
   }
 
   details summary::-webkit-details-marker {
