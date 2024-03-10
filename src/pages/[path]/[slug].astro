@@ -8,7 +8,7 @@ import { Markdown } from "astro-remote";
 
 const { path, slug } = Astro.params;
 
-const paths = ["photographs", "posts", "recipes", "notes" /* add other content types here */];
+const paths = ["art", "posts", "recipes", "notes" /* add other content types here */];
 
 if (!path || !paths.includes(path)) {
   return (
