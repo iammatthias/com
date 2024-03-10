@@ -77,6 +77,20 @@ footer {
 @media (max-width: 1024px) {
   body > main,
   footer {
+    padding: 8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  body > main,
+  footer {
+    padding: 4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body > main,
+  footer {
     padding: 2rem;
   }
 }
