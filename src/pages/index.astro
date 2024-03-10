@@ -4,45 +4,52 @@ import Layout from "@layouts/layout.astro";
 
 <Layout>
   <main>
-    <h1>I am Matthias—a photographer and growth technologist based in Southern California.</h1>
+    <h1 class='difference'>I am Matthias—a photographer and growth technologist based in Southern California.</h1>
     <h1>
-      You can find me behind a camera, cooking, or building things online @ <details
-        x-data='{ open: false }'
-        x-bind:open='open'
-        aria-label='Social media links'
+      <span class='difference'>You can find me behind a camera, cooking, or building things online @</span>
+      <span
+        ><details
+          x-data='{ open: false }'
+          @mouseover='open = true'
+          @mouseout='open = false'
+          x-bind:open='open'
+          aria-label='Social media links'
+        >
+          <summary class='difference'>iammatthias</summary>
+          <div>
+            <p>
+              <a href='https://github.com/iammatthias' title="Matthias's GitHub" aria-label="Matthias's GitHub"
+                >github</a
+              >
+            </p>
+            <p><a href='https://glass.photo/iam' title="Matthias's Glass" aria-label="Matthias's Glass">glass</a></p>
+            <p>
+              <a href='https://warpcast.com/iammatthias' title="Matthias's Warpcast" aria-label="Matthias's Warpcast"
+                >warpcast</a
+              >
+            </p>
+            <p>
+              <a
+                href='https://www.instagram.com/iammatthias/'
+                title="Matthias's Instagram"
+                aria-label="Matthias's Instagram">instagram</a
+              >
+            </p>
+            <p>
+              <a
+                href='https://www.linkedin.com/in/iammatthias/'
+                title="Matthias's LinkedIn"
+                aria-label="Matthias's LinkedIn">linkedin</a
+              >
+            </p>
+            <p>
+              <a href='https://twitter.com/iammatthias' title="Matthias's Twitter" aria-label="Matthias's Twitter"
+                >twitter</a
+              >
+            </p>
+          </div>
+        </details></span
       >
-        <summary>iammatthias</summary>
-        <div>
-          <p>
-            <a href='https://github.com/iammatthias' title="Matthias's GitHub" aria-label="Matthias's GitHub">github</a>
-          </p>
-          <p><a href='https://glass.photo/iam' title="Matthias's Glass" aria-label="Matthias's Glass">glass</a></p>
-          <p>
-            <a href='https://warpcast.com/iammatthias' title="Matthias's Warpcast" aria-label="Matthias's Warpcast"
-              >warpcast</a
-            >
-          </p>
-          <p>
-            <a
-              href='https://www.instagram.com/iammatthias/'
-              title="Matthias's Instagram"
-              aria-label="Matthias's Instagram">instagram</a
-            >
-          </p>
-          <p>
-            <a
-              href='https://www.linkedin.com/in/iammatthias/'
-              title="Matthias's LinkedIn"
-              aria-label="Matthias's LinkedIn">linkedin</a
-            >
-          </p>
-          <p>
-            <a href='https://twitter.com/iammatthias' title="Matthias's Twitter" aria-label="Matthias's Twitter"
-              >twitter</a
-            >
-          </p>
-        </div>
-      </details>
     </h1>
   </main>
   <div class='background'>
@@ -76,28 +83,34 @@ import Layout from "@layouts/layout.astro";
     line-height: 1.25;
   }
 
+  .difference {
+    color: var(--white);
+    mix-blend-mode: difference;
+  }
+
   details {
-    position: relative;
-    display: inline;
     vertical-align: top; /* Keeps the details aligned at the top when inline */
     list-style: none; /* Removes the list style */
     padding: 0; /* Removes the padding */
+    display: inline-block; /* Makes the details inline */
   }
 
   details[open] > *:not(summary) {
+    left: 50%;
+    transform: translateX(-50%);
     position: absolute;
     border: 1px solid var(--foreground);
     border-radius: 1rem;
-    width: 100%; /* Or set a specific width */
+    width: fit-content; /* Or set a specific width */
     max-width: 100%; /* Limits the width */
     color: var(--foreground);
     padding: 1rem; /* Add some padding */
     box-shadow:
       0px 10px 15px -3px rgba(0, 0, 0, 0.1),
       0px 4px 6px -2px rgba(0, 0, 0, 0.05);
-    -webkit-backdrop-filter: blur(5px) invert(0);
-    backdrop-filter: blur(5px) invert(1);
-    mix-blend-mode: screen;
+
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
   }
 
   details summary {
@@ -105,6 +118,7 @@ import Layout from "@layouts/layout.astro";
     list-style: none; /* Removes the list style */
     padding: 0; /* Removes the padding */
     cursor: pointer; /* Add a pointer to the cursor */
+    mix-blend-mode: difference;
   }
 
   details summary::-webkit-details-marker {

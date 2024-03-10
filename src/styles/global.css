@@ -72,7 +72,7 @@ body > main {
 
 body > main,
 footer {
-  padding: 8rem;
+  padding: 12rem;
 }
 
 @media (max-width: 1024px) {
@@ -92,7 +92,7 @@ footer {
   top: 0;
   bottom: 0;
   inset: 0;
-  height: auto; /* Adjusted to auto */
+  height: auto;
   z-index: 5;
 }
 
