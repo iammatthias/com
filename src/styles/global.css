@@ -51,7 +51,7 @@
     --text-link: var(--grey-light); /* Lighter grey for visibility in dark mode */
     --text-title: var(--white); /* White titles for contrast */
 
-    --noise-opacity: 0.2;
+    --noise-opacity: 0.4;
   }
 }
 
