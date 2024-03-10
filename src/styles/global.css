@@ -59,12 +59,11 @@ body {
   position: relative;
   background: var(--background);
   color: var(--foreground);
-  min-height: 100svh;
   z-index: -100;
 }
 
 body > main {
-  min-height: calc(100vh);
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   gap: 2rem;
