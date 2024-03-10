@@ -99,11 +99,11 @@ import Layout from "@layouts/layout.astro";
     left: 50%;
     transform: translateX(-50%);
     position: absolute;
-    border: 1px solid var(--foreground);
+    border: 1px solid var(--background);
     border-radius: 1rem;
     width: fit-content; /* Or set a specific width */
     max-width: 100%; /* Limits the width */
-    color: var(--foreground);
+    color: var(--background);
     padding: 1rem; /* Add some padding */
     box-shadow:
       0px 10px 15px -3px rgba(0, 0, 0, 0.1),
@@ -169,5 +169,16 @@ import Layout from "@layouts/layout.astro";
     100% {
       opacity: 1;
     }
+  }
+</style>
+
+<style is:global>
+  nav {
+    border: 1px solid var(--background) !important;
+  }
+
+  nav summary,
+  nav p {
+    color: var(--background) !important;
   }
 </style>
