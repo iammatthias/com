@@ -84,14 +84,14 @@ footer {
 @media (max-width: 768px) {
   body > main,
   footer {
-    padding: 4rem;
+    padding: 4rem 4rem 8rem;
   }
 }
 
 @media (max-width: 480px) {
   body > main,
   footer {
-    padding: 2rem;
+    padding: 2rem 2rem 8rem;
   }
 }
 
