@@ -79,6 +79,13 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
           }
         </small>
       </p>
+
+      <p>
+        <small>
+          Estimated reading time: <span id='readingTime'></span>
+        </small>
+      </p>
+
       {
         frontmatter.tags && frontmatter.tags.length > 0 && (
           <div class='tags'>
@@ -107,6 +114,18 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
     <p><small><a href={`/${path}`}>« View more</a></small></p>
   </main>
 </Layout>
+
+<script>
+  function getReadingTime() {
+    const text = document.querySelector("article")!.innerText;
+    const wpm = 225;
+    const words = text.trim().split(/\s+/).length;
+    const time = Math.ceil(words / wpm);
+    const timeText = time > 1 ? `${time} minutes` : `${time} minute`;
+    document.getElementById("readingTime")!.innerText = timeText;
+  }
+  getReadingTime();
+</script>
 
 <style>
   article {

@@ -50,7 +50,7 @@ h5,
 h6 {
   color: var(--text-title);
   font-family: "Kalnia Variable";
-  font-weight: 500;
+  font-weight: 700;
 }
 
 h1 {
@@ -83,9 +83,18 @@ small {
 a {
   color: var(--text-link);
   font-family: "Kalnia Variable";
-  font-weight: 700;
+  font-weight: 500;
   text-decoration: none;
   border-bottom: 2px solid var(--text-link);
+}
+
+h1 > a,
+h2 > a,
+h3 > a,
+h4 > a,
+h5 > a,
+h6 > a {
+  font-weight: inherit;
 }
 
 p > a {

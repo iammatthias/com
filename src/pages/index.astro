@@ -10,8 +10,8 @@ import { Image } from "astro:assets";
       <span class='difference'>You can find me behind a camera, cooking, or online</span>
       <span
         ><details
-          x-data='{ open: false }'
-          @mouseover='open = true'
+          x-data='{ open: false, key: 0 }'
+          @mouseover='open = true; key += 1'
           @mouseout='open = false'
           x-bind:open='open'
           aria-label='Social media links'
@@ -135,10 +135,6 @@ import { Image } from "astro:assets";
     cursor: pointer;
   }
 
-  details[open] summary ~ * {
-    animation: open 0.3s ease-in-out;
-  }
-
   details div {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -168,12 +164,29 @@ import { Image } from "astro:assets";
     }
   }
 
+  details[open] summary ~ * {
+    animation: open 0.3s ease-in-out;
+  }
+
+  details:not([open]) summary ~ * {
+    animation: close 0.3s ease-in-out forwards;
+  }
+
   @keyframes open {
     0% {
       opacity: 0;
     }
     100% {
       opacity: 1;
+    }
+  }
+
+  @keyframes close {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
     }
   }
 </style>

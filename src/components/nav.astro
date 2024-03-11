@@ -2,8 +2,8 @@
 
 ---
 
-<nav x-data='{ open: false }' @mouseover='open = true' @mouseout='open = false'>
-  <details x-bind:open='open'>
+<nav x-data='{ open: false, key: 0 }' @mouseover='open = true; key += 1' @mouseout='open = false'>
+  <details x-bind:open='open' x-bind:key='key'>
     <summary><p>&</p></summary>
     <p><a href='/' aria-label='Home page' title='Home'>Home</a></p>
     <p><a href='/art' aria-label='Art page' title='Art'>Art</a></p>
@@ -70,19 +70,7 @@
 
   details[open] {
     padding-bottom: 3rem;
-    width: calc(100vw - 24rem);
-  }
-
-  @media (max-width: 1024px) {
-    details[open] {
-      width: calc(100vw - 16rem);
-    }
-  }
-
-  @media (max-width: 768px) {
-    details[open] {
-      width: calc(100vw - 8rem);
-    }
+    width: 300px;
   }
 
   @media (max-width: 480px) {
@@ -108,12 +96,25 @@
     animation: open 0.3s ease-in-out;
   }
 
+  details:not([open]) summary ~ * {
+    animation: close 0.3s ease-in-out forwards;
+  }
+
   @keyframes open {
     0% {
       opacity: 0;
     }
     100% {
       opacity: 1;
+    }
+  }
+
+  @keyframes close {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
     }
   }
 </style>
