@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === "production") {
 }
 ---
 
-<Layout>
+<Layout title={`${path.charAt(0).toUpperCase() + path.slice(1)}`}>
   <main>
     <h1>{path}</h1>
     <ul>

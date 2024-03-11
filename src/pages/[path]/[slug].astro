@@ -65,7 +65,7 @@ const difference = updatedAtDate.getTime() - createdAtDate.getTime();
 const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
 ---
 
-<Layout title={`${path} | ${frontmatter.title}`}>
+<Layout title={`${frontmatter.title} | ${path.charAt(0).toUpperCase() + path.slice(1)}`}>
   <main>
     <div class='meta'>
       <p><small><a href={`/${path}`}>« View more</a></small></p>

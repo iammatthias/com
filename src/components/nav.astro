@@ -5,11 +5,11 @@
 <nav x-data='{ open: false }' @mouseover='open = true' @mouseout='open = false'>
   <details x-bind:open='open'>
     <summary><p>&</p></summary>
-    <p><a href='/'>Home</a></p>
-    <p><a href='/art'>Art</a></p>
-    <p><a href='/posts'>Posts</a></p>
-    <p><a href='/recipes'>Recipes</a></p>
-    <p><a href='/notes'>Notes</a></p>
+    <p><a href='/' aria-label='Home page' title='Home'>Home</a></p>
+    <p><a href='/art' aria-label='Art page' title='Art'>Art</a></p>
+    <p><a href='/posts' aria-label='Posts page' title='Posts'>Posts</a></p>
+    <p><a href='/recipes' aria-label='Recipes page' title='Recipes'>Recipes</a></p>
+    <p><a href='/notes' aria-label='Notes page' title='Notes'>Notes</a></p>
   </details>
 </nav>
 
@@ -23,7 +23,7 @@
     padding: 1rem;
     align-self: center;
     border: 1px solid var(--foreground);
-    border-radius: 2rem;
+    border-radius: 3rem;
     color: var(--foreground);
     text-align: center;
     z-index: 1;
@@ -63,7 +63,6 @@
 
   details[open] summary {
     position: absolute;
-    width: 100%;
     bottom: 0;
     left: 50%;
     transform: translate(-50%, 0%);
@@ -71,6 +70,25 @@
 
   details[open] {
     padding-bottom: 3rem;
+    width: calc(100vw - 24rem);
+  }
+
+  @media (max-width: 1024px) {
+    details[open] {
+      width: calc(100vw - 16rem);
+    }
+  }
+
+  @media (max-width: 768px) {
+    details[open] {
+      width: calc(100vw - 8rem);
+    }
+  }
+
+  @media (max-width: 480px) {
+    details[open] {
+      width: calc(100vw - 4rem);
+    }
   }
 
   details summary p {
