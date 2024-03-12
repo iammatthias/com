@@ -181,3 +181,128 @@ td:hover {
 p:has(> img:nth-of-type(2)) img {
   border: 10px solid red;
 }
+
+/* Base highlight.js styling */
+.hljs {
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--grey-light);
+  overflow-x: auto;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-link {
+  color: var(--gold);
+}
+
+.hljs-function .hljs-keyword {
+  color: var(--gold-darker);
+}
+
+.hljs-title,
+.hljs-name {
+  color: var(--orange);
+  font-weight: 700;
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: var(--orange-lighter);
+}
+
+.hljs-string,
+.hljs-bullet,
+.hljs-quote,
+.hljs-addition {
+  color: var(--grey-dark);
+}
+
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-meta .hljs-string {
+  color: var(--grey-dark-darker);
+}
+
+.hljs-comment,
+.hljs-deletion,
+.hljs-code {
+  color: var(--text-secondary); /* Adjusted for readability */
+}
+
+.hljs-attribute,
+.hljs-regex,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-type,
+.hljs-number {
+  color: var(--grey-dark-lighter);
+}
+
+.hljs-symbol,
+.hljs-variable,
+.hljs-template-tag,
+.hljs-link {
+  color: var(--text-link);
+}
+
+code.hljs {
+  padding: 0.1rem 0.4rem;
+  border-radius: 1rem;
+  border: 1px solid var(--grey-light); /* Accent usage */
+}
+
+pre.hljs {
+  border: 1px solid var(--grey-light); /* Accent usage */
+  border-radius: 1rem;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+/* Light mode specific styles */
+@media (prefers-color-scheme: light) {
+  .hljs {
+    background: var(--white);
+    color: var(--black);
+  }
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-literal,
+  .hljs-section,
+  .hljs-link {
+    color: var(--gold);
+  }
+  /* Use more readable colors instead of var(--grey-light) for critical text elements */
+  .hljs-comment,
+  .hljs-deletion,
+  .hljs-code {
+    color: var(--grey-dark); /* Adjusted for readability */
+  }
+  code.hljs,
+  pre.hljs {
+    border: 1px solid var(--grey-light); /* Retain as accent */
+  }
+}
+
+/* Dark mode specific styles */
+@media (prefers-color-scheme: dark) {
+  .hljs {
+    background: var(--black);
+    color: var(--white);
+  }
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-literal,
+  .hljs-section,
+  .hljs-link {
+    color: var(--gold-lighter);
+  }
+  /* Adjustments for dark mode as needed */
+}

@@ -5,6 +5,8 @@ import Image from "@components/img.astro";
 import Paragraph from "@components/paragraph.astro";
 
 import { Markdown } from "astro-remote";
+import { markedHighlight } from "marked-highlight";
+import hljs from "highlight.js";
 
 const { path, slug } = Astro.params;
 
@@ -106,6 +108,16 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
         sanitize={{
           dropElements: ["head", "style"],
           allowCustomElements: true,
+        }}
+        marked={{
+          extensions: [
+            markedHighlight({
+              highlight(code, lang, info) {
+                const language = hljs.getLanguage(lang) ? lang : "plaintext";
+                return hljs.highlight(code, { language }).value;
+              },
+            }),
+          ],
         }}
       >
         {body}

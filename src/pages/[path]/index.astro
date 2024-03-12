@@ -18,7 +18,7 @@ if (!path || !paths.includes(path)) {
 
 let entries = await getObsidianEntries(path);
 
-if (!entries || entries.length === 0) {
+if (entries.length === 0) {
   return (
     {
       status: 404,
