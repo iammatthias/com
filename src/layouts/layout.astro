@@ -30,5 +30,13 @@ const { title } = Astro.props;
     <slot />
     <!-- <Footer /> -->
   </>
-  <script src='https://unpkg.com/htmx.org@1'></script>
+  <script>
+    import posthog from "posthog-js";
+    posthog.init("phc_m547PTGk57uBWEvaKQov39JeM7TOOCtcr98f4tmrImr", {
+      api_host: "https://us.posthog.com",
+    });
+  </script>
+  <!-- <script src='https://unpkg.com/htmx.org@1'></script> -->
+
+
 </html>

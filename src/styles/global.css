@@ -110,11 +110,11 @@ footer {
 }
 
 /* scale the bg image for the vision pro */
-@media only screen and (-webkit-device-pixel-ratio: 2) and (resolution: 192dpi) {
+/* @media only screen and (-webkit-device-pixel-ratio: 2) and (resolution: 192dpi) {
   .noise {
     background-size: 364px;
   }
-}
+} */
 
 .medium-zoom-image--opened {
   z-index: 6;

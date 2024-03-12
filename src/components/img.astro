@@ -6,12 +6,18 @@ const { src, alt } = Astro.props;
 <div><Image src={src} inferSize alt={alt} loading='lazy' decoding='async' data-zoomable /></div>
 
 <script>
+  import posthog from "posthog-js";
   import mediumZoom from "medium-zoom";
-  mediumZoom("[data-zoomable]", {
-    // background: "#EEEEEE",
+
+  const zoom = mediumZoom("[data-zoomable]", {
     background: "var(--background)",
     margin: 64,
     scrollOffset: 0,
+  });
+
+  zoom.on("open", (event) => {
+    const { alt, src } = event.target;
+    posthog.capture("image_zoomed", { alt, img_src: src });
   });
 </script>
 
