@@ -1,7 +1,7 @@
 {
   "extends": "astro/tsconfigs/base",
   "exclude": ["node_modules"],
-  "include": ["*.d.ts", "src/**/*.ts"],
+  "include": ["*.d.ts"],
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "nodenext",
