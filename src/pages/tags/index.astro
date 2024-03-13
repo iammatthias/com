@@ -1,34 +1,33 @@
 ---
 import Layout from "@layouts/layout.astro";
-import Glass from "@components/glass.astro";
 
-interface SlugPathPair {
+import { db, eq, Posts, Tags, PostTags } from "astro:db";
+
+type Post = {
   slug: string;
   path: string;
   title: string;
-}
+};
 
-interface Tags {
-  [key: string]: SlugPathPair[];
-}
+type TagPostMap = {
+  [tag: string]: Post[];
+};
 
-// Assuming 'tags' is being fetched and processed as shown in your script
-let tags: Tags = await fetch("https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json").then((res) => res.json());
+const tagsWithPosts = await db
+  .select()
+  .from(Tags)
+  .innerJoin(PostTags, eq(PostTags.tagId, Tags.id))
+  .innerJoin(Posts, eq(PostTags.postId, Posts.id))
+  .execute();
 
-// remove the "test" tag from the object
-delete tags["test"];
-
-// remove slug-path pairs that reference '1546329600000-markdown-test'
-for (let tag in tags) {
-  tags[tag] = tags[tag].filter((pair) => pair.slug !== "1546329600000-markdown-test");
-
-  // remove the tag if it's empty
-  if (tags[tag].length === 0) {
-    delete tags[tag];
+// Transform the data into a map where each key is a tag and the value is an array of related posts
+const tagPostMap: TagPostMap = tagsWithPosts.reduce((map, { Tags, Posts }) => {
+  if (!map[Tags.name]) {
+    map[Tags.name] = [];
   }
-}
-
-console.log(tags);
+  map[Tags.name].push(Posts);
+  return map;
+}, {});
 ---
 
 <Layout>
@@ -36,13 +35,13 @@ console.log(tags);
     <h1>Tags</h1>
     <ul class='masonry' x-data x-masonry>
       {
-        Object.entries(tags).map(([tag, slugs]) => (
+        Object.entries(tagPostMap).map(([tag, posts]) => (
           <div>
             <h2>
               <a href={`/tags/${tag}`}>{tag}</a>
             </h2>
 
-            {slugs.map(({ slug, path, title }) => (
+            {posts.map(({ slug, path, title }) => (
               <p>
                 <small>
                   <a href={`/${path}/${slug}`}>{title}</a>
@@ -53,8 +52,6 @@ console.log(tags);
         ))
       }
     </ul>
-
-    <Glass limit='5' offset='5' loading='lazy' />
   </main>
 </Layout>
 

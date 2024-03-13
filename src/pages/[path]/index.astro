@@ -1,6 +1,6 @@
 ---
 import Layout from "@layouts/layout.astro";
-import { getObsidianEntries } from "@lib/github";
+import { getObsidianEntries, getObsidianTags } from "@lib/github";
 
 const { path } = Astro.params;
 
@@ -35,6 +35,8 @@ entries = entries.sort((a, b) => new Date(b.frontmatter.created).getTime() - new
 if (process.env.NODE_ENV === "production") {
   entries = entries.filter((entry) => entry.frontmatter.published !== false);
 }
+
+getObsidianTags();
 ---
 
 <Layout title={`${path.charAt(0).toUpperCase() + path.slice(1)}`}>

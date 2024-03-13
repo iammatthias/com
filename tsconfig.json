@@ -3,7 +3,8 @@
   "exclude": ["node_modules"],
   "include": ["*.d.ts", "src/**/*.ts"],
   "compilerOptions": {
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
