@@ -9,7 +9,7 @@ export default defineConfig({
   adapter: vercel({
     isr: {
       // A secret random string that you create.
-      bypassToken: "ghostbusters",
+      bypassToken: "01123581321345589144233377610987",
       expiration: 60 * 60 * 24,
       // expiration: 60,
     },
