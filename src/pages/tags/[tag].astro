@@ -1,6 +1,5 @@
 ---
 import Layout from "@layouts/layout.astro";
-import Glass from "@components/glass.astro";
 
 const { tag } = Astro.params;
 
@@ -14,15 +13,12 @@ interface Tags {
   [key: string]: SlugPathPair[];
 }
 
-// Assuming 'tags' is being fetched and processed as shown in your script
 let tags: Tags = await fetch("https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json").then((res) => res.json());
 
 // using the tag parameter to filter the tags
 if (tag) {
-  tags = Object.fromEntries(Object.entries(tags).filter(([key, value]) => key === tag));
+  tags = Object.fromEntries(Object.entries(tags).filter(([key]) => key === tag));
 }
-
-console.log(tags);
 ---
 
 <Layout>
@@ -30,7 +26,7 @@ console.log(tags);
     <h1>Tag: {tag}</h1>
 
     {
-      Object.entries(tags).map(([tag, slugs]) =>
+      Object.entries(tags).map(([tags, slugs]) =>
         slugs.map(({ slug, path, title }) => (
           <p>
             <a href={`/${path}/${slug}`}>{title}</a>
@@ -40,7 +36,6 @@ console.log(tags);
     }
 
     <p><a href='/tags'>View all Tags</a></p>
-    <Glass limit='5' offset='5' />
   </main>
 </Layout>
 

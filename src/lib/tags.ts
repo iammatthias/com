@@ -1,50 +1,18 @@
-import { fetchExistingTags, saveTagsData } from "@lib/cloudflare";
+// tags.ts
+
+import { fetchExistingTagsHash, saveTagsData, generateHash } from "@lib/cloudflare.ts";
 
 export async function parseAndMergeTags(contents) {
-  const existingTags = await fetchExistingTags(); // Fetch existing tags from R2
-  const newTags = parseTags(contents); // Tags from new contents based on current batch
-  let isChanged = false;
+  const existingTagsHash = await fetchExistingTagsHash(); // Fetch the existing hash of the tags
+  const newTags = parseTags(contents); // Parse new tags from contents
+  const newTagsHash = generateHash(newTags); // Generate hash for new tags
 
-  // Update and deduplicate tags based on new contents
-  Object.keys(newTags).forEach((tag) => {
-    const newTagContents = newTags[tag];
-
-    // Ensure existing tag list exists
-    if (!existingTags[tag]) {
-      existingTags[tag] = [];
-      isChanged = true;
-    }
-
-    newTagContents.forEach((newContent) => {
-      const existingContentIndex = existingTags[tag].findIndex((content) => content.slug === newContent.slug);
-
-      // If content is new, add it
-      if (existingContentIndex === -1) {
-        existingTags[tag].push(newContent);
-        isChanged = true;
-      } else {
-        // If content exists but has updated information, update it
-        const existingContent = existingTags[tag][existingContentIndex];
-        if (existingContent.path !== newContent.path || existingContent.title !== newContent.title) {
-          existingTags[tag][existingContentIndex] = newContent;
-          isChanged = true;
-        }
-      }
-    });
-
-    // Deduplicate the tags for this batch
-    existingTags[tag] = existingTags[tag].filter(
-      (value, index, self) =>
-        index === self.findIndex((t) => t.slug === value.slug && t.path === value.path && t.title === value.title)
-    );
-  });
-
-  // Only update if there's a change
-  if (isChanged) {
-    await saveTagsData(existingTags);
+  // Compare hashes and update if different
+  if (newTagsHash !== existingTagsHash) {
+    await saveTagsData(newTags, existingTagsHash); // Save new tags and update hash if different
   }
 
-  return existingTags; // Return the updated and deduplicated tag map
+  return newTags; // Return the updated tags
 }
 
 function parseTags(contents) {

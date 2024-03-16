@@ -1,33 +1,17 @@
 ---
 import Layout from "@layouts/layout.astro";
 
-import { db, eq, Posts, Tags, PostTags } from "astro:db";
-
-type Post = {
+interface SlugPathPair {
   slug: string;
   path: string;
   title: string;
-};
+}
 
-type TagPostMap = {
-  [tag: string]: Post[];
-};
+interface Tags {
+  [key: string]: SlugPathPair[];
+}
 
-const tagsWithPosts = await db
-  .select()
-  .from(Tags)
-  .innerJoin(PostTags, eq(PostTags.tagId, Tags.id))
-  .innerJoin(Posts, eq(PostTags.postId, Posts.id))
-  .execute();
-
-// Transform the data into a map where each key is a tag and the value is an array of related posts
-const tagPostMap: TagPostMap = tagsWithPosts.reduce((map, { Tags, Posts }) => {
-  if (!map[Tags.name]) {
-    map[Tags.name] = [];
-  }
-  map[Tags.name].push(Posts);
-  return map;
-}, {});
+let tags: Tags = await fetch("https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json").then((res) => res.json());
 ---
 
 <Layout>
@@ -35,7 +19,7 @@ const tagPostMap: TagPostMap = tagsWithPosts.reduce((map, { Tags, Posts }) => {
     <h1>Tags</h1>
     <ul class='masonry' x-data x-masonry>
       {
-        Object.entries(tagPostMap).map(([tag, posts]) => (
+        Object.entries(tags).map(([tag, posts]) => (
           <div>
             <h2>
               <a href={`/tags/${tag}`}>{tag}</a>
@@ -59,6 +43,7 @@ const tagPostMap: TagPostMap = tagsWithPosts.reduce((map, { Tags, Posts }) => {
   import Alpine from "alpinejs";
   import masonry from "alpinejs-masonry";
 
+  // @ts-ignore
   Alpine.plugin(masonry);
 </script>
 

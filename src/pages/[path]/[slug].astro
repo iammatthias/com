@@ -34,7 +34,7 @@ if (!entry) {
   );
 }
 
-if (!entry || (process.env.NODE_ENV === "production" && entry.frontmatter.published === false)) {
+if (!entry || (process.env.NODE_ENV === "production" && entry[0].frontmatter.published === false)) {
   return (
     {
       status: 404,
@@ -54,7 +54,7 @@ if (!entry) {
   );
 }
 
-const { body, frontmatter } = entry;
+const { body, frontmatter } = entry[0];
 
 // Convert the timestamps to Date objects
 const createdAtDate = new Date(frontmatter.created);
@@ -116,7 +116,7 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
                 const language = hljs.getLanguage(lang) ? lang : "plaintext";
                 return hljs.highlight(code, { language }).value;
               },
-            }),
+            }) as any,
           ],
         }}
       >

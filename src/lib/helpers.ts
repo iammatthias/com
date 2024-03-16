@@ -1,4 +1,4 @@
-export function reformatString(input) {
+export function reformatString(input: string) {
   let parts = input.split("-"); // Split the string by '-'
   let timestamp = parts[0]; // Extract timestamp
   let words = parts.slice(1); // Extract the remaining words

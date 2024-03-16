@@ -32,7 +32,8 @@ const posts = data.map((post: Post) => {
         rel='noopener noreferrer'
         class='masonry-item'
         title={post.friendly_id}
-        aria-label={post.friendly_id}>
+        aria-label={post.friendly_id}
+      >
         <Image src={post.image640x640} alt={post.description} width={post.width} height={post.height} />
       </a>
     ))
@@ -43,6 +44,7 @@ const posts = data.map((post: Post) => {
   import Alpine from "alpinejs";
   import masonry from "alpinejs-masonry";
 
+  // @ts-ignore
   Alpine.plugin(masonry);
 </script>
 
