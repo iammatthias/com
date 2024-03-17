@@ -8,10 +8,8 @@ export default defineConfig({
   output: "server",
   adapter: vercel({
     isr: {
-      // A secret random string that you create.
+      // F16
       bypassToken: "01123581321345589144233377610987",
-      expiration: 60 * 60 * 24,
-      // expiration: 60,
     },
   }),
 });
