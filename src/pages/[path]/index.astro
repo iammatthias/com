@@ -31,9 +31,11 @@ if (entries.length === 0) {
 // Sort entries based on the 'created' field
 entries = entries.sort((a, b) => new Date(b.frontmatter.created).getTime() - new Date(a.frontmatter.created).getTime());
 
+const isStaging = import.meta.env.MODE === "development";
+
 // Filter out entries where frontmatter.published is false only in production
-if (process.env.NODE_ENV === "production") {
-  entries = entries.filter((entry) => entry.frontmatter.published !== false);
+if (!isStaging) {
+  entries = entries.filter((entry: { frontmatter: { published: boolean } }) => entry.frontmatter.published !== false);
 }
 
 getObsidianTags();

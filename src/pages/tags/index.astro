@@ -13,11 +13,12 @@ interface Tags {
   [key: string]: SlugPathPair[];
 }
 
-// if in prod, fetch tags.json. else, fetch tags-staging.json
-const tags: Tags = await fetch(
-  import.meta.env.PROD
-    ? "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json"
-    : "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags-staging.json"
+const isStaging = import.meta.env.MODE === "development";
+
+let tags: Tags = await fetch(
+  isStaging
+    ? "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags-staging.json"
+    : "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json"
 ).then((res) => res.json());
 ---
 
