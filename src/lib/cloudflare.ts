@@ -30,7 +30,9 @@ export function generateHash(object) {
 // Fetches the existing hash of the tags data
 export async function fetchExistingTagsHash() {
   try {
-    const { Body } = await s3.getObject({ Bucket: BUCKET_NAME, Key: HASH_FILE_KEY }).promise();
+    const isStaging = import.meta.env.MODE === "development";
+    const hashFileKey = isStaging ? STAGING_HASH_FILE_KEY : HASH_FILE_KEY;
+    const { Body } = await s3.getObject({ Bucket: BUCKET_NAME, Key: hashFileKey }).promise();
     return Body!.toString();
   } catch (error) {
     console.error("Error fetching existing tags hash:", error);
