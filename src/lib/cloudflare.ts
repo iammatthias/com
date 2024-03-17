@@ -18,6 +18,8 @@ const s3 = new AWS.S3({
 const BUCKET_NAME = "obsidian-cms";
 const FILE_KEY = "tags.json";
 const HASH_FILE_KEY = "tags_hash.txt";
+const STAGING_FILE_KEY = "tags-staging.json";
+const STAGING_HASH_FILE_KEY = "tags_hash-staging.txt";
 
 // Generates a SHA-256 hash of a given object
 export function generateHash(object) {
@@ -29,7 +31,7 @@ export function generateHash(object) {
 export async function fetchExistingTagsHash() {
   try {
     const { Body } = await s3.getObject({ Bucket: BUCKET_NAME, Key: HASH_FILE_KEY }).promise();
-    return Body.toString();
+    return Body!.toString();
   } catch (error) {
     console.error("Error fetching existing tags hash:", error);
     return ""; // Return an empty string if there's no existing hash
@@ -42,10 +44,14 @@ export async function saveTagsData(data, oldHash) {
   if (newHash !== oldHash) {
     // Save the new tag data because the hash is different
     const body = JSON.stringify(data);
+    const isStaging = import.meta.env.MODE === "development";
+    const fileKey = isStaging ? STAGING_FILE_KEY : FILE_KEY;
+    const hashFileKey = isStaging ? STAGING_HASH_FILE_KEY : HASH_FILE_KEY;
+
     await s3
       .putObject({
         Bucket: BUCKET_NAME,
-        Key: FILE_KEY,
+        Key: fileKey,
         Body: body,
         ContentType: "application/json",
       })
@@ -55,7 +61,7 @@ export async function saveTagsData(data, oldHash) {
     await s3
       .putObject({
         Bucket: BUCKET_NAME,
-        Key: HASH_FILE_KEY,
+        Key: hashFileKey,
         Body: newHash,
         ContentType: "text/plain",
       })

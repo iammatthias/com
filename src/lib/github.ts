@@ -135,6 +135,16 @@ export async function getObsidianTags() {
   const extractedPaths = paths.entries.map((entry) => entry.name);
 
   let entries: any[] = [];
+  // Sort entries based on the 'created' field
+  entries = entries.sort(
+    (a, b) => new Date(b.frontmatter.created).getTime() - new Date(a.frontmatter.created).getTime()
+  );
+
+  // Filter out entries where frontmatter.published is false only in production
+  if (process.env.NODE_ENV === "production") {
+    entries = entries.filter((entry) => entry.frontmatter.published !== false);
+  }
+
   // Loop through each path to get the entries and merge them into a single array
   for (const path of extractedPaths) {
     const pathEntries = await getObsidianEntries(path);
