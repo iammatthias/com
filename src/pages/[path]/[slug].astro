@@ -6,6 +6,7 @@ import Paragraph from "@components/paragraph.astro";
 
 import { Markdown } from "astro-remote";
 import { markedHighlight } from "marked-highlight";
+import markedAlert from "marked-alert";
 import hljs from "highlight.js";
 
 const { path, slug } = Astro.params;
@@ -104,11 +105,9 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
     </div>
     <article>
       <Markdown
+        sanitize={{ allowComponents: true }}
+        content={body}
         components={{ img: Image, p: Paragraph }}
-        sanitize={{
-          dropElements: ["head", "style"],
-          allowCustomElements: true,
-        }}
         marked={{
           extensions: [
             markedHighlight({
@@ -117,11 +116,10 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
                 return hljs.highlight(code, { language }).value;
               },
             }) as any,
+            markedAlert(),
           ],
         }}
-      >
-        {body}
-      </Markdown>
+      />
     </article>
     <p><small><a href={`/${path}`}>« View more</a></small></p>
   </main>
@@ -163,5 +161,48 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
   .tags {
     display: flex;
     gap: 0.5rem;
+  }
+</style>
+
+<style is:global>
+  .markdown-alert {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--alert-border-color);
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+    color: var(--alert-text-color);
+    box-shadow: var(--smooth-shadow);
+  }
+
+  .markdown-alert svg {
+    width: 1rem;
+    height: auto;
+    fill: currentColor;
+    display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 0.2rem;
+    vertical-align: middle;
+  }
+
+  .markdown-alert-note {
+    background-color: var(--alert-note-bg);
+  }
+
+  .markdown-alert-tip {
+    background-color: var(--alert-tip-bg);
+  }
+
+  .markdown-alert-important {
+    background-color: var(--alert-important-bg);
+  }
+
+  .markdown-alert-warning {
+    background-color: var(--alert-warning-bg);
+  }
+
+  .markdown-alert-caution {
+    background-color: var(--alert-caution-bg);
   }
 </style>

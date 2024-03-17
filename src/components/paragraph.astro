@@ -20,7 +20,8 @@ let extraSmallColumns = Math.min(imgCount, 1);
       class='masonry'
       x-data
       x-masonry
-      style={`--max-columns: ${maxColumns}; --medium-columns: ${mediumColumns}; --small-columns: ${smallColumns}; --extra-small-columns: ${extraSmallColumns};`}>
+      style={`--max-columns: ${maxColumns}; --medium-columns: ${mediumColumns}; --small-columns: ${smallColumns}; --extra-small-columns: ${extraSmallColumns};`}
+    >
       <slot />
     </div>
   )

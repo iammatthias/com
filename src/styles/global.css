@@ -1,43 +1,65 @@
 :root {
-  /* Primary Palette */
-  --gold: rgba(245, 171, 0, 1);
-  --gold-lighter: rgba(255, 205, 0, 1);
-  --gold-darker: rgba(196, 136, 0, 1);
+  /* Primary Palette - Subtle and functional */
+  --gold: rgba(204, 163, 0, 1); /* More muted gold */
+  --gold-lighter: rgba(229, 195, 0, 1); /* Lighter, subtle gold */
+  --gold-darker: rgba(163, 130, 0, 1); /* Darker, earthy gold */
 
-  --orange: rgba(240, 105, 0, 1);
-  --orange-lighter: rgba(255, 126, 0, 1);
-  --orange-darker: rgba(192, 84, 0, 1);
+  --orange: rgba(240, 105, 0, 1); /* Action Orange */
+  --orange-lighter: rgba(246, 143, 29, 1); /* Subtly lighter orange */
+  --orange-darker: rgba(184, 92, 0, 1); /* Deeper, more subdued orange */
 
-  --white: rgba(238, 238, 238, 1);
-  --white-lighter: rgba(255, 255, 255, 1);
-  --white-darker: rgba(190, 190, 190, 1);
+  --white: rgba(242, 242, 242, 1); /* Cleaner, brighter white */
+  --white-lighter: rgba(255, 255, 255, 1); /* Pure white */
+  --white-darker: rgba(222, 222, 222, 1); /* Soft grey instead of harsher dark */
 
-  /* Grey Palette */
-  --grey-light: rgba(219, 222, 229, 1);
-  --grey-light-lighter: rgba(255, 255, 255, 1);
-  --grey-light-darker: rgba(175, 177, 183, 1);
+  /* Grey Palette - Emphasizing simplicity and functionality */
+  --grey-light: rgba(229, 231, 235, 1); /* Lighter, cleaner grey */
+  --grey-light-lighter: rgba(255, 255, 255, 1); /* Consistent with Rams' aesthetics */
+  --grey-light-darker: rgba(195, 198, 203, 1); /* Subtle dark grey */
 
-  --grey-dark: rgba(136, 139, 147, 1);
-  --grey-dark-lighter: rgba(163, 166, 176, 1);
-  --grey-dark-darker: rgba(108, 111, 117, 1);
+  --grey-dark: rgba(156, 159, 162, 1); /* Soft, more subdued dark grey */
+  --grey-dark-lighter: rgba(176, 180, 184, 1); /* Lighter, understated grey */
+  --grey-dark-darker: rgba(130, 133, 137, 1); /* Deeper yet still soft dark grey */
 
-  /* Black Palette */
-  --black: rgba(2, 2, 2, 1);
-  --black-lighter: rgba(2, 2, 2, 1);
-  --black-darker: rgba(1, 1, 1, 1);
+  /* Black Palette - For depth and intensity */
+  --black: rgba(10, 10, 10, 1); /* Softer black for less harshness */
+  --black-lighter: rgba(36, 36, 36, 1); /* Lighter 'black' resembling dark grey */
+  --black-darker: rgba(0, 0, 0, 1); /* Pure black for depth */
+
+  /* Red and Blue Palettes - Used sparingly for functional accents */
+  --red: rgba(207, 0, 15, 1); /* A more subdued, less vibrant red */
+  --red-lighter: rgba(239, 51, 64, 1); /* Lighter, yet not too bright red */
+  --red-darker: rgba(165, 0, 12, 1); /* Darker, more reserved red */
+
+  /* Ocean-inspired Blue Palette */
+  --blue: rgba(0, 105, 148, 1); /* Dark and stormy ocean blue */
+  --blue-lighter: rgba(102, 194, 255, 1); /* Light and tropical ocean blue */
+  --blue-darker: rgba(0, 75, 107, 1); /* Deeper, mysterious ocean blue */
 
   /* Layout Colors */
   --background: var(--white);
   --foreground: var(--black);
   --midground: var(--grey-light);
 
+  /* Alert Colors */
+  --alert-note-bg: var(--blue-lighter); /* Light and tropical blue */
+  --alert-tip-bg: var(--gold-lighter); /* Subtle, light gold */
+  --alert-important-bg: var(--red-lighter); /* Light, less vibrant red */
+  --alert-warning-bg: var(--orange-lighter); /* Light, vibrant orange */
+  --alert-caution-bg: var(--grey-light); /* Clean, light grey */
+
+  --alert-text-color: var(--black); /* High contrast for readability */
+  --alert-border-color: var(--grey-dark); /* Subtle, for definition */
+
   /* Typography Colors */
-  --text-primary: var(--foreground); /* Main text color */
-  --text-secondary: var(--grey-dark); /* Lighter for less intensity */
-  --text-link: var(--grey-dark-darker); /* Darker grey for links */
-  --text-title: var(--foreground); /* Main title color */
+  --text-primary: var(--foreground);
+  --text-secondary: var(--grey-dark);
+  --text-warning: var(--red); /* Subtle warning */
+  --text-link: var(--blue); /* Clear, functional links */
+  --text-title: var(--foreground);
 
   --noise-opacity: 0.6;
+  --smooth-shadow: 0px 15px 25px -5px rgba(0, 0, 0, 0.2), 0px 5px 10px -5px rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,12 +68,23 @@
     --foreground: var(--white);
     --midground: var(--grey-dark);
 
-    --text-primary: var(--grey-light); /* Lighter text for dark mode */
-    --text-secondary: var(--orange-lighter); /* Keep lighter orange for contrast */
-    --text-link: var(--grey-light); /* Lighter grey for visibility in dark mode */
-    --text-title: var(--white); /* White titles for contrast */
+    --text-primary: var(--grey-light);
+    --text-secondary: var(--orange-lighter);
+    --text-warning: var(--red-lighter); /* Visible yet not overwhelming */
+    --text-link: var(--blue-lighter); /* Visible and functional */
+    --text-title: var(--white);
+
+    --alert-note-bg: var(--blue-darker); /* Dark and stormy blue */
+    --alert-tip-bg: var(--gold-darker); /* Deeper, muted gold */
+    --alert-important-bg: var(--red-darker); /* Deeper red for emphasis */
+    --alert-warning-bg: var(--orange-darker); /* Deeper, subdued orange */
+    --alert-caution-bg: var(--grey-dark); /* Darker grey for subtlety */
+
+    --alert-text-color: var(--white); /* High contrast for dark mode readability */
+    --alert-border-color: var(--grey-light-darker); /* Visible but not intrusive */
 
     --noise-opacity: 0.4;
+    --smooth-shadow: 0px 15px 30px -5px rgba(255, 255, 255, 0.1), 0px 5px 15px -5px rgba(255, 255, 255, 0.15);
   }
 }
 
