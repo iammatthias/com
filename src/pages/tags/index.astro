@@ -1,5 +1,7 @@
 ---
 import Layout from "@layouts/layout.astro";
+import { getObsidianTags } from "@lib/github.ts";
+getObsidianTags();
 
 interface SlugPathPair {
   slug: string;
