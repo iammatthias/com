@@ -11,7 +11,12 @@ interface Tags {
   [key: string]: SlugPathPair[];
 }
 
-let tags: Tags = await fetch("https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json").then((res) => res.json());
+// if in prod, fetch tags.json. else, fetch tags-staging.json
+const tags: Tags = await fetch(
+  import.meta.env.PROD
+    ? "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json"
+    : "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags-staging.json"
+).then((res) => res.json());
 ---
 
 <Layout>
@@ -25,13 +30,17 @@ let tags: Tags = await fetch("https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.de
               <a href={`/tags/${tag}`}>{tag}</a>
             </h2>
 
-            {posts.map(({ slug, path, title }) => (
-              <p>
-                <small>
-                  <a href={`/${path}/${slug}`}>{title}</a>
-                </small>
-              </p>
-            ))}
+            <ul>
+              {posts.map(({ slug, path, title }) => (
+                <li>
+                  <p>
+                    <small>
+                      <a href={`/${path}/${slug}`}>{title}</a>
+                    </small>
+                  </p>
+                </li>
+              ))}
+            </ul>
           </div>
         ))
       }
@@ -64,8 +73,9 @@ let tags: Tags = await fetch("https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.de
     padding: 0;
   }
 
-  li {
-    padding-left: 0.5rem;
+  ul ul li {
+    list-style: circle;
+    margin-left: 1rem;
   }
 
   .masonry {
