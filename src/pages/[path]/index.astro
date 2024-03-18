@@ -39,11 +39,26 @@ if (!isStaging) {
 }
 
 getObsidianTags();
+
+let description = "";
+if (path === "posts") {
+  description = "Projects, case studies, and other longform pieces.";
+}
+if (path === "recipes") {
+  description = "A constantly evolving cookbook of recipes that are found, adapted, and created.";
+}
+if (path === "notes") {
+  description = "Short, informal slices of life.";
+}
+if (path === "art") {
+  description = "Photography, generative art, and other creative endeavors.";
+}
 ---
 
 <Layout title={`${path.charAt(0).toUpperCase() + path.slice(1)}`}>
   <main>
     <h1>{path}</h1>
+    <p>{description}</p>
     <ul>
       {
         entries.map((entry) => (

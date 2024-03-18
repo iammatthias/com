@@ -70,8 +70,12 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
 
 <Layout title={`${frontmatter.title} | ${path.charAt(0).toUpperCase() + path.slice(1)}`}>
   <main>
-    <div class='meta'>
-      <p><small><a href={`/${path}`}>« View more</a></small></p>
+    <div>
+      <p class='breadcrumb'>
+        <small>
+          <a href='/'>⌂</a> / <a href={`/${path}`}>{path}</a>
+        </small>
+      </p>
       <h1>{frontmatter.title}</h1>
       <p>
         <small>
@@ -85,7 +89,7 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
 
       <p>
         <small>
-          Estimated reading time: <span id='readingTime'></span>
+          This post will take roughly <span id='readingTime'></span> to read.
         </small>
       </p>
 
@@ -121,7 +125,11 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
         }}
       />
     </article>
-    <p><small><a href={`/${path}`}>« View more</a></small></p>
+    <p class='breadcrumb'>
+      <small>
+        <a href='/'>⌂</a> / <a href={`/${path}`}>{path}</a>
+      </small>
+    </p>
   </main>
 </Layout>
 
@@ -156,6 +164,10 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
       max-width: unset;
       grid-gap: 1rem;
     }
+  }
+
+  .breadcrumb a {
+    border-bottom: none;
   }
 
   .tags {

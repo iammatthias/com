@@ -29,6 +29,12 @@ if (tag) {
 
 <Layout>
   <main>
+    <p class='breadcrumb'>
+      <small>
+        <a href='/'>⌂</a> / <a href='/tags'>tags</a>
+      </small>
+    </p>
+
     <h1>Tag: {tag}</h1>
 
     {
@@ -41,7 +47,11 @@ if (tag) {
       )
     }
 
-    <p><a href='/tags'>View all Tags</a></p>
+    <p class='breadcrumb'>
+      <small>
+        <a href='/'>⌂</a> / <a href='/tags'>tags</a>
+      </small>
+    </p>
   </main>
 </Layout>
 
@@ -74,5 +84,9 @@ if (tag) {
     .grid {
       gap: 1rem;
     }
+  }
+
+  .breadcrumb a {
+    border-bottom: none;
   }
 </style>
