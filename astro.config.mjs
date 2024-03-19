@@ -6,7 +6,13 @@ import vercel from "@astrojs/vercel/serverless";
 export default defineConfig({
   integrations: [alpine()],
   output: "server",
-  adapter: vercel(),
+  adapter: vercel({
+    isr: {
+      // F16
+      bypassToken: "01123581321345589144233377610987",
+      expiration: 60 * 60 * 24 * 7,
+    },
+  }),
   prefetch: {
     prefetchAll: true,
   },
