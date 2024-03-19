@@ -1,0 +1,16 @@
+name: Trigger Vercel Deploy Webhook
+
+on:
+  push:
+    branches:
+      - astro # or any branch you want to trigger the webhook
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Vercel Webhook
+        uses: fjogeleit/http-request-action@v1.15.2
+        with:
+          url: "https://api.vercel.com/v1/integrations/deploy/prj_WAKV3YAerNQEzZDCQYMbXM5Tvg7m/j7ZBpZ5m9e"
+          method: "GET"

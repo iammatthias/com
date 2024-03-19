@@ -5,13 +5,8 @@ import vercel from "@astrojs/vercel/serverless";
 // https://astro.build/config
 export default defineConfig({
   integrations: [alpine()],
-  output: "server",
-  adapter: vercel({
-    isr: {
-      // F16
-      bypassToken: "01123581321345589144233377610987",
-    },
-  }),
+  output: "static",
+  adapter: vercel(),
   prefetch: {
     prefetchAll: true,
   },
