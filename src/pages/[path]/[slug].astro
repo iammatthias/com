@@ -66,30 +66,35 @@ const difference = updatedAtDate.getTime() - createdAtDate.getTime();
 
 // Check if the difference is more than 24 hours
 const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric" }).format(date);
+}
 ---
 
 <Layout title={`${frontmatter.title} | ${path.charAt(0).toUpperCase() + path.slice(1)}`}>
   <main>
-    <div>
-      <p class='breadcrumb'>
-        <small>
-          <a href='/'>⌂</a> / <a href={`/${path}`}>{path}</a>
-        </small>
-      </p>
-      <h1>{frontmatter.title}</h1>
+    <p class='breadcrumb'>
+      <small>
+        <a href='/'>⌂</a> / <a href={`/${path}`}>{path}</a>
+      </small>
+    </p>
+    <h1>{frontmatter.title}</h1>
+    <div class='meta'>
       <p>
         <small>
-          This post was first published at <time datetime={frontmatter.created}>{frontmatter.created}</time>. {
-            isUpdatedAfter24Hours && (
-              <time datetime={frontmatter.updated}>It was last updated at {frontmatter.updated}</time>
+          This post will take roughly <span id='readingTime'></span> to read. It was first published on <time
+            datetime={frontmatter.created}>{formatDate(frontmatter.created)}</time
+          >{
+            isUpdatedAfter24Hours ? (
+              <>
+                , and was last updated at <time datetime={frontmatter.updated}>{formatDate(frontmatter.updated)}</time>
+              </>
+            ) : (
+              "."
             )
           }
-        </small>
-      </p>
-
-      <p>
-        <small>
-          This post will take roughly <span id='readingTime'></span> to read.
         </small>
       </p>
 
@@ -136,7 +141,7 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
 <script>
   function getReadingTime() {
     const text = document.querySelector("article")!.innerText;
-    const wpm = 225;
+    const wpm = 180;
     const words = text.trim().split(/\s+/).length;
     const time = Math.ceil(words / wpm);
     const timeText = time > 1 ? `${time} minutes` : `${time} minute`;
@@ -164,6 +169,12 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
       max-width: unset;
       grid-gap: 1rem;
     }
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   .breadcrumb a {
