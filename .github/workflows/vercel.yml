@@ -3,7 +3,7 @@ name: Trigger Vercel Deploy Webhook
 on:
   push:
     branches:
-      - main
+      - astro
     paths:
       - "content/**" # Replace 'your-directory' with the path to the specific directory
 
