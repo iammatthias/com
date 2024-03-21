@@ -1,7 +1,18 @@
 ---
 import Layout from "@layouts/layout.astro";
+import BreadCrumb from "@components/breadcrumb.astro";
 
-const { tag } = Astro.params;
+export async function getStaticPaths() {
+  const isStaging = import.meta.env.MODE === "development";
+  let tags: Tags = await fetch(
+    isStaging
+      ? "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags-staging.json"
+      : "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json"
+  ).then((res) => res.json());
+
+  const paths = Object.keys(tags);
+  return paths.map((tag) => ({ params: { tag } }));
+}
 
 interface SlugPathPair {
   slug: string;
@@ -21,6 +32,8 @@ let tags: Tags = await fetch(
     : "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json"
 ).then((res) => res.json());
 
+const { tag } = Astro.params;
+
 // using the tag parameter to filter the tags
 if (tag) {
   tags = Object.fromEntries(Object.entries(tags).filter(([key]) => key === tag));
@@ -29,11 +42,7 @@ if (tag) {
 
 <Layout>
   <main>
-    <p class='breadcrumb'>
-      <small>
-        <a href='/'>⌂</a> / <a href='/tags'>tags</a>
-      </small>
-    </p>
+    <BreadCrumb path='tags' />
 
     <h1>Tag: {tag}</h1>
 
@@ -47,11 +56,7 @@ if (tag) {
       )
     }
 
-    <p class='breadcrumb'>
-      <small>
-        <a href='/'>⌂</a> / <a href='/tags'>tags</a>
-      </small>
-    </p>
+    <BreadCrumb path='tags' />
   </main>
 </Layout>
 
@@ -84,9 +89,5 @@ if (tag) {
     .grid {
       gap: 1rem;
     }
-  }
-
-  .breadcrumb a {
-    border-bottom: none;
   }
 </style>

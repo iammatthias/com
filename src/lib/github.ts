@@ -100,7 +100,9 @@ export async function getObsidianEntries(path: string = "", slug?: string) {
   // For single entry (when slug is provided)
   if (slug) {
     if (!object || !object.text) {
-      console.error("No data returned from the GraphQL query for the single entry.");
+      console.error(
+        "No data returned from the GraphQL query for the single entry.",
+      );
       return [];
     }
     const singleEntry = await parseMarkdownContent(object.text, path);
@@ -109,7 +111,9 @@ export async function getObsidianEntries(path: string = "", slug?: string) {
 
   // For multiple entries (when no slug is provided)
   if (!object || !object.entries) {
-    console.error("No data returned from the GraphQL query for multiple entries.");
+    console.error(
+      "No data returned from the GraphQL query for multiple entries.",
+    );
     return [];
   }
 
@@ -117,10 +121,8 @@ export async function getObsidianEntries(path: string = "", slug?: string) {
     object.entries.map((entry: { object: { text: any } }) => {
       const content = entry.object.text;
       return parseMarkdownContent(content, path);
-    })
+    }),
   );
-
-  // parseAndMergeTags(parsedEntries); // Assuming this is for bulk entries
 
   return parsedEntries;
 }
@@ -137,7 +139,9 @@ export async function getObsidianTags() {
   let entries: any[] = [];
   // Sort entries based on the 'created' field
   entries = entries.sort(
-    (a, b) => new Date(b.frontmatter.created).getTime() - new Date(a.frontmatter.created).getTime()
+    (a, b) =>
+      new Date(b.frontmatter.created).getTime() -
+      new Date(a.frontmatter.created).getTime(),
   );
 
   // Filter out entries where frontmatter.published is false only in production

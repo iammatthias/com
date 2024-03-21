@@ -1,5 +1,6 @@
 ---
 import Layout from "@layouts/layout.astro";
+import BreadCrumb from "@components/breadcrumb.astro";
 import { getObsidianTags } from "@lib/github.ts";
 getObsidianTags();
 
@@ -15,7 +16,7 @@ interface Tags {
 
 const isStaging = import.meta.env.MODE === "development";
 
-let tags: Tags = await fetch(
+const tags: Tags = await fetch(
   isStaging
     ? "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags-staging.json"
     : "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json"
@@ -24,6 +25,7 @@ let tags: Tags = await fetch(
 
 <Layout>
   <main>
+    <BreadCrumb />
     <h1>Tags</h1>
     <ul class='masonry' x-data x-masonry>
       {
@@ -48,6 +50,7 @@ let tags: Tags = await fetch(
         ))
       }
     </ul>
+    <BreadCrumb />
   </main>
 </Layout>
 

@@ -3,25 +3,33 @@ import Layout from "@layouts/layout.astro";
 import { getObsidianEntries } from "@lib/github";
 import Image from "@components/img.astro";
 import Paragraph from "@components/paragraph.astro";
+import BreadCrumb from "@components/breadcrumb.astro";
+import Meta_ReadTime_Dates from "@components/meta_readtime_dates.astro";
+import Meta_Tags from "@components/meta_tags.astro";
 
 import { Markdown } from "astro-remote";
 import { markedHighlight } from "marked-highlight";
 import markedAlert from "marked-alert";
 import hljs from "highlight.js";
 
-const { path, slug } = Astro.params;
-
-const paths = ["art", "posts", "recipes", "notes" /* add other content types here */];
-
-if (!path || !paths.includes(path)) {
-  return (
-    {
-      status: 404,
-      error: "Content type not found",
-    },
-    Astro.redirect("/404")
+export async function getStaticPaths() {
+  const paths = ["art", "posts", "recipes", "notes" /* add other content types here */];
+  const entriesPromises = paths.map((path) => getObsidianEntries(path));
+  const entries = await Promise.all(entriesPromises);
+  const params = entries.flatMap((entryList, index) =>
+    entryList.map((entry) => ({ params: { path: paths[index], slug: entry.frontmatter.slug } }))
   );
+  return params;
 }
+
+// Add this interface at the top of your script
+interface Params {
+  path: string;
+  slug: string;
+}
+
+// Then use it to annotate Astro.params
+const { path, slug }: Params = Astro.params;
 
 const entry = await getObsidianEntries(path, slug);
 
@@ -57,60 +65,16 @@ if (!entry) {
 
 const { body, frontmatter } = entry[0];
 
-// Convert the timestamps to Date objects
-const createdAtDate = new Date(frontmatter.created);
-const updatedAtDate = new Date(frontmatter.updated);
-
-// Calculate the difference in milliseconds
-const difference = updatedAtDate.getTime() - createdAtDate.getTime();
-
-// Check if the difference is more than 24 hours
-const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric" }).format(date);
-}
+const readingTime = Math.ceil(body.split(/\s+/).length / 180);
 ---
 
 <Layout title={`${frontmatter.title} | ${path.charAt(0).toUpperCase() + path.slice(1)}`}>
   <main>
-    <p class='breadcrumb'>
-      <small>
-        <a href='/'>⌂</a> / <a href={`/${path}`}>{path}</a>
-      </small>
-    </p>
     <h1>{frontmatter.title}</h1>
     <div class='meta'>
-      <p>
-        <small>
-          This post will take roughly <span id='readingTime'></span> to read. It was first published on <time
-            datetime={frontmatter.created}>{formatDate(frontmatter.created)}</time
-          >{
-            isUpdatedAfter24Hours ? (
-              <>
-                , and was last updated at <time datetime={frontmatter.updated}>{formatDate(frontmatter.updated)}</time>
-              </>
-            ) : (
-              "."
-            )
-          }
-        </small>
-      </p>
+      <Meta_ReadTime_Dates created={frontmatter.created} updated={frontmatter.updated} readingTime={readingTime} />
 
-      {
-        frontmatter.tags && frontmatter.tags.length > 0 && (
-          <div class='tags'>
-            {frontmatter.tags.map((tag: string) => (
-              <span>
-                <small>
-                  <a href={`/tags/${tag}`}>#{tag}</a>
-                </small>
-              </span>
-            ))}
-          </div>
-        )
-      }
+      <Meta_Tags tags={frontmatter.tags} />
     </div>
     <article>
       <Markdown
@@ -130,25 +94,9 @@ function formatDate(dateString) {
         }}
       />
     </article>
-    <p class='breadcrumb'>
-      <small>
-        <a href='/'>⌂</a> / <a href={`/${path}`}>{path}</a>
-      </small>
-    </p>
+    <BreadCrumb path={path} />
   </main>
 </Layout>
-
-<script>
-  function getReadingTime() {
-    const text = document.querySelector("article")!.innerText;
-    const wpm = 180;
-    const words = text.trim().split(/\s+/).length;
-    const time = Math.ceil(words / wpm);
-    const timeText = time > 1 ? `${time} minutes` : `${time} minute`;
-    document.getElementById("readingTime")!.innerText = timeText;
-  }
-  getReadingTime();
-</script>
 
 <style>
   article {
@@ -175,58 +123,5 @@ function formatDate(dateString) {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-  }
-
-  .breadcrumb a {
-    border-bottom: none;
-    color: inherit;
-  }
-
-  .tags {
-    display: flex;
-    gap: 0.5rem;
-  }
-</style>
-
-<style is:global>
-  .markdown-alert {
-    padding: 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--alert-border-color);
-    display: flex;
-    gap: 1rem;
-    flex-direction: column;
-    color: var(--alert-text-color);
-    box-shadow: var(--smooth-shadow);
-  }
-
-  .markdown-alert svg {
-    width: 1rem;
-    height: auto;
-    fill: currentColor;
-    display: inline-block;
-    margin-right: 1rem;
-    margin-bottom: 0.2rem;
-    vertical-align: middle;
-  }
-
-  .markdown-alert-note {
-    background-color: var(--alert-note-bg);
-  }
-
-  .markdown-alert-tip {
-    background-color: var(--alert-tip-bg);
-  }
-
-  .markdown-alert-important {
-    background-color: var(--alert-important-bg);
-  }
-
-  .markdown-alert-warning {
-    background-color: var(--alert-warning-bg);
-  }
-
-  .markdown-alert-caution {
-    background-color: var(--alert-caution-bg);
   }
 </style>

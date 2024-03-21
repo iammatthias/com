@@ -1,20 +1,15 @@
 ---
 import Layout from "@layouts/layout.astro";
-import { getObsidianEntries, getObsidianTags } from "@lib/github.ts";
+import { getObsidianEntries } from "@lib/github.ts";
+import BreadCrumb from "@components/breadcrumb.astro";
+import Meta_Tags from "@components/meta_tags.astro";
+
+export async function getStaticPaths() {
+  const paths = ["art", "posts", "recipes", "notes" /* add other content types here */];
+  return paths.map((path) => ({ params: { path } }));
+}
 
 const { path } = Astro.params;
-
-const paths = ["art", "posts", "recipes", "notes" /* add other content types here */];
-
-if (!path || !paths.includes(path)) {
-  return (
-    {
-      status: 404,
-      error: "Content type not found",
-    },
-    Astro.redirect("/404")
-  );
-}
 
 let entries = await getObsidianEntries(path);
 
@@ -38,8 +33,6 @@ if (!isStaging) {
   entries = entries.filter((entry: { frontmatter: { published: boolean } }) => entry.frontmatter.published !== false);
 }
 
-getObsidianTags();
-
 let description = "";
 if (path === "posts") {
   description = "Projects, case studies, and other longform pieces.";
@@ -57,6 +50,7 @@ if (path === "art") {
 
 <Layout title={`${path.charAt(0).toUpperCase() + path.slice(1)}`}>
   <main>
+    <BreadCrumb />
     <h1>{path}</h1>
     <p>{description}</p>
     <ul>
@@ -66,17 +60,7 @@ if (path === "art") {
             <h2>
               <a href={`/${path}/${entry.frontmatter.slug}`}>{entry.frontmatter.title}</a>
             </h2>
-            {entry.frontmatter.tags && entry.frontmatter.tags.length > 0 && (
-              <div class='tags'>
-                {entry.frontmatter.tags.map((tag: string) => (
-                  <span>
-                    <small>
-                      <a href={`/tags/${tag}`}>#{tag}</a>
-                    </small>
-                  </span>
-                ))}
-              </div>
-            )}
+            <Meta_Tags tags={entry.frontmatter.tags} />
             <p>
               <small>{entry.frontmatter.created}</small>
             </p>
@@ -84,6 +68,7 @@ if (path === "art") {
         ))
       }
     </ul>
+    <BreadCrumb />
   </main>
 </Layout>
 
@@ -115,10 +100,5 @@ if (path === "art") {
     ul {
       gap: 1rem;
     }
-  }
-
-  .tags {
-    display: flex;
-    gap: 0.5rem;
   }
 </style>

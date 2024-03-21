@@ -182,3 +182,46 @@ footer {
 .medium-zoom-overlay {
   z-index: 4;
 }
+
+/* Alert banners */
+
+.markdown-alert {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--alert-border-color);
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  color: var(--alert-text-color);
+  box-shadow: var(--smooth-shadow);
+}
+
+.markdown-alert svg {
+  width: 1rem;
+  height: auto;
+  fill: currentColor;
+  display: inline-block;
+  margin-right: 1rem;
+  margin-bottom: 0.2rem;
+  vertical-align: middle;
+}
+
+.markdown-alert-note {
+  background-color: var(--alert-note-bg);
+}
+
+.markdown-alert-tip {
+  background-color: var(--alert-tip-bg);
+}
+
+.markdown-alert-important {
+  background-color: var(--alert-important-bg);
+}
+
+.markdown-alert-warning {
+  background-color: var(--alert-warning-bg);
+}
+
+.markdown-alert-caution {
+  background-color: var(--alert-caution-bg);
+}
