@@ -1,18 +1,8 @@
 ---
+export const prerender = false;
+
 import Layout from "@layouts/layout.astro";
 import BreadCrumb from "@components/breadcrumb.astro";
-
-export async function getStaticPaths() {
-  const isStaging = import.meta.env.MODE === "development";
-  let tags: Tags = await fetch(
-    isStaging
-      ? "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags-staging.json"
-      : "https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/tags.json"
-  ).then((res) => res.json());
-
-  const paths = Object.keys(tags);
-  return paths.map((tag) => ({ params: { tag } }));
-}
 
 interface SlugPathPair {
   slug: string;

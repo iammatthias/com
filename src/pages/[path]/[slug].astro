@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import Layout from "@layouts/layout.astro";
 import { getObsidianEntries } from "@lib/github";
 import Image from "@components/img.astro";
@@ -11,16 +13,6 @@ import { Markdown } from "astro-remote";
 import { markedHighlight } from "marked-highlight";
 import markedAlert from "marked-alert";
 import hljs from "highlight.js";
-
-export async function getStaticPaths() {
-  const paths = ["art", "posts", "recipes", "notes" /* add other content types here */];
-  const entriesPromises = paths.map((path) => getObsidianEntries(path));
-  const entries = await Promise.all(entriesPromises);
-  const params = entries.flatMap((entryList, index) =>
-    entryList.map((entry) => ({ params: { path: paths[index], slug: entry.frontmatter.slug } }))
-  );
-  return params;
-}
 
 // Add this interface at the top of your script
 interface Params {

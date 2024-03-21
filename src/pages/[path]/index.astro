@@ -1,13 +1,10 @@
 ---
+export const prerender = false;
+
 import Layout from "@layouts/layout.astro";
 import { getObsidianEntries } from "@lib/github.ts";
 import BreadCrumb from "@components/breadcrumb.astro";
 import Meta_Tags from "@components/meta_tags.astro";
-
-export async function getStaticPaths() {
-  const paths = ["art", "posts", "recipes", "notes" /* add other content types here */];
-  return paths.map((path) => ({ params: { path } }));
-}
 
 const { path } = Astro.params;
 
