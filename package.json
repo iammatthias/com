@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "node --max-old-space-size=8192 astro check && astro build",
+    "build": "NODE_OPTIONS=--max_old_space_size=2048 astro check && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
