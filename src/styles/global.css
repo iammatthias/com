@@ -10,20 +10,40 @@
 
   --white: rgba(242, 242, 242, 1); /* Cleaner, brighter white */
   --white-lighter: rgba(255, 255, 255, 1); /* Pure white */
-  --white-darker: rgba(222, 222, 222, 1); /* Soft grey instead of harsher dark */
+  --white-darker: rgba(
+    222,
+    222,
+    222,
+    1
+  ); /* Soft grey instead of harsher dark */
 
   /* Grey Palette - Emphasizing simplicity and functionality */
   --grey-light: rgba(229, 231, 235, 1); /* Lighter, cleaner grey */
-  --grey-light-lighter: rgba(255, 255, 255, 1); /* Consistent with Rams' aesthetics */
+  --grey-light-lighter: rgba(
+    255,
+    255,
+    255,
+    1
+  ); /* Consistent with Rams' aesthetics */
   --grey-light-darker: rgba(195, 198, 203, 1); /* Subtle dark grey */
 
   --grey-dark: rgba(156, 159, 162, 1); /* Soft, more subdued dark grey */
   --grey-dark-lighter: rgba(176, 180, 184, 1); /* Lighter, understated grey */
-  --grey-dark-darker: rgba(130, 133, 137, 1); /* Deeper yet still soft dark grey */
+  --grey-dark-darker: rgba(
+    130,
+    133,
+    137,
+    1
+  ); /* Deeper yet still soft dark grey */
 
   /* Black Palette - For depth and intensity */
   --black: rgba(10, 10, 10, 1); /* Softer black for less harshness */
-  --black-lighter: rgba(36, 36, 36, 1); /* Lighter 'black' resembling dark grey */
+  --black-lighter: rgba(
+    36,
+    36,
+    36,
+    1
+  ); /* Lighter 'black' resembling dark grey */
   --black-darker: rgba(0, 0, 0, 1); /* Pure black for depth */
 
   /* Red and Blue Palettes - Used sparingly for functional accents */
@@ -59,7 +79,8 @@
   --text-title: var(--foreground);
 
   --noise-opacity: 0.6;
-  --smooth-shadow: 0px 15px 25px -5px rgba(0, 0, 0, 0.2), 0px 5px 10px -5px rgba(0, 0, 0, 0.1);
+  --smooth-shadow: 0px 15px 25px -5px rgba(0, 0, 0, 0.2),
+    0px 5px 10px -5px rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -80,11 +101,16 @@
     --alert-warning-bg: var(--orange-darker); /* Deeper, subdued orange */
     --alert-caution-bg: var(--grey-dark); /* Darker grey for subtlety */
 
-    --alert-text-color: var(--white); /* High contrast for dark mode readability */
-    --alert-border-color: var(--grey-light-darker); /* Visible but not intrusive */
+    --alert-text-color: var(
+      --white
+    ); /* High contrast for dark mode readability */
+    --alert-border-color: var(
+      --grey-light-darker
+    ); /* Visible but not intrusive */
 
     --noise-opacity: 0.4;
-    --smooth-shadow: 0px 15px 30px -5px rgba(255, 255, 255, 0.1), 0px 5px 15px -5px rgba(255, 255, 255, 0.15);
+    --smooth-shadow: 0px 15px 30px -5px rgba(255, 255, 255, 0.1),
+      0px 5px 15px -5px rgba(255, 255, 255, 0.15);
   }
 }
 
@@ -139,7 +165,7 @@ footer {
   bottom: 0;
   inset: 0;
   height: auto;
-  z-index: 5;
+  z-index: 0;
 }
 
 /* scale the bg image for the vision pro */
