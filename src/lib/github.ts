@@ -117,12 +117,20 @@ export async function getObsidianEntries(path: string = "", slug?: string) {
     return [];
   }
 
-  const parsedEntries = await Promise.all(
+  let parsedEntries = await Promise.all(
     object.entries.map((entry: { object: { text: any } }) => {
       const content = entry.object.text;
       return parseMarkdownContent(content, path);
     }),
   );
+
+  // if in development, return all entries
+  // if not in development, filter out entries where frontmatter.published is false
+  if (process.env.NODE_ENV !== "development") {
+    parsedEntries = parsedEntries.filter(
+      (entry) => entry.frontmatter.published !== false,
+    );
+  }
 
   return parsedEntries;
 }
@@ -145,7 +153,7 @@ export async function getObsidianTags() {
   );
 
   // Filter out entries where frontmatter.published is false only in production
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV !== "development") {
     entries = entries.filter((entry) => entry.frontmatter.published !== false);
   }
 
