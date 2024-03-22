@@ -4,8 +4,13 @@
   "buildCommand": "bun run build",
   "headers": [
     {
-      "key": "x-vercel-skip-toolbar",
-      "value": "1"
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "x-vercel-skip-toolbar",
+          "value": "1"
+        }
+      ]
     }
   ]
 }
