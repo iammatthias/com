@@ -1,16 +1,5 @@
 {
   "framework": "astro",
   "installCommand": "bun install",
-  "buildCommand": "bun run build",
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "x-vercel-skip-toolbar",
-          "value": "1"
-        }
-      ]
-    }
-  ]
+  "buildCommand": "bun run build"
 }
