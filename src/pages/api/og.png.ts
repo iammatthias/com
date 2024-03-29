@@ -1,9 +1,10 @@
+import type { APIRoute } from "astro";
 import satori from "satori";
 import { html } from "satori-html";
 
-export async function GET({ params, request }) {
-  console.log(request.url);
-  const url = new URL(request.url);
+export async function GET({ params, request }): Promise<Response> {
+  const host = request.headers.host;
+  const url = new URL(request.url, `http://${host}`);
   const title = url.searchParams.get("title") || "";
   const path = url.searchParams.get("path") || "";
 
@@ -139,6 +140,7 @@ export async function GET({ params, request }) {
   return new Response(svg, {
     headers: {
       "Content-Type": "image/svg+xml",
+      "Cache-Control": "public, max-age=604800, immutable",
     },
   });
 }
