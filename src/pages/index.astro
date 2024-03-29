@@ -88,6 +88,7 @@ import { Image } from "astro:assets";
   h1 {
     text-align: center;
     line-height: 1.25;
+    font-size: var(--fs-h2);
   }
 
   .difference {
@@ -100,6 +101,7 @@ import { Image } from "astro:assets";
     list-style: none; /* Removes the list style */
     padding: 0; /* Removes the padding */
     display: inline-block; /* Makes the details inline */
+    position: relative;
   }
 
   details[open] > *:not(summary) {
@@ -108,8 +110,7 @@ import { Image } from "astro:assets";
     position: absolute;
     border: 1px solid var(--white);
     border-radius: 1rem;
-    width: fit-content; /* Or set a specific width */
-    max-width: 100%; /* Limits the width */
+    width: 100%; /* Or set a specific width */
     color: var(--white);
     padding: 1rem; /* Add some padding */
     box-shadow:
@@ -159,7 +160,7 @@ import { Image } from "astro:assets";
 
   @media (max-width: 768px) {
     h1 {
-      font-size: var(--fs-h2);
+      font-size: var(--fs-h3);
     }
     details div {
       grid-template-columns: 1fr 1fr;

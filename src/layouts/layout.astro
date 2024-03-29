@@ -1,5 +1,6 @@
 ---
 import "@fontsource-variable/kalnia/wdth.css";
+import { SEO } from "astro-seo";
 import Nav from "@components/nav.astro";
 // import Footer from "@components/footer.astro";
 
@@ -9,20 +10,79 @@ import "@styles/global.css";
 
 interface Props {
   title?: string;
+  path?: string;
 }
 
-const { title } = Astro.props;
+const { title, path } = Astro.props;
+
+let seoTitle = "@iammatthias";
+if (title || path) {
+  seoTitle = "";
+  if (title) {
+    seoTitle += `${title} | `;
+  }
+  if (path) {
+    seoTitle += `${path.charAt(0).toUpperCase() + path.slice(1)} | `;
+  }
+  seoTitle += "@iammatthias";
+}
+
+let seoImage = `${Astro.url.origin}/api/og.png`;
+if (title || path) {
+  seoImage += "?";
+  if (title) {
+    seoImage += `title=${title}`;
+  }
+  if (path) {
+    if (title) {
+      seoImage += "&";
+    }
+    seoImage += `path=${path.charAt(0).toUpperCase() + path.slice(1)}`;
+  }
+}
 ---
 
 <!-- something --><!-- will --><!-- go --><!-- here -->
 <html lang='en'>
   <head>
-    <meta charset='UTF-8' />
-    <meta name='description' content='Astro description' />
-    <meta name='viewport' content='width=device-width' />
-    <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
-    <meta name='generator' content={Astro.generator} />
-    <title>{title ? `${title} | @iammatthias` : "@iammatthias"}</title>
+    <SEO
+      charset='UTF-8'
+      title={seoTitle}
+      description='A digital garden.'
+      openGraph={{
+        basic: {
+          title: seoTitle,
+          type: "website",
+          // image: `${Astro.url.origin}/api/og.png`,
+          image: seoImage,
+        },
+      }}
+      twitter={{
+        creator: "@iammatthias",
+        card: "summary_large_image",
+        image: `${Astro.url.origin}/api/og.png`,
+        title: seoTitle,
+        description: "A digital garden.",
+      }}
+      extend={{
+        link: [
+          {
+            rel: "icon",
+            href: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌞</text></svg>",
+          },
+        ],
+        meta: [
+          {
+            name: "viewport",
+            content: "width=device-width, initial-scale=1",
+          },
+          {
+            name: "generator",
+            content: "Astro",
+          },
+        ],
+      }}
+    />
   </head>
   <>
     <div class='noise'></div>
@@ -36,7 +96,4 @@ const { title } = Astro.props;
       api_host: "https://us.posthog.com",
     });
   </script>
-  <!-- <script src='https://unpkg.com/htmx.org@1'></script> -->
-
-
 </html>
