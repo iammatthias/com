@@ -1,13 +1,16 @@
 import satori from "satori";
 import { html } from "satori-html";
 
-export async function GET({ request }) {
-  const host = request.headers.host;
-  const url = new URL(request.url, `https://${host}`);
-  const title = url.searchParams.get("title");
-  const path = url.searchParams.get("path");
+export async function GET({ params, request }) {
+  // const url = new URL(request.url);
+  // const title = url.searchParams.get("title");
+  // const path = url.searchParams.get("path");
 
-  console.log(request, title, path);
+  const parts = params.og.split("-");
+  console.log(parts);
+
+  const path = parts[1];
+  const title = parts[2];
 
   // fetch fonts to array buffer
   const font = await fetch(

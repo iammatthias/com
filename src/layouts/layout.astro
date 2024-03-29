@@ -29,15 +29,11 @@ if (title || path) {
 
 let seoImage = `${Astro.url.origin}/api/og.png`;
 if (title || path) {
-  seoImage += "?";
-  if (title) {
-    seoImage += `title=${encodeURIComponent(title)}`;
-  }
   if (path) {
-    if (title) {
-      seoImage += "&";
-    }
-    seoImage += `path=${path.charAt(0).toUpperCase() + path.slice(1)}`;
+    seoImage = `${Astro.url.origin}/api/og-${path}.png`;
+  }
+  if (title && path) {
+    seoImage = `${Astro.url.origin}/api/og-${path}-${encodeURIComponent(title)}.png`;
   }
 }
 ---
