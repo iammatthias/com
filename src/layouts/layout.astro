@@ -31,7 +31,7 @@ let seoImage = `${Astro.url.origin}/api/og.png`;
 if (title || path) {
   seoImage += "?";
   if (title) {
-    seoImage += `title=${title}`;
+    seoImage += `title=${encodeURIComponent(title)}`;
   }
   if (path) {
     if (title) {

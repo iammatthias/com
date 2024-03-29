@@ -1,4 +1,3 @@
-import type { APIRoute } from "astro";
 import satori from "satori";
 import { html } from "satori-html";
 
