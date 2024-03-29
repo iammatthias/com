@@ -7,7 +7,7 @@ export async function GET({ request }) {
   const title = url.searchParams.get("title");
   const path = url.searchParams.get("path");
 
-  console.log(title, path);
+  console.log(request, title, path);
 
   // fetch fonts to array buffer
   const font = await fetch(
