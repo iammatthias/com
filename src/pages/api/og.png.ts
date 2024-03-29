@@ -139,7 +139,6 @@ export async function GET({ params, request }) {
   return new Response(svg, {
     headers: {
       "Content-Type": "image/svg+xml",
-      "Cache-Control": "public, max-age=604800, immutable",
     },
   });
 }
