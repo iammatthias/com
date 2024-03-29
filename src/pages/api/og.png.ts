@@ -1,23 +1,15 @@
-import type { APIRoute } from "astro";
 import satori from "satori";
 import { html } from "satori-html";
 
-export async function GET({ params, request }): Promise<Response> {
+export async function GET({ request }) {
   const host = request.headers.host;
-  const url = new URL(request.url, `http://${host}`);
-  const title = url.searchParams.get("title") || "";
-  const path = url.searchParams.get("path") || "";
+  const url = new URL(request.url, `https://${host}`);
+  const title = url.searchParams.get("title");
+  const path = url.searchParams.get("path");
 
   console.log(title, path);
 
   // fetch fonts to array buffer
-
-  //   const font = await fetch(
-  //     "https://github.com/googlefonts/opensans/raw/main/fonts/ttf/OpenSans-Regular.ttf",
-  //   );
-
-  // kalnia extra bold
-  // https://github.com/fridamedrano/Kalnia-Typeface/blob/main/fonts/ttf/Kalnia-Bold.ttf
   const font = await fetch(
     "https://github.com/fridamedrano/Kalnia-Typeface/raw/main/fonts/ttf/Kalnia-Bold.ttf",
   );
