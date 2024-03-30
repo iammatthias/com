@@ -27,9 +27,7 @@ if (title || path) {
   seoTitle += "@iammatthias";
 }
 
-// if dev use localhost, else use `PUBLIC_VERCEL_URL`
-const base_url = process.env.NODE_ENV === "development" ? Astro.url.origin : process.env.PUBLIC_VERCEL_URL;
-// const base_url = Astro.url.origin;
+const base_url = Astro.url.origin;
 
 let seoImage = `${base_url}/api/og.png`;
 
