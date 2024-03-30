@@ -27,15 +27,17 @@ if (title || path) {
   seoTitle += "@iammatthias";
 }
 
-console.log(Astro.url);
+// if dev use localhost, else use `PUBLIC_VERCEL_URL`
+const base_url = process.env.NODE_ENV === "development" ? Astro.url.origin : process.env.PUBLIC_VERCEL_URL;
 
-let seoImage = `${Astro.url.origin}/api/og.png`;
+let seoImage = `${base_url}/api/og.png`;
+
 if (title || path) {
   if (path) {
-    seoImage = `${Astro.url.origin}/api/og-${path}.png`;
+    seoImage = `${base_url}/api/og-${path}.png`;
   }
   if (title && path) {
-    seoImage = `${Astro.url.origin}/api/og-${path}-${encodeURIComponent(title)}.png`;
+    seoImage = `${base_url}/api/og-${path}-${encodeURIComponent(title)}.png`;
   }
 }
 ---
