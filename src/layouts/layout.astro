@@ -27,6 +27,8 @@ if (title || path) {
   seoTitle += "@iammatthias";
 }
 
+console.log(Astro.url);
+
 let seoImage = `${Astro.url.origin}/api/og.png`;
 if (title || path) {
   if (path) {
