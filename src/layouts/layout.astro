@@ -49,7 +49,6 @@ if (title || path) {
         basic: {
           title: seoTitle,
           type: "website",
-          // image: `${Astro.url.origin}/api/og.png`,
           image: seoImage,
         },
         optional: {
@@ -59,7 +58,7 @@ if (title || path) {
       twitter={{
         creator: "@iammatthias",
         card: "summary_large_image",
-        image: `${Astro.url.origin}/api/og.png`,
+        image: seoImage,
         title: seoTitle,
         description: "A digital garden.",
       }}
