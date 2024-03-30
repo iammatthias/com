@@ -13,15 +13,15 @@
     "@alpinejs/intersect": "3.13.7",
     "@astrojs/alpinejs": "0.4.0",
     "@astrojs/check": "0.5.10",
-    "@astrojs/vercel": "7.4.0",
+    "@astrojs/vercel": "7.5.0",
     "@fontsource-variable/kalnia": "5.0.2",
     "@types/alpinejs": "3.13.10",
     "alpinejs": "3.13.7",
     "alpinejs-masonry": "1.0.14",
-    "astro": "4.5.10",
+    "astro": "4.5.12",
     "astro-remote": "0.3.2",
     "astro-seo": "^0.8.3",
-    "aws-sdk": "2.1587.0",
+    "aws-sdk": "2.1589.0",
     "gray-matter": "4.0.3",
     "highlight.js": "11.9.0",
     "marked-alert": "2.0.1",
@@ -33,10 +33,12 @@
     "sass": "1.72.0",
     "satori": "^0.10.13",
     "satori-html": "^0.3.2",
-    "vercel": "33.6.1"
+    "vercel": "33.6.2"
   },
   "devDependencies": {
-    "@types/bun": "1.0.11",
+    "@types/bun": "1.0.12",
+    "autoprefixer": "^10.4.19",
+    "cssnano": "^6.1.2",
     "prettier": "3.2.5",
     "prettier-plugin-astro": "0.13.0"
   }
