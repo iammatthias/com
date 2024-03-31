@@ -7,9 +7,9 @@ import { Image } from "astro:assets";
 
 <Layout>
   <main>
-    <h1 class='difference'>I am Matthias—a photographer and growth technologist based in Southern California.</h1>
+    <h1>I am Matthias—a photographer and growth technologist based in Southern California.</h1>
     <h1>
-      <span class='difference'>You can find me behind a camera, cooking, or online</span>
+      <span>You can find me behind a camera, cooking, or online</span>
       <span
         ><details
           x-data='{ open: false, key: 0 }'
@@ -18,7 +18,7 @@ import { Image } from "astro:assets";
           x-bind:open='open'
           aria-label='Social media links'
         >
-          <summary class='difference'>@ iammatthias</summary>
+          <summary>@ iammatthias</summary>
           <div>
             <p>
               <a href='https://github.com/iammatthias' title="Matthias's GitHub" aria-label="Matthias's GitHub"
@@ -91,11 +91,6 @@ import { Image } from "astro:assets";
     font-size: var(--fs-h2);
   }
 
-  .difference {
-    color: var(--white);
-    mix-blend-mode: difference;
-  }
-
   details {
     vertical-align: top; /* Keeps the details aligned at the top when inline */
     list-style: none; /* Removes the list style */
@@ -127,7 +122,6 @@ import { Image } from "astro:assets";
     list-style: none; /* Removes the list style */
     padding: 0; /* Removes the padding */
     cursor: pointer; /* Add a pointer to the cursor */
-    mix-blend-mode: difference;
   }
 
   details summary::-webkit-details-marker {
