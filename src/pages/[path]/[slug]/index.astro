@@ -6,6 +6,7 @@ import Paragraph from "@components/paragraph.astro";
 import BreadCrumb from "@components/breadcrumb.astro";
 import Meta_ReadTime_Dates from "@components/meta_readtime_dates.astro";
 import Meta_Tags from "@components/meta_tags.astro";
+import Squiggle from "@components/squiggle.astro";
 
 import { Markdown } from "astro-remote";
 import { markedHighlight } from "marked-highlight";
@@ -67,6 +68,7 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
 
       <Meta_Tags tags={frontmatter.tags} />
     </div>
+    <Squiggle />
     <article>
       <Markdown
         sanitize={{ allowComponents: true }}
