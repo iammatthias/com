@@ -9,50 +9,46 @@ import { Image } from "astro:assets";
   <main>
     <h1>I am Matthias—a photographer and growth technologist based in Southern California.</h1>
     <h1>
-      <span>You can find me behind a camera, cooking, or online</span>
-      <span
-        ><details
-          x-data='{ open: false, key: 0 }'
-          @mouseover='open = true; key += 1'
-          @mouseout='open = false'
-          x-bind:open='open'
-          aria-label='Social media links'
-        >
-          <summary>@ iammatthias</summary>
-          <div>
-            <p>
-              <a href='https://github.com/iammatthias' title="Matthias's GitHub" aria-label="Matthias's GitHub"
-                >github</a
-              >
-            </p>
-            <p><a href='https://glass.photo/iam' title="Matthias's Glass" aria-label="Matthias's Glass">glass</a></p>
-            <p>
-              <a href='https://warpcast.com/iammatthias' title="Matthias's Warpcast" aria-label="Matthias's Warpcast"
-                >warpcast</a
-              >
-            </p>
-            <p>
-              <a
-                href='https://www.instagram.com/iammatthias/'
-                title="Matthias's Instagram"
-                aria-label="Matthias's Instagram">instagram</a
-              >
-            </p>
-            <p>
-              <a
-                href='https://www.linkedin.com/in/iammatthias/'
-                title="Matthias's LinkedIn"
-                aria-label="Matthias's LinkedIn">linkedin</a
-              >
-            </p>
-            <p>
-              <a href='https://twitter.com/iammatthias' title="Matthias's Twitter" aria-label="Matthias's Twitter"
-                >twitter</a
-              >
-            </p>
-          </div>
-        </details></span
+      You can find me behind a camera, cooking, or online @iammatthias.
+      <!-- <details
+        x-data='{ open: false, key: 0 }'
+        @mouseover='open = true; key += 1'
+        @mouseout='open = false'
+        x-bind:open='open'
+        aria-label='Social media links'
       >
+        <summary>@ iammatthias</summary>
+        <div>
+          <p>
+            <a href='https://github.com/iammatthias' title="Matthias's GitHub" aria-label="Matthias's GitHub">github</a>
+          </p>
+          <p><a href='https://glass.photo/iam' title="Matthias's Glass" aria-label="Matthias's Glass">glass</a></p>
+          <p>
+            <a href='https://warpcast.com/iammatthias' title="Matthias's Warpcast" aria-label="Matthias's Warpcast"
+              >warpcast</a
+            >
+          </p>
+          <p>
+            <a
+              href='https://www.instagram.com/iammatthias/'
+              title="Matthias's Instagram"
+              aria-label="Matthias's Instagram">instagram</a
+            >
+          </p>
+          <p>
+            <a
+              href='https://www.linkedin.com/in/iammatthias/'
+              title="Matthias's LinkedIn"
+              aria-label="Matthias's LinkedIn">linkedin</a
+            >
+          </p>
+          <p>
+            <a href='https://twitter.com/iammatthias' title="Matthias's Twitter" aria-label="Matthias's Twitter"
+              >twitter</a
+            >
+          </p>
+        </div>
+      </details> -->
     </h1>
   </main>
   <div class='background'>
@@ -89,6 +85,7 @@ import { Image } from "astro:assets";
     text-align: center;
     line-height: 1.25;
     font-size: var(--fs-h2);
+    color: var(--white);
   }
 
   details {
@@ -96,7 +93,6 @@ import { Image } from "astro:assets";
     list-style: none; /* Removes the list style */
     padding: 0; /* Removes the padding */
     display: inline-block; /* Makes the details inline */
-    position: relative;
   }
 
   details[open] > *:not(summary) {
@@ -107,7 +103,7 @@ import { Image } from "astro:assets";
     border-radius: 1rem;
     width: 100%; /* Or set a specific width */
     color: var(--white);
-    padding: 1rem; /* Add some padding */
+    padding: 2rem; /* Add some padding */
     box-shadow:
       0px 10px 15px -3px rgba(0, 0, 0, 0.1),
       0px 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -115,10 +111,10 @@ import { Image } from "astro:assets";
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     z-index: 2;
+    width: fit-content; /* Makes the details fit the content */
   }
 
   details summary {
-    position: relative;
     list-style: none; /* Removes the list style */
     padding: 0; /* Removes the padding */
     cursor: pointer; /* Add a pointer to the cursor */
@@ -135,7 +131,7 @@ import { Image } from "astro:assets";
   details div {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 1rem 2rem;
     width: fit-content;
     margin-left: auto;
     text-align: center;
