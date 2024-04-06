@@ -41,7 +41,8 @@
 <style>
   div {
     padding: 8px 12px;
-    border: 1px solid var(--foreground);
+    color: var(--background);
+    border: 1px solid var(--background);
     border-radius: 3rem;
     box-shadow: var(--smooth-shadow);
     backdrop-filter: blur(10px);
@@ -53,6 +54,9 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
   }
 
   @property --num {
