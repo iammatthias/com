@@ -8,7 +8,7 @@
   import { publicClient } from "@lib/viemClients";
   import { sessionCountABI } from "@lib/abi";
 
-  document.addEventListener("DOMContentLoaded", async () => {
+  window.addEventListener("load", async () => {
     const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
 
     // Function to update the session count
@@ -41,8 +41,8 @@
 <style>
   div {
     padding: 8px 12px;
-    color: var(--background);
-    border: 1px solid var(--background);
+    color: var(--white);
+    border: 1px solid var(--white);
     border-radius: 3rem;
     box-shadow: var(--smooth-shadow);
     backdrop-filter: blur(10px);
