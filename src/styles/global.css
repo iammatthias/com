@@ -78,7 +78,7 @@
   --text-link: var(--blue); /* Clear, functional links */
   --text-title: var(--foreground);
 
-  --noise-opacity: 0.6;
+  --noise-opacity: 0.8;
   --smooth-shadow: 0px 15px 25px -5px rgba(0, 0, 0, 0.2),
     0px 5px 10px -5px rgba(0, 0, 0, 0.1);
 }
@@ -158,8 +158,7 @@ footer {
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="a"><feTurbulence type="fractalNoise" baseFrequency=".618" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23a)"/></svg>');
   background-repeat: repeat;
   background-size: 182px;
-  /* opacity: var(--noise-opacity); */
-  opacity: 1;
+  opacity: var(--noise-opacity);
   pointer-events: none;
   position: absolute;
   top: 0;
