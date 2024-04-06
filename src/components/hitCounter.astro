@@ -2,7 +2,7 @@
 
 ---
 
-<div><span class='circle'></span> <span><span id='sessionCount'></span> hits</span></div>
+<div class="wrapper"><span class='circle'></span> <span><span id='sessionCount'></span> hits</span></div>
 
 <script>
   import { publicClient } from "@lib/viemClients";
@@ -39,10 +39,11 @@
 </script>
 
 <style>
-  div {
+
+  .wrapper {
     padding: 8px 12px;
-    color: var(--white);
-    border: 1px solid var(--white);
+    color: var(--foreground);
+    border: 1px solid var(--foreground);
     border-radius: 3rem;
     box-shadow: var(--smooth-shadow);
     backdrop-filter: blur(10px);
@@ -54,8 +55,8 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    position: fixed;
-    bottom: 40px;
+    position: absolute;
+    bottom: 32px;
     right: 32px;
   }
 

@@ -158,7 +158,8 @@ footer {
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="a"><feTurbulence type="fractalNoise" baseFrequency=".618" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23a)"/></svg>');
   background-repeat: repeat;
   background-size: 182px;
-  opacity: var(--noise-opacity);
+  /* opacity: var(--noise-opacity); */
+  opacity: 1;
   pointer-events: none;
   position: absolute;
   top: 0;
