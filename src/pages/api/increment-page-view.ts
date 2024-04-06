@@ -23,14 +23,10 @@ export async function POST({ request }) {
     account,
   });
 
-  // If nonce is null, get the current transaction count
-  if (nonce === null) {
-    nonce = await publicClient.getTransactionCount({
-      address: account.address,
-    });
-  } else {
-    nonce++; // Increment the nonce for each subsequent transaction
-  }
+  // Always fetch the latest nonce from the blockchain
+  const nonce = await publicClient.getTransactionCount({
+    address: account.address,
+  });
 
   // Add the nonce to the transaction
   contractRequest.nonce = nonce;
