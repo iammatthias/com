@@ -1,7 +1,7 @@
 import matter from "gray-matter";
 import { parseAndMergeTags } from "./tags.ts";
 
-const github = import.meta.env.github;
+const github = import.meta.env.GITHUB;
 
 interface Frontmatter {
   title: string;

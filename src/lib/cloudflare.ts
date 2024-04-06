@@ -3,8 +3,8 @@
 import AWS from "aws-sdk";
 import crypto from "crypto";
 
-const r2_key = import.meta.env.r2_key;
-const r2_secret = import.meta.env.r2_secret;
+const r2_key = import.meta.env.R2_KEY;
+const r2_secret = import.meta.env.R2_SECRET;
 
 // Set up Cloudflare R2 endpoint and credentials
 const s3 = new AWS.S3({
@@ -32,7 +32,9 @@ export async function fetchExistingTagsHash() {
   try {
     const isStaging = import.meta.env.MODE === "development";
     const hashFileKey = isStaging ? STAGING_HASH_FILE_KEY : HASH_FILE_KEY;
-    const { Body } = await s3.getObject({ Bucket: BUCKET_NAME, Key: hashFileKey }).promise();
+    const { Body } = await s3
+      .getObject({ Bucket: BUCKET_NAME, Key: hashFileKey })
+      .promise();
     return Body!.toString();
   } catch (error) {
     console.error("Error fetching existing tags hash:", error);

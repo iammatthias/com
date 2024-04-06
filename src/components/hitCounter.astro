@@ -1,0 +1,101 @@
+---
+
+---
+
+<div><span class='circle'></span> <span><span id='sessionCount'></span> hits</span></div>
+
+<script>
+  import { publicClient } from "@lib/viemClients";
+  import { sessionCountABI } from "@lib/abi";
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
+
+    // Function to update the session count
+    const updateSessionCount = async () => {
+      const data = await publicClient.readContract({
+        address: `0x${contractAddress}`,
+        abi: sessionCountABI,
+        functionName: "sessionCount",
+      });
+
+      // Set the --num CSS property
+      const sessionCountElement = document.getElementById("sessionCount");
+      sessionCountElement!.style.setProperty("--num", `${Number(data)}`);
+    };
+
+    // Update the session count on page load
+    await updateSessionCount();
+
+    // Watch for new blocks and update the session count
+    const unwatch = publicClient.watchBlocks({
+      onBlock: updateSessionCount,
+      onError: (error) => console.error(error),
+    });
+
+    // Stop watching for new blocks when the page is unloaded
+    window.addEventListener("unload", unwatch);
+  });
+</script>
+
+<style>
+  div {
+    padding: 8px 12px;
+    border: 1px solid var(--foreground);
+    border-radius: 3rem;
+    box-shadow: var(--smooth-shadow);
+    backdrop-filter: blur(10px);
+    width: fit-content;
+    min-width: 96px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  @property --num {
+    syntax: "<integer>";
+    initial-value: 0;
+    inherits: false;
+  }
+
+  #sessionCount {
+    transition: --num 1s;
+    counter-reset: num var(--num);
+  }
+  #sessionCount::before {
+    content: counter(num);
+  }
+
+  .circle {
+    display: inline-block;
+    background-color: transparent;
+    width: 8px;
+    height: 8px;
+    border-radius: 50px;
+    box-shadow:
+      0 0 8px var(--blue),
+      inset 0 0 8px var(--blue);
+    animation: pulse 5s ease 5s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow:
+        0 0 8px var(--blue),
+        inset 0 0 8px var(--blue);
+    }
+    50% {
+      box-shadow:
+        0 0 16px var(--blue),
+        inset 0 0 14px var(--blue);
+    }
+    100% {
+      box-shadow:
+        0 0 8px var(--blue),
+        inset 0 0 8px var(--blue);
+    }
+  }
+</style>
