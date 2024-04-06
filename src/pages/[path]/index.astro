@@ -1,0 +1,96 @@
+---
+import Layout from "@layouts/layout.astro";
+import { getObsidianEntries } from "@lib/github.ts";
+import BreadCrumb from "@components/breadcrumb.astro";
+import Meta_Tags from "@components/meta_tags.astro";
+import Squiggle from "@components/squiggle.astro";
+
+const { path } = Astro.params;
+
+let entries = await getObsidianEntries(path);
+
+if (entries.length === 0) {
+  return (
+    {
+      status: 404,
+      error: "Entries not found",
+    },
+    Astro.redirect("/404")
+  );
+}
+
+// Sort entries based on the 'created' field
+entries = entries.sort((a, b) => new Date(b.frontmatter.created).getTime() - new Date(a.frontmatter.created).getTime());
+
+let description = "";
+if (path === "posts") {
+  description = "Projects, case studies, and other longform pieces.";
+}
+if (path === "recipes") {
+  description = "A constantly evolving cookbook of recipes that are found, adapted, and created.";
+}
+if (path === "notes") {
+  description = "Short, informal slices of life.";
+}
+if (path === "art") {
+  description = "Photography, generative art, and other creative endeavors.";
+}
+---
+
+<Layout path={path}>
+  <main>
+    <BreadCrumb />
+    <h1>{path}</h1>
+    <p>{description}</p>
+    <ul>
+      {
+        entries.map((entry) => (
+          <>
+            <li>
+              <h2>
+                <a href={`/${path}/${entry.frontmatter.slug}`}>{entry.frontmatter.title}</a>
+              </h2>
+              <Meta_Tags tags={entry.frontmatter.tags} />
+              <p>
+                <small>{entry.frontmatter.created}</small>
+              </p>
+            </li>
+            <Squiggle />
+          </>
+        ))
+      }
+    </ul>
+    <BreadCrumb />
+  </main>
+</Layout>
+
+<style>
+  h1 {
+    text-transform: capitalize;
+  }
+
+  h2 a {
+    color: var(--color-text);
+    border: none;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    ul {
+      gap: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    ul {
+      gap: 1rem;
+    }
+  }
+</style>

@@ -1,7 +1,7 @@
-declare module "uuid";
+declare module "alpinejs-masonry";
 
-declare module "lodash.debounce";
-
-declare module "rss";
-
-declare module "@mapbox/rehype-prism";
+interface ImportMetaEnv {
+  readonly github: string;
+  readonly r2_key: string;
+  readonly r2_secret: string;
+}

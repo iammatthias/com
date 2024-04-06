@@ -1,0 +1,164 @@
+---
+import { keccak256 } from "viem";
+import "@fontsource-variable/kalnia/wdth.css";
+import { SEO } from "astro-seo";
+import { ViewTransitions } from "astro:transitions";
+import Nav from "@components/nav.astro";
+import Ascii from "@components/ascii.astro";
+// import Footer from "@components/footer.astro";
+
+import "@styles/reset.css";
+import "@styles/typography.css";
+import "@styles/global.css";
+
+interface Props {
+  title?: string;
+  path?: string;
+}
+
+const { title, path } = Astro.props;
+
+let seoTitle = "@iammatthias";
+if (title || path) {
+  seoTitle = "";
+  if (title) {
+    seoTitle += `${title} | `;
+  }
+  if (path) {
+    seoTitle += `${path.charAt(0).toUpperCase() + path.slice(1)} | `;
+  }
+  seoTitle += "@iammatthias";
+}
+
+const base_url = Astro.url.origin;
+
+let seoImage = `${base_url}/api/og.png`;
+
+if (title || path) {
+  if (path) {
+    seoImage = `${base_url}/api/og-${path}.png`;
+  }
+  if (title && path) {
+    seoImage = `${base_url}/api/og-${path}-${encodeURIComponent(title)}.png`;
+  }
+}
+
+// Extract IP and user agent from the request
+const ip = Astro.clientAddress;
+const userAgent = Astro.request.headers.get("user-agent");
+
+// Get the current time in milliseconds
+const currentTime = Date.now();
+
+// Hash the IP, user agent, and current time together
+const sessionHash = keccak256(`0x${ip + userAgent + currentTime}`);
+---
+
+<Ascii />
+<html lang='en'>
+  <head>
+    <SEO
+      charset='UTF-8'
+      title={seoTitle}
+      description='A digital garden.'
+      openGraph={{
+        basic: {
+          title: seoTitle,
+          type: "website",
+          image: seoImage,
+        },
+        optional: {
+          description: "A digital garden.",
+        },
+      }}
+      twitter={{
+        creator: "@iammatthias",
+        card: "summary_large_image",
+        image: seoImage,
+        title: seoTitle,
+        description: "A digital garden.",
+      }}
+      extend={{
+        link: [
+          {
+            rel: "icon",
+            href: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌞</text></svg>",
+          },
+        ],
+        meta: [
+          {
+            name: "viewport",
+            content: "width=device-width, initial-scale=1",
+          },
+          {
+            name: "generator",
+            content: "Astro",
+          },
+        ],
+      }}
+    />
+    <ViewTransitions />
+  </head>
+  <>
+    <div class='noise'></div>
+    <Nav />
+    <slot />
+    <!-- <Footer /> -->
+  </>
+  <div id='sessionHash' data-session-hash={sessionHash} style='display: none;'></div>
+  <script>
+    // post hog
+    import posthog from "posthog-js";
+    posthog.init("phc_m547PTGk57uBWEvaKQov39JeM7TOOCtcr98f4tmrImr", {
+      api_host: "https://us.posthog.com",
+    });
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Read the sessionHash from the data attribute.
+      const sessionHashElement = document.getElementById("sessionHash");
+      const sessionHash = sessionHashElement!.dataset.sessionHash;
+
+      // Get the current time in milliseconds
+      const currentTime = Date.now();
+
+      // Get the stored sessionHash and its expiration time from localStorage
+      const storedSessionHash = localStorage.getItem("sessionHash");
+      const expirationTime = localStorage.getItem("expirationTime");
+
+      // Set a default expiration time (e.g., 1 hour)
+      const defaultExpirationTime = 60 * 60 * 1000;
+
+      // If a sessionHash is already present and has not expired, skip the contract interaction
+      if (storedSessionHash && currentTime < Number(expirationTime)) {
+        return;
+      }
+
+      // Update the expiration time
+      localStorage.setItem("expirationTime", (currentTime + defaultExpirationTime).toString());
+
+      // Store the sessionHash and its expiration time in localStorage
+      localStorage.setItem("sessionHash", sessionHash!);
+
+      // Call the API to increment the page view counter
+      const response = await fetch("/api/increment-page-view", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionHash }),
+      });
+
+      const result = await response.json();
+      console.log(result); // For debugging
+    });
+
+    // Update the expiration time on user interaction
+    let debounceTimer;
+    document.addEventListener("mousemove", () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        const currentTime = Date.now();
+        const defaultExpirationTime = 60 * 60 * 1000;
+        localStorage.setItem("expirationTime", (currentTime + defaultExpirationTime).toString());
+      }, 1000); // 1 second debounce time
+    });
+  </script>
+</html>

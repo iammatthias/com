@@ -1,0 +1,227 @@
+:root {
+  /* Primary Palette - Subtle and functional */
+  --gold: rgba(204, 163, 0, 1); /* More muted gold */
+  --gold-lighter: rgba(229, 195, 0, 1); /* Lighter, subtle gold */
+  --gold-darker: rgba(163, 130, 0, 1); /* Darker, earthy gold */
+
+  --orange: rgba(240, 105, 0, 1); /* Action Orange */
+  --orange-lighter: rgba(246, 143, 29, 1); /* Subtly lighter orange */
+  --orange-darker: rgba(184, 92, 0, 1); /* Deeper, more subdued orange */
+
+  --white: rgba(242, 242, 242, 1); /* Cleaner, brighter white */
+  --white-lighter: rgba(255, 255, 255, 1); /* Pure white */
+  --white-darker: rgba(
+    222,
+    222,
+    222,
+    1
+  ); /* Soft grey instead of harsher dark */
+
+  /* Grey Palette - Emphasizing simplicity and functionality */
+  --grey-light: rgba(229, 231, 235, 1); /* Lighter, cleaner grey */
+  --grey-light-lighter: rgba(
+    255,
+    255,
+    255,
+    1
+  ); /* Consistent with Rams' aesthetics */
+  --grey-light-darker: rgba(195, 198, 203, 1); /* Subtle dark grey */
+
+  --grey-dark: rgba(156, 159, 162, 1); /* Soft, more subdued dark grey */
+  --grey-dark-lighter: rgba(176, 180, 184, 1); /* Lighter, understated grey */
+  --grey-dark-darker: rgba(
+    130,
+    133,
+    137,
+    1
+  ); /* Deeper yet still soft dark grey */
+
+  /* Black Palette - For depth and intensity */
+  --black: rgba(10, 10, 10, 1); /* Softer black for less harshness */
+  --black-lighter: rgba(
+    36,
+    36,
+    36,
+    1
+  ); /* Lighter 'black' resembling dark grey */
+  --black-darker: rgba(0, 0, 0, 1); /* Pure black for depth */
+
+  /* Red and Blue Palettes - Used sparingly for functional accents */
+  --red: rgba(207, 0, 15, 1); /* A more subdued, less vibrant red */
+  --red-lighter: rgba(239, 51, 64, 1); /* Lighter, yet not too bright red */
+  --red-darker: rgba(165, 0, 12, 1); /* Darker, more reserved red */
+
+  /* Ocean-inspired Blue Palette */
+  --blue: rgba(0, 105, 148, 1); /* Dark and stormy ocean blue */
+  --blue-lighter: rgba(102, 194, 255, 1); /* Light and tropical ocean blue */
+  --blue-darker: rgba(0, 75, 107, 1); /* Deeper, mysterious ocean blue */
+
+  /* Layout Colors */
+  --background: var(--white);
+  --foreground: var(--black);
+  --midground: var(--grey-light);
+
+  /* Alert Colors */
+  --alert-note-bg: var(--blue-lighter); /* Light and tropical blue */
+  --alert-tip-bg: var(--gold-lighter); /* Subtle, light gold */
+  --alert-important-bg: var(--red-lighter); /* Light, less vibrant red */
+  --alert-warning-bg: var(--orange-lighter); /* Light, vibrant orange */
+  --alert-caution-bg: var(--grey-light); /* Clean, light grey */
+
+  --alert-text-color: var(--black); /* High contrast for readability */
+  --alert-border-color: var(--grey-dark); /* Subtle, for definition */
+
+  /* Typography Colors */
+  --text-primary: var(--foreground);
+  --text-secondary: var(--grey-dark);
+  --text-warning: var(--red); /* Subtle warning */
+  --text-link: var(--blue); /* Clear, functional links */
+  --text-title: var(--foreground);
+
+  --noise-opacity: 0.6;
+  --smooth-shadow: 0px 15px 25px -5px rgba(0, 0, 0, 0.2),
+    0px 5px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--black);
+    --foreground: var(--white);
+    --midground: var(--grey-dark);
+
+    --text-primary: var(--grey-light);
+    --text-secondary: var(--orange-lighter);
+    --text-warning: var(--red-lighter); /* Visible yet not overwhelming */
+    --text-link: var(--blue-lighter); /* Visible and functional */
+    --text-title: var(--white);
+
+    --alert-note-bg: var(--blue-darker); /* Dark and stormy blue */
+    --alert-tip-bg: var(--gold-darker); /* Deeper, muted gold */
+    --alert-important-bg: var(--red-darker); /* Deeper red for emphasis */
+    --alert-warning-bg: var(--orange-darker); /* Deeper, subdued orange */
+    --alert-caution-bg: var(--grey-dark); /* Darker grey for subtlety */
+
+    --alert-text-color: var(
+      --white
+    ); /* High contrast for dark mode readability */
+    --alert-border-color: var(
+      --grey-light-darker
+    ); /* Visible but not intrusive */
+
+    --noise-opacity: 0.4;
+    --smooth-shadow: 0px 15px 30px -5px rgba(255, 255, 255, 0.1),
+      0px 5px 15px -5px rgba(255, 255, 255, 0.15);
+  }
+}
+
+body {
+  position: relative;
+  background: var(--background);
+  color: var(--foreground);
+  z-index: -100;
+}
+
+body > main {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+body > main,
+footer {
+  padding: 12rem;
+}
+
+@media (max-width: 1024px) {
+  body > main,
+  footer {
+    padding: 8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  body > main,
+  footer {
+    padding: 4rem 4rem 8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body > main,
+  footer {
+    padding: 2rem 2rem 8rem;
+  }
+}
+
+.noise {
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="a"><feTurbulence type="fractalNoise" baseFrequency=".618" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23a)"/></svg>');
+  background-repeat: repeat;
+  background-size: 182px;
+  opacity: var(--noise-opacity);
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  inset: 0;
+  height: auto;
+  z-index: 0;
+}
+
+/* scale the bg image for the vision pro */
+/* @media only screen and (-webkit-device-pixel-ratio: 2) and (resolution: 192dpi) {
+  .noise {
+    background-size: 364px;
+  }
+} */
+
+.medium-zoom-image--opened {
+  z-index: 6;
+}
+
+.medium-zoom-overlay {
+  z-index: 4;
+}
+
+/* Alert banners */
+
+.markdown-alert {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--alert-border-color);
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  color: var(--alert-text-color);
+  box-shadow: var(--smooth-shadow);
+}
+
+.markdown-alert svg {
+  width: 1rem;
+  height: auto;
+  fill: currentColor;
+  display: inline-block;
+  margin-right: 1rem;
+  margin-bottom: 0.2rem;
+  vertical-align: middle;
+}
+
+.markdown-alert-note {
+  background-color: var(--alert-note-bg);
+}
+
+.markdown-alert-tip {
+  background-color: var(--alert-tip-bg);
+}
+
+.markdown-alert-important {
+  background-color: var(--alert-important-bg);
+}
+
+.markdown-alert-warning {
+  background-color: var(--alert-warning-bg);
+}
+
+.markdown-alert-caution {
+  background-color: var(--alert-caution-bg);
+}

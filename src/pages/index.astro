@@ -1,0 +1,157 @@
+---
+// export const prerender = true;
+
+import Layout from "@layouts/layout.astro";
+import { Image } from "astro:assets";
+import HitCounter from "@components/hitCounter.astro";
+---
+
+<Layout>
+  <main>
+    <h1>I am Matthias—a photographer and growth marketer based in Southern California.</h1>
+    <h1>You can find me behind a camera, cooking, or online @iammatthias.</h1>
+  </main>
+  <div class='background'>
+    <Image
+      inferSize
+      loading='eager'
+      decoding='async'
+      alt='fullscreen background'
+      src='https://wsrv.nl/?url=https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/assets/3c2b662eee2940e019212ab9d40c16d9.png'
+    />
+  </div>
+  <HitCounter />
+</Layout>
+
+<style>
+  .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+  }
+  .background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  main {
+    justify-content: center;
+  }
+  h1 {
+    text-align: center;
+    line-height: 1.25;
+    font-size: var(--fs-h2);
+    color: var(--white);
+  }
+
+  details {
+    vertical-align: top; /* Keeps the details aligned at the top when inline */
+    list-style: none; /* Removes the list style */
+    padding: 0; /* Removes the padding */
+    display: inline-block; /* Makes the details inline */
+  }
+
+  details[open] > *:not(summary) {
+    left: 50%;
+    transform: translateX(-50%);
+    position: absolute;
+    border: 1px solid var(--white);
+    border-radius: 1rem;
+    width: 100%; /* Or set a specific width */
+    color: var(--white);
+    padding: 2rem; /* Add some padding */
+    box-shadow:
+      0px 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0px 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    z-index: 2;
+    width: fit-content; /* Makes the details fit the content */
+  }
+
+  details summary {
+    list-style: none; /* Removes the list style */
+    padding: 0; /* Removes the padding */
+    cursor: pointer; /* Add a pointer to the cursor */
+  }
+
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  details:hover {
+    cursor: pointer;
+  }
+
+  details div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 2rem;
+    width: fit-content;
+    margin-left: auto;
+    text-align: center;
+  }
+
+  details a {
+    margin: 0;
+    padding: 0;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: inherit;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: none;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: var(--fs-h3);
+    }
+    details div {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  details[open] summary ~ * {
+    animation: open 0.3s ease-in-out;
+  }
+
+  details:not([open]) summary ~ * {
+    animation: close 0.3s ease-in-out forwards;
+  }
+
+  @keyframes open {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes close {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+</style>
+
+<style is:global>
+  nav {
+    border: 1px solid var(--white) !important;
+  }
+
+  nav summary,
+  nav p {
+    color: var(--white) !important;
+  }
+</style>

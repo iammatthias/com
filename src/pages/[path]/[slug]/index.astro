@@ -1,0 +1,120 @@
+---
+import Layout from "@layouts/layout.astro";
+import { getObsidianEntries } from "@lib/github";
+import Image from "@components/img.astro";
+import Paragraph from "@components/paragraph.astro";
+import BreadCrumb from "@components/breadcrumb.astro";
+import Meta_ReadTime_Dates from "@components/meta_readtime_dates.astro";
+import Meta_Tags from "@components/meta_tags.astro";
+import Squiggle from "@components/squiggle.astro";
+
+import { Markdown } from "astro-remote";
+import { markedHighlight } from "marked-highlight";
+import markedAlert from "marked-alert";
+import hljs from "highlight.js";
+
+// Add this interface at the top of your script
+interface Params {
+  path: string;
+  slug: string;
+}
+
+// Then use it to annotate Astro.params
+const { path, slug }: Params = Astro.params;
+
+const entry = await getObsidianEntries(path, slug);
+
+if (!entry) {
+  return (
+    {
+      status: 404,
+      error: "Entry not found",
+    },
+    Astro.redirect("/404")
+  );
+}
+
+if (!entry || (process.env.NODE_ENV === "production" && entry[0].frontmatter.published === false)) {
+  return (
+    {
+      status: 404,
+      error: "Entry not found",
+    },
+    Astro.redirect("/404")
+  );
+}
+
+if (!entry) {
+  return (
+    {
+      status: 404,
+      error: "Entry not found",
+    },
+    Astro.redirect("/404")
+  );
+}
+
+const { body, frontmatter } = entry[0];
+
+const readingTime = Math.ceil(body.split(/\s+/).length / 180);
+---
+
+<Layout title={frontmatter.title} path={path}>
+  <main>
+    <BreadCrumb path={path} />
+    <h1>{frontmatter.title}</h1>
+    <div class='meta'>
+      <Meta_ReadTime_Dates created={frontmatter.created} updated={frontmatter.updated} readingTime={readingTime} />
+
+      <Meta_Tags tags={frontmatter.tags} />
+    </div>
+    <Squiggle />
+    <article>
+      <Markdown
+        sanitize={{ allowComponents: true }}
+        content={body}
+        components={{ img: Image, p: Paragraph }}
+        marked={{
+          extensions: [
+            markedHighlight({
+              highlight(code, lang, info) {
+                const language = hljs.getLanguage(lang) ? lang : "plaintext";
+                return hljs.highlight(code, { language }).value;
+              },
+            }) as any,
+            markedAlert(),
+          ],
+        }}
+      />
+    </article>
+    <BreadCrumb path={path} />
+  </main>
+</Layout>
+
+<style>
+  article {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  article:has(.masonry) {
+    max-width: unset;
+    grid-gap: 2rem;
+  }
+
+  /* Extra small devices (portrait phones, less than 576px) */
+  @media (max-width: 575px) {
+    article:has(.masonry) {
+      max-width: unset;
+      grid-gap: 1rem;
+    }
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+</style>

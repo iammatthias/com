@@ -1,46 +1,28 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# build output
+dist/
+.vercel/
+
+# generated types
+.astro/
 
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
+node_modules/
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# local env files
+# environment variables
 .env
-.env*
+.env.production
 
-# vercel
-.vercel
+# macOS-specific files
+.DS_Store
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# blank tags file
+tags.json
 
-# feeds
-public/feed
-
-# next-video
-videos/*
-!videos/*.json
-!videos/*.js
-!videos/*.ts
-public/_next-video
+# Allow vercel.json
+!vercel.json

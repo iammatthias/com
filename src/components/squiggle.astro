@@ -1,0 +1,26 @@
+---
+
+---
+
+<div x-data='{ squiggleHeight: 24, squiggleWidth: 48 }' style='width: 100%; height: 100%;'>
+  <svg width='100%' :height='`${squiggleHeight}px`' preserveAspectRatio='none'>
+    <defs>
+      <pattern
+        id='squigglePattern'
+        x='0'
+        y='0'
+        :width='`${squiggleWidth}`'
+        :height='`${squiggleHeight}`'
+        patternUnits='userSpaceOnUse'
+      >
+        <path
+          :d="'M0,' + (squiggleHeight / 2) + ' C' + (squiggleWidth / 4) + ',0 ' + (3 * squiggleWidth / 4) + ',' + squiggleHeight + ' ' + squiggleWidth + ',' + (squiggleHeight / 2)"
+          stroke='currentColor'
+          stroke-width='1'
+          fill='none'></path>
+      </pattern>
+    </defs>
+
+    <rect width='100%' height='100%' fill='url(#squigglePattern)'></rect>
+  </svg>
+</div>

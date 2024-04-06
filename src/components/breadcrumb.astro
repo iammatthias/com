@@ -1,0 +1,26 @@
+---
+const { path } = Astro.props;
+---
+
+<p class='breadcrumb'>
+  <small>
+    <a href='/'>⌂</a>{
+      path && (
+        <>
+          {" "}
+          /{" "}
+          <a href={`/${path}`} data-astro-prefetch='false'>
+            {path}
+          </a>
+        </>
+      )
+    }
+  </small>
+</p>
+
+<style>
+  .breadcrumb a {
+    border-bottom: none;
+    color: inherit;
+  }
+</style>

@@ -1,0 +1,40 @@
+---
+import { Image } from "astro:assets";
+const { src, alt } = Astro.props;
+---
+
+<div><Image src={src} inferSize alt={alt} loading='lazy' decoding='async' data-zoomable /></div>
+
+<script>
+  import posthog from "posthog-js";
+  import mediumZoom from "medium-zoom";
+
+  const zoom = mediumZoom("[data-zoomable]", {
+    background: "var(--background)",
+    margin: 64,
+    scrollOffset: 0,
+  });
+
+  zoom.on("open", (event) => {
+    const { alt, src } = event.target;
+    posthog.capture("image_zoomed", { alt, img_src: src });
+  });
+</script>
+
+<style>
+  div:has(> img) {
+    position: relative;
+    width: 100%;
+    height: fit-content;
+    overflow: hidden;
+    border: 1px solid var(--foreground);
+    border-radius: 1rem;
+    display: block;
+    box-shadow: var(--smooth-shadow);
+  }
+  img {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+</style>

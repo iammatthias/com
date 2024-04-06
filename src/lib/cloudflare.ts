@@ -1,62 +1,74 @@
-import { Readable } from "stream";
+// cloudflare.ts
 
 import AWS from "aws-sdk";
+import crypto from "crypto";
 
-const env = process.env;
+const r2_key = import.meta.env.R2_KEY;
+const r2_secret = import.meta.env.R2_SECRET;
 
-// Cloudflare env variables
-const CLOUDFLARE_ACCESS_KEY_ID = env.NEXT_PUBLIC_CLOUDFLARE_ACCESS_KEY_ID;
-const CLOUDFLARE_SECRET_ACCESS_KEY =
-  env.NEXT_PUBLIC_CLOUDFLARE_SECRET_ACCESS_KEY;
-const CLOUDFLARE_BUCKET_NAME = env.NEXT_PUBLIC_CLOUDFLARE_BUCKET_NAME;
-const CLOUDFLARE_ID = env.NEXT_PUBLIC_CLOUDFLARE_ID;
-
-// Initialize AWS
+// Set up Cloudflare R2 endpoint and credentials
 const s3 = new AWS.S3({
-  endpoint: `https://${CLOUDFLARE_ID}.r2.cloudflarestorage.com`,
-  accessKeyId: CLOUDFLARE_ACCESS_KEY_ID,
-  secretAccessKey: CLOUDFLARE_SECRET_ACCESS_KEY,
+  endpoint: "https://ea8e8dd71ce896c57be1f426dae21195.r2.cloudflarestorage.com",
+  accessKeyId: r2_key,
+  secretAccessKey: r2_secret,
   signatureVersion: "v4",
+  s3ForcePathStyle: true,
 });
 
-const BUCKET_NAME = CLOUDFLARE_BUCKET_NAME as string;
+const BUCKET_NAME = "obsidian-cms";
+const FILE_KEY = "tags.json";
+const HASH_FILE_KEY = "tags_hash.txt";
+const STAGING_FILE_KEY = "tags-staging.json";
+const STAGING_HASH_FILE_KEY = "tags_hash-staging.txt";
 
-// Cloudflare helper functions
-export const extractKey = (imageUrl: string): string => {
-  const url = new URL(imageUrl);
-  const parts = url.pathname.split("/");
-  return parts[parts.length - 2];
-};
+// Generates a SHA-256 hash of a given object
+export function generateHash(object) {
+  const data = JSON.stringify(object, Object.keys(object).sort());
+  return crypto.createHash("sha256").update(data).digest("hex");
+}
 
-export const uploadImageToR2 = async (
-  imageUrl: string,
-  key: string
-): Promise<any> => {
+// Fetches the existing hash of the tags data
+export async function fetchExistingTagsHash() {
   try {
-    await s3.headObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+    const isStaging = import.meta.env.MODE === "development";
+    const hashFileKey = isStaging ? STAGING_HASH_FILE_KEY : HASH_FILE_KEY;
+    const { Body } = await s3
+      .getObject({ Bucket: BUCKET_NAME, Key: hashFileKey })
+      .promise();
+    return Body!.toString();
   } catch (error) {
-    const response = await fetch(imageUrl);
+    console.error("Error fetching existing tags hash:", error);
+    return ""; // Return an empty string if there's no existing hash
+  }
+}
 
-    if (!response.body) {
-      throw new Error("Failed to fetch image");
-    }
+// Saves the tags data and updates the hash, only if the data has changed
+export async function saveTagsData(data, oldHash) {
+  const newHash = generateHash(data);
+  if (newHash !== oldHash) {
+    // Save the new tag data because the hash is different
+    const body = JSON.stringify(data);
+    const isStaging = import.meta.env.MODE === "development";
+    const fileKey = isStaging ? STAGING_FILE_KEY : FILE_KEY;
+    const hashFileKey = isStaging ? STAGING_HASH_FILE_KEY : HASH_FILE_KEY;
 
-    const reader = response.body.getReader();
-    const stream = new Readable({
-      async read() {
-        const { done, value } = await reader.read();
-        this.push(done ? null : new Uint8Array(value));
-      },
-    });
-
-    return s3
-      .upload({
+    await s3
+      .putObject({
         Bucket: BUCKET_NAME,
-        Key: key,
-        Body: stream,
-        ContentType:
-          response.headers.get("Content-Type") || "application/octet-stream",
+        Key: fileKey,
+        Body: body,
+        ContentType: "application/json",
+      })
+      .promise();
+
+    // Also update the hash file with the new hash
+    await s3
+      .putObject({
+        Bucket: BUCKET_NAME,
+        Key: hashFileKey,
+        Body: newHash,
+        ContentType: "text/plain",
       })
       .promise();
   }
-};
+}
