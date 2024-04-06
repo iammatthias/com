@@ -3,45 +3,31 @@ import { parseAndMergeTags } from "./tags.ts";
 
 const github = import.meta.env.GITHUB;
 
-interface Frontmatter {
-  title: string;
-  slug: string;
-  published: boolean;
-  created: string;
-  updated: string;
-  tags: string[];
-  path: string;
-}
-
 // Updated parseMarkdownContent to incorporate tag, slug, and path extraction
-async function parseMarkdownContent(content: string, path: string) {
+async function parseMarkdownContent(content, path = "") {
   const { data, content: body } = matter(content);
 
-  // Add the path to the frontmatter
-  // Add the path to the frontmatter
-  const frontmatter: Frontmatter = {
+  // Ensure path is used correctly in the frontmatter
+  const frontmatter = {
     title: data.title || "",
     slug: data.slug || "",
     published: data.published || false,
     created: data.created || "",
     updated: data.updated || "",
     tags: data.tags || [],
-    path,
+    // Only include path in the frontmatter if it's defined and not empty
+    path: path ? path : undefined,
   };
 
   return { frontmatter, body };
 }
 
-// Helper function to fetch data from GitHub GraphQL API
-async function fetchFromGitHubGraphQL(path?: string, slug?: string) {
-  // Adjust the expression based on whether a path and/or a slug is provided
+// Helper function to fetch data from GitHub GraphQL API, ensuring proper path handling
+async function fetchFromGitHubGraphQL(path = "", slug = "") {
   let expression = "HEAD:content";
-  if (path && slug) {
-    expression += `/${path}/${slug}.md`;
-  } else if (path) {
-    expression += `/${path}`;
-  } else if (slug) {
-    expression += `/${slug}.md`;
+  if (path || slug) {
+    expression += path ? `/${path}` : "";
+    expression += slug ? `/${slug}.md` : "";
   }
 
   const query = `
@@ -76,63 +62,77 @@ async function fetchFromGitHubGraphQL(path?: string, slug?: string) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${github}`,
+      Authorization: `Bearer ${github}`, // Use environment variable for the GitHub token
     },
     body: JSON.stringify({ query, variables }),
   });
 
   if (!response.ok) {
-    console.error("HTTP Error:", response.status);
-    return response; // Return the response to handle status and errors outside
+    throw new Error(`HTTP Error: ${response.status}`);
   }
 
-  return response.json(); // Return the parsed JSON response
+  return await response.json();
 }
 
-// Function to get all entries
-export async function getObsidianEntries(path: string = "", slug?: string) {
-  const {
-    data: {
-      repository: { object },
-    },
-  } = await fetchFromGitHubGraphQL(path, slug);
+// Function to get all entries, with extended handling for directory names
+export async function getObsidianEntries(path = "", slug = "") {
+  try {
+    const fetchResponse = await fetchFromGitHubGraphQL(path, slug);
 
-  // For single entry (when slug is provided)
-  if (slug) {
-    if (!object || !object.text) {
-      console.error(
-        "No data returned from the GraphQL query for the single entry.",
+    const {
+      data: {
+        repository: { object },
+      },
+    } = fetchResponse;
+
+    if (!object) throw new Error("No data returned from the GraphQL query.");
+
+    // Handling directory listing when neither path nor slug is provided
+    if (!path && !slug && object.entries) {
+      let directoryEntries = await Promise.all(
+        object.entries.map(async (dir) => {
+          // Re-fetch using the directory name as path
+          const dirEntries = await getObsidianEntries(dir.name);
+          return { path: dir.name, entries: dirEntries };
+        }),
       );
-      return [];
+
+      // Return grouped entries by path
+      return directoryEntries.reduce((acc, dir) => {
+        acc[dir.path] = dir.entries;
+        return acc;
+      }, {});
     }
-    const singleEntry = await parseMarkdownContent(object.text, path);
-    return [singleEntry]; // Return as an array
+
+    // Handling a single entry (slug provided)
+    if (slug && object.text) {
+      return [await parseMarkdownContent(object.text, path)];
+    }
+
+    // Handling multiple entries within a given path
+    if (object.entries) {
+      let parsedEntries = await Promise.all(
+        object.entries.map((entry) =>
+          parseMarkdownContent(entry.object.text, path),
+        ),
+      );
+
+      if (process.env.NODE_ENV !== "development") {
+        parsedEntries = parsedEntries.filter(
+          (entry) => entry.frontmatter.published,
+        );
+      }
+
+      return parsedEntries;
+    } else {
+      throw new Error(
+        "Unexpected data structure returned from the GraphQL query.",
+      );
+    }
+  } catch (error) {
+    console.error(error.message);
+    return []; // Adjust error handling as needed
   }
-
-  // For multiple entries (when no slug is provided)
-  if (!object || !object.entries) {
-    console.error(
-      "No data returned from the GraphQL query for multiple entries.",
-    );
-    return [];
-  }
-
-  let parsedEntries = await Promise.all(
-    object.entries.map((entry: { object: { text: any } }) => {
-      const content = entry.object.text;
-      return parseMarkdownContent(content, path);
-    }),
-  );
-
-  // if in development, return all entries
-  // if not in development, filter out entries where frontmatter.published is false
-  if (process.env.NODE_ENV !== "development") {
-    parsedEntries = parsedEntries.filter(
-      (entry) => entry.frontmatter.published !== false,
-    );
-  }
-
-  return parsedEntries;
 }
 
 // getObsidianTags
