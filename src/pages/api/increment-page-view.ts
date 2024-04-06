@@ -59,3 +59,11 @@ async function processQueue() {
   }
   processingQueue = false;
 }
+
+export const GET = () => {
+  return new Response(
+    JSON.stringify({
+      message: "👀",
+    }),
+  );
+};
