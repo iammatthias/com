@@ -27,14 +27,14 @@
     "marked-alert": "2.0.1",
     "marked-highlight": "2.1.1",
     "medium-zoom": "1.1.0",
-    "posthog-js": "1.118.1",
+    "posthog-js": "1.120.2",
     "posthog-node": "4.0.0",
     "redis": "4.6.13",
     "sass": "1.74.1",
     "satori": "^0.10.13",
     "satori-html": "^0.3.2",
     "vercel": "33.7.0",
-    "viem": "^2.9.9"
+    "viem": "^2.9.13"
   },
   "devDependencies": {
     "@types/bun": "1.0.12",
