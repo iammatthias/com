@@ -57,19 +57,19 @@ export async function POST({ request }) {
 async function processQueue() {
   processingQueue = true;
 
-  while (transactionQueue.length > 0) {
-    const transaction = transactionQueue.shift();
-    if (transaction) {
-      try {
+  try {
+    while (transactionQueue.length > 0) {
+      const transaction = transactionQueue.shift();
+      if (transaction) {
         await transaction();
-      } catch (error) {
-        console.error(`Error processing transaction: ${error.message}`);
       }
     }
+  } catch (error) {
+    console.error(`Error processing transaction: ${error.message}`);
+  } finally {
+    processingQueue = false;
+    console.log("Transaction queue processing completed.");
   }
-
-  processingQueue = false;
-  console.log("Transaction queue processing completed.");
 }
 
 export const GET = () => {
