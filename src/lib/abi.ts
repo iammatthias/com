@@ -1,3 +1,24 @@
+export const addPageViewABI = [
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "path",
+        type: "string",
+      },
+      {
+        internalType: "bytes32",
+        name: "sessionHash",
+        type: "bytes32",
+      },
+    ],
+    name: "addPageView",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];
+
 export const addSessionABI = [
   {
     inputs: [

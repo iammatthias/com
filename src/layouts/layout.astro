@@ -146,7 +146,7 @@ const sessionHash = keccak256(`0x${ip + userAgent + currentTime}`);
       localStorage.setItem("sessionHash", sessionHash!);
 
       // Call the API to increment the page view counter
-      const response = await fetch("/api/increment-page-view", {
+      const response = await fetch("/api/increment-hit-counter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionHash }),
