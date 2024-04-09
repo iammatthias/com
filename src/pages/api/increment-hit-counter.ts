@@ -1,81 +1,73 @@
 import { publicClient, walletClient } from "@lib/viemClients";
 import { privateKeyToAccount } from "viem/accounts";
 import { addSessionABI } from "@lib/abi";
+import { Mutex } from "async-mutex";
 
-let pendingNonce: number | null = null;
-let transactionQueue: Array<() => Promise<void>> = [];
-let processingQueue = false;
-let account: any = null;
+const mutex = new Mutex();
+let nonce = null;
 
 export async function POST({ request }) {
-  if (!account) {
-    account = privateKeyToAccount(`0x${import.meta.env.HIT_COUNTER_WALLET}`);
-  }
+  try {
+    const requestBody = await request.json();
+    const sessionHash = requestBody.sessionHash;
+    const contractAddress = import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
+    const privateKey = import.meta.env.HIT_COUNTER_WALLET;
 
-  const requestBody = await request.json();
-  const sessionHash = requestBody.sessionHash;
-  const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
-
-  const transaction = async () => {
-    let nonce: number;
-    if (pendingNonce === null) {
-      nonce = await publicClient.getTransactionCount({
-        address: account.address,
-        blockTag: "pending",
-      });
-      console.log(`Fetched initial nonce: ${nonce}`);
-    } else {
-      nonce = pendingNonce;
-      console.log(`Using pending nonce: ${nonce}`);
+    if (!sessionHash || !contractAddress || !privateKey) {
+      console.error("Missing required parameters");
+      return new Response(
+        JSON.stringify({
+          status: "Error",
+          message: "Missing required parameters",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
-    pendingNonce = nonce + 1;
+
+    const account = privateKeyToAccount(`0x${privateKey}`);
 
     const { request: contractRequest } = await publicClient.simulateContract({
       address: `0x${contractAddress}`,
-      abi: addSessionABI!,
+      abi: addSessionABI,
       functionName: "addSession",
       args: [sessionHash],
       account,
-      nonce,
     });
 
-    const result = await walletClient.writeContract(contractRequest);
-    console.log(`Transaction sent. Hash: ${result}`);
-  };
-
-  transactionQueue.push(transaction);
-
-  if (!processingQueue) {
-    processQueue();
-  }
-
-  return new Response(JSON.stringify({ status: "OK" }), {
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
-async function processQueue() {
-  processingQueue = true;
-
-  try {
-    while (transactionQueue.length > 0) {
-      const transaction = transactionQueue.shift();
-      if (transaction) {
-        await transaction();
+    const release = await mutex.acquire();
+    try {
+      if (nonce === null) {
+        nonce = await publicClient.getTransactionCount({
+          address: account.address,
+          blockTag: "latest",
+        });
+      } else {
+        nonce++;
       }
+
+      contractRequest.nonce = nonce;
+    } finally {
+      release();
     }
+
+    const writeContractResponse =
+      await walletClient.writeContract(contractRequest);
+    console.log("Transaction hash:", writeContractResponse);
+
+    return new Response(JSON.stringify({ status: "OK" }), {
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
-    console.error(`Error processing transaction: ${error.message}`);
-  } finally {
-    processingQueue = false;
-    console.log("Transaction queue processing completed.");
+    console.error("Error processing request:", error);
+    return new Response(
+      JSON.stringify({ status: "Error", message: "An error occurred" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 }
-
-export const GET = () => {
-  return new Response(
-    JSON.stringify({
-      message: "👀",
-    }),
-  );
-};

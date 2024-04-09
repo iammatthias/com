@@ -7,7 +7,6 @@ export async function GET({ params, request }) {
   // const path = url.searchParams.get("path");
 
   const parts = params.og.split("-");
-  console.log(parts);
 
   const path = parts[1];
   const title = parts[2];
