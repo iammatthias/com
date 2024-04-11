@@ -8,34 +8,40 @@
   import { publicClient } from "@lib/viemClients";
   import { sessionCountABI } from "@lib/abi";
 
-  window.addEventListener("load", async () => {
+  const updateSessionCount = async () => {
     const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
 
-    // Function to update the session count
-    const updateSessionCount = async () => {
-      const data = await publicClient.readContract({
-        address: `0x${contractAddress}`,
-        abi: sessionCountABI,
-        functionName: "sessionCount",
-      });
-
-      // Set the --num CSS property
-      const sessionCountElement = document.getElementById("sessionCount");
-      sessionCountElement!.style.setProperty("--num", `${Number(data)}`);
-    };
-
-    // Update the session count on page load
-    await updateSessionCount();
-
-    // Watch for new blocks and update the session count
-    const unwatch = publicClient.watchBlocks({
-      onBlock: updateSessionCount,
-      onError: (error) => console.error(error),
+    const data = await publicClient.readContract({
+      address: `0x${contractAddress}`,
+      abi: sessionCountABI,
+      functionName: "sessionCount",
     });
 
-    // Stop watching for new blocks when the page is unloaded
-    window.addEventListener("unload", unwatch);
+    // Set the --num CSS property
+    const sessionCountElement = document.getElementById("sessionCount");
+    sessionCountElement!.style.setProperty("--num", `${Number(data)}`);
+  };
+
+  const handleVisibilityChange = async () => {
+    if (document.visibilityState === "visible") {
+      await updateSessionCount();
+    }
+  };
+
+  // Update the session count on page load
+  window.addEventListener("load", updateSessionCount);
+
+  // Update the session count when the page becomes visible
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+
+  // Watch for new blocks and update the session count
+  const unwatch = publicClient.watchBlocks({
+    onBlock: updateSessionCount,
+    onError: (error) => console.error(error),
   });
+
+  // Stop watching for new blocks when the page is unloaded
+  window.addEventListener("unload", unwatch);
 </script>
 
 <style>
