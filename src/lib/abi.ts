@@ -50,3 +50,47 @@ export const sessionCountABI = [
     type: "function",
   },
 ];
+
+export const pageViewCountABI = [
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    name: "pageViewCounts",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+export const sessionExistsABI = [
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    name: "sessionExists",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];

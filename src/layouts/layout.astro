@@ -119,42 +119,90 @@ const sessionHash = keccak256(`0x${ip + userAgent + currentTime}`);
       api_host: "https://us.posthog.com",
     });
 
+    // document.addEventListener("DOMContentLoaded", async () => {
+    //   // Read the sessionHash from the data attribute.
+    //   const sessionHashElement = document.getElementById("sessionHash");
+    //   const sessionHash = sessionHashElement!.dataset.sessionHash;
+
+    //   // Get the current time in milliseconds
+    //   const currentTime = Date.now();
+
+    //   // Get the stored sessionHash and its expiration time from localStorage
+    //   const storedSessionHash = localStorage.getItem("sessionHash");
+    //   const expirationTime = localStorage.getItem("expirationTime");
+
+    //   // Set a default expiration time (e.g., 1 hour)
+    //   const defaultExpirationTime = 60 * 60 * 1000;
+
+    //   // If a sessionHash is already present and has not expired, skip the contract interaction
+    //   if (storedSessionHash && currentTime < Number(expirationTime)) {
+    //     return;
+    //   }
+
+    //   // Update the expiration time
+    //   localStorage.setItem("expirationTime", (currentTime + defaultExpirationTime).toString());
+
+    //   // Store the sessionHash and its expiration time in localStorage
+    //   localStorage.setItem("sessionHash", sessionHash!);
+
+    //   // Call the API to increment the page view counter
+    //   const response = await fetch("/api/increment-hit-counter", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ sessionHash }),
+    //   });
+
+    //   const result = await response.json();
+    //   console.log(result); // For debugging
+    // });
+
     document.addEventListener("DOMContentLoaded", async () => {
-      // Read the sessionHash from the data attribute.
-      const sessionHashElement = document.getElementById("sessionHash");
-      const sessionHash = sessionHashElement!.dataset.sessionHash;
+    // Read the sessionHash from the data attribute.
+    const sessionHashElement = document.getElementById("sessionHash");
+    const sessionHash = sessionHashElement ? sessionHashElement.dataset.sessionHash : null;
 
-      // Get the current time in milliseconds
-      const currentTime = Date.now();
+    // Get the current page path
+    const path = window.location.pathname;
 
-      // Get the stored sessionHash and its expiration time from localStorage
-      const storedSessionHash = localStorage.getItem("sessionHash");
-      const expirationTime = localStorage.getItem("expirationTime");
+    // Get the current time in milliseconds
+    const currentTime = Date.now();
 
-      // Set a default expiration time (e.g., 1 hour)
-      const defaultExpirationTime = 60 * 60 * 1000;
+    // Get the stored sessionHash and its expiration time from localStorage
+    const storedSessionHash = localStorage.getItem("sessionHash");
+    const expirationTime = localStorage.getItem("expirationTime");
 
-      // If a sessionHash is already present and has not expired, skip the contract interaction
-      if (storedSessionHash && currentTime < Number(expirationTime)) {
+    // Set a default expiration time (e.g., 1 hour)
+    const defaultExpirationTime = 60 * 60 * 1000; // 1 hour in milliseconds
+
+    // Check if a sessionHash is already present and hasn't expired
+    if (storedSessionHash && currentTime < Number(expirationTime)) {
+        // If the session is valid, update the page view counter only
+        const response = await fetch("/api/increment-hit-counter", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionHash, path }),
+        });
+
+        const result = await response.json();
+        console.log("Page view updated:", result);
         return;
-      }
+    }
 
-      // Update the expiration time
-      localStorage.setItem("expirationTime", (currentTime + defaultExpirationTime).toString());
+    // No valid session found or session expired, update session and expiration time
+    localStorage.setItem("expirationTime", (currentTime + defaultExpirationTime).toString());
+    localStorage.setItem("sessionHash", sessionHash);
 
-      // Store the sessionHash and its expiration time in localStorage
-      localStorage.setItem("sessionHash", sessionHash!);
-
-      // Call the API to increment the page view counter
-      const response = await fetch("/api/increment-hit-counter", {
+    // Call the API to register the new session and update the page view
+    const response = await fetch("/api/increment-hit-counter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionHash }),
-      });
-
-      const result = await response.json();
-      console.log(result); // For debugging
+        body: JSON.stringify({ sessionHash, path }), // Include the path to record the page view
     });
+
+    const result = await response.json();
+    console.log("Session and page view registered:", result);
+});
+
 
     // Update the expiration time on user interaction
     let debounceTimer;
