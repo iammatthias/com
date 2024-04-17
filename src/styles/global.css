@@ -1,118 +1,81 @@
 :root {
-  /* Primary Palette - Subtle and functional */
-  --gold: rgba(204, 163, 0, 1); /* More muted gold */
-  --gold-lighter: rgba(229, 195, 0, 1); /* Lighter, subtle gold */
-  --gold-darker: rgba(163, 130, 0, 1); /* Darker, earthy gold */
+  /* Primary Palette - Mediterranean Inspiration */
+  --gold: rgba(255, 187, 0, 1); /* Brighter base gold */
+  --gold-lighter: rgba(255, 204, 0, 1); /* Lighter, vibrant gold */
+  --gold-darker: rgba(204, 136, 0, 1); /* Darker, richer gold */
 
-  --orange: rgba(240, 105, 0, 1); /* Action Orange */
-  --orange-lighter: rgba(246, 143, 29, 1); /* Subtly lighter orange */
-  --orange-darker: rgba(184, 92, 0, 1); /* Deeper, more subdued orange */
+  --blue: rgba(0, 105, 148, 1); /* Deep Aegean blue */
+  --blue-lighter: rgba(77, 172, 234, 1); /* Lighter, vibrant Aegean blue */
+  --blue-darker: rgba(0, 57, 81, 1); /* Darker, rich Aegean blue */
 
-  --white: rgba(242, 242, 242, 1); /* Cleaner, brighter white */
-  --white-lighter: rgba(255, 255, 255, 1); /* Pure white */
-  --white-darker: rgba(
-    222,
-    222,
-    222,
-    1
-  ); /* Soft grey instead of harsher dark */
+  --white: rgba(255, 255, 255, 1); /* Pure, bright white */
+  --white-darker: rgba(240, 240, 240, 1); /* Slightly off-white */
 
-  /* Grey Palette - Emphasizing simplicity and functionality */
-  --grey-light: rgba(229, 231, 235, 1); /* Lighter, cleaner grey */
-  --grey-light-lighter: rgba(
-    255,
-    255,
-    255,
-    1
-  ); /* Consistent with Rams' aesthetics */
-  --grey-light-darker: rgba(195, 198, 203, 1); /* Subtle dark grey */
+  --terracotta: rgba(226, 109, 90, 1); /* Warm, earthy terracotta */
+  --terracotta-lighter: rgba(244, 162, 148, 1); /* Lighter, softer terracotta */
+  --terracotta-darker: rgba(183, 65, 46, 1); /* Darker, richer terracotta */
 
-  --grey-dark: rgba(156, 159, 162, 1); /* Soft, more subdued dark grey */
-  --grey-dark-lighter: rgba(176, 180, 184, 1); /* Lighter, understated grey */
-  --grey-dark-darker: rgba(
-    130,
-    133,
-    137,
-    1
-  ); /* Deeper yet still soft dark grey */
-
-  /* Black Palette - For depth and intensity */
-  --black: rgba(10, 10, 10, 1); /* Softer black for less harshness */
-  --black-lighter: rgba(
-    36,
-    36,
-    36,
-    1
-  ); /* Lighter 'black' resembling dark grey */
-  --black-darker: rgba(0, 0, 0, 1); /* Pure black for depth */
-
-  /* Red and Blue Palettes - Used sparingly for functional accents */
-  --red: rgba(207, 0, 15, 1); /* A more subdued, less vibrant red */
-  --red-lighter: rgba(239, 51, 64, 1); /* Lighter, yet not too bright red */
-  --red-darker: rgba(165, 0, 12, 1); /* Darker, more reserved red */
-
-  /* Ocean-inspired Blue Palette */
-  --blue: rgba(0, 105, 148, 1); /* Dark and stormy ocean blue */
-  --blue-lighter: rgba(102, 194, 255, 1); /* Light and tropical ocean blue */
-  --blue-darker: rgba(0, 75, 107, 1); /* Deeper, mysterious ocean blue */
+  /* Neutral Palette */
+  --grey-light: rgba(241, 241, 241, 1);
+  --grey: rgba(204, 204, 204, 1);
+  --grey-dark: rgba(89, 89, 89, 1);
+  --black: rgba(0, 0, 0, 1);
 
   /* Layout Colors */
   --background: var(--white);
-  --foreground: var(--black);
-  --midground: var(--grey-light);
+  --foreground: var(--blue-darker);
+  --midground: var(--white-darker);
 
   /* Alert Colors */
-  --alert-note-bg: var(--blue-lighter); /* Light and tropical blue */
-  --alert-tip-bg: var(--gold-lighter); /* Subtle, light gold */
-  --alert-important-bg: var(--red-lighter); /* Light, less vibrant red */
-  --alert-warning-bg: var(--orange-lighter); /* Light, vibrant orange */
-  --alert-caution-bg: var(--grey-light); /* Clean, light grey */
+  --alert-note-bg: var(--blue-lighter);
+  --alert-tip-bg: var(--gold-lighter);
+  --alert-important-bg: var(--terracotta);
+  --alert-warning-bg: var(--terracotta-lighter);
+  --alert-caution-bg: var(--grey-light);
 
-  --alert-text-color: var(--black); /* High contrast for readability */
-  --alert-border-color: var(--grey-dark); /* Subtle, for definition */
+  --alert-text-color: var(--blue-darker);
+  --alert-border-color: var(--grey);
 
   /* Typography Colors */
-  --text-primary: var(--foreground);
+  --text-primary: var(--blue-darker);
   --text-secondary: var(--grey-dark);
-  --text-warning: var(--red); /* Subtle warning */
-  --text-link: var(--blue); /* Clear, functional links */
-  --text-title: var(--foreground);
+  --text-warning: var(--terracotta-darker);
+  --text-link: var(--blue);
+  --text-title: var(--blue-darker);
 
-  --noise-opacity: 0.8;
+  --noise-opacity: 0.6;
   --smooth-shadow: 0px 15px 25px -5px rgba(0, 0, 0, 0.2),
     0px 5px 10px -5px rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: var(--black);
+    --background: var(--blue-darker);
     --foreground: var(--white);
-    --midground: var(--grey-dark);
+    --midground: var(--blue);
 
-    --text-primary: var(--grey-light);
-    --text-secondary: var(--orange-lighter);
-    --text-warning: var(--red-lighter); /* Visible yet not overwhelming */
-    --text-link: var(--blue-lighter); /* Visible and functional */
-    --text-title: var(--white);
+    --text-primary: var(--white);
+    --text-secondary: var(--grey-light);
+    --text-warning: var(--terracotta-lighter);
+    --text-link: var(--gold-lighter);
+    --text-title: var(--gold);
 
-    --alert-note-bg: var(--blue-darker); /* Dark and stormy blue */
-    --alert-tip-bg: var(--gold-darker); /* Deeper, muted gold */
-    --alert-important-bg: var(--red-darker); /* Deeper red for emphasis */
-    --alert-warning-bg: var(--orange-darker); /* Deeper, subdued orange */
-    --alert-caution-bg: var(--grey-dark); /* Darker grey for subtlety */
+    --alert-note-bg: var(--blue);
+    --alert-tip-bg: var(--gold-darker);
+    --alert-important-bg: var(--terracotta);
+    --alert-warning-bg: var(--terracotta-lighter);
+    --alert-caution-bg: var(--grey-dark);
 
-    --alert-text-color: var(
-      --white
-    ); /* High contrast for dark mode readability */
-    --alert-border-color: var(
-      --grey-light-darker
-    ); /* Visible but not intrusive */
+    --alert-text-color: var(--white);
+    --alert-border-color: var(--white-darker);
 
     --noise-opacity: 0.4;
     --smooth-shadow: 0px 15px 30px -5px rgba(255, 255, 255, 0.1),
       0px 5px 15px -5px rgba(255, 255, 255, 0.15);
   }
 }
+
+/* Rest of the CSS remains the same */
 
 body {
   position: relative;
@@ -224,4 +187,8 @@ footer {
 
 .markdown-alert-caution {
   background-color: var(--alert-caution-bg);
+}
+
+#squigglePattern > path {
+  stroke: var(--gold);
 }

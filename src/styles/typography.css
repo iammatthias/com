@@ -38,7 +38,7 @@
 html {
   font-size: 16px;
   font-family: -apple-system-ui-serif, ui-serif, "Georgia", serif;
-  color: var(--foreground);
+  color: var(--text-primary);
   background-color: var(--background);
 }
 
@@ -50,7 +50,7 @@ h5,
 h6 {
   color: var(--text-title);
   font-family: "Kalnia Variable";
-  font-weight: 700;
+  font-weight: 500;
 }
 
 h1 {
@@ -75,9 +75,12 @@ h6 {
 p,
 li {
   font-size: var(--fs-p);
+  color: var(--text-primary);
 }
+
 small {
   font-size: var(--fs-sm);
+  color: var(--text-secondary);
 }
 
 a {
@@ -88,22 +91,10 @@ a {
   border-bottom: 2px solid var(--text-link);
 }
 
-h1 > a,
-h2 > a,
-h3 > a,
-h4 > a,
-h5 > a,
-h6 > a {
-  font-weight: inherit;
-}
-
-p > a {
-  font-size: var(--fs-sm);
-}
-
 pre,
 code {
-  font-family: ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono",
+    "Ubuntu Mono", monospace;
   color: var(--text-primary);
   font-size: var(--fs-sm);
 }
@@ -121,83 +112,29 @@ code:not(pre > code) {
   border-radius: 1rem;
 }
 
-.shadow-text {
-  text-shadow: 2px 2px 4px var(--grey-dark-darker);
-}
-
-.gradient-text {
-  background: linear-gradient(45deg, var(--orange), var(--gold));
-  background-clip: text;
-  color: transparent;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-blockquote {
-  border-left: 4px solid var(--grey-light);
-  padding-left: 1rem;
-  color: var(--text-secondary);
-  font-style: italic;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--fs-p);
-  box-shadow: 0 0 10px var(--grey-light-darker);
-  table-layout: fixed;
-}
-
-th,
-td {
-  padding: 12px 15px;
-  text-align: left;
-  border: 1px solid var(--grey-light);
-  word-wrap: break-word;
-}
-
-th {
-  background-color: var(--foreground);
-  color: var(--black);
-}
-
-td:hover {
-  background-color: var(--grey-light-lighter);
-  color: var(--black);
-}
-
-@media screen and (max-width: 600px) {
-  table {
-    display: block;
-    overflow-x: auto;
-  }
-
-  th,
-  td {
-    padding: 12px;
-  }
-}
-
-p:has(> img:nth-of-type(2)) img {
-  border: 10px solid red;
-}
-
-/* Base highlight.js styling */
+/* Highlight.js Styles */
 .hljs {
   background: var(--background);
   color: var(--text-primary);
-  font-family: ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
-  padding: 1rem;
-  border-radius: 1rem;
-  border: 1px solid var(--grey-light);
-  overflow-x: auto;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--text-secondary);
 }
 
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-literal,
-.hljs-section,
-.hljs-link {
+.hljs-title {
+  color: var(--terracotta);
+}
+
+.hljs-string,
+.hljs-number,
+.hljs-regexp,
+.hljs-variable,
+.hljs-template-variable {
   color: var(--gold);
 }
 
@@ -205,104 +142,76 @@ p:has(> img:nth-of-type(2)) img {
   color: var(--gold-darker);
 }
 
-.hljs-title,
-.hljs-name {
-  color: var(--orange);
-  font-weight: 700;
-}
-
-.hljs-variable,
-.hljs-template-variable,
+.hljs-tag .hljs-name,
 .hljs-selector-id,
 .hljs-selector-class {
-  color: var(--orange-lighter);
+  color: var(--blue);
 }
 
-.hljs-string,
-.hljs-bullet,
-.hljs-quote,
-.hljs-addition {
-  color: var(--grey-dark);
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-p);
+  background-color: var(--background);
 }
 
-.hljs-meta,
-.hljs-meta .hljs-keyword,
-.hljs-meta .hljs-string {
-  color: var(--grey-dark-darker);
+th,
+td {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid var(--grey-light);
+  color: var(--text-primary);
 }
 
-.hljs-comment,
-.hljs-deletion,
-.hljs-code {
-  color: var(--text-secondary); /* Adjusted for readability */
+th {
+  background-color: var(--blue);
+  color: var(--white);
 }
 
-.hljs-attribute,
-.hljs-regex,
-.hljs-selector-attr,
-.hljs-selector-pseudo,
-.hljs-type,
-.hljs-number {
-  color: var(--grey-dark-lighter);
+td:hover {
+  background-color: var(--blue-lighter);
+  color: var(--white);
 }
 
-.hljs-symbol,
-.hljs-variable,
-.hljs-template-tag,
-.hljs-link {
-  color: var(--text-link);
-}
-
-code.hljs {
-  padding: 0.1rem 0.4rem;
-  border-radius: 1rem;
-  border: 1px solid var(--grey-light); /* Accent usage */
-}
-
-pre.hljs {
-  border: 1px solid var(--grey-light); /* Accent usage */
-  border-radius: 1rem;
-  padding: 1rem;
-  overflow-x: auto;
-}
-
-/* Light mode specific styles */
-@media (prefers-color-scheme: light) {
-  .hljs {
-    background: var(--white);
-    color: var(--black);
-  }
-  .hljs-keyword,
-  .hljs-selector-tag,
-  .hljs-literal,
-  .hljs-section,
-  .hljs-link {
-    color: var(--gold);
-  }
-  /* Use more readable colors instead of var(--grey-light) for critical text elements */
-  .hljs-comment,
-  .hljs-deletion,
-  .hljs-code {
-    color: var(--grey-dark); /* Adjusted for readability */
-  }
-  code.hljs,
-  pre.hljs {
-    border: 1px solid var(--grey-light); /* Retain as accent */
-  }
-}
-
-/* Dark mode specific styles */
+/* Color scheme adjustments for dark and light modes */
 @media (prefers-color-scheme: dark) {
-  .hljs {
-    background: var(--black);
-    color: var(--white);
+  :root {
+    --background: var(--black);
+    --text-primary: var(--white);
+    --text-secondary: var(--grey-light);
+    --text-title: var(--gold);
+    --text-link: var(--gold-lighter);
   }
-  .hljs-keyword,
-  .hljs-selector-tag,
-  .hljs-literal,
-  .hljs-section,
-  .hljs-link {
-    color: var(--gold-lighter);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: var(--white);
+    --text-primary: var(--blue-darker);
+    --text-secondary: var(--grey-dark);
+    --text-title: var(--blue);
+    --text-link: var(--blue-lighter);
   }
-  /* Adjustments for dark mode as needed */
+}
+
+/* etc */
+
+.shadow-text {
+  text-shadow: 2px 2px 4px var(--grey-dark);
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, var(--terracotta), var(--gold));
+  background-clip: text;
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+blockquote {
+  border-left: 4px solid var(--gold);
+  padding-left: 1rem;
+  color: var(--text-secondary);
+  font-style: italic;
 }

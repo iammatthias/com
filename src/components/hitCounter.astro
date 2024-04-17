@@ -2,7 +2,7 @@
 
 ---
 
-<div class="wrapper"><span class='circle'></span> <span><span id='sessionCount'></span> hits</span></div>
+<div class='wrapper'><span class='circle'></span> <span><span id='sessionCount'></span> hits</span></div>
 
 <script>
   import { publicClient } from "@lib/viemClients";
@@ -12,7 +12,7 @@
     const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
 
     const data = await publicClient.readContract({
-      address: `0x${contractAddress}`,
+      address: contractAddress,
       abi: sessionCountABI,
       functionName: "sessionCount",
     });
@@ -45,7 +45,6 @@
 </script>
 
 <style>
-
   .wrapper {
     padding: 8px 12px;
     color: var(--foreground);
@@ -87,26 +86,26 @@
     height: 8px;
     border-radius: 50px;
     box-shadow:
-      0 0 8px var(--blue),
-      inset 0 0 8px var(--blue-lighter);
+      0 0 8px var(--gold),
+      inset 0 0 8px var(--gold-lighter);
     animation: pulse 5s ease 5s infinite;
   }
 
   @keyframes pulse {
     0% {
       box-shadow:
-        0 0 8px var(--blue),
-        inset 0 0 8px var(--blue);
+        0 0 8px var(--gold),
+        inset 0 0 8px var(--gold);
     }
     50% {
       box-shadow:
-        0 0 16px var(--blue),
-        inset 0 0 14px var(--blue);
+        0 0 16px var(--gold),
+        inset 0 0 14px var(--gold);
     }
     100% {
       box-shadow:
-        0 0 8px var(--blue),
-        inset 0 0 8px var(--blue);
+        0 0 8px var(--gold),
+        inset 0 0 8px var(--gold);
     }
   }
 </style>

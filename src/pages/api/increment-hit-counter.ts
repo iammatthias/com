@@ -1,9 +1,10 @@
-// import { publicClient, walletClient } from "@lib/viemClients";
+import { publicClient, walletClient } from "@lib/viemClients";
 // import { privateKeyToAccount } from "viem/accounts";
-// import { addSessionABI } from "@lib/abi";
+import { sessionExistsABI } from "@lib/abi";
 
 // export async function POST({ request }) {
 //   const requestBody = await request.json();
+//   const path = await requestBody.path;
 //   const sessionHash = await requestBody.sessionHash;
 //   const contractAddress = import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
 
@@ -11,7 +12,7 @@
 //     `0x${import.meta.env.HIT_COUNTER_WALLET}`,
 //   );
 
-//   const { request: contractRequest } = await publicClient.simulateContract({
+//   const { request: addSessionRequest } = await publicClient.simulateContract({
 //     address: `0x${contractAddress}`,
 //     abi: addSessionABI!,
 //     functionName: "addSession",
@@ -19,111 +20,139 @@
 //     account,
 //   });
 
-//   console.log("simulated session");
+//   console.log("simulated addSession");
 
-//   const response = await walletClient.writeContract(contractRequest);
+//   const addSessionResponse =
+//     await walletClient.writeContract(addSessionRequest);
 
-//   console.log("tx", response);
+//   console.log("tx", addSessionResponse);
+
+//   await publicClient.waitForTransactionReceipt({
+//     hash: addSessionResponse,
+//   });
+
+//   const { request: addPageRequest } = await publicClient.simulateContract({
+//     address: `0x${contractAddress}`,
+//     abi: addPageViewABI!,
+//     functionName: "addPageView",
+//     args: [path, sessionHash],
+//     account,
+//   });
+
+//   console.log("simulated addPageView");
+
+//   const addPageViewResponse = await walletClient.writeContract(addPageRequest);
+
+//   console.log("tx", addPageViewResponse);
 
 //   return new Response(JSON.stringify({ status: "OK" }), {
 //     headers: { "Content-Type": "application/json" },
 //   });
 // }
 
-import { publicClient, walletClient } from "@lib/viemClients";
-import { privateKeyToAccount } from "viem/accounts";
-import { sessionExistsABI, addSessionABI, addPageViewABI } from "@lib/abi";
-
 export async function POST({ request }) {
-  const requestBody = await request.json();
-  const { sessionHash, path } = requestBody;
-  const contractAddress = import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
-
-  const account = privateKeyToAccount(
-    `0x${import.meta.env.HIT_COUNTER_WALLET}`,
-  );
-
-  // Check if the session exists using the readContract method
   try {
+    const requestBody = await request.json();
+    const sessionHash = requestBody.sessionHash;
+    const path = requestBody.path;
+
+    // Assuming these values come from your environment configuration
+    const SYNDICATE_KEY = import.meta.env.SYNDICATE_KEY;
+    const SYNDICATE_ID = import.meta.env.SYNDICATE_ID;
+    const CONTRACT_ADDRESS = import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
+    const CHAIN_ID = 84532;
+
+    // Check if the session already exists
     const sessionExists = await publicClient.readContract({
-      address: `0x${contractAddress}`,
+      address: CONTRACT_ADDRESS,
       abi: sessionExistsABI,
       functionName: "sessionExists",
       args: [sessionHash],
     });
 
-    if (!sessionExists) {
-      // If session does not exist, register it
-      const registerSessionResponse = await registerSession(
-        sessionHash,
-        account,
-        contractAddress,
+    if (sessionExists) {
+      console.log("Session already exists");
+    } else {
+      // Send the transaction to add the session
+      const response = await fetch(
+        "https://api.syndicate.io/transact/sendTransaction",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${SYNDICATE_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            projectId: SYNDICATE_ID,
+            contractAddress: CONTRACT_ADDRESS,
+            chainId: CHAIN_ID,
+            functionSignature: "addSession(bytes32 sessionHash)",
+            args: { sessionHash: sessionHash },
+          }),
+        },
       );
-      if (registerSessionResponse.success) {
-        return await recordPageView(
-          path,
-          sessionHash,
-          account,
-          contractAddress,
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("Failed to send session transaction:", errorData);
+        return new Response(
+          JSON.stringify({ status: "ERROR", error: errorData }),
+          {
+            status: response.status,
+            headers: { "Content-Type": "application/json" },
+          },
         );
       }
-      throw new Error("Failed to register session");
-    } else {
-      // If session exists, directly record the page view
-      return await recordPageView(path, sessionHash, account, contractAddress);
+
+      const data = await response.json();
+      console.log("Transaction response:", data);
     }
-  } catch (error) {
-    console.error("Error in operation:", error);
-    return new Response(
-      JSON.stringify({ status: "error", message: error.toString() }),
+
+    // Now, record the page view
+    const pageViewResponse = await fetch(
+      "https://api.syndicate.io/transact/sendTransaction",
       {
-        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${SYNDICATE_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          projectId: SYNDICATE_ID,
+          contractAddress: CONTRACT_ADDRESS,
+          chainId: CHAIN_ID,
+          functionSignature: "addPageView(string path, bytes32 sessionHash)",
+          args: { path: path, sessionHash: sessionHash },
+        }),
       },
     );
-  }
-}
 
-async function registerSession(sessionHash, account, contractAddress) {
-  try {
-    const { request: contractRequest } = await publicClient.simulateContract({
-      address: `0x${contractAddress}`,
-      abi: addSessionABI,
-      functionName: "addSession",
-      args: [sessionHash],
-      account,
-    });
-
-    const response = await walletClient.writeContract(contractRequest);
-    if (!response) {
-      throw new Error("Transaction hash is undefined.");
+    if (!pageViewResponse.ok) {
+      const errorData = await pageViewResponse.text();
+      console.error("Failed to send page view transaction:", errorData);
+      return new Response(
+        JSON.stringify({ status: "ERROR", error: errorData }),
+        {
+          status: pageViewResponse.status,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
-    await publicClient.waitForTransactionReceipt({
-      hash: response,
-    });
-    return { success: true, receipt: response };
-  } catch (error) {
-    console.error("Error registering session:", error);
-    throw error; // Re-throw the error for higher-level handling
-  }
-}
 
-async function recordPageView(path, sessionHash, account, contractAddress) {
-  try {
-    const { request: pageViewRequest } = await publicClient.simulateContract({
-      address: `0x${contractAddress}`,
-      abi: addPageViewABI,
-      functionName: "addPageView",
-      args: [path, sessionHash],
-      account,
-    });
+    const pageViewData = await pageViewResponse.json();
+    console.log("Page view transaction response:", pageViewData);
 
-    const response = await walletClient.writeContract(pageViewRequest);
-    console.log("Page view recorded:", response);
-    return new Response(JSON.stringify({ status: "OK" }), {
+    return new Response(JSON.stringify({ status: "OK", data: pageViewData }), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error recording page view:", error);
-    throw error; // Re-throw the error for higher-level handling
+    console.error("Error processing request:", error);
+    return new Response(
+      JSON.stringify({ status: "ERROR", error: error.message }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 }

@@ -2,7 +2,7 @@
 
 ---
 
-<div x-data='{ squiggleHeight: 24, squiggleWidth: 48 }' style='width: 100%; height: 100%;'>
+<div x-data='{ squiggleHeight: 64, squiggleWidth: 96 }' style='width: 100%; height: 100%;'>
   <svg width='100%' :height='`${squiggleHeight}px`' preserveAspectRatio='none'>
     <defs>
       <pattern
@@ -14,8 +14,8 @@
         patternUnits='userSpaceOnUse'
       >
         <path
-          :d="'M0,' + (squiggleHeight / 2) + ' C' + (squiggleWidth / 4) + ',0 ' + (3 * squiggleWidth / 4) + ',' + squiggleHeight + ' ' + squiggleWidth + ',' + (squiggleHeight / 2)"
-          stroke='currentColor'
+          :d="'M0,' + (squiggleHeight / 2) + ' C' + (squiggleWidth / 6) + ',' + (squiggleHeight / 4) + ' ' + (squiggleWidth / 3) + ',' + (3 * squiggleHeight / 4) + ' ' + (squiggleWidth / 2) + ',' + (squiggleHeight / 2) + ' C' + (2 * squiggleWidth / 3) + ',' + (squiggleHeight / 4) + ' ' + (5 * squiggleWidth / 6) + ',' + (3 * squiggleHeight / 4) + ' ' + squiggleWidth + ',' + (squiggleHeight / 2)"
+          stroke='black'
           stroke-width='1'
           fill='none'></path>
       </pattern>
