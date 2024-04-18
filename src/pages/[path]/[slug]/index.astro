@@ -11,7 +11,7 @@ import Squiggle from "@components/squiggle.astro";
 import { Markdown } from "astro-remote";
 import { markedHighlight } from "marked-highlight";
 import markedAlert from "marked-alert";
-import hljs from "highlight.js";
+// import hljs from "highlight.js";
 
 export async function getStaticPaths() {
   const categories = ["posts", "recipes", "notes", "art"];
@@ -64,12 +64,12 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
         components={{ img: Image, p: Paragraph }}
         marked={{
           extensions: [
-            markedHighlight({
-              highlight(code, lang) {
-                const language = hljs.getLanguage(lang) ? lang : "plaintext";
-                return hljs.highlight(code, { language }).value;
-              },
-            }) as any,
+            // markedHighlight({
+            //   highlight(code, lang) {
+            //     const language = hljs.getLanguage(lang) ? lang : "plaintext";
+            //     return hljs.highlight(code, { language }).value;
+            //   },
+            // }) as any,
             markedAlert(),
           ],
         }}
