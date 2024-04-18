@@ -50,8 +50,8 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
 
 <Layout title={frontmatter.title} path={path}>
   <main>
-    <BreadCrumb path={path} />
     <h1>{frontmatter.title}</h1>
+    <BreadCrumb path={path} />
     <div class='meta'>
       <Meta_ReadTime_Dates created={frontmatter.created} updated={frontmatter.updated} readingTime={readingTime} />
       <Meta_Tags tags={frontmatter.tags} />

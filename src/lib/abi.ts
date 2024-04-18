@@ -51,21 +51,36 @@ export const sessionCountABI = [
   },
 ];
 
-export const pageViewCountABI = [
+export const getAllPageViewsABI = [
   {
-    inputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    name: "pageViewCounts",
+    inputs: [],
+    name: "getAllPageViews",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "string[]",
         name: "",
-        type: "uint256",
+        type: "string[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+export const getAllSessionHashesABI = [
+  {
+    inputs: [],
+    name: "getAllSessionHashes",
+    outputs: [
+      {
+        internalType: "bytes32[]",
+        name: "",
+        type: "bytes32[]",
       },
     ],
     stateMutability: "view",
