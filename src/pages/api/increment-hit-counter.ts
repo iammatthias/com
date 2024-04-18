@@ -1,54 +1,7 @@
-import { publicClient, walletClient } from "@lib/viemClients";
-// import { privateKeyToAccount } from "viem/accounts";
+import { publicClient } from "@lib/viemClients";
 import { sessionExistsABI } from "@lib/abi";
 
-// export async function POST({ request }) {
-//   const requestBody = await request.json();
-//   const path = await requestBody.path;
-//   const sessionHash = await requestBody.sessionHash;
-//   const contractAddress = import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
-
-//   const account = privateKeyToAccount(
-//     `0x${import.meta.env.HIT_COUNTER_WALLET}`,
-//   );
-
-//   const { request: addSessionRequest } = await publicClient.simulateContract({
-//     address: `0x${contractAddress}`,
-//     abi: addSessionABI!,
-//     functionName: "addSession",
-//     args: [sessionHash],
-//     account,
-//   });
-
-//   console.log("simulated addSession");
-
-//   const addSessionResponse =
-//     await walletClient.writeContract(addSessionRequest);
-
-//   console.log("tx", addSessionResponse);
-
-//   await publicClient.waitForTransactionReceipt({
-//     hash: addSessionResponse,
-//   });
-
-//   const { request: addPageRequest } = await publicClient.simulateContract({
-//     address: `0x${contractAddress}`,
-//     abi: addPageViewABI!,
-//     functionName: "addPageView",
-//     args: [path, sessionHash],
-//     account,
-//   });
-
-//   console.log("simulated addPageView");
-
-//   const addPageViewResponse = await walletClient.writeContract(addPageRequest);
-
-//   console.log("tx", addPageViewResponse);
-
-//   return new Response(JSON.stringify({ status: "OK" }), {
-//     headers: { "Content-Type": "application/json" },
-//   });
-// }
+export const prerender = false;
 
 export async function POST({ request }) {
   try {

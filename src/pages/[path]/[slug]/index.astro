@@ -13,49 +13,38 @@ import { markedHighlight } from "marked-highlight";
 import markedAlert from "marked-alert";
 import hljs from "highlight.js";
 
-// Add this interface at the top of your script
-interface Params {
-  path: string;
-  slug: string;
+export async function getStaticPaths() {
+  const categories = ["posts", "recipes", "notes", "art"];
+  let staticPaths: { params: { path: string; slug: string } }[] = [];
+
+  // Iterate over each category to fetch entries
+  for (const path of categories) {
+    const entries = await getObsidianEntries(path);
+    // Add paths for each entry's slug under the current path
+    entries.forEach((entry) => {
+      if (entry.frontmatter.slug) {
+        // Ensure there is a slug before adding to paths
+
+        staticPaths.push({
+          params: { path, slug: entry.frontmatter.slug },
+        });
+      }
+    });
+  }
+
+  return staticPaths;
 }
 
-// Then use it to annotate Astro.params
-const { path, slug }: Params = Astro.params;
-
-const entry = await getObsidianEntries(path, slug);
+// Parameters are received from the URL defined by the static paths
+const { path, slug } = Astro.params;
+const entries = await getObsidianEntries(path, slug); // Directly use path and slug to get the entry
+const entry = entries[0]; // Assuming getObsidianEntries returns an array with one entry when slug is provided
 
 if (!entry) {
-  return (
-    {
-      status: 404,
-      error: "Entry not found",
-    },
-    Astro.redirect("/404")
-  );
+  throw new Error("404: Entry not found");
 }
 
-if (!entry || (process.env.NODE_ENV === "production" && entry[0].frontmatter.published === false)) {
-  return (
-    {
-      status: 404,
-      error: "Entry not found",
-    },
-    Astro.redirect("/404")
-  );
-}
-
-if (!entry) {
-  return (
-    {
-      status: 404,
-      error: "Entry not found",
-    },
-    Astro.redirect("/404")
-  );
-}
-
-const { body, frontmatter } = entry[0];
-
+const { body, frontmatter } = entry;
 const readingTime = Math.ceil(body.split(/\s+/).length / 180);
 ---
 
@@ -65,7 +54,6 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
     <h1>{frontmatter.title}</h1>
     <div class='meta'>
       <Meta_ReadTime_Dates created={frontmatter.created} updated={frontmatter.updated} readingTime={readingTime} />
-
       <Meta_Tags tags={frontmatter.tags} />
     </div>
     <Squiggle />
@@ -77,7 +65,7 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
         marked={{
           extensions: [
             markedHighlight({
-              highlight(code, lang, info) {
+              highlight(code, lang) {
                 const language = hljs.getLanguage(lang) ? lang : "plaintext";
                 return hljs.highlight(code, { language }).value;
               },
