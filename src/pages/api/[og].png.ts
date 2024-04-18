@@ -1,6 +1,8 @@
 import satori from "satori";
 import { html } from "satori-html";
 
+export const prerender = false;
+
 export async function GET({ params, request }) {
   // const url = new URL(request.url);
   // const title = url.searchParams.get("title");
