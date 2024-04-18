@@ -169,9 +169,14 @@ th {
   color: var(--white);
 }
 
+td {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease; /* Smooth transition for background and text color */
+}
+
 td:hover {
-  background-color: var(--blue-lighter);
-  color: var(--white);
+  background-color: var(--gold);
 }
 
 /* Color scheme adjustments for dark and light modes */

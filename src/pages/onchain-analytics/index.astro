@@ -16,47 +16,35 @@ import Squiggle from "@components/squiggle.astro";
     </p>
     <Squiggle />
 
-    <section>
-      <h3>How it Works:</h3>
-      <ul>
-        <li>
-          Your IP, user agent, and timestamp are hashed (keccak256) client-side to generate a unique, irreversible
-          session ID.
-        </li>
-        <li>Session IDs are stored onchain to validate page views without any personal data.</li>
-        <li>Page views are counted using a simple incrementing integer attached to each page path.</li>
-      </ul>
-    </section>
+    <h3>How it Works:</h3>
+    <ul>
+      <li>
+        Your IP, user agent, and timestamp are hashed (keccak256) client-side to generate a unique, irreversible session
+        ID.
+      </li>
+      <li>Session IDs are stored onchain to validate page views without any personal data.</li>
+      <li>Page views are counted using a simple incrementing integer attached to each page path.</li>
+    </ul>
 
-    <section>
-      <h3>Data Collection Details:</h3>
-      <p>
-        Data collection began at <a
-          href='https://sepolia.basescan.org/tx/0x8364d0d8827f5129965955c0e836cb54af213dc0aaa43e7b53635f3ced43135f'
-          >block number 8853154 on Base-Sepolia</a
-        >. The contract is verified on BaseScan: <a
-          href='https://sepolia.basescan.org/address/0x40d59f33d1e36d8ddc171af7c40bd85ca25008f0#code#L1'
-          >0x40d59f33D1e36D8DDC171Af7C40Bd85Ca25008F0</a
-        >.
-      </p>
-    </section>
+    <h3>Data Collection Details:</h3>
+    <p>
+      Data collection began at <a
+        href='https://sepolia.basescan.org/tx/0x8364d0d8827f5129965955c0e836cb54af213dc0aaa43e7b53635f3ced43135f'
+        >block number 8853154 on Base-Sepolia</a
+      >. The contract is verified on BaseScan: <a
+        href='https://sepolia.basescan.org/address/0x40d59f33d1e36d8ddc171af7c40bd85ca25008f0#code#L1'
+        >0x40d59f33D1e36D8DDC171Af7C40Bd85Ca25008F0</a
+      >.
+    </p>
 
-    <section>
-      <h3>Analytics Data:</h3>
-      <ul>
-        <li>Total site views: <span id='sessionCount'>Loading...</span></li>
-        <li>
-          Top pages by view count:
-          <ul id='pageCounts'>
-            <!-- Dynamically filled -->
-          </ul>
-        </li>
-      </ul>
-      <h4>Session IDs:</h4>
-      <div id='sessionIDs'>
-        <!-- Dynamically filled spans for each session ID -->
-      </div>
-    </section>
+    <h3>Analytics Data:</h3>
+    <p>Total site views: <span id='sessionCount'>Loading...</span></p>
+    <p>Top pages by view count:</p>
+    <div id='pageCounts'></div>
+    <h4>Session IDs:</h4>
+    <div id='sessionIDs'>
+      <!-- Dynamically filled spans for each session ID -->
+    </div>
   </main>
 </Layout>
 
@@ -92,6 +80,7 @@ import Squiggle from "@components/squiggle.astro";
   }
 
   // Async function to update page counts
+  // Async function to update page counts
   async function updatePageCounts() {
     try {
       const data = await publicClient.readContract({
@@ -100,9 +89,10 @@ import Squiggle from "@components/squiggle.astro";
         functionName: "getAllPageViews",
       });
 
-      const pagesList = document.getElementById("pageCounts");
-      if (pagesList) {
-        pagesList.innerHTML = ""; // Clear existing list
+      const pagesTable = document.getElementById("pageCounts");
+      if (pagesTable) {
+        // Start a new table with headers and prepare to add rows dynamically
+        let tableHTML = "<table><tr><th>Page</th><th>Views</th></tr>";
 
         // Ensure data[1] which contains counts is treated as BigInt for sorting and comparison
         const pageData = data[0].map((page, index) => ({
@@ -111,14 +101,16 @@ import Squiggle from "@components/squiggle.astro";
         }));
 
         // Sort by count using BigInt comparison
-        pageData.sort((a, b) => (b.count > a.count ? 1 : b.count < a.count ? -1 : 0));
+        pageData.sort((a, b) => (b.count > a.count ? 1 : -1));
 
-        // Slice to topPagesCount and append to DOM
+        // Slice to topPagesCount and append rows to tableHTML
         pageData.slice(0, topPagesCount).forEach((item) => {
-          const pageElement = document.createElement("li");
-          pageElement.innerText = `${item.page} (${item.count.toString()})`; // Convert BigInt to string for display
-          pagesList.appendChild(pageElement);
+          tableHTML += `<tr><td><a href="${item.page}">${item.page}</a></td><td>${item.count.toString()}</td></tr>`; // Convert BigInt to string for display
         });
+
+        // Close the table tag after appending all rows
+        tableHTML += "</table>";
+        pagesTable.innerHTML = tableHTML; // Update the innerHTML of pagesTable with the full tableHTML
       } else {
         console.error("Element with id 'pageCounts' not found.");
       }
@@ -141,7 +133,7 @@ import Squiggle from "@components/squiggle.astro";
         sessionIDs.innerHTML = "";
         data.forEach((hash) => {
           const hashSpan = document.createElement("span");
-          hashSpan.className = "session-hash";
+          hashSpan.className = "sessionHash";
           hashSpan.innerText = hash;
           sessionIDs.appendChild(hashSpan);
           sessionIDs.appendChild(document.createTextNode(" ")); // Space for readability
@@ -177,3 +169,35 @@ import Squiggle from "@components/squiggle.astro";
 
   watchDataUpdates();
 </script>
+
+<style is:global>
+  #sessionIDs {
+    white-space: normal; /* Ensures the normal text wrapping and white-space handling */
+  }
+
+  .sessionHash {
+    display: inline; /* Keeps span inline */
+    word-break: break-all; /* Breaks long words anywhere */
+    white-space: normal; /* Allows wrapping */
+    margin-right: 0.5rem; /* Adds horizontal space between items */
+    background-color: #fff; /* Default background color */
+    color: #000; /* Default text color */
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease; /* Smooth transition for background and text color */
+    font-family: monospace; /* Monospace font for fixed-width display */
+    font-size: 0.9rem; /* Slightly smaller font size */
+  }
+
+  table,
+  td,
+  th {
+    font-family: monospace; /* Monospace font for fixed-width display */
+    font-size: 0.9rem; /* Slightly smaller font size */
+  }
+
+  .sessionHash:hover {
+    background-color: var(--gold); /* Light grey background on hover */
+    color: #333; /* Darker text color for contrast */
+  }
+</style>
