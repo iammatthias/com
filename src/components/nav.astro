@@ -16,16 +16,17 @@
 <style>
   nav {
     position: fixed;
+    left: 2rem;
     bottom: 2rem;
-    left: 50%;
-    transform: translate(-50%, 0);
+    /* left: 50%;
+    transform: translate(-50%, 0); */
     width: fit-content;
     padding: 1rem;
     align-self: center;
     border: 1px solid var(--foreground);
-    border-radius: 3rem;
+    border-radius: 2rem;
     color: var(--foreground);
-    text-align: center;
+    text-align: left;
     z-index: 1;
     box-shadow: var(--smooth-shadow);
     pointer-events: auto;
@@ -61,20 +62,11 @@
   details[open] summary {
     position: absolute;
     bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 0%);
-    width: 100%;
+    left: 0;
   }
 
   details[open] {
     padding-bottom: 3rem;
-    width: 300px;
-  }
-
-  @media (max-width: 480px) {
-    details[open] {
-      width: calc(100vw - 4rem);
-    }
   }
 
   details summary p {

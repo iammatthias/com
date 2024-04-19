@@ -98,6 +98,24 @@ body > main > * {
   width: 100%;
 }
 
+@media (max-width: 1024px) {
+  body > main {
+    padding: 4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  body > main {
+    padding: 4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body > main {
+    padding: 2rem 2rem 8rem;
+  }
+}
+
 .noise {
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="a"><feTurbulence type="fractalNoise" baseFrequency=".618" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23a)"/></svg>');
   background-repeat: repeat;
