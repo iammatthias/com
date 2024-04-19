@@ -10,7 +10,7 @@ import Squiggle from "@components/squiggle.astro";
     <h1>Onchain Analytics</h1>
     <p>
       This site features onchain analytics to track sessions and page counts. If you're interested, you can read more
-      about the project here: <a href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'
+      about the project here: <a class='break' href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'
         >iammatthias.com/posts/1712329304675-onchain-hit-counter</a
       >.
     </p>
@@ -32,13 +32,14 @@ import Squiggle from "@components/squiggle.astro";
         href='https://sepolia.basescan.org/tx/0x8364d0d8827f5129965955c0e836cb54af213dc0aaa43e7b53635f3ced43135f'
         >block number 8853154 on Base-Sepolia</a
       >. The contract is verified on BaseScan: <a
+        class='break'
         href='https://sepolia.basescan.org/address/0x40d59f33d1e36d8ddc171af7c40bd85ca25008f0#code#L1'
         >0x40d59f33D1e36D8DDC171Af7C40Bd85Ca25008F0</a
       >.
     </p>
 
     <h3>Analytics Data:</h3>
-    <p>Total site views: <span id='sessionCount'>Loading...</span></p>
+    <p>Total site views: <span id='sessionCount'></span></p>
     <p>Top pages by view count:</p>
     <div id='pageCounts'></div>
     <h4>Session IDs:</h4>
@@ -171,6 +172,21 @@ import Squiggle from "@components/squiggle.astro";
 </script>
 
 <style is:global>
+  main * {
+    font-family: monospace; /* Monospace font for fixed-width display */
+  }
+  p,
+  li,
+  span {
+    font-size: var(--fs-sm);
+  }
+
+  a,
+  th,
+  td {
+    font-size: 0.9rem;
+  }
+
   #sessionIDs {
     white-space: normal; /* Ensures the normal text wrapping and white-space handling */
   }
@@ -180,24 +196,17 @@ import Squiggle from "@components/squiggle.astro";
     word-break: break-all; /* Breaks long words anywhere */
     white-space: normal; /* Allows wrapping */
     margin-right: 0.5rem; /* Adds horizontal space between items */
-    background-color: #fff; /* Default background color */
-    color: #000; /* Default text color */
     transition:
       background-color 0.3s ease,
       color 0.3s ease; /* Smooth transition for background and text color */
-    font-family: monospace; /* Monospace font for fixed-width display */
-    font-size: 0.9rem; /* Slightly smaller font size */
-  }
-
-  table,
-  td,
-  th {
-    font-family: monospace; /* Monospace font for fixed-width display */
-    font-size: 0.9rem; /* Slightly smaller font size */
   }
 
   .sessionHash:hover {
     background-color: var(--gold); /* Light grey background on hover */
-    color: #333; /* Darker text color for contrast */
+  }
+
+  .break {
+    overflow-wrap: break-word; /* Handles normal wrapping */
+    word-break: break-all; /* Forces break for long unbreakable strings */
   }
 </style>

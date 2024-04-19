@@ -175,9 +175,9 @@ td {
     color 0.3s ease; /* Smooth transition for background and text color */
 }
 
-td:hover {
+/* td:hover {
   background-color: var(--gold);
-}
+} */
 
 /* Color scheme adjustments for dark and light modes */
 @media (prefers-color-scheme: dark) {
