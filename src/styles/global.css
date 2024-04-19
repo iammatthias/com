@@ -88,33 +88,14 @@ body > main {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 2rem;
+  padding: 8rem;
 }
 
-body > main,
-footer {
-  padding: 12rem;
-}
-
-@media (max-width: 1024px) {
-  body > main,
-  footer {
-    padding: 8rem;
-  }
-}
-
-@media (max-width: 768px) {
-  body > main,
-  footer {
-    padding: 4rem 4rem 8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  body > main,
-  footer {
-    padding: 2rem 2rem 8rem;
-  }
+body > main > * {
+  max-width: 800px;
+  width: 100%;
 }
 
 .noise {

@@ -87,11 +87,6 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
     gap: 1rem;
   }
 
-  article:has(.masonry) {
-    max-width: unset;
-    grid-gap: 2rem;
-  }
-
   /* Extra small devices (portrait phones, less than 576px) */
   @media (max-width: 575px) {
     article:has(.masonry) {
