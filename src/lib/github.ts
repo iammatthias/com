@@ -1,5 +1,4 @@
 import matter from "gray-matter";
-import { parseAndMergeTags } from "./tags.ts";
 
 const github = import.meta.env.GITHUB;
 
@@ -162,6 +161,4 @@ export async function getObsidianTags() {
     const pathEntries = await getObsidianEntries(path);
     entries = entries.concat(pathEntries);
   }
-
-  parseAndMergeTags(entries);
 }
