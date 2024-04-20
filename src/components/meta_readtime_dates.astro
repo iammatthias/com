@@ -18,18 +18,15 @@ const isUpdatedAfter24Hours = difference > 24 * 60 * 60 * 1000;
 ---
 
 <p>
-  <small>
-    This post will take roughly {readingTime}
-    {readingTime === 1 ? "minute" : "minutes"} to read. It was first published on <time datetime={created}
-      >{formatDate(created)}</time
-    >{
-      isUpdatedAfter24Hours ? (
-        <>
-          , and was last updated <time datetime={updated}>{formatDate(updated)}</time>
-        </>
-      ) : (
-        "."
-      )
-    }
-  </small>
+  This post was first published on <time datetime={created}>{formatDate(created)}</time>{
+    isUpdatedAfter24Hours ? (
+      <>
+        and was last updated <time datetime={updated}>{formatDate(updated)}</time>.
+      </>
+    ) : (
+      "."
+    )
+  }
+  It will take roughly {readingTime}
+  {readingTime === 1 ? "minute" : "minutes"} to read.
 </p>

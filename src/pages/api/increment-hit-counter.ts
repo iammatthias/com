@@ -24,7 +24,7 @@ export async function POST({ request }) {
     });
 
     if (sessionExists) {
-      console.log("Session already exists");
+      // console.log("Session already exists");
     } else {
       // Send the transaction to add the session
       const response = await fetch(
@@ -58,7 +58,7 @@ export async function POST({ request }) {
       }
 
       const data = await response.json();
-      console.log("Transaction response:", data);
+      // console.log("Transaction response:", data);
     }
 
     // Now, record the page view
@@ -93,7 +93,7 @@ export async function POST({ request }) {
     }
 
     const pageViewData = await pageViewResponse.json();
-    console.log("Page view transaction response:", pageViewData);
+    // console.log("Page view transaction response:", pageViewData);
 
     return new Response(JSON.stringify({ status: "OK", data: pageViewData }), {
       headers: { "Content-Type": "application/json" },

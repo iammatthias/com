@@ -51,7 +51,7 @@
     padding: 8px 12px;
     color: var(--foreground);
     border: 1px solid var(--foreground);
-    border-radius: 3rem;
+    border-radius: 1.5rem;
     box-shadow: var(--smooth-shadow);
     backdrop-filter: blur(10px);
     width: fit-content;
@@ -63,9 +63,22 @@
     justify-content: space-between;
     gap: 12px;
     position: fixed;
-    bottom: 2.5rem;
-    right: 2rem;
+    bottom: 4.5rem;
+    right: 8rem;
     font-family: monospace;
+  }
+
+  @media (max-width: 1060px) {
+    .wrapper {
+      right: 4rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .wrapper {
+      bottom: 3rem;
+      right: 2rem;
+    }
   }
 
   @property --num {

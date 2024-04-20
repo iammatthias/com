@@ -112,42 +112,6 @@ code:not(pre > code) {
   border-radius: 1rem;
 }
 
-/* Highlight.js Styles */
-.hljs {
-  background: var(--background);
-  color: var(--text-primary);
-}
-
-.hljs-comment,
-.hljs-quote {
-  color: var(--text-secondary);
-}
-
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-literal,
-.hljs-title {
-  color: var(--terracotta);
-}
-
-.hljs-string,
-.hljs-number,
-.hljs-regexp,
-.hljs-variable,
-.hljs-template-variable {
-  color: var(--gold);
-}
-
-.hljs-function .hljs-keyword {
-  color: var(--gold-darker);
-}
-
-.hljs-tag .hljs-name,
-.hljs-selector-id,
-.hljs-selector-class {
-  color: var(--blue);
-}
-
 /* Table Styles */
 table {
   width: 100%;

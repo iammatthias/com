@@ -16,15 +16,15 @@
 <style>
   nav {
     position: fixed;
-    left: 2rem;
-    bottom: 2rem;
+    left: 8rem;
+    bottom: 4rem;
     /* left: 50%;
     transform: translate(-50%, 0); */
     width: fit-content;
     padding: 1rem;
     align-self: center;
     border: 1px solid var(--foreground);
-    border-radius: 2rem;
+    border-radius: 1.5rem;
     color: var(--foreground);
     text-align: left;
     z-index: 1;
@@ -32,6 +32,19 @@
     pointer-events: auto;
     isolation: isolate;
     backdrop-filter: blur(10px);
+  }
+
+  @media (max-width: 1060px) {
+    nav {
+      left: 4rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    nav {
+      bottom: 2.5rem;
+      left: 2rem;
+    }
   }
 
   p,

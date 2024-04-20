@@ -2,8 +2,7 @@
 let slots = await Astro.slots.render("default");
 let slotsString = slots.toString();
 let imgCount = (slotsString.match(/img src/g) || []).length;
-let maxColumns = Math.min(imgCount, 5);
-let mediumColumns = Math.min(imgCount, 3);
+let maxColumns = Math.min(imgCount, 3);
 let smallColumns = Math.min(imgCount, 2);
 let extraSmallColumns = Math.min(imgCount, 1);
 ---
@@ -20,7 +19,7 @@ let extraSmallColumns = Math.min(imgCount, 1);
       class='masonry'
       x-data
       x-masonry
-      style={`--max-columns: ${maxColumns}; --medium-columns: ${mediumColumns}; --small-columns: ${smallColumns}; --extra-small-columns: ${extraSmallColumns};`}
+      style={`--max-columns: ${maxColumns}; --small-columns: ${smallColumns}; --extra-small-columns: ${extraSmallColumns};`}
     >
       <slot />
     </div>
@@ -51,13 +50,6 @@ let extraSmallColumns = Math.min(imgCount, 1);
   @media (min-width: 992px) {
     .masonry {
       grid-template-columns: repeat(var(--max-columns), minmax(0, 1fr));
-    }
-  }
-
-  /* Medium devices (tablets, 768px and up) */
-  @media (min-width: 768px) and (max-width: 991px) {
-    .masonry {
-      grid-template-columns: repeat(var(--medium-columns), minmax(0, 1fr));
     }
   }
 
