@@ -1,13 +1,10 @@
 import satori from "satori";
 import { html } from "satori-html";
+import { Resvg } from "@resvg/resvg-js";
 
 export const prerender = false;
 
-export async function GET({ params, request }) {
-  // const url = new URL(request.url);
-  // const title = url.searchParams.get("title");
-  // const path = url.searchParams.get("path");
-
+export async function GET({ params }) {
   const parts = params.og.split("-");
 
   const path = parts[1];
@@ -50,7 +47,11 @@ export async function GET({ params, request }) {
           <div
             style="display: flex; flex-direction: column; align-items: flex-start;"
           >
-            <div style="font-size: 64px; display: flex">${path}</div>
+            <div
+              style="font-size: 64px; display: flex; text-transform: capitalize;"
+            >
+              ${path}
+            </div>
           </div>
         </div>
       </div>
@@ -84,7 +85,11 @@ export async function GET({ params, request }) {
           <div
             style="display: flex; flex-direction: column; align-items: flex-start;"
           >
-            <div style="font-size: 48px; display: flex">${path}</div>
+            <div
+              style="font-size: 48px; display: flex; text-transform: capitalize;"
+            >
+              ${path}
+            </div>
             <div style="font-size: 64px; display: flex">${title}</div>
           </div>
         </div>
@@ -133,10 +138,12 @@ export async function GET({ params, request }) {
     ],
   });
 
-  return new Response(svg, {
+  const resvg = new Resvg(svg);
+
+  return new Response(resvg.render().asPng(), {
+    status: 200,
     headers: {
-      "Content-Type": "image/svg+xml",
-      "Cache-Control": "public, max-age=604800, immutable",
+      "Content-Type": "image/png",
     },
   });
 }

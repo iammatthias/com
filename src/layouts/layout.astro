@@ -149,7 +149,7 @@ if (title || path) {
         localStorage.setItem("lastTransactionTime", currentTime.toString());
         postSessionData(sessionHash);
       } else {
-        console.log("Duplicate transaction skipped for sessionHash:", sessionHash);
+        console.log("Duplicate, skipped sessionHash:", sessionHash);
       }
     }
 
