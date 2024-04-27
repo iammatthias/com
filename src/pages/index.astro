@@ -13,7 +13,9 @@ import HitCounter from "@components/hitCounter.astro";
       I'm a photographer and growth technologist. When I'm not working you can find me cooking, behind a camera, or with
       my family.
     </h1>
-    <h1>You can find me online @iammatthias. Reach out if you'd like to connect or collaborate.</h1>
+    <h1>
+      You can find me online <a href='/social'>@iammatthias</a>. Reach out if you'd like to connect or collaborate.
+    </h1>
   </main>
   <div class='background'>
     <!-- <Image id='backgroundImage' inferSize loading='eager' decoding='async' alt='fullscreen background' src='#' /> -->
@@ -87,5 +89,8 @@ import HitCounter from "@components/hitCounter.astro";
   h1 {
     line-height: 1.15;
     font-size: var(--fs-h4);
+  }
+  a {
+    color: inherit;
   }
 </style>

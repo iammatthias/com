@@ -20,10 +20,14 @@ import Squiggle from "@components/squiggle.astro";
     <ul>
       <li>
         The client IP, user agent, and timestamp are hashed (keccak256) client-side to generate a unique, irreversible
-        session ID.
+        <code>sessionID</code>. Only the hash is stored.
       </li>
-      <li>Session IDs are stored onchain to validate page views without any personal data.</li>
+      <li><code>sessionID</code>s are stored onchain to validate page views without any personal data.</li>
       <li>Page views are counted using a simple incrementing integer attached to each page path.</li>
+      <li>
+        All onchain interactions are handled by a [syndicate.io](Syndicate.io) `Cloud Transaction` wallet in the
+        background.
+      </li>
     </ul>
 
     <h3>Data Collection Details:</h3>
@@ -66,8 +70,26 @@ import Squiggle from "@components/squiggle.astro";
     }
   }
 
+  // Function to show loading indicators
+  function showLoadingIndicator(id) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.innerHTML = '<div class="loading">Loading...</div>'; // Simple text or replace with an HTML/CSS spinner
+    }
+  }
+
+  // Function to hide loading indicators
+  function hideLoadingIndicator(id) {
+    const element = document.getElementById(id);
+    const loadingElement = element?.querySelector(".loading");
+    if (element && loadingElement) {
+      element.removeChild(loadingElement);
+    }
+  }
+
   // Async function to update session count
   async function updateSessionCount() {
+    showLoadingIndicator("sessionCount");
     try {
       const data = await publicClient.readContract({
         address: contractAddress,
@@ -77,12 +99,15 @@ import Squiggle from "@components/squiggle.astro";
       safelyUpdateTextContent("sessionCount", `${Number(data)}`);
     } catch (error) {
       console.error("Failed to fetch session count:", error);
+      safelyUpdateTextContent("sessionCount", "Failed to load data.");
     }
+    hideLoadingIndicator("sessionCount");
   }
 
   // Async function to update page counts
-  // Async function to update page counts
   async function updatePageCounts() {
+    const pagesTable = document.getElementById("pageCounts"); // Define pagesTable here
+    showLoadingIndicator("pageCounts");
     try {
       const data = await publicClient.readContract({
         address: contractAddress,
@@ -90,38 +115,34 @@ import Squiggle from "@components/squiggle.astro";
         functionName: "getAllPageViews",
       });
 
-      const pagesTable = document.getElementById("pageCounts");
       if (pagesTable) {
-        // Start a new table with headers and prepare to add rows dynamically
         let tableHTML = "<table><tr><th>Page</th><th>Views</th></tr>";
-
-        // Ensure data[1] which contains counts is treated as BigInt for sorting and comparison
         const pageData = data[0].map((page, index) => ({
           page: page,
-          count: BigInt(data[1][index]), // Treat count as BigInt
+          count: BigInt(data[1][index]),
         }));
-
-        // Sort by count using BigInt comparison
         pageData.sort((a, b) => (b.count > a.count ? 1 : -1));
-
-        // Slice to topPagesCount and append rows to tableHTML
         pageData.slice(0, topPagesCount).forEach((item) => {
-          tableHTML += `<tr><td><a href="${item.page}">${item.page}</a></td><td>${item.count.toString()}</td></tr>`; // Convert BigInt to string for display
+          tableHTML += `<tr><td><a href="${item.page}">${item.page}</a></td><td>${item.count.toString()}</td></tr>`;
         });
-
-        // Close the table tag after appending all rows
         tableHTML += "</table>";
-        pagesTable.innerHTML = tableHTML; // Update the innerHTML of pagesTable with the full tableHTML
+        pagesTable.innerHTML = tableHTML;
       } else {
         console.error("Element with id 'pageCounts' not found.");
       }
     } catch (error) {
       console.error("Failed to fetch page counts:", error);
+      if (pagesTable) {
+        pagesTable.innerHTML = "<p>Failed to load page counts.</p>"; // Provide a fallback message within the table
+      }
     }
+    hideLoadingIndicator("pageCounts");
   }
 
   // Async function to update session IDs
   async function updateSessionIDs() {
+    const sessionIDs = document.getElementById("sessionIDs"); // Define sessionIDs here
+    showLoadingIndicator("sessionIDs");
     try {
       const data = await publicClient.readContract({
         address: contractAddress,
@@ -129,9 +150,8 @@ import Squiggle from "@components/squiggle.astro";
         functionName: "getAllSessionHashes",
       });
 
-      const sessionIDs = document.getElementById("sessionIDs");
       if (sessionIDs) {
-        sessionIDs.innerHTML = "";
+        sessionIDs.innerHTML = ""; // Clear previous content
         data.forEach((hash) => {
           const hashSpan = document.createElement("span");
           hashSpan.className = "sessionHash";
@@ -144,7 +164,11 @@ import Squiggle from "@components/squiggle.astro";
       }
     } catch (error) {
       console.error("Failed to fetch session IDs:", error);
+      if (sessionIDs) {
+        sessionIDs.innerHTML = "<p>Failed to load session IDs.</p>"; // Provide a fallback message
+      }
     }
+    hideLoadingIndicator("sessionIDs");
   }
 
   // Initialize data on page load
@@ -208,5 +232,12 @@ import Squiggle from "@components/squiggle.astro";
   .break {
     overflow-wrap: break-word; /* Handles normal wrapping */
     word-break: break-all; /* Forces break for long unbreakable strings */
+  }
+
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px; /* Ensure adequate space for the spinner or text */
   }
 </style>
