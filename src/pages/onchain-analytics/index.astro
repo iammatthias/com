@@ -58,7 +58,52 @@ import Squiggle from "@components/squiggle.astro";
   import { sessionCountABI, getAllPageViewsABI, getAllSessionHashesABI } from "@lib/abi";
 
   const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
-  const topPagesCount = 5; // Adjust this value as needed
+  const topPagesCount = 5; // This can be adjusted dynamically based on your needs
+
+  // Function to create the initial table skeleton on page load
+  function createTableSkeleton() {
+    const pagesTable = document.getElementById("pageCounts");
+    if (pagesTable) {
+      let tableHTML = "<table><tr><th>Page</th><th>Views</th></tr>";
+      for (let i = 0; i < topPagesCount; i++) {
+        tableHTML += `<tr><td id="page${i}"></td><td id="views${i}"></td></tr>`;
+      }
+      tableHTML += "</table>";
+      pagesTable.innerHTML = tableHTML;
+    } else {
+      console.error("Element with id 'pageCounts' not found.");
+    }
+  }
+
+  // Async function to update page counts
+  async function updatePageCounts() {
+    try {
+      const data = await publicClient.readContract({
+        address: contractAddress,
+        abi: getAllPageViewsABI,
+        functionName: "getAllPageViews",
+      });
+
+      const pageData = data[0].map((page, index) => ({
+        page: page,
+        count: BigInt(data[1][index]), // Ensure count remains as BigInt for accurate handling
+      }));
+
+      // Correct sorting logic
+      pageData.sort((a, b) => {
+        if (b.count > a.count) return 1;
+        if (b.count < a.count) return -1;
+        return 0;
+      });
+
+      for (let i = 0; i < topPagesCount && i < pageData.length; i++) {
+        safelyUpdateTextContent(`page${i}`, pageData[i].page);
+        safelyUpdateTextContent(`views${i}`, pageData[i].count.toString());
+      }
+    } catch (error) {
+      console.error("Failed to fetch page counts:", error);
+    }
+  }
 
   // Function to safely update text content of an element
   function safelyUpdateTextContent(id, text) {
@@ -70,26 +115,8 @@ import Squiggle from "@components/squiggle.astro";
     }
   }
 
-  // Function to show loading indicators
-  function showLoadingIndicator(id) {
-    const element = document.getElementById(id);
-    if (element) {
-      element.innerHTML = '<div class="loading">Loading...</div>'; // Simple text or replace with an HTML/CSS spinner
-    }
-  }
-
-  // Function to hide loading indicators
-  function hideLoadingIndicator(id) {
-    const element = document.getElementById(id);
-    const loadingElement = element?.querySelector(".loading");
-    if (element && loadingElement) {
-      element.removeChild(loadingElement);
-    }
-  }
-
   // Async function to update session count
   async function updateSessionCount() {
-    showLoadingIndicator("sessionCount");
     try {
       const data = await publicClient.readContract({
         address: contractAddress,
@@ -99,57 +126,18 @@ import Squiggle from "@components/squiggle.astro";
       safelyUpdateTextContent("sessionCount", `${Number(data)}`);
     } catch (error) {
       console.error("Failed to fetch session count:", error);
-      safelyUpdateTextContent("sessionCount", "Failed to load data.");
     }
-    hideLoadingIndicator("sessionCount");
-  }
-
-  // Async function to update page counts
-  async function updatePageCounts() {
-    const pagesTable = document.getElementById("pageCounts"); // Define pagesTable here
-    showLoadingIndicator("pageCounts");
-    try {
-      const data = await publicClient.readContract({
-        address: contractAddress,
-        abi: getAllPageViewsABI,
-        functionName: "getAllPageViews",
-      });
-
-      if (pagesTable) {
-        let tableHTML = "<table><tr><th>Page</th><th>Views</th></tr>";
-        const pageData = data[0].map((page, index) => ({
-          page: page,
-          count: BigInt(data[1][index]),
-        }));
-        pageData.sort((a, b) => (b.count > a.count ? 1 : -1));
-        pageData.slice(0, topPagesCount).forEach((item) => {
-          tableHTML += `<tr><td><a href="${item.page}">${item.page}</a></td><td>${item.count.toString()}</td></tr>`;
-        });
-        tableHTML += "</table>";
-        pagesTable.innerHTML = tableHTML;
-      } else {
-        console.error("Element with id 'pageCounts' not found.");
-      }
-    } catch (error) {
-      console.error("Failed to fetch page counts:", error);
-      if (pagesTable) {
-        pagesTable.innerHTML = "<p>Failed to load page counts.</p>"; // Provide a fallback message within the table
-      }
-    }
-    hideLoadingIndicator("pageCounts");
   }
 
   // Async function to update session IDs
   async function updateSessionIDs() {
-    const sessionIDs = document.getElementById("sessionIDs"); // Define sessionIDs here
-    showLoadingIndicator("sessionIDs");
     try {
       const data = await publicClient.readContract({
         address: contractAddress,
         abi: getAllSessionHashesABI,
         functionName: "getAllSessionHashes",
       });
-
+      const sessionIDs = document.getElementById("sessionIDs");
       if (sessionIDs) {
         sessionIDs.innerHTML = ""; // Clear previous content
         data.forEach((hash) => {
@@ -159,20 +147,15 @@ import Squiggle from "@components/squiggle.astro";
           sessionIDs.appendChild(hashSpan);
           sessionIDs.appendChild(document.createTextNode(" ")); // Space for readability
         });
-      } else {
-        console.error("Element with id 'sessionIDs' not found.");
       }
     } catch (error) {
       console.error("Failed to fetch session IDs:", error);
-      if (sessionIDs) {
-        sessionIDs.innerHTML = "<p>Failed to load session IDs.</p>"; // Provide a fallback message
-      }
     }
-    hideLoadingIndicator("sessionIDs");
   }
 
   // Initialize data on page load
   window.addEventListener("load", () => {
+    createTableSkeleton(); // Create the table immediately when the page loads
     updateSessionCount();
     updatePageCounts();
     updateSessionIDs();
