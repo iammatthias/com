@@ -1,7 +1,7 @@
 ---
 import "@fontsource-variable/kalnia/wdth.css";
 import { SEO } from "astro-seo";
-// import { ViewTransitions } from "astro:transitions";
+import { ViewTransitions } from "astro:transitions";
 import Nav from "@components/nav.astro";
 import Ascii from "@components/ascii.astro";
 // import Footer from "@components/footer.astro";
@@ -49,7 +49,7 @@ if (title || path) {
     <SEO
       charset='UTF-8'
       title={seoTitle}
-      description='A digital garden.'
+      description='A digital garden where photographs, recipes, and thoughts can grow.'
       openGraph={{
         basic: {
           title: seoTitle,
@@ -57,7 +57,7 @@ if (title || path) {
           image: seoImage,
         },
         optional: {
-          description: "A digital garden.",
+          description: "A digital garden where photographs, recipes, and thoughts can grow.",
         },
       }}
       twitter={{
@@ -65,7 +65,7 @@ if (title || path) {
         card: "summary_large_image",
         image: seoImage,
         title: seoTitle,
-        description: "A digital garden.",
+        description: "A digital garden where photographs, recipes, and thoughts can grow.",
       }}
       extend={{
         link: [
@@ -92,7 +92,7 @@ if (title || path) {
         ],
       }}
     />
-    <!-- <ViewTransitions /> -->
+    <ViewTransitions />
   </head>
   <>
     <div class='noise'></div>
@@ -101,13 +101,13 @@ if (title || path) {
     <!-- <Footer /> -->
   </>
 
-  <script>
+  <!-- <script>
     // post hog
     import posthog from "posthog-js";
     posthog.init("phc_m547PTGk57uBWEvaKQov39JeM7TOOCtcr98f4tmrImr", {
       api_host: "https://us.posthog.com",
     });
-  </script>
+  </script> -->
   <script>
     import { keccak256 } from "viem";
 

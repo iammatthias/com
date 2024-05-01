@@ -88,32 +88,7 @@ a {
   font-family: "Kalnia Variable";
   font-weight: 500;
   text-decoration: none;
-  position: relative;
 }
-/* 
-a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 100%;
-  background: var(--text-link);
-}
-
-a:hover::after {
-  animation: shimmer 5s infinite;
-}
-
-@keyframes shimmer {
-  0%,
-  100% {
-    background: var(--gold);
-  }
-  50% {
-    background: var(--blue);
-  }
-} */
 
 pre,
 code {

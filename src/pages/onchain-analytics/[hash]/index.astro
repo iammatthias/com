@@ -1,0 +1,118 @@
+---
+export const prerender = false;
+
+import Layout from "@layouts/layout.astro";
+import HitCounter from "@components/hitCounter.astro";
+
+// Parameters are received from the URL defined by the static paths
+const { hash } = Astro.params;
+
+const processedHash = hash!.substring(2); // Assumes the key is pre-validated or error handling is in place
+---
+
+<Layout path=`Portraits of Private Keys`>
+  <main>
+    <div id='grid' class='grid'></div>
+  </main>
+
+  <div id='hash' style='display: none;'>{processedHash}</div>
+  <HitCounter />
+</Layout>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const privateKey = document.getElementById("hash")!.innerHTML;
+    setupGridCells(privateKey);
+  });
+
+  function setupGridCells(privateKey) {
+    console.log(privateKey);
+    const grid = document.getElementById("grid");
+    for (let i = 0; i < privateKey.length; i++) {
+      const char = privateKey[i].toLowerCase();
+      const value = parseInt(char, 16);
+      const cell = createCell(char, value);
+      grid!.appendChild(cell);
+    }
+  }
+
+  function createCell(hexChar, value) {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    const innerCell = document.createElement("div");
+    innerCell.className = "inner-cell";
+    const size = 50 - value * 2;
+    innerCell.style.width = `${size}%`;
+    innerCell.style.backgroundColor = `#${hexChar}${hexChar}${hexChar}`;
+    innerCell.style.animation = `pulse ${value + 1}s infinite ease-in-out`;
+    cell.appendChild(innerCell);
+    return cell;
+  }
+</script>
+
+<style>
+  main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Prevents potential scrollbar issues */
+    padding: unset;
+    height: 100svh;
+  }
+</style>
+
+<style is:global>
+  :root {
+    --grid-size: 8;
+    --cell-size: calc(100% / var(--grid-size));
+    --cell-height: calc(100% / var(--grid-size));
+    --min-font-size: 12px;
+    --max-font-size: 24px;
+    --padding: 16px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-size), 1fr);
+    grid-template-rows: repeat(var(--grid-size), 1fr);
+    gap: 4px;
+    width: 100%;
+    height: 100%;
+    max-width: calc(var(--cell-size) * var(--grid-size));
+    max-height: calc(var(--cell-height) * var(--grid-size));
+    box-sizing: border-box;
+  }
+
+  .cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(var(--min-font-size), 2.5vmin, var(--max-font-size));
+    width: 100%;
+    height: 100%;
+  }
+
+  .inner-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    animation-name: pulse;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    aspect-ratio: 1;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.3);
+      opacity: 0.8;
+    }
+  }
+</style>

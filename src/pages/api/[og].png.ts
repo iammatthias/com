@@ -27,14 +27,14 @@ export async function GET({ params }) {
           display: flex;
           color: rgba(10, 10, 10, 1);
           padding: 48px;
-          background-color: rgba(242, 242, 242, 1);
+          background-color: rgba(255, 255, 255, 1);
       "
       >
         <div
           style="
           width: 100%;
           height: 100%;
-          border: 8px solid rgba(240, 105, 0, 1);
+          border: 8px solid rgba(255, 187, 0, 1);
           border-radius: 48px;
           padding: 48px;
           display: flex;
@@ -65,14 +65,14 @@ export async function GET({ params }) {
           display: flex;
           color: rgba(10, 10, 10, 1);
           padding: 48px;
-          background-color: rgba(242, 242, 242, 1);
+          background-color: rgba(255, 255, 255, 1);
       "
       >
         <div
           style="
           width: 100%;
           height: 100%;
-          border: 8px solid rgba(240, 105, 0, 1);
+          border: 8px solid rgba(255, 187, 0, 1);
           border-radius: 48px;
           padding: 48px;
           display: flex;
@@ -104,14 +104,14 @@ export async function GET({ params }) {
           display: flex;
           color: rgba(10, 10, 10, 1);
           padding: 48px;
-          background-color: rgba(242, 242, 242, 1);
+          background-color: rgba(255, 255, 255, 1);
       "
       >
         <div
           style="
           width: 100%;
           height: 100%;
-          border: 8px solid rgba(240, 105, 0, 1);
+          border: 8px solid rgba(255, 187, 0, 1);
           border-radius: 48px;
           padding: 48px;
           display: flex;

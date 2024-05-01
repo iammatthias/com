@@ -1,11 +1,9 @@
 ---
-// export const prerender = true;
-
 import Layout from "@layouts/layout.astro";
 import Squiggle from "@components/squiggle.astro";
 ---
 
-<Layout title='Onchain Analytics'>
+<Layout path='Onchain Analytics'>
   <main>
     <h1>Onchain Analytics</h1>
     <p>
@@ -53,130 +51,7 @@ import Squiggle from "@components/squiggle.astro";
   </main>
 </Layout>
 
-<script>
-  import { publicClient } from "@lib/viemClients";
-  import { sessionCountABI, getAllPageViewsABI, getAllSessionHashesABI } from "@lib/abi";
-
-  const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
-  const topPagesCount = 5; // This can be adjusted dynamically based on your needs
-
-  // Function to create the initial table skeleton on page load
-  function createTableSkeleton() {
-    const pagesTable = document.getElementById("pageCounts");
-    if (pagesTable) {
-      let tableHTML = "<table><tr><th>Page</th><th>Views</th></tr>";
-      for (let i = 0; i < topPagesCount; i++) {
-        tableHTML += `<tr><td id="page${i}"></td><td id="views${i}"></td></tr>`;
-      }
-      tableHTML += "</table>";
-      pagesTable.innerHTML = tableHTML;
-    } else {
-      console.error("Element with id 'pageCounts' not found.");
-    }
-  }
-
-  // Async function to update page counts
-  async function updatePageCounts() {
-    try {
-      const data = await publicClient.readContract({
-        address: contractAddress,
-        abi: getAllPageViewsABI,
-        functionName: "getAllPageViews",
-      });
-
-      const pageData = data[0].map((page, index) => ({
-        page: page,
-        count: BigInt(data[1][index]), // Ensure count remains as BigInt for accurate handling
-      }));
-
-      // Correct sorting logic
-      pageData.sort((a, b) => {
-        if (b.count > a.count) return 1;
-        if (b.count < a.count) return -1;
-        return 0;
-      });
-
-      for (let i = 0; i < topPagesCount && i < pageData.length; i++) {
-        safelyUpdateTextContent(`page${i}`, pageData[i].page);
-        safelyUpdateTextContent(`views${i}`, pageData[i].count.toString());
-      }
-    } catch (error) {
-      console.error("Failed to fetch page counts:", error);
-    }
-  }
-
-  // Function to safely update text content of an element
-  function safelyUpdateTextContent(id, text) {
-    const element = document.getElementById(id);
-    if (element) {
-      element.innerText = text;
-    } else {
-      console.error(`Element with id '${id}' not found.`);
-    }
-  }
-
-  // Async function to update session count
-  async function updateSessionCount() {
-    try {
-      const data = await publicClient.readContract({
-        address: contractAddress,
-        abi: sessionCountABI,
-        functionName: "sessionCount",
-      });
-      safelyUpdateTextContent("sessionCount", `${Number(data)}`);
-    } catch (error) {
-      console.error("Failed to fetch session count:", error);
-    }
-  }
-
-  // Async function to update session IDs
-  async function updateSessionIDs() {
-    try {
-      const data = await publicClient.readContract({
-        address: contractAddress,
-        abi: getAllSessionHashesABI,
-        functionName: "getAllSessionHashes",
-      });
-      const sessionIDs = document.getElementById("sessionIDs");
-      if (sessionIDs) {
-        sessionIDs.innerHTML = ""; // Clear previous content
-        data.forEach((hash) => {
-          const hashSpan = document.createElement("span");
-          hashSpan.className = "sessionHash";
-          hashSpan.innerText = hash;
-          sessionIDs.appendChild(hashSpan);
-          sessionIDs.appendChild(document.createTextNode(" ")); // Space for readability
-        });
-      }
-    } catch (error) {
-      console.error("Failed to fetch session IDs:", error);
-    }
-  }
-
-  // Initialize data on page load
-  window.addEventListener("load", () => {
-    createTableSkeleton(); // Create the table immediately when the page loads
-    updateSessionCount();
-    updatePageCounts();
-    updateSessionIDs();
-  });
-
-  // Watch for new blocks and update data
-  const watchDataUpdates = () => {
-    const unwatch = publicClient.watchBlocks({
-      onBlock: () => {
-        updateSessionCount();
-        updatePageCounts();
-        updateSessionIDs();
-      },
-      onError: (error) => console.error("Error watching blocks:", error),
-    });
-
-    window.addEventListener("unload", unwatch);
-  };
-
-  watchDataUpdates();
-</script>
+<script src='../../lib/analytics.ts'></script>
 
 <style is:global>
   main * {
