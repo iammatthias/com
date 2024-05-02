@@ -2,70 +2,32 @@
 
 ---
 
-<a href='/onchain-analytics'
-  ><div class='wrapper'><span class='circle'></span> <span><span id='sessionCount'></span> hits</span></div></a
->
-
-<script>
-  import { publicClient } from "@lib/viemClients";
-  import { sessionCountABI } from "@lib/abi";
-
-  const updateSessionCount = async () => {
-    const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
-
-    const data = await publicClient.readContract({
-      address: contractAddress,
-      abi: sessionCountABI,
-      functionName: "sessionCount",
-    });
-
-    // Set the --num CSS property
-    const sessionCountElement = document.getElementById("sessionCount");
-    sessionCountElement!.style.setProperty("--num", `${Number(data)}`);
-  };
-
-  const handleVisibilityChange = async () => {
-    if (document.visibilityState === "visible") {
-      await updateSessionCount();
-    }
-  };
-
-  // Update the session count on page load
-  window.addEventListener("load", updateSessionCount);
-
-  // Update the session count when the page becomes visible
-  document.addEventListener("visibilitychange", handleVisibilityChange);
-
-  // Watch for new blocks and update the session count
-  const unwatch = publicClient.watchBlocks({
-    onBlock: updateSessionCount,
-    onError: (error) => console.error(error),
-  });
-
-  // Stop watching for new blocks when the page is unloaded
-  window.addEventListener("unload", unwatch);
-</script>
+<a href='/onchain-analytics'>
+  <div class='wrapper'><span class='circle'></span></div>
+</a>
 
 <style>
   .wrapper {
-    padding: 8px 12px;
+    padding: 1rem;
     color: var(--foreground);
     border: 1px solid var(--foreground);
     border-radius: 1.5rem;
     box-shadow: var(--smooth-shadow);
     backdrop-filter: blur(10px);
     width: fit-content;
-    min-width: 96px;
+
     font-size: 12px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 12px;
     position: fixed;
     bottom: 4.5rem;
     right: 8rem;
     font-family: monospace;
+    width: 48px;
+    height: 58px;
   }
 
   @media (max-width: 1060px) {

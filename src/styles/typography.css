@@ -115,7 +115,6 @@ code:not(pre > code) {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--fs-p);
   background-color: var(--background);
 }
 
@@ -125,6 +124,7 @@ td {
   text-align: left;
   border: 1px solid var(--grey-light);
   color: var(--text-primary);
+  font-size: var(--fs-p);
 }
 
 th {

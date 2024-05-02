@@ -2,7 +2,6 @@
 export const prerender = false;
 
 import Layout from "@layouts/layout.astro";
-import HitCounter from "@components/hitCounter.astro";
 
 // Parameters are received from the URL defined by the static paths
 const { hash } = Astro.params;
@@ -16,23 +15,22 @@ const processedHash = hash!.substring(2); // Assumes the key is pre-validated or
   </main>
 
   <div id='hash' style='display: none;'>{processedHash}</div>
-  <HitCounter />
 </Layout>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("astro:page-load", () => {
     const privateKey = document.getElementById("hash")!.innerHTML;
     setupGridCells(privateKey);
   });
 
   function setupGridCells(privateKey) {
     console.log(privateKey);
-    const grid = document.getElementById("grid");
+    const grid = document.getElementById("grid")!;
     for (let i = 0; i < privateKey.length; i++) {
       const char = privateKey[i].toLowerCase();
       const value = parseInt(char, 16);
       const cell = createCell(char, value);
-      grid!.appendChild(cell);
+      grid.appendChild(cell);
     }
   }
 

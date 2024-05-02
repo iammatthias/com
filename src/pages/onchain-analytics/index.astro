@@ -4,7 +4,7 @@ import Squiggle from "@components/squiggle.astro";
 ---
 
 <Layout path='Onchain Analytics'>
-  <main>
+  <main class='text'>
     <h1>Onchain Analytics</h1>
     <p>
       This site features onchain analytics to track sessions and page counts. If you're interested, you can read more
@@ -43,7 +43,22 @@ import Squiggle from "@components/squiggle.astro";
     <h3>Analytics Data:</h3>
     <p>Total site views: <span id='sessionCount'></span></p>
     <p>Top pages by view count:</p>
-    <div id='pageCounts'></div>
+
+    <table id='pageCounts'>
+      <tr><th>Page</th><th>Views</th></tr>
+      <!-- Placeholder rows for dynamic content -->
+      {
+        Array.from({ length: 5 }).map((_, i) => (
+          <tr>
+            <>
+              <td id={`page${i}`} />
+              <td id={`views${i}`} />
+            </>
+          </tr>
+        ))
+      }
+    </table>
+
     <h4>Session IDs:</h4>
     <div id='sessionIDs'>
       <!-- Dynamically filled spans for each session ID -->
@@ -51,29 +66,134 @@ import Squiggle from "@components/squiggle.astro";
   </main>
 </Layout>
 
-<script src='../../lib/analytics.ts'></script>
+<!-- <script src='../../lib/analytics.ts'></script> -->
 
-<style is:global>
-  main * {
-    font-family: monospace; /* Monospace font for fixed-width display */
+<script>
+  import { publicClient } from "@lib/viemClients";
+  import { sessionCountABI, getAllPageViewsABI, getAllSessionHashesABI } from "@lib/abi";
+
+  const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
+
+  function safelyUpdateTextContent(id, text) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.innerText = text;
+      return true;
+    }
+    console.error(`Element with id '${id}' not found.`);
+    return false;
   }
-  p,
-  li,
-  span {
+
+  async function updateSessionCount() {
+    try {
+      const data = await publicClient.readContract({
+        address: contractAddress,
+        abi: sessionCountABI,
+        functionName: "sessionCount",
+      });
+      safelyUpdateTextContent("sessionCount", `${Number(data)}`);
+    } catch (error) {
+      console.error("Failed to fetch session count:", error);
+    }
+  }
+
+  async function updatePageCounts() {
+    try {
+      const data = await publicClient.readContract({
+        address: contractAddress,
+        abi: getAllPageViewsABI,
+        functionName: "getAllPageViews",
+      });
+      const pageData = data[0].map((page, index) => ({
+        page: page,
+        count: BigInt(data[1][index]),
+      }));
+      pageData.sort((a, b) => (a.count > b.count ? -1 : a.count < b.count ? 1 : 0));
+      pageData.forEach((item, index) => {
+        if (index < 5) {
+          safelyUpdateTextContent(`page${index}`, item.page);
+          safelyUpdateTextContent(`views${index}`, item.count.toString());
+        }
+      });
+    } catch (error) {
+      console.error("Failed to fetch page counts:", error);
+    }
+  }
+
+  async function updateSessionIDs() {
+    try {
+      const data = await publicClient.readContract({
+        address: contractAddress,
+        abi: getAllSessionHashesABI,
+        functionName: "getAllSessionHashes",
+      });
+      const sessionIDs = document.getElementById("sessionIDs")!;
+      sessionIDs.innerHTML = ""; // Clear previous entries
+      data.reverse(); // Show the latest session IDs first
+      data.forEach((hash) => {
+        const hashSpan = document.createElement("span");
+        hashSpan.className = "sessionHash";
+        hashSpan.innerText = hash;
+
+        const hashLink = document.createElement("a");
+        hashLink.href = `/onchain-analytics/${hash}`;
+        hashLink.appendChild(hashSpan);
+
+        sessionIDs.appendChild(hashLink);
+        sessionIDs.appendChild(document.createTextNode(" "));
+      });
+    } catch (error) {
+      console.error("Failed to fetch session IDs:", error);
+    }
+  }
+
+  document.addEventListener(
+    "astro:page-load",
+    async () => {
+      // Execute all async operations in parallel
+      await Promise.all([updateSessionCount(), updatePageCounts(), updateSessionIDs()]).catch((error) => {
+        console.error("Error updating data:", error);
+      });
+    },
+    { once: true }
+  );
+
+  const unwatch = publicClient.watchBlocks({
+    onBlock: async () => {
+      await Promise.all([updateSessionCount(), updatePageCounts(), updateSessionIDs()]).catch((error) =>
+        console.error("Error watching blocks:", error)
+      );
+    },
+    onError: (error) => console.error("Error watching blocks:", error),
+  });
+
+  window.addEventListener("unload", unwatch);
+</script>
+
+<style>
+  .text {
     font-size: var(--fs-sm);
   }
 
-  a,
-  th,
-  td {
+  .text th,
+  .text td {
+    font-family: monospace;
     font-size: 0.9rem;
+  }
+
+  .text td {
+    word-break: break-all; /* Breaks long words anywhere */
+    white-space: normal; /* Allows wrapping */
   }
 
   #sessionIDs {
     white-space: normal; /* Ensures the normal text wrapping and white-space handling */
   }
+</style>
 
+<style is:global>
   .sessionHash {
+    font-family: monospace;
     display: inline; /* Keeps span inline */
     word-break: break-all; /* Breaks long words anywhere */
     white-space: normal; /* Allows wrapping */
@@ -90,12 +210,5 @@ import Squiggle from "@components/squiggle.astro";
   .break {
     overflow-wrap: break-word; /* Handles normal wrapping */
     word-break: break-all; /* Forces break for long unbreakable strings */
-  }
-
-  .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 50px; /* Ensure adequate space for the spinner or text */
   }
 </style>

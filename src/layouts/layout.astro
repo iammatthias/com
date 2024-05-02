@@ -3,6 +3,7 @@ import "@fontsource-variable/kalnia/wdth.css";
 import { SEO } from "astro-seo";
 import { ViewTransitions } from "astro:transitions";
 import Nav from "@components/nav.astro";
+import HitCounter from "@components/hitCounter.astro";
 import Ascii from "@components/ascii.astro";
 // import Footer from "@components/footer.astro";
 
@@ -97,6 +98,7 @@ if (title || path) {
   <>
     <div class='noise'></div>
     <Nav />
+    <HitCounter />
     <slot />
     <!-- <Footer /> -->
   </>
