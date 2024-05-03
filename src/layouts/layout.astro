@@ -113,7 +113,7 @@ if (title || path) {
   <script>
     import { keccak256 } from "viem";
 
-    document.addEventListener("DOMContentLoaded", async () => {
+    document.addEventListener("astro:page-load", async () => {
       const currentTime = Date.now();
 
       // Retrieve stored session data
@@ -151,7 +151,7 @@ if (title || path) {
         localStorage.setItem("lastTransactionTime", currentTime.toString());
         postSessionData(sessionHash);
       } else {
-        console.log("Duplicate, skipped sessionHash:", sessionHash);
+        // console.log("Duplicate, skipped sessionHash:", sessionHash);
       }
     }
 
@@ -166,7 +166,7 @@ if (title || path) {
       });
 
       const result = await response.json();
-      console.log("Session and page view registered:", result);
+      // console.log("Session and page view registered:", result);
     }
 
     // Update the expiration time on user interaction

@@ -14,7 +14,7 @@ import Squiggle from "@components/squiggle.astro";
     </p>
     <Squiggle />
 
-    <h3>How it Works:</h3>
+    <h2>How it Works:</h2>
     <ul>
       <li>
         The client IP, user agent, and timestamp are hashed (keccak256) client-side to generate a unique, irreversible
@@ -28,7 +28,7 @@ import Squiggle from "@components/squiggle.astro";
       </li>
     </ul>
 
-    <h3>Data Collection Details:</h3>
+    <h3>Meta Details</h3>
     <p>
       Data collection began at <a
         href='https://sepolia.basescan.org/tx/0x8364d0d8827f5129965955c0e836cb54af213dc0aaa43e7b53635f3ced43135f'
@@ -40,33 +40,35 @@ import Squiggle from "@components/squiggle.astro";
       >.
     </p>
 
-    <h3>Analytics Data:</h3>
-    <p>Total site views: <span id='sessionCount'></span></p>
-    <p>Top pages by view count:</p>
-
+    <h3>The Data</h3>
+    <p>There have been <span id='sessionCount'></span> unique sessions since the onchain analytics went live.</p>
+    <p>Here are the top 5 pages, sorted by view count:</p>
     <table id='pageCounts'>
       <tr><th>Page</th><th>Views</th></tr>
-      <!-- Placeholder rows for dynamic content -->
       {
         Array.from({ length: 5 }).map((_, i) => (
           <tr>
-            <>
-              <td id={`page${i}`} />
-              <td id={`views${i}`} />
-            </>
+            <td id={`page${i}`} />
+            <td id={`views${i}`} />
           </tr>
         ))
       }
     </table>
 
-    <h4>Session IDs:</h4>
+    <h4>Portraits of Private Keys</h4>
+    <p>
+      Our on-chain analytics generates unique keccak256 hashes for each session, and these hashes can also serve as
+      valid private keys. The keys are transformed into generative art by using their hexadecimal characters as
+      pseudo-random values. It is essential to note that since the hashes are public, they should never be used as
+      actual private keys in the wild.
+    </p>
+    <p>Click on a hash to view its corresponding portrait:</p>
     <div id='sessionIDs'>
-      <!-- Dynamically filled spans for each session ID -->
+      <!-- Placeholder for session IDs -->
+      <div class='sessionPlaceholder'>Loading session IDs...</div>
     </div>
   </main>
 </Layout>
-
-<!-- <script src='../../lib/analytics.ts'></script> -->
 
 <script>
   import { publicClient } from "@lib/viemClients";
@@ -74,13 +76,52 @@ import Squiggle from "@components/squiggle.astro";
 
   const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
 
+  updateData();
+
+  document.addEventListener("astro:after-swap", async () => {
+    console.log("Page loaded");
+    await updateData();
+  });
+
+  const unwatch = setupBlockNumberWatcher();
+
+  // Register cleanup function to be called on 'before-swap'
+  document.addEventListener(
+    "astro:before-swap",
+    () => {
+      // console.log("Cleaning up before navigation");
+      unwatch(); // Correctly calling the cleanup function
+    },
+    { once: true }
+  ); // Ensure this cleanup happens once per page load
+
+  function setupBlockNumberWatcher() {
+    return publicClient.watchBlockNumber({
+      onBlockNumber: async () => {
+        // console.log("Block number changed");
+        await updateData();
+      },
+      onError: (error) => console.error("Error watching blocks:", error),
+    });
+  }
+
+  async function updateData() {
+    try {
+      await Promise.all([updateSessionCount(), updatePageCounts(), updateSessionIDsIncrementally()]);
+      return true; // Return true if successful
+    } catch (error) {
+      console.error("Error updating data:", error);
+      return false; // Return false if there was an error
+    }
+  }
+
   function safelyUpdateTextContent(id, text) {
     const element = document.getElementById(id);
     if (element) {
       element.innerText = text;
       return true;
     }
-    console.error(`Element with id '${id}' not found.`);
+    // console.error(`Element with id '${id}' not found.`);
     return false;
   }
 
@@ -109,65 +150,50 @@ import Squiggle from "@components/squiggle.astro";
         count: BigInt(data[1][index]),
       }));
       pageData.sort((a, b) => (a.count > b.count ? -1 : a.count < b.count ? 1 : 0));
-      pageData.forEach((item, index) => {
-        if (index < 5) {
-          safelyUpdateTextContent(`page${index}`, item.page);
-          safelyUpdateTextContent(`views${index}`, item.count.toString());
-        }
-      });
+      for (let item of pageData.slice(0, 5)) {
+        safelyUpdateTextContent(`page${pageData.indexOf(item)}`, item.page);
+        safelyUpdateTextContent(`views${pageData.indexOf(item)}`, item.count.toString());
+      }
     } catch (error) {
       console.error("Failed to fetch page counts:", error);
     }
   }
 
-  async function updateSessionIDs() {
+  async function updateSessionIDsIncrementally() {
+    const sessionIDs = document.getElementById("sessionIDs");
+    if (!sessionIDs) {
+      // console.error("Element with id 'sessionIDs' not found.");
+      return;
+    }
     try {
       const data = await publicClient.readContract({
         address: contractAddress,
         abi: getAllSessionHashesABI,
         functionName: "getAllSessionHashes",
       });
-      const sessionIDs = document.getElementById("sessionIDs")!;
+
       sessionIDs.innerHTML = ""; // Clear previous entries
-      data.reverse(); // Show the latest session IDs first
-      data.forEach((hash) => {
+      const fragment = document.createDocumentFragment(); // Create a new fragment
+      data.reverse().forEach((hash, index) => {
+        const hashLink = document.createElement("a");
+        hashLink.href = `/onchain-analytics/${hash}`;
         const hashSpan = document.createElement("span");
         hashSpan.className = "sessionHash";
         hashSpan.innerText = hash;
-
-        const hashLink = document.createElement("a");
-        hashLink.href = `/onchain-analytics/${hash}`;
         hashLink.appendChild(hashSpan);
+        fragment.appendChild(hashLink);
+        fragment.appendChild(document.createTextNode(" "));
 
-        sessionIDs.appendChild(hashLink);
-        sessionIDs.appendChild(document.createTextNode(" "));
+        // Append the fragment to the DOM in batches of 10 or at the end of the loop
+        if ((index + 1) % 10 === 0 || index === data.length - 1) {
+          sessionIDs.appendChild(fragment); // Append the fragment to the DOM
+        }
       });
     } catch (error) {
       console.error("Failed to fetch session IDs:", error);
+      sessionIDs.innerText = "Failed to fetch session IDs.";
     }
   }
-
-  document.addEventListener(
-    "astro:page-load",
-    async () => {
-      // Execute all async operations in parallel
-      await Promise.all([updateSessionCount(), updatePageCounts(), updateSessionIDs()]).catch((error) => {
-        console.error("Error updating data:", error);
-      });
-    },
-    { once: true }
-  );
-
-  const unwatch = publicClient.watchBlocks({
-    onBlock: async () => {
-      await Promise.all([updateSessionCount(), updatePageCounts(), updateSessionIDs()]).catch((error) =>
-        console.error("Error watching blocks:", error)
-      );
-    },
-    onError: (error) => console.error("Error watching blocks:", error),
-  });
-
-  window.addEventListener("unload", unwatch);
 </script>
 
 <style>
