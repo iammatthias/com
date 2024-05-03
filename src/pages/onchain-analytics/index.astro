@@ -75,14 +75,12 @@ import Squiggle from "@components/squiggle.astro";
 
   document.addEventListener("astro:page-load", async () => {
     // Update session counts
-    const sessionCountElement = document.getElementById("sessionCount")!;
     const getSessionCountData = await getSessionCount();
     const sessionCount = getSessionCountData.toString();
 
+    const sessionCountElement = document.getElementById("sessionCount");
     if (sessionCountElement) {
       sessionCountElement.textContent = sessionCount;
-    } else {
-      console.error('Element with ID "sessionCount" not found');
     }
 
     // Update page counts
@@ -110,12 +108,16 @@ import Squiggle from "@components/squiggle.astro";
     });
 
     // Update session IDs
-    const sessionIDsElement = document.getElementById("sessionIDs")!;
     const sessionIDs = await getAllSessions();
+
+    const sessionIDsElement = document.getElementById("sessionIDs");
+    if (!sessionIDsElement) {
+      return;
+    }
 
     sessionIDs[0].forEach((sessionID) => {
       const linkElement = document.createElement("a");
-      linkElement.href = `/onchain-analytics/${sessionID}`; // Replace with the actual URL
+      linkElement.href = `/onchain-analytics/${sessionID}`;
       linkElement.textContent = sessionID;
       linkElement.className = "sessionHash";
 
