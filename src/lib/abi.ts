@@ -1,99 +1,9 @@
-export const addPageViewABI = [
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "path",
-        type: "string",
-      },
-      {
-        internalType: "bytes32",
-        name: "sessionHash",
-        type: "bytes32",
-      },
-    ],
-    name: "addPageView",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-];
-
-export const addSessionABI = [
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "sessionHash",
-        type: "bytes32",
-      },
-    ],
-    name: "addSession",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-];
-
-export const sessionCountABI = [
-  {
-    inputs: [],
-    name: "sessionCount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-];
-
-export const getAllPageViewsABI = [
-  {
-    inputs: [],
-    name: "getAllPageViews",
-    outputs: [
-      {
-        internalType: "string[]",
-        name: "",
-        type: "string[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-];
-
-export const getAllSessionHashesABI = [
-  {
-    inputs: [],
-    name: "getAllSessionHashes",
-    outputs: [
-      {
-        internalType: "bytes32[]",
-        name: "",
-        type: "bytes32[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-];
-
 export const sessionExistsABI = [
   {
     inputs: [
       {
         internalType: "bytes32",
-        name: "",
+        name: "sessionId",
         type: "bytes32",
       },
     ],
@@ -104,6 +14,126 @@ export const sessionExistsABI = [
         name: "",
         type: "bool",
       },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+export const getSessionABI = [
+  {
+    inputs: [{ internalType: "bytes32", name: "sessionId", type: "bytes32" }],
+    name: "getSession",
+    outputs: [
+      { internalType: "bytes32", name: "", type: "bytes32" },
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "string[]", name: "", type: "string[]" },
+      { internalType: "string[]", name: "", type: "string[]" },
+      { internalType: "string[]", name: "", type: "string[]" },
+      { internalType: "uint256[]", name: "", type: "uint256[]" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+export const getAllEventsDataABI = [
+  {
+    inputs: [],
+    name: "getAllEventsData",
+    outputs: [
+      { internalType: "string[]", name: "", type: "string[]" },
+      {
+        components: [
+          { internalType: "uint256", name: "count", type: "uint256" },
+          {
+            components: [
+              { internalType: "string", name: "properties", type: "string" },
+              { internalType: "uint256", name: "blockNumber", type: "uint256" },
+            ],
+            internalType: "struct Analytics.EventData[]",
+            name: "events",
+            type: "tuple[]",
+          },
+        ],
+        internalType: "struct Analytics.EventGroup[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+export const getAllPageViewCountsABI = [
+  {
+    inputs: [],
+    name: "getAllPageViewCounts",
+    outputs: [
+      { internalType: "string[]", name: "", type: "string[]" },
+      { internalType: "uint256[]", name: "", type: "uint256[]" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+export const getAllSessionsABI = [
+  {
+    inputs: [],
+    name: "getAllSessions",
+    outputs: [
+      { internalType: "bytes32[]", name: "", type: "bytes32[]" },
+      { internalType: "uint256[]", name: "", type: "uint256[]" },
+      { internalType: "string[][]", name: "", type: "string[][]" },
+      { internalType: "string[][]", name: "", type: "string[][]" },
+      { internalType: "string[][]", name: "", type: "string[][]" },
+      { internalType: "uint256[][]", name: "", type: "uint256[][]" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+export const getEventCountABI = [
+  {
+    inputs: [{ internalType: "string", name: "eventName", type: "string" }],
+    name: "getEventCount",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+export const getPageViewCountABI = [
+  {
+    inputs: [{ internalType: "string", name: "pagePath", type: "string" }],
+    name: "getPageViewCount",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+export const getSessionCountABI = [
+  {
+    inputs: [],
+    name: "getSessionCount",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+export const getSessionEventsABI = [
+  {
+    inputs: [{ internalType: "bytes32", name: "sessionId", type: "bytes32" }],
+    name: "getSessionEvents",
+    outputs: [
+      { internalType: "string[]", name: "", type: "string[]" },
+      { internalType: "string[]", name: "", type: "string[]" },
+      { internalType: "uint256[]", name: "", type: "uint256[]" },
     ],
     stateMutability: "view",
     type: "function",

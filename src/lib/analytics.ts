@@ -1,111 +1,86 @@
-import { publicClient } from "@lib/viemClients";
-import {
-  sessionCountABI,
-  getAllPageViewsABI,
-  getAllSessionHashesABI,
-} from "@lib/abi";
+import { keccak256 } from "viem";
+import { getSession } from "@lib/contractProvider";
 
-const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
+export async function track(action, properties = {}) {
+  const defaultExpirationTime = 60 * 60 * 1000; // 1 hour in milliseconds
+  const currentTime = Date.now();
+  let sessionId = localStorage.getItem("sessionId");
+  const expirationTime = localStorage.getItem("expirationTime");
 
-function safelyUpdateTextContent(id, text) {
-  const element = document.getElementById(id);
-  if (element) {
-    element.innerText = text;
-    return true;
-  }
-  console.error(`Element with id '${id}' not found.`);
-  return false;
-}
-
-async function updateSessionCount() {
-  try {
-    const data = await publicClient.readContract({
-      address: contractAddress,
-      abi: sessionCountABI,
-      functionName: "sessionCount",
-    });
-    safelyUpdateTextContent("sessionCount", `${Number(data)}`);
-  } catch (error) {
-    console.error("Failed to fetch session count:", error);
-  }
-}
-
-async function updatePageCounts() {
-  try {
-    const data = await publicClient.readContract({
-      address: contractAddress,
-      abi: getAllPageViewsABI,
-      functionName: "getAllPageViews",
-    });
-    const pageData = data[0].map((page, index) => ({
-      page: page,
-      count: BigInt(data[1][index]),
-    }));
-    pageData.sort((a, b) =>
-      a.count > b.count ? -1 : a.count < b.count ? 1 : 0,
+  if (!sessionId || currentTime > Number(expirationTime)) {
+    // If no session ID exists in local storage or it's expired, generate a new session ID
+    sessionId = await generateSessionId();
+    localStorage.setItem("sessionId", sessionId);
+    localStorage.setItem(
+      "expirationTime",
+      (currentTime + defaultExpirationTime).toString(),
     );
-    pageData.forEach((item, index) => {
-      if (index < 5) {
-        safelyUpdateTextContent(`page${index}`, item.page);
-        safelyUpdateTextContent(`views${index}`, item.count.toString());
-      }
-    });
-  } catch (error) {
-    console.error("Failed to fetch page counts:", error);
   }
-}
 
-async function updateSessionIDs() {
+  // Check if the session exists on the blockchain
+  let sessionExists = false;
   try {
-    const data = await publicClient.readContract({
-      address: contractAddress,
-      abi: getAllSessionHashesABI,
-      functionName: "getAllSessionHashes",
-    });
-    const sessionIDs = document.getElementById("sessionIDs")!;
-    sessionIDs.innerHTML = ""; // Clear previous entries
-    data.reverse(); // Show the latest session IDs first
-    data.forEach((hash) => {
-      const hashSpan = document.createElement("span");
-      hashSpan.className = "sessionHash";
-      hashSpan.innerText = hash;
-
-      const hashLink = document.createElement("a");
-      hashLink.href = `/onchain-analytics/${hash}`;
-      hashLink.appendChild(hashSpan);
-
-      sessionIDs.appendChild(hashLink);
-      sessionIDs.appendChild(document.createTextNode(" "));
-    });
+    const sessionData = await getSession(sessionId);
+    if (sessionData) {
+      sessionExists = true;
+    }
   } catch (error) {
-    console.error("Failed to fetch session IDs:", error);
+    if (error.message.includes("Session doesn't exist")) {
+      // Session doesn't exist, proceed to create a new session
+    } else {
+      // Handle other errors
+      console.error("Error checking session existence:", error);
+      // You can choose to rethrow the error or handle it in a different way
+      // throw error;
+    }
   }
+
+  if (!sessionExists) {
+    // If the session doesn't exist on the blockchain, create a new session
+    await createSession(sessionId);
+  }
+
+  // Prepare the data object for the tracking event
+  const data = {
+    action,
+    properties: {
+      ...properties,
+      sessionId,
+      timestamp: currentTime,
+      path: properties.pagePath || window.location.pathname || "",
+    },
+  };
+
+  // Send the tracking event data to the analytics endpoint
+  await fetch("/api/analytics", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 }
 
-document.addEventListener(
-  "astro:page-load",
-  async () => {
-    // Execute all async operations in parallel
-    await Promise.all([
-      updateSessionCount(),
-      updatePageCounts(),
-      updateSessionIDs(),
-    ]).catch((error) => {
-      console.error("Error updating data:", error);
-    });
-  },
-  { once: true },
-);
+async function generateSessionId() {
+  const userAgent = navigator.userAgent;
+  const ipResponse = await fetch("https://api.ipify.org?format=json");
+  const { ip } = await ipResponse.json();
+  const currentTime = Date.now();
+  return keccak256(`0x${ip + userAgent + currentTime}`);
+}
 
-const unwatch = publicClient.watchBlocks({
-  onBlock: async () => {
-    await Promise.all([
-      updateSessionCount(),
-      updatePageCounts(),
-      updateSessionIDs(),
-    ]).catch((error) => console.error("Error watching blocks:", error));
-  },
-  onError: (error) => console.error("Error watching blocks:", error),
-});
-
-window.addEventListener("unload", unwatch);
+async function createSession(sessionId) {
+  // Send a request to create the session on the blockchain
+  await fetch("/api/analytics", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      action: "createSession",
+      properties: {
+        sessionId,
+      },
+    }),
+  });
+}

@@ -31,19 +31,21 @@ import Squiggle from "@components/squiggle.astro";
     <h3>Meta Details</h3>
     <p>
       Data collection began at <a
-        href='https://sepolia.basescan.org/tx/0x8364d0d8827f5129965955c0e836cb54af213dc0aaa43e7b53635f3ced43135f'
-        >block number 8853154 on Base-Sepolia</a
+        href='https://sepolia.basescan.org/tx/0x4081f562fd8c02a07f253f834925f03c4be0096b1f84cb35347580b92511c5c7'
+        >block number 9501594 on Base-Sepolia</a
       >. The contract is verified on BaseScan: <a
         class='break'
-        href='https://sepolia.basescan.org/address/0x40d59f33d1e36d8ddc171af7c40bd85ca25008f0#code#L1'
-        >0x40d59f33D1e36D8DDC171Af7C40Bd85Ca25008F0</a
+        href='https://sepolia.basescan.org/address/0xdAe71e132bC8598C1A08C00823Bec9041AeB4A26#code#L1'
+        >0xdAe71e132bC8598C1A08C00823Bec9041AeB4A26</a
       >.
     </p>
 
     <h3>The Data</h3>
+    <h4>Sessions</h4>
     <p>There have been <span id='sessionCount'></span> unique sessions since the onchain analytics went live.</p>
-    <p>Here are the top 5 pages, sorted by view count:</p>
-    <table id='pageCounts'>
+    <h4>Page Views</h4>
+    <p>Top 5 pages, sorted by view count:</p>
+    <table id='pageViewCounts'>
       <tr><th>Page</th><th>Views</th></tr>
       {
         Array.from({ length: 5 }).map((_, i) => (
@@ -63,137 +65,53 @@ import Squiggle from "@components/squiggle.astro";
       actual private keys in the wild.
     </p>
     <p>Click on a hash to view its corresponding portrait:</p>
-    <div id='sessionIDs'>
-      <!-- Placeholder for session IDs -->
-      <div class='sessionPlaceholder'>Loading session IDs...</div>
-    </div>
+    <div id='sessionIDs'></div>
   </main>
 </Layout>
 
 <script>
-  import { publicClient } from "@lib/viemClients";
-  import { sessionCountABI, getAllPageViewsABI, getAllSessionHashesABI } from "@lib/abi";
+  // import {getAllPageViewCountsABI, getSessionCountABI, getAllSessionsABI} from '../utils/abis.js';
+  import { getAllPageViewCounts, getSessionCount, getAllSessions } from "@lib/contractProvider";
 
-  const contractAddress = await import.meta.env.PUBLIC_HIT_COUNTER_CONTRACT;
+  // Update session counts
+  const sessionCountElement = document.getElementById("sessionCount")!;
+  const getSessionCountData = await getSessionCount();
+  const sessionCount = getSessionCountData.toString();
 
-  updateData();
+  sessionCountElement.textContent = sessionCount;
 
-  document.addEventListener("astro:after-swap", async () => {
-    console.log("Page loaded");
-    await updateData();
+  // Update page counts
+  const pageViewCountsData = await getAllPageViewCounts();
+
+  // Combine the data into an array of objects
+  const combinedData = pageViewCountsData[0].map((pagePath, index) => ({
+    pagePath,
+    count: Number(pageViewCountsData[1][index]), // Convert BigInt to Number
+  }));
+
+  // Sort the data based on the count property in descending order
+  combinedData.sort((a, b) => b.count - a.count);
+
+  combinedData.slice(0, 5).forEach((item, index) => {
+    const pageElement = document.getElementById(`page${index}`)!;
+    const viewsElement = document.getElementById(`views${index}`)!;
+
+    pageElement.textContent = item.pagePath;
+    viewsElement.textContent = item.count;
   });
 
-  const unwatch = setupBlockNumberWatcher();
+  // Update session IDs
+  const sessionIDsElement = document.getElementById("sessionIDs")!;
+  const sessionIDs = await getAllSessions();
 
-  // Register cleanup function to be called on 'before-swap'
-  document.addEventListener(
-    "astro:before-swap",
-    () => {
-      // console.log("Cleaning up before navigation");
-      unwatch(); // Correctly calling the cleanup function
-    },
-    { once: true }
-  ); // Ensure this cleanup happens once per page load
+  sessionIDs[0].forEach((sessionID) => {
+    const linkElement = document.createElement("a");
+    linkElement.href = `/onchain-analytics/${sessionID}`; // Replace with the actual URL
+    linkElement.textContent = sessionID;
+    linkElement.className = "sessionHash";
 
-  function setupBlockNumberWatcher() {
-    return publicClient.watchBlockNumber({
-      onBlockNumber: async () => {
-        // console.log("Block number changed");
-        await updateData();
-      },
-      onError: (error) => console.error("Error watching blocks:", error),
-    });
-  }
-
-  async function updateData() {
-    try {
-      await Promise.all([updateSessionCount(), updatePageCounts(), updateSessionIDsIncrementally()]);
-      return true; // Return true if successful
-    } catch (error) {
-      console.error("Error updating data:", error);
-      return false; // Return false if there was an error
-    }
-  }
-
-  function safelyUpdateTextContent(id, text) {
-    const element = document.getElementById(id);
-    if (element) {
-      element.innerText = text;
-      return true;
-    }
-    // console.error(`Element with id '${id}' not found.`);
-    return false;
-  }
-
-  async function updateSessionCount() {
-    try {
-      const data = await publicClient.readContract({
-        address: contractAddress,
-        abi: sessionCountABI,
-        functionName: "sessionCount",
-      });
-      safelyUpdateTextContent("sessionCount", `${Number(data)}`);
-    } catch (error) {
-      console.error("Failed to fetch session count:", error);
-    }
-  }
-
-  async function updatePageCounts() {
-    try {
-      const data = await publicClient.readContract({
-        address: contractAddress,
-        abi: getAllPageViewsABI,
-        functionName: "getAllPageViews",
-      });
-      const pageData = data[0].map((page, index) => ({
-        page: page,
-        count: BigInt(data[1][index]),
-      }));
-      pageData.sort((a, b) => (a.count > b.count ? -1 : a.count < b.count ? 1 : 0));
-      for (let item of pageData.slice(0, 5)) {
-        safelyUpdateTextContent(`page${pageData.indexOf(item)}`, item.page);
-        safelyUpdateTextContent(`views${pageData.indexOf(item)}`, item.count.toString());
-      }
-    } catch (error) {
-      console.error("Failed to fetch page counts:", error);
-    }
-  }
-
-  async function updateSessionIDsIncrementally() {
-    const sessionIDs = document.getElementById("sessionIDs");
-    if (!sessionIDs) {
-      // console.error("Element with id 'sessionIDs' not found.");
-      return;
-    }
-    try {
-      const data = await publicClient.readContract({
-        address: contractAddress,
-        abi: getAllSessionHashesABI,
-        functionName: "getAllSessionHashes",
-      });
-
-      sessionIDs.innerHTML = ""; // Clear previous entries
-      const fragment = document.createDocumentFragment(); // Create a new fragment
-      data.reverse().forEach((hash, index) => {
-        const hashLink = document.createElement("a");
-        hashLink.href = `/onchain-analytics/${hash}`;
-        const hashSpan = document.createElement("span");
-        hashSpan.className = "sessionHash";
-        hashSpan.innerText = hash;
-        hashLink.appendChild(hashSpan);
-        fragment.appendChild(hashLink);
-        fragment.appendChild(document.createTextNode(" "));
-
-        // Append the fragment to the DOM in batches of 10 or at the end of the loop
-        if ((index + 1) % 10 === 0 || index === data.length - 1) {
-          sessionIDs.appendChild(fragment); // Append the fragment to the DOM
-        }
-      });
-    } catch (error) {
-      console.error("Failed to fetch session IDs:", error);
-      sessionIDs.innerText = "Failed to fetch session IDs.";
-    }
-  }
+    sessionIDsElement.appendChild(linkElement);
+  });
 </script>
 
 <style>

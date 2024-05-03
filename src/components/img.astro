@@ -6,8 +6,8 @@ const { src, alt } = Astro.props;
 <div><Image src={src} inferSize alt={alt} loading='lazy' decoding='async' data-zoomable /></div>
 
 <script>
-  import posthog from "posthog-js";
   import mediumZoom from "medium-zoom";
+  import { track } from "@lib/analytics";
 
   const zoom = mediumZoom("[data-zoomable]", {
     background: "var(--background)",
@@ -17,7 +17,18 @@ const { src, alt } = Astro.props;
 
   zoom.on("open", (event) => {
     const { alt, src } = event.target;
-    posthog.capture("image_zoomed", { alt, img_src: src });
+    track("addEvent", {
+      eventName: "zoomOpen",
+      properties: { alt, src },
+    });
+  });
+
+  zoom.on("close", (event) => {
+    const { alt, src } = event.target;
+    track("addEvent", {
+      eventName: "zoomClose",
+      properties: { alt, src },
+    });
   });
 </script>
 

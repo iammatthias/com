@@ -103,80 +103,20 @@ if (title || path) {
     <!-- <Footer /> -->
   </>
 
-  <!-- <script>
-    // post hog
-    import posthog from "posthog-js";
-    posthog.init("phc_m547PTGk57uBWEvaKQov39JeM7TOOCtcr98f4tmrImr", {
-      api_host: "https://us.posthog.com",
-    });
-  </script> -->
   <script>
-    import { keccak256 } from "viem";
+    import { track } from "@lib/analytics";
+
+    document.addEventListener(
+      "astro:page-load",
+      async () => {
+        track("createSession");
+        track("addPageView", { pagePath: window.location.pathname });
+      },
+      { once: true }
+    );
 
     document.addEventListener("astro:page-load", async () => {
-      const currentTime = Date.now();
-
-      // Retrieve stored session data
-      const storedSessionHash = localStorage.getItem("sessionHash");
-      const expirationTime = localStorage.getItem("expirationTime");
-
-      // Set a default expiration time (1 hour)
-      const defaultExpirationTime = 60 * 60 * 1000; // 1 hour in milliseconds
-
-      // If the current session is valid and not expired, skip the data fetch and hash
-      if (storedSessionHash && currentTime < Number(expirationTime)) {
-        updateLastTransactionTime(currentTime, storedSessionHash);
-      } else {
-        // Session is expired or not found, fetch new data and update session
-        const userAgent = navigator.userAgent;
-        const ipResponse = await fetch("https://api.ipify.org?format=json");
-        const { ip } = await ipResponse.json();
-
-        // Hash the IP, user agent, and current time
-        const sessionHash = keccak256(`0x${ip + userAgent + currentTime}`);
-
-        localStorage.setItem("sessionHash", sessionHash);
-        localStorage.setItem("expirationTime", (currentTime + defaultExpirationTime).toString());
-
-        postSessionData(sessionHash);
-      }
-    });
-
-    // Function to update the last transaction time
-    function updateLastTransactionTime(currentTime, sessionHash) {
-      const cooldownPeriod = 2000; // 2 seconds cooldown
-      const lastTransactionTime = localStorage.getItem("lastTransactionTime");
-
-      if (!lastTransactionTime || currentTime - Number(lastTransactionTime) >= cooldownPeriod) {
-        localStorage.setItem("lastTransactionTime", currentTime.toString());
-        postSessionData(sessionHash);
-      } else {
-        // console.log("Duplicate, skipped sessionHash:", sessionHash);
-      }
-    }
-
-    // Function to post session data
-    async function postSessionData(sessionHash) {
-      const path = window.location.pathname;
-
-      const response = await fetch("/api/increment-hit-counter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionHash, path }),
-      });
-
-      const result = await response.json();
-      // console.log("Session and page view registered:", result);
-    }
-
-    // Update the expiration time on user interaction
-    let debounceTimer;
-    document.addEventListener("mousemove", () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        const currentTime = Date.now();
-        localStorage.setItem("expirationTime", (currentTime + 60 * 60 * 1000).toString());
-      }, 1000); // 1 second debounce time
+      track("addPageView", { pagePath: window.location.pathname });
     });
   </script>
 </html>
