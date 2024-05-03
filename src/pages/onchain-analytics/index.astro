@@ -44,7 +44,7 @@ import Squiggle from "@components/squiggle.astro";
     <h4>Sessions</h4>
     <p>There have been <span id='sessionCount'></span> unique sessions since the onchain analytics went live.</p>
     <h4>Page Views</h4>
-    <p>Top 5 pages, sorted by view count:</p>
+    <p>Top 5 pages</p>
     <table id='pageViewCounts'>
       <tr><th>Page</th><th>Views</th></tr>
       {
@@ -52,6 +52,20 @@ import Squiggle from "@components/squiggle.astro";
           <tr>
             <td id={`page${i}`} />
             <td id={`views${i}`} />
+          </tr>
+        ))
+      }
+    </table>
+
+    <h4>Events</h4>
+    <p>Top events</p>
+    <table id='eventCounts'>
+      <tr><th>Event</th><th>Count</th></tr>
+      {
+        Array.from({ length: 2 }).map((_, i) => (
+          <tr>
+            <td id={`event${i}`} />
+            <td id={`count${i}`} />
           </tr>
         ))
       }
@@ -70,8 +84,8 @@ import Squiggle from "@components/squiggle.astro";
 </Layout>
 
 <script>
-  // import {getAllPageViewCountsABI, getSessionCountABI, getAllSessionsABI} from '../utils/abis.js';
-  import { getAllPageViewCounts, getSessionCount, getAllSessions } from "@lib/contractProvider";
+  // import {getAllPageViewCountsABI, getSessionCountABI, getAllSessionsABI, getAllEventsDataABI} from '../utils/abis.js';
+  import { getAllPageViewCounts, getSessionCount, getAllSessions, getAllEventsData } from "@lib/contractProvider";
 
   document.addEventListener("astro:page-load", async () => {
     // Update session counts
@@ -96,10 +110,14 @@ import Squiggle from "@components/squiggle.astro";
     combinedData.sort((a, b) => b.count - a.count);
 
     combinedData.slice(0, 5).forEach((item, index) => {
-      const pageElement = document.getElementById(`page${index}`)!;
-      const viewsElement = document.getElementById(`views${index}`)!;
+      const pageElement = document.getElementById(`page${index}`);
+      const viewsElement = document.getElementById(`views${index}`);
+
       if (pageElement) {
-        pageElement.textContent = item.pagePath;
+        const linkElement = document.createElement("a");
+        linkElement.href = item.pagePath; // Set the href to the page path
+        linkElement.textContent = item.pagePath;
+        pageElement.appendChild(linkElement);
       }
 
       if (viewsElement) {
@@ -123,6 +141,31 @@ import Squiggle from "@components/squiggle.astro";
 
       sessionIDsElement.appendChild(linkElement);
     });
+  });
+
+  // Update event counts
+  const eventsData = await getAllEventsData();
+
+  // Combine the data into an array of objects
+  const combinedEventData = eventsData[0].map((eventName, index) => ({
+    eventName,
+    count: Number(eventsData[1][index].count), // Convert BigInt to Number
+  }));
+
+  // Sort the data based on the count property in descending order
+  combinedEventData.sort((a, b) => b.count - a.count);
+
+  combinedEventData.slice(0, 2).forEach((item, index) => {
+    const eventElement = document.getElementById(`event${index}`);
+    const countElement = document.getElementById(`count${index}`);
+
+    if (eventElement) {
+      eventElement.textContent = item.eventName;
+    }
+
+    if (countElement) {
+      countElement.textContent = item.count;
+    }
   });
 </script>
 
