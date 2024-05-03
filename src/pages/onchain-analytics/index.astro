@@ -23,7 +23,7 @@ import Squiggle from "@components/squiggle.astro";
       <li><code>sessionID</code>s are stored onchain to validate page views without any personal data.</li>
       <li>Page views are counted using a simple incrementing integer attached to each page path.</li>
       <li>
-        All onchain interactions are handled by a [syndicate.io](Syndicate.io) `Cloud Transaction` wallet in the
+        All onchain interactions are handled by a [syndicate.io](Syndicate.io) <code>Cloud Transaction</code> wallet in the
         background.
       </li>
     </ul>
@@ -73,44 +73,54 @@ import Squiggle from "@components/squiggle.astro";
   // import {getAllPageViewCountsABI, getSessionCountABI, getAllSessionsABI} from '../utils/abis.js';
   import { getAllPageViewCounts, getSessionCount, getAllSessions } from "@lib/contractProvider";
 
-  // Update session counts
-  const sessionCountElement = document.getElementById("sessionCount")!;
-  const getSessionCountData = await getSessionCount();
-  const sessionCount = getSessionCountData.toString();
+  document.addEventListener("astro:page-load", async () => {
+    // Update session counts
+    const sessionCountElement = document.getElementById("sessionCount")!;
+    const getSessionCountData = await getSessionCount();
+    const sessionCount = getSessionCountData.toString();
 
-  sessionCountElement.textContent = sessionCount;
+    if (sessionCountElement) {
+      sessionCountElement.textContent = sessionCount;
+    } else {
+      console.error('Element with ID "sessionCount" not found');
+    }
 
-  // Update page counts
-  const pageViewCountsData = await getAllPageViewCounts();
+    // Update page counts
+    const pageViewCountsData = await getAllPageViewCounts();
 
-  // Combine the data into an array of objects
-  const combinedData = pageViewCountsData[0].map((pagePath, index) => ({
-    pagePath,
-    count: Number(pageViewCountsData[1][index]), // Convert BigInt to Number
-  }));
+    // Combine the data into an array of objects
+    const combinedData = pageViewCountsData[0].map((pagePath, index) => ({
+      pagePath,
+      count: Number(pageViewCountsData[1][index]), // Convert BigInt to Number
+    }));
 
-  // Sort the data based on the count property in descending order
-  combinedData.sort((a, b) => b.count - a.count);
+    // Sort the data based on the count property in descending order
+    combinedData.sort((a, b) => b.count - a.count);
 
-  combinedData.slice(0, 5).forEach((item, index) => {
-    const pageElement = document.getElementById(`page${index}`)!;
-    const viewsElement = document.getElementById(`views${index}`)!;
+    combinedData.slice(0, 5).forEach((item, index) => {
+      const pageElement = document.getElementById(`page${index}`)!;
+      const viewsElement = document.getElementById(`views${index}`)!;
+      if (pageElement) {
+        pageElement.textContent = item.pagePath;
+      }
 
-    pageElement.textContent = item.pagePath;
-    viewsElement.textContent = item.count;
-  });
+      if (viewsElement) {
+        viewsElement.textContent = item.count;
+      }
+    });
 
-  // Update session IDs
-  const sessionIDsElement = document.getElementById("sessionIDs")!;
-  const sessionIDs = await getAllSessions();
+    // Update session IDs
+    const sessionIDsElement = document.getElementById("sessionIDs")!;
+    const sessionIDs = await getAllSessions();
 
-  sessionIDs[0].forEach((sessionID) => {
-    const linkElement = document.createElement("a");
-    linkElement.href = `/onchain-analytics/${sessionID}`; // Replace with the actual URL
-    linkElement.textContent = sessionID;
-    linkElement.className = "sessionHash";
+    sessionIDs[0].forEach((sessionID) => {
+      const linkElement = document.createElement("a");
+      linkElement.href = `/onchain-analytics/${sessionID}`; // Replace with the actual URL
+      linkElement.textContent = sessionID;
+      linkElement.className = "sessionHash";
 
-    sessionIDsElement.appendChild(linkElement);
+      sessionIDsElement.appendChild(linkElement);
+    });
   });
 </script>
 
