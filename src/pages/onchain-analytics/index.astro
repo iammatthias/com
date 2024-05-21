@@ -125,8 +125,35 @@ import Squiggle from "@components/squiggle.astro";
       }
     });
 
+    // Update event counts
+    const eventsData = await getAllEventsData();
+
+    // Combine the data into an array of objects
+    const combinedEventData = eventsData[0].map((eventName, index) => ({
+      eventName,
+      count: Number(eventsData[1][index].count), // Convert BigInt to Number
+    }));
+
+    // Sort the data based on the count property in descending order
+    combinedEventData.sort((a, b) => b.count - a.count);
+
+    combinedEventData.slice(0, 2).forEach((item, index) => {
+      const eventElement = document.getElementById(`event${index}`);
+      const countElement = document.getElementById(`count${index}`);
+
+      if (eventElement) {
+        eventElement.textContent = item.eventName;
+      }
+
+      if (countElement) {
+        countElement.textContent = item.count;
+      }
+    });
+
     // Update session IDs
     const sessionIDs = await getAllSessions();
+
+    console.log(sessionIDs);
 
     const sessionIDsElement = document.getElementById("sessionIDs");
     if (!sessionIDsElement) {
@@ -141,31 +168,6 @@ import Squiggle from "@components/squiggle.astro";
 
       sessionIDsElement.appendChild(linkElement);
     });
-  });
-
-  // Update event counts
-  const eventsData = await getAllEventsData();
-
-  // Combine the data into an array of objects
-  const combinedEventData = eventsData[0].map((eventName, index) => ({
-    eventName,
-    count: Number(eventsData[1][index].count), // Convert BigInt to Number
-  }));
-
-  // Sort the data based on the count property in descending order
-  combinedEventData.sort((a, b) => b.count - a.count);
-
-  combinedEventData.slice(0, 2).forEach((item, index) => {
-    const eventElement = document.getElementById(`event${index}`);
-    const countElement = document.getElementById(`count${index}`);
-
-    if (eventElement) {
-      eventElement.textContent = item.eventName;
-    }
-
-    if (countElement) {
-      countElement.textContent = item.count;
-    }
   });
 </script>
 

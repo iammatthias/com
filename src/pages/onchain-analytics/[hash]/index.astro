@@ -28,7 +28,7 @@ const processedHash = hash!.substring(2); // Assumes the key is pre-validated or
       privateKey = hashElement.innerHTML;
       grid = gridElement;
       setupGridCells();
-      setupBackgroundAnimation();
+      setupBackgroundColor();
     }
   });
 
@@ -54,14 +54,31 @@ const processedHash = hash!.substring(2); // Assumes the key is pre-validated or
     return cell;
   }
 
-  function setupBackgroundAnimation() {
-    const secondsSinceMidnight = new Date().getHours() * 3600 + new Date().getMinutes() * 60 + new Date().getSeconds();
-    const totalSecondsInDay = 86400;
-    const elapsedDayFraction = secondsSinceMidnight / totalSecondsInDay;
-    const animationDurationSeconds = 86400; // Full cycle in seconds
-    const animationStartDelaySeconds = elapsedDayFraction * animationDurationSeconds - animationDurationSeconds;
+  function setupBackgroundColor() {
+    const frequencyMap = {};
+    for (let i = 0; i < privateKey.length; i++) {
+      const char = privateKey[i].toLowerCase();
+      if (!frequencyMap[char]) {
+        frequencyMap[char] = 0;
+      }
+      frequencyMap[char]++;
+    }
 
-    document.body.style.animation = `colorCycle ${animationDurationSeconds}s infinite linear ${animationStartDelaySeconds}s`;
+    let mostFrequentChar: string | null = null;
+    let maxCount = 0;
+    for (const char in frequencyMap) {
+      if (frequencyMap[char] > maxCount) {
+        maxCount = frequencyMap[char];
+        mostFrequentChar = char;
+      }
+    }
+
+    console.log(`Most frequent character: ${mostFrequentChar}`);
+
+    const mainElement = document.querySelector("main");
+    if (mainElement && mostFrequentChar) {
+      mainElement.style.backgroundColor = `#${mostFrequentChar}${mostFrequentChar}${mostFrequentChar}`;
+    }
   }
 </script>
 
@@ -73,59 +90,6 @@ const processedHash = hash!.substring(2); // Assumes the key is pre-validated or
     align-items: center;
     overflow: hidden; /* Prevents potential scrollbar issues */
     height: 100svh;
-    animation: colorCycle 86400s infinite linear; /* 86400 seconds = 24 hours */
-  }
-
-  @keyframes colorCycle {
-    0%,
-    100% {
-      background-color: #000;
-    } /* Black */
-    6.25% {
-      background-color: #111;
-    }
-    12.5% {
-      background-color: #222;
-    }
-    18.75% {
-      background-color: #333;
-    }
-    25% {
-      background-color: #444;
-    }
-    31.25% {
-      background-color: #555;
-    }
-    37.5% {
-      background-color: #666;
-    }
-    43.75% {
-      background-color: #777;
-    }
-    50% {
-      background-color: #888;
-    }
-    56.25% {
-      background-color: #999;
-    }
-    62.5% {
-      background-color: #aaa;
-    }
-    68.75% {
-      background-color: #bbb;
-    }
-    75% {
-      background-color: #ccc;
-    }
-    81.25% {
-      background-color: #ddd;
-    }
-    87.5% {
-      background-color: #eee;
-    }
-    93.75% {
-      background-color: #fff;
-    } /* White */
   }
 </style>
 

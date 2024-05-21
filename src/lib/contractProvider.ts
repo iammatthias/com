@@ -75,12 +75,17 @@ export async function getAllPageViewCounts() {
 }
 
 export async function getAllSessions() {
-  const data = await publicClient.readContract({
-    address: CONTRACT_ADDRESS,
-    abi: getAllSessionsABI,
-    functionName: "getAllSessions",
-  });
-  return data;
+  try {
+    const data = await publicClient.readContract({
+      address: CONTRACT_ADDRESS,
+      abi: getAllSessionsABI,
+      functionName: "getAllSessions",
+    });
+    return data;
+  } catch (error) {
+    console.error("Failed to retrieve sessions:", error);
+    throw error; // Re-throw the error if you want to handle it further up the call stack
+  }
 }
 
 export async function getEventCount(eventName) {

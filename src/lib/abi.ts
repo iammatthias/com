@@ -84,12 +84,36 @@ export const getAllSessionsABI = [
     inputs: [],
     name: "getAllSessions",
     outputs: [
-      { internalType: "bytes32[]", name: "", type: "bytes32[]" },
-      { internalType: "uint256[]", name: "", type: "uint256[]" },
-      { internalType: "string[][]", name: "", type: "string[][]" },
-      { internalType: "string[][]", name: "", type: "string[][]" },
-      { internalType: "string[][]", name: "", type: "string[][]" },
-      { internalType: "uint256[][]", name: "", type: "uint256[][]" },
+      {
+        internalType: "bytes32[]",
+        name: "",
+        type: "bytes32[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+      {
+        internalType: "string[][]",
+        name: "",
+        type: "string[][]",
+      },
+      {
+        internalType: "string[][]",
+        name: "",
+        type: "string[][]",
+      },
+      {
+        internalType: "string[][]",
+        name: "",
+        type: "string[][]",
+      },
+      {
+        internalType: "uint256[][]",
+        name: "",
+        type: "uint256[][]",
+      },
     ],
     stateMutability: "view",
     type: "function",
