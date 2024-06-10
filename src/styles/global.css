@@ -1,6 +1,6 @@
 :root {
   /* Primary Palette - Mediterranean Inspiration */
-  --gold: rgba(255, 187, 0, 1); /* Brighter base gold */
+  --gold: rgb(255, 187, 0); /* Brighter base gold */
   --gold-lighter: rgba(255, 204, 0, 1); /* Lighter, vibrant gold */
   --gold-darker: rgba(204, 136, 0, 1); /* Darker, richer gold */
 
@@ -85,7 +85,7 @@ body {
 }
 
 body > main {
-  min-height: 100svh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
