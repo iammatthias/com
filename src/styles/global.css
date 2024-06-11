@@ -110,7 +110,7 @@ body > main > * {
   }
 }
 
-@media (max-width: 580px) {
+@media (max-width: 480px) {
   body > main {
     padding: 2rem 2rem 8rem;
   }

@@ -4,18 +4,11 @@ import vercel from "@astrojs/vercel/serverless";
 import metaTags from "astro-meta-tags";
 import devtoolBreakpoints from "astro-devtool-breakpoints";
 import embeds from "astro-embed/integration";
-import playformCompress from "@playform/compress";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://iammatthias.com",
-  integrations: [
-    alpine(),
-    embeds(),
-    metaTags(),
-    devtoolBreakpoints(),
-    playformCompress(),
-  ],
+  integrations: [alpine(), embeds(), metaTags(), devtoolBreakpoints()],
   output: "hybrid",
   adapter: vercel(),
   prefetch: {
