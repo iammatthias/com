@@ -1,37 +1,11 @@
 ---
+export const prerender = false;
+
 import Layout from "@layouts/layout.astro";
 import BreadCrumb from "@components/breadcrumb.astro";
 import { getObsidianEntries } from "@lib/github.ts";
 import Meta_Tags from "@components/meta_tags.astro";
 import Squiggle from "@components/squiggle.astro";
-
-export async function getStaticPaths() {
-  const categories = ["posts", "recipes", "notes", "art"];
-  let allTags = new Set();
-
-  // Iterate over each category to fetch entries
-  for (const category of categories) {
-    const entries = await getObsidianEntries(category);
-
-    // Collect all unique tags
-    entries.forEach((entry) => {
-      if (entry.frontmatter.tags) {
-        entry.frontmatter.tags.forEach((tag) => {
-          // Remove '#' characters from tags
-          const sanitizedTag = tag.replace(/#/g, "");
-          allTags.add(sanitizedTag);
-        });
-      }
-    });
-  }
-
-  // Create paths for each sanitized unique tag
-  const paths = Array.from(allTags).map((tag) => ({
-    params: { tag },
-  }));
-
-  return paths;
-}
 
 const { tag } = Astro.params;
 const categories = ["posts", "recipes", "notes", "art"];

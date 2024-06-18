@@ -10,7 +10,12 @@ export default defineConfig({
   site: "https://iammatthias.com",
   integrations: [alpine(), embeds(), metaTags(), devtoolBreakpoints()],
   output: "hybrid",
-  adapter: vercel(),
+  adapter: vercel({
+    isr: {
+      // caches all pages on first request and saves for 1 day
+      expiration: 60 * 60 * 24,
+    },
+  }),
   prefetch: {
     prefetchAll: true,
   },
