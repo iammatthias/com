@@ -52,5 +52,13 @@ export default defineConfig({
       status: 302,
       destination: "/posts",
     },
+    "/content/*": {
+      status: 302,
+      destination: "/posts",
+    },
+    "/md/*": {
+      status: 302,
+      destination: "/posts",
+    },
   },
 });
