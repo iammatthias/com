@@ -62,7 +62,7 @@ import Squiggle from "@components/squiggle.astro";
     <table id='eventCounts'>
       <tr><th>Event</th><th>Count</th></tr>
       {
-        Array.from({ length: 2 }).map((_, i) => (
+        Array.from({ length: 3 }).map((_, i) => (
           <tr>
             <td id={`event${i}`} />
             <td id={`count${i}`} />
@@ -137,7 +137,7 @@ import Squiggle from "@components/squiggle.astro";
     // Sort the data based on the count property in descending order
     combinedEventData.sort((a, b) => b.count - a.count);
 
-    combinedEventData.slice(0, 2).forEach((item, index) => {
+    combinedEventData.slice(0, 3).forEach((item, index) => {
       const eventElement = document.getElementById(`event${index}`);
       const countElement = document.getElementById(`count${index}`);
 

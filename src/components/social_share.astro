@@ -67,6 +67,8 @@
 </style>
 
 <script>
+  import { track } from "@lib/analytics";
+
   document.addEventListener(
     "astro:page-load",
     () => {
@@ -91,6 +93,13 @@
 
         const shareUrl = getShareUrl(button, text, url);
         openShareWindow(shareUrl);
+
+        // Call track function here
+
+        track("addEvent", {
+          eventName: "share",
+          properties: { platform: button.getAttribute("data-platform"), url: window.location.href },
+        });
       }
 
       document.querySelectorAll(".share-button").forEach((button) => {
