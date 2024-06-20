@@ -50,14 +50,15 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
 
 <Layout title={frontmatter.title} path={path}>
   <main>
-    <h1>{frontmatter.title}</h1>
     <BreadCrumb path={path} />
     <div class='meta'>
+      <h1>{frontmatter.title}</h1>
       <Meta_ReadTime_Dates created={frontmatter.created} updated={frontmatter.updated} readingTime={readingTime} />
       <Meta_Tags tags={frontmatter.tags} />
       <SocialShare />
+      <Squiggle />
     </div>
-    <Squiggle />
+
     <article>
       <Markdown
         sanitize={{ allowComponents: true }}
@@ -68,6 +69,8 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
         }}
       />
     </article>
+    <!-- <Squiggle />
+    <SocialShare /> -->
     <BreadCrumb path={path} />
   </main>
 </Layout>
