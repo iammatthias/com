@@ -1,0 +1,73 @@
+---
+
+---
+
+<div class='share-button__wrapper'>
+  <button class='share-button' data-platform='twitter' data-url='https://twitter.com/intent/tweet?text={text}&url={url}'
+    >Share on Twitter</button
+  >
+  <button
+    class='share-button'
+    data-platform='warpcast'
+    data-url='https://warpcast.com/~/compose?text={text}&embeds[]={url}'>Share on Warpcast</button
+  >
+  <button
+    class='share-button'
+    data-platform='threads'
+    data-url='https://www.threads.net/intent/post?text={text}%20{url}'>Share on Threads</button
+  >
+</div>
+
+<style>
+  .share-button__wrapper {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+  }
+
+  .share-button {
+    padding: 10px;
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  document.addEventListener(
+    "astro:page-load",
+    () => {
+      function openShareWindow(url) {
+        window.open(url, "_blank", "width=550,height=280");
+      }
+
+      function getShareUrl(button, text, url) {
+        let shareUrlTemplate = button.getAttribute("data-url");
+
+        // Replace placeholders with actual values
+        shareUrlTemplate = shareUrlTemplate.replace("{text}", text).replace("{url}", url);
+
+        return shareUrlTemplate;
+      }
+
+      function handleShareClick(event) {
+        const button = event.currentTarget;
+        const title = document.title.split(" | ")[0];
+        const text = encodeURIComponent(`Check out "${title}" from @iammatthias`);
+        // const url = encodeURIComponent(window.location.href);
+        const url = window.location.href;
+
+        const shareUrl = getShareUrl(button, text, url);
+        console.log(shareUrl);
+        openShareWindow(shareUrl);
+      }
+
+      document.querySelectorAll(".share-button").forEach((button) => {
+        button.addEventListener("click", handleShareClick);
+      });
+    },
+    { once: true }
+  );
+</script>
