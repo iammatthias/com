@@ -27,16 +27,16 @@
     "astro-meta-tags": "^0.3.0",
     "astro-remote": "0.3.3",
     "astro-seo": "^0.8.4",
-    "aws-sdk": "2.1645.0",
+    "aws-sdk": "2.1646.0",
     "gray-matter": "4.0.3",
     "marked-alert": "2.0.1",
     "medium-zoom": "1.1.0",
-    "posthog-js": "1.139.5",
+    "posthog-js": "1.140.1",
     "sass": "1.77.6",
     "satori": "^0.10.13",
     "satori-html": "^0.3.2",
     "vercel": "34.2.7",
-    "viem": "^2.15.1"
+    "viem": "^2.16.1"
   },
   "devDependencies": {
     "@types/bun": "1.1.5",
