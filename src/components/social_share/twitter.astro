@@ -1,0 +1,28 @@
+---
+const { url = Astro.request.url, via } = Astro.props;
+
+let URL = `https://twitter.com/intent/tweet?url=${url}`;
+
+if (via) URL += `&via=${via}`;
+---
+
+<style>
+  a {
+    margin-right: 10px;
+  }
+</style>
+<a class='social-share-btn' target='_blank' href={URL} rel='noopener noreferrer'>
+  <slot>
+    <style>
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    </style>
+    <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' focusable='false'
+      ><path
+        d='M13.093 9.3155L21.283 0H19.3422L12.2308 8.08852L6.55101 0H0L8.58902 12.2313L0 22H1.94088L9.45067 13.4583L15.449 22H22L13.0925 9.3155H13.093ZM10.4347 12.339L9.56444 11.1211L2.6402 1.42965H5.62127L11.2092 9.25094L12.0795 10.4689L19.3431 20.6354H16.3621L10.4347 12.3395V12.339Z'
+        fill='currentColor'></path></svg
+    >
+  </slot>
+</a>

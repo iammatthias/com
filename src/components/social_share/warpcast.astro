@@ -1,0 +1,35 @@
+---
+const { url = Astro.request.url, via } = Astro.props;
+
+// https://warpcast.com/~/compose?text={text}&embeds[]={url}
+let URL = `https://warpcast.com/~/compose?embeds[]=${url}`;
+
+if (via) URL += `&text=%20via%20%40${via}`;
+---
+
+<style>
+  a {
+    margin-right: 10px;
+  }
+</style>
+<a class='social-share-btn' target='_blank' href={URL} rel='noopener noreferrer'>
+  <slot>
+    <style>
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    </style>
+    <svg width='323' height='297' viewBox='0 0 323 297' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M55.5867 0.733337H263.413V296.267H232.907V160.893H232.607C229.236 123.479 197.792 94.16 159.5 94.16C121.208 94.16 89.7642 123.479 86.3926 160.893H86.0933V296.267H55.5867V0.733337Z'
+        fill='currentColor'></path>
+      <path
+        d='M0.293335 42.68L12.6867 84.6267H23.1733V254.32C17.9082 254.32 13.64 258.588 13.64 263.853V275.293H11.7333C6.46822 275.293 2.2 279.562 2.2 284.827V296.267H108.973V284.827C108.973 279.562 104.705 275.293 99.44 275.293H97.5333V263.853C97.5333 258.588 93.2651 254.32 88 254.32H76.56V42.68H0.293335Z'
+        fill='currentColor'></path>
+      <path
+        d='M234.813 254.32C229.548 254.32 225.28 258.588 225.28 263.853V275.293H223.373C218.108 275.293 213.84 279.562 213.84 284.827V296.267H320.613V284.827C320.613 279.562 316.345 275.293 311.08 275.293H309.173V263.853C309.173 258.588 304.905 254.32 299.64 254.32V84.6267H310.127L322.52 42.68H246.253V254.32H234.813Z'
+        fill='currentColor'></path>
+    </svg>
+  </slot>
+</a>

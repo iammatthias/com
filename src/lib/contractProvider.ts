@@ -1,160 +1,156 @@
-// contractProvider.js
+import { keccak256 } from "viem";
 import { publicClient } from "@lib/viemProvider";
-import {
-  getSessionABI,
-  getAllEventsDataABI,
-  getAllPageViewCountsABI,
-  getAllSessionsABI,
-  getEventCountABI,
-  getPageViewCountABI,
-  getSessionCountABI,
-  getSessionEventsABI,
-} from "@lib/abi";
+import { analyticsABI } from "@lib/abi";
 
-const SYNDICATE_KEY = import.meta.env.SYNDICATE_KEY;
-const SYNDICATE_ID = import.meta.env.SYNDICATE_ID;
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
-const CHAIN_ID = 84532;
 
-async function sendSyndicateTransaction(functionSignature, args) {
-  const response = await fetch(
-    "https://api.syndicate.io/transact/sendTransaction",
-    {
+export const generateSessionId = (input) => {
+  return keccak256(input);
+};
+
+// Write functions
+const sendTransactionViaEndpoint = async (functionName, args) => {
+  try {
+    const response = await fetch("/api/analytics", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${SYNDICATE_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        projectId: SYNDICATE_ID,
-        contractAddress: CONTRACT_ADDRESS,
-        chainId: CHAIN_ID,
-        functionSignature,
-        args,
-      }),
-    },
-  );
+      body: JSON.stringify({ functionName, args }),
+    });
 
-  if (!response.ok) {
-    const errorData = await response.text();
-    console.error("Failed to send transaction:", errorData);
-    throw new Error(errorData);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorText}`,
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error in sendTransactionViaEndpoint:", error);
+    throw error;
   }
+};
 
-  const data = await response.json();
-  return data;
-}
+export const createSession = (sessionId) => {
+  return sendTransactionViaEndpoint("createSession", { sessionId });
+};
+
+export const addPageView = (pagePath, sessionId) => {
+  return sendTransactionViaEndpoint("addPageView", { pagePath, sessionId });
+};
+
+export const addEvent = (eventName, properties, sessionId) => {
+  return sendTransactionViaEndpoint("addEvent", {
+    eventName,
+    properties,
+    sessionId,
+  });
+};
 
 // Read functions
-export async function getSession(sessionId) {
-  const data = await publicClient.readContract({
+export const getAllEventsData = async () => {
+  return publicClient.readContract({
     address: CONTRACT_ADDRESS,
-    abi: getSessionABI,
-    functionName: "getSession",
-    args: [sessionId],
-  });
-  return data;
-}
-
-export async function getAllEventsData() {
-  const data = await publicClient.readContract({
-    address: CONTRACT_ADDRESS,
-    abi: getAllEventsDataABI,
+    abi: analyticsABI,
     functionName: "getAllEventsData",
   });
-  return data;
-}
+};
 
-export async function getAllPageViewCounts() {
-  const data = await publicClient.readContract({
+export const getAllPageViewCounts = async () => {
+  const [paths, counts] = await publicClient.readContract({
     address: CONTRACT_ADDRESS,
-    abi: getAllPageViewCountsABI,
+    abi: analyticsABI,
     functionName: "getAllPageViewCounts",
   });
-  return data;
-}
+  return paths.map((path, index) => ({ path, count: counts[index] }));
+};
 
-export async function getAllSessions() {
-  try {
-    const data = await publicClient.readContract({
-      address: CONTRACT_ADDRESS,
-      abi: getAllSessionsABI,
-      functionName: "getAllSessions",
-    });
-    return data;
-  } catch (error) {
-    console.error("Failed to retrieve sessions:", error);
-    throw error; // Re-throw the error if you want to handle it further up the call stack
-  }
-}
-
-export async function getEventCount(eventName) {
-  const data = await publicClient.readContract({
+export const getAllSessions = async () => {
+  const [
+    ids,
+    startBlocks,
+    pageViewsArray,
+    eventsArray,
+    eventPropertiesArray,
+    eventBlocksArray,
+  ] = await publicClient.readContract({
     address: CONTRACT_ADDRESS,
-    abi: getEventCountABI,
+    abi: analyticsABI,
+    functionName: "getAllSessions",
+  });
+
+  return ids.map((id, index) => ({
+    id,
+    startBlock: startBlocks[index],
+    pageViews: pageViewsArray[index],
+    events: eventsArray[index].map((event, eventIndex) => ({
+      name: event,
+      properties: eventPropertiesArray[index][eventIndex],
+      block: eventBlocksArray[index][eventIndex],
+    })),
+  }));
+};
+
+export const getEventCount = (eventName) => {
+  return publicClient.readContract({
+    address: CONTRACT_ADDRESS,
+    abi: analyticsABI,
     functionName: "getEventCount",
     args: [eventName],
   });
-  return data;
-}
+};
 
-export async function getPageViewCount(pagePath) {
-  const data = await publicClient.readContract({
+export const getPageViewCount = (pagePath) => {
+  return publicClient.readContract({
     address: CONTRACT_ADDRESS,
-    abi: getPageViewCountABI,
+    abi: analyticsABI,
     functionName: "getPageViewCount",
     args: [pagePath],
   });
-  return data;
-}
+};
 
-export async function getSessionCount() {
-  const data = await publicClient.readContract({
+export const getSession = async (sessionId) => {
+  const [id, startBlock, pageViews, events, eventProperties, eventBlocks] =
+    await publicClient.readContract({
+      address: CONTRACT_ADDRESS,
+      abi: analyticsABI,
+      functionName: "getSession",
+      args: [sessionId],
+    });
+
+  return {
+    id,
+    startBlock,
+    pageViews,
+    events: events.map((event, index) => ({
+      name: event,
+      properties: eventProperties[index],
+      block: eventBlocks[index],
+    })),
+  };
+};
+
+export const getSessionCount = () => {
+  return publicClient.readContract({
     address: CONTRACT_ADDRESS,
-    abi: getSessionCountABI,
+    abi: analyticsABI,
     functionName: "getSessionCount",
   });
-  return data;
-}
+};
 
-export async function getSessionEvents(sessionId) {
-  const data = await publicClient.readContract({
-    address: CONTRACT_ADDRESS,
-    abi: getSessionEventsABI,
-    functionName: "getSessionEvents",
-    args: [sessionId],
-  });
-  return data;
-}
-
-// Write functions
-export async function addEvent(eventName, properties, sessionId) {
-  const functionSignature =
-    "addEvent(string eventName, string properties, bytes32 sessionId)";
-  const args = { eventName, properties, sessionId };
-  await sendSyndicateTransaction(functionSignature, args);
-}
-
-export async function addPageView(pagePath, sessionId) {
-  const functionSignature = "addPageView(string path, bytes32 sessionId)";
-  const args = { path: pagePath, sessionId };
-  await sendSyndicateTransaction(functionSignature, args);
-}
-
-export async function createSession(sessionId) {
-  const functionSignature = "createSession(bytes32 sessionId)";
-  const args = { sessionId };
-  await sendSyndicateTransaction(functionSignature, args);
-}
-
-export async function authorizeAddress(address) {
-  const functionSignature = "authorizeAddress(address addr)";
-  const args = { addr: address };
-  await sendSyndicateTransaction(functionSignature, args);
-}
-
-export async function deauthorizeAddress(address) {
-  const functionSignature = "deauthorizeAddress(address addr)";
-  const args = { addr: address };
-  await sendSyndicateTransaction(functionSignature, args);
-}
+export const getSessionEvents = async (sessionId) => {
+  const [eventNames, eventProperties, eventBlocks] =
+    await publicClient.readContract({
+      address: CONTRACT_ADDRESS,
+      abi: analyticsABI,
+      functionName: "getSessionEvents",
+      args: [sessionId],
+    });
+  return eventNames.map((name, index) => ({
+    name,
+    properties: eventProperties[index],
+    block: eventBlocks[index],
+  }));
+};
