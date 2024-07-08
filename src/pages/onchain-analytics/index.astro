@@ -31,12 +31,12 @@ import Squiggle from "@components/squiggle.astro";
     <h3>Meta Details</h3>
     <p>
       Data collection began at <a
-        href='https://sepolia.basescan.org/tx/0x4081f562fd8c02a07f253f834925f03c4be0096b1f84cb35347580b92511c5c7'
-        >block number 9501594 on Base-Sepolia</a
+        href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
+        >block number 12315477 on Base-Sepolia</a
       >. The contract is verified on BaseScan: <a
         class='break'
-        href='https://sepolia.basescan.org/address/0xdAe71e132bC8598C1A08C00823Bec9041AeB4A26#code#L1'
-        >0xdAe71e132bC8598C1A08C00823Bec9041AeB4A26</a
+        href='https://sepolia.basescan.org/address/0x419240253dc57e6e390d66f9c9a4321b85e18b49#code#L1'
+        >0x419240253dC57E6E390d66f9C9A4321b85e18B49</a
       >.
     </p>
 
@@ -83,94 +83,6 @@ import Squiggle from "@components/squiggle.astro";
   </main>
 </Layout>
 
-<script>
-  // import {getAllPageViewCountsABI, getSessionCountABI, getAllSessionsABI, getAllEventsDataABI} from '../utils/abis.js';
-  import { getAllPageViewCounts, getSessionCount, getAllSessions, getAllEventsData } from "@lib/contractProvider";
-
-  document.addEventListener("astro:page-load", async () => {
-    // Update session counts
-    const getSessionCountData = await getSessionCount();
-    const sessionCount = getSessionCountData.toString();
-
-    const sessionCountElement = document.getElementById("sessionCount");
-    if (sessionCountElement) {
-      sessionCountElement.textContent = sessionCount;
-    }
-
-    // Update page counts
-    const pageViewCountsData = await getAllPageViewCounts();
-
-    // Combine the data into an array of objects
-    const combinedData = pageViewCountsData[0].map((pagePath, index) => ({
-      pagePath,
-      count: Number(pageViewCountsData[1][index]), // Convert BigInt to Number
-    }));
-
-    // Sort the data based on the count property in descending order
-    combinedData.sort((a, b) => b.count - a.count);
-
-    combinedData.slice(0, 5).forEach((item, index) => {
-      const pageElement = document.getElementById(`page${index}`);
-      const viewsElement = document.getElementById(`views${index}`);
-
-      if (pageElement) {
-        const linkElement = document.createElement("a");
-        linkElement.href = item.pagePath; // Set the href to the page path
-        linkElement.textContent = item.pagePath;
-        pageElement.appendChild(linkElement);
-      }
-
-      if (viewsElement) {
-        viewsElement.textContent = item.count;
-      }
-    });
-
-    // Update event counts
-    const eventsData = await getAllEventsData();
-
-    // Combine the data into an array of objects
-    const combinedEventData = eventsData[0].map((eventName, index) => ({
-      eventName,
-      count: Number(eventsData[1][index].count), // Convert BigInt to Number
-    }));
-
-    // Sort the data based on the count property in descending order
-    combinedEventData.sort((a, b) => b.count - a.count);
-
-    combinedEventData.slice(0, 3).forEach((item, index) => {
-      const eventElement = document.getElementById(`event${index}`);
-      const countElement = document.getElementById(`count${index}`);
-
-      if (eventElement) {
-        eventElement.textContent = item.eventName;
-      }
-
-      if (countElement) {
-        countElement.textContent = item.count;
-      }
-    });
-
-    // Update session IDs
-    const sessionIDs = await getAllSessions();
-
-    console.log(sessionIDs);
-
-    const sessionIDsElement = document.getElementById("sessionIDs");
-    if (!sessionIDsElement) {
-      return;
-    }
-
-    sessionIDs[0].forEach((sessionID) => {
-      const linkElement = document.createElement("a");
-      linkElement.href = `/onchain-analytics/${sessionID}`;
-      linkElement.textContent = sessionID;
-      linkElement.className = "sessionHash";
-
-      sessionIDsElement.appendChild(linkElement);
-    });
-  });
-</script>
-
 <style>
   .text {
     font-size: var(--fs-sm);
@@ -213,3 +125,47 @@ import Squiggle from "@components/squiggle.astro";
     word-break: break-all; /* Forces break for long unbreakable strings */
   }
 </style>
+
+<script>
+  import { getAllSessionIds, getSessionCount, getAllEvents, getAllPageViews } from "@/lib/sessionContractDataProvider";
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    // Update session count
+    const sessionCount = await getSessionCount();
+    document.getElementById("sessionCount")!.textContent = sessionCount;
+
+    // Update top 5 page views
+    const allPageViews = await getAllPageViews();
+    const pageViewCounts = allPageViews.pageOccurrences
+      .map((views, i) => ({ page: allPageViews.pagePaths[i], views }))
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 5);
+
+    pageViewCounts.forEach((pageView, i) => {
+      document.getElementById(`page${i}`)!.textContent = pageView.page;
+      document.getElementById(`views${i}`)!.textContent = pageView.views;
+    });
+
+    // Update top 3 events
+    const allEvents = await getAllEvents();
+    const eventCounts = allEvents.eventOccurrences
+      .map((count, i) => ({ event: allEvents.eventNames[i], count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3);
+
+    eventCounts.forEach((event, i) => {
+      document.getElementById(`event${i}`)!.textContent = event.event;
+      document.getElementById(`count${i}`)!.textContent = event.count;
+    });
+
+    // Update session IDs
+    const sessionIds = await getAllSessionIds();
+    const sessionIDsContainer = document.getElementById("sessionIDs");
+    sessionIds.forEach((sessionId) => {
+      const span = document.createElement("span");
+      span.textContent = sessionId;
+      span.classList.add("sessionHash");
+      sessionIDsContainer!.appendChild(span);
+    });
+  });
+</script>

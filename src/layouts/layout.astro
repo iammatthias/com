@@ -103,70 +103,11 @@ if (title || path) {
     <!-- <Footer /> -->
   </>
 
-  <script>
-    import { generateSessionId, createSession, addPageView } from "@lib/contractProvider";
+  <script type='module'>
+    import { initializeSession } from "/src/lib/session.ts";
 
-    const SESSION_KEY = "analyticsSession";
-    const SESSION_EXPIRATION = 30 * 60 * 1000; // 30 minutes
-
-    const getSessionId = () => {
-      const now = Date.now();
-      const storedSession = localStorage.getItem(SESSION_KEY);
-
-      if (storedSession) {
-        const { id, expiration } = JSON.parse(storedSession);
-        if (now < expiration) {
-          return id;
-        }
-      }
-
-      const newId = generateSessionId(now.toString() + Math.random().toString());
-      const expiration = now + SESSION_EXPIRATION;
-      localStorage.setItem(SESSION_KEY, JSON.stringify({ id: newId, expiration }));
-      return newId;
-    };
-
-    const trackPageView = async () => {
-      const sessionId = getSessionId();
-      try {
-        await createSession(sessionId);
-        await addPageView(window.location.pathname, sessionId);
-        console.log("Page view tracked:", window.location.pathname);
-      } catch (error) {
-        console.error("Failed to track page view:", error);
-      }
-    };
-
-    // Extend session on activity
-    const extendSession = () => {
-      const sessionId = getSessionId();
-      const expiration = Date.now() + SESSION_EXPIRATION;
-      localStorage.setItem(SESSION_KEY, JSON.stringify({ id: sessionId, expiration }));
-    };
-
-    let debounceTimer;
-    const debouncedExtendSession = () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(extendSession, 1000);
-    };
-
-    // Track initial page view and set up session extension
-    document.addEventListener(
-      "astro:page-load",
-      () => {
-        trackPageView();
-        document.addEventListener("mousemove", debouncedExtendSession);
-        document.addEventListener("keypress", debouncedExtendSession);
-      },
-      { once: true }
-    );
-
-    // Track subsequent page views
-    document.addEventListener("astro:after-swap", trackPageView);
-
-    // Clear session on tab close
-    window.addEventListener("beforeunload", () => {
-      localStorage.removeItem(SESSION_KEY);
+    document.addEventListener("astro:page-load", () => {
+      initializeSession();
     });
   </script>
 </html>
