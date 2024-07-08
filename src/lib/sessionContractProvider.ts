@@ -57,7 +57,8 @@ async function addPageView(sessionId, pagePath) {
   return await sendTransaction(functionName, args);
 }
 
-async function addEvent(sessionId, eventName, eventData) {
+async function addEvent(eventName, eventData) {
+  const sessionId = localStorage.getItem("sessionId");
   const functionName = "addEvent(bytes32,string,string)";
   const args = [sessionId, eventName, eventData];
   return await sendTransaction(functionName, args);

@@ -1,6 +1,7 @@
 ---
 import Layout from "@layouts/layout.astro";
 import Squiggle from "@components/squiggle.astro";
+const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 ---
 
 <Layout path='Onchain Analytics'>
@@ -30,13 +31,11 @@ import Squiggle from "@components/squiggle.astro";
 
     <h3>Meta Details</h3>
     <p>
-      Data collection began at <a
+      Data collection began at block number <a
         href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
-        >block number 12315477 on Base-Sepolia</a
-      >. The contract is verified on BaseScan: <a
-        class='break'
-        href='https://sepolia.basescan.org/address/0x419240253dc57e6e390d66f9c9a4321b85e18b49#code#L1'
-        >0x419240253dC57E6E390d66f9C9A4321b85e18B49</a
+        >12315477</a
+      > on Base-Sepolia, and the contract is <a href=`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code#L1`
+        >verified on BaseScan</a
       >.
     </p>
 
@@ -129,43 +128,88 @@ import Squiggle from "@components/squiggle.astro";
 <script>
   import { getAllSessionIds, getSessionCount, getAllEvents, getAllPageViews } from "@/lib/sessionContractDataProvider";
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    // Update session count
-    const sessionCount = await getSessionCount();
-    document.getElementById("sessionCount")!.textContent = sessionCount;
+  document.addEventListener("astro:page-load", async () => {
+    try {
+      // Update session count
+      const sessionCount = await getSessionCount();
+      const sessionCountElement = document.getElementById("sessionCount");
+      if (sessionCountElement && sessionCount !== null) {
+        sessionCountElement.textContent = sessionCount.toString();
+      }
 
-    // Update top 5 page views
-    const allPageViews = await getAllPageViews();
-    const pageViewCounts = allPageViews.pageOccurrences
-      .map((views, i) => ({ page: allPageViews.pagePaths[i], views }))
-      .sort((a, b) => b.views - a.views)
-      .slice(0, 5);
+      // Update top 5 page views
+      const allPageViews = await getAllPageViews();
+      console.log("All Page Views: ", allPageViews); // Added for debugging
+      if (Array.isArray(allPageViews) && allPageViews.length > 0 && Array.isArray(allPageViews[0])) {
+        const pageOccurrences = allPageViews[0];
+        const pagePaths = allPageViews[1];
+        if (pageOccurrences && pagePaths && pageOccurrences.length === pagePaths.length) {
+          const pageViewCounts = pageOccurrences
+            .map((views, i) => ({ page: pagePaths[i], views }))
+            .sort((a, b) => b.views - a.views)
+            .slice(0, 5);
 
-    pageViewCounts.forEach((pageView, i) => {
-      document.getElementById(`page${i}`)!.textContent = pageView.page;
-      document.getElementById(`views${i}`)!.textContent = pageView.views;
-    });
+          console.log("Page View Counts: ", pageViewCounts); // Added for debugging
+          pageViewCounts.forEach((pageView, i) => {
+            const pageElement = document.getElementById(`page${i}`);
+            const viewsElement = document.getElementById(`views${i}`);
+            if (pageElement) {
+              pageElement.textContent = pageView.page;
+            }
+            if (viewsElement) {
+              viewsElement.textContent = pageView.views.toString();
+            }
+          });
+        } else {
+          console.error("Mismatch between page occurrences and page paths lengths"); // Improved error handling
+        }
+      } else {
+        console.error("Invalid data structure for page views"); // Improved error handling
+      }
 
-    // Update top 3 events
-    const allEvents = await getAllEvents();
-    const eventCounts = allEvents.eventOccurrences
-      .map((count, i) => ({ event: allEvents.eventNames[i], count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 3);
+      // Update top 3 events
+      const allEvents = await getAllEvents();
+      console.log("All Events: ", allEvents); // Added for debugging
+      if (Array.isArray(allEvents) && allEvents.length > 0 && Array.isArray(allEvents[0])) {
+        const eventOccurrences = allEvents[0];
+        const eventNames = allEvents[1];
+        if (eventOccurrences && eventNames && eventOccurrences.length === eventNames.length) {
+          const eventCounts = eventOccurrences
+            .map((count, i) => ({ event: eventNames[i], count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 3);
 
-    eventCounts.forEach((event, i) => {
-      document.getElementById(`event${i}`)!.textContent = event.event;
-      document.getElementById(`count${i}`)!.textContent = event.count;
-    });
+          console.log("Event Counts: ", eventCounts); // Added for debugging
+          eventCounts.forEach((event, i) => {
+            const eventElement = document.getElementById(`event${i}`);
+            const countElement = document.getElementById(`count${i}`);
+            if (eventElement) {
+              eventElement.textContent = event.event;
+            }
+            if (countElement) {
+              countElement.textContent = event.count.toString();
+            }
+          });
+        } else {
+          console.error("Mismatch between event occurrences and event names lengths"); // Improved error handling
+        }
+      } else {
+        console.error("Invalid data structure for events"); // Improved error handling
+      }
 
-    // Update session IDs
-    const sessionIds = await getAllSessionIds();
-    const sessionIDsContainer = document.getElementById("sessionIDs");
-    sessionIds.forEach((sessionId) => {
-      const span = document.createElement("span");
-      span.textContent = sessionId;
-      span.classList.add("sessionHash");
-      sessionIDsContainer!.appendChild(span);
-    });
+      // Update session IDs
+      const sessionIds = await getAllSessionIds();
+      const sessionIDsContainer = document.getElementById("sessionIDs");
+      if (sessionIDsContainer && Array.isArray(sessionIds)) {
+        sessionIds.forEach((sessionId) => {
+          const span = document.createElement("span");
+          span.textContent = sessionId;
+          span.classList.add("sessionHash");
+          sessionIDsContainer.appendChild(span);
+        });
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching data: ", error);
+    }
   });
 </script>

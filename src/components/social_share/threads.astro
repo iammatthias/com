@@ -11,7 +11,7 @@ if (via) URL += `%20via%20%40${via}`;
     margin-right: 10px;
   }
 </style>
-<a class='social-share-btn' target='_blank' href={URL} rel='noopener noreferrer'>
+<a id='shareButton' class='social-share-btn' target='_blank' href={URL} rel='noopener noreferrer'>
   <slot>
     <style>
       svg {
@@ -26,3 +26,19 @@ if (via) URL += `%20via%20%40${via}`;
     </svg>
   </slot>
 </a>
+
+<script>
+  import { addEvent } from "@lib/sessionContractProvider";
+
+  // Ensure the event listener is added when the DOM is ready
+  document.addEventListener("astro:page-load", () => {
+    const shareButton = document.getElementById("shareButton");
+
+    shareButton!.addEventListener("click", (event) => {
+      const url = window.location.href;
+
+      // Track the share event
+      addEvent("share", JSON.stringify({ platform: "warpcast", url: url }));
+    });
+  });
+</script>
