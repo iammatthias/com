@@ -36,11 +36,16 @@ function getSession() {
 }
 
 function resetSessionExpiration() {
+  const { sessionId, expirationTime } = getSession();
   const currentTime = Date.now();
-  localStorage.setItem(
-    "expirationTime",
-    (currentTime + defaultExpirationTime).toString(),
-  );
+
+  // Only reset expiration if the session is still valid
+  if (sessionId && currentTime <= Number(expirationTime)) {
+    localStorage.setItem(
+      "expirationTime",
+      (currentTime + defaultExpirationTime).toString(),
+    );
+  }
 }
 
 async function recordPageView() {
@@ -49,6 +54,9 @@ async function recordPageView() {
   if (sessionId && currentTime <= Number(expirationTime)) {
     const pagePath = window.location.pathname;
     await addPageView(sessionId, pagePath); // Record page view in the smart contract
+  } else {
+    await setSession(); // Create a new session if the current one has expired
+    await recordPageView(); // Record the page view after creating a new session
   }
 }
 
