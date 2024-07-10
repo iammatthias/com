@@ -41,10 +41,8 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
     <h3>The Data</h3>
     <h4>Sessions</h4>
     <p>There have been <span id='sessionCount'></span> unique sessions since the onchain analytics went live.</p>
-    <h4>Page Views</h4>
-    <p>Top 5 pages</p>
     <table id='pageViewCounts'>
-      <tr><th>Page</th><th>Views</th></tr>
+      <tr><th>Top 5 pages</th><th>Views</th></tr>
       {
         Array.from({ length: 5 }).map((_, i) => (
           <tr>
@@ -55,10 +53,8 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
       }
     </table>
 
-    <h4>Events</h4>
-    <p>Top events</p>
     <table id='eventCounts'>
-      <tr><th>Event</th><th>Count</th></tr>
+      <tr><th>Top events</th><th>Count</th></tr>
       {
         Array.from({ length: 3 }).map((_, i) => (
           <tr>
@@ -139,16 +135,21 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
       const allPageViews = await getAllPageViews();
       console.log("All Page Views: ", allPageViews); // Added for debugging
       if (Array.isArray(allPageViews) && allPageViews.length > 0 && Array.isArray(allPageViews[0])) {
-        const pageOccurrences = allPageViews[0];
-        const pagePaths = allPageViews[1];
+        const pagePaths = allPageViews[0]; // Paths of pages
+        const pageOccurrences = allPageViews[1]; // Views per page
         if (pageOccurrences && pagePaths && pageOccurrences.length === pagePaths.length) {
-          const pageViewCounts = pageOccurrences
-            .map((views, i) => ({ page: pagePaths[i], views }))
-            .sort((a, b) => b.views - a.views)
-            .slice(0, 5);
+          const pageViewCounts = pageOccurrences.map((views, i) => ({ page: pagePaths[i], views: Number(views) })); // Ensure views are treated as numbers
 
-          console.log("Page View Counts: ", pageViewCounts); // Added for debugging
-          pageViewCounts.forEach((pageView, i) => {
+          console.log("Before sorting: ", pageViewCounts); // Debugging before sorting
+
+          pageViewCounts.sort((a, b) => b.views - a.views); // Sorting by views
+
+          console.log("After sorting: ", pageViewCounts); // Debugging after sorting
+
+          const topPageViewCounts = pageViewCounts.slice(0, 5);
+          console.log("Top Page View Counts: ", topPageViewCounts); // Debugging top page views
+
+          topPageViewCounts.forEach((pageView, i) => {
             const pageElement = document.getElementById(`page${i}`);
             const viewsElement = document.getElementById(`views${i}`);
             if (pageElement) {
@@ -159,10 +160,10 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
             }
           });
         } else {
-          console.error("Mismatch between page occurrences and page paths lengths"); // Improved error handling
+          console.error("Mismatch between page occurrences and page paths lengths");
         }
       } else {
-        console.error("Invalid data structure for page views"); // Improved error handling
+        console.error("Invalid data structure for page views");
       }
 
       // Update top 3 events
