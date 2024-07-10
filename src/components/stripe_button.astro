@@ -1,0 +1,16 @@
+---
+const { buttonId } = Astro.props;
+---
+
+<stripe-buy-button
+  buy-button-id={buttonId}
+  publishable-key='pk_test_51Pais1ImntWObPSeCH5Oe0vO93XWwaOZqmofwn9VH6kIGjjq5MK1K26jz6EXuUFDbDwEgvwIBd7uxBeQdoinNPyZ00vaGQ81DN'
+></stripe-buy-button>
+
+<style is:global>
+  @media screen and (max-width: 720px) {
+    stripe-buy-button {
+      margin: 0 auto;
+    }
+  }
+</style>
