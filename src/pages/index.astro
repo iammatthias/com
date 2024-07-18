@@ -71,7 +71,8 @@ import { Image } from "astro:assets";
     height: 100%;
     z-index: -1;
     overflow: hidden;
-    opacity: 0.33;
+    opacity: var(--noise-opacity);
+    filter: brightness(0.4);
   }
   .background img {
     width: 100%;
@@ -86,7 +87,8 @@ import { Image } from "astro:assets";
   }
   h1 {
     line-height: 1.15;
-    font-size: var(--fs-h4);
+    font-size: var(--fs-h3);
+    color: var(--gold);
   }
   a {
     color: inherit;
