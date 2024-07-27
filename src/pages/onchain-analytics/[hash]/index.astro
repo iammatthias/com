@@ -10,9 +10,7 @@ const processedHash = hash!.substring(2); // Assumes the key is pre-validated or
 ---
 
 <Layout path=`Portraits of Private Keys`>
-  <main>
-    <div id='grid' class='grid'></div>
-  </main>
+  <div id='grid' class='hash__grid'></div>
 
   <div id='hash' style='display: none;'>{processedHash}</div>
 </Layout>
@@ -82,17 +80,6 @@ const processedHash = hash!.substring(2); // Assumes the key is pre-validated or
   }
 </script>
 
-<style>
-  main {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden; /* Prevents potential scrollbar issues */
-    height: 100svh;
-  }
-</style>
-
 <style is:global>
   :root {
     --grid-size: 8;
@@ -103,7 +90,7 @@ const processedHash = hash!.substring(2); // Assumes the key is pre-validated or
     --padding: 16px;
   }
 
-  .grid {
+  .hash__grid {
     display: grid;
     grid-template-columns: repeat(var(--grid-size), 1fr);
     grid-template-rows: repeat(var(--grid-size), 1fr);

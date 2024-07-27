@@ -3,17 +3,23 @@ let currentYear = new Date().getFullYear();
 ---
 
 <footer>
-  <h6>@iammatthias</h6>
-
-  <p>{currentYear}</p>
+  <small
+    >© {currentYear} Matthias Jordan
+    <span>✧</span>
+    <a href='/' aria-label='Home page' title='Home'>Home</a>
+    <span>✧</span>
+    <a href='/social' aria-label='Social page' title='Social'>Social</a>
+    <span>✧</span>
+    <a href='/resume' aria-label='Resume page' title='Resume'>Resume</a>
+  </small>
 </footer>
 
 <style>
   footer {
-    background: var(--foreground);
+    margin-top: auto;
   }
-
-  footer * {
-    color: var(--background);
+  a {
+    color: inherit;
+    font-weight: 400;
   }
 </style>
