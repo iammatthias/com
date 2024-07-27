@@ -1,19 +1,17 @@
 ---
-import Layout from "@layouts/layout.astro";
-
 const platforms = [
+  {
+    name: "Glass",
+    url: "https://glass.photo/iam",
+    username: "@iam",
+    blurb: "Glass is a photography-centric platform, and is where I post most of my pictures.",
+  },
   {
     name: "Farcaster",
     url: "https://warpcast.com/iammatthias",
     username: "@iammatthias",
     blurb:
       'Farcaster is a "sufficiently decentralized" social protocol. There are multiple clients, but the main one is Warpcast.',
-  },
-  {
-    name: "Glass",
-    url: "https://glass.photo/iam",
-    username: "@iam",
-    blurb: "Glass is a photography-centric platform, and is where I post most of my pictures.",
   },
   {
     name: "Instagram",
@@ -47,44 +45,35 @@ const platforms = [
     username: "@iammatthias",
     blurb: "I am not active, but maintain a presence.",
   },
+  {
+    name: "email",
+    url: "hey@iammatthias.com",
+    username: "hey@iammatthias.com",
+    blurb: "Reach out.",
+  },
 ];
 ---
 
-<Layout title='Social'>
-  <p>I'm on a lot of different platforms, but I'm not especially active on any of them.</p>
-  <p>You can find me @iammatthias unless otherwise mentioned.</p>
-  <div>
-    {
-      platforms.map((platform) => (
-        <div class='card'>
-          <h2>
-            <a href={platform.url}>{platform.name}</a>
-          </h2>
-          <small>{platform.username}</small>
-          <p>{platform.blurb}</p>
-        </div>
-      ))
-    }
-  </div>
-</Layout>
+<ul>
+  {
+    platforms.map((platform) => (
+      <li>
+        <a href={platform.url}>{platform.name}</a> ~ {platform.username}
+      </li>
+    ))
+  }
+</ul>
 
 <style>
-  div {
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-  }
-
-  div.card {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-  }
-
-  h2 {
-    font-size: var(--fs-h4);
+    a {
+      color: var(--text-title);
+    }
   }
 </style>

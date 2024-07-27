@@ -5,75 +5,73 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 ---
 
 <Layout path='Onchain Analytics'>
-  <main class='text'>
-    <h1>Onchain Analytics</h1>
-    <p>
-      This site uses a homebrew session management system to generate fully anonymous session hashes and onchain
-      analytics. If you're interested, you can <a
-        class='break'
-        href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>qread more about the project</a
-      >.
-    </p>
-    <Squiggle />
+  <h1>Onchain Analytics</h1>
+  <p>
+    This site uses a homebrew session management system to generate fully anonymous session hashes and onchain
+    analytics. If you're interested, you can <a
+      class='break'
+      href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>qread more about the project</a
+    >.
+  </p>
+  <Squiggle />
 
-    <h2>How it Works:</h2>
-    <ul>
-      <li>
-        A keccak256 hash is generated from the client IP, user agent, and timestamp to create a unique, irreversible
-        sessionID that is completely anonymous. Only the hash is stored.
-      </li>
-      <li><code>sessionID</code>s are stored onchain to validate page views.</li>
-      <li>
-        All sessions are recorded using <a href='https://syndicate.io/'>Syndicate.io</a>'s Cloud Transaction platform.
-      </li>
-    </ul>
+  <h2>How it Works:</h2>
+  <ul>
+    <li>
+      A keccak256 hash is generated from the client IP, user agent, and timestamp to create a unique, irreversible
+      sessionID that is completely anonymous. Only the hash is stored.
+    </li>
+    <li><code>sessionID</code>s are stored onchain to validate page views.</li>
+    <li>
+      All sessions are recorded using <a href='https://syndicate.io/'>Syndicate.io</a>'s Cloud Transaction platform.
+    </li>
+  </ul>
 
-    <h3>Meta Details</h3>
-    <p>
-      Data collection began at block number <a
-        href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
-        >12315477</a
-      > on Base-Sepolia, and the contract is <a href=`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code#L1`
-        >verified on BaseScan</a
-      >.
-    </p>
+  <h3>Meta Details</h3>
+  <p>
+    Data collection began at block number <a
+      href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
+      >12315477</a
+    > on Base-Sepolia, and the contract is <a href=`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code#L1`
+      >verified on BaseScan</a
+    >.
+  </p>
 
-    <h3>The Data</h3>
-    <h4>Sessions</h4>
-    <p>There have been <span id='sessionCount'></span> unique sessions since the onchain analytics went live.</p>
-    <table id='pageViewCounts'>
-      <tr><th>Top 5 pages</th><th>Views</th></tr>
-      {
-        Array.from({ length: 5 }).map((_, i) => (
-          <tr>
-            <td id={`page${i}`} />
-            <td id={`views${i}`} />
-          </tr>
-        ))
-      }
-    </table>
+  <h3>The Data</h3>
+  <h4>Sessions</h4>
+  <p>There have been <span id='sessionCount'></span> unique sessions since the onchain analytics went live.</p>
+  <table id='pageViewCounts'>
+    <tr><th>Top 5 pages</th><th>Views</th></tr>
+    {
+      Array.from({ length: 5 }).map((_, i) => (
+        <tr>
+          <td id={`page${i}`} />
+          <td id={`views${i}`} />
+        </tr>
+      ))
+    }
+  </table>
 
-    <table id='eventCounts'>
-      <tr><th>Top events</th><th>Count</th></tr>
-      {
-        Array.from({ length: 3 }).map((_, i) => (
-          <tr>
-            <td id={`event${i}`} />
-            <td id={`count${i}`} />
-          </tr>
-        ))
-      }
-    </table>
+  <table id='eventCounts'>
+    <tr><th>Top events</th><th>Count</th></tr>
+    {
+      Array.from({ length: 3 }).map((_, i) => (
+        <tr>
+          <td id={`event${i}`} />
+          <td id={`count${i}`} />
+        </tr>
+      ))
+    }
+  </table>
 
-    <h4>Portraits of Private Keys</h4>
-    <p>
-      The keccack256 hashes generated for each session can also serve as valid private keys. The hexadecimal characters
-      in the hash are used as pseudo-random values for a generative art piece. Please note that these private keys have
-      been publically burned, and they should never be used.
-    </p>
-    <p>Click on a hash to view its corresponding portrait:</p>
-    <div id='sessionIDs'></div>
-  </main>
+  <h4>Portraits of Private Keys</h4>
+  <p>
+    The keccack256 hashes generated for each session can also serve as valid private keys. The hexadecimal characters in
+    the hash are used as pseudo-random values for a generative art piece. Please note that these private keys have been
+    publically burned, and they should never be used.
+  </p>
+  <p>Click on a hash to view its corresponding portrait:</p>
+  <div id='sessionIDs'></div>
 </Layout>
 
 <style>

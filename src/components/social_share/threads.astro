@@ -2,7 +2,6 @@
 const { url = Astro.request.url, via } = Astro.props;
 
 let URL = `https://www.threads.net/intent/post?text=${url}`;
-
 if (via) URL += `%20via%20%40${via}`;
 ---
 
@@ -11,7 +10,7 @@ if (via) URL += `%20via%20%40${via}`;
     margin-right: 10px;
   }
 </style>
-<a id='shareButton' class='social-share-btn' target='_blank' href={URL} rel='noopener noreferrer'>
+<a id='threadsShareButton' class='social-share-btn' target='_blank' href={URL} rel='noopener noreferrer'>
   <slot>
     <style>
       svg {
@@ -30,15 +29,16 @@ if (via) URL += `%20via%20%40${via}`;
 <script>
   import { addEvent } from "@lib/sessionContractProvider";
 
-  // Ensure the event listener is added when the DOM is ready
-  document.addEventListener("astro:page-load", () => {
-    const shareButton = document.getElementById("shareButton");
+  function setupThreadsShareButton() {
+    const shareButton = document.getElementById("threadsShareButton");
+    if (shareButton) {
+      shareButton.addEventListener("click", (event) => {
+        const url = window.location.href;
+        addEvent("share", JSON.stringify({ platform: "threads", url: url }));
+      });
+    }
+  }
 
-    shareButton!.addEventListener("click", (event) => {
-      const url = window.location.href;
-
-      // Track the share event
-      addEvent("share", JSON.stringify({ platform: "warpcast", url: url }));
-    });
-  });
+  // Use astro:page-load for both initial load and subsequent navigations
+  document.addEventListener("astro:page-load", setupThreadsShareButton);
 </script>

@@ -7,12 +7,7 @@ let URL = `https://warpcast.com/~/compose?embeds[]=${url}`;
 if (via) URL += `&text=%20via%20%40${via}`;
 ---
 
-<style>
-  a {
-    margin-right: 10px;
-  }
-</style>
-<a id='shareButton' class='social-share-btn' target='_blank' href={URL} rel='noopener noreferrer'>
+<a id='warpcastShareButton' class='social-share-btn' target='_blank' href={URL} rel='noopener noreferrer'>
   <slot>
     <style>
       svg {
@@ -37,15 +32,22 @@ if (via) URL += `&text=%20via%20%40${via}`;
 <script>
   import { addEvent } from "@lib/sessionContractProvider";
 
-  // Ensure the event listener is added when the DOM is ready
-  document.addEventListener("astro:page-load", () => {
-    const shareButton = document.getElementById("shareButton");
+  function setupWarpcastShareButton() {
+    const shareButton = document.getElementById("warpcastShareButton");
+    if (shareButton) {
+      shareButton.addEventListener("click", (event) => {
+        const url = window.location.href;
+        addEvent("share", JSON.stringify({ platform: "warpcast", url: url }));
+      });
+    }
+  }
 
-    shareButton!.addEventListener("click", (event) => {
-      const url = window.location.href;
-
-      // Track the share event
-      addEvent("share", JSON.stringify({ platform: "warpcast", url: url }));
-    });
-  });
+  // Use astro:page-load for both initial load and subsequent navigations
+  document.addEventListener("astro:page-load", setupWarpcastShareButton);
 </script>
+
+<style>
+  a {
+    margin-right: 10px;
+  }
+</style>

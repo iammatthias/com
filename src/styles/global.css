@@ -50,7 +50,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: var(--blue-darker);
+    --background: var(--black);
     --foreground: var(--white);
     --midground: var(--blue);
 
@@ -76,6 +76,9 @@
 }
 
 /* Rest of the CSS remains the same */
+html {
+  min-height: 100%;
+}
 
 body {
   position: relative;
@@ -83,59 +86,6 @@ body {
   color: var(--foreground);
   z-index: -100;
 }
-
-body > main {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  padding: 8rem;
-}
-
-body > main > * {
-  max-width: 800px;
-  width: 100%;
-}
-
-@media (max-width: 1024px) {
-  body > main {
-    padding: 4rem;
-  }
-}
-
-@media (max-width: 768px) {
-  body > main {
-    padding: 4rem;
-  }
-}
-
-@media (max-width: 480px) {
-  body > main {
-    padding: 2rem 2rem 8rem;
-  }
-}
-
-.noise {
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="a"><feTurbulence type="fractalNoise" baseFrequency=".618" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23a)"/></svg>');
-  background-repeat: repeat;
-  background-size: 182px;
-  opacity: var(--noise-opacity);
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  inset: 0;
-  height: auto;
-  z-index: 0;
-}
-
-/* scale the bg image for the vision pro */
-/* @media only screen and (-webkit-device-pixel-ratio: 2) and (resolution: 192dpi) {
-  .noise {
-    background-size: 364px;
-  }
-} */
 
 .medium-zoom-image--opened {
   z-index: 6;

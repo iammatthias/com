@@ -24,30 +24,28 @@ for (const category of categories) {
 ---
 
 <Layout>
-  <main>
-    <h1>Tag: {tag}</h1>
-    <BreadCrumb path='tags' />
+  <h1>Tag: {tag}</h1>
+  <BreadCrumb path='tags' />
 
-    <ul>
-      {
-        entriesForTag.map((entry) => (
-          <>
-            <li>
-              <h2>
-                <a href={`/${entry.path}/${entry.slug}`}>{entry.title}</a>
-              </h2>
-              <Meta_Tags tags={entry.tags} />
-              <p>
-                <small>{entry.created}</small>
-              </p>
-            </li>
-            <Squiggle />
-          </>
-        ))
-      }
-    </ul>
-    <BreadCrumb path='tags' />
-  </main>
+  <ul>
+    {
+      entriesForTag.map((entry) => (
+        <>
+          <li>
+            <h2>
+              <a href={`/${entry.path}/${entry.slug}`}>{entry.title}</a>
+            </h2>
+            <Meta_Tags tags={entry.tags} />
+            <p>
+              <small>{entry.created}</small>
+            </p>
+          </li>
+          <Squiggle />
+        </>
+      ))
+    }
+  </ul>
+  <BreadCrumb path='tags' />
 </Layout>
 
 <style>

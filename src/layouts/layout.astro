@@ -2,9 +2,10 @@
 import "@fontsource-variable/kalnia/wdth.css";
 import { SEO } from "astro-seo";
 import { ViewTransitions } from "astro:transitions";
-import Nav from "@components/nav.astro";
-import HitCounter from "@components/hitCounter.astro";
 import Ascii from "@components/ascii.astro";
+import Navigation from "@components/navigation.astro";
+import HomepageHero from "@components/homepage-hero.astro";
+
 // import Footer from "@components/footer.astro";
 
 import "@styles/reset.css";
@@ -96,10 +97,14 @@ if (title || path) {
     <ViewTransitions />
   </head>
   <>
-    <div class='noise'></div>
-    <Nav />
-    <HitCounter />
-    <slot />
+    <main class=`grid ${Astro.url.pathname === "/" ? "homepage-grid" : "page-grid"}`>
+      <section class='content'>
+        <Navigation />
+        <slot />
+      </section>
+      {Astro.url.pathname === "/" && <HomepageHero />}
+    </main>
+
     <!-- <Footer /> -->
   </>
 
@@ -111,3 +116,65 @@ if (title || path) {
     });
   </script>
 </html>
+
+<style>
+  .grid {
+    display: grid;
+    grid-auto-rows: auto;
+    gap: 8rem;
+    min-height: 100vh;
+    @media (max-width: 1999px) {
+      gap: 4rem;
+    }
+    @media (max-width: 899px) {
+      gap: 2rem;
+    }
+    @media (max-width: 768px) {
+      min-height: unset;
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 8rem 0 8rem 8rem;
+    @media (max-width: 1999px) {
+      padding: 4rem 0 4rem 4rem;
+    }
+    @media (max-width: 899px) {
+      padding: 2rem 0 2rem 2rem;
+    }
+    @media (max-width: 768px) {
+      padding: 2rem 2rem 0;
+    }
+  }
+
+  .homepage-grid {
+    grid-template-columns: 1fr 2fr;
+    @media (max-width: 1299px) {
+      grid-template-columns: 1fr 1.5fr;
+    }
+    @media (max-width: 899px) {
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 768px) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .page-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+    .content {
+      padding: 8rem;
+      @media (max-width: 1999px) {
+        padding: 4rem;
+      }
+      @media (max-width: 899px) {
+        padding: 2rem;
+      }
+    }
+  }
+</style>

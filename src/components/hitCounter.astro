@@ -23,38 +23,22 @@
     justify-content: center;
     gap: 12px;
     position: fixed;
-    bottom: 4.5rem;
-    right: 8rem;
+
     font-family: monospace;
     width: 48px;
     height: 58px;
-  }
 
-  @media (max-width: 1060px) {
-    .wrapper {
-      right: 4rem;
+    bottom: 8rem;
+    left: 8rem;
+
+    @media (max-width: 1999px) {
+      bottom: 4rem;
+      left: 4rem;
     }
-  }
-
-  @media (max-width: 480px) {
-    .wrapper {
-      bottom: 3rem;
-      right: 2rem;
+    @media (max-width: 899px) {
+      bottom: 2rem;
+      left: 2rem;
     }
-  }
-
-  @property --num {
-    syntax: "<integer>";
-    initial-value: 0;
-    inherits: false;
-  }
-
-  #sessionCount {
-    transition: --num 1s;
-    counter-reset: num var(--num);
-  }
-  #sessionCount::before {
-    content: counter(num);
   }
 
   .circle {

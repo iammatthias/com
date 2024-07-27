@@ -37,32 +37,30 @@ for (const path of paths) {
 ---
 
 <Layout>
-  <main>
-    <h1>Tags</h1>
-    <ul class='masonry' x-data x-masonry>
-      {
-        Object.entries(tags).map(([tag, posts]) => (
-          <div>
-            <h2>
-              <a href={`/tags/${tag}`}>{tag}</a>
-            </h2>
+  <h1>Tags</h1>
+  <ul class='masonry' x-data x-masonry>
+    {
+      Object.entries(tags).map(([tag, posts]) => (
+        <div>
+          <h2>
+            <a href={`/tags/${tag}`}>{tag}</a>
+          </h2>
 
-            <ul>
-              {posts.map(({ slug, path, title }) => (
-                <li>
-                  <p>
-                    <small>
-                      <a href={`/${path}/${slug}`}>{title}</a>
-                    </small>
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      }
-    </ul>
-  </main>
+          <ul>
+            {posts.map(({ slug, path, title }) => (
+              <li>
+                <p>
+                  <small>
+                    <a href={`/${path}/${slug}`}>{title}</a>
+                  </small>
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </ul>
 </Layout>
 
 <script>

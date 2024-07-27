@@ -1,96 +1,59 @@
 ---
 import Layout from "@layouts/layout.astro";
-import { Image } from "astro:assets";
+import SocialPlatforms from "@components/social_platforms.astro";
+import Navigation from "@components/navigation.astro";
+import HomepageHero from "@components/homepage-hero.astro";
 ---
 
 <Layout>
-  <main>
-    <!-- <h1>I am Matthias—a photographer and growth marketer based in Southern California.</h1>
-    <h1>You can find me behind a camera, cooking, or online @iammatthias.</h1> -->
-    <h1>Hi, I am Matthias 🌞</h1>
-    <h1>
-      I'm a photographer and growth technologist. When I'm not working you can find me cooking, behind a camera, or with
-      my family.
-    </h1>
-    <h1>
-      You can find me online <a href='/social'>@iammatthias</a>. Reach out if you'd like to connect or collaborate.
-    </h1>
-  </main>
-  <div class='background'>
-    <!-- <Image id='backgroundImage' inferSize loading='eager' decoding='async' alt='fullscreen background' src='#' /> -->
-    <img id='backgroundImage' loading='eager' decoding='async' alt='fullscreen background' src='#' />
+  <h1 class='h5'>Hi, I am Matthias 🌞</h1>
+  <p class='text--color'>I'm a photographer and growth technologist.</p>
+
+  <p class='text--color'>
+    I build things for the web that help brand identify and meet their goals. Outside of work my time is spent taking
+    pictures, cooking, and with my family.
+  </p>
+
+  <div x-data='{ activeAccordion: false }' class='find-me-online'>
+    <p class='text--color'>
+      You can find me online at: <button @click='activeAccordion = !activeAccordion' class='underline'>
+        @<span>iammatthias</span>
+      </button>
+    </p>
+
+    <div x-cloak x-collapse x-show='activeAccordion'>
+      <SocialPlatforms />
+    </div>
   </div>
 </Layout>
 
-<script>
-  async function fetchData() {
-    try {
-      const response = await fetch("/api/hero-image");
-      if (!response.ok) {
-        console.error("Failed to fetch:", response.status);
-        return;
-      }
-      const data = await response.json();
-      const imageUrls = data.imageUrls;
-
-      if (!imageUrls || imageUrls.length === 0) {
-        console.error("No image URLs found in response");
-        return;
-      }
-
-      // Select a random URL from the array
-      const randomImgIndex = Math.floor(Math.random() * imageUrls.length);
-
-      const randomImgUrl = imageUrls[randomImgIndex].toString(); // Convert to string
-
-      const imageElement = document.getElementById("backgroundImage") as HTMLImageElement;
-      if (imageElement) {
-        const img = new Image();
-        img.onload = () => {
-          imageElement.src = randomImgUrl; // Set src after image is preloaded
-          imageElement.style.opacity = "1"; // Make image visible
-        };
-        img.src = randomImgUrl; // Start preloading
-      } else {
-        console.error("Element with id 'backgroundImage' not found");
-      }
-    } catch (error) {
-      console.error("Error fetching image:", error);
+<style>
+  .text--color {
+    color: var(--text-title);
+  }
+  .find-me-online {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .underline {
+    color: inherit;
+    /* transition: color 0.2s ease-in-out; */
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    > span {
+      text-decoration: underline;
+      text-underline-offset: 0.2rem;
     }
   }
-
-  fetchData();
-</script>
-
-<style>
-  .background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
-    opacity: var(--noise-opacity);
-    filter: brightness(0.4);
-  }
-  .background img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    transition: opacity 0.05s ease-in-out;
-    opacity: 0; /* Start invisible */
-  }
-  main {
-    justify-content: center;
-  }
-  h1 {
-    line-height: 1.15;
-    font-size: var(--fs-h3);
-    color: var(--gold);
-  }
-  a {
-    color: inherit;
-  }
 </style>
+
+<script>
+  import Alpine from "alpinejs";
+  import collapse from "@alpinejs/collapse";
+
+  Alpine.plugin(collapse);
+</script>

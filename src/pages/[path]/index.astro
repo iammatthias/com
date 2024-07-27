@@ -43,28 +43,26 @@ if (path === "art") {
 ---
 
 <Layout path={path}>
-  <main>
-    <h1>{path}</h1>
-    <p>{description}</p>
-    <ul>
-      {
-        entries.map((entry) => (
-          <>
-            <li>
-              <h2>
-                <a href={`/${path}/${entry.frontmatter.slug}`}>{entry.frontmatter.title}</a>
-              </h2>
-              <Meta_Tags tags={entry.frontmatter.tags} />
-              <p>
-                <small>{entry.frontmatter.created}</small>
-              </p>
-            </li>
-            <Squiggle />
-          </>
-        ))
-      }
-    </ul>
-  </main>
+  <h1>{path}</h1>
+  <p>{description}</p>
+  <ul>
+    {
+      entries.map((entry) => (
+        <>
+          <li>
+            <h2>
+              <a href={`/${path}/${entry.frontmatter.slug}`}>{entry.frontmatter.title}</a>
+            </h2>
+            <Meta_Tags tags={entry.frontmatter.tags} />
+            <p>
+              <small>{entry.frontmatter.created}</small>
+            </p>
+          </li>
+          <Squiggle />
+        </>
+      ))
+    }
+  </ul>
 </Layout>
 
 <style>
@@ -82,7 +80,8 @@ if (path === "art") {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
+    max-width: 50vw;
   }
 
   li {
@@ -91,15 +90,15 @@ if (path === "art") {
     gap: 0.5rem;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1099px) {
     ul {
-      gap: 1.5rem;
+      max-width: 70vw;
     }
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 786px) {
     ul {
-      gap: 1rem;
+      max-width: unset;
     }
   }
 </style>

@@ -50,8 +50,8 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
 ---
 
 <Layout title={frontmatter.title} path={path}>
-  <main>
-    <BreadCrumb path={path} />
+  <BreadCrumb path={path} />
+  <article>
     <div class='meta'>
       <h1>{frontmatter.title}</h1>
       <Meta_ReadTime_Dates created={frontmatter.created} updated={frontmatter.updated} readingTime={readingTime} />
@@ -60,20 +60,17 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
       <Squiggle />
     </div>
 
-    <article>
-      <Markdown
-        sanitize={{ allowComponents: true }}
-        content={body}
-        components={{ img: Image, p: Paragraph, StripeButton }}
-        marked={{
-          extensions: [markedAlert()],
-        }}
-      />
-    </article>
-    <!-- <Squiggle />
-    <SocialShare /> -->
-    <BreadCrumb path={path} />
-  </main>
+    <Markdown
+      sanitize={{ allowComponents: true }}
+      content={body}
+      components={{ img: Image, p: Paragraph, StripeButton }}
+      marked={{
+        extensions: [markedAlert()],
+      }}
+    />
+  </article>
+
+  <BreadCrumb path={path} />
 </Layout>
 
 <script async src='https://js.stripe.com/v3/buy-button.js'></script>

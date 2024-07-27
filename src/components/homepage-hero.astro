@@ -1,0 +1,139 @@
+---
+
+---
+
+<section class='background'>
+  <div class='imageContainer'>
+    <img
+      id='backgroundImage1'
+      loading='eager'
+      decoding='async'
+      alt='fullscreen background'
+      src='https://pub-ba3d6ef16e5c44b7b4b89835777f6653.r2.dev/hero_images/19cf518030046371396ba9e1d94cba65.jpg'
+      class='backgroundImage'
+    />
+    <img
+      id='backgroundImage2'
+      loading='eager'
+      decoding='async'
+      alt='fullscreen background'
+      src=''
+      class='backgroundImage'
+    />
+  </div>
+</section>
+
+<style>
+  .background {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    padding: 8rem 8rem 8rem 0;
+    @media (max-width: 1999px) {
+      padding: 4rem 4rem 4rem 0;
+    }
+    @media (max-width: 899px) {
+      padding: 2rem 2rem 2rem 0;
+    }
+    @media (max-width: 768px) {
+      position: relative;
+      height: auto;
+      padding: 0rem 2rem 2rem;
+    }
+  }
+  .imageContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 4rem;
+    box-shadow: var(--smooth-shadow);
+    @media (max-width: 768px) {
+      border-radius: 2rem;
+      aspect-ratio: 16 / 9;
+    }
+  }
+  .backgroundImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 1s ease-in-out;
+  }
+  .backgroundImage:not(:first-child) {
+    opacity: 0;
+  }
+</style>
+
+<script>
+  async function fetchImageUrls() {
+    try {
+      const response = await fetch("/api/hero-image");
+      if (!response.ok) {
+        console.error("Failed to fetch:", response.status);
+        return [];
+      }
+      const data = await response.json();
+      return data.imageUrls || [];
+    } catch (error) {
+      console.error("Error fetching image URLs:", error);
+      return [];
+    }
+  }
+
+  function preloadImage(url) {
+    return new Promise<string>((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(url);
+      img.src = url;
+    });
+  }
+
+  async function changeImage(imageUrls) {
+    if (imageUrls.length === 0) {
+      console.error("No image URLs available");
+      return;
+    }
+
+    const imageElement1 = document.getElementById("backgroundImage1") as HTMLImageElement;
+    const imageElement2 = document.getElementById("backgroundImage2") as HTMLImageElement;
+
+    if (!imageElement1 || !imageElement2) {
+      console.error("Background image elements not found");
+      return;
+    }
+
+    let activeImageElement = imageElement1;
+    let inactiveImageElement = imageElement2;
+
+    while (true) {
+      const randomImgIndex = Math.floor(Math.random() * imageUrls.length);
+      const randomImgUrl = imageUrls[randomImgIndex];
+
+      try {
+        const preloadedUrl = await preloadImage(randomImgUrl);
+        inactiveImageElement.src = preloadedUrl;
+        inactiveImageElement.style.opacity = "1"; // Fade in
+
+        setTimeout(() => {
+          activeImageElement.style.opacity = "0"; // Fade out
+          [activeImageElement, inactiveImageElement] = [inactiveImageElement, activeImageElement]; // Swap elements
+        }, 500); // Wait for fade in transition
+      } catch (error) {
+        console.error("Error preloading image:", error);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait for 10 seconds
+    }
+  }
+
+  async function init() {
+    const imageUrls = await fetchImageUrls();
+    await changeImage(imageUrls);
+  }
+
+  init();
+</script>

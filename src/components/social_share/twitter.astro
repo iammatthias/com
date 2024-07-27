@@ -11,7 +11,7 @@ if (via) URL += `&via=${via}`;
     margin-right: 10px;
   }
 </style>
-<a id='shareButton' class='social-share-btn' target='_blank' href={URL} rel='noopener noreferrer'>
+<a id='twitterShareButton' class='social-share-btn' target='_blank' href={URL} rel='noopener noreferrer'>
   <slot>
     <style>
       svg {
@@ -30,15 +30,16 @@ if (via) URL += `&via=${via}`;
 <script>
   import { addEvent } from "@lib/sessionContractProvider";
 
-  // Ensure the event listener is added when the DOM is ready
-  document.addEventListener("astro:page-load", () => {
-    const shareButton = document.getElementById("shareButton");
+  function setupTwitterShareButton() {
+    const shareButton = document.getElementById("twitterShareButton");
+    if (shareButton) {
+      shareButton.addEventListener("click", (event) => {
+        const url = window.location.href;
+        addEvent("share", JSON.stringify({ platform: "twitter", url: url }));
+      });
+    }
+  }
 
-    shareButton!.addEventListener("click", (event) => {
-      const url = window.location.href;
-
-      // Track the share event
-      addEvent("share", JSON.stringify({ platform: "warpcast", url: url }));
-    });
-  });
+  // Use astro:page-load for both initial load and subsequent navigations
+  document.addEventListener("astro:page-load", setupTwitterShareButton);
 </script>
