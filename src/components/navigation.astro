@@ -12,8 +12,6 @@
   <a href='/recipes' aria-label='Recipes page' title='Recipes'>Recipes</a>
   <span>✧</span>
   <a href='/notes' aria-label='Notes page' title='Notes'>Notes</a>
-  <span>✧</span>
-  <a href='/onchain-analytics'><span class='circle'></span></a>
 </nav>
 
 <nav
@@ -46,7 +44,6 @@
         <span>✧</span>
         <a href='/notes' aria-label='Notes page' title='Notes'>Notes</a>
       </p>
-      <p><a href='/onchain-analytics'>Onchain Analytics <span class='circle'></span></a></p>
     </div>
   </details>
 </nav>
@@ -116,39 +113,16 @@
     right: 0;
     border: 1px solid var(--text-title);
     border-radius: 1rem;
-    padding: 0.5rem 1.25rem;
+    padding: 1rem;
     z-index: 10;
     box-sizing: border-box;
     margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  .circle {
-    display: inline-block;
-    background-color: transparent;
-    width: 8px;
-    height: 8px;
-    border-radius: 50px;
-    box-shadow:
-      0 0 8px var(--gold),
-      inset 0 0 8px var(--gold-lighter);
-    animation: pulse 5s ease 5s infinite;
-  }
-
-  @keyframes pulse {
-    0% {
-      box-shadow:
-        0 0 8px var(--gold),
-        inset 0 0 8px var(--gold);
-    }
-    50% {
-      box-shadow:
-        0 0 16px var(--gold),
-        inset 0 0 14px var(--gold);
-    }
-    100% {
-      box-shadow:
-        0 0 8px var(--gold),
-        inset 0 0 8px var(--gold);
-    }
+  details summary::-webkit-details-marker {
+    display: none;
   }
 </style>

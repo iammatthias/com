@@ -97,16 +97,16 @@ if (title || path) {
     />
     <ViewTransitions />
   </head>
-  <>
-    <main class=`grid ${Astro.url.pathname === "/" ? "homepage-grid" : "page-grid"}`>
-      <section class='content'>
-        <Navigation />
-        <slot />
-        <Footer />
-      </section>
-      {Astro.url.pathname === "/" && <HomepageHero />}
-    </main>
-  </>
+
+  <main class=`grid ${Astro.url.pathname === "/" ? "homepage-grid" : "page-grid"}`>
+    <section class='content'>
+      <Navigation />
+      <slot />
+      <Footer class='hide-on-mobile' />
+    </section>
+    {Astro.url.pathname === "/" && <HomepageHero />}
+    <Footer class='hide-on-desktop' />
+  </main>
 
   <script type='module'>
     import { initializeSession } from "/src/lib/session.ts";
@@ -122,7 +122,7 @@ if (title || path) {
     display: grid;
     grid-auto-rows: auto;
     gap: 8rem;
-    min-height: 100vh;
+
     @media (max-width: 1999px) {
       gap: 4rem;
     }
@@ -151,10 +151,7 @@ if (title || path) {
   }
 
   .homepage-grid {
-    grid-template-columns: 1fr 2fr;
-    @media (max-width: 1299px) {
-      grid-template-columns: 1fr 1.5fr;
-    }
+    grid-template-columns: 1fr 1.5fr;
     @media (max-width: 899px) {
       grid-template-columns: 1fr 1fr;
     }

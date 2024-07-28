@@ -141,3 +141,20 @@ body {
 #squigglePattern > path {
   stroke: var(--gold);
 }
+
+/* helper classes to show / hide on desktop and mobile at a 786px breakpoint */
+.hide-on-mobile {
+  display: none;
+}
+.hide-on-desktop {
+  display: block;
+}
+
+@media (min-width: 786px) {
+  .hide-on-mobile {
+    display: block;
+  }
+  .hide-on-desktop {
+    display: none;
+  }
+}

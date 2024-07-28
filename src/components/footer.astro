@@ -1,12 +1,14 @@
 ---
+const { class: classes } = Astro.props;
 let currentYear = new Date().getFullYear();
 ---
 
-<footer>
+<footer class={classes}>
   <small
-    >© {currentYear} Matthias Jordan
-    <span>✧</span>
-    <a href='/' aria-label='Home page' title='Home'>Home</a>
+    ><span>© {currentYear} Matthias Jordan</span><br />
+
+    <span class='circle'></span>
+    <a href='/onchain-analytics'>Onchain Analytics</a>
     <span>✧</span>
     <a href='/social' aria-label='Social page' title='Social'>Social</a>
     <span>✧</span>
@@ -17,9 +19,47 @@ let currentYear = new Date().getFullYear();
 <style>
   footer {
     margin-top: auto;
+    @media (max-width: 899px) {
+      padding: 0 2rem 2rem;
+    }
+    *:not(.circle, small) {
+      opacity: 0.75;
+    }
   }
   a {
     color: inherit;
     font-weight: 400;
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+  }
+
+  .circle {
+    display: inline-block;
+    background-color: transparent;
+    width: 8px;
+    height: 8px;
+    border-radius: 50px;
+    box-shadow:
+      0 0 8px var(--gold),
+      inset 0 0 8px var(--gold-lighter);
+    animation: pulse 5s ease 5s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow:
+        0 0 8px var(--gold),
+        inset 0 0 8px var(--gold);
+    }
+    50% {
+      box-shadow:
+        0 0 16px var(--gold),
+        inset 0 0 14px var(--gold);
+    }
+    100% {
+      box-shadow:
+        0 0 8px var(--gold),
+        inset 0 0 8px var(--gold);
+    }
   }
 </style>

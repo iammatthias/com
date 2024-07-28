@@ -10,11 +10,15 @@ import HomepageHero from "@components/homepage-hero.astro";
   <p class='text--color'>I'm a photographer and growth technologist.</p>
 
   <p class='text--color'>
-    I build things for the web that help brand identify and meet their goals. Outside of work my time is spent taking
-    pictures, cooking, and with my family.
+    I build things for the web that help brands grow. Outside of work my time is spent taking pictures, cooking, and
+    with my family.
   </p>
 
-  <div x-data='{ activeAccordion: false }' class='find-me-online'>
+  <p class='text--color'>
+    This is my little corner of the web where I share some of my work, some of my recipes, and some of my thoughts.
+  </p>
+
+  <!-- <div x-data='{ activeAccordion: false }' class='find-me-online'>
     <p class='text--color'>
       You can find me online at: <button @click='activeAccordion = !activeAccordion' class='underline'>
         @<span>iammatthias</span>
@@ -24,7 +28,7 @@ import HomepageHero from "@components/homepage-hero.astro";
     <div x-cloak x-collapse x-show='activeAccordion'>
       <SocialPlatforms />
     </div>
-  </div>
+  </div> -->
 </Layout>
 
 <style>
@@ -51,9 +55,9 @@ import HomepageHero from "@components/homepage-hero.astro";
   }
 </style>
 
-<script>
+<!-- <script>
   import Alpine from "alpinejs";
   import collapse from "@alpinejs/collapse";
 
   Alpine.plugin(collapse);
-</script>
+</script> -->
