@@ -10,7 +10,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
     This site uses a homebrew session management system to generate fully anonymous session hashes and onchain
     analytics. If you're interested, you can <a
       class='break'
-      href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>qread more about the project</a
+      href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more about the project</a
     >.
   </p>
   <Squiggle />
@@ -45,7 +45,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
     {
       Array.from({ length: 5 }).map((_, i) => (
         <tr>
-          <td id={`page${i}`} />
+          <td id={`page${i}`} class='break' />
           <td id={`views${i}`} />
         </tr>
       ))
@@ -99,8 +99,6 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
   .sessionHash {
     font-family: monospace;
     display: inline; /* Keeps span inline */
-    word-break: break-all; /* Breaks long words anywhere */
-    white-space: normal; /* Allows wrapping */
     margin-right: 0.5rem; /* Adds horizontal space between items */
     transition:
       background-color 0.3s ease,
@@ -202,7 +200,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
           const linkElement = document.createElement("a");
           linkElement.href = `/onchain-analytics/${sessionId}`;
           linkElement.textContent = sessionId;
-          linkElement.className = "sessionHash";
+          linkElement.className = "sessionHash break";
 
           sessionIDsContainer.appendChild(linkElement);
         });

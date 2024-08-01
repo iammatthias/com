@@ -44,7 +44,7 @@ const processedHash = hash!.substring(2); // Assumes the key is pre-validated or
     cell.className = "cell";
     const innerCell = document.createElement("div");
     innerCell.className = "inner-cell";
-    const size = 50 - value * 2;
+    const size = 40 - value * 2;
     innerCell.style.width = `${size}%`;
     innerCell.style.backgroundColor = `#${hexChar}${hexChar}${hexChar}`;
     innerCell.style.animation = `pulse ${value + 1}s infinite ease-in-out`;
@@ -73,10 +73,10 @@ const processedHash = hash!.substring(2); // Assumes the key is pre-validated or
 
     console.log(`Most frequent character: ${mostFrequentChar}`);
 
-    const mainElement = document.querySelector("main");
-    if (mainElement && mostFrequentChar) {
-      mainElement.style.backgroundColor = `#${mostFrequentChar}${mostFrequentChar}${mostFrequentChar}`;
-    }
+    // const mainElement = document.querySelector("main");
+    // if (mainElement && mostFrequentChar) {
+    //   mainElement.style.backgroundColor = `#${mostFrequentChar}${mostFrequentChar}${mostFrequentChar}`;
+    // }
   }
 </script>
 
@@ -96,10 +96,15 @@ const processedHash = hash!.substring(2); // Assumes the key is pre-validated or
     grid-template-rows: repeat(var(--grid-size), 1fr);
     gap: 4px;
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
+    height: calc(100vh - 4rem - 2rem - 48px);
     max-width: calc(var(--cell-size) * var(--grid-size));
     max-height: calc(var(--cell-height) * var(--grid-size));
     box-sizing: border-box;
+    @media (max-width: 768px) {
+      height: calc(100vh - 80px - 44px - 2rem - 6rem);
+      /* 80px footer, 44px header, 2rem padding, 2rem gap, 2rem gap */
+    }
   }
 
   .cell {

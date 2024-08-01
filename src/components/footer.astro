@@ -1,12 +1,10 @@
 ---
-const { class: classes } = Astro.props;
 let currentYear = new Date().getFullYear();
 ---
 
-<footer class={classes}>
-  <small
-    ><span>© {currentYear} Matthias Jordan</span><br />
-
+<footer>
+  <small>
+    <span>© {currentYear} Matthias Jordan</span><br />
     <span class='circle'></span>
     <a href='/onchain-analytics'>Onchain Analytics</a>
     <span>✧</span>
@@ -19,9 +17,6 @@ let currentYear = new Date().getFullYear();
 <style>
   footer {
     margin-top: auto;
-    @media (max-width: 899px) {
-      padding: 0 2rem 2rem;
-    }
     *:not(.circle, small) {
       opacity: 0.75;
     }

@@ -97,28 +97,42 @@ if (title || path) {
     />
     <ViewTransitions />
   </head>
-
-  <main class=`grid ${Astro.url.pathname === "/" ? "homepage-grid" : "page-grid"}`>
-    <section class='content'>
-      <Navigation />
-      <slot />
-      <Footer class='hide-on-mobile' />
-    </section>
-    {Astro.url.pathname === "/" && <HomepageHero />}
-    <Footer class='hide-on-desktop' />
-  </main>
-
-  <script type='module'>
-    import { initializeSession } from "/src/lib/session.ts";
-
-    document.addEventListener("astro:page-load", () => {
-      initializeSession();
-    });
-  </script>
+  <body>
+    <Navigation />
+    <main class=`grid ${Astro.url.pathname === "/" ? "homepage-grid" : "page-grid"}`>
+      <section class='content'>
+        <slot />
+      </section>
+      {Astro.url.pathname === "/" && <HomepageHero />}
+    </main>
+    <Footer />
+  </body>
 </html>
 
+<script type='module'>
+  import { initializeSession } from "/src/lib/session.ts";
+
+  document.addEventListener("astro:page-load", () => {
+    initializeSession();
+  });
+</script>
+
 <style>
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    gap: 2rem;
+    padding: 8rem;
+    @media (max-width: 1999px) {
+      padding: 4rem;
+    }
+    @media (max-width: 768px) {
+      padding: 2rem;
+    }
+  }
   .grid {
+    flex: 1;
     display: grid;
     grid-auto-rows: auto;
     gap: 8rem;
@@ -138,16 +152,7 @@ if (title || path) {
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    padding: 8rem 0 8rem 8rem;
-    @media (max-width: 1999px) {
-      padding: 4rem 0 4rem 4rem;
-    }
-    @media (max-width: 899px) {
-      padding: 2rem 0 2rem 2rem;
-    }
-    @media (max-width: 768px) {
-      padding: 2rem 2rem 0;
-    }
+    justify-content: center;
   }
 
   .homepage-grid {
@@ -164,14 +169,5 @@ if (title || path) {
   .page-grid {
     grid-template-columns: 1fr;
     width: 100%;
-    .content {
-      padding: 8rem;
-      @media (max-width: 1999px) {
-        padding: 4rem;
-      }
-      @media (max-width: 899px) {
-        padding: 2rem;
-      }
-    }
   }
 </style>
