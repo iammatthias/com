@@ -1,21 +1,17 @@
 import { defineConfig } from "astro/config";
 import alpine from "@astrojs/alpinejs";
-import vercel from "@astrojs/vercel/serverless";
 import metaTags from "astro-meta-tags";
 import devtoolBreakpoints from "astro-devtool-breakpoints";
 import embeds from "astro-embed/integration";
+
+import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://iammatthias.com",
   integrations: [alpine(), embeds(), metaTags(), devtoolBreakpoints()],
   output: "hybrid",
-  adapter: vercel({
-    isr: {
-      // caches all pages on first request and saves for 1 day
-      expiration: 60 * 60 * 24,
-    },
-  }),
+  adapter: cloudflare(),
   prefetch: {
     prefetchAll: true,
   },
