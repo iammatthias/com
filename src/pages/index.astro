@@ -3,6 +3,7 @@ import Layout from "@layouts/layout.astro";
 import SocialPlatforms from "@components/social_platforms.astro";
 import Navigation from "@components/navigation.astro";
 import HomepageHero from "@components/homepage-hero.astro";
+import FarcasterLatestPost from "@/components/onchain/farcaster_latest_post.astro";
 ---
 
 <Layout>
@@ -17,6 +18,8 @@ import HomepageHero from "@components/homepage-hero.astro";
   <p class='text--color'>
     This is my little corner of the web where I share some of my work, some of my recipes, and some of my thoughts.
   </p>
+
+  <FarcasterLatestPost />
 
   <!-- <div x-data='{ activeAccordion: false }' class='find-me-online'>
     <p class='text--color'>

@@ -9,7 +9,7 @@ import Meta_Tags from "@components/meta_tags.astro";
 import Squiggle from "@components/squiggle.astro";
 import SocialShare from "@components/social_share.astro";
 import StripeButton from "@components/stripe_button.astro";
-import ZoraCollection from "@components/zora/collection.astro";
+import ZoraCollection from "@components/onchain/zora_collection.astro";
 
 import { Markdown } from "astro-remote";
 
@@ -99,8 +99,14 @@ const readingTime = Math.ceil(body.split(/\s+/).length / 180);
 </style>
 
 <style is:global>
-  article > *:not(.masonry),
-  article > p {
+  article > *:not(.masonry) {
     max-width: 800px;
+    width: 100%;
+  }
+
+  @media (max-width: 899px) {
+    article > *:not(.masonry) {
+      max-width: calc(100vw - 4rem);
+    }
   }
 </style>

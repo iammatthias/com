@@ -23,6 +23,13 @@
   --fw-normal: 400;
   --fw-medium: 500;
   --fw-bold: 700;
+
+  /* Font families */
+  --font-family-serif: -apple-system-ui-serif, ui-serif, "Georgia", serif;
+  --font-family-sans: -apple-system-ui-sans-serif, ui-sans-serif,
+    "Helvetica Neue", --font-family-mono: ui-monospace, SFMono-Regular, Monaco,
+    "Andale Mono", "Ubuntu Mono", monospace;
+  --font-family-kalnia: "Kalnia Variable", sans-serif;
 }
 
 @media screen and (min-width: 768px) {
@@ -33,7 +40,7 @@
 
 html {
   font-size: 16px;
-  font-family: -apple-system-ui-serif, ui-serif, "Georgia", serif;
+  font-family: var(--font-family-serif);
   line-height: var(--lh-normal);
   color: var(--text-primary);
   background-color: var(--background);
@@ -46,7 +53,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Kalnia Variable", sans-serif;
+  font-family: var(--font-family-serif);
   font-weight: var(--fw-medium);
   line-height: var(--lh-tight);
   color: var(--text-title);
@@ -98,7 +105,7 @@ small,
 /* Links */
 a {
   color: var(--text-link);
-  font-family: "Kalnia Variable", sans-serif;
+  font-family: inherit;
   font-weight: var(--fw-medium);
   text-decoration: none;
 }
@@ -106,22 +113,23 @@ a {
 /* Code blocks */
 pre,
 code {
-  font-family: ui-monospace, SFMono-Regular, Monaco, "Andale Mono",
-    "Ubuntu Mono", monospace;
+  font-family: var(--font-family-mono);
   font-size: var(--fs-sm);
   line-height: var(--lh-normal);
   color: var(--text-primary);
 }
 
 pre {
-  border: 1px solid var(--grey-light);
+  border: 1px solid var(--text-primary);
   border-radius: 0.5rem;
   overflow-x: auto;
+  padding: 1rem;
 }
 
 code:not(pre > code) {
-  border: 1px solid var(--grey-light);
+  border: 1px solid var(--text-primary);
   border-radius: 0.25rem;
+  padding: 0 0.25rem;
 }
 
 /* Tables */

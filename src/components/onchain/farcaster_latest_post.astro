@@ -1,0 +1,154 @@
+---
+
+---
+
+<div class='social-card' style='display: none;'>
+  <div class='user-info'>
+    <img src='' alt='Profile picture' class='profile-pic' id='profilePic' />
+    <div class='user-details'>
+      <h2 id='displayName'></h2>
+      <p id='username'></p>
+    </div>
+  </div>
+
+  <p id='postText' class='post-text'></p>
+  <div id='postImage' class='post-image'></div>
+
+  <div class='post-meta'>
+    <span id='timestamp' class='timestamp'></span>
+    <span id='channel' class='channel'></span>
+    <a href='https://warpcast.com/' target='_blank' class='farcaster-link'>View on Farcaster</a>
+  </div>
+</div>
+
+<style>
+  .social-card {
+    border: 1px solid var(--foreground);
+    border-radius: 1.5rem;
+    padding: 16px;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .social-card * {
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--foreground);
+  }
+
+  .profile-pic {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 12px;
+  }
+
+  .user-details h2 {
+    font-weight: bold;
+  }
+
+  .post-text {
+    font-size: 14px !important;
+  }
+
+  .post-image:empty {
+    display: none;
+  }
+
+  .post-image img {
+    max-width: 100%;
+  }
+
+  .post-meta {
+    display: flex;
+    padding-top: 12px;
+    border-top: 1px solid var(--foreground);
+  }
+
+  .farcaster-link {
+    text-decoration: underline;
+    margin-left: auto;
+  }
+
+  .social-card.loaded {
+    display: flex;
+  }
+</style>
+
+<script>
+  const FARQUEST_API_KEY = import.meta.env.PUBLIC_FARQUEST_API_KEY;
+
+  const options = {
+    method: "GET",
+    headers: { accept: "application/json", "API-KEY": FARQUEST_API_KEY },
+  };
+
+  fetch("https://build.far.quest/farcaster/v2/casts?fid=2728&limit=1", options)
+    .then((response) => response.json())
+    .then((data) => {
+      const {
+        author: {
+          displayName,
+          pfp: { url },
+          username,
+        },
+        channel,
+        embeds: { images },
+        text,
+        timestamp,
+        hash, // Extract the hash
+      } = data.result.casts[0];
+
+      // Update profile information
+      (document.getElementById("profilePic") as HTMLImageElement).src = url;
+      document.getElementById("displayName")!.textContent = displayName;
+      document.getElementById("username")!.textContent = `@${username}`;
+
+      // Update post content
+      document.getElementById("postText")!.textContent = text;
+
+      // Add image if available
+      if (images && images.length > 0) {
+        const imgElement = document.createElement("img");
+        imgElement.src = images[0].url;
+        imgElement.alt = "Post image";
+        document.getElementById("postImage")!.appendChild(imgElement);
+      }
+
+      // Update post metadata
+      document.getElementById("timestamp")!.textContent = new Date(timestamp).toLocaleString();
+      document.getElementById("channel")!.textContent = channel ? `#${channel}` : "";
+
+      // Update the "View on Farcaster" link
+      const farcasterLink = document.querySelector(".post-meta a") as HTMLAnchorElement;
+      const baseUrl = farcasterLink.href.split("?")[0]; // Get the base URL without query parameters
+      const queryParams = new URLSearchParams(farcasterLink.search); // Get existing query parameters
+
+      // Construct the new URL
+      const newUrl = new URL(`${baseUrl}${username}/${hash}`);
+
+      // Append existing query parameters
+      queryParams.forEach((value, key) => {
+        newUrl.searchParams.append(key, value);
+      });
+
+      farcasterLink.href = newUrl.toString();
+
+      // Show the component after data is populated
+      const socialCard = document.querySelector(".social-card") as HTMLElement;
+      socialCard.classList.add("loaded");
+      socialCard.style.display = "flex";
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      // Optionally, show an error message to the user
+    });
+</script>

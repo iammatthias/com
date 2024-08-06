@@ -1,0 +1,94 @@
+---
+import Image from "@components/img.astro";
+let maxColumns = 3;
+let smallColumns = 2;
+let extraSmallColumns = 1;
+
+const { collectionAddress, network, chain } = Astro.props;
+
+const PINATA_GATEWAY_TOKEN = import.meta.env.PINATA_GATEWAY_TOKEN;
+
+const response = await fetch(`https://api.zora.co/graphql`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  } as Record<string, string>,
+  body: JSON.stringify({
+    query: `
+    query Tokens {
+      tokens(
+        where: {collectionAddresses: "${collectionAddress}"}
+        sort: {sortKey: NONE, sortDirection: DESC}
+        networks: {network: ${network}, chain: ${chain}}
+      ) {
+        nodes {
+          token {
+            metadata
+          }
+        }
+      }
+    }`,
+  }),
+});
+
+const { data } = await response.json();
+const tokens = data.tokens.nodes;
+
+const metadata = tokens.map((node) => {
+  const metadata = node.token.metadata; // Remove JSON.parse here
+  metadata.image = metadata.image.replace("ipfs://", "https://ipfs.io/ipfs/");
+  return metadata;
+});
+---
+
+<div
+  class='masonry'
+  x-data
+  x-masonry
+  style={`--max-columns: ${maxColumns}; --small-columns: ${smallColumns}; --extra-small-columns: ${extraSmallColumns};`}
+>
+  {metadata.map((metadata) => <img alt={metadata.name} src={metadata.image} />)}
+</div>
+
+<script>
+  import Alpine from "alpinejs";
+  import masonry from "alpinejs-masonry";
+
+  Alpine.plugin(masonry);
+</script>
+
+<style>
+  a {
+    text-decoration: none;
+    border: none;
+  }
+
+  .masonry {
+    display: grid;
+    grid-gap: 2rem;
+    align-items: flex-start;
+    grid-template-columns: repeat(var(--max-columns), minmax(0, 1fr));
+  }
+
+  /* Large devices (desktops, 992px and up) */
+  @media (min-width: 992px) {
+    .masonry {
+      grid-template-columns: repeat(var(--max-columns), minmax(0, 1fr));
+    }
+  }
+
+  /* Small devices (landscape phones, 576px and up) */
+  @media (min-width: 576px) and (max-width: 767px) {
+    .masonry {
+      grid-template-columns: repeat(var(--small-columns), minmax(0, 1fr));
+    }
+  }
+
+  /* Extra small devices (portrait phones, less than 576px) */
+  @media (max-width: 575px) {
+    .masonry {
+      grid-template-columns: 1fr;
+      grid-gap: 1rem;
+    }
+  }
+</style>

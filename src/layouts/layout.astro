@@ -111,9 +111,11 @@ if (title || path) {
 
 <script type='module'>
   import { initializeSession } from "/src/lib/session.ts";
+  import { processOutboundLinks } from "/src/lib/attribution.ts";
 
   document.addEventListener("astro:page-load", () => {
     initializeSession();
+    processOutboundLinks();
   });
 </script>
 
