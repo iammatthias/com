@@ -1,0 +1,50 @@
+---
+const { collectionAddress, network, chain } = Astro.props;
+
+const PINATA_GATEWAY_TOKEN = import.meta.env.PINATA_GATEWAY_TOKEN;
+
+const response = await fetch(`https://api.zora.co/graphql`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  } as Record<string, string>,
+  body: JSON.stringify({
+    query: `
+    query Tokens {
+      tokens(
+        where: {collectionAddresses: "${collectionAddress}"}
+        sort: {sortKey: NONE, sortDirection: DESC}
+        networks: {network: ${network}, chain: ${chain}}
+      ) {
+        nodes {
+          token {
+            metadata
+          }
+        }
+      }
+    }`,
+  }),
+});
+
+const { data } = await response.json();
+const tokens = data.tokens.nodes;
+
+const metadata = tokens.map((node) => {
+  const metadata = node.token.metadata; // Remove JSON.parse here
+  metadata.image = metadata.image.replace("ipfs://", "silver-bitter-junglefowl-364.mypinata.cloud/");
+  return metadata;
+});
+---
+
+<div>
+  <ul>
+    {
+      metadata.map((metadata) => (
+        <li>
+          <p>{metadata.name}</p>
+          <img src={metadata.image + "?pinataGatewayToken=" + PINATA_GATEWAY_TOKEN} />
+        </li>
+      ))
+    }
+  </ul>
+</div>
