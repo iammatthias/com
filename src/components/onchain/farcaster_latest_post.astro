@@ -84,71 +84,73 @@
 </style>
 
 <script>
-  const FARQUEST_API_KEY = import.meta.env.PUBLIC_FARQUEST_API_KEY;
+  document.addEventListener("astro:page-load", () => {
+    const FARQUEST_API_KEY = import.meta.env.PUBLIC_FARQUEST_API_KEY;
 
-  const options = {
-    method: "GET",
-    headers: { accept: "application/json", "API-KEY": FARQUEST_API_KEY },
-  };
+    const options = {
+      method: "GET",
+      headers: { accept: "application/json", "API-KEY": FARQUEST_API_KEY },
+    };
 
-  fetch("https://build.far.quest/farcaster/v2/casts?fid=2728&limit=1", options)
-    .then((response) => response.json())
-    .then((data) => {
-      const {
-        author: {
-          displayName,
-          pfp: { url },
-          username,
-        },
-        channel,
-        embeds: { images },
-        text,
-        timestamp,
-        hash, // Extract the hash
-      } = data.result.casts[0];
+    fetch("https://build.far.quest/farcaster/v2/casts?fid=2728&limit=1", options)
+      .then((response) => response.json())
+      .then((data) => {
+        const {
+          author: {
+            displayName,
+            pfp: { url },
+            username,
+          },
+          channel,
+          embeds: { images },
+          text,
+          timestamp,
+          hash, // Extract the hash
+        } = data.result.casts[0];
 
-      // Update profile information
-      (document.getElementById("profilePic") as HTMLImageElement).src = url;
-      document.getElementById("displayName")!.textContent = displayName;
-      document.getElementById("username")!.textContent = `@${username}`;
+        // Update profile information
+        (document.getElementById("profilePic") as HTMLImageElement).src = url;
+        document.getElementById("displayName")!.textContent = displayName;
+        document.getElementById("username")!.textContent = `@${username}`;
 
-      // Update post content
-      document.getElementById("postText")!.textContent = text;
+        // Update post content
+        document.getElementById("postText")!.textContent = text;
 
-      // Add image if available
-      if (images && images.length > 0) {
-        const imgElement = document.createElement("img");
-        imgElement.src = images[0].url;
-        imgElement.alt = "Post image";
-        document.getElementById("postImage")!.appendChild(imgElement);
-      }
+        // Add image if available
+        if (images && images.length > 0) {
+          const imgElement = document.createElement("img");
+          imgElement.src = images[0].url;
+          imgElement.alt = "Post image";
+          document.getElementById("postImage")!.appendChild(imgElement);
+        }
 
-      // Update post metadata
-      document.getElementById("timestamp")!.textContent = new Date(timestamp).toLocaleString();
-      document.getElementById("channel")!.textContent = channel ? `#${channel}` : "";
+        // Update post metadata
+        document.getElementById("timestamp")!.textContent = new Date(timestamp).toLocaleString();
+        document.getElementById("channel")!.textContent = channel ? `#${channel}` : "";
 
-      // Update the "View on Farcaster" link
-      const farcasterLink = document.querySelector(".post-meta a") as HTMLAnchorElement;
-      const baseUrl = farcasterLink.href.split("?")[0]; // Get the base URL without query parameters
-      const queryParams = new URLSearchParams(farcasterLink.search); // Get existing query parameters
+        // Update the "View on Farcaster" link
+        const farcasterLink = document.querySelector(".post-meta a") as HTMLAnchorElement;
+        const baseUrl = farcasterLink.href.split("?")[0]; // Get the base URL without query parameters
+        const queryParams = new URLSearchParams(farcasterLink.search); // Get existing query parameters
 
-      // Construct the new URL
-      const newUrl = new URL(`${baseUrl}${username}/${hash}`);
+        // Construct the new URL
+        const newUrl = new URL(`${baseUrl}${username}/${hash}`);
 
-      // Append existing query parameters
-      queryParams.forEach((value, key) => {
-        newUrl.searchParams.append(key, value);
+        // Append existing query parameters
+        queryParams.forEach((value, key) => {
+          newUrl.searchParams.append(key, value);
+        });
+
+        farcasterLink.href = newUrl.toString();
+
+        // Show the component after data is populated
+        const socialCard = document.querySelector(".social-card") as HTMLElement;
+        socialCard.classList.add("loaded");
+        socialCard.style.display = "flex";
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        // Optionally, show an error message to the user
       });
-
-      farcasterLink.href = newUrl.toString();
-
-      // Show the component after data is populated
-      const socialCard = document.querySelector(".social-card") as HTMLElement;
-      socialCard.classList.add("loaded");
-      socialCard.style.display = "flex";
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-      // Optionally, show an error message to the user
-    });
+  });
 </script>
