@@ -129,21 +129,23 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 
       // Update top 5 page views
       const allPageViews = await getAllPageViews();
-      console.log("All Page Views: ", allPageViews); // Added for debugging
+      // console.log("All Page Views: ", allPageViews);
       if (Array.isArray(allPageViews) && allPageViews.length > 0 && Array.isArray(allPageViews[0])) {
-        const pagePaths = allPageViews[0]; // Paths of pages
-        const pageOccurrences = allPageViews[1]; // Views per page
+        const pagePaths = allPageViews[0];
+        const pageOccurrences = allPageViews[1];
         if (pageOccurrences && pagePaths && pageOccurrences.length === pagePaths.length) {
-          const pageViewCounts = pageOccurrences.map((views, i) => ({ page: pagePaths[i], views: Number(views) })); // Ensure views are treated as numbers
+          const pageViewCounts = pageOccurrences
+            .map((views, i) => ({ page: pagePaths[i], views: Number(views) }))
+            .filter(({ page }) => page !== "/test" && page !== "/posts/1546329600000-markdown-test");
 
-          console.log("Before sorting: ", pageViewCounts); // Debugging before sorting
+          // console.log("Before sorting: ", pageViewCounts);
 
-          pageViewCounts.sort((a, b) => b.views - a.views); // Sorting by views
+          pageViewCounts.sort((a, b) => b.views - a.views);
 
-          console.log("After sorting: ", pageViewCounts); // Debugging after sorting
+          // console.log("After sorting: ", pageViewCounts);
 
           const topPageViewCounts = pageViewCounts.slice(0, 5);
-          console.log("Top Page View Counts: ", topPageViewCounts); // Debugging top page views
+          // console.log("Top Page View Counts: ", topPageViewCounts);
 
           topPageViewCounts.forEach((pageView, i) => {
             const pageElement = document.getElementById(`page${i}`);
@@ -164,7 +166,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 
       // Update top 3 events
       const allEvents = await getAllEvents();
-      console.log("All Events: ", allEvents); // Added for debugging
+      // console.log("All Events: ", allEvents);
       if (Array.isArray(allEvents) && allEvents.length > 0 && Array.isArray(allEvents[0])) {
         const eventOccurrences = allEvents[0];
         const eventNames = allEvents[1];
@@ -174,7 +176,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
             .sort((a, b) => b.count - a.count)
             .slice(0, 3);
 
-          console.log("Event Counts: ", eventCounts); // Added for debugging
+          // console.log("Event Counts: ", eventCounts);
           eventCounts.forEach((event, i) => {
             const eventElement = document.getElementById(`event${i}`);
             const countElement = document.getElementById(`count${i}`);
@@ -186,10 +188,10 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
             }
           });
         } else {
-          console.error("Mismatch between event occurrences and event names lengths"); // Improved error handling
+          console.error("Mismatch between event occurrences and event names lengths");
         }
       } else {
-        console.error("Invalid data structure for events"); // Improved error handling
+        console.error("Invalid data structure for events");
       }
 
       // Update session IDs

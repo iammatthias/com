@@ -27,8 +27,9 @@
   /* Font families */
   --font-family-serif: -apple-system-ui-serif, ui-serif, "Georgia", serif;
   --font-family-sans: -apple-system-ui-sans-serif, ui-sans-serif,
-    "Helvetica Neue", --font-family-mono: ui-monospace, SFMono-Regular, Monaco,
-    "Andale Mono", "Ubuntu Mono", monospace;
+    "Helvetica Neue";
+  --font-family-mono: ui-monospace, SFMono-Regular, Monaco, "Andale Mono",
+    "Ubuntu Mono", monospace;
   --font-family-kalnia: "Kalnia Variable", sans-serif;
 }
 
