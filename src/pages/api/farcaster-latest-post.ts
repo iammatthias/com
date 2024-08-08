@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
 
+export const prerender = false;
+
 const AIRSTACK_API_KEY = import.meta.env.AIRSTACK_API_KEY;
 
 interface AirstackResponse {
@@ -40,7 +42,7 @@ export const GET: APIRoute = async ({ request }) => {
             profileName
             profileDisplayName
             profileImage
-          }
+          } 
           embeds
           numberOfLikes
           numberOfRecasts
@@ -104,10 +106,9 @@ export const GET: APIRoute = async ({ request }) => {
         : null,
       embed:
         cast.embeds && cast.embeds.length > 0
-          ? {
-              url: cast.embeds[0],
-              contentType: "image",
-            }
+          ? cast.embeds.map((embed) => ({
+              url: embed,
+            }))
           : null,
     };
 
