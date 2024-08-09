@@ -180,156 +180,131 @@
 </style>
 
 <script>
-  import mediumZoom from "medium-zoom";
-  import { addEvent } from "@lib/sessionContractProvider";
-
-  let zoom: ReturnType<typeof mediumZoom>;
-
   document.addEventListener("astro:page-load", () => {
-    // Update on page load
-    updateFarcasterPost();
-    // initializeZoom();
-  });
+    function updateFarcasterPost() {
+      const socialCard = document.querySelector(".social-card") as HTMLElement;
+      const errorMessage = document.getElementById("errorMessage") as HTMLElement;
 
-  // function initializeZoom() {
-  //   zoom = mediumZoom("[data-zoomable]", {
-  //     background: "var(--background)",
-  //     margin: 64,
-  //     scrollOffset: 0,
-  //   });
+      fetch("/api/farcaster-latest-post")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.error) {
+            throw new Error(data.error);
+          }
 
-  //   zoom.on("open", async (event) => {
-  //     const { alt, src } = event.target;
-  //     addEvent("zoomOpen", JSON.stringify({ alt, src }));
-  //   });
+          const { author, cast, channel, embed } = data.postData;
 
-  //   zoom.on("close", async (event) => {
-  //     const { alt, src } = event.target;
-  //     addEvent("zoomClose", JSON.stringify({ alt, src }));
-  //   });
-  // }
+          // Update profile information
+          (document.getElementById("profilePic") as HTMLImageElement).src = author.pfpUrl;
+          document.getElementById("displayName")!.textContent = author.displayName;
+          document.getElementById("username")!.textContent = `@${author.username}`;
 
-  function updateFarcasterPost() {
-    const socialCard = document.querySelector(".social-card") as HTMLElement;
-    const errorMessage = document.getElementById("errorMessage") as HTMLElement;
+          // Update post content
+          const postTextElement = document.getElementById("postText")!;
+          postTextElement.innerHTML = cast.text.replace(/\n/g, "<br>");
 
-    fetch("/api/farcaster-latest-post")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.error) {
-          throw new Error(data.error);
-        }
+          // Handle embed content
+          const embedContentElement = document.getElementById("embedContent")!;
+          embedContentElement.innerHTML = "";
+          if (embed) {
+            const embedPromises = embed.map(async (embedItem) => {
+              try {
+                const response = await fetch(embedItem.url.url, { method: "HEAD" });
+                const contentType = response.headers.get("Content-Type");
+                let embedElement;
 
-        const { author, cast, channel, embed } = data.postData;
+                if (contentType?.startsWith("image/")) {
+                  embedElement = document.createElement("img");
+                  embedElement.src = embedItem.url.url;
+                  embedElement.alt = "Embedded image";
+                  embedElement.setAttribute("data-zoomable", "");
+                } else if (contentType?.startsWith("video/")) {
+                  embedElement = document.createElement("video");
+                  embedElement.controls = true;
+                  const sourceElement = document.createElement("source");
+                  sourceElement.src = embedItem.url.url;
+                  sourceElement.type = contentType;
+                  embedElement.appendChild(sourceElement);
+                } else if (contentType?.startsWith("audio/")) {
+                  embedElement = document.createElement("audio");
+                  embedElement.controls = true;
+                  const sourceElement = document.createElement("source");
+                  sourceElement.src = embedItem.url.url;
+                  sourceElement.type = contentType;
+                  embedElement.appendChild(sourceElement);
+                } else {
+                  embedElement = document.createElement("iframe");
+                  embedElement.src = embedItem.url.url;
+                  embedElement.frameBorder = 0;
+                }
 
-        // Update profile information
-        (document.getElementById("profilePic") as HTMLImageElement).src = author.pfpUrl;
-        document.getElementById("displayName")!.textContent = author.displayName;
-        document.getElementById("username")!.textContent = `@${author.username}`;
-
-        // Update post content
-        const postTextElement = document.getElementById("postText")!;
-        postTextElement.innerHTML = cast.text.replace(/\n/g, "<br>");
-
-        // Handle embed content
-        const embedContentElement = document.getElementById("embedContent")!;
-        embedContentElement.innerHTML = "";
-        if (embed) {
-          const embedPromises = embed.map(async (embedItem) => {
-            try {
-              const response = await fetch(embedItem.url.url, { method: "HEAD" });
-              const contentType = response.headers.get("Content-Type");
-              let embedElement;
-
-              if (contentType?.startsWith("image/")) {
-                embedElement = document.createElement("img");
-                embedElement.src = embedItem.url.url;
-                embedElement.alt = "Embedded image";
-                embedElement.setAttribute("data-zoomable", "");
-              } else if (contentType?.startsWith("video/")) {
-                embedElement = document.createElement("video");
-                embedElement.controls = true;
-                const sourceElement = document.createElement("source");
-                sourceElement.src = embedItem.url.url;
-                sourceElement.type = contentType;
-                embedElement.appendChild(sourceElement);
-              } else if (contentType?.startsWith("audio/")) {
-                embedElement = document.createElement("audio");
-                embedElement.controls = true;
-                const sourceElement = document.createElement("source");
-                sourceElement.src = embedItem.url.url;
-                sourceElement.type = contentType;
-                embedElement.appendChild(sourceElement);
-              } else {
-                embedElement = document.createElement("iframe");
-                embedElement.src = embedItem.url.url;
-                embedElement.frameBorder = 0;
+                embedElement.className = "embed-content";
+                embedContentElement.appendChild(embedElement);
+              } catch (error) {
+                console.error("Error fetching the URL:", error);
+                // Handle error or display a placeholder
               }
+            });
 
-              embedElement.className = "embed-content";
-              embedContentElement.appendChild(embedElement);
-            } catch (error) {
-              console.error("Error fetching the URL:", error);
-              // Handle error or display a placeholder
-            }
-          });
+            Promise.all(embedPromises).then(() => {
+              // Reinitialize zoom after all embeds have been added
+              zoom.detach();
+              // initializeZoom();
+            });
+          }
 
-          Promise.all(embedPromises).then(() => {
-            // Reinitialize zoom after all embeds have been added
-            zoom.detach();
-            // initializeZoom();
-          });
-        }
+          // Update post metadata
+          function timeSince(date) {
+            const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+            let interval = Math.floor(seconds / 31536000);
 
-        // Update post metadata
-        function timeSince(date) {
-          const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
-          let interval = Math.floor(seconds / 31536000);
+            if (interval >= 1) return interval + "y";
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) return interval + "mo";
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) return interval + "d";
+            interval = Math.floor(seconds / 3600);
+            if (interval >= 1) return interval + "h";
+            interval = Math.floor(seconds / 60);
+            if (interval >= 1) return interval + "m";
+            return Math.floor(seconds) + "s";
+          }
 
-          if (interval >= 1) return interval + "y";
-          interval = Math.floor(seconds / 2592000);
-          if (interval >= 1) return interval + "mo";
-          interval = Math.floor(seconds / 86400);
-          if (interval >= 1) return interval + "d";
-          interval = Math.floor(seconds / 3600);
-          if (interval >= 1) return interval + "h";
-          interval = Math.floor(seconds / 60);
-          if (interval >= 1) return interval + "m";
-          return Math.floor(seconds) + "s";
-        }
+          document.getElementById("timestamp")!.textContent = timeSince(cast.timestamp);
+          const channelLinkElement = document.getElementById("channelLink") as HTMLAnchorElement;
+          if (channel) {
+            channelLinkElement.href = `https://warpcast.com/~/channel/${channel.name}`;
+            channelLinkElement.textContent = `/${channel.name}`;
+            channelLinkElement.style.display = "inline";
+          } else {
+            channelLinkElement.style.display = "none";
+          }
+          document.querySelector("#reactions .count")!.textContent = cast.reactionCount.toString();
+          document.querySelector("#recasts .count")!.textContent = cast.recastCount.toString();
+          document.querySelector("#replies .count")!.textContent = cast.replyCount.toString();
 
-        document.getElementById("timestamp")!.textContent = timeSince(cast.timestamp);
-        const channelLinkElement = document.getElementById("channelLink") as HTMLAnchorElement;
-        if (channel) {
-          channelLinkElement.href = `https://warpcast.com/~/channel/${channel.name}`;
-          channelLinkElement.textContent = `/${channel.name}`;
-          channelLinkElement.style.display = "inline";
-        } else {
-          channelLinkElement.style.display = "none";
-        }
-        document.querySelector("#reactions .count")!.textContent = cast.reactionCount.toString();
-        document.querySelector("#recasts .count")!.textContent = cast.recastCount.toString();
-        document.querySelector("#replies .count")!.textContent = cast.replyCount.toString();
+          // Update the "View on Farcaster" link
+          const farcasterLink = document.getElementById("farcasterLink") as HTMLAnchorElement;
+          farcasterLink.href = `https://warpcast.com/${author.username}/${cast.hash}`;
 
-        // Update the "View on Farcaster" link
-        const farcasterLink = document.getElementById("farcasterLink") as HTMLAnchorElement;
-        farcasterLink.href = `https://warpcast.com/${author.username}/${cast.hash}`;
+          socialCard.classList.add("loaded");
+          socialCard.classList.remove("error");
+          errorMessage.style.display = "none";
+        })
+        .catch((err) => {
+          console.error("Error fetching data:", err);
+          errorMessage.textContent = "Failed to load the latest Farcaster post. Please try again later.";
+          errorMessage.style.display = "block";
+          socialCard.classList.add("error");
+          socialCard.classList.remove("loaded");
+        });
+    }
 
-        socialCard.classList.add("loaded");
-        socialCard.classList.remove("error");
-        errorMessage.style.display = "none";
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-        errorMessage.textContent = "Failed to load the latest Farcaster post. Please try again later.";
-        errorMessage.style.display = "block";
-        socialCard.classList.add("error");
-        socialCard.classList.remove("loaded");
-      });
-  }
+    updateFarcasterPost();
+  });
 </script>
