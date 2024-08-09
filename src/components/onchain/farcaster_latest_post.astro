@@ -188,26 +188,26 @@
   document.addEventListener("astro:page-load", () => {
     // Update on page load
     updateFarcasterPost();
-    initializeZoom();
+    // initializeZoom();
   });
 
-  function initializeZoom() {
-    zoom = mediumZoom("[data-zoomable]", {
-      background: "var(--background)",
-      margin: 64,
-      scrollOffset: 0,
-    });
+  // function initializeZoom() {
+  //   zoom = mediumZoom("[data-zoomable]", {
+  //     background: "var(--background)",
+  //     margin: 64,
+  //     scrollOffset: 0,
+  //   });
 
-    zoom.on("open", async (event) => {
-      const { alt, src } = event.target;
-      addEvent("zoomOpen", JSON.stringify({ alt, src }));
-    });
+  //   zoom.on("open", async (event) => {
+  //     const { alt, src } = event.target;
+  //     addEvent("zoomOpen", JSON.stringify({ alt, src }));
+  //   });
 
-    zoom.on("close", async (event) => {
-      const { alt, src } = event.target;
-      addEvent("zoomClose", JSON.stringify({ alt, src }));
-    });
-  }
+  //   zoom.on("close", async (event) => {
+  //     const { alt, src } = event.target;
+  //     addEvent("zoomClose", JSON.stringify({ alt, src }));
+  //   });
+  // }
 
   function updateFarcasterPost() {
     const socialCard = document.querySelector(".social-card") as HTMLElement;
@@ -282,7 +282,7 @@
           Promise.all(embedPromises).then(() => {
             // Reinitialize zoom after all embeds have been added
             zoom.detach();
-            initializeZoom();
+            // initializeZoom();
           });
         }
 
