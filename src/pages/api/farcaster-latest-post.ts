@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import metadata from "url-metadata";
 
 export const prerender = false;
 
@@ -16,7 +17,7 @@ interface AirstackResponse {
           profileDisplayName: string;
           profileImage: string;
         };
-        embeds: string[];
+        embeds: { url: string }[];
         numberOfLikes: number;
         numberOfRecasts: number;
         numberOfReplies: number;
@@ -81,6 +82,37 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     const cast = data.data.FarcasterCasts.Cast[0];
+
+    // Handle embeds separately as it's an asynchronous operation
+    const embedData =
+      cast.embeds && cast.embeds.length > 0
+        ? await Promise.all(
+            cast.embeds.map(async (embedObj) => {
+              if (
+                embedObj &&
+                embedObj.url &&
+                typeof embedObj.url === "string"
+              ) {
+                // console.log("Processing embed URL:", embedObj.url); // Debug statement
+                try {
+                  return await metadata(embedObj.url);
+                } catch (err) {
+                  console.error("Error processing embed:", err);
+                  return null;
+                }
+              } else {
+                console.warn("Invalid embed object:", embedObj); // Log the issue
+                return null;
+              }
+            }),
+          )
+        : null;
+
+    // Filter out any null values that may have resulted from invalid embeds
+    const filteredEmbedData = embedData
+      ? embedData.filter((item) => item !== null)
+      : null;
+
     const processedData = {
       author: {
         displayName: cast.castedBy.profileDisplayName,
@@ -104,12 +136,7 @@ export const GET: APIRoute = async ({ request }) => {
             imageUrl: "",
           }
         : null,
-      embed:
-        cast.embeds && cast.embeds.length > 0
-          ? cast.embeds.map((embed) => ({
-              url: embed,
-            }))
-          : null,
+      embed: filteredEmbedData,
     };
 
     return new Response(JSON.stringify({ postData: processedData }), {

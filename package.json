@@ -36,6 +36,7 @@
     "satori": "^0.10.14",
     "satori-html": "^0.3.2",
     "three": "^0.167.1",
+    "url-metadata": "^4.1.1",
     "vercel": "35.2.3",
     "viem": "^2.18.8"
   },
