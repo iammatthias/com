@@ -239,201 +239,200 @@
 </style>
 
 <script>
-  document.addEventListener("astro:page-load", () => {
-    function updateFarcasterPost() {
-      const socialCard = document.querySelector(".social-card") as HTMLElement | null;
-      const errorMessage = document.getElementById("errorMessage") as HTMLElement | null;
+  function updateFarcasterPost() {
+    const socialCard = document.querySelector(".social-card") as HTMLElement | null;
+    const errorMessage = document.getElementById("errorMessage") as HTMLElement | null;
 
-      if (!socialCard || !errorMessage) {
-        console.error("Required elements are missing from the DOM.");
-        return;
-      }
-
-      fetch("/api/farcaster-latest-post")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          if (data.error) {
-            throw new Error(data.error);
-          }
-
-          const { author, cast, channel, embed } = data.postData;
-
-          // Update profile information
-          const profilePic = document.getElementById("profilePic") as HTMLImageElement | null;
-          if (profilePic) {
-            profilePic.src = author.pfpUrl;
-          }
-
-          const displayName = document.getElementById("displayName");
-          if (displayName) {
-            displayName.textContent = author.displayName;
-          }
-
-          const username = document.getElementById("username");
-          if (username) {
-            username.textContent = `@${author.username}`;
-          }
-
-          // Update post content
-          const postTextElement = document.getElementById("postText");
-          if (postTextElement) {
-            postTextElement.innerHTML = cast.text.replace(/\n/g, "<br>");
-          }
-
-          // Handle embed content
-          const embedContentElement = document.getElementById("embedContent");
-          if (embedContentElement) {
-            embedContentElement.innerHTML = "";
-
-            if (embed && Array.isArray(embed)) {
-              // Determine layout based on the number of embeds
-              embedContentElement.style.gridTemplateColumns = embed.length > 1 ? "1fr 1fr" : "1fr";
-
-              embed.forEach((embedItem) => {
-                try {
-                  const embedContainer = document.createElement("a");
-                  embedContainer.className = "embed-container";
-                  embedContainer.href = embedItem["og:url"] || embedItem.url;
-                  embedContainer.target = "_blank"; // Make the entire embed clickable
-
-                  const ogTitle = embedItem["og:title"] || embedItem.title;
-                  const ogImage = embedItem["og:image"] || embedItem.image;
-
-                  // Apply specific layout for music links (Spotify, Apple Music, etc.)
-                  if (embedContainer.href.includes("spotify.com") || embedContainer.href.includes("music.apple.com")) {
-                    embedContainer.className += " music-embed";
-
-                    if (ogImage) {
-                      const imgElement = document.createElement("img");
-                      imgElement.src = ogImage;
-                      imgElement.alt = ogTitle || "Embedded image";
-                      imgElement.className = "music-embed-image";
-                      embedContainer.appendChild(imgElement);
-                    }
-
-                    const textContainer = document.createElement("div");
-                    textContainer.className = "music-embed-text";
-
-                    if (ogTitle) {
-                      const titleElement = document.createElement("p");
-                      titleElement.textContent = ogTitle;
-                      titleElement.className = "music-embed-title";
-                      textContainer.appendChild(titleElement);
-                    }
-
-                    const urlElement = document.createElement("p");
-                    urlElement.textContent = new URL(embedContainer.href).hostname;
-                    urlElement.className = "music-embed-url";
-                    textContainer.appendChild(urlElement);
-
-                    embedContainer.appendChild(textContainer);
-                  } else {
-                    // Standard card layout for other links
-                    if (ogImage) {
-                      const imgElement = document.createElement("img");
-                      imgElement.src = ogImage;
-                      imgElement.alt = ogTitle || "Embedded image";
-                      imgElement.className = "embed-image";
-                      embedContainer.appendChild(imgElement);
-                    }
-
-                    if (ogTitle) {
-                      const titleElement = document.createElement("p");
-                      titleElement.textContent = ogTitle;
-                      titleElement.className = "embed-title";
-                      embedContainer.appendChild(titleElement);
-                    }
-
-                    const urlElement = document.createElement("p");
-                    urlElement.textContent = "Visit link";
-                    urlElement.className = "embed-url";
-                    embedContainer.appendChild(urlElement);
-                  }
-
-                  embedContentElement.appendChild(embedContainer);
-                } catch (error) {
-                  console.error("Error processing embed item:", error);
-                  const errorElement = document.createElement("p");
-                  errorElement.textContent = "Failed to load content.";
-                  embedContentElement.appendChild(errorElement);
-                }
-              });
-            }
-          }
-
-          // Update post metadata
-          function timeSince(date: string) {
-            const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
-            let interval = Math.floor(seconds / 31536000);
-
-            if (interval >= 1) return interval + "y";
-            interval = Math.floor(seconds / 2592000);
-            if (interval >= 1) return interval + "mo";
-            interval = Math.floor(seconds / 86400);
-            if (interval >= 1) return interval + "d";
-            interval = Math.floor(seconds / 3600);
-            if (interval >= 1) return interval + "h";
-            interval = Math.floor(seconds / 60);
-            if (interval >= 1) return interval + "m";
-            return Math.floor(seconds) + "s";
-          }
-
-          const timestamp = document.getElementById("timestamp");
-          if (timestamp) {
-            timestamp.textContent = timeSince(cast.timestamp);
-          }
-
-          const channelLinkElement = document.getElementById("channelLink") as HTMLAnchorElement | null;
-          if (channelLinkElement && channel) {
-            channelLinkElement.href = `https://warpcast.com/~/channel/${channel.name}`;
-            channelLinkElement.textContent = `/${channel.name}`;
-            channelLinkElement.style.display = "inline";
-          } else if (channelLinkElement) {
-            channelLinkElement.style.display = "none";
-          }
-
-          const reactions = document.querySelector("#reactions .count");
-          if (reactions) {
-            reactions.textContent = cast.reactionCount.toString();
-          }
-
-          const recasts = document.querySelector("#recasts .count");
-          if (recasts) {
-            recasts.textContent = cast.recastCount.toString();
-          }
-
-          const replies = document.querySelector("#replies .count");
-          if (replies) {
-            replies.textContent = cast.replyCount.toString();
-          }
-
-          const farcasterLink = document.getElementById("farcasterLink") as HTMLAnchorElement | null;
-          if (farcasterLink) {
-            farcasterLink.href = `https://warpcast.com/${author.username}/${cast.hash}`;
-          }
-
-          socialCard.classList.add("loaded");
-          socialCard.classList.remove("error");
-          errorMessage.style.display = "none";
-        })
-        .catch((err) => {
-          console.error("Error fetching data:", err);
-          if (errorMessage) {
-            errorMessage.textContent = "Failed to load the latest Farcaster post. Please try again later.";
-            errorMessage.style.display = "block";
-          }
-          if (socialCard) {
-            socialCard.classList.add("error");
-            socialCard.classList.remove("loaded");
-          }
-        });
+    if (!socialCard || !errorMessage) {
+      console.error("Required elements are missing from the DOM.");
+      return;
     }
 
+    fetch("/api/farcaster-latest-post")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        const { author, cast, channel, embed } = data.postData;
+
+        // Update profile information
+        const profilePic = document.getElementById("profilePic") as HTMLImageElement | null;
+        if (profilePic) {
+          profilePic.src = author.pfpUrl;
+        }
+
+        const displayName = document.getElementById("displayName");
+        if (displayName) {
+          displayName.textContent = author.displayName;
+        }
+
+        const username = document.getElementById("username");
+        if (username) {
+          username.textContent = `@${author.username}`;
+        }
+
+        // Update post content
+        const postTextElement = document.getElementById("postText");
+        if (postTextElement) {
+          postTextElement.innerHTML = cast.text.replace(/\n/g, "<br>");
+        }
+
+        // Handle embed content
+        const embedContentElement = document.getElementById("embedContent");
+        if (embedContentElement) {
+          embedContentElement.innerHTML = "";
+
+          if (embed && Array.isArray(embed)) {
+            // Determine layout based on the number of embeds
+            embedContentElement.style.gridTemplateColumns = embed.length > 1 ? "1fr 1fr" : "1fr";
+
+            embed.forEach((embedItem) => {
+              try {
+                const embedContainer = document.createElement("a");
+                embedContainer.className = "embed-container";
+                embedContainer.href = embedItem["og:url"] || embedItem.url;
+                embedContainer.target = "_blank"; // Make the entire embed clickable
+
+                const ogTitle = embedItem["og:title"] || embedItem.title;
+                const ogImage = embedItem["og:image"] || embedItem.image;
+
+                // Apply specific layout for music links (Spotify, Apple Music, etc.)
+                if (embedContainer.href.includes("spotify.com") || embedContainer.href.includes("music.apple.com")) {
+                  embedContainer.className += " music-embed";
+
+                  if (ogImage) {
+                    const imgElement = document.createElement("img");
+                    imgElement.src = ogImage;
+                    imgElement.alt = ogTitle || "Embedded image";
+                    imgElement.className = "music-embed-image";
+                    embedContainer.appendChild(imgElement);
+                  }
+
+                  const textContainer = document.createElement("div");
+                  textContainer.className = "music-embed-text";
+
+                  if (ogTitle) {
+                    const titleElement = document.createElement("p");
+                    titleElement.textContent = ogTitle;
+                    titleElement.className = "music-embed-title";
+                    textContainer.appendChild(titleElement);
+                  }
+
+                  const urlElement = document.createElement("p");
+                  urlElement.textContent = new URL(embedContainer.href).hostname;
+                  urlElement.className = "music-embed-url";
+                  textContainer.appendChild(urlElement);
+
+                  embedContainer.appendChild(textContainer);
+                } else {
+                  // Standard card layout for other links
+                  if (ogImage) {
+                    const imgElement = document.createElement("img");
+                    imgElement.src = ogImage;
+                    imgElement.alt = ogTitle || "Embedded image";
+                    imgElement.className = "embed-image";
+                    embedContainer.appendChild(imgElement);
+                  }
+
+                  if (ogTitle) {
+                    const titleElement = document.createElement("p");
+                    titleElement.textContent = ogTitle;
+                    titleElement.className = "embed-title";
+                    embedContainer.appendChild(titleElement);
+                  }
+
+                  const urlElement = document.createElement("p");
+                  urlElement.textContent = "Visit link";
+                  urlElement.className = "embed-url";
+                  embedContainer.appendChild(urlElement);
+                }
+
+                embedContentElement.appendChild(embedContainer);
+              } catch (error) {
+                console.error("Error processing embed item:", error);
+                const errorElement = document.createElement("p");
+                errorElement.textContent = "Failed to load content.";
+                embedContentElement.appendChild(errorElement);
+              }
+            });
+          }
+        }
+
+        // Update post metadata
+        function timeSince(date: string) {
+          const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+          let interval = Math.floor(seconds / 31536000);
+
+          if (interval >= 1) return interval + "y";
+          interval = Math.floor(seconds / 2592000);
+          if (interval >= 1) return interval + "mo";
+          interval = Math.floor(seconds / 86400);
+          if (interval >= 1) return interval + "d";
+          interval = Math.floor(seconds / 3600);
+          if (interval >= 1) return interval + "h";
+          interval = Math.floor(seconds / 60);
+          if (interval >= 1) return interval + "m";
+          return Math.floor(seconds) + "s";
+        }
+
+        const timestamp = document.getElementById("timestamp");
+        if (timestamp) {
+          timestamp.textContent = timeSince(cast.timestamp);
+        }
+
+        const channelLinkElement = document.getElementById("channelLink") as HTMLAnchorElement | null;
+        if (channelLinkElement && channel) {
+          channelLinkElement.href = `https://warpcast.com/~/channel/${channel.name}`;
+          channelLinkElement.textContent = `/${channel.name}`;
+          channelLinkElement.style.display = "inline";
+        } else if (channelLinkElement) {
+          channelLinkElement.style.display = "none";
+        }
+
+        const reactions = document.querySelector("#reactions .count");
+        if (reactions) {
+          reactions.textContent = cast.reactionCount.toString();
+        }
+
+        const recasts = document.querySelector("#recasts .count");
+        if (recasts) {
+          recasts.textContent = cast.recastCount.toString();
+        }
+
+        const replies = document.querySelector("#replies .count");
+        if (replies) {
+          replies.textContent = cast.replyCount.toString();
+        }
+
+        const farcasterLink = document.getElementById("farcasterLink") as HTMLAnchorElement | null;
+        if (farcasterLink) {
+          farcasterLink.href = `https://warpcast.com/${author.username}/${cast.hash}`;
+        }
+
+        socialCard.classList.add("loaded");
+        socialCard.classList.remove("error");
+        errorMessage.style.display = "none";
+      })
+      .catch((err) => {
+        console.error("Error fetching data:", err);
+        if (errorMessage) {
+          errorMessage.textContent = "Failed to load the latest Farcaster post. Please try again later.";
+          errorMessage.style.display = "block";
+        }
+        if (socialCard) {
+          socialCard.classList.add("error");
+          socialCard.classList.remove("loaded");
+        }
+      });
+  }
+  document.addEventListener("astro:page-load", () => {
     updateFarcasterPost();
   });
 </script>
