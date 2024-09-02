@@ -3,24 +3,51 @@ let currentYear = new Date().getFullYear();
 ---
 
 <footer>
-  <small>
-    <span>© {currentYear} Matthias Jordan</span><br />
-    <span class='circle'></span>
-    <a href='/onchain-analytics'>Onchain Analytics</a>
-    <span>✧</span>
-    <a href='/social' aria-label='Social page' title='Social'>Social</a>
-    <span>✧</span>
-    <a href='/resume' aria-label='Resume page' title='Resume'>Resume</a>
-  </small>
+  <p class='small'>© {currentYear} Matthias Jordan</p>
+  <div class='links'>
+    <p class='small'>
+      <span class='circle'></span>
+      <a href='/onchain-analytics' aria-label='Onchain analytics' title='Onchain analytics'>Onchain Analytics</a>
+    </p>
+    <p class='small'>
+      <span>✧</span>
+      <a href='/social' aria-label='Social media presence' title='Social'>Social</a>
+    </p>
+    <p class='small'>
+      <span>✧</span>
+      <a href='/resume' aria-label='An abbreviated resume' title='Resume'>Resume</a>
+    </p>
+    <p class='small'>
+      <span>✧</span>
+      <a
+        href='https://day---break.com/'
+        target='_blank'
+        aria-label='day---break: Driving Growth Through Data-Driven Marketing'
+        title='day---break: Driving Growth Through Data-Driven Marketing'>☼ day---break</a
+      >
+    </p>
+  </div>
 </footer>
 
 <style>
   footer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     margin-top: auto;
-    *:not(.circle, small) {
+    *:not(.circle, .small) {
       opacity: 0.75;
     }
   }
+  .links {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    @media (max-width: 768px) {
+      gap: 0.25rem;
+    }
+  }
+
   a {
     color: inherit;
     font-weight: 400;

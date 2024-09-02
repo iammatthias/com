@@ -97,6 +97,7 @@ li {
 
 /* Small text */
 small,
+.small,
 .text-sm {
   font-size: var(--fs-sm);
   line-height: var(--lh-snug);
