@@ -108,6 +108,8 @@ export const GET: APIRoute = async ({ request }) => {
           )
         : null;
 
+    console.log("embedData", embedData);
+
     // Filter out any null values that may have resulted from invalid embeds
     const filteredEmbedData = embedData
       ? embedData.filter((item) => item !== null)
@@ -136,7 +138,8 @@ export const GET: APIRoute = async ({ request }) => {
             imageUrl: "",
           }
         : null,
-      embed: filteredEmbedData,
+      // embed: filteredEmbedData,
+      embed: embedData,
     };
 
     return new Response(JSON.stringify({ postData: processedData }), {
