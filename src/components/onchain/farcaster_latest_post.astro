@@ -106,16 +106,10 @@
   }
 
   .embed-content {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 12px;
     border-radius: 8px;
-    grid-template-columns: 1fr;
-  }
-
-  @media (max-width: 899px) {
-    .embed-content {
-      grid-template-columns: 1fr;
-    }
   }
 
   .embed-content:empty {
@@ -175,64 +169,63 @@
 <style is:global>
   .embed-container {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 12px;
     padding: 10px;
     border: 1px solid #e1e1e1;
     border-radius: 8px;
     background-color: #fff;
-    text-decoration: none; /* Make sure the entire block has no underline */
-    color: inherit; /* Ensure text color is inherited */
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
   }
 
-  .embed-image,
-  .music-embed-image {
-    width: 64px;
-    height: 64px;
+  .embed-image {
+    max-width: 100%;
+    height: auto;
     object-fit: cover;
     border-radius: 4px;
   }
 
-  .embed-title,
-  .music-embed-title {
-    font-size: 14px;
-    font-weight: bold;
-    margin: 0;
-  }
-
-  .embed-url,
-  .music-embed-url {
-    font-size: 12px;
-    color: #666;
-    text-decoration: none;
-  }
-
-  .music-embed {
-    display: flex;
-    align-items: start;
-    flex-direction: row;
-    width: 100%; /* Ensure the embed takes up the full width */
-  }
-
-  .music-embed-text {
+  .embed-content {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
 
-  .music-embed-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 4px;
-  }
-
-  .music-embed-title {
+  .embed-title {
+    font-size: 14px;
     font-weight: bold;
     margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 
-  .music-embed-url {
+  .embed-url {
+    font-size: 12px;
     color: #666;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .music-embed {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .music-embed .embed-image {
+    max-width: 80px;
+    max-height: 80px;
+  }
+
+  .music-embed .embed-content {
+    flex: 1;
+    min-width: 0;
   }
 </style>
 
@@ -288,70 +281,46 @@
           embedContentElement.innerHTML = "";
 
           if (embed && Array.isArray(embed)) {
-            // Determine layout based on the number of embeds
-            embedContentElement.style.gridTemplateColumns = embed.length > 1 ? "1fr 1fr" : "1fr";
-
             embed.forEach((embedItem) => {
               try {
                 const embedContainer = document.createElement("a");
                 embedContainer.className = "embed-container";
                 embedContainer.href = embedItem["og:url"] || embedItem.url;
-                embedContainer.target = "_blank"; // Make the entire embed clickable
+                embedContainer.target = "_blank";
 
                 const ogTitle = embedItem["og:title"] || embedItem.title;
                 const ogImage = embedItem["og:image"] || embedItem.image;
+                const isMusicEmbed =
+                  embedContainer.href.includes("spotify.com") || embedContainer.href.includes("music.apple.com");
 
-                // Apply specific layout for music links (Spotify, Apple Music, etc.)
-                if (embedContainer.href.includes("spotify.com") || embedContainer.href.includes("music.apple.com")) {
-                  embedContainer.className += " music-embed";
-
-                  if (ogImage) {
-                    const imgElement = document.createElement("img");
-                    imgElement.src = ogImage;
-                    imgElement.alt = ogTitle || "Embedded image";
-                    imgElement.className = "music-embed-image";
-                    embedContainer.appendChild(imgElement);
-                  }
-
-                  const textContainer = document.createElement("div");
-                  textContainer.className = "music-embed-text";
-
-                  if (ogTitle) {
-                    const titleElement = document.createElement("p");
-                    titleElement.textContent = ogTitle;
-                    titleElement.className = "music-embed-title";
-                    textContainer.appendChild(titleElement);
-                  }
-
-                  const urlElement = document.createElement("p");
-                  urlElement.textContent = new URL(embedContainer.href).hostname;
-                  urlElement.className = "music-embed-url";
-                  textContainer.appendChild(urlElement);
-
-                  embedContainer.appendChild(textContainer);
-                } else {
-                  // Standard card layout for other links
-                  if (ogImage) {
-                    const imgElement = document.createElement("img");
-                    imgElement.src = ogImage;
-                    imgElement.alt = ogTitle || "Embedded image";
-                    imgElement.className = "embed-image";
-                    embedContainer.appendChild(imgElement);
-                  }
-
-                  if (ogTitle) {
-                    const titleElement = document.createElement("p");
-                    titleElement.textContent = ogTitle;
-                    titleElement.className = "embed-title";
-                    embedContainer.appendChild(titleElement);
-                  }
-
-                  const urlElement = document.createElement("p");
-                  urlElement.textContent = "Visit link";
-                  urlElement.className = "embed-url";
-                  embedContainer.appendChild(urlElement);
+                if (isMusicEmbed) {
+                  embedContainer.classList.add("music-embed");
                 }
 
+                if (ogImage) {
+                  const imgElement = document.createElement("img");
+                  imgElement.src = ogImage;
+                  imgElement.alt = ogTitle || "Embedded image";
+                  imgElement.className = "embed-image";
+                  embedContainer.appendChild(imgElement);
+                }
+
+                const contentDiv = document.createElement("div");
+                contentDiv.className = "embed-content";
+
+                if (ogTitle) {
+                  const titleElement = document.createElement("p");
+                  titleElement.textContent = ogTitle;
+                  titleElement.className = "embed-title";
+                  contentDiv.appendChild(titleElement);
+                }
+
+                const urlElement = document.createElement("p");
+                urlElement.textContent = new URL(embedContainer.href).hostname;
+                urlElement.className = "embed-url";
+                contentDiv.appendChild(urlElement);
+
+                embedContainer.appendChild(contentDiv);
                 embedContentElement.appendChild(embedContainer);
               } catch (error) {
                 console.error("Error processing embed item:", error);

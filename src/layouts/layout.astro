@@ -98,9 +98,9 @@ if (title || path) {
     <ViewTransitions />
   </head>
   <body>
-    <Navigation />
     <main class=`grid ${Astro.url.pathname === "/" ? "homepage-grid" : "page-grid"}`>
       <section class='content'>
+        <Navigation />
         <slot />
       </section>
       {Astro.url.pathname === "/" && <HomepageHero />}
@@ -123,6 +123,8 @@ if (title || path) {
   body {
     display: flex;
     flex-direction: column;
+    max-width: 1440px;
+    margin: 0 auto;
     min-height: 100vh;
     gap: 2rem;
     padding: 8rem;

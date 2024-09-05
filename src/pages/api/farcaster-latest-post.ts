@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import metadata from "url-metadata";
+import fetch from "node-fetch";
 
 export const prerender = false;
 
@@ -93,9 +94,24 @@ export const GET: APIRoute = async ({ request }) => {
                 embedObj.url &&
                 typeof embedObj.url === "string"
               ) {
-                // console.log("Processing embed URL:", embedObj.url); // Debug statement
                 try {
-                  return await metadata(embedObj.url);
+                  // First, fetch headers to check content type
+                  const response = await fetch(embedObj.url, {
+                    method: "HEAD",
+                  });
+                  const contentType = response.headers.get("content-type");
+
+                  if (contentType && contentType.startsWith("image/")) {
+                    // If it's an image, return a simple object with image info
+                    return {
+                      url: embedObj.url,
+                      contentType: contentType,
+                      isImage: true,
+                    };
+                  } else {
+                    // If it's not an image, proceed with metadata extraction
+                    return await metadata(embedObj.url);
+                  }
                 } catch (err) {
                   console.error("Error processing embed:", err);
                   return null;
