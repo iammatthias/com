@@ -143,6 +143,9 @@ export const GET: APIRoute = async ({ request }) => {
       status: 200,
       headers: {
         "Content-Type": "application/json",
+        "Cache-Control": "no-store, max-age=0",
+        Pragma: "no-cache",
+        Expires: "0",
       },
     });
   } catch (error) {
@@ -156,6 +159,9 @@ export const GET: APIRoute = async ({ request }) => {
         status: 500,
         headers: {
           "Content-Type": "application/json",
+          "Cache-Control": "no-store, max-age=0",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       },
     );
