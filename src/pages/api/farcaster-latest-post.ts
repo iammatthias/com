@@ -124,13 +124,6 @@ export const GET: APIRoute = async ({ request }) => {
           )
         : null;
 
-    console.log("embedData", embedData);
-
-    // Filter out any null values that may have resulted from invalid embeds
-    const filteredEmbedData = embedData
-      ? embedData.filter((item) => item !== null)
-      : null;
-
     const processedData = {
       author: {
         displayName: cast.castedBy.profileDisplayName,

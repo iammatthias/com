@@ -109,12 +109,13 @@ if (title || path) {
   </body>
 </html>
 
-<script type='module'>
-  import { initializeSession } from "/src/lib/session.ts";
-  import { processOutboundLinks } from "/src/lib/attribution.ts";
+<script>
+  import { initializeSession } from "../lib/session";
+  import { processOutboundLinks } from "../lib/attribution";
 
   document.addEventListener("astro:page-load", () => {
     initializeSession();
+    console.log("session initialized");
     processOutboundLinks();
   });
 </script>
@@ -139,11 +140,7 @@ if (title || path) {
     flex: 1;
     display: grid;
     grid-auto-rows: auto;
-    gap: 8rem;
-
-    @media (max-width: 1999px) {
-      gap: 4rem;
-    }
+    gap: 4rem;
     @media (max-width: 899px) {
       gap: 2rem;
     }
