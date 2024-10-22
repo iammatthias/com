@@ -1,87 +1,49 @@
 ---
-let currentYear = new Date().getFullYear();
+
 ---
 
 <footer>
-  <p class='small'>© {currentYear} Matthias Jordan</p>
-  <div class='links'>
-    <p class='small'>
-      <span class='circle'></span>
-      <a href='/onchain-analytics' aria-label='Onchain analytics' title='Onchain analytics'>Onchain Analytics</a>
-    </p>
-    <p class='small'>
-      <span>✧</span>
-      <a href='/social' aria-label='Social media presence' title='Social'>Social</a>
-    </p>
-    <p class='small'>
-      <span>✧</span>
-      <a href='/resume' aria-label='An abbreviated resume' title='Resume'>Resume</a>
-    </p>
-    <p class='small'>
-      <span>✧</span>
-      <a
-        href='https://day---break.com/'
-        target='_blank'
-        aria-label='day---break: Driving Growth Through Data-Driven Marketing'
-        title='day---break: Driving Growth Through Data-Driven Marketing'>☼ day---break</a
-      >
-    </p>
-  </div>
+  <div>© {new Date().getFullYear()}</div>
+  <div><a href='/onchain-analytics'>ONCHAIN ANALYTICS</a></div>
+  <div><a href='/resume'>RESUME</a></div>
+  <div><a href='/social'>SOCIAL</a></div>
 </footer>
 
 <style>
   footer {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: auto;
-    *:not(.circle, .small) {
-      opacity: 0.75;
-    }
-  }
-  .links {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    position: sticky;
+    bottom: 0px;
+    z-index: 100;
+    border-top: var(--border);
+    background-color: var(--background);
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
     @media (max-width: 768px) {
-      gap: 0.25rem;
+      grid-template-columns: 1fr 1fr;
     }
   }
 
-  a {
-    color: inherit;
-    font-weight: 400;
-    text-decoration: underline;
-    text-underline-offset: 0.2rem;
-  }
-
-  .circle {
-    display: inline-block;
-    background-color: transparent;
-    width: 8px;
-    height: 8px;
-    border-radius: 50px;
-    box-shadow:
-      0 0 8px var(--gold),
-      inset 0 0 8px var(--gold-lighter);
-    animation: pulse 5s ease 5s infinite;
-  }
-
-  @keyframes pulse {
-    0% {
-      box-shadow:
-        0 0 8px var(--gold),
-        inset 0 0 8px var(--gold);
-    }
-    50% {
-      box-shadow:
-        0 0 16px var(--gold),
-        inset 0 0 14px var(--gold);
-    }
-    100% {
-      box-shadow:
-        0 0 8px var(--gold),
-        inset 0 0 8px var(--gold);
+  footer > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    &:not(:last-child) {
+      border-right: var(--border);
+      @media (max-width: 768px) {
+        border-right: none;
+        border-bottom: var(--border);
+        &:first-child,
+        &:nth-child(3) {
+          border-right: var(--border);
+        }
+        &:nth-child(3) {
+          border-bottom: none;
+        }
+      }
     }
   }
 </style>

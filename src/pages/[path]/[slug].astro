@@ -1,0 +1,81 @@
+---
+import { getEntry, render, getCollection } from "astro:content";
+
+// layouts
+import PageLayout from "@layouts/PageLayout.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  const art = await getCollection("art");
+  const notes = await getCollection("notes");
+  const recipes = await getCollection("recipes");
+
+  //combine all collections into one array
+  const allContent = [...posts, ...art, ...notes, ...recipes];
+
+  // sort posts by created date, newest first
+  const sortedContent = allContent.sort(
+    (a, b) => new Date(b.data.frontmatter.created).getTime() - new Date(a.data.frontmatter.created).getTime()
+  );
+
+  // drop the body
+  const entries = sortedContent.map((entry) => ({
+    ...entry.data.frontmatter,
+  }));
+
+  return entries.map((entry) => ({ params: { path: entry.path, slug: entry.slug } }));
+}
+
+const { path, slug }: { path: any; slug: string } = Astro.params;
+const entry = await getEntry(path, slug);
+
+const { Content } = await render(entry);
+---
+
+<PageLayout title='Home' path='home'>
+  <aside></aside>
+  <section>
+    <div class='header'>
+      <h3 class='capitalize'><a href={`/${path}`}>{path}</a></h3>
+      <h1>{entry.data.frontmatter.title}</h1>
+      <p>
+        Published {new Date(entry.data.frontmatter.created).toLocaleDateString()}.
+        {
+          new Date(entry.data.frontmatter.updated).getTime() - new Date(entry.data.frontmatter.created).getTime() >
+            24 * 60 * 60 * 1000 && `Last updated ${new Date(entry.data.frontmatter.updated).toLocaleDateString()}.`
+        }
+      </p>
+      <div class='tags'>
+        {entry.data.frontmatter.tags.map((tag: any) => <span>#{tag}</span>)}
+      </div>
+    </div>
+    <article><Content /></article>
+  </section>
+</PageLayout>
+
+<style>
+  .header {
+    padding: var(--padding);
+  }
+
+  article {
+    padding: var(--padding);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  article > :global(*) {
+    max-width: 65ch;
+  }
+
+  article > :global(pre) {
+    max-width: calc(100vw - 2rem);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+</style>

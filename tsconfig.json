@@ -1,17 +1,14 @@
 {
-  "extends": "astro/tsconfigs/base",
-  "exclude": ["node_modules"],
-  "include": ["*.d.ts"],
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
       "@layouts/*": ["src/layouts/*"],
-      "@lib/*": ["src/lib/*"],
-      "@styles/*": ["src/styles/*"]
+      "@styles/*": ["src/styles/*"],
+      "@lib/*": ["src/lib/*"]
     }
   }
 }

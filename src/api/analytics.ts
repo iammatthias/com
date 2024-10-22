@@ -22,26 +22,20 @@ export const POST: APIRoute = async ({ request }) => {
     body = await request.json();
   } catch (error) {
     // console.error("Failed to parse request body:", error);
-    return new Response(
-      JSON.stringify({ error: "Invalid JSON in request body" }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   // console.log("Parsed request body:", body);
 
   if (!body || !body.functionName || !body.args) {
     // console.log("Invalid request body structure");
-    return new Response(
-      JSON.stringify({ error: "Invalid request body structure" }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    return new Response(JSON.stringify({ error: "Invalid request body structure" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const { functionName, args } = body;
@@ -55,23 +49,17 @@ export const POST: APIRoute = async ({ request }) => {
     args: { ...args }, // Spread the args array into an object
   };
 
-  // console.log("Sending request to Syndicate:", requestBody);
-  // console.log("Syndicate Key:", SYNDICATE_KEY ? "Present" : "Missing");
-
   let syndicateResponse;
   try {
-    syndicateResponse = await fetch(
-      "https://api.syndicate.io/transact/sendTransaction",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${SYNDICATE_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
+    syndicateResponse = await fetch("https://api.syndicate.io/transact/sendTransaction", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SYNDICATE_KEY}`,
+        "Content-Type": "application/json",
       },
-    );
-  } catch (fetchError) {
+      body: JSON.stringify(requestBody),
+    });
+  } catch (fetchError: any) {
     // console.error("Fetch to Syndicate failed:", fetchError);
     return new Response(
       JSON.stringify({
@@ -81,7 +69,7 @@ export const POST: APIRoute = async ({ request }) => {
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      },
+      }
     );
   }
 
@@ -102,7 +90,7 @@ export const POST: APIRoute = async ({ request }) => {
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      },
+      }
     );
   }
 
@@ -116,16 +104,13 @@ export const POST: APIRoute = async ({ request }) => {
       {
         status: syndicateResponse.status,
         headers: { "Content-Type": "application/json" },
-      },
+      }
     );
   }
 
   // console.log("Successful response:", data);
-  return new Response(
-    JSON.stringify({ success: true, transactionId: data.transactionId }),
-    {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    },
-  );
+  return new Response(JSON.stringify({ success: true, transactionId: data.transactionId }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
 };

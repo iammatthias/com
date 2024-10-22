@@ -1,0 +1,25 @@
+---
+import { getCollection } from "astro:content";
+
+const allContent = await getCollection("glass");
+
+const entries = allContent.map((entry) => ({
+  width: entry.data.width,
+  height: entry.data.height,
+  src: entry.data.image2048x2048,
+  share_url: entry.data.share_url,
+}));
+
+// get 1 random entry
+const randomEntry = entries[Math.floor(Math.random() * entries.length)];
+---
+
+<img src={randomEntry.src} alt={randomEntry.share_url} />
+
+<style>
+  img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+</style>

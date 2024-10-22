@@ -1,6 +1,6 @@
 const API_ENDPOINT = "/api/analytics";
 
-async function sendTransaction(functionName, args) {
+async function sendTransaction(functionName: string, args: any[]) {
   const requestBody = {
     functionName: functionName,
     args: args,
@@ -45,20 +45,19 @@ async function sendTransaction(functionName, args) {
   }
 }
 
-async function createSession(sessionId) {
+async function createSession(sessionId: `0x${string}`) {
   const functionName = "createSession(bytes32)";
   const args = [sessionId];
   return await sendTransaction(functionName, args);
 }
 
-async function addPageView(sessionId, pagePath) {
+async function addPageView(sessionId: `0x${string}`, pagePath: string) {
   const functionName = "addPageView(bytes32,string)";
   const args = [sessionId, pagePath];
   return await sendTransaction(functionName, args);
 }
 
-async function addEvent(eventName, eventData) {
-  const sessionId = localStorage.getItem("sessionId");
+async function addEvent(sessionId: `0x${string}`, eventName: string, eventData: string) {
   const functionName = "addEvent(bytes32,string,string)";
   const args = [sessionId, eventName, eventData];
   return await sendTransaction(functionName, args);

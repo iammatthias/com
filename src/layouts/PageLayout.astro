@@ -1,0 +1,182 @@
+---
+import { Head } from "astro-capo";
+import { SEO } from "astro-seo";
+
+// styles
+import "@styles/reset.css";
+import "@styles/global.css";
+import "@styles/typography.css";
+
+// components
+import Footer from "@components/Footer.astro";
+import Nav from "@components/Nav.astro";
+interface Props {
+  title?: string;
+  path?: string;
+}
+
+const { title, path } = Astro.props;
+
+let seoTitle = "@iammatthias";
+if (title || path) {
+  seoTitle = "";
+  if (title) {
+    seoTitle += `${title} | `;
+  }
+  if (path) {
+    seoTitle += `${path.charAt(0).toUpperCase() + path.slice(1)} | `;
+  }
+  seoTitle += "@iammatthias";
+}
+
+const base_url = Astro.url.origin;
+
+let seoImage = `${base_url}/api/og.png`;
+
+if (title || path) {
+  if (path) {
+    seoImage = `${base_url}/api/og-${path}.png`;
+  }
+  if (title && path) {
+    seoImage = `${base_url}/api/og-${path}-${encodeURIComponent(title)}.png`;
+  }
+}
+---
+
+<html lang='en'>
+  <Head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <SEO
+      charset='UTF-8'
+      title={seoTitle}
+      description='A digital garden where photographs, recipes, and thoughts can grow.'
+      openGraph={{
+        basic: {
+          title: seoTitle,
+          type: "website",
+          image: seoImage,
+        },
+        optional: {
+          description: "A digital garden where photographs, recipes, and thoughts can grow.",
+        },
+      }}
+      twitter={{
+        creator: "@iammatthias",
+        card: "summary_large_image",
+        image: seoImage,
+        title: seoTitle,
+        description: "A digital garden where photographs, recipes, and thoughts can grow.",
+      }}
+      extend={{
+        link: [
+          //   {
+          //     rel: "icon",
+          //     href: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌞</text></svg>",
+          //   },
+          {
+            rel: "sitemap",
+            type: "application/xml",
+            href: "/sitemap.xml",
+          },
+        ],
+        meta: [
+          {
+            name: "viewport",
+            content: "width=device-width, initial-scale=1",
+          },
+          {
+            name: "generator",
+            content: "Astro",
+          },
+        ],
+      }}
+    />
+  </Head>
+  <body>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    position: relative;
+    display: grid;
+    grid-template-columns: 256px 1fr;
+    position: relative;
+    @media (max-width: 1380px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  main > :global(*) {
+    &:not(:last-child) {
+      border-right: var(--border);
+      @media (max-width: 1280px) {
+        border-right: none;
+      }
+    }
+  }
+
+  main > :global(*):first-child {
+    position: sticky;
+    top: calc(var(--nav-height) + 1px);
+    height: calc(100vh - var(--nav-height) - var(--footer-height) - 2px);
+    @media (max-width: 1380px) {
+      display: none;
+      visibility: hidden;
+    }
+  }
+</style>
+
+<script>
+  function debounce(func: Function, wait: number) {
+    let timeout: ReturnType<typeof setTimeout>;
+    return function executedFunction(...args: any[]) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  function updateHeights() {
+    const navHeight = document.querySelector("nav")?.clientHeight;
+    const footerHeight = document.querySelector("footer")?.clientHeight;
+    const aboutHeight = document.querySelector(".about")?.clientHeight;
+
+    document.documentElement.style.setProperty("--nav-height", `${navHeight}px`);
+    document.documentElement.style.setProperty("--footer-height", `${footerHeight}px`);
+    document.documentElement.style.setProperty("--about-height", `${aboutHeight}px`);
+  }
+
+  // Initial update
+  updateHeights();
+
+  // Debounced update on window resize
+  const debouncedUpdateHeights = debounce(updateHeights, 250);
+  window.addEventListener("resize", debouncedUpdateHeights);
+
+  // Format time without seconds and update every minute
+  const time = document.querySelector("time");
+  function updateTime() {
+    const now = new Date();
+    const formattedTime = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    time!.textContent = formattedTime;
+    time!.setAttribute("datetime", now.toISOString());
+  }
+
+  updateTime();
+  setInterval(updateTime, 60000);
+</script>

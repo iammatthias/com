@@ -1,11 +1,10 @@
-import { publicClient } from "./viemProvider";
+import { publicClient } from "@lib/viemProvider";
 
 // Contract address
-const CONTRACT_ADDRESS = import.meta.env
-  .PUBLIC_ANALYTICS_CONTRACT as `0x${string}`;
+const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT as `0x${string}`;
 
 // Get session details
-export async function getSession(sessionId) {
+export async function getSession(sessionId: `0x${string}`) {
   const abi = [
     {
       inputs: [{ internalType: "bytes32", name: "sessionId", type: "bytes32" }],
@@ -81,7 +80,7 @@ export async function getSessionCount() {
 }
 
 // Get page view count
-export async function getPageViewCount(pagePath) {
+export async function getPageViewCount(pagePath: string) {
   const abi = [
     {
       inputs: [{ internalType: "string", name: "pagePath", type: "string" }],
@@ -103,7 +102,7 @@ export async function getPageViewCount(pagePath) {
 }
 
 // Get event count
-export async function getEventCount(eventName) {
+export async function getEventCount(eventName: string) {
   const abi = [
     {
       inputs: [{ internalType: "string", name: "eventName", type: "string" }],
@@ -175,7 +174,7 @@ export async function getAllPageViews() {
 }
 
 // Get session IDs within a range
-export async function getSessionIds(start, end) {
+export async function getSessionIds(start: number, end: number) {
   const abi = [
     {
       inputs: [
@@ -200,7 +199,7 @@ export async function getSessionIds(start, end) {
 }
 
 // Get events within a range
-export async function getEventsInRange(start, end) {
+export async function getEventsInRange(start: number, end: number) {
   const abi = [
     {
       inputs: [
@@ -229,7 +228,7 @@ export async function getEventsInRange(start, end) {
 }
 
 // Get page views within a range
-export async function getPageViewsInRange(start, end) {
+export async function getPageViewsInRange(start: number, end: number) {
   const abi = [
     {
       inputs: [

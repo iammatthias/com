@@ -1,0 +1,131 @@
+---
+
+---
+
+<nav>
+  <div class='nav-content'>
+    <div class='nav-item'>@iammatthias</div>
+    <div class='nav-item menu-button'>MENU</div>
+    <div class='nav-item time'>
+      <time datetime={new Date().toISOString().slice(0, -5)}></time>
+    </div>
+  </div>
+  <div class='dropdown-menu'>
+    <a href='/'>Home</a>
+    <a href='/posts'>Posts</a>
+    <a href='/notes'>Notes</a>
+    <a href='/art'>Art</a>
+    <a href='/recipes'>Recipes</a>
+    <a href='/social'>Social</a>
+    <a href='/resume'>Resume</a>
+  </div>
+</nav>
+
+<script>
+  const menuButton = document.querySelector(".menu-button");
+  const dropdownMenu = document.querySelector(".dropdown-menu");
+
+  menuButton?.addEventListener("click", () => {
+    dropdownMenu?.classList.toggle("show");
+  });
+
+  // Update time every minute
+  function updateTime() {
+    const timeElement = document.querySelector("time");
+    if (timeElement) {
+      timeElement.setAttribute("datetime", new Date().toISOString().slice(0, -5));
+      timeElement.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+  }
+
+  updateTime();
+  setInterval(updateTime, 60000);
+</script>
+
+<style>
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 101;
+    background-color: var(--background);
+    border-bottom: var(--border);
+    font-family: var(--font-mono);
+  }
+
+  .nav-content {
+    display: grid;
+    grid-template-columns: 256px 1fr 256px;
+  }
+
+  .nav-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border-right: var(--border);
+  }
+
+  .nav-item:first-child {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  .nav-item:last-child {
+    border-right: none;
+  }
+
+  .menu-button {
+    cursor: pointer;
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: calc(100vh - var(--nav-height));
+    background-color: var(--background);
+    border-top: var(--border);
+  }
+
+  .dropdown-menu.show {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dropdown-menu a {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    text-decoration: none;
+    color: var(--color);
+    border-bottom: var(--border);
+    transition: background-color 0.3s ease;
+  }
+
+  .dropdown-menu a:last-child {
+    border-bottom: none;
+  }
+
+  .dropdown-menu a:hover {
+    background-color: #f0f0f0;
+  }
+
+  @media (max-width: 768px) {
+    .nav-content {
+      grid-template-columns: 1fr;
+    }
+
+    .nav-item {
+      border-right: none;
+    }
+
+    .nav-item.time {
+      display: none;
+    }
+  }
+</style>
