@@ -1,0 +1,29 @@
+---
+// layout
+import PageLayout from "@layouts/PageLayout.astro";
+import RecentContent from "@components/RecentContent.astro";
+---
+
+<PageLayout path='Social'>
+  <aside></aside>
+  <section>
+    <div class='social-header'>
+      <h1>404</h1>
+      <p>Page not found.</p>
+      <p>You don't have to go home, but you can't stay here.</p>
+    </div>
+    <RecentContent />
+  </section>
+</PageLayout>
+
+<style>
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .social-header {
+    padding: var(--padding);
+  }
+</style>

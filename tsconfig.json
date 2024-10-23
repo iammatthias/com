@@ -1,8 +1,10 @@
 {
-  "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist"],
+  "extends": "astro/tsconfigs/base",
   "compilerOptions": {
+    "strictNullChecks": true, // add if using `base` template
+    "allowJs": true, // required, and included with all Astro templates
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],

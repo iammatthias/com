@@ -4,47 +4,63 @@ import { getCollection } from "astro:content";
 // layouts
 import PageLayout from "@layouts/PageLayout.astro";
 
-const { path }: { path: any } = Astro.params;
+const { path } = Astro.params;
 
 export async function getStaticPaths() {
-  const paths = ["posts", "recipes", "notes", "art"];
-  return paths.map((path) => ({ params: { path } }));
+  const [posts, art, notes, recipes] = await Promise.all([
+    getCollection("posts"),
+    getCollection("art"),
+    getCollection("notes"),
+    getCollection("recipes"),
+  ]);
+
+  // Combine all collections into one array and filter out entries missing path or slug
+  const allContent = [...posts, ...art, ...notes, ...recipes].filter(
+    (entry) => entry.data.frontmatter?.path && entry.data.frontmatter?.slug
+  );
+
+  // Unique paths and their entries (frontmatter)
+  const paths = [...new Set(allContent.map((entry) => entry.data.frontmatter.path))];
+
+  return Promise.all(
+    paths.map((path) => ({
+      params: { path },
+      props: {
+        // Filter entries for each path and sort them by created date (most recent first)
+        entries: allContent
+          .filter((entry) => entry.data.frontmatter.path === path)
+          .sort(
+            (a, b) => new Date(b.data.frontmatter.created).getTime() - new Date(a.data.frontmatter.created).getTime()
+          ),
+      },
+    }))
+  );
 }
 
-const allContent = await getCollection(path);
-
-// sort posts by created date, newest first
-const sortedContent = allContent.sort(
-  (a: any, b: any) => new Date(b.data.frontmatter.created).getTime() - new Date(a.data.frontmatter.created).getTime()
-);
-
-// drop the body
-const entries = sortedContent.map((entry: any) => ({
-  ...entry.data.frontmatter,
-}));
+const { entries } = Astro.props;
 ---
 
-<PageLayout title='Home' path='home'>
+<PageLayout path={path}>
   <aside></aside>
   <section>
     <div class='header'>
-      <h1 class='capitalize'>{path}</h1>
+      <h2 class='capitalize'>{path}</h2>
     </div>
     <ul>
       {
         entries.map((entry) => (
           <li>
             <h2>
-              <a href={`/${path}/${entry.slug}`}>{entry.title}</a>
+              <a href={`/${path}/${entry.data.frontmatter.slug}`}>{entry.data.frontmatter.title}</a>
             </h2>
             {/* Always show the created date. Only show the updated date if it is +24 hours from the created date */}
             <p>
-              Published {new Date(entry.created).toLocaleDateString()}.
-              {new Date(entry.updated).getTime() - new Date(entry.created).getTime() > 24 * 60 * 60 * 1000 &&
-                `Last updated ${new Date(entry.updated).toLocaleDateString()}.`}
+              Published {new Date(entry.data.frontmatter.created).toLocaleDateString()}.
+              {new Date(entry.data.frontmatter.updated).getTime() - new Date(entry.data.frontmatter.created).getTime() >
+                24 * 60 * 60 * 1000 && `Last updated ${new Date(entry.data.frontmatter.updated).toLocaleDateString()}.`}
             </p>
             <div class='tags'>
-              {entry.tags.map((tag: any) => (
+              {entry.data.frontmatter.tags.map((tag) => (
                 <span>#{tag}</span>
               ))}
             </div>

@@ -1,42 +1,47 @@
 ---
-import { getEntry, render, getCollection } from "astro:content";
+import { render, getCollection } from "astro:content";
 
 // layouts
 import PageLayout from "@layouts/PageLayout.astro";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("posts");
-  const art = await getCollection("art");
-  const notes = await getCollection("notes");
-  const recipes = await getCollection("recipes");
+  const [posts, art, notes, recipes] = await Promise.all([
+    getCollection("posts"),
+    getCollection("art"),
+    getCollection("notes"),
+    getCollection("recipes"),
+  ]);
 
-  //combine all collections into one array
+  // Combine all collections into one array
   const allContent = [...posts, ...art, ...notes, ...recipes];
 
-  // sort posts by created date, newest first
-  const sortedContent = allContent.sort(
-    (a, b) => new Date(b.data.frontmatter.created).getTime() - new Date(a.data.frontmatter.created).getTime()
-  );
+  // Filter entries to ensure they have path and slug
+  const entries = allContent
+    .filter((entry) => entry.data.frontmatter?.path && entry.data.frontmatter?.slug)
+    .map((entry) => ({
+      params: { path: entry.data.frontmatter.path, slug: entry.data.frontmatter.slug },
+      props: {
+        entry: {
+          ...entry,
+        },
+      },
+    }));
 
-  // drop the body
-  const entries = sortedContent.map((entry) => ({
-    ...entry.data.frontmatter,
-  }));
-
-  return entries.map((entry) => ({ params: { path: entry.path, slug: entry.slug } }));
+  return entries;
 }
 
-const { path, slug }: { path: any; slug: string } = Astro.params;
-const entry = await getEntry(path, slug);
+const { path } = Astro.params;
+const { entry } = Astro.props;
 
 const { Content } = await render(entry);
 ---
 
-<PageLayout title='Home' path='home'>
+<PageLayout title={entry.data.frontmatter.title} path={path}>
   <aside></aside>
   <section>
     <div class='header'>
-      <h3 class='capitalize'><a href={`/${path}`}>{path}</a></h3>
+      <h3 class='capitalize'><a href={`/${entry.data.frontmatter.path}`}>{entry.data.frontmatter.path}</a></h3>
+      <hr />
       <h1>{entry.data.frontmatter.title}</h1>
       <p>
         Published {new Date(entry.data.frontmatter.created).toLocaleDateString()}.
@@ -63,14 +68,11 @@ const { Content } = await render(entry);
     display: flex;
     flex-direction: column;
     gap: 1rem;
-  }
-
-  article > :global(*) {
-    max-width: 65ch;
+    max-width: 800px;
   }
 
   article > :global(pre) {
-    max-width: calc(100vw - 2rem);
+    max-width: calc(100vw - 4rem);
   }
 
   .tags {

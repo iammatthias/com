@@ -10,11 +10,9 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/sitemap": "^3.2.1",
-    "@astrojs/vercel": "^7.8.2",
+    "@astrojs/vercel": "^8.0.0-beta.2",
     "astro": "^5.0.0-beta.5",
     "astro-capo": "^0.0.1",
-    "astro-robots-txt": "^1.0.0",
     "astro-seo": "^0.8.4",
     "gray-matter": "^4.0.3",
     "marked": "^14.1.3",

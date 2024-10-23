@@ -5,7 +5,7 @@ import PageLayout from "@layouts/PageLayout.astro";
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 ---
 
-<PageLayout title='Onchain Analytics' path='onchain-analytics'>
+<PageLayout path='Onchain Analytics'>
   <aside></aside>
   <section>
     <article>
@@ -158,7 +158,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
       const allEvents = await getAllEvents();
       console.log("All Events:", allEvents);
       if (Array.isArray(allEvents) && allEvents.length === 3) {
-        const [eventNames, eventOccurrences, timestamps] = allEvents;
+        const [eventNames, eventOccurrences] = allEvents;
         if (
           Array.isArray(eventNames) &&
           Array.isArray(eventOccurrences) &&

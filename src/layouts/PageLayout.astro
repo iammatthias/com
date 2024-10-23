@@ -113,6 +113,7 @@ if (title || path) {
     display: grid;
     grid-template-columns: 256px 1fr;
     position: relative;
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
     @media (max-width: 1380px) {
       grid-template-columns: 1fr;
     }

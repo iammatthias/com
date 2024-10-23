@@ -1,54 +1,63 @@
 ---
 import { getCollection } from "astro:content";
 
-const posts = await getCollection("posts");
-const art = await getCollection("art");
-const notes = await getCollection("notes");
-const recipes = await getCollection("recipes");
+const [posts, art, notes, recipes] = await Promise.all([
+  getCollection("posts"),
+  getCollection("art"),
+  getCollection("notes"),
+  getCollection("recipes"),
+]);
 
-//combine all collections into one array
-const allContent = [...posts, ...art, ...notes, ...recipes];
+// Combine all collections into one array and filter out entries missing 'created' field
+const allContent = [...posts, ...art, ...notes, ...recipes].filter((entry) => entry.data.frontmatter?.created);
 
-// sort posts by created date, newest first
+// Sort posts by created date, newest first
 const sortedContent = allContent.sort(
   (a, b) => new Date(b.data.frontmatter.created).getTime() - new Date(a.data.frontmatter.created).getTime()
 );
 
-// get the first 5 entries, and drop the body
+// Get the first 5 entries and drop the body
 const firstEntries = sortedContent.slice(0, 5).map((entry) => ({
   ...entry.data.frontmatter,
 }));
 ---
 
-<ul>
-  {
-    firstEntries.map((entry) => (
-      <li>
-        <h3>{entry.path}</h3>
-        <h2>
-          <a href={`/${entry.path}/${entry.slug}`}>{entry.title}</a>
-        </h2>
-        {/* Always show the created date. Only show the updated date if it is +24 hours from the created date */}
-        <p>
-          Published {new Date(entry.created).toLocaleDateString()}.
-          {new Date(entry.updated).getTime() - new Date(entry.created).getTime() > 24 * 60 * 60 * 1000 &&
-            `Last updated ${new Date(entry.updated).toLocaleDateString()}.`}
-        </p>
-        <div class='tags'>
-          {entry.tags.map((tag) => (
-            <span>#{tag}</span>
-          ))}
-        </div>
-      </li>
-    ))
-  }
-</ul>
+<div class='recent-content'>
+  <h3>Recent Content</h3>
+  <ul>
+    {
+      firstEntries.map((entry) => (
+        <li>
+          <h3>{entry.path}</h3>
+          <h2>
+            <a href={`/${entry.path}/${entry.slug}`}>{entry.title}</a>
+          </h2>
+          {/* Always show the created date. Only show the updated date if it is +24 hours from the created date */}
+          <p>
+            Published {new Date(entry.created).toLocaleDateString()}.
+            {new Date(entry.updated).getTime() - new Date(entry.created).getTime() > 24 * 60 * 60 * 1000 &&
+              `Last updated ${new Date(entry.updated).toLocaleDateString()}.`}
+          </p>
+          <div class='tags'>
+            {entry.tags.map((tag) => (
+              <span>#{tag}</span>
+            ))}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</div>
 
 <style>
+  .recent-content {
+    padding: var(--padding);
+  }
+
   ul {
     margin: 0;
+    padding: 0;
     list-style: none;
-    padding: var(--padding);
     height: fit-content;
     display: flex;
     flex-direction: column;

@@ -4,11 +4,10 @@ import PageLayout from "@layouts/PageLayout.astro";
 
 // components
 import RecentContent from "@components/RecentContent.astro";
-import RecentGlassContent from "@components/RecentGlassContent.astro";
 import GlassHero from "@components/GlassHero.astro";
 ---
 
-<PageLayout title='Home' path='home'>
+<PageLayout>
   <aside></aside>
   <section>
     <div>
@@ -61,8 +60,9 @@ import GlassHero from "@components/GlassHero.astro";
   section > div:last-child {
     position: sticky;
     top: calc(var(--nav-height) + 1px);
-    height: calc(100vh - var(--nav-height) - var(--footer-height) - 1px);
+    height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
     border-left: var(--border);
+    border-bottom: none;
     overflow: hidden;
     @media (max-width: 1080px) {
       border-top: var(--border);
