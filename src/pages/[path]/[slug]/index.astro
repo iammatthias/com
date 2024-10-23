@@ -2,7 +2,7 @@
 import { render, getCollection } from "astro:content";
 
 // layouts
-import PageLayout from "@layouts/PageLayout.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
 
 export async function getStaticPaths() {
   const [posts, art, notes, recipes] = await Promise.all([

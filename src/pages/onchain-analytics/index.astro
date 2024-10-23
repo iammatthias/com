@@ -1,6 +1,6 @@
 ---
 // layouts
-import PageLayout from "@layouts/PageLayout.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
 
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 ---
@@ -115,7 +115,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 </style>
 
 <script>
-  import { getAllSessionIds, getSessionCount, getAllEvents, getAllPageViews } from "@lib/sessionContractDataProvider";
+  import { getAllSessionIds, getSessionCount, getAllEvents, getAllPageViews } from "@/lib/sessionContractDataProvider";
 
   async function updateData() {
     try {

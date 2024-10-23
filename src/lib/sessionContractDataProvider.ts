@@ -1,4 +1,4 @@
-import { publicClient } from "@lib/viemProvider";
+import { publicClient } from "@/lib/viemProvider";
 
 // Contract address
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT as `0x${string}`;
