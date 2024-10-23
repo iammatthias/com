@@ -1,6 +1,6 @@
-import type { APIRoute } from "astro";
-
 export const prerender = false;
+
+import type { APIRoute } from "astro";
 
 const SYNDICATE_KEY = import.meta.env.SYNDICATE_KEY;
 const SYNDICATE_ID = import.meta.env.SYNDICATE_ID;

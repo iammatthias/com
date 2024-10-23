@@ -1,8 +1,8 @@
+export const prerender = false;
+
 import satori from "satori";
 import { html } from "satori-html";
 import { Resvg } from "@resvg/resvg-js";
-
-export const prerender = false;
 
 export async function GET({ params }) {
   const parts = params.og.split("-");
