@@ -8,12 +8,8 @@ import "@/styles/global.css";
 import "@/styles/typography.css";
 
 // components
-import Footer from "@/components/Footer.astro";
-import Nav from "@/components/Nav.astro";
-interface Props {
-  title?: string;
-  path?: string;
-}
+import Footer from "@components/Footer.astro";
+import Nav from "@components/Nav.astro";
 
 const { title, path } = Astro.props;
 
