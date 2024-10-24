@@ -28,7 +28,9 @@ const firstEntries = sortedContent.slice(0, 5).map((entry) => ({
     {
       firstEntries.map((entry) => (
         <li>
-          <h3>{entry.path}</h3>
+          <h3>
+            <a href={`/${entry.path}`}>{entry.path}</a>
+          </h3>
           <h2>
             <a href={`/${entry.path}/${entry.slug}`}>{entry.title}</a>
           </h2>
