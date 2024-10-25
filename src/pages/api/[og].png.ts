@@ -25,7 +25,7 @@ export async function GET({ params }) {
           display: flex;
           color: rgba(10, 10, 10, 1);
           padding: 48px;
-          background-color: rgba(255, 255, 255, 1);
+          background-color: rgba(241, 241, 241, 1);
       "
       >
         <div
@@ -55,17 +55,16 @@ export async function GET({ params }) {
           width: 100%;
           height: 100%;
           display: flex;
-          color: rgba(10, 10, 10, 1);
+          color: rgba(26, 26, 26, 1);
           padding: 48px;
-          background-color: rgba(255, 255, 255, 1);
+          background-color: rgba(241, 241, 241, 1);
       "
       >
         <div
           style="
           width: 100%;
           height: 100%;
-          border: 8px solid rgba(255, 187, 0, 1);
-          border-radius: 48px;
+          border: 8px solid rgb(255, 187, 0);
           padding: 48px;
           display: flex;
           flex-direction: column;
@@ -88,17 +87,16 @@ export async function GET({ params }) {
           width: 100%;
           height: 100%;
           display: flex;
-          color: rgba(10, 10, 10, 1);
+          color: rgba(26, 26, 26, 1);
           padding: 48px;
-          background-color: rgba(255, 255, 255, 1);
+          background-color: rgba(241, 241, 241, 1);
       "
       >
         <div
           style="
           width: 100%;
           height: 100%;
-          border: 8px solid rgba(255, 187, 0, 1);
-          border-radius: 48px;
+          border: 8px solid rgb(255, 187, 0);
           padding: 48px;
           display: flex;
           flex-direction: column;
@@ -114,7 +112,7 @@ export async function GET({ params }) {
 
   const svg = await satori(markup, {
     width: 1200,
-    height: 630,
+    height: 628,
     fonts: [
       {
         name: "Kalnia",
