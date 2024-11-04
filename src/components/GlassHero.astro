@@ -9,17 +9,43 @@ const entries = allContent.map((entry) => ({
   src: entry.data.image2048x2048,
   share_url: entry.data.share_url,
 }));
-
-// get 1 random entry
-const randomEntry = entries[Math.floor(Math.random() * entries.length)];
 ---
 
-<img src={randomEntry.src} alt={randomEntry.share_url} />
+<div class='hero'>
+  <img id='randomImage' src={entries[0].src} alt={entries[0].share_url} />
+</div>
+
+<script define:vars={{ entries }}>
+  function updateRandomImage() {
+    const randomEntry = entries[Math.floor(Math.random() * entries.length)];
+    const imgElement = document.getElementById("randomImage");
+    if (imgElement) {
+      imgElement.src = randomEntry.src;
+      imgElement.alt = randomEntry.share_url;
+    }
+  }
+
+  // Update on page load
+  updateRandomImage();
+
+  // Optional: Update on click or other events
+  document.querySelector(".hero")?.addEventListener("click", updateRandomImage);
+</script>
 
 <style>
+  .hero {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer; /* Since we added click functionality */
+  }
+
   img {
     object-fit: cover;
     width: 100%;
     height: 100%;
+    display: block;
+    transition: opacity 0.3s ease;
   }
 </style>
