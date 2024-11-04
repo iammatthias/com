@@ -10,7 +10,7 @@ import "@/styles/typography.css";
 // components
 import Footer from "@components/Footer.astro";
 import Nav from "@components/Nav.astro";
-
+import KWH from "@components/KWH.astro";
 const { title, path } = Astro.props;
 
 let seoTitle = "@iammatthias";
@@ -93,6 +93,7 @@ if (title || path) {
     <Nav />
     <main>
       <slot />
+      <KWH />
     </main>
     <Footer />
   </body>
