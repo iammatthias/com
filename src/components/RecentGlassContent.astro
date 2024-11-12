@@ -1,0 +1,40 @@
+---
+import { getCollection } from "astro:content";
+
+const allContent = await getCollection("glass");
+
+// sort posts by created date, newest first
+const sortedContent = allContent.sort(
+  (a, b) => new Date(b.data.created_at).getTime() - new Date(a.data.created_at).getTime()
+);
+
+// get the first 5 entries, and drop the body
+const firstEntries = sortedContent.slice(0, 3).map((entry) => ({
+  width: entry.data.width,
+  height: entry.data.height,
+  src: entry.data.image640x640,
+  share_url: entry.data.share_url,
+}));
+---
+
+<ul>
+  {
+    firstEntries.map((entry) => (
+      <li>
+        <img src={entry.src} alt={entry.share_url} />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  ul {
+    margin: 0;
+    list-style: none;
+    padding: var(--padding);
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+</style>

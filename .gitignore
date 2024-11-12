@@ -21,8 +21,5 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
-# blank tags file
-tags.json
-
-# Allow vercel.json
-!vercel.json
+# jetbrains setting folder
+.idea/

@@ -1,97 +1,96 @@
 ---
-import Layout from "@layouts/layout.astro";
-import Squiggle from "@components/squiggle.astro";
+// layouts
+import PageLayout from "@/layouts/PageLayout.astro";
+
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 ---
 
-<Layout path='Onchain Analytics'>
-  <h1>Onchain Analytics</h1>
-  <p>
-    This site uses a homebrew session management system to generate fully anonymous session hashes and onchain
-    analytics. If you're interested, you can <a
-      class='break'
-      href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more about the project</a
-    >.
-  </p>
-  <Squiggle />
+<PageLayout path='Onchain Analytics'>
+  <aside></aside>
+  <section>
+    <article>
+      <h1>Onchain Analytics</h1>
+      <p>
+        This site uses a homebrew session management system to generate fully anonymous session hashes and onchain
+        analytics. If you're interested, you can <a
+          class='break'
+          href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more about the project</a
+        >.
+      </p>
 
-  <h2>How it Works:</h2>
-  <ul>
-    <li>
-      A keccak256 hash is generated from the client IP, user agent, and timestamp to create a unique, irreversible
-      sessionID that is completely anonymous. Only the hash is stored.
-    </li>
-    <li><code>sessionID</code>s are stored onchain to validate page views.</li>
-    <li>
-      All sessions are recorded using <a href='https://syndicate.io/'>Syndicate.io</a>'s Cloud Transaction platform.
-    </li>
-  </ul>
+      <hr />
 
-  <h3>Meta Details</h3>
-  <p>
-    Data collection began at block number <a
-      href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
-      >12315477</a
-    > on Base-Sepolia, and the contract is <a href=`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code#L1`
-      >verified on BaseScan</a
-    >.
-  </p>
+      <h2>How it Works:</h2>
+      <ul>
+        <li>
+          A keccak256 hash is generated from the client IP, user agent, and timestamp to create a unique, irreversible
+          sessionID that is completely anonymous. Only the hash is stored.
+        </li>
+        <li><code>sessionID</code>s are stored onchain to validate page views.</li>
+        <li>
+          All sessions are recorded using <a href='https://syndicate.io/'>Syndicate.io</a>'s Cloud Transaction platform.
+        </li>
+      </ul>
 
-  <h3>The Data</h3>
-  <h4>Sessions</h4>
-  <p>There have been <span id='sessionCount'></span> unique sessions since the onchain analytics went live.</p>
-  <table id='pageViewCounts'>
-    <tr><th>Top 5 pages</th><th>Views</th></tr>
-    {
-      Array.from({ length: 5 }).map((_, i) => (
-        <tr>
-          <td id={`page${i}`} class='break' />
-          <td id={`views${i}`} />
-        </tr>
-      ))
-    }
-  </table>
+      <h3>Meta Details</h3>
+      <p>
+        Data collection began at block number <a
+          href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
+          >12315477</a
+        > on Base-Sepolia, and the contract is <a
+          href=`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code#L1`>verified on BaseScan</a
+        >.
+      </p>
 
-  <table id='eventCounts'>
-    <tr><th>Top events</th><th>Count</th></tr>
-    {
-      Array.from({ length: 3 }).map((_, i) => (
-        <tr>
-          <td id={`event${i}`} />
-          <td id={`count${i}`} />
-        </tr>
-      ))
-    }
-  </table>
+      <h3>The Data</h3>
+      <h4>Sessions</h4>
+      <p>There have been <span id='sessionCount'></span> unique sessions since the onchain analytics went live.</p>
+      <table id='pageViewCounts'>
+        <tr><th>Top 5 pages</th><th>Views</th></tr>
+        {
+          Array.from({ length: 5 }).map((_, i) => (
+            <tr>
+              <td id={`page${i}`} class='break' />
+              <td id={`views${i}`} />
+            </tr>
+          ))
+        }
+      </table>
 
-  <h4>Portraits of Private Keys</h4>
-  <p>
-    The keccack256 hashes generated for each session can also serve as valid private keys. The hexadecimal characters in
-    the hash are used as pseudo-random values for a generative art piece. Please note that these private keys have been
-    publically burned, and they should never be used.
-  </p>
-  <p>Click on a hash to view its corresponding portrait:</p>
-  <div id='sessionIDs'></div>
-</Layout>
+      <table id='eventCounts'>
+        <tr><th>Top events</th><th>Count</th></tr>
+        {
+          Array.from({ length: 3 }).map((_, i) => (
+            <tr>
+              <td id={`event${i}`} />
+              <td id={`count${i}`} />
+            </tr>
+          ))
+        }
+      </table>
+
+      <h4>Portraits of Private Keys</h4>
+      <p>
+        The keccack256 hashes generated for each session can also serve as valid private keys. The hexadecimal
+        characters in the hash are used as pseudo-random values for a generative art piece. Please note that these
+        private keys have been publically burned, and they should never be used.
+      </p>
+      <p>Click on a hash to view its corresponding portrait:</p>
+      <div id='sessionIDs'></div>
+    </article>
+  </section>
+</PageLayout>
 
 <style>
-  .text {
-    font-size: var(--fs-sm);
+  article {
+    padding: var(--padding);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  .text th,
-  .text td {
-    font-family: monospace;
-    font-size: 0.9rem;
-  }
-
-  .text td {
-    word-break: break-all; /* Breaks long words anywhere */
-    white-space: normal; /* Allows wrapping */
-  }
-
-  #sessionIDs {
-    white-space: normal; /* Ensures the normal text wrapping and white-space handling */
+  article > :global(*) {
+    max-width: 65ch;
   }
 </style>
 
@@ -118,47 +117,38 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 <script>
   import { getAllSessionIds, getSessionCount, getAllEvents, getAllPageViews } from "@/lib/sessionContractDataProvider";
 
-  document.addEventListener("astro:page-load", async () => {
+  async function updateData() {
     try {
       // Update session count
       const sessionCount = await getSessionCount();
+      console.log("Session Count:", sessionCount);
       const sessionCountElement = document.getElementById("sessionCount");
-      if (sessionCountElement && sessionCount !== null) {
+      if (sessionCountElement && sessionCount !== null && sessionCount !== undefined) {
         sessionCountElement.textContent = sessionCount.toString();
       }
 
       // Update top 5 page views
       const allPageViews = await getAllPageViews();
-      // console.log("All Page Views: ", allPageViews);
-      if (Array.isArray(allPageViews) && allPageViews.length > 0 && Array.isArray(allPageViews[0])) {
-        const pagePaths = allPageViews[0];
-        const pageOccurrences = allPageViews[1];
-        if (pageOccurrences && pagePaths && pageOccurrences.length === pagePaths.length) {
+      console.log("All Page Views:", allPageViews);
+      if (Array.isArray(allPageViews) && allPageViews.length === 3) {
+        const [pagePaths, pageOccurrences] = allPageViews;
+        if (Array.isArray(pagePaths) && Array.isArray(pageOccurrences) && pagePaths.length === pageOccurrences.length) {
           const pageViewCounts = pageOccurrences
             .map((views, i) => ({ page: pagePaths[i], views: Number(views) }))
-            .filter(({ page }) => page !== "/test" && page !== "/posts/1546329600000-markdown-test");
+            .filter(({ page }) => page !== "/test" && page !== "/posts/1546329600000-markdown-test")
+            .sort((a, b) => b.views - a.views)
+            .slice(0, 5);
 
-          // console.log("Before sorting: ", pageViewCounts);
+          console.log("Top Page View Counts:", pageViewCounts);
 
-          pageViewCounts.sort((a, b) => b.views - a.views);
-
-          // console.log("After sorting: ", pageViewCounts);
-
-          const topPageViewCounts = pageViewCounts.slice(0, 5);
-          // console.log("Top Page View Counts: ", topPageViewCounts);
-
-          topPageViewCounts.forEach((pageView, i) => {
+          pageViewCounts.forEach((pageView, i) => {
             const pageElement = document.getElementById(`page${i}`);
             const viewsElement = document.getElementById(`views${i}`);
-            if (pageElement) {
-              pageElement.textContent = pageView.page;
-            }
-            if (viewsElement) {
-              viewsElement.textContent = pageView.views.toString();
-            }
+            if (pageElement) pageElement.textContent = pageView.page;
+            if (viewsElement) viewsElement.textContent = pageView.views.toString();
           });
         } else {
-          console.error("Mismatch between page occurrences and page paths lengths");
+          console.error("Mismatch between page occurrences and page paths");
         }
       } else {
         console.error("Invalid data structure for page views");
@@ -166,29 +156,32 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 
       // Update top 3 events
       const allEvents = await getAllEvents();
-      // console.log("All Events: ", allEvents);
-      if (Array.isArray(allEvents) && allEvents.length > 0 && Array.isArray(allEvents[0])) {
-        const eventOccurrences = allEvents[0];
-        const eventNames = allEvents[1];
-        if (eventOccurrences && eventNames && eventOccurrences.length === eventNames.length) {
-          const eventCounts = eventOccurrences
-            .map((count, i) => ({ event: eventNames[i], count }))
+      console.log("All Events:", allEvents);
+      if (Array.isArray(allEvents) && allEvents.length === 3) {
+        const [eventNames, eventOccurrences] = allEvents;
+        if (
+          Array.isArray(eventNames) &&
+          Array.isArray(eventOccurrences) &&
+          eventNames.length === eventOccurrences.length
+        ) {
+          const eventCounts = eventNames
+            .map((name, i) => ({
+              event: name,
+              count: Number(eventOccurrences[i].toString()),
+            }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 3);
 
-          // console.log("Event Counts: ", eventCounts);
+          console.log("Top Event Counts:", eventCounts);
+
           eventCounts.forEach((event, i) => {
             const eventElement = document.getElementById(`event${i}`);
             const countElement = document.getElementById(`count${i}`);
-            if (eventElement) {
-              eventElement.textContent = event.event;
-            }
-            if (countElement) {
-              countElement.textContent = event.count.toString();
-            }
+            if (eventElement) eventElement.textContent = event.event;
+            if (countElement) countElement.textContent = event.count.toString();
           });
         } else {
-          console.error("Mismatch between event occurrences and event names lengths");
+          console.error("Mismatch between event names and occurrences");
         }
       } else {
         console.error("Invalid data structure for events");
@@ -196,6 +189,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 
       // Update session IDs
       const sessionIds = await getAllSessionIds();
+      console.log("Session IDs:", sessionIds);
       const sessionIDsContainer = document.getElementById("sessionIDs");
       if (sessionIDsContainer && Array.isArray(sessionIds)) {
         sessionIds.forEach((sessionId) => {
@@ -203,12 +197,13 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
           linkElement.href = `/onchain-analytics/${sessionId}`;
           linkElement.textContent = sessionId;
           linkElement.className = "sessionHash break";
-
           sessionIDsContainer.appendChild(linkElement);
         });
       }
     } catch (error) {
-      console.error("An error occurred while fetching data: ", error);
+      console.error("Error updating data:", error);
     }
-  });
+  }
+
+  updateData();
 </script>

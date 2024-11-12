@@ -32,7 +32,6 @@ The site is hosted on [Vercel](https://vercel.com/), and I'm using [PostHog](htt
 
 - [Astro](https://astro.build/)
 - [Obsidian](https://obsidian.md/)
-- [PostHog](https://posthog.com/)
 - [Vercel](https://vercel.com/)
 - [WSRV](https://wsrv.nl/)
 - [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/)

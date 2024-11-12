@@ -1,112 +1,91 @@
 ---
-import Layout from "@layouts/layout.astro";
-import { getObsidianEntries } from "@lib/github";
-import Image from "@components/img.astro";
-import Paragraph from "@components/paragraph.astro";
-import BreadCrumb from "@components/breadcrumb.astro";
-import Meta_ReadTime_Dates from "@components/meta_readtime_dates.astro";
-import Meta_Tags from "@components/meta_tags.astro";
-import Squiggle from "@components/squiggle.astro";
-import SocialShare from "@components/social_share.astro";
-import StripeButton from "@components/stripe_button.astro";
-import ZoraCollection from "@components/onchain/zora_collection.astro";
+import { render, getCollection } from "astro:content";
 
-import { Markdown } from "astro-remote";
-
-import markedAlert from "marked-alert";
+// layouts
+import PageLayout from "@/layouts/PageLayout.astro";
 
 export async function getStaticPaths() {
-  const categories = ["posts", "recipes", "notes", "art"];
-  let staticPaths: { params: { path: string; slug: string } }[] = [];
+  const [posts, art, notes, recipes] = await Promise.all([
+    getCollection("posts"),
+    getCollection("art"),
+    getCollection("notes"),
+    getCollection("recipes"),
+  ]);
 
-  // Iterate over each category to fetch entries
-  for (const path of categories) {
-    const entries = await getObsidianEntries(path);
-    // Add paths for each entry's slug under the current path
-    entries.forEach((entry) => {
-      if (entry.frontmatter.slug) {
-        // Ensure there is a slug before adding to paths
+  // Combine all collections into one array
+  const allContent = [...posts, ...art, ...notes, ...recipes];
 
-        staticPaths.push({
-          params: { path, slug: entry.frontmatter.slug },
-        });
-      }
-    });
-  }
+  // Filter entries to ensure they have path and slug
+  const entries = allContent
+    .filter((entry) => entry.data.frontmatter?.path && entry.data.frontmatter?.slug)
+    .map((entry) => ({
+      params: { path: entry.data.frontmatter.path, slug: entry.data.frontmatter.slug },
+      props: {
+        entry: {
+          ...entry,
+        },
+      },
+    }));
 
-  return staticPaths;
+  return entries;
 }
 
-// Parameters are received from the URL defined by the static paths
-const { path, slug } = Astro.params;
-const entries = await getObsidianEntries(path, slug); // Directly use path and slug to get the entry
-const entry = entries[0]; // Assuming getObsidianEntries returns an array with one entry when slug is provided
+const { path } = Astro.params;
+const { entry } = Astro.props;
 
-if (!entry) {
-  throw new Error("404: Entry not found");
-}
-
-const { body, frontmatter } = entry;
-const readingTime = Math.ceil(body.split(/\s+/).length / 180);
+const { Content } = await render(entry);
 ---
 
-<Layout title={frontmatter.title} path={path}>
-  <BreadCrumb path={path} />
-  <article>
-    <div class='meta'>
-      <h1>{frontmatter.title}</h1>
-      <Meta_ReadTime_Dates created={frontmatter.created} updated={frontmatter.updated} readingTime={readingTime} />
-      <Meta_Tags tags={frontmatter.tags} />
-      <SocialShare />
-      <Squiggle />
+<PageLayout title={entry.data.frontmatter.title} path={path}>
+  <aside></aside>
+  <section>
+    <div class='breadcrumb'>
+      <h3 class='capitalize'><a href={`/${entry.data.frontmatter.path}`}>{entry.data.frontmatter.path}</a></h3>
     </div>
-
-    <Markdown
-      sanitize={{ allowComponents: true }}
-      content={body}
-      components={{ img: Image, p: Paragraph, StripeButton, ZoraCollection }}
-      marked={{
-        extensions: [markedAlert()],
-      }}
-    />
-  </article>
-
-  <BreadCrumb path={path} />
-</Layout>
-
-<script async src='https://js.stripe.com/v3/buy-button.js'></script>
+    <div class='header'>
+      <h1>{entry.data.frontmatter.title}</h1>
+      <p>
+        Published {new Date(entry.data.frontmatter.created).toLocaleDateString()}.
+        {
+          new Date(entry.data.frontmatter.updated).getTime() - new Date(entry.data.frontmatter.created).getTime() >
+            24 * 60 * 60 * 1000 && `Last updated ${new Date(entry.data.frontmatter.updated).toLocaleDateString()}.`
+        }
+      </p>
+      <div class='tags'>
+        {entry.data.frontmatter.tags.map((tag: any) => <span>#{tag}</span>)}
+      </div>
+    </div>
+    <article>
+      <Content />
+    </article>
+  </section>
+</PageLayout>
 
 <style>
+  .breadcrumb {
+    padding: var(--padding);
+  }
+
+  .header {
+    padding: var(--padding);
+    border-bottom: var(--border);
+  }
+
   article {
+    padding: var(--padding);
     display: flex;
     flex-direction: column;
     gap: 1rem;
-  }
-
-  /* Extra small devices (portrait phones, less than 576px) */
-  @media (max-width: 575px) {
-    article:has(.masonry) {
-      max-width: unset;
-      grid-gap: 1rem;
-    }
-  }
-
-  .meta {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-</style>
-
-<style is:global>
-  article > *:not(.masonry) {
     max-width: 800px;
-    width: 100%;
   }
 
-  @media (max-width: 899px) {
-    article > *:not(.masonry) {
-      max-width: calc(100vw - 4rem);
-    }
+  article > :global(pre) {
+    max-width: calc(100vw - 4rem);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 </style>

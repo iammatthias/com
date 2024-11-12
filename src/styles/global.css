@@ -1,3 +1,9 @@
+/* Color Variables */
+:root {
+  color-scheme: light dark;
+}
+
+/* Color Variables */
 :root {
   /* Primary Palette - Mediterranean Inspiration */
   --gold: rgb(255, 187, 0); /* Brighter base gold */
@@ -21,140 +27,80 @@
   --grey-dark: rgba(89, 89, 89, 1);
   --black: rgba(26, 26, 26, 1);
 
-  /* Layout Colors */
-  --background: var(--white-darker);
-  --foreground: var(--blue-darker);
-  --midground: var(--white-darker);
+  /* Accessibility Colors */
+  --focus-outline: rgba(255, 187, 0, 0.6); /* Semi-transparent gold for focus outline */
 
-  /* Alert Colors */
-  --alert-note-bg: var(--blue-lighter);
-  --alert-tip-bg: var(--gold-lighter);
-  --alert-important-bg: var(--terracotta);
-  --alert-warning-bg: var(--terracotta-lighter);
-  --alert-caution-bg: var(--grey-light);
+  /* Borders */
+  --default-border: 1px solid var(--gold);
 
-  --alert-text-color: var(--blue-darker);
-  --alert-border-color: var(--grey);
+  /* Text Colors */
+  --text-color-light: var(--blue-darker);
+  --text-color-dark: var(--white);
+  --background-color-light: var(--white-darker);
+  --background-color-dark: var(--black);
+  --heading-color-light: var(--blue-darker);
+  --heading-color-dark: var(--white);
+  --paragraph-color-light: var(--grey-dark);
+  --paragraph-color-dark: var(--grey-light);
 
-  /* Typography Colors */
-  --text-primary: var(--blue-darker);
-  --text-secondary: var(--grey-dark);
-  --text-warning: var(--terracotta-darker);
-  --text-link: var(--blue);
-  --text-title: var(--blue-darker);
+  /* Link Colors */
+  --link-color-light: var(--blue);
+  --link-color-dark: var(--blue-lighter);
+  --link-hover-color-light: var(--gold);
+  --link-hover-color-dark: var(--gold-lighter);
+  --link-active-color-light: var(--terracotta);
+  --link-active-color-dark: var(--terracotta-lighter);
+  --link-visited-color-light: var(--terracotta-darker);
+  --link-visited-color-dark: var(--terracotta-lighter);
 
-  --noise-opacity: 0.6;
-  --smooth-shadow: 0px 15px 25px -5px rgba(0, 0, 0, 0.2),
-    0px 5px 10px -5px rgba(0, 0, 0, 0.1);
+  /* Code Background */
+  --code-background-light: var(--grey-light);
+  --code-background-dark: var(--grey-dark);
+
+  --color-bg: #fafafa;
+  --color-text: #444444;
+  --color-blue: #3273dc;
+  --color-blue-light: #4a9dec;
+
+  /* responsive*/
+  --background: light-dark(var(--background-color-light), var(--background-color-dark));
+  --color: light-dark(var(--text-color-light), var(--text-color-dark));
+  --border: 2px solid var(--gold);
+  --padding: 2rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: var(--black);
-    --foreground: var(--white);
-    --midground: var(--blue);
-
-    --text-primary: var(--white);
-    --text-secondary: var(--grey-light);
-    --text-warning: var(--terracotta-lighter);
-    --text-link: var(--gold-lighter);
-    --text-title: var(--gold);
-
-    --alert-note-bg: var(--blue);
-    --alert-tip-bg: var(--gold-darker);
-    --alert-important-bg: var(--terracotta);
-    --alert-warning-bg: var(--terracotta-lighter);
-    --alert-caution-bg: var(--grey-dark);
-
-    --alert-text-color: var(--white);
-    --alert-border-color: var(--white-darker);
-
-    --noise-opacity: 0.4;
-    --smooth-shadow: 0px 15px 30px -5px rgba(255, 255, 255, 0.1),
-      0px 5px 15px -5px rgba(255, 255, 255, 0.15);
-  }
+/* Font Family Variables */
+:root {
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    "Helvetica Neue", sans-serif;
+  --font-heading: "New York", "Times New Roman", Times, serif;
+  --font-mono: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Monaco, "Liberation Mono", Consolas, monospace;
 }
 
-/* Rest of the CSS remains the same */
-html {
-  min-height: 100%;
+:root {
+  --fs-x-small: 0.79rem;
+  --fs-small: 0.89rem;
+  --fs-p: 1rem;
+  --fs-h6: 1.13rem;
+  --fs-h5: 1.27rem;
+  --fs-h4: 1.42rem;
+  --fs-h3: 1.6rem;
+  --fs-h2: 1.8rem;
+  --fs-h1: 2.03rem;
+  --lh: 1.6;
+}
+
+/* Base Styles */
+html,
+body {
+  scrollbar-gutter: stable;
 }
 
 body {
-  position: relative;
-  background: var(--background);
-  color: var(--foreground);
-  z-index: -100;
-}
-
-.medium-zoom-image--opened {
-  z-index: 6;
-}
-
-.medium-zoom-overlay {
-  z-index: 4;
-}
-
-/* Alert banners */
-
-.markdown-alert {
-  padding: 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--alert-border-color);
-  display: flex;
-  gap: 1rem;
-  flex-direction: column;
-  color: var(--alert-text-color);
-  box-shadow: var(--smooth-shadow);
-}
-
-.markdown-alert svg {
-  width: 1rem;
-  height: auto;
-  fill: currentColor;
-  display: inline-block;
-  margin-right: 1rem;
-  margin-bottom: 0.2rem;
-  vertical-align: middle;
-}
-
-.markdown-alert-note {
-  background-color: var(--alert-note-bg);
-}
-
-.markdown-alert-tip {
-  background-color: var(--alert-tip-bg);
-}
-
-.markdown-alert-important {
-  background-color: var(--alert-important-bg);
-}
-
-.markdown-alert-warning {
-  background-color: var(--alert-warning-bg);
-}
-
-.markdown-alert-caution {
-  background-color: var(--alert-caution-bg);
-}
-
-#squigglePattern > path {
-  stroke: var(--gold);
-}
-
-/* helper classes to show / hide on desktop and mobile at a 786px breakpoint */
-.hide-on-mobile {
-  display: none;
-}
-.hide-on-desktop {
-  display: block;
-}
-
-@media (min-width: 786px) {
-  .hide-on-mobile {
-    display: block;
-  }
-  .hide-on-desktop {
-    display: none;
-  }
+  font-family: var(--font-body);
+  font-size: var(--fs-p);
+  line-height: var(--lh);
+  color: var(--color);
+  background-color: var(--background);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

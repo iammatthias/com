@@ -1,54 +1,73 @@
 ---
-import Layout from "@layouts/layout.astro";
-import SocialPlatforms from "@components/social_platforms.astro";
-import Navigation from "@components/navigation.astro";
-import HomepageHero from "@components/homepage-hero.astro";
-import FarcasterLatestPost from "@/components/onchain/farcaster_latest_post.astro";
+// layout
+import PageLayout from "@/layouts/PageLayout.astro";
+
+// components
+import RecentContent from "@/components/RecentContent.astro";
+import GlassHero from "@/components/GlassHero.astro";
 ---
 
-<Layout>
-  <h1 class='h5'>Hi, I'm Matthias 🌞</h1>
-  <p class='text--color'>
-    I run <a
-      href='https://day---break.com/'
-      target='_blank'
-      title='day---break: Driving Growth Through Data-Driven Marketing'>☼ day---break</a
-    >, a small marketing agency focused on growth and lifecycle automation.
-  </p>
-
-  <p class='text--color'>
-    Outside of work my time is spent <a href='/art' target='_blank' title='Creative works — photography and digital art'
-      >taking pictures</a
-    >, <a href='/recipes' target='_blank' title='Recipes found and developed'>cooking</a>, <a
-      href='/posts'
-      target='_blank'
-      title="Posts I've written">writing</a
-    > the occasional <a href='/notes' target='_blank' title="Notes I've written">note</a>, and with my family.
-  </p>
-
-  <!-- <FarcasterLatestPost /> -->
-</Layout>
+<PageLayout>
+  <aside></aside>
+  <section>
+    <div>
+      <div class='about'>
+        <h1>Hi, I'm Matthias</h1>
+        <p>
+          I'm a photographer turned marketing technologist. Over the years I've worked in luxury travel, fintech, and
+          ecommerce.
+        </p>
+        <p>
+          These days I run <a
+            href='https://day---break.com/'
+            target='_blank'
+            title='day---break: Driving Growth Through Data-Driven Marketing'>☼ day---break</a
+          >, a marketing consultancy focused on growth and lifecycle automation.
+        </p>
+        <p>Outside of work I can be found with a camera in my hand, in front of a bbq, writing, or with my family.</p>
+      </div>
+      <RecentContent />
+      <!-- <RecentGlassContent /> -->
+    </div>
+    <div>
+      <GlassHero />
+    </div>
+  </section>
+</PageLayout>
 
 <style>
-  .text--color {
-    color: var(--text-title);
+  section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    @media (max-width: 1080px) {
+      display: block;
+    }
   }
-  .find-me-online {
+
+  section > div > :global(*):not(:last-child) {
+    border-bottom: var(--border);
+  }
+
+  .about {
+    padding: var(--padding);
+    height: fit-content;
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
-  .underline {
-    color: inherit;
-    /* transition: color 0.2s ease-in-out; */
-    cursor: pointer;
-    border: none;
-    background: none;
-    padding: 0;
-    margin: 0;
-    > span {
-      text-decoration: underline;
-      text-underline-offset: 0.2rem;
+
+  section > div:last-child {
+    position: sticky;
+    top: calc(var(--nav-height) + 1px);
+    height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+    border-left: var(--border);
+    border-bottom: none;
+    overflow: hidden;
+    @media (max-width: 1080px) {
+      border-top: var(--border);
+      border-left: none;
+      padding: var(--padding);
     }
   }
 </style>

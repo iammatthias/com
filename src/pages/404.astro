@@ -1,11 +1,29 @@
 ---
-// export const prerender = true;
-
-import Layout from "@layouts/layout.astro";
+// layout
+import PageLayout from "@/layouts/PageLayout.astro";
+import RecentContent from "@/components/RecentContent.astro";
 ---
 
-<Layout title='404'>
-  <h1>404</h1>
-  <p>You don't have to go home, but you can't stay here.</p>
-  <p><a aria-label='Go home' href='/'>Go home</a></p>
-</Layout>
+<PageLayout path='Social'>
+  <aside></aside>
+  <section>
+    <div class='social-header'>
+      <h1>404</h1>
+      <p>Page not found.</p>
+      <p>You don't have to go home, but you can't stay here.</p>
+    </div>
+    <RecentContent />
+  </section>
+</PageLayout>
+
+<style>
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .social-header {
+    padding: var(--padding);
+  }
+</style>
