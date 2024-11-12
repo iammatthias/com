@@ -39,9 +39,10 @@ const { Content } = await render(entry);
 <PageLayout title={entry.data.frontmatter.title} path={path}>
   <aside></aside>
   <section>
-    <div class='header'>
+    <div class='breadcrumb'>
       <h3 class='capitalize'><a href={`/${entry.data.frontmatter.path}`}>{entry.data.frontmatter.path}</a></h3>
-      <hr />
+    </div>
+    <div class='header'>
       <h1>{entry.data.frontmatter.title}</h1>
       <p>
         Published {new Date(entry.data.frontmatter.created).toLocaleDateString()}.
@@ -54,13 +55,20 @@ const { Content } = await render(entry);
         {entry.data.frontmatter.tags.map((tag: any) => <span>#{tag}</span>)}
       </div>
     </div>
-    <article><Content /></article>
+    <article>
+      <Content />
+    </article>
   </section>
 </PageLayout>
 
 <style>
+  .breadcrumb {
+    padding: var(--padding);
+  }
+
   .header {
     padding: var(--padding);
+    border-bottom: var(--border);
   }
 
   article {
