@@ -1,47 +1,37 @@
-# Astro Starter Kit: Minimal
+```
+      :::::::::::            :::          :::   :::
+         :+:              :+: :+:       :+:+: :+:+:
+        +:+             +:+   +:+     +:+ +:+:+ +:+
+       +#+            +#++:++#++:    +#+  +:+  +#+
+      +#+            +#+     +#+    +#+       +#+
+     #+#            #+#     #+#    #+#       #+#
+###########        ###     ###    ###       ###
 
-```sh
-npm create astro@latest -- --template minimal
+        :::   :::           :::    :::::::::::   :::::::::::       :::    :::       :::::::::::           :::        ::::::::
+      :+:+: :+:+:        :+: :+:      :+:           :+:           :+:    :+:           :+:             :+: :+:     :+:    :+:
+    +:+ +:+:+ +:+      +:+   +:+     +:+           +:+           +:+    +:+           +:+            +:+   +:+    +:+
+   +#+  +:+  +#+     +#++:++#++:    +#+           +#+           +#++:++#++           +#+           +#++:++#++:   +#++:++#++
+  +#+       +#+     +#+     +#+    +#+           +#+           +#+    +#+           +#+           +#+     +#+          +#+
+ #+#       #+#     #+#     #+#    #+#           #+#           #+#    #+#           #+#           #+#     #+#   #+#    #+#
+###       ###     ###     ###    ###           ###           ###    ###       ###########       ###     ###    ########
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/minimal)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/minimal)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/minimal/devcontainer.json)
+### hi
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+After a few years on NextJS with various content backends (Contentful, Hygraph, Sanity, Tina, etc.), I've embraced a new approach.
 
-## 🚀 Project Structure
+The front-end is built with [Astro](https://astro.build/), and the content is authored in [Obsidian](https://obsidian.md/). The markdown files are stored in a private repo on Github, and pulled into the Astro site through the Github GraphQL API.
 
-Inside of your Astro project, you'll see the following folders and files:
+Images that are added to the markdown in Obsidian are uploaded to a [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) bucket, and the URLs are replaced in the markdown files. In Astro, these images are optimized and cached through [WSRV](https://wsrv.nl/).
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+The site is hosted on [Vercel](https://vercel.com/), and I'm using [PostHog](https://posthog.com/) for some basic analytics.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+> The code is provided as-is, and I'm not planning to provide support for this setup. Feel free to use it as inspiration for your own projects.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### built with
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- [Astro](https://astro.build/)
+- [Obsidian](https://obsidian.md/)
+- [Vercel](https://vercel.com/)
+- [WSRV](https://wsrv.nl/)
+- [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/)
