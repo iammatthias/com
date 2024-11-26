@@ -97,7 +97,7 @@ body {
 }
 
 body {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: var(--fs-p);
   line-height: var(--lh);
   color: var(--color);

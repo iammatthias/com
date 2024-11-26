@@ -45,7 +45,7 @@ import GlassHero from "@/components/GlassHero.astro";
     }
   }
 
-  section > div > :global(*):not(:last-child) {
+  section > div > :not(:last-child) {
     border-bottom: var(--border);
   }
 
@@ -68,6 +68,7 @@ import GlassHero from "@/components/GlassHero.astro";
       border-top: var(--border);
       border-left: none;
       padding: var(--padding);
+      height: fit-content;
     }
   }
 </style>
