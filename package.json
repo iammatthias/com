@@ -10,16 +10,16 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/vercel": "^8.0.0-beta.2",
+    "@astrojs/vercel": "^8.0.0",
     "@resvg/resvg-js": "^2.6.2",
-    "astro": "^5.0.0-beta.5",
+    "astro": "^5.0.2",
     "astro-capo": "^0.0.1",
     "astro-seo": "^0.8.4",
     "gray-matter": "^4.0.3",
-    "marked": "^15.0.1",
-    "satori": "^0.11.3",
+    "marked": "^15.0.3",
+    "satori": "^0.12.0",
     "satori-html": "^0.3.2",
-    "typescript": "^5.6.3",
-    "viem": "^2.21.47"
+    "typescript": "^5.7.2",
+    "viem": "^2.21.54"
   }
 }
