@@ -12,7 +12,7 @@
     "@astrojs/check": "^0.9.4",
     "@astrojs/vercel": "^8.0.0",
     "@resvg/resvg-js": "^2.6.2",
-    "astro": "^5.0.2",
+    "astro": "^5.0.3",
     "astro-capo": "^0.0.1",
     "astro-seo": "^0.8.4",
     "gray-matter": "^4.0.3",

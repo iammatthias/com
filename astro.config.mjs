@@ -7,7 +7,7 @@ import vercel from "@astrojs/vercel/serverless";
 export default defineConfig({
   site: "https://iammatthias.com",
   output: "static",
-  adapter: vercel(),
+  adapter: vercel({}),
   prefetch: {
     prefetchAll: true,
   },
