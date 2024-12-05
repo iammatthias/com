@@ -222,7 +222,6 @@ label {
 blockquote,
 ul,
 ol {
-  margin-left: 1rem;
   margin-block: 0;
 }
 

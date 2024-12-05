@@ -83,6 +83,10 @@ const { Content } = await render(entry);
     max-width: calc(100vw - 4rem);
   }
 
+  article :global(a) {
+    word-break: break-all;
+  }
+
   .tags {
     display: flex;
     flex-wrap: wrap;
