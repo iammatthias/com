@@ -121,7 +121,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
     try {
       // Update session count
       const sessionCount = await getSessionCount();
-      console.log("Session Count:", sessionCount);
+
       const sessionCountElement = document.getElementById("sessionCount");
       if (sessionCountElement && sessionCount !== null && sessionCount !== undefined) {
         sessionCountElement.textContent = sessionCount.toString();
@@ -129,7 +129,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 
       // Update top 5 page views
       const allPageViews = await getAllPageViews();
-      console.log("All Page Views:", allPageViews);
+
       if (Array.isArray(allPageViews) && allPageViews.length === 3) {
         const [pagePaths, pageOccurrences] = allPageViews;
         if (Array.isArray(pagePaths) && Array.isArray(pageOccurrences) && pagePaths.length === pageOccurrences.length) {
@@ -138,8 +138,6 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
             .filter(({ page }) => page !== "/test" && page !== "/posts/1546329600000-markdown-test")
             .sort((a, b) => b.views - a.views)
             .slice(0, 5);
-
-          console.log("Top Page View Counts:", pageViewCounts);
 
           pageViewCounts.forEach((pageView, i) => {
             const pageElement = document.getElementById(`page${i}`);
@@ -156,7 +154,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 
       // Update top 3 events
       const allEvents = await getAllEvents();
-      console.log("All Events:", allEvents);
+
       if (Array.isArray(allEvents) && allEvents.length === 3) {
         const [eventNames, eventOccurrences] = allEvents;
         if (
@@ -171,8 +169,6 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
             }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 3);
-
-          console.log("Top Event Counts:", eventCounts);
 
           eventCounts.forEach((event, i) => {
             const eventElement = document.getElementById(`event${i}`);
@@ -189,7 +185,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 
       // Update session IDs
       const sessionIds = await getAllSessionIds();
-      console.log("Session IDs:", sessionIds);
+
       const sessionIDsContainer = document.getElementById("sessionIDs");
       if (sessionIDsContainer && Array.isArray(sessionIds)) {
         sessionIds.forEach((sessionId) => {
