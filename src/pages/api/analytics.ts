@@ -7,6 +7,16 @@ const SYNDICATE_ID = import.meta.env.SYNDICATE_ID;
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 const CHAIN_ID = 84532;
 
+interface RequestBody {
+  functionName: string;
+  args: Record<string, unknown>;
+}
+
+interface SyndicateResponse {
+  transactionId: string;
+  error?: string;
+}
+
 export const POST: APIRoute = async ({ request }) => {
   // console.log("API route called");
 
@@ -17,7 +27,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  let body;
+  let body: RequestBody;
   try {
     body = await request.json();
   } catch (error) {
@@ -49,7 +59,7 @@ export const POST: APIRoute = async ({ request }) => {
     args: { ...args }, // Spread the args array into an object
   };
 
-  let syndicateResponse;
+  let syndicateResponse: Response;
   try {
     syndicateResponse = await fetch("https://api.syndicate.io/transact/sendTransaction", {
       method: "POST",
@@ -77,7 +87,7 @@ export const POST: APIRoute = async ({ request }) => {
   const text = await syndicateResponse.text();
   // console.log("Raw Syndicate Response:", text);
 
-  let data;
+  let data: SyndicateResponse;
   try {
     data = JSON.parse(text);
   } catch (parseError) {

@@ -1,5 +1,10 @@
 const API_ENDPOINT = "/api/analytics";
 
+interface TransactionResponse {
+  error?: string;
+  [key: string]: any;
+}
+
 async function sendTransaction(functionName: string, args: any[]) {
   const requestBody = {
     functionName: functionName,
@@ -25,7 +30,7 @@ async function sendTransaction(functionName: string, args: any[]) {
     const text = await response.text();
     // console.log("Raw response text:", text);
 
-    let data;
+    let data: TransactionResponse;
     try {
       data = JSON.parse(text);
     } catch (parseError) {

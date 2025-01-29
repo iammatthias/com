@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 
 const { showTags = true, showGlass = false, collection = "all", contentLimit } = Astro.props;
 
@@ -27,6 +28,9 @@ interface GlassEntry {
 
 type CombinedEntry = ContentEntry | GlassEntry;
 
+type ContentCollectionEntry = CollectionEntry<"posts" | "art" | "notes" | "recipes">;
+type GlassCollectionEntry = CollectionEntry<"glass">;
+
 const [posts, art, notes, recipes, glass] = await Promise.all([
   getCollection("posts"),
   getCollection("art"),
@@ -36,7 +40,7 @@ const [posts, art, notes, recipes, glass] = await Promise.all([
 ]);
 
 // Create a map of collection names to their data
-const collections = {
+const collections: Record<string, ContentCollectionEntry[]> = {
   posts,
   art,
   notes,
@@ -44,19 +48,20 @@ const collections = {
 };
 
 // Get content based on collection prop
-const contentToProcess =
+const contentToProcess: ContentCollectionEntry[] =
   collection === "all" ? [...posts, ...art, ...notes, ...recipes] : collections[collection] || [];
 
 // Filter out entries missing 'created' field
-const allContent = contentToProcess.filter((entry) => entry.data.frontmatter?.created);
+const allContent = contentToProcess.filter((entry: ContentCollectionEntry) => entry.data.frontmatter?.created);
 
 // Sort posts by created date, newest first
 const sortedContent = allContent.sort(
-  (a, b) => new Date(b.data.frontmatter.created).getTime() - new Date(a.data.frontmatter.created).getTime()
+  (a: ContentCollectionEntry, b: ContentCollectionEntry) =>
+    new Date(b.data.frontmatter.created).getTime() - new Date(a.data.frontmatter.created).getTime()
 );
 
 // Get entries based on contentLimit
-const firstEntries = sortedContent.slice(0, effectiveContentLimit).map((entry) => ({
+const firstEntries = sortedContent.slice(0, effectiveContentLimit).map((entry: ContentCollectionEntry) => ({
   ...entry.data.frontmatter,
   type: "content",
 })) as ContentEntry[];

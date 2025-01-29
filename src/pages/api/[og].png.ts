@@ -14,7 +14,7 @@ export async function GET({ params }) {
   const font = await fetch("https://github.com/fridamedrano/Kalnia-Typeface/raw/main/fonts/ttf/Kalnia-Bold.ttf");
   const buffer = await font.arrayBuffer();
 
-  let markup;
+  let markup: ReturnType<typeof html>;
 
   if (path && !title) {
     markup = html`
