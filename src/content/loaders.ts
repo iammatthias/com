@@ -25,8 +25,40 @@ export function obsidianLoader({ path = "" }: { path?: string }): Loader {
           // Use gray-matter to parse the frontmatter and content body
           const { data: frontmatter, content } = matter(markdown);
 
-          // Parse and validate the frontmatter and markdown content using the schema
-          const parsedData = await parseData({
+          marked.use({
+            renderer: {
+              paragraph({ tokens }) {
+                // Check if the paragraph contains only an image
+                if (tokens.length === 1 && tokens[0].type === "image") {
+                  // Return just the image token without paragraph wrapping
+                  return tokens[0].raw;
+                }
+
+                // Process mixed content paragraphs
+                const content = tokens
+                  .map((token) => {
+                    switch (token.type) {
+                      case "text":
+                        return token.text;
+                      case "link":
+                        return token.raw;
+                      case "codespan":
+                        return token.raw;
+                      case "image":
+                        return token.raw;
+                      default:
+                        return token.raw;
+                    }
+                  })
+                  .join("");
+
+                // Wrap in paragraph tags if there's content
+                return content ? `<p>${content}</p>` : "";
+              },
+            },
+          });
+
+          store.set({
             id: frontmatter.slug,
             data: {
               frontmatter: {
@@ -36,31 +68,11 @@ export function obsidianLoader({ path = "" }: { path?: string }): Loader {
                 updated: frontmatter.updated,
                 published: frontmatter.published,
                 tags: frontmatter.tags,
-                path: path,
+                path,
               },
-              body: content, // Use the content (markdown body)
-              rendered: {
-                html: await marked(content),
-              },
-            },
-          });
-
-          store.set({
-            id: parsedData.frontmatter.slug,
-            data: {
-              frontmatter: {
-                title: parsedData.frontmatter.title,
-                slug: parsedData.frontmatter.slug,
-                created: parsedData.frontmatter.created,
-                updated: parsedData.frontmatter.updated,
-                published: parsedData.frontmatter.published,
-                tags: parsedData.frontmatter.tags,
-                path: parsedData.frontmatter.path,
-              },
-              body: parsedData.body,
             }, // Validated data
             rendered: {
-              html: parsedData.rendered.html,
+              html: await marked(content),
             },
             digest, // Track content integrity using the digest
           });

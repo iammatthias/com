@@ -33,7 +33,7 @@ export async function getStaticPaths() {
 const { path } = Astro.params;
 const { entry } = Astro.props;
 
-const { Content } = await render(entry);
+console.log(entry);
 ---
 
 <PageLayout title={entry.data.frontmatter.title} path={path}>
@@ -59,7 +59,7 @@ const { Content } = await render(entry);
       </div>
     </section>
     <article>
-      <Content />
+      <Fragment set:html={entry.data.rendered.html} />
     </article>
   </main>
 </PageLayout>
@@ -67,6 +67,7 @@ const { Content } = await render(entry);
 <style>
   main {
     max-width: 800px;
+    width: 100%;
     min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
     margin: 0 auto;
     outline: var(--border);
