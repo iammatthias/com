@@ -4,91 +4,50 @@ import { getCollection } from "astro:content";
 // layouts
 import PageLayout from "@/layouts/PageLayout.astro";
 
+// components
+import RecentContent from "@/components/RecentContent.astro";
+
 const { path } = Astro.params;
 
 export async function getStaticPaths() {
-  const [posts, art, notes, recipes] = await Promise.all([
-    getCollection("posts"),
-    getCollection("art"),
-    getCollection("notes"),
-    getCollection("recipes"),
-  ]);
-
-  // Combine all collections into one array and filter out entries missing path or slug
-  const allContent = [...posts, ...art, ...notes, ...recipes].filter(
-    (entry) => entry.data.frontmatter?.path && entry.data.frontmatter?.slug
-  );
-
-  // Unique paths and their entries (frontmatter)
-  const paths = [...new Set(allContent.map((entry) => entry.data.frontmatter.path))];
-
-  return Promise.all(
-    paths.map((path) => ({
-      params: { path },
-      props: {
-        // Filter entries for each path and sort them by created date (most recent first)
-        entries: allContent
-          .filter((entry) => entry.data.frontmatter.path === path)
-          .sort(
-            (a, b) => new Date(b.data.frontmatter.created).getTime() - new Date(a.data.frontmatter.created).getTime()
-          ),
-      },
-    }))
-  );
+  return [
+    { params: { path: "posts" } },
+    { params: { path: "art" } },
+    { params: { path: "notes" } },
+    { params: { path: "recipes" } },
+  ];
 }
-
-const { entries } = Astro.props;
 ---
 
-<PageLayout path={path}>
-  <aside></aside>
-  <section>
-    <div class='header'>
-      <h2 class='capitalize'>{path}</h2>
-    </div>
-    <ul>
-      {
-        entries.map((entry) => (
-          <li>
-            <h2>
-              <a href={`/${path}/${entry.data.frontmatter.slug}`}>{entry.data.frontmatter.title}</a>
-            </h2>
-            {/* Always show the created date. Only show the updated date if it is +24 hours from the created date */}
-            <p>
-              Published {new Date(entry.data.frontmatter.created).toLocaleDateString()}.
-              {new Date(entry.data.frontmatter.updated).getTime() - new Date(entry.data.frontmatter.created).getTime() >
-                24 * 60 * 60 * 1000 && `Last updated ${new Date(entry.data.frontmatter.updated).toLocaleDateString()}.`}
-            </p>
-            <div class='tags'>
-              {entry.data.frontmatter.tags.map((tag) => (
-                <span>#{tag}</span>
-              ))}
-            </div>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+<PageLayout>
+  <main>
+    <h1 class='capitalize'>{path}</h1>
+    <RecentContent collection={path} />
+  </main>
 </PageLayout>
 
 <style>
-  ul {
-    margin: 0;
-    list-style: none;
-    padding: var(--padding);
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  main {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+    overflow: hidden;
+    align-content: start;
+    align-items: start;
+    gap: 1px;
   }
 
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .header {
+  main > :global(*):not(.glass-content) {
+    aspect-ratio: 6 / 7;
+    min-height: 0;
+    min-width: 0;
+    outline: var(--border);
     padding: var(--padding);
+    @media (max-width: 768px) {
+      /* &:first-child {
+        aspect-ratio: unset;
+      } */
+      aspect-ratio: 7 / 6;
+    }
   }
 </style>

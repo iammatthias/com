@@ -92,7 +92,7 @@ export function obsidianLoader({ path = "" }: { path?: string }): Loader {
 // Define any options that the loader needs
 export function glassLoader(): Loader {
   // Configure the loader
-  const feedUrl = new URL(`https://glass.photo/api/v2/users/iam/posts`);
+  const feedUrl = new URL(`https://glass.photo/api/v2/users/iam/posts?limit=50`);
 
   return {
     name: "glass-loader",
@@ -185,6 +185,104 @@ export function glassLoader(): Loader {
         model: z.string(),
         model_slug: z.string(),
       }),
+    }),
+  };
+}
+
+export function tagLoader(): Loader {
+  return {
+    name: "tag-loader",
+    load: async ({ store, parseData, logger }) => {
+      try {
+        // Get all collections that use the obsidian loader
+        const collections = ["posts", "art", "notes", "recipes"];
+        const tagMap = new Map<
+          string,
+          Set<{
+            slug: string;
+            title: string;
+            path: string;
+            created: string;
+            updated: string;
+            published: boolean;
+            tags: string[];
+          }>
+        >();
+
+        // Process each collection
+        for (const path of collections) {
+          logger.info(`Processing tags from collection: ${path}`);
+          const entries = await fetchFromGitHub(path);
+
+          if (!entries?.length) {
+            logger.warn(`No entries found for collection: ${path}`);
+            continue;
+          }
+
+          // Process each entry in the collection
+          for (const entry of entries) {
+            const { data: frontmatter } = matter(entry.markdown);
+
+            // Skip if no tags
+            if (!frontmatter.tags?.length) continue;
+
+            // Process each tag
+            for (const tag of frontmatter.tags) {
+              const normalizedTag = tag.toLowerCase().trim();
+              if (!tagMap.has(normalizedTag)) {
+                tagMap.set(normalizedTag, new Set());
+              }
+
+              // Add entry reference to the tag with complete frontmatter
+              tagMap.get(normalizedTag)?.add({
+                slug: frontmatter.slug,
+                title: frontmatter.title,
+                path: path,
+                created: frontmatter.created,
+                updated: frontmatter.updated,
+                published: frontmatter.published,
+                tags: frontmatter.tags,
+              });
+            }
+          }
+        }
+
+        // Store processed tags
+        for (const [tag, entries] of tagMap.entries()) {
+          const parsedData = await parseData({
+            id: tag,
+            data: {
+              tag,
+              entries: Array.from(entries),
+              count: entries.size,
+            },
+          });
+
+          store.set({
+            id: tag,
+            data: parsedData,
+          });
+        }
+
+        logger.info(`Successfully processed tags from all collections`);
+      } catch (error) {
+        logger.error(`Error processing tags: ${error instanceof Error ? error.message : "Unknown error"}`);
+      }
+    },
+    schema: z.object({
+      tag: z.string(),
+      entries: z.array(
+        z.object({
+          slug: z.string(),
+          title: z.string(),
+          path: z.string(),
+          created: z.string(),
+          updated: z.string(),
+          published: z.boolean(),
+          tags: z.array(z.string()),
+        })
+      ),
+      count: z.number(),
     }),
   };
 }

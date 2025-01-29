@@ -1,74 +1,165 @@
 ---
 import { getCollection } from "astro:content";
 
-const [posts, art, notes, recipes] = await Promise.all([
+const { showTags = true, showGlass = false, collection = "all", contentLimit } = Astro.props;
+
+// Calculate effective limits
+const effectiveContentLimit = contentLimit || Infinity;
+
+interface ContentEntry {
+  type: "content";
+  title: string;
+  slug: string;
+  created: string;
+  updated: string;
+  published: boolean;
+  tags: string[];
+  path: string;
+}
+
+interface GlassEntry {
+  type: "glass";
+  width: number;
+  height: number;
+  src: string;
+  share_url: string;
+}
+
+type CombinedEntry = ContentEntry | GlassEntry;
+
+const [posts, art, notes, recipes, glass] = await Promise.all([
   getCollection("posts"),
   getCollection("art"),
   getCollection("notes"),
   getCollection("recipes"),
+  getCollection("glass"),
 ]);
 
-// Combine all collections into one array and filter out entries missing 'created' field
-const allContent = [...posts, ...art, ...notes, ...recipes].filter((entry) => entry.data.frontmatter?.created);
+// Create a map of collection names to their data
+const collections = {
+  posts,
+  art,
+  notes,
+  recipes,
+};
+
+// Get content based on collection prop
+const contentToProcess =
+  collection === "all" ? [...posts, ...art, ...notes, ...recipes] : collections[collection] || [];
+
+// Filter out entries missing 'created' field
+const allContent = contentToProcess.filter((entry) => entry.data.frontmatter?.created);
 
 // Sort posts by created date, newest first
 const sortedContent = allContent.sort(
   (a, b) => new Date(b.data.frontmatter.created).getTime() - new Date(a.data.frontmatter.created).getTime()
 );
 
-// Get the first 5 entries and drop the body
-const firstEntries = sortedContent.slice(0, 5).map((entry) => ({
+// Get entries based on contentLimit
+const firstEntries = sortedContent.slice(0, effectiveContentLimit).map((entry) => ({
   ...entry.data.frontmatter,
-}));
+  type: "content",
+})) as ContentEntry[];
+
+// Calculate glass limit based on actual number of content entries
+const calculatedGlassLimit = Math.floor(firstEntries.length / 3);
+
+// Process glass entries when showGlass is true, using calculated limit
+const glassEntries = showGlass
+  ? glass
+      .sort((a, b) => new Date(b.data.created_at).getTime() - new Date(a.data.created_at).getTime())
+      .slice(0, calculatedGlassLimit)
+      .map((entry) => ({
+        width: entry.data.width,
+        height: entry.data.height,
+        src: entry.data.image640x640,
+        share_url: entry.data.share_url,
+        type: "glass" as const,
+      }))
+  : [];
+
+// Combine and distribute glass entries evenly when showGlass is true
+const combinedEntries: CombinedEntry[] = showGlass
+  ? firstEntries.reduce((acc, entry, index) => {
+      // Insert a glass entry every third content entry, if available
+      const glassIndex = Math.floor(index / 3);
+      const shouldAddGlass = glassIndex < glassEntries.length && index % 3 === 0;
+
+      return shouldAddGlass ? [...acc, glassEntries[glassIndex], entry] : [...acc, entry];
+    }, [] as CombinedEntry[])
+  : firstEntries;
 ---
 
-<div class='recent-content'>
-  <h3>Recent Content</h3>
-  <ul>
-    {
-      firstEntries.map((entry) => (
-        <li>
-          <h3>
-            <a href={`/${entry.path}`}>{entry.path}</a>
-          </h3>
-          <h2>
-            <a href={`/${entry.path}/${entry.slug}`}>{entry.title}</a>
-          </h2>
-          {/* Always show the created date. Only show the updated date if it is +24 hours from the created date */}
-          <p>
-            Published {new Date(entry.created).toLocaleDateString()}.
-            {new Date(entry.updated).getTime() - new Date(entry.created).getTime() > 24 * 60 * 60 * 1000 &&
-              `Last updated ${new Date(entry.updated).toLocaleDateString()}.`}
-          </p>
+{
+  combinedEntries.map((entry) =>
+    entry.type === "glass" ? (
+      <div class='glass-content'>
+        <a href={entry.share_url} target='_blank' rel='noopener noreferrer'>
+          <img src={entry.src} width={entry.width} height={entry.height} alt='Glass photo' loading='lazy' />
+        </a>
+      </div>
+    ) : (
+      <div class='recent-content'>
+        <p>
+          <a href={`/${entry.path}`}>{entry.path}</a>
+        </p>
+        <h2>
+          <a href={`/${entry.path}/${entry.slug}`}>{entry.title}</a>
+        </h2>
+
+        {showTags && (
           <div class='tags'>
             {entry.tags.map((tag) => (
-              <span>#{tag}</span>
+              <span class='small'>
+                #<a href={`/tags/${tag}`}>{tag}</a>
+              </span>
             ))}
           </div>
-        </li>
-      ))
-    }
-  </ul>
-</div>
+        )}
+        <p class='align-bottom small'>
+          <a href={`/${entry.path}/${entry.slug}`}>
+            Published {new Date(entry.created).toLocaleDateString()}
+            <br />
+            {new Date(entry.updated).getTime() - new Date(entry.created).getTime() > 24 * 60 * 60 * 1000 &&
+              `Last updated ${new Date(entry.updated).toLocaleDateString()}`}
+          </a>
+        </p>
+      </div>
+    )
+  )
+}
 
 <style>
   .recent-content {
-    padding: var(--padding);
-  }
-
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    height: fit-content;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .glass-content {
+    display: block;
+    line-height: 0;
+    aspect-ratio: 6/7;
+    object-fit: cover;
+    overflow: hidden;
+  }
+
+  .glass-content img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .align-bottom {
+    margin-top: auto;
   }
 
   .tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+  }
+
+  .small {
+    font-size: 0.8rem;
   }
 </style>

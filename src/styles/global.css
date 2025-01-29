@@ -65,7 +65,7 @@
   /* responsive*/
   --background: light-dark(var(--background-color-light), var(--background-color-dark));
   --color: light-dark(var(--text-color-light), var(--text-color-dark));
-  --border: 2px solid var(--gold);
+  --border: 1px solid var(--gold);
   --padding: 2rem;
 }
 
@@ -78,23 +78,19 @@
 }
 
 :root {
-  --fs-x-small: 0.79rem;
-  --fs-small: 0.89rem;
+  --fs-x-small: 0.878rem
+  --fs-small: 0.937rem;
   --fs-p: 1rem;
-  --fs-h6: 1.13rem;
-  --fs-h5: 1.27rem;
-  --fs-h4: 1.42rem;
-  --fs-h3: 1.6rem;
-  --fs-h2: 1.8rem;
-  --fs-h1: 2.03rem;
+  --fs-h6: 1.067rem;
+  --fs-h5: 1.138rem;
+  --fs-h4: 1.215rem;
+  --fs-h3: 1.296rem;
+  --fs-h2: 1.383rem;
+  --fs-h1: 1.476rem;
   --lh: 1.6;
 }
 
 /* Base Styles */
-html,
-body {
-  scrollbar-gutter: stable;
-}
 
 body {
   font-family: var(--font-mono);

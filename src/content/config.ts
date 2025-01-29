@@ -1,5 +1,5 @@
 import { defineCollection } from "astro:content";
-import { glassLoader, obsidianLoader } from "./loaders";
+import { glassLoader, obsidianLoader, tagLoader } from "./loaders";
 
 const glass = defineCollection({
   loader: glassLoader(),
@@ -21,10 +21,15 @@ const recipes = defineCollection({
   loader: obsidianLoader({ path: "recipes" }),
 });
 
+const tags = defineCollection({
+  loader: tagLoader(),
+});
+
 export const collections = {
   glass,
   posts,
   art,
   notes,
   recipes,
+  tags,
 };

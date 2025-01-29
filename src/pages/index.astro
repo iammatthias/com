@@ -4,71 +4,48 @@ import PageLayout from "@/layouts/PageLayout.astro";
 
 // components
 import RecentContent from "@/components/RecentContent.astro";
-import GlassHero from "@/components/GlassHero.astro";
 ---
 
 <PageLayout>
-  <aside></aside>
-  <section>
-    <div>
-      <div class='about'>
-        <h1>Hi, I'm Matthias</h1>
-        <p>
-          I'm a photographer turned marketing technologist. Over the years I've worked in luxury travel, fintech, and
-          ecommerce.
-        </p>
-        <p>
-          These days I run <a
-            href='https://day---break.com/'
-            target='_blank'
-            title='day---break: Driving Growth Through Data-Driven Marketing'>☼ day---break</a
-          >, a marketing consultancy focused on growth and lifecycle automation.
-        </p>
-        <p>Outside of work I can be found with a camera in my hand, in front of a bbq, writing, or with my family.</p>
-      </div>
-      <RecentContent />
-      <!-- <RecentGlassContent /> -->
-    </div>
-    <div>
-      <GlassHero />
-    </div>
-  </section>
+  <main>
+    <h1>Hi, I'm Matthias</h1>
+    <p>
+      I'm a photographer turned marketing technologist. Over the years I've worked in luxury travel, fintech, and
+      ecommerce.
+    </p>
+    <p>
+      These days I run <a
+        href='https://day---break.com/'
+        target='_blank'
+        title='day---break: Driving Growth Through Data-Driven Marketing'>☼ day---break</a
+      >, a marketing consultancy focused on growth and lifecycle automation.
+    </p>
+    <RecentContent showTags={false} showGlass={true} contentLimit={15} />
+  </main>
 </PageLayout>
 
 <style>
-  section {
+  main {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-
-    @media (max-width: 1080px) {
-      display: block;
-    }
-  }
-
-  section > div > :not(:last-child) {
-    border-bottom: var(--border);
-  }
-
-  .about {
-    padding: var(--padding);
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  section > div:last-child {
-    position: sticky;
-    top: calc(var(--nav-height) + 1px);
-    height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
-    border-left: var(--border);
-    border-bottom: none;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
     overflow: hidden;
-    @media (max-width: 1080px) {
-      border-top: var(--border);
-      border-left: none;
-      padding: var(--padding);
-      height: fit-content;
+    align-content: start;
+    align-items: start;
+    gap: 1px;
+  }
+
+  main > :global(*):not(.glass-content) {
+    aspect-ratio: 6/7;
+    min-height: 0;
+    min-width: 0;
+    outline: var(--border);
+    padding: var(--padding);
+    @media (max-width: 768px) {
+      /* &:first-child {
+        aspect-ratio: unset;
+      } */
+      aspect-ratio: 7/6;
     }
   }
 </style>

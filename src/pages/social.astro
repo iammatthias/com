@@ -4,11 +4,11 @@ import PageLayout from "@/layouts/PageLayout.astro";
 
 const platforms = [
   {
-    name: "Farcaster",
+    name: "Warpcast",
     url: "https://warpcast.com/iammatthias",
     username: "@iammatthias",
     blurb:
-      'Farcaster is a "sufficiently decentralized" social protocol. There are multiple clients, but the main one is Warpcast.',
+      'Farcaster is a "sufficiently decentralized" social protocol. There are multiple clients, but I use Warpcast.',
   },
   {
     name: "Glass",
@@ -20,14 +20,13 @@ const platforms = [
     name: "Instagram",
     url: "https://instagram.com/iammatthias",
     username: "@iammatthias",
-    blurb:
-      "My feed is not as active as it used to be, but I frequently post ephemeral snapshots of recent work on my story.",
+    blurb: "Not as active as it used to be, I share pictures on Glass these days.",
   },
   {
     name: "Threads",
     url: "https://www.threads.net/@iammatthias",
     username: "@iammatthias",
-    blurb: "Generally inactive, but I post from time to time.",
+    blurb: "Mostly inactive.",
   },
   { name: "GitHub", url: "https://github.com/iammatthias", username: "@iammatthias", blurb: "Work and side projects." },
   {
@@ -41,21 +40,20 @@ const platforms = [
     name: "Mastadon",
     url: "https://mastodon.social/@iammatthias",
     username: "@iammatthias",
-    blurb: "I am not active, but maintain a presence.",
+    blurb: "I maintain an account, but I am not active.",
   },
   {
     name: "Twitter",
     url: "https://twitter.com/iammatthias",
     username: "@iammatthias",
-    blurb: "I maintain my account, but I have deleted all content.",
+    blurb: "I maintain an account, but I have deleted almost all content.",
   },
 ];
 ---
 
 <PageLayout path='Social'>
-  <aside></aside>
-  <section>
-    <div class='social-header'>
+  <main>
+    <div>
       <h1>Social</h1>
       <p>I'm on a lot of different platforms, but I'm not especially active on any of them.</p>
     </div>
@@ -67,28 +65,40 @@ const platforms = [
           </h2>
           <small>{platform.username}</small>
           <p>{platform.blurb}</p>
-          <hr />
         </div>
       ))
     }
-  </section>
+  </main>
 </PageLayout>
 
 <style>
-  section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  main {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+    overflow: hidden;
+    align-content: start;
+    align-items: start;
+    gap: 1px;
   }
 
-  .social-header {
+  main > :global(*) {
+    aspect-ratio: 6/7;
+    min-height: 0;
+    min-width: 0;
+    outline: var(--border);
     padding: var(--padding);
+    @media (max-width: 768px) {
+      /* &:first-child {
+        aspect-ratio: unset;
+      } */
+      aspect-ratio: 7/6;
+    }
   }
 
-  .social-section {
-    padding: var(--padding);
+  main > div {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
   }
 </style>

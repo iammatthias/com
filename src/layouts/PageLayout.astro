@@ -91,9 +91,7 @@ if (title || path) {
   </Head>
   <body>
     <Nav />
-    <main>
-      <slot />
-    </main>
+    <slot />
     <Footer />
   </body>
 </html>
@@ -102,36 +100,7 @@ if (title || path) {
   body {
     display: flex;
     flex-direction: column;
-  }
-
-  main {
-    position: relative;
-    display: grid;
-    grid-template-columns: 256px 1fr;
-    position: relative;
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
-    @media (max-width: 1380px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  main > :global(*) {
-    &:not(:last-child) {
-      border-right: var(--border);
-      @media (max-width: 1280px) {
-        border-right: none;
-      }
-    }
-  }
-
-  main > :global(*):first-child {
-    position: sticky;
-    top: calc(var(--nav-height) + 1px);
-    height: calc(100vh - var(--nav-height) - var(--footer-height) - 2px);
-    @media (max-width: 1380px) {
-      display: none;
-      visibility: hidden;
-    }
+    min-height: 100vh;
   }
 </style>
 
@@ -151,11 +120,9 @@ if (title || path) {
   function updateHeights() {
     const navHeight = document.querySelector("nav")?.clientHeight;
     const footerHeight = document.querySelector("footer")?.clientHeight;
-    const aboutHeight = document.querySelector(".about")?.clientHeight;
 
     document.documentElement.style.setProperty("--nav-height", `${navHeight}px`);
     document.documentElement.style.setProperty("--footer-height", `${footerHeight}px`);
-    document.documentElement.style.setProperty("--about-height", `${aboutHeight}px`);
   }
 
   // Initial update

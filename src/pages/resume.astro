@@ -9,7 +9,7 @@ const resumeData = [
       {
         date: "2024 ➵ Current",
         company: "☼ day---break",
-        position: "Founder & CEO",
+        position: "Owner",
       },
       {
         date: "2012 ➵ Current",
@@ -63,8 +63,7 @@ const resumeData = [
 ---
 
 <PageLayout path='Resume'>
-  <aside></aside>
-  <section>
+  <main>
     <div class='resume-header'>
       <h1>Resume</h1>
       <p>A brief overview of my professional experience and education.</p>
@@ -86,14 +85,14 @@ const resumeData = [
         </div>
       ))
     }
-  </section>
+  </main>
 </PageLayout>
 
 <style>
-  section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    outline: var(--border);
   }
 
   .resume-header {
