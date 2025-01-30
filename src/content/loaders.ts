@@ -1,7 +1,6 @@
 import { z } from "astro:content";
 import type { Loader } from "astro/loaders";
 import matter from "gray-matter";
-import { marked } from "marked";
 import { fetchFromGitHub } from "./helpers";
 
 export function obsidianLoader({ path = "" }: { path?: string }): Loader {
@@ -25,55 +24,18 @@ export function obsidianLoader({ path = "" }: { path?: string }): Loader {
           // Use gray-matter to parse the frontmatter and content body
           const { data: frontmatter, content } = matter(markdown);
 
-          marked.use({
-            renderer: {
-              paragraph({ tokens }) {
-                // Check if the paragraph contains only an image
-                if (tokens.length === 1 && tokens[0].type === "image") {
-                  // Return just the image token without paragraph wrapping
-                  return tokens[0].raw;
-                }
-
-                // Process mixed content paragraphs
-                const content = tokens
-                  .map((token) => {
-                    switch (token.type) {
-                      case "text":
-                        return token.text;
-                      case "link":
-                        return token.raw;
-                      case "codespan":
-                        return token.raw;
-                      case "image":
-                        return token.raw;
-                      default:
-                        return token.raw;
-                    }
-                  })
-                  .join("");
-
-                // Wrap in paragraph tags if there's content
-                return content ? `<p>${content}</p>` : "";
-              },
-            },
-          });
-
           store.set({
             id: frontmatter.slug,
             data: {
-              frontmatter: {
-                title: frontmatter.title,
-                slug: frontmatter.slug,
-                created: frontmatter.created,
-                updated: frontmatter.updated,
-                published: frontmatter.published,
-                tags: frontmatter.tags,
-                path,
-              },
+              title: frontmatter.title,
+              slug: frontmatter.slug,
+              created: frontmatter.created,
+              updated: frontmatter.updated,
+              published: frontmatter.published,
+              tags: frontmatter.tags,
+              path,
             }, // Validated data
-            rendered: {
-              html: await marked(content),
-            },
+            body: content,
             digest, // Track content integrity using the digest
           });
         }
@@ -84,19 +46,14 @@ export function obsidianLoader({ path = "" }: { path?: string }): Loader {
       }
     },
     schema: z.object({
-      frontmatter: z.object({
-        title: z.string(),
-        slug: z.string(),
-        created: z.string(),
-        updated: z.string(),
-        published: z.boolean(),
-        tags: z.array(z.string()),
-        path: z.string(),
-      }),
+      title: z.string(),
+      slug: z.string(),
+      created: z.string(),
+      updated: z.string(),
+      published: z.boolean(),
+      tags: z.array(z.string()),
+      path: z.string(),
       body: z.string(), // The body of the markdown content
-      rendered: z.object({
-        html: z.string(),
-      }),
     }),
   };
 }

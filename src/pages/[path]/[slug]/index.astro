@@ -1,8 +1,14 @@
 ---
-import { render, getCollection } from "astro:content";
+import { getCollection } from "astro:content";
+import { Markdown } from "astro-remote";
 
 // layouts
 import PageLayout from "@/layouts/PageLayout.astro";
+
+// components
+import Paragraph from "@/components/MDX/Paragraph.astro";
+import Img from "@/components/MDX/Img.astro";
+import OfficeSpace from "@/components/MDX/OfficeSpace.astro";
 
 export async function getStaticPaths() {
   const [posts, art, notes, recipes] = await Promise.all([
@@ -17,9 +23,9 @@ export async function getStaticPaths() {
 
   // Filter entries to ensure they have path and slug
   const entries = allContent
-    .filter((entry) => entry.data.frontmatter?.path && entry.data.frontmatter?.slug)
+    .filter((entry) => entry.data?.path && entry.data?.slug)
     .map((entry) => ({
-      params: { path: entry.data.frontmatter.path, slug: entry.data.frontmatter.slug },
+      params: { path: entry.data.path, slug: entry.data.slug },
       props: {
         entry: {
           ...entry,
@@ -33,24 +39,28 @@ export async function getStaticPaths() {
 const { path } = Astro.params;
 const { entry } = Astro.props;
 
-console.log(entry);
+const components = {
+  p: Paragraph,
+  img: Img,
+  OfficeSpace,
+};
 ---
 
-<PageLayout title={entry.data.frontmatter.title} path={path}>
+<PageLayout title={entry.data.title} path={path}>
   <main>
     <section class='header'>
-      <small class='capitalize'><a href={`/${entry.data.frontmatter.path}`}>{entry.data.frontmatter.path}</a></small>
-      <h1>{entry.data.frontmatter.title}</h1>
+      <small class='capitalize'><a href={`/${entry.data.path}`}>{entry.data.path}</a></small>
+      <h1>{entry.data.title}</h1>
       <p>
-        Published {new Date(entry.data.frontmatter.created).toLocaleDateString()}.
+        Published {new Date(entry.data.created).toLocaleDateString()}.
         {
-          new Date(entry.data.frontmatter.updated).getTime() - new Date(entry.data.frontmatter.created).getTime() >
-            24 * 60 * 60 * 1000 && `Last updated ${new Date(entry.data.frontmatter.updated).toLocaleDateString()}.`
+          new Date(entry.data.updated).getTime() - new Date(entry.data.created).getTime() > 24 * 60 * 60 * 1000 &&
+            `Last updated ${new Date(entry.data.updated).toLocaleDateString()}.`
         }
       </p>
       <div class='tags'>
         {
-          entry.data.frontmatter.tags.map((tag: any) => (
+          entry.data.tags.map((tag: any) => (
             <span class='small'>
               #<a href={`/tags/${tag}`}>{tag}</a>
             </span>
@@ -59,18 +69,17 @@ console.log(entry);
       </div>
     </section>
     <article>
-      <Fragment set:html={entry.data.rendered.html} />
+      <!-- <Content /> -->
+      <Markdown sanitize={{ allowComponents: true }} content={entry.body} components={{ ...components }} />
     </article>
   </main>
 </PageLayout>
 
 <style>
   main {
-    max-width: 800px;
     width: 100%;
     min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
-    margin: 0 auto;
-    outline: var(--border);
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
   }
 
   .header {
@@ -78,22 +87,57 @@ console.log(entry);
     flex-direction: column;
     gap: 1rem;
     padding: var(--padding);
-    border-bottom: var(--border);
+    outline: var(--border);
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
   }
 
   article {
-    padding: var(--padding);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-  }
-
-  article > :global(pre) {
-    max-width: calc(100vw - 4rem);
   }
 
   article :global(*) {
-    word-break: break-all;
+    /* word-break: break-all; */
+    overflow-wrap: anywhere;
+  }
+
+  article > :global(*) {
+    border-left: var(--border);
+    border-right: var(--border);
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--padding);
+    &:not(:last-child) {
+      padding-bottom: 0;
+    }
+    &:has(+ .office-space, + script, + style) {
+      padding-bottom: var(--padding);
+    }
+    @media (max-width: 800px) {
+      border-left: none;
+      border-right: none;
+    }
+  }
+
+  article > :global(.office-space) {
+    padding: 0;
+    outline: var(--border);
+    max-width: 80vw;
+    width: 100%;
+    margin: 0 auto;
+    overflow-x: scroll;
+    &:last-child {
+      margin-bottom: var(--padding);
+    }
+
+    @media (max-width: 800px) {
+      max-width: unset;
+
+      width: calc(100vw - 4rem);
+    }
   }
 
   .tags {

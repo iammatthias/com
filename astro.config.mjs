@@ -3,14 +3,18 @@ import { defineConfig } from "astro/config";
 
 import vercel from "@astrojs/vercel";
 
+import mdx from "@astrojs/mdx";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://iammatthias.com",
   output: "static",
   adapter: vercel({}),
+
   prefetch: {
     prefetchAll: true,
   },
+
   redirects: {
     "/post/1563778800000": {
       status: 302,
@@ -53,4 +57,6 @@ export default defineConfig({
       destination: "/posts",
     },
   },
+
+  integrations: [mdx()],
 });

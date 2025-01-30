@@ -52,17 +52,17 @@ const contentToProcess: ContentCollectionEntry[] =
   collection === "all" ? [...posts, ...art, ...notes, ...recipes] : collections[collection] || [];
 
 // Filter out entries missing 'created' field
-const allContent = contentToProcess.filter((entry: ContentCollectionEntry) => entry.data.frontmatter?.created);
+const allContent = contentToProcess.filter((entry: ContentCollectionEntry) => entry.data?.created);
 
 // Sort posts by created date, newest first
 const sortedContent = allContent.sort(
   (a: ContentCollectionEntry, b: ContentCollectionEntry) =>
-    new Date(b.data.frontmatter.created).getTime() - new Date(a.data.frontmatter.created).getTime()
+    new Date(b.data.created).getTime() - new Date(a.data.created).getTime()
 );
 
 // Get entries based on contentLimit
 const firstEntries = sortedContent.slice(0, effectiveContentLimit).map((entry: ContentCollectionEntry) => ({
-  ...entry.data.frontmatter,
+  ...entry.data,
   type: "content",
 })) as ContentEntry[];
 

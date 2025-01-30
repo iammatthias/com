@@ -1,0 +1,14 @@
+---
+let slots = await Astro.slots.render("default");
+let slotsString = slots.toString();
+---
+
+{
+  slotsString.includes("img src") || slotsString.includes("OfficeSpace") ? (
+    <slot />
+  ) : (
+    <p>
+      <slot />
+    </p>
+  )
+}
