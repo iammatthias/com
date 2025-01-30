@@ -44,18 +44,18 @@ export default defineConfig({
       status: 302,
       destination: "/posts/1699332127006-revisiting-obsidian-as-a-cms",
     },
-    "/post/*": {
-      status: 302,
-      destination: "/posts",
-    },
-    "/content/*": {
-      status: 302,
-      destination: "/posts",
-    },
-    "/md/*": {
-      status: 302,
-      destination: "/posts",
-    },
+    // "/post/*": {
+    //   status: 302,
+    //   destination: "/posts",
+    // },
+    // "/content/*": {
+    //   status: 302,
+    //   destination: "/posts",
+    // },
+    // "/md/*": {
+    //   status: 302,
+    //   destination: "/posts",
+    // },
   },
 
   integrations: [mdx()],
