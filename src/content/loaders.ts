@@ -6,10 +6,11 @@ import { fetchFromGitHub } from "./helpers";
 export function obsidianLoader({ path = "" }: { path?: string }): Loader {
   return {
     name: "obsidian-loader",
-    load: async ({ store, logger, parseData, generateDigest }) => {
+    load: async ({ store, logger, generateDigest }) => {
       try {
         logger.info(`Fetching content from GitHub path: ${path}`);
         const entries = await fetchFromGitHub(path);
+        const isDev = import.meta.env.DEV;
 
         if (!entries.length) {
           logger.error(`No entries returned from GitHub for path: ${path}`);
@@ -19,10 +20,14 @@ export function obsidianLoader({ path = "" }: { path?: string }): Loader {
         // Process each entry and store the structured data
         for (const entry of entries) {
           const { markdown } = entry;
-          const digest = generateDigest(markdown);
-
-          // Use gray-matter to parse the frontmatter and content body
           const { data: frontmatter, content } = matter(markdown);
+
+          // Skip unpublished entries in production
+          if (!isDev && !frontmatter.published) {
+            continue;
+          }
+
+          const digest = generateDigest(markdown);
 
           store.set({
             id: frontmatter.slug,
@@ -34,9 +39,9 @@ export function obsidianLoader({ path = "" }: { path?: string }): Loader {
               published: frontmatter.published,
               tags: frontmatter.tags,
               path,
-            }, // Validated data
+            },
             body: content,
-            digest, // Track content integrity using the digest
+            digest,
           });
         }
 
