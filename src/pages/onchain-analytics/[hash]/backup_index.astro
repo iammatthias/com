@@ -1,0 +1,257 @@
+---
+export const prerender = false;
+import PageLayout from "@/layouts/PageLayout.astro";
+
+// Helper function to convert hash segments to numbers
+function hashToNumbers(hash: string): number[] {
+  const cleanHash = hash.replace("0x", "");
+  return Array.from({ length: cleanHash.length / 2 }, (_, i) => parseInt(cleanHash.slice(i * 2, (i + 1) * 2), 16));
+}
+
+// Generate a combination of cellular and wave patterns
+function generatePatternData(hash: string) {
+  const numbers = hashToNumbers(hash);
+
+  // Generate organic cluster centers
+  function generateClusterCenters(): [number, number][] {
+    const centers: [number, number][] = [];
+    const numClusters = 4 + (numbers[0] % 3); // 4-6 main clusters
+
+    for (let i = 0; i < numClusters; i++) {
+      const x = 30 + (numbers[i % numbers.length] / 255) * 40;
+      const y = 30 + (numbers[(i + 1) % numbers.length] / 255) * 40;
+      centers.push([x, y]);
+    }
+    return centers;
+  }
+
+  // Generate organic dot clusters
+  function generateDotClusters(): string[] {
+    const patterns: string[] = [];
+    const centers = generateClusterCenters();
+
+    centers.forEach((center, centerIdx) => {
+      // Generate primary cluster dots
+      const numDots = 150 + (numbers[centerIdx] % 100);
+      for (let i = 0; i < numDots; i++) {
+        const angle = (numbers[(i + centerIdx) % numbers.length] / 255) * Math.PI * 2;
+        const distanceBase = numbers[(i + centerIdx + 1) % numbers.length] / 255;
+        // Use gaussian-like distribution for more natural clustering
+        const distance = 25 * Math.pow(distanceBase, 2) * (1 + Math.sin(angle * 3) * 0.2);
+
+        const x = center[0] + Math.cos(angle) * distance;
+        const y = center[1] + Math.sin(angle) * distance;
+
+        // Vary dot sizes based on position and noise
+        const sizeNoise = 0.3 + (numbers[(i + centerIdx + 2) % numbers.length] / 255) * 0.7;
+        const radius = 0.3 + sizeNoise * (1.2 - distance / 30); // Dots get smaller towards edges
+
+        if (x >= -10 && x <= 110 && y >= -10 && y <= 110) {
+          patterns.push(
+            `M ${x},${y} m ${-radius},0 a ${radius},${radius} 0 1,0 ${radius * 2},0 a ${radius},${radius} 0 1,0 ${-radius * 2},0`
+          );
+        }
+      }
+
+      // Add connecting dot trails between clusters
+      if (centerIdx > 0) {
+        const prevCenter = centers[centerIdx - 1];
+        const dx = center[0] - prevCenter[0];
+        const dy = center[1] - prevCenter[1];
+        const steps = 20;
+        for (let i = 0; i < steps; i++) {
+          const t = i / steps;
+          const noise = Math.sin(t * Math.PI * 4) * 5;
+          const x = prevCenter[0] + dx * t + Math.cos(t * Math.PI * 2) * noise;
+          const y = prevCenter[1] + dy * t + Math.sin(t * Math.PI * 2) * noise;
+          const radius = 0.2 + Math.sin(t * Math.PI) * 0.3;
+          patterns.push(
+            `M ${x},${y} m ${-radius},0 a ${radius},${radius} 0 1,0 ${radius * 2},0 a ${radius},${radius} 0 1,0 ${-radius * 2},0`
+          );
+        }
+      }
+    });
+
+    return patterns;
+  }
+
+  // Generate meandering paths
+  function generateMeanderingPaths(): string[] {
+    const paths: string[] = [];
+    const numPaths = 12 + (numbers[0] % 8);
+
+    for (let i = 0; i < numPaths; i++) {
+      const points: [number, number][] = [];
+      const numPoints = 30;
+      const baseY = (numbers[i % numbers.length] / 255) * 100;
+
+      // Create more organic, meandering paths
+      let x = -10;
+      let y = baseY;
+      let angle = 0;
+
+      while (x < 110) {
+        points.push([x, y]);
+
+        // Update angle with smooth transitions
+        const targetAngle = (numbers[(points.length + i) % numbers.length] / 255 - 0.5) * Math.PI * 0.5;
+        angle = angle * 0.8 + targetAngle * 0.2;
+
+        // Move in current direction with varying step size
+        const step = 2 + Math.sin(x * 0.1) * 1;
+        x += Math.cos(angle) * step;
+        y += Math.sin(angle) * step;
+
+        // Keep within bounds
+        y = Math.max(-10, Math.min(110, y));
+      }
+
+      // Create smooth curve through points
+      const path = points.reduce((acc, point, idx) => {
+        if (idx === 0) return `M ${point[0]} ${point[1]}`;
+        const prev = points[Math.max(0, idx - 1)];
+        const next = points[Math.min(points.length - 1, idx + 1)];
+
+        // Calculate control points for more organic curves
+        const tension = 0.3 + Math.sin(idx * 0.5) * 0.2;
+        const cp1x = prev[0] + (point[0] - prev[0]) * tension;
+        const cp1y = prev[1] + (point[1] - prev[1]) * tension;
+        const cp2x = point[0] + (next[0] - point[0]) * tension;
+        const cp2y = point[1] + (next[1] - point[1]) * tension;
+
+        return `${acc} C ${cp1x},${cp1y} ${cp2x},${cp2y} ${point[0]},${point[1]}`;
+      }, "");
+
+      paths.push(path);
+    }
+
+    return paths;
+  }
+
+  return {
+    dotPatterns: generateDotClusters(),
+    flowPaths: generateMeanderingPaths(),
+  };
+}
+
+// Generate colors from hash
+function generateColors(hash: string) {
+  const numbers = hashToNumbers(hash);
+
+  // Generate 4-5 colors that work together
+  function generatePalette(): string[] {
+    const baseHue = (numbers[0] / 255) * 360;
+    const palette: string[] = [];
+
+    // Rich, dark background
+    palette.push(`hsl(${(baseHue + 210) % 360}, 85%, 8%)`);
+
+    // Earthy main colors with slight desaturation
+    const mainHues = [15, 45, 75]; // Warm earth tones
+    mainHues.forEach((hueOffset, i) => {
+      const hue = (baseHue + hueOffset) % 360;
+      const sat = 45 + (numbers[i + 1] / 255) * 25; // 45-70% saturation
+      const light = 50 + (numbers[i + 2] / 255) * 20; // 50-70% lightness
+      palette.push(`hsl(${hue}, ${sat}%, ${light}%)`);
+    });
+
+    // Light accent color
+    palette.push(`hsl(${(baseHue + 30) % 360}, 25%, 85%)`);
+
+    return palette;
+  }
+
+  return generatePalette();
+}
+
+const { hash } = Astro.params;
+if (!hash) throw new Error("Hash parameter is required");
+
+const patterns = generatePatternData(hash);
+const colors = generateColors(hash);
+---
+
+<PageLayout path='Pattern Generator'>
+  <main>
+    <section class='header'>
+      <p>{hash}</p>
+    </section>
+    <article>
+      <svg viewBox='-10 -10 120 120' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg'>
+        <defs>
+          <filter id='grainTexture'>
+            <feTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' seed={parseInt(hash.slice(2, 10), 16)}
+            ></feTurbulence>
+            <feColorMatrix type='saturate' values='0.1'></feColorMatrix>
+            <feBlend mode='multiply' in='SourceGraphic'></feBlend>
+          </filter>
+        </defs>
+
+        <!-- Background -->
+        <rect x='-10' y='-10' width='120' height='120' fill={colors[0]}></rect>
+
+        <!-- Meandering Paths -->
+        {
+          patterns.flowPaths.map((path, i) => (
+            <path
+              d={path}
+              fill='none'
+              stroke={colors[1 + (i % (colors.length - 1))]}
+              stroke-width='0.4'
+              stroke-linecap='round'
+              opacity='0.7'
+            />
+          ))
+        }
+
+        <!-- Dot Patterns -->
+        {
+          patterns.dotPatterns.map((path, i) => (
+            <path d={path} fill={colors[1 + (i % (colors.length - 1))]} opacity='0.85' />
+          ))
+        }
+
+        <!-- Texture Overlay -->
+        <rect x='-10' y='-10' width='120' height='120' fill='url(#grainTexture)' opacity='0.03'></rect>
+      </svg>
+    </article>
+  </main>
+</PageLayout>
+
+<style>
+  main {
+    width: 100%;
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+    background-color: var(--bg);
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: var(--padding);
+    border-left: var(--border);
+    border-right: var(--border);
+    border-bottom: var(--border);
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    @media (max-width: 800px) {
+      border-left: none;
+      border-right: none;
+    }
+  }
+
+  article {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+  }
+
+  svg {
+    max-width: 800px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+  }
+</style>

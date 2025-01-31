@@ -20,7 +20,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
           href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
           >12315477</a
         > on Base-Sepolia, and the contract is <a
-          href=`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code#L1`>verified on BaseScan</a
+          href=`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code#L1`>verified.</a
         >.
       </p>
     </section>
@@ -104,11 +104,10 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
     width: 100%;
     margin: 0 auto;
     padding: var(--padding);
-  }
-
-  article :global(*) {
-    /* word-break: break-all; */
-    overflow-wrap: anywhere;
+    @media (max-width: 800px) {
+      border-left: none;
+      border-right: none;
+    }
   }
 </style>
 
