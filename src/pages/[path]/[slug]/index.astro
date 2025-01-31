@@ -87,10 +87,16 @@ const components = {
     flex-direction: column;
     gap: 1rem;
     padding: var(--padding);
-    outline: var(--border);
+    border-left: var(--border);
+    border-right: var(--border);
+    border-bottom: var(--border);
     max-width: 800px;
     width: 100%;
     margin: 0 auto;
+    @media (max-width: 800px) {
+      border-left: none;
+      border-right: none;
+    }
   }
 
   article {
@@ -124,7 +130,7 @@ const components = {
 
   article > :global(.office-space) {
     padding: 0;
-    outline: var(--border);
+    border: var(--border);
     max-width: 80vw;
     width: 100%;
     margin: 0 auto;
