@@ -6,33 +6,15 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 ---
 
 <PageLayout path='Onchain Analytics'>
-  <aside></aside>
-  <section>
-    <article>
+  <main>
+    <section class='header'>
       <h1>Onchain Analytics</h1>
       <p>
-        This site uses a homebrew session management system to generate fully anonymous session hashes and onchain
-        analytics. If you're interested, you can <a
+        This site has a homebrew anonymous session management system. If you're interested, you can <a
           class='break'
-          href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more about the project</a
+          href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more about the project here</a
         >.
       </p>
-
-      <hr />
-
-      <h2>How it Works:</h2>
-      <ul>
-        <li>
-          A keccak256 hash is generated from the client IP, user agent, and timestamp to create a unique, irreversible
-          sessionID that is completely anonymous. Only the hash is stored.
-        </li>
-        <li><code>sessionID</code>s are stored onchain to validate page views.</li>
-        <li>
-          All sessions are recorded using <a href='https://syndicate.io/'>Syndicate.io</a>'s Cloud Transaction platform.
-        </li>
-      </ul>
-
-      <h3>Meta Details</h3>
       <p>
         Data collection began at block number <a
           href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
@@ -41,10 +23,17 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
           href=`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code#L1`>verified on BaseScan</a
         >.
       </p>
+    </section>
+    <article>
+      <ul>
+        <li>
+          A unique, irreversible keccack256 sessionID is anonymously generated client side. Only the hash is stored.
+        </li>
+        <li>The hash is stored onchain to validate page views.</li>
+      </ul>
 
       <h3>The Data</h3>
-      <h4>Sessions</h4>
-      <p>There have been <span id='sessionCount'></span> unique sessions since the onchain analytics went live.</p>
+      <p><span id='sessionCount'></span> unique sessions have been recorded.</p>
       <table id='pageViewCounts'>
         <tr><th>Top 5 pages</th><th>Views</th></tr>
         {
@@ -78,19 +67,48 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
       <p>Click on a hash to view its corresponding portrait:</p>
       <div id='sessionIDs'></div>
     </article>
-  </section>
+  </main>
 </PageLayout>
 
 <style>
-  article {
-    padding: var(--padding);
+  main {
+    width: 100%;
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+  }
+
+  .header {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    padding: var(--padding);
+    border-left: var(--border);
+    border-right: var(--border);
+    border-bottom: var(--border);
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    @media (max-width: 800px) {
+      border-left: none;
+      border-right: none;
+    }
   }
 
-  article > :global(*) {
-    max-width: 65ch;
+  article {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-left: var(--border);
+    border-right: var(--border);
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--padding);
+  }
+
+  article :global(*) {
+    /* word-break: break-all; */
+    overflow-wrap: anywhere;
   }
 </style>
 

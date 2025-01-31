@@ -235,13 +235,21 @@ ul {
 table {
   @media (max-width: 768px) {
     margin-left: 0;
+    font-size: var(--fs-small);
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
 table {
   border-collapse: collapse;
   table-layout: fixed;
-  color: light-dark(var(--paragraph-color-light), var(--paragraph-color-dark));
+  width: 100%;
+  margin-block: 0.75rem;
+  color: light-dark(var(--text-color-light), var(--text-color-dark));
+  border: var(--border);
+  font-size: var(--fs-small);
 }
 
 th,
@@ -250,9 +258,9 @@ caption {
 }
 
 caption {
-  margin-block: 0.75rem;
+  margin-block: 0.5rem;
   font-weight: bold;
-  color: var(--blue-darker);
+  color: light-dark(var(--blue), var(--blue-lighter));
 }
 
 thead th:not(:first-child),
@@ -261,66 +269,69 @@ td {
 }
 
 thead {
-  border-block-end: 2px solid var(--terracotta); /* Darker terracotta for bottom header border */
-  background: var(--blue-darker); /* Dark blue for high contrast */
+  border-block-end: 1px solid light-dark(var(--gold), var(--gold-lighter));
+  background: light-dark(var(--blue), var(--blue-darker));
 }
 
 tfoot {
-  border-block: 2px solid var(--terracotta); /* Darker terracotta for footer */
-  background: var(--blue-lighter); /* Lighter blue for footer background */
-  color: var(--white); /* White text for readability */
+  border-block: 1px solid light-dark(var(--gold), var(--gold-lighter));
+  background: light-dark(var(--blue-lighter), var(--blue));
 }
 
 th,
 td {
-  border: 1px solid var(--terracotta-lighter); /* Lighter terracotta for inner borders */
-  padding: 0.25rem 0.75rem;
+  border: 1px solid light-dark(var(--gold-lighter), var(--gold));
+  padding: 0.375rem 0.75rem;
   vertical-align: baseline;
-  background-color: light-dark(
-    var(--background-color-light),
-    var(--background-color-dark)
-  ); /* Dynamic cell backgrounds */
+  min-width: 4rem;
+
+  @media (max-width: 768px) {
+    padding: 0.25rem 0.5rem;
+    min-width: 3rem;
+  }
 }
 
 tbody th {
-  color: var(--white); /* High contrast with white text */
+  color: light-dark(var(--text-color-light), var(--text-color-dark));
+  background-color: light-dark(var(--blue-lighter), var(--blue));
+  white-space: nowrap;
 }
 
 tbody td {
-  background-color: light-dark(
-    var(--background-color-light),
-    var(--background-color-dark)
-  ); /* Dynamic background for body cells */
-}
-
-thead th,
-tfoot th {
-  background: var(--gold); /* Dark blue for header/footer */
-  color: var(--black); /* White for contrast */
+  background-color: light-dark(var(--background-color-light), var(--background-color-dark));
 }
 
 thead th {
+  color: light-dark(var(--white), var(--white));
+  background: light-dark(var(--blue), var(--blue-darker));
   vertical-align: bottom;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+tfoot th,
+tfoot td {
+  background: light-dark(var(--blue-lighter), var(--blue));
+  color: light-dark(var(--text-color-light), var(--text-color-dark));
 }
 
 th:first-of-type {
-  width: 10rem;
-  background: var(--blue-darker); /* High contrast for first column header */
+  width: 12rem;
+  background: light-dark(var(--blue), var(--blue-darker));
   color: var(--white);
+
+  @media (max-width: 768px) {
+    width: 8rem;
+  }
 }
 
-th:first-child::after {
-  content: "";
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline-end: 0;
-  width: 1px;
-  height: 100%;
-}
+th:not(:first-of-type),
+td:not(:first-of-type) {
+  width: 6rem;
 
-tfoot td {
-  background: var(--blue-lighter); /* Footer background in lighter blue */
-  color: var(--white);
+  @media (max-width: 768px) {
+    width: 4rem;
+  }
 }
 
 .capitalize {
