@@ -49,7 +49,7 @@ const components = {
 <PageLayout title={entry.data.title} path={path}>
   <main>
     <section class='header'>
-      <small class='capitalize'><a href={`/${entry.data.path}`}>{entry.data.path}</a></small>
+      <p class='small capitalize'><a href={`/${entry.data.path}`}>{entry.data.path}</a></p>
       <h1>{entry.data.title}</h1>
       <p>
         Published {new Date(entry.data.created).toLocaleDateString()}.
@@ -145,5 +145,9 @@ const components = {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+  }
+
+  .small {
+    font-size: 0.8rem;
   }
 </style>

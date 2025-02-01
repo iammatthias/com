@@ -1,9 +1,8 @@
 /* Text Elements */
+
 p {
   font-size: var(--fs-p);
   line-height: var(--lh);
-  margin: 0;
-  color: light-dark(var(--paragraph-color-light), var(--paragraph-color-dark));
 }
 
 small {
@@ -17,11 +16,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-mono);
+  font-family: var(--font-heading);
   font-weight: bold;
   line-height: var(--lh);
-  margin: 0;
-  color: light-dark(var(--heading-color-light), var(--heading-color-dark));
 }
 
 h1 {
@@ -43,45 +40,11 @@ h6 {
   font-size: var(--fs-h6);
 }
 
-/* Backup Classes for Font Sizing */
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6 {
-  font-family: var(--font-mono);
-  font-weight: bold;
-  line-height: var(--lh);
-  margin: 0;
-  color: light-dark(var(--heading-color-light), var(--heading-color-dark));
-}
-
-.h1 {
-  font-size: var(--fs-h1);
-}
-.h2 {
-  font-size: var(--fs-h2);
-}
-.h3 {
-  font-size: var(--fs-h3);
-}
-.h4 {
-  font-size: var(--fs-h4);
-}
-.h5 {
-  font-size: var(--fs-h5);
-}
-.h6 {
-  font-size: var(--fs-h6);
-}
-
 /* Lists */
 ul,
 ol {
   margin: 0;
   padding-left: 1.5em;
-  color: light-dark(var(--paragraph-color-light), var(--paragraph-color-dark));
 }
 
 li {
@@ -98,7 +61,6 @@ blockquote {
   padding-left: 1em;
   border-left: 4px solid light-dark(var(--grey), var(--grey-dark));
   font-style: italic;
-  color: light-dark(var(--paragraph-color-light), var(--paragraph-color-dark));
 }
 
 /* Code and Preformatted Text */
@@ -123,31 +85,40 @@ code {
 
 /* Enhanced Link Styles */
 a {
-  font-family: var(--font-mono);
+  font-family: var(--font-heading);
   color: light-dark(var(--link-color-light), var(--link-color-dark));
   text-decoration: underline;
   text-decoration-color: light-dark(var(--link-color-light), var(--link-color-dark));
-  transition: color 0.3s ease, text-decoration-color 0.3s ease;
+  text-underline-offset: 0.2em;
+  transition: all 0.2s ease-in-out;
 }
 
 a:hover {
   color: light-dark(var(--link-hover-color-light), var(--link-hover-color-dark));
   text-decoration-color: light-dark(var(--link-hover-color-light), var(--link-hover-color-dark));
+  text-underline-offset: 0.3em;
 }
 
 a:active {
   color: light-dark(var(--link-active-color-light), var(--link-active-color-dark));
   text-decoration-color: light-dark(var(--link-active-color-light), var(--link-active-color-dark));
+  transform: translateY(1px);
 }
 
-a:focus {
-  outline: 2px dashed var(--focus-outline);
-  outline-offset: 2px;
+a:focus-visible {
+  outline: 2px solid var(--focus-outline);
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
 a:visited {
   color: light-dark(var(--link-visited-color-light), var(--link-visited-color-dark));
   text-decoration-color: light-dark(var(--link-visited-color-light), var(--link-visited-color-dark));
+}
+
+a:visited:hover {
+  color: light-dark(var(--link-hover-color-light), var(--link-hover-color-dark));
+  text-decoration-color: light-dark(var(--link-hover-color-light), var(--link-hover-color-dark));
 }
 
 /* Images */
