@@ -58,11 +58,10 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
         }
       </table>
 
-      <h4>Portraits of Private Keys</h4>
+      <h4>Session Hashes</h4>
       <p>
-        The keccack256 hashes generated for each session can also serve as valid private keys. The hexadecimal
-        characters in the hash are used as pseudo-random values for a generative art piece. Please note that these
-        private keys have been publically burned, and they should never be used.
+        The keccack256 hashes generated are technically valid private keys. These private keys are effectively burned,
+        since they are public. As such, they should never be used for anything.
       </p>
       <p>Click on a hash to view its corresponding portrait:</p>
       <div id='sessionIDs'></div>

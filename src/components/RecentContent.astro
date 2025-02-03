@@ -4,10 +4,13 @@ import type { CollectionEntry } from "astro:content";
 
 const { showTags = true, showGlass = false, collection = "all", contentLimit } = Astro.props;
 
-// Calculate effective limits
-const effectiveContentLimit = contentLimit || Infinity;
+// Optimize type definitions
+type ContentType = "posts" | "art" | "notes" | "recipes";
+type BaseEntry = {
+  type: string;
+};
 
-interface ContentEntry {
+interface ContentEntry extends BaseEntry {
   type: "content";
   title: string;
   slug: string;
@@ -18,7 +21,7 @@ interface ContentEntry {
   path: string;
 }
 
-interface GlassEntry {
+interface GlassEntry extends BaseEntry {
   type: "glass";
   width: number;
   height: number;
@@ -26,72 +29,87 @@ interface GlassEntry {
   share_url: string;
 }
 
-type CombinedEntry = ContentEntry | GlassEntry;
-
 type ContentCollectionEntry = CollectionEntry<"posts" | "art" | "notes" | "recipes">;
 type GlassCollectionEntry = CollectionEntry<"glass">;
 
-const [posts, art, notes, recipes, glass] = await Promise.all([
-  getCollection("posts"),
-  getCollection("art"),
-  getCollection("notes"),
-  getCollection("recipes"),
-  getCollection("glass"),
+// Get collections efficiently
+const collections = new Map<string, Promise<ContentCollectionEntry[] | GlassCollectionEntry[]>>([
+  ["posts", getCollection("posts")],
+  ["art", getCollection("art")],
+  ["notes", getCollection("notes")],
+  ["recipes", getCollection("recipes")],
+  ["glass", getCollection("glass")],
 ]);
 
-// Create a map of collection names to their data
-const collections: Record<string, ContentCollectionEntry[]> = {
-  posts,
-  art,
-  notes,
-  recipes,
+// Type guard functions
+const isContentEntry = (entry: any): entry is ContentCollectionEntry => {
+  return entry?.data?.title && entry?.data?.created && entry?.data?.slug;
 };
 
-// Get content based on collection prop
-const contentToProcess: ContentCollectionEntry[] =
-  collection === "all" ? [...posts, ...art, ...notes, ...recipes] : collections[collection] || [];
+const isGlassEntry = (entry: any): entry is GlassCollectionEntry => {
+  return entry?.data?.image640x640 && entry?.data?.width && entry?.data?.height;
+};
 
-// Filter out entries missing 'created' field
-const allContent = contentToProcess.filter((entry: ContentCollectionEntry) => entry.data?.created);
+// Efficient content fetching
+const getContentEntries = async (): Promise<ContentCollectionEntry[]> => {
+  if (collection === "all") {
+    const results = await Promise.all(["posts", "art", "notes", "recipes"].map((key) => collections.get(key)));
+    return results.flat().filter(isContentEntry);
+  }
+  const result = (await collections.get(collection)) || [];
+  return result.filter(isContentEntry);
+};
 
-// Sort posts by created date, newest first
-const sortedContent = allContent.sort(
-  (a: ContentCollectionEntry, b: ContentCollectionEntry) =>
-    new Date(b.data.created).getTime() - new Date(a.data.created).getTime()
-);
+// Process content efficiently
+const contentEntries = await getContentEntries();
+const validContent = contentEntries.filter((entry) => entry?.data?.created);
 
-// Get entries based on contentLimit
-const firstEntries = sortedContent.slice(0, effectiveContentLimit).map((entry: ContentCollectionEntry) => ({
-  ...entry.data,
+// Optimize sorting
+const sortedContent = validContent
+  .sort((a, b) => Number(new Date(b.data.created)) - Number(new Date(a.data.created)))
+  .slice(0, contentLimit || validContent.length);
+
+// Transform to ContentEntry efficiently
+const firstEntries: ContentEntry[] = sortedContent.map((entry) => ({
   type: "content",
-})) as ContentEntry[];
+  title: entry.data.title,
+  slug: entry.data.slug,
+  created: entry.data.created,
+  updated: entry.data.updated,
+  published: entry.data.published,
+  tags: entry.data.tags,
+  path: entry.data.path,
+}));
 
-// Calculate glass limit based on actual number of content entries
-const calculatedGlassLimit = Math.floor(firstEntries.length / 3);
-
-// Process glass entries when showGlass is true, using calculated limit
-const glassEntries = showGlass
-  ? glass
-      .sort((a, b) => new Date(b.data.created_at).getTime() - new Date(a.data.created_at).getTime())
-      .slice(0, calculatedGlassLimit)
+// Process glass entries efficiently
+const glassEntries: GlassEntry[] = showGlass
+  ? ((await collections.get("glass")) || [])
+      .filter(isGlassEntry)
+      .sort((a, b) => Number(new Date(b.data.created_at)) - Number(new Date(a.data.created_at)))
+      .slice(0, Math.floor(firstEntries.length / 3))
       .map((entry) => ({
+        type: "glass",
         width: entry.data.width,
         height: entry.data.height,
         src: entry.data.image640x640,
         share_url: entry.data.share_url,
-        type: "glass" as const,
       }))
   : [];
 
-// Combine and distribute glass entries evenly when showGlass is true
-const combinedEntries: CombinedEntry[] = showGlass
-  ? firstEntries.reduce((acc, entry, index) => {
-      // Insert a glass entry every third content entry, if available
-      const glassIndex = Math.floor(index / 3);
-      const shouldAddGlass = glassIndex < glassEntries.length && index % 3 === 0;
-
-      return shouldAddGlass ? [...acc, glassEntries[glassIndex], entry] : [...acc, entry];
-    }, [] as CombinedEntry[])
+// Optimize combination logic
+const combinedEntries = showGlass
+  ? firstEntries.reduce(
+      (acc, entry, index) => {
+        const glassIndex = Math.floor(index / 3);
+        if (glassIndex < glassEntries.length && index % 3 === 0) {
+          acc.push(glassEntries[glassIndex], entry);
+        } else {
+          acc.push(entry);
+        }
+        return acc;
+      },
+      [] as (ContentEntry | GlassEntry)[]
+    )
   : firstEntries;
 ---
 

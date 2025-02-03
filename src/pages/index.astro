@@ -8,7 +8,7 @@ import RecentContent from "@/components/RecentContent.astro";
 
 <PageLayout>
   <main>
-    <h1>Hi, I'm Matthias ☼</h1>
+    <h1>Hi, I'm Matthias <span class='icon'>☼</span></h1>
     <p>I'm a photographer turned growth technologist. Over the years I've worked in travel, fintech, and ecommerce.</p>
     <p>
       These days I run <a
@@ -44,5 +44,11 @@ import RecentContent from "@/components/RecentContent.astro";
       } */
       aspect-ratio: 7/6;
     }
+  }
+
+  .icon {
+    padding-left: 0.3em;
+    font-size: 0.7em;
+    vertical-align: middle;
   }
 </style>

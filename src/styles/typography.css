@@ -2,11 +2,12 @@
 
 p {
   font-size: var(--fs-p);
+  font-weight: 200;
   line-height: var(--lh);
 }
 
 small {
-  font-size: var(--fs-small);
+  font-size: var(--fs-sm);
   color: light-dark(var(--grey-dark), var(--grey-light));
 }
 
@@ -17,27 +18,37 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  font-weight: bold;
+  font-weight: 800;
   line-height: var(--lh);
+  font-variation-settings: "wdth" 80;
 }
 
 h1 {
   font-size: var(--fs-h1);
 }
+article h1 {
+  font-size: var(--fs-h2);
+}
+
 h2 {
   font-size: var(--fs-h2);
 }
+article h2 {
+  font-size: var(--fs-h3);
+}
+
 h3 {
   font-size: var(--fs-h3);
 }
+article h3 {
+  font-size: var(--fs-h4);
+}
+
 h4 {
   font-size: var(--fs-h4);
 }
-h5 {
-  font-size: var(--fs-h5);
-}
-h6 {
-  font-size: var(--fs-h6);
+article h4 {
+  font-size: var(--fs-p);
 }
 
 /* Lists */
@@ -206,7 +217,7 @@ ul {
 table {
   @media (max-width: 768px) {
     margin-left: 0;
-    font-size: var(--fs-small);
+    font-size: var(--fs-sm);
     display: block;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -220,7 +231,7 @@ table {
   margin-block: 0.75rem;
   color: light-dark(var(--text-color-light), var(--text-color-dark));
   border: var(--border);
-  font-size: var(--fs-small);
+  font-size: var(--fs-sm);
 }
 
 th,
