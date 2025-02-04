@@ -5,13 +5,14 @@ import { html } from "satori-html";
 import { Resvg } from "@resvg/resvg-js";
 
 export async function GET({ params }) {
-  const parts = params.og.split("-");
-
-  const path = parts[1];
-  const title = parts[2];
+  const firstDashIndex = params.og.indexOf("-");
+  const path = params.og.substring(firstDashIndex + 1, params.og.indexOf("-", firstDashIndex + 1));
+  const title = firstDashIndex >= 0 ? params.og.substring(params.og.indexOf("-", firstDashIndex + 1) + 1) : undefined;
 
   // fetch fonts to array buffer
-  const font = await fetch("https://github.com/fridamedrano/Kalnia-Typeface/raw/main/fonts/ttf/Kalnia-Bold.ttf");
+  const font = await fetch(
+    "https://github.com/ateliertriay/bricolage/raw/refs/heads/main/fonts/ttf/BricolageGrotesque-ExtraBold.ttf"
+  );
   const buffer = await font.arrayBuffer();
 
   let markup: ReturnType<typeof html>;
@@ -74,7 +75,7 @@ export async function GET({ params }) {
           <div style="font-size: 48px; display: flex">@iammatthias</div>
 
           <div style="display: flex; flex-direction: column; align-items: flex-start;">
-            <div style="font-size: 48px; display: flex; text-transform: capitalize;">${path}</div>
+            <div style="font-size: 32px; display: flex; text-transform: capitalize;">${path}</div>
             <div style="font-size: 64px; display: flex">${title}</div>
           </div>
         </div>
@@ -115,7 +116,7 @@ export async function GET({ params }) {
     height: 628,
     fonts: [
       {
-        name: "Kalnia",
+        name: "Bricolage Grotesque",
         data: buffer,
         style: "normal",
       },
