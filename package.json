@@ -11,6 +11,7 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "^4.0.8",
+    "@astrojs/sitemap": "^3.2.1",
     "@astrojs/vercel": "^8.0.5",
     "@resvg/resvg-js": "^2.6.2",
     "astro": "5.2.1",
