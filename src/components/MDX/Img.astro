@@ -3,4 +3,4 @@ import { Image } from "astro:assets";
 const { src, alt } = Astro.props;
 ---
 
-<Image src={src} inferSize alt={alt} loading='lazy' decoding='async' data-zoomable />
+<Image src={`${src}&w=1000`} inferSize alt={alt} loading='lazy' decoding='async' data-zoomable />

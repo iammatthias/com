@@ -119,9 +119,12 @@ if (title || path) {
   function updateHeights() {
     const navHeight = document.querySelector("nav")?.clientHeight;
     const footerHeight = document.querySelector("footer")?.clientHeight;
+    // class .header
+    const headerHeight = document.querySelector(".header")?.clientHeight;
 
     document.documentElement.style.setProperty("--nav-height", `${navHeight}px`);
     document.documentElement.style.setProperty("--footer-height", `${footerHeight}px`);
+    document.documentElement.style.setProperty("--header-height", `${headerHeight}px`);
   }
 
   // Initial update

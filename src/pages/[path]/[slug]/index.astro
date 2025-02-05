@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import { Markdown } from "astro-remote";
-import Vimeo from "@components/MDX/Vimeo.astro";
+
 // layouts
 import PageLayout from "@/layouts/PageLayout.astro";
 
@@ -9,6 +9,8 @@ import PageLayout from "@/layouts/PageLayout.astro";
 import Paragraph from "@/components/MDX/Paragraph.astro";
 import Img from "@/components/MDX/Img.astro";
 import OfficeSpace from "@/components/MDX/OfficeSpace.astro";
+import Vimeo from "@components/MDX/Vimeo.astro";
+import Grid from "@components/MDX/Grid.astro";
 
 export async function getStaticPaths() {
   const [posts, art, notes, recipes] = await Promise.all([
@@ -44,6 +46,7 @@ const components = {
   img: Img,
   OfficeSpace,
   Vimeo,
+  Grid,
 };
 ---
 
@@ -105,6 +108,7 @@ const components = {
   article {
     display: flex;
     flex-direction: column;
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - var(--header-height));
   }
 
   article > :global(*) {

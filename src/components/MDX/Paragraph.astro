@@ -3,12 +3,33 @@ let slots = await Astro.slots.render("default");
 let slotsString = slots.toString();
 ---
 
+{slotsString.includes("OfficeSpace") && <slot />}
+
+{slotsString.includes("Vimeo") && <slot />}
+
+{slotsString.includes("Grid") && <slot />}
+
 {
-  slotsString.includes("img src") || slotsString.includes("OfficeSpace") || slotsString.includes("Vimeo") ? (
-    <slot />
-  ) : (
+  slotsString.includes("img src") && (
+    <div class='grid'>
+      <slot />
+    </div>
+  )
+}
+
+{
+  !slotsString.includes("OfficeSpace") && !slotsString.includes("Vimeo") && !slotsString.includes("img src") && (
     <p>
       <slot />
     </p>
   )
 }
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: 1.5rem;
+    width: 100%;
+  }
+</style>

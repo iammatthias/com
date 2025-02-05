@@ -7,7 +7,7 @@ const data = await response.json();
 const aspectRatio = (data.height / data.width) * 100;
 ---
 
-<div class='container'>
+<div class='vimeo-container'>
   <div class='video-wrapper' style={`padding-bottom: ${aspectRatio}%;`}>
     <iframe
       src={`https://player.vimeo.com/video/${id}?background=true`}
@@ -20,7 +20,7 @@ const aspectRatio = (data.height / data.width) * 100;
 </div>
 
 <style>
-  .container {
+  .vimeo-container {
     width: 100%;
 
     margin: 0 auto;

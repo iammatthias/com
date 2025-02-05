@@ -12,6 +12,9 @@ export default defineConfig({
   site: "https://iammatthias.com",
   output: "static",
   adapter: vercel({}),
+  image: {
+    domains: ["https://wsrv.nl/"],
+  },
 
   prefetch: {
     prefetchAll: true,
