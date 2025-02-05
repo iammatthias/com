@@ -17,9 +17,13 @@ let slotsString = slots.toString();
   )
 }
 
-<p>
-  <slot />
-</p>
+{
+  !slotsString.includes("OfficeSpace") && !slotsString.includes("Vimeo") && !slotsString.includes("img src") && (
+    <p>
+      <slot />
+    </p>
+  )
+}
 
 <style>
   .grid {
