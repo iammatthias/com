@@ -7,7 +7,9 @@ import { Resvg } from "@resvg/resvg-js";
 export async function GET({ params }) {
   const firstDashIndex = params.og.indexOf("-");
   const path = params.og.substring(firstDashIndex + 1, params.og.indexOf("-", firstDashIndex + 1));
-  const title = firstDashIndex >= 0 ? params.og.substring(params.og.indexOf("-", firstDashIndex + 1) + 1) : undefined;
+  const encodedTitle =
+    firstDashIndex >= 0 ? params.og.substring(params.og.indexOf("-", firstDashIndex + 1) + 1) : undefined;
+  const title = encodedTitle ? decodeURIComponent(encodedTitle.replace(/\+/g, " ")) : undefined;
 
   // fetch fonts to array buffer
   const font = await fetch(
