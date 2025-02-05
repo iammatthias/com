@@ -11,7 +11,7 @@ import Img from "@/components/MDX/Img.astro";
 import OfficeSpace from "@/components/MDX/OfficeSpace.astro";
 import Vimeo from "@components/MDX/Vimeo.astro";
 import Grid from "@components/MDX/Grid.astro";
-
+import Link from "@components/MDX/Link.astro";
 export async function getStaticPaths() {
   const [posts, art, notes, recipes] = await Promise.all([
     getCollection("posts"),

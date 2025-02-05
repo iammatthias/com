@@ -1,0 +1,11 @@
+---
+const { href, children } = Astro.props;
+
+// Check if the link is external
+const isExternal = href && (href.startsWith("http") || href.startsWith("//")) && !href.includes("iammatthias.com");
+
+// Only add target and rel attributes for external links
+const attrs = isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {};
+---
+
+<a href={href} {...attrs}>{children}</a>
