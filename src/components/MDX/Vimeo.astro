@@ -1,0 +1,44 @@
+---
+const { id } = Astro.props;
+
+// Fetch video metadata from Vimeo's oEmbed API
+const response = await fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}`);
+const data = await response.json();
+const aspectRatio = (data.height / data.width) * 100;
+---
+
+<div class='container'>
+  <div class='video-wrapper' style={`padding-bottom: ${aspectRatio}%;`}>
+    <iframe
+      src={`https://player.vimeo.com/video/${id}?background=true`}
+      frameborder='0'
+      title={data.title || "Vimeo video player"}
+      loading='lazy'
+    >
+    </iframe>
+  </div>
+</div>
+
+<style>
+  .container {
+    width: 100%;
+
+    margin: 0 auto;
+  }
+
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+</style>

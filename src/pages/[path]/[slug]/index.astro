@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import { Markdown } from "astro-remote";
-
+import Vimeo from "@components/MDX/Vimeo.astro";
 // layouts
 import PageLayout from "@/layouts/PageLayout.astro";
 
@@ -43,6 +43,7 @@ const components = {
   p: Paragraph,
   img: Img,
   OfficeSpace,
+  Vimeo,
 };
 ---
 
@@ -74,6 +75,8 @@ const components = {
     </article>
   </main>
 </PageLayout>
+
+<script src='https://player.vimeo.com/api/player.js'></script>
 
 <style>
   main {
