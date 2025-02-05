@@ -1,7 +1,7 @@
 ---
 import { Head } from "astro-capo";
 import { SEO } from "astro-seo";
-
+import PostHog from "@components/posthog.astro";
 // styles
 import "@/styles/reset.css";
 import "@/styles/global.css";
@@ -88,6 +88,7 @@ if (title || path) {
         ],
       }}
     />
+    <PostHog />
   </Head>
   <body>
     <Nav />
