@@ -18,7 +18,7 @@ const { sensor } = Astro.props;
 
       const imagePaths = await response.json();
 
-      imagePaths.forEach((path) => {
+      imagePaths.forEach((path: any) => {
         if (typeof path !== "string") {
           console.error("Invalid image path:", path);
           return;

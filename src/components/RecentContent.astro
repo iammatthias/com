@@ -5,7 +5,6 @@ import type { CollectionEntry } from "astro:content";
 const { showTags = true, showGlass = false, collection = "all", contentLimit } = Astro.props;
 
 // Optimize type definitions
-type ContentType = "posts" | "art" | "notes" | "recipes";
 type BaseEntry = {
   type: string;
 };
