@@ -9,14 +9,18 @@ import RecentContent from "@/components/RecentContent.astro";
 <PageLayout>
   <main>
     <h1>Hi, I'm Matthias <span class='icon'>🌞</span></h1>
-    <p>I'm a photographer turned growth technologist. Over the years I've worked in travel, fintech, and ecommerce.</p>
-    <p>
-      These days I run <a
-        href='https://day---break.com/'
-        target='_blank'
-        title='day---break: Driving Growth Through Data-Driven Marketing'>day---break</a
-      >, a marketing consultancy focused on growth and lifecycle automation.
-    </p>
+    <div class='intro'>
+      <p>
+        I'm a photographer turned growth technologist. Over the years I've worked in travel, fintech, and ecommerce.
+      </p>
+      <p>
+        These days I run <a
+          href='https://day---break.com/'
+          target='_blank'
+          title='day---break: Driving Growth Through Data-Driven Marketing'>day---break</a
+        >, a marketing consultancy focused on growth and lifecycle automation.
+      </p>
+    </div>
     <RecentContent showTags={true} showGlass={true} contentLimit={16} />
   </main>
 </PageLayout>
@@ -50,5 +54,11 @@ import RecentContent from "@/components/RecentContent.astro";
     padding-left: 0.3em;
     font-size: 0.7em;
     vertical-align: middle;
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 </style>
