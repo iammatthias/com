@@ -58,7 +58,6 @@ interface Event {
 function AnalyticsContent() {
   const [pageViews, setPageViews] = useState<PageView[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
-  const [error, setError] = useState<string | null>(null);
 
   // Use Wagmi hooks for contract reads
   const { data: sessionCount, isLoading: isLoadingSessionCount } = useReadContract({
@@ -121,10 +120,6 @@ function AnalyticsContent() {
       }
     }
   }, [allEvents]);
-
-  if (error) {
-    return <div className={styles.error}>{error}</div>;
-  }
 
   return (
     <div className={styles.container}>

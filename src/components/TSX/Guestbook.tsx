@@ -88,7 +88,7 @@ const GuestbookContent: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoadingEvents, setIsLoadingEvents] = useState(true);
 
-  const { address, isConnected, chain } = useAccount();
+  const { isConnected, chain } = useAccount();
   const { connect } = useConnect();
   const publicClient = usePublicClient();
 
@@ -299,7 +299,7 @@ const GuestbookContent: React.FC = () => {
 
     try {
       const value = mintNFT ? parseEther("0.00111") : 0n;
-      await writeGm({
+      writeGm({
         address: contractAddress,
         abi: guestbookABI,
         functionName: "signGuestbookGm",
@@ -343,7 +343,7 @@ const GuestbookContent: React.FC = () => {
 
     try {
       const value = parseEther("0.00111") + (mintNFT ? parseEther("0.00111") : 0n);
-      await writeCustom({
+      writeCustom({
         address: contractAddress,
         abi: guestbookABI,
         functionName: "signGuestbookCustom",

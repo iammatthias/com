@@ -6,7 +6,10 @@ import { Resvg } from "@resvg/resvg-js";
 
 export async function GET({ params }) {
   const firstDashIndex = params.og.indexOf("-");
-  const path = params.og.substring(firstDashIndex + 1, params.og.indexOf("-", firstDashIndex + 1));
+  let path = params.og.substring(firstDashIndex + 1, params.og.indexOf("-", firstDashIndex + 1));
+  // Simple decode for path
+  path = path.replace(/&amp;/g, "&");
+
   const encodedTitle =
     firstDashIndex >= 0 ? params.og.substring(params.og.indexOf("-", firstDashIndex + 1) + 1) : undefined;
   const title = encodedTitle ? decodeURIComponent(encodedTitle.replace(/\+/g, " ")) : undefined;
@@ -113,6 +116,7 @@ export async function GET({ params }) {
     `;
   }
 
+  // @ts-ignore
   const svg = await satori(markup, {
     width: 1200,
     height: 628,
