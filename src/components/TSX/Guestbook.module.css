@@ -24,6 +24,15 @@
 
 .section {
   composes: flexCol;
+  padding: var(--padding);
+  &:first-child {
+    border-bottom: var(--border);
+  }
+}
+
+.guestbookContainer {
+  composes: flexCol;
+  gap: 0;
 }
 
 .messageInput {
@@ -98,9 +107,10 @@
   cursor: not-allowed;
 }
 
-.connectButtonWrapper {
+.actionButtons {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
   width: 100%;
 }
 
@@ -127,31 +137,6 @@
     padding-bottom: 0;
     border-bottom: none;
   }
-}
-
-.timeAndBlock {
-  composes: flexBetween;
-  font-size: 0.9em;
-  opacity: 0.8;
-}
-
-.author {
-  font-size: 0.9em;
-  opacity: 0.8;
-}
-
-.blockLink,
-.addressLink,
-.nftLink {
-  color: light-dark(var(--link-color-light), var(--link-color-dark));
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.blockLink:hover,
-.addressLink:hover,
-.nftLink:hover {
-  color: light-dark(var(--link-hover-color-light), var(--link-hover-color-dark));
 }
 
 @media (max-width: 768px) {

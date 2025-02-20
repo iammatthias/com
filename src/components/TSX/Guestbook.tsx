@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { parseEther, parseAbiItem } from "viem";
-import { baseSepolia } from "viem/chains"; // Import Base Sepolia chain configuration
+import { baseSepolia } from "wagmi/chains";
 import {
   useAccount,
-  useConnect,
   useReadContract,
   useWriteContract,
   useWaitForTransactionReceipt,
@@ -11,7 +10,6 @@ import {
   usePublicClient,
   useWatchContractEvent,
 } from "wagmi";
-import { injected } from "wagmi/connectors";
 import WagmiProvider from "@/lib/WagmiProvider";
 import styles from "./Guestbook.module.css";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -79,6 +77,7 @@ interface GuestbookEvent {
   timestamp: bigint;
   tokenId: bigint;
   blockNumber: bigint;
+  transactionHash: `0x${string}`;
 }
 
 const GuestbookContent: React.FC = () => {
@@ -89,7 +88,6 @@ const GuestbookContent: React.FC = () => {
   const [isLoadingEvents, setIsLoadingEvents] = useState(true);
 
   const { isConnected, chain } = useAccount();
-  const { connect } = useConnect();
   const publicClient = usePublicClient();
 
   // Contract writes
@@ -108,6 +106,124 @@ const GuestbookContent: React.FC = () => {
   });
 
   const isLoading = isGmPending || isCustomPending || isGmConfirming || isCustomConfirming;
+
+  // Check if connected to correct network - only show if connected
+  const isWrongNetwork = isConnected && chain?.id !== baseSepolia.id;
+
+  // Check if contract is paused
+  const { data: isPaused } = useReadContract({
+    address: contractAddress,
+    abi: guestbookABI,
+    functionName: "paused",
+    chainId: baseSepolia.id, // Explicitly set chain ID
+  });
+
+  // Sanitize message input
+  const sanitizeMessage = (input: string): string => {
+    // Remove HTML tags and entities
+    const noHtml = input.replace(/<[^>]*>|&[^;]+;/g, "");
+
+    // Remove control characters and normalize whitespace
+    const normalized = noHtml
+      .replace(/[\x00-\x1F\x7F-\x9F]/g, "") // Remove control characters
+      .replace(/\s+/g, " ") // Normalize whitespace
+      .trim();
+
+    // Ensure the message is within valid UTF-8 range and length
+    return normalized.slice(0, 140);
+  };
+
+  // Sign the guestbook with "gm"
+  const signGuestbookGm = async () => {
+    if (isPaused) {
+      setError("The guestbook is currently paused. Please try again later.");
+      return;
+    }
+
+    try {
+      const value = mintNFT ? parseEther("0.00111") : 0n;
+      writeGm({
+        address: contractAddress,
+        abi: guestbookABI,
+        functionName: "signGuestbookGm",
+        args: [mintNFT],
+        value,
+        chainId: baseSepolia.id,
+      });
+    } catch (err) {
+      console.error("Error signing guestbook:", err);
+      setError(getErrorMessage(err));
+    }
+  };
+
+  // Sign the guestbook with a custom message
+  const signGuestbookCustom = async () => {
+    if (isPaused) {
+      setError("The guestbook is currently paused. Please try again later.");
+      return;
+    }
+
+    const sanitized = sanitizeMessage(customMessage);
+
+    if (!sanitized) {
+      setError("Please enter a valid message");
+      return;
+    }
+    if (sanitized.length > 140) {
+      setError("Message must be 140 characters or less");
+      return;
+    }
+
+    try {
+      const value = parseEther("0.00111") + (mintNFT ? parseEther("0.00111") : 0n);
+      writeCustom({
+        address: contractAddress,
+        abi: guestbookABI,
+        functionName: "signGuestbookCustom",
+        args: [sanitized, mintNFT],
+        value,
+        chainId: baseSepolia.id,
+      });
+    } catch (err) {
+      console.error("Error signing guestbook:", err);
+      setError(getErrorMessage(err));
+    }
+  };
+
+  // Helper to get user-friendly error messages
+  const getErrorMessage = (error: any): string => {
+    const msg = error?.message || "Unknown error occurred";
+
+    if (msg.includes("insufficient funds")) {
+      return "You don't have enough ETH for this transaction";
+    }
+
+    if (msg.includes("user rejected transaction")) {
+      return "Transaction was cancelled";
+    }
+
+    if (msg.includes("user rejected request")) {
+      return "Network switch was cancelled";
+    }
+
+    if (msg.includes("InsufficientFee")) {
+      return "Insufficient fee provided for this operation";
+    }
+
+    if (msg.includes("EmptyMessage")) {
+      return "Message cannot be empty";
+    }
+
+    if (msg.includes("MessageTooLong")) {
+      return "Message exceeds 140 characters";
+    }
+
+    if (msg.includes("ContractPaused")) {
+      return "The guestbook is currently paused";
+    }
+
+    return "Failed to sign guestbook. Please try again.";
+  };
 
   const fetchLatestEvents = async () => {
     if (!publicClient) return;
@@ -128,6 +244,7 @@ const GuestbookContent: React.FC = () => {
         timestamp: log.args?.timestamp ?? 0n,
         tokenId: log.args?.tokenId ?? 0n,
         blockNumber: log.blockNumber ?? 0n,
+        transactionHash: log.transactionHash,
       }));
 
       if (formattedEvents.length > 0) {
@@ -189,6 +306,7 @@ const GuestbookContent: React.FC = () => {
           timestamp: log.args.timestamp,
           tokenId: log.args.tokenId,
           blockNumber: log.blockNumber,
+          transactionHash: log.transactionHash,
         })) as GuestbookEvent[];
 
       if (newEvents.length === 0) return;
@@ -233,6 +351,7 @@ const GuestbookContent: React.FC = () => {
           toBlock: "latest",
         });
 
+        console.log(logs);
         const formattedEvents: GuestbookEvent[] = logs.map((log) => ({
           guestId: log.args?.guestId ?? 0n,
           guest: log.args?.guest as `0x${string}`,
@@ -240,6 +359,7 @@ const GuestbookContent: React.FC = () => {
           timestamp: log.args?.timestamp ?? 0n,
           tokenId: log.args?.tokenId ?? 0n,
           blockNumber: log.blockNumber ?? 0n,
+          transactionHash: log.transactionHash,
         }));
 
         setEvents(formattedEvents.sort((a, b) => Number(b.timestamp - a.timestamp)));
@@ -254,263 +374,141 @@ const GuestbookContent: React.FC = () => {
     fetchEvents();
   }, [publicClient]);
 
-  // Check if contract is paused
-  const { data: isPaused } = useReadContract({
-    address: contractAddress,
-    abi: guestbookABI,
-    functionName: "paused",
-    chainId: baseSepolia.id, // Explicitly set chain ID
-  });
-
-  // Sanitize message input
-  const sanitizeMessage = (input: string): string => {
-    // Remove HTML tags and entities
-    const noHtml = input.replace(/<[^>]*>|&[^;]+;/g, "");
-
-    // Remove control characters and normalize whitespace
-    const normalized = noHtml
-      .replace(/[\x00-\x1F\x7F-\x9F]/g, "") // Remove control characters
-      .replace(/\s+/g, " ") // Normalize whitespace
-      .trim();
-
-    // Ensure the message is within valid UTF-8 range and length
-    return normalized.slice(0, 140);
-  };
-
-  // Check if connected to correct network
-  const isWrongNetwork = chain?.id !== baseSepolia.id;
-
-  // Sign the guestbook with "gm"
-  const signGuestbookGm = async () => {
-    if (!isConnected) {
-      connect({ connector: injected() });
-      return;
-    }
-
-    if (isWrongNetwork) {
-      setError(`Please connect to Base Sepolia network`);
-      return;
-    }
-
-    if (isPaused) {
-      setError("The guestbook is currently paused. Please try again later.");
-      return;
-    }
-
-    try {
-      const value = mintNFT ? parseEther("0.00111") : 0n;
-      writeGm({
-        address: contractAddress,
-        abi: guestbookABI,
-        functionName: "signGuestbookGm",
-        args: [mintNFT],
-        value,
-        chainId: baseSepolia.id, // Explicitly set chain ID
-      });
-    } catch (err) {
-      console.error("Error signing guestbook:", err);
-      setError(getErrorMessage(err));
-    }
-  };
-
-  // Sign the guestbook with a custom message
-  const signGuestbookCustom = async () => {
-    if (!isConnected) {
-      connect({ connector: injected() });
-      return;
-    }
-
-    if (isWrongNetwork) {
-      setError(`Please connect to Base Sepolia network`);
-      return;
-    }
-
-    if (isPaused) {
-      setError("The guestbook is currently paused. Please try again later.");
-      return;
-    }
-
-    const sanitized = sanitizeMessage(customMessage);
-
-    if (!sanitized) {
-      setError("Please enter a valid message");
-      return;
-    }
-    if (sanitized.length > 140) {
-      setError("Message must be 140 characters or less");
-      return;
-    }
-
-    try {
-      const value = parseEther("0.00111") + (mintNFT ? parseEther("0.00111") : 0n);
-      writeCustom({
-        address: contractAddress,
-        abi: guestbookABI,
-        functionName: "signGuestbookCustom",
-        args: [sanitized, mintNFT],
-        value,
-        chainId: baseSepolia.id, // Explicitly set chain ID
-      });
-    } catch (err) {
-      console.error("Error signing guestbook:", err);
-      setError(getErrorMessage(err));
-    }
-  };
-
-  // Helper to get user-friendly error messages
-  const getErrorMessage = (error: any): string => {
-    const msg = error?.message || "Unknown error occurred";
-
-    if (msg.includes("insufficient funds")) {
-      return "You don't have enough ETH for this transaction";
-    }
-
-    if (msg.includes("user rejected transaction")) {
-      return "Transaction was cancelled";
-    }
-
-    if (msg.includes("InsufficientFee")) {
-      return "Insufficient fee provided for this operation";
-    }
-
-    if (msg.includes("EmptyMessage")) {
-      return "Message cannot be empty";
-    }
-
-    if (msg.includes("MessageTooLong")) {
-      return "Message exceeds 140 characters";
-    }
-
-    if (msg.includes("ContractPaused")) {
-      return "The guestbook is currently paused";
-    }
-
-    return "Failed to sign guestbook. Please try again.";
-  };
-
   return (
-    <>
+    <div className={styles.guestbookContainer}>
       <section className={styles.section}>
         <p>
-          Sign the guestbook (free) or leave a message (0.00111 Ξ), mint it if you want (0.00111 Ξ). Don't be a jerk —
-          harmful content will be moderated. Onchain gas fees still apply.
-        </p>
-        <p>
-          Don't have a wallet? I like <a href='https://rainbow.me/'>Rainbow</a>.
+          Welcome to the guestbook! Connect your wallet to sign and leave your mark. Don't have a wallet? I like{" "}
+          <a href='https://rainbow.me/'>Rainbow</a>.
         </p>
 
-        {isWrongNetwork && (
-          <div className={styles.error}>Please connect to Base Sepolia network to interact with the guestbook</div>
-        )}
+        <ConnectButton
+          chainStatus='name'
+          showBalance={false}
+          accountStatus={{
+            smallScreen: "avatar",
+            largeScreen: "full",
+          }}
+        />
 
-        <div className={styles.messageInput}>
-          <div className={styles.messageTypeSelector}>
-            <label className={`${styles.messageType} ${customMessage.toLowerCase() === "gm" ? styles.active : ""}`}>
+        {isConnected && (
+          <>
+            <p>
+              Sign the guestbook on Base (free) or leave a message (0.00111 Ξ), mint it if you want (0.00111 Ξ). Don't
+              be a jerk — harmful content will be moderated. Onchain gas fees still apply.
+            </p>
+
+            {isWrongNetwork && (
+              <div className={styles.error}>Please connect to Base Sepolia network to interact with the guestbook</div>
+            )}
+
+            <div className={styles.messageInput}>
+              <div className={styles.messageTypeSelector}>
+                <label className={`${styles.messageType} ${customMessage.toLowerCase() === "gm" ? styles.active : ""}`}>
+                  <input
+                    type='radio'
+                    checked={customMessage.toLowerCase() === "gm"}
+                    onChange={() => {
+                      setCustomMessage("gm");
+                      setError(null);
+                    }}
+                    disabled={isLoading}
+                  />
+                  Just say "gm"
+                </label>
+                <label className={`${styles.messageType} ${customMessage.toLowerCase() !== "gm" ? styles.active : ""}`}>
+                  <input
+                    type='radio'
+                    checked={customMessage.toLowerCase() !== "gm"}
+                    onChange={() => {
+                      setCustomMessage("");
+                      setError(null);
+                    }}
+                    disabled={isLoading}
+                  />
+                  Write a custom message
+                </label>
+              </div>
+
+              {customMessage.toLowerCase() !== "gm" && (
+                <div className={styles.flexCol}>
+                  <textarea
+                    value={customMessage}
+                    onChange={(e) => {
+                      const sanitized = sanitizeMessage(e.target.value);
+                      setCustomMessage(sanitized);
+                      setError(null);
+                    }}
+                    placeholder='Your message (max 140 characters)'
+                    maxLength={140}
+                    disabled={isLoading}
+                    className={styles.input}
+                    rows={3}
+                  />
+                  <span className={customMessage.length > 140 ? styles.error : ""}>
+                    {140 - customMessage.length} characters remaining
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <label className={styles.nftOption}>
               <input
-                type='radio'
-                checked={customMessage.toLowerCase() === "gm"}
-                onChange={() => {
-                  setCustomMessage("gm");
-                  setError(null);
-                }}
+                type='checkbox'
+                checked={mintNFT}
+                onChange={(e) => setMintNFT(e.target.checked)}
                 disabled={isLoading}
               />
-              Just say "gm"
+              <span>Mint onchain (+0.00111 Ξ)</span>
             </label>
-            <label className={`${styles.messageType} ${customMessage.toLowerCase() !== "gm" ? styles.active : ""}`}>
-              <input
-                type='radio'
-                checked={customMessage.toLowerCase() !== "gm"}
-                onChange={() => {
-                  setCustomMessage("");
-                  setError(null);
-                }}
-                disabled={isLoading}
-              />
-              Write a custom message
-            </label>
-          </div>
 
-          {customMessage.toLowerCase() !== "gm" && (
             <div className={styles.flexCol}>
-              <textarea
-                value={customMessage}
-                onChange={(e) => {
-                  const sanitized = sanitizeMessage(e.target.value);
-                  setCustomMessage(sanitized);
-                  setError(null);
-                }}
-                placeholder='Your message (max 140 characters)'
-                maxLength={140}
-                disabled={isLoading}
-                className={styles.input}
-                rows={3}
-              />
-              <span className={customMessage.length > 140 ? styles.error : ""}>
-                {140 - customMessage.length} characters remaining
-              </span>
+              <div className={styles.priceBreakdown}>
+                <span>Message fee:</span>
+                <span>{customMessage.toLowerCase() === "gm" ? "No contract fee" : "0.00111 Ξ"}</span>
+              </div>
+              {mintNFT && (
+                <div className={styles.priceBreakdown}>
+                  <span>NFT fee:</span>
+                  <span>0.00111 Ξ</span>
+                </div>
+              )}
+              <div className={`${styles.priceBreakdown} ${styles.total}`}>
+                <span>Total contract fees:</span>
+                <span>
+                  {customMessage.toLowerCase() === "gm" ? (mintNFT ? "0.00111" : "0") : mintNFT ? "0.00222" : "0.00111"}{" "}
+                  Ξ
+                </span>
+              </div>
+              <div className={styles.priceBreakdown}>
+                <span>Gas fees:</span>
+                <span>Variable (paid to network)</span>
+              </div>
             </div>
-          )}
-        </div>
 
-        <label className={styles.nftOption}>
-          <input
-            type='checkbox'
-            checked={mintNFT}
-            onChange={(e) => setMintNFT(e.target.checked)}
-            disabled={isLoading}
-          />
-          <span>Mint onchain (+0.00111 Ξ)</span>
-        </label>
-
-        <div className={styles.flexCol}>
-          <div className={styles.priceBreakdown}>
-            <span>Message fee:</span>
-            <span>{customMessage.toLowerCase() === "gm" ? "No contract fee" : "0.00111 Ξ"}</span>
-          </div>
-          {mintNFT && (
-            <div className={styles.priceBreakdown}>
-              <span>NFT fee:</span>
-              <span>0.00111 Ξ</span>
+            <div className={styles.actionButtons}>
+              <button
+                onClick={customMessage.toLowerCase() === "gm" ? signGuestbookGm : signGuestbookCustom}
+                disabled={
+                  isLoading ||
+                  isWrongNetwork ||
+                  Boolean(isPaused) ||
+                  (customMessage.toLowerCase() !== "gm" && (!customMessage.trim() || customMessage.length > 140))
+                }
+                className={styles.button}
+              >
+                {isLoading ? "Signing..." : "Sign Guestbook"}
+              </button>
             </div>
-          )}
-          <div className={`${styles.priceBreakdown} ${styles.total}`}>
-            <span>Total contract fees:</span>
-            <span>
-              {customMessage.toLowerCase() === "gm" ? (mintNFT ? "0.00111" : "0") : mintNFT ? "0.00222" : "0.00111"} Ξ
-            </span>
-          </div>
-          <div className={styles.priceBreakdown}>
-            <span>Gas fees:</span>
-            <span>Variable (paid to network)</span>
-          </div>
-        </div>
 
-        {!isConnected ? (
-          <div className={styles.connectButtonWrapper}>
-            <ConnectButton />
-          </div>
-        ) : (
-          <button
-            onClick={customMessage.toLowerCase() === "gm" ? signGuestbookGm : signGuestbookCustom}
-            disabled={
-              isLoading ||
-              isWrongNetwork ||
-              Boolean(isPaused) ||
-              (customMessage.toLowerCase() !== "gm" && (!customMessage.trim() || customMessage.length > 140))
-            }
-            className={styles.button}
-          >
-            {isLoading ? "Signing..." : "Sign Guestbook"}
-          </button>
-        )}
-
-        {error && <div className={styles.error}>{error}</div>}
-        {(isGmSuccess || isCustomSuccess) && (
-          <div className={styles.success}>
-            Successfully signed the guestbook!
-            {mintNFT && " Your NFT is being minted."}
-          </div>
+            {error && <div className={styles.error}>{error}</div>}
+            {(isGmSuccess || isCustomSuccess) && (
+              <div className={styles.success}>
+                Successfully signed the guestbook!
+                {mintNFT && " Your NFT is being minted."}
+              </div>
+            )}
+          </>
         )}
       </section>
 
@@ -522,8 +520,8 @@ const GuestbookContent: React.FC = () => {
         ) : (
           events.map((event) => (
             <article key={`${event.guestId}-${event.timestamp}`} className={styles.guestEntry}>
-              <div className={styles.timeAndBlock}>
-                <span>
+              <div className={styles.flexBetween}>
+                <small>
                   {new Date(Number(event.timestamp * 1000n)).toLocaleString(undefined, {
                     month: "short",
                     day: "numeric",
@@ -531,21 +529,34 @@ const GuestbookContent: React.FC = () => {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
-                </span>
-                <a
-                  href={`https://sepolia.basescan.org/block/${event.blockNumber.toString()}`}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className={styles.blockLink}
-                >
-                  Block #{event.blockNumber.toString()}
-                </a>
+                </small>
+
+                <small>
+                  <a
+                    href={`https://sepolia.basescan.org/block/${event.blockNumber.toString()}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    Block #{event.blockNumber.toString()}
+                  </a>
+                </small>
               </div>
               <div className={styles.flexCol}>
                 <p className={styles.author}>
                   by <AddressDisplay address={event.guest} />
                 </p>
                 <p>{event.message || "gm"}</p>
+              </div>
+              <div className={styles.flexBetween}>
+                <small>
+                  <a
+                    href={`https://sepolia.basescan.org/tx/${event.transactionHash}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    View on BaseScan
+                  </a>
+                </small>
                 {event.tokenId > 0n && (
                   <small>
                     <a
@@ -563,7 +574,7 @@ const GuestbookContent: React.FC = () => {
           ))
         )}
       </section>
-    </>
+    </div>
   );
 };
 

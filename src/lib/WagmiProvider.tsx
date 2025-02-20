@@ -4,7 +4,7 @@ import { config } from "@/lib/wagmiConfig";
 import { type ReactNode } from "react";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
-
+import { baseSepolia } from "wagmi/chains";
 const queryClient = new QueryClient();
 
 interface Props {
@@ -16,6 +16,7 @@ export default function WagmiProvider({ children }: Props) {
     <WagmiConfig config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
+          initialChain={baseSepolia}
           theme={{
             lightMode: lightTheme({
               accentColor: "var(--blue)",
@@ -28,7 +29,6 @@ export default function WagmiProvider({ children }: Props) {
               borderRadius: "small",
             }),
           }}
-          coolMode
         >
           {children}
         </RainbowKitProvider>
