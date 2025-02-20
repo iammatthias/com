@@ -3,67 +3,221 @@ import type { Loader } from "astro/loaders";
 import matter from "gray-matter";
 import { fetchFromGitHub } from "./helpers";
 
-export function obsidianLoader({ path = "" }: { path?: string }): Loader {
+// Shared content schema
+const contentSchema = z.object({
+  title: z.string(),
+  slug: z.string(),
+  created: z.string(),
+  updated: z.string(),
+  published: z.boolean(),
+  tags: z.array(z.string()),
+  path: z.string(),
+});
+
+type ContentType = z.infer<typeof contentSchema>;
+
+// Cache for content data
+let contentCache: Map<string, any> | null = null;
+
+// Helper to process markdown entries
+async function processMarkdownEntries(entries: any[], path: string, isDev: boolean) {
+  return entries
+    .map((entry) => {
+      const { markdown } = entry;
+      const { data: frontmatter, content } = matter(markdown);
+
+      // Skip unpublished entries in production
+      if (!isDev && !frontmatter.published) {
+        return null;
+      }
+
+      return {
+        frontmatter: {
+          ...frontmatter,
+          path,
+        } as ContentType,
+        content,
+        markdown,
+      };
+    })
+    .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
+}
+
+// Helper to handle GitHub API retries
+async function fetchWithRetry(path: string, maxRetries = 3, baseDelay = 2000): Promise<any[]> {
+  let retries = maxRetries;
+  let delay = baseDelay;
+
+  while (retries > 0) {
+    try {
+      const entries = await fetchFromGitHub(path);
+      return entries;
+    } catch (error) {
+      retries--;
+      if (retries === 0) throw error;
+
+      if (error instanceof Error) {
+        // Handle rate limiting
+        if (error.message.includes("rate limit")) {
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          delay *= 2; // Exponential backoff
+          continue;
+        }
+
+        // Handle other GitHub API errors
+        if (error.message.includes("GraphQL")) {
+          throw new Error(`GitHub API error for path ${path}: ${error.message}`);
+        }
+      }
+
+      // Handle unknown errors
+      throw new Error(
+        `Failed to fetch content from GitHub for path ${path}: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
+  }
+  return [];
+}
+
+export function contentLoader({ path = "" }: { path?: string }): Loader {
   return {
-    name: "obsidian-loader",
+    name: "content-loader",
     load: async ({ store, logger, generateDigest }) => {
       try {
-        logger.info(`Fetching content from GitHub path: ${path}`);
-        const entries = await fetchFromGitHub(path);
-        const isDev = import.meta.env.DEV;
-
-        if (!entries.length) {
-          logger.error(`No entries returned from GitHub for path: ${path}`);
+        // Return cached data if available and in the same path
+        if (contentCache?.has(path)) {
+          logger.info(`Using cached content data for ${path}`);
+          const cachedData = contentCache.get(path);
+          for (const entry of cachedData) {
+            store.set(entry);
+          }
           return;
         }
 
-        // Process each entry and store the structured data
-        for (const entry of entries) {
-          const { markdown } = entry;
-          const { data: frontmatter, content } = matter(markdown);
+        logger.info(`Fetching content from GitHub path: ${path}`);
 
-          // Skip unpublished entries in production
-          if (!isDev && !frontmatter.published) {
-            continue;
-          }
+        const entries = await fetchWithRetry(path);
 
-          const digest = generateDigest(markdown);
-
-          store.set({
-            id: frontmatter.slug,
-            data: {
-              title: frontmatter.title,
-              slug: frontmatter.slug,
-              created: frontmatter.created,
-              updated: frontmatter.updated,
-              published: frontmatter.published,
-              tags: frontmatter.tags,
-              path,
-            },
-            body: content,
-            digest,
-          });
+        if (!entries.length) {
+          logger.warn(`No entries returned from GitHub for path: ${path}`);
+          return;
         }
 
-        logger.info(`Successfully loaded ${entries.length} entries from GitHub.`);
+        const isDev = import.meta.env.DEV;
+
+        // Process entries
+        const processedEntries = await processMarkdownEntries(entries, path, isDev);
+
+        if (!processedEntries.length) {
+          logger.warn(`No valid entries found for path: ${path}`);
+          return;
+        }
+
+        // Store processed entries
+        const storeEntries = processedEntries.map((entry) => ({
+          id: entry.frontmatter.slug,
+          data: {
+            title: entry.frontmatter.title,
+            slug: entry.frontmatter.slug,
+            created: entry.frontmatter.created,
+            updated: entry.frontmatter.updated,
+            published: entry.frontmatter.published,
+            tags: entry.frontmatter.tags,
+            path: entry.frontmatter.path,
+          },
+          body: entry.content,
+          digest: generateDigest(entry.markdown),
+        }));
+
+        // Update cache
+        if (!contentCache) {
+          contentCache = new Map();
+        }
+        contentCache.set(path, storeEntries);
+
+        // Store entries
+        for (const entry of storeEntries) {
+          store.set(entry);
+        }
+
+        logger.info(`Successfully loaded ${storeEntries.length} entries from GitHub for ${path}`);
       } catch (error) {
         logger.error(`Error loading entries: ${error instanceof Error ? error.message : "Unknown error"}`);
+        throw error; // Propagate error to prevent partial content loading
       }
     },
-    schema: z.object({
-      title: z.string(),
-      slug: z.string(),
-      created: z.string(),
-      updated: z.string(),
-      published: z.boolean(),
-      tags: z.array(z.string()),
-      path: z.string(),
-      body: z.string(), // The body of the markdown content
+    schema: contentSchema.extend({
+      body: z.string(),
     }),
   };
 }
 
-// Define any options that the loader needs
+export function tagLoader(): Loader {
+  return {
+    name: "tag-loader",
+    load: async ({ store, parseData, logger }) => {
+      try {
+        const collections = ["posts", "art", "notes", "recipes"];
+        const tagMap = new Map<string, Set<z.infer<typeof contentSchema>>>();
+
+        // Process all collections
+        for (const path of collections) {
+          if (!contentCache?.has(path)) {
+            logger.warn(`Content not found in cache for ${path}, skipping...`);
+            continue;
+          }
+
+          const entries = contentCache.get(path);
+
+          // Process entries for tags
+          entries.forEach((entry) => {
+            const { data } = entry;
+            if (!data.tags?.length) return;
+
+            data.tags.forEach((tag) => {
+              const normalizedTag = tag.toLowerCase().trim();
+              if (!tagMap.has(normalizedTag)) {
+                tagMap.set(normalizedTag, new Set());
+              }
+              tagMap.get(normalizedTag)?.add(data);
+            });
+          });
+        }
+
+        // Store processed tags
+        for (const [tag, entries] of tagMap.entries()) {
+          const parsedData = await parseData({
+            id: tag,
+            data: {
+              tag,
+              entries: Array.from(entries),
+              count: entries.size,
+            },
+          });
+
+          store.set({
+            id: tag,
+            data: parsedData,
+          });
+        }
+
+        logger.info(`Successfully processed ${tagMap.size} tags from all collections`);
+      } catch (error) {
+        logger.error(`Error processing tags: ${error instanceof Error ? error.message : "Unknown error"}`);
+        throw error; // Propagate error to prevent partial tag loading
+      }
+    },
+    schema: z.object({
+      tag: z.string(),
+      entries: z.array(contentSchema),
+      count: z.number(),
+    }),
+  };
+}
+
+// Glass loader remains unchanged
 export function glassLoader(): Loader {
   // Configure the loader
   const feedUrl = new URL(`https://glass.photo/api/v2/users/iam/posts?limit=50`);
@@ -159,104 +313,6 @@ export function glassLoader(): Loader {
         model: z.string(),
         model_slug: z.string(),
       }),
-    }),
-  };
-}
-
-export function tagLoader(): Loader {
-  return {
-    name: "tag-loader",
-    load: async ({ store, parseData, logger }) => {
-      try {
-        // Get all collections that use the obsidian loader
-        const collections = ["posts", "art", "notes", "recipes"];
-        const tagMap = new Map<
-          string,
-          Set<{
-            slug: string;
-            title: string;
-            path: string;
-            created: string;
-            updated: string;
-            published: boolean;
-            tags: string[];
-          }>
-        >();
-
-        // Process each collection
-        for (const path of collections) {
-          logger.info(`Processing tags from collection: ${path}`);
-          const entries = await fetchFromGitHub(path);
-
-          if (!entries?.length) {
-            logger.warn(`No entries found for collection: ${path}`);
-            continue;
-          }
-
-          // Process each entry in the collection
-          for (const entry of entries) {
-            const { data: frontmatter } = matter(entry.markdown);
-
-            // Skip if no tags
-            if (!frontmatter.tags?.length) continue;
-
-            // Process each tag
-            for (const tag of frontmatter.tags) {
-              const normalizedTag = tag.toLowerCase().trim();
-              if (!tagMap.has(normalizedTag)) {
-                tagMap.set(normalizedTag, new Set());
-              }
-
-              // Add entry reference to the tag with complete frontmatter
-              tagMap.get(normalizedTag)?.add({
-                slug: frontmatter.slug,
-                title: frontmatter.title,
-                path: path,
-                created: frontmatter.created,
-                updated: frontmatter.updated,
-                published: frontmatter.published,
-                tags: frontmatter.tags,
-              });
-            }
-          }
-        }
-
-        // Store processed tags
-        for (const [tag, entries] of tagMap.entries()) {
-          const parsedData = await parseData({
-            id: tag,
-            data: {
-              tag,
-              entries: Array.from(entries),
-              count: entries.size,
-            },
-          });
-
-          store.set({
-            id: tag,
-            data: parsedData,
-          });
-        }
-
-        logger.info(`Successfully processed tags from all collections`);
-      } catch (error) {
-        logger.error(`Error processing tags: ${error instanceof Error ? error.message : "Unknown error"}`);
-      }
-    },
-    schema: z.object({
-      tag: z.string(),
-      entries: z.array(
-        z.object({
-          slug: z.string(),
-          title: z.string(),
-          path: z.string(),
-          created: z.string(),
-          updated: z.string(),
-          published: z.boolean(),
-          tags: z.array(z.string()),
-        })
-      ),
-      count: z.number(),
     }),
   };
 }

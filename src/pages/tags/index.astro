@@ -14,9 +14,9 @@ const tags = await getCollection("tags");
     {
       tags.map((tag) => (
         <div class='tag'>
-          <h2>
+          <h3>
             <a href={`/tags/${tag.data.tag}/`}>{tag.data.tag}</a>
-          </h2>
+          </h3>
           {tag.data.entries.map((entry) => (
             <a href={`/${entry.path}/${entry.slug}/`}>{entry.title}</a>
           ))}

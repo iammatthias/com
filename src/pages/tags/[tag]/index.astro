@@ -20,6 +20,8 @@ const { entries } = currentTag.data;
 <PageLayout title={currentTag.data.tag} path='Tags'>
   <main>
     <header>
+      <a href='/tags'>All tags</a>
+
       <h1 class='title'>{currentTag.data.tag}</h1>
       <p class='count'>{entries.length} entries</p>
     </header>
@@ -27,12 +29,11 @@ const { entries } = currentTag.data;
     {
       entries.map((entry) => (
         <div>
-          <p>
-            <a href={`/${entry.path}`}>{entry.path}</a>
-          </p>
-          <h2>
+          <a href={`/${entry.path}`}>{entry.path}</a>
+
+          <h3>
             <a href={`/${entry.path}/${entry.slug}`}>{entry.title}</a>
-          </h2>
+          </h3>
 
           <p class='align-bottom small'>
             <a href={`/${entry.path}/${entry.slug}`}>
