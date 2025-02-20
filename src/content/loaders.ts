@@ -81,6 +81,26 @@ async function fetchWithRetry(path: string, maxRetries = 3, baseDelay = 2000): P
   return [];
 }
 
+// Helper to load content for a specific path
+async function loadContent(path: string, logger: any): Promise<any[]> {
+  try {
+    logger.info(`Loading content for path: ${path}`);
+    const entries = await fetchWithRetry(path);
+    const isDev = import.meta.env.DEV;
+
+    if (!entries.length) {
+      logger.warn(`No entries returned for path: ${path}`);
+      return [];
+    }
+
+    const processedEntries = await processMarkdownEntries(entries, path, isDev);
+    return processedEntries;
+  } catch (error) {
+    logger.error(`Error loading content for ${path}: ${error instanceof Error ? error.message : "Unknown error"}`);
+    return [];
+  }
+}
+
 export function contentLoader({ path = "" }: { path?: string }): Loader {
   return {
     name: "content-loader",
@@ -162,28 +182,35 @@ export function tagLoader(): Loader {
         const collections = ["posts", "art", "notes", "recipes"];
         const tagMap = new Map<string, Set<z.infer<typeof contentSchema>>>();
 
-        // Process all collections
-        for (const path of collections) {
-          if (!contentCache?.has(path)) {
-            logger.warn(`Content not found in cache for ${path}, skipping...`);
-            continue;
+        // Load all content first
+        const contentPromises = collections.map((path) => loadContent(path, logger));
+        const contentResults = await Promise.all(contentPromises);
+
+        // Process content for tags
+        collections.forEach((path, index) => {
+          const entries = contentResults[index];
+          if (!entries?.length) {
+            logger.warn(`No valid entries found for ${path}`);
+            return;
           }
 
-          const entries = contentCache.get(path);
-
-          // Process entries for tags
           entries.forEach((entry) => {
-            const { data } = entry;
-            if (!data.tags?.length) return;
+            const { frontmatter } = entry;
+            if (!frontmatter.tags?.length) return;
 
-            data.tags.forEach((tag) => {
+            frontmatter.tags.forEach((tag) => {
               const normalizedTag = tag.toLowerCase().trim();
               if (!tagMap.has(normalizedTag)) {
                 tagMap.set(normalizedTag, new Set());
               }
-              tagMap.get(normalizedTag)?.add(data);
+              tagMap.get(normalizedTag)?.add(frontmatter);
             });
           });
+        });
+
+        if (!tagMap.size) {
+          logger.warn("No tags found in any collection");
+          return;
         }
 
         // Store processed tags
@@ -206,7 +233,7 @@ export function tagLoader(): Loader {
         logger.info(`Successfully processed ${tagMap.size} tags from all collections`);
       } catch (error) {
         logger.error(`Error processing tags: ${error instanceof Error ? error.message : "Unknown error"}`);
-        throw error; // Propagate error to prevent partial tag loading
+        throw error;
       }
     },
     schema: z.object({

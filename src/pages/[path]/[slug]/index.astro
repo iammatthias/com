@@ -12,6 +12,9 @@ import OfficeSpace from "@/components/MDX/OfficeSpace.astro";
 import Vimeo from "@components/MDX/Vimeo.astro";
 import Grid from "@components/MDX/Grid.astro";
 
+// Cache for processed markdown content
+const markdownCache = new Map();
+
 export async function getStaticPaths() {
   const [posts, art, notes, recipes] = await Promise.all([
     getCollection("posts"),
@@ -31,6 +34,7 @@ export async function getStaticPaths() {
       props: {
         entry: {
           ...entry,
+          body: entry.body?.trim() || "",
         },
       },
     }));
@@ -48,6 +52,16 @@ const components = {
   Vimeo,
   Grid,
 };
+
+// Process markdown with caching
+const getCachedMarkdown = (content: string) => {
+  if (markdownCache.has(content)) {
+    return markdownCache.get(content);
+  }
+  return content;
+};
+
+const markdownContent = getCachedMarkdown(entry.body);
 ---
 
 <PageLayout title={entry.data.title} path={path}>
@@ -73,8 +87,7 @@ const components = {
       </div>
     </section>
     <article>
-      <!-- <Content /> -->
-      <Markdown sanitize={{ allowComponents: true }} content={entry.body} components={{ ...components }} />
+      <Markdown sanitize={{ allowComponents: true }} content={markdownContent} components={components} />
     </article>
   </main>
 </PageLayout>
@@ -143,7 +156,6 @@ const components = {
 
     @media (max-width: 800px) {
       max-width: unset;
-
       width: calc(100vw - 4rem);
     }
   }
