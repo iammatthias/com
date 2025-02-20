@@ -1,4 +1,4 @@
-import { publicClient } from "@/lib/viemProvider";
+import { baseSepoliaClient } from "@/lib/viemProvider";
 
 // Contract address
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT as `0x${string}`;
@@ -27,7 +27,7 @@ export async function getSession(sessionId: `0x${string}`) {
     },
   ];
 
-  const data = await publicClient.readContract({
+  const data = await baseSepoliaClient.readContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: "getSession",
@@ -49,7 +49,7 @@ export async function getAllSessionIds() {
     },
   ];
 
-  const data = await publicClient.readContract({
+  const data = await baseSepoliaClient.readContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: "getAllSessionIds",
@@ -70,7 +70,7 @@ export async function getSessionCount() {
     },
   ];
 
-  const data = await publicClient.readContract({
+  const data = await baseSepoliaClient.readContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: "getSessionCount",
@@ -91,7 +91,7 @@ export async function getPageViewCount(pagePath: string) {
     },
   ];
 
-  const data = await publicClient.readContract({
+  const data = await baseSepoliaClient.readContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: "getPageViewCount",
@@ -113,7 +113,7 @@ export async function getEventCount(eventName: string) {
     },
   ];
 
-  const data = await publicClient.readContract({
+  const data = await baseSepoliaClient.readContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: "getEventCount",
@@ -139,7 +139,7 @@ export async function getAllEvents() {
     },
   ];
 
-  const data = await publicClient.readContract({
+  const data = await baseSepoliaClient.readContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: "getAllEvents",
@@ -164,7 +164,7 @@ export async function getAllPageViews() {
     },
   ];
 
-  const data = await publicClient.readContract({
+  const data = await baseSepoliaClient.readContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: "getAllPageViews",
@@ -188,7 +188,7 @@ export async function getSessionIds(start: number, end: number) {
     },
   ];
 
-  const data = await publicClient.readContract({
+  const data = await baseSepoliaClient.readContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: "getSessionIds",
@@ -217,7 +217,7 @@ export async function getEventsInRange(start: number, end: number) {
     },
   ];
 
-  const data = await publicClient.readContract({
+  const data = await baseSepoliaClient.readContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: "getEvents",
@@ -246,7 +246,7 @@ export async function getPageViewsInRange(start: number, end: number) {
     },
   ];
 
-  const data = await publicClient.readContract({
+  const data = await baseSepoliaClient.readContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: "getPageViews",

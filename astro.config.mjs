@@ -7,6 +7,8 @@ import mdx from "@astrojs/mdx";
 
 import sitemap from "@astrojs/sitemap";
 
+import react from "@astrojs/react";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://iammatthias.com",
@@ -18,6 +20,16 @@ export default defineConfig({
 
   prefetch: {
     prefetchAll: true,
+  },
+
+  vite: {
+    define: {
+      "process.env.NODE_DEBUG": "false",
+      global: "globalThis",
+    },
+    build: {
+      target: "esnext",
+    },
   },
 
   redirects: {
@@ -56,5 +68,6 @@ export default defineConfig({
     sitemap({
       filter: (page) => !page.includes("/api/") && !page.includes("/onchain-analytics/"),
     }),
+    react(),
   ],
 });

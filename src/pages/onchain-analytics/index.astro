@@ -1,6 +1,7 @@
 ---
 // layouts
 import PageLayout from "@/layouts/PageLayout.astro";
+import OnchainAnalytics from "@/components/TSX/OnchainAnalytics";
 
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 ---
@@ -26,46 +27,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
       </p>
     </section>
     <article>
-      <ul>
-        <li>
-          A unique, irreversible keccack256 sessionID is anonymously generated client side. Only the hash is stored.
-        </li>
-        <li>The hash is stored onchain to validate page views.</li>
-      </ul>
-
-      <h3>The Data</h3>
-      <p><span id='sessionCount'></span> unique sessions have been recorded.</p>
-      <table id='pageViewCounts'>
-        <tr><th>Top 5 pages</th><th>Views</th></tr>
-        {
-          Array.from({ length: 5 }).map((_, i) => (
-            <tr>
-              <td id={`page${i}`} class='break' />
-              <td id={`views${i}`} />
-            </tr>
-          ))
-        }
-      </table>
-
-      <table id='eventCounts'>
-        <tr><th>Top events</th><th>Count</th></tr>
-        {
-          Array.from({ length: 3 }).map((_, i) => (
-            <tr>
-              <td id={`event${i}`} />
-              <td id={`count${i}`} />
-            </tr>
-          ))
-        }
-      </table>
-
-      <h4>Session Hashes</h4>
-      <p>
-        The keccack256 hashes generated are technically valid private keys. These private keys are effectively burned,
-        since they are public. As such, they should never be used for anything.
-      </p>
-      <p>Click on a hash to view its corresponding portrait:</p>
-      <div id='sessionIDs'></div>
+      <OnchainAnalytics client:only='react' />
     </article>
   </main>
 </PageLayout>
@@ -73,7 +35,6 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 <style>
   main {
     width: 100%;
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
     min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
   }
 
@@ -102,6 +63,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
     border-right: var(--border);
     max-width: 800px;
     width: 100%;
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - var(--header-height) - 4px);
     margin: 0 auto;
     padding: var(--padding);
     @media (max-width: 800px) {
@@ -109,114 +71,9 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
       border-right: none;
     }
   }
-</style>
-
-<style is:global>
-  .sessionHash {
-    font-family: monospace;
-    display: inline; /* Keeps span inline */
-    margin-right: 0.5rem; /* Adds horizontal space between items */
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease; /* Smooth transition for background and text color */
-  }
-
-  .sessionHash:hover {
-    background-color: var(--gold); /* Light grey background on hover */
-  }
 
   .break {
-    overflow-wrap: break-word; /* Handles normal wrapping */
-    word-break: break-all; /* Forces break for long unbreakable strings */
+    overflow-wrap: break-word;
+    word-break: break-all;
   }
 </style>
-
-<script>
-  import { getAllSessionIds, getSessionCount, getAllEvents, getAllPageViews } from "@/lib/sessionContractDataProvider";
-
-  async function updateData() {
-    try {
-      // Update session count
-      const sessionCount = await getSessionCount();
-
-      const sessionCountElement = document.getElementById("sessionCount");
-      if (sessionCountElement && sessionCount !== null && sessionCount !== undefined) {
-        sessionCountElement.textContent = sessionCount.toString();
-      }
-
-      // Update top 5 page views
-      const allPageViews = await getAllPageViews();
-
-      if (Array.isArray(allPageViews) && allPageViews.length === 3) {
-        const [pagePaths, pageOccurrences] = allPageViews;
-        if (Array.isArray(pagePaths) && Array.isArray(pageOccurrences) && pagePaths.length === pageOccurrences.length) {
-          const pageViewCounts = pageOccurrences
-            .map((views, i) => ({ page: pagePaths[i], views: Number(views) }))
-            .filter(({ page }) => page !== "/test" && page !== "/posts/1546329600000-markdown-test")
-            .sort((a, b) => b.views - a.views)
-            .slice(0, 5);
-
-          pageViewCounts.forEach((pageView, i) => {
-            const pageElement = document.getElementById(`page${i}`);
-            const viewsElement = document.getElementById(`views${i}`);
-            if (pageElement) pageElement.textContent = pageView.page;
-            if (viewsElement) viewsElement.textContent = pageView.views.toString();
-          });
-        } else {
-          console.error("Mismatch between page occurrences and page paths");
-        }
-      } else {
-        console.error("Invalid data structure for page views");
-      }
-
-      // Update top 3 events
-      const allEvents = await getAllEvents();
-
-      if (Array.isArray(allEvents) && allEvents.length === 3) {
-        const [eventNames, eventOccurrences] = allEvents;
-        if (
-          Array.isArray(eventNames) &&
-          Array.isArray(eventOccurrences) &&
-          eventNames.length === eventOccurrences.length
-        ) {
-          const eventCounts = eventNames
-            .map((name, i) => ({
-              event: name,
-              count: Number(eventOccurrences[i].toString()),
-            }))
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 3);
-
-          eventCounts.forEach((event, i) => {
-            const eventElement = document.getElementById(`event${i}`);
-            const countElement = document.getElementById(`count${i}`);
-            if (eventElement) eventElement.textContent = event.event;
-            if (countElement) countElement.textContent = event.count.toString();
-          });
-        } else {
-          console.error("Mismatch between event names and occurrences");
-        }
-      } else {
-        console.error("Invalid data structure for events");
-      }
-
-      // Update session IDs
-      const sessionIds = await getAllSessionIds();
-
-      const sessionIDsContainer = document.getElementById("sessionIDs");
-      if (sessionIDsContainer && Array.isArray(sessionIds)) {
-        sessionIds.forEach((sessionId) => {
-          const linkElement = document.createElement("a");
-          linkElement.href = `/onchain-analytics/${sessionId}`;
-          linkElement.textContent = sessionId;
-          linkElement.className = "sessionHash break";
-          sessionIDsContainer.appendChild(linkElement);
-        });
-      }
-    } catch (error) {
-      console.error("Error updating data:", error);
-    }
-  }
-
-  updateData();
-</script>
