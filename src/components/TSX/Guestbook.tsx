@@ -378,7 +378,8 @@ const GuestbookContent: React.FC = () => {
     <div className={styles.guestbookContainer}>
       <section className={styles.section}>
         <p>
-          Welcome to the guestbook! Connect your wallet to sign and leave your mark. Don't have a wallet? I like{" "}
+          Sign the guestbook on Base (free) or leave a message (0.00111 Ξ), mint it if you want (0.00111 Ξ). Don't be a
+          jerk — harmful content will be moderated. Onchain gas fees still apply. I like{" "}
           <a href='https://rainbow.me/'>Rainbow</a>.
         </p>
 
@@ -393,11 +394,6 @@ const GuestbookContent: React.FC = () => {
 
         {isConnected && (
           <>
-            <p>
-              Sign the guestbook on Base (free) or leave a message (0.00111 Ξ), mint it if you want (0.00111 Ξ). Don't
-              be a jerk — harmful content will be moderated. Onchain gas fees still apply.
-            </p>
-
             {isWrongNetwork && (
               <div className={styles.error}>Please connect to Base Sepolia network to interact with the guestbook</div>
             )}
