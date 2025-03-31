@@ -1,0 +1,269 @@
+<script lang="ts">
+	interface ContentItem {
+		slug: string;
+		title: string;
+		date: string;
+		metadata?: {
+			published?: boolean;
+			[key: string]: any;
+		};
+	}
+
+	interface PageDataWithContent {
+		contentTypes: string[];
+		contentMap: Record<string, ContentItem[]>;
+		configError?: string;
+		error?: string;
+		isDev?: boolean;
+	}
+
+	export let data: PageDataWithContent;
+
+	// Format content type for display (e.g., "blog-posts" -> "Blog Posts")
+	function formatContentType(type: string): string {
+		return type
+			.split('-')
+			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(' ');
+	}
+
+	// Format date for display
+	function formatDate(dateString: string): string {
+		return new Date(dateString).toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'short',
+			day: 'numeric'
+		});
+	}
+</script>
+
+<div class="page">
+	<section class="breadcrumbs">
+		<a href="/">Home</a>
+		<span>/</span>
+		<span>Content</span>
+	</section>
+
+	<section class="header">
+		<h1>All Content</h1>
+		<p>Browse through all content categories</p>
+	</section>
+
+	<section class="content">
+		{#if data.configError}
+			<div class="alert error" role="alert">
+				<p>{data.configError}</p>
+			</div>
+		{:else if data.error}
+			<div class="alert error" role="alert">
+				<p>{data.error}</p>
+			</div>
+		{:else if data.contentTypes && data.contentTypes.length > 0}
+			<div class="categories">
+				{#each data.contentTypes as contentType}
+					{#if data.contentMap[contentType] && data.contentMap[contentType].length > 0}
+						<div class="category">
+							<h2>{formatContentType(contentType)}</h2>
+							<div class="entries">
+								{#each data.contentMap[contentType] as item}
+									<a href={`/content/${contentType}/${item.slug}`} class="entry">
+										<span class="title">
+											{item.title}
+											{#if data.isDev && item.metadata?.published === false}
+												<span class="draft">Draft</span>
+											{/if}
+										</span>
+										<span class="date">{formatDate(item.date)}</span>
+									</a>
+								{/each}
+							</div>
+							<a href={`/content/${contentType}`} class="view-all">
+								View all {formatContentType(contentType)}
+							</a>
+						</div>
+					{/if}
+				{/each}
+			</div>
+		{:else}
+			<div class="alert info" role="alert">
+				<p>
+					No content collections are currently available. Make sure your GitHub repository is
+					properly configured.
+				</p>
+			</div>
+		{/if}
+	</section>
+</div>
+
+<style>
+	.page {
+		max-width: var(--content-width);
+		margin: 0 auto;
+		padding: var(--space-8) var(--space-4);
+	}
+
+	.breadcrumbs {
+		margin-bottom: var(--space-8);
+		color: var(--color-text-secondary);
+		display: flex;
+		gap: var(--space-2);
+	}
+
+	.breadcrumbs a {
+		color: var(--color-text-secondary);
+		text-decoration: none;
+		transition: color var(--transition-fast);
+	}
+
+	.breadcrumbs a:hover {
+		color: var(--color-text);
+	}
+
+	.breadcrumbs span {
+		margin: 0 var(--space-2);
+	}
+
+	.header {
+		margin-bottom: var(--space-12);
+		text-align: center;
+	}
+
+	.header h1 {
+		font-size: var(--text-4xl);
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		margin-bottom: var(--space-4);
+		color: var(--color-text);
+	}
+
+	.header p {
+		font-size: var(--text-lg);
+		color: var(--color-text-secondary);
+	}
+
+	.content {
+		margin-top: var(--space-8);
+	}
+
+	.categories {
+		display: grid;
+		gap: var(--space-12);
+	}
+
+	.category {
+		display: grid;
+		gap: var(--space-4);
+	}
+
+	.category h2 {
+		font-size: var(--text-2xl);
+		font-weight: 600;
+		color: var(--color-text);
+		padding-bottom: var(--space-2);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.entries {
+		display: grid;
+		gap: var(--space-2);
+	}
+
+	.entry {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		padding-block: var(--space-2);
+		color: var(--color-text);
+		text-decoration: none;
+		border-bottom: 1px solid var(--color-border);
+		transition: all var(--transition-fast);
+	}
+
+	.entry:hover {
+		color: var(--color-primary);
+		border-color: var(--color-primary);
+	}
+
+	.title {
+		font-weight: 500;
+		flex: 1;
+		margin-right: var(--space-4);
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+	}
+
+	.draft {
+		display: inline-block;
+		padding-inline: var(--space-2);
+		font-size: var(--text-xs);
+		font-weight: 500;
+		color: var(--color-warning-text);
+		background-color: var(--color-warning-bg);
+		border: 1px solid var(--color-warning-border);
+		border-radius: var(--radius-sm);
+	}
+
+	.date {
+		font-size: var(--text-sm);
+		color: var(--color-text-secondary);
+		white-space: nowrap;
+	}
+
+	.view-all {
+		color: var(--color-primary);
+		text-decoration: none;
+		font-size: var(--text-sm);
+		font-weight: 500;
+		transition: color var(--transition-fast);
+	}
+
+	.view-all:hover {
+		color: var(--color-primary-dark);
+		text-decoration: underline;
+	}
+
+	.alert {
+		padding: var(--space-4);
+		border-radius: var(--radius-md);
+		margin-block: var(--space-4);
+	}
+
+	.alert.error {
+		background-color: var(--color-error-bg);
+		color: var(--color-error-text);
+		border: 1px solid var(--color-error-border);
+	}
+
+	.alert.info {
+		background-color: var(--color-info-bg);
+		color: var(--color-info-text);
+		border: 1px solid var(--color-info-border);
+	}
+
+	@media (max-width: 768px) {
+		.page {
+			padding: var(--space-4);
+		}
+
+		.header {
+			margin-bottom: var(--space-8);
+		}
+
+		.header h1 {
+			font-size: var(--text-3xl);
+		}
+
+		.header p {
+			font-size: var(--text-base);
+		}
+
+		.categories {
+			gap: var(--space-8);
+		}
+
+		.title {
+			margin-right: var(--space-2);
+		}
+	}
+</style>

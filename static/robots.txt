@@ -1,0 +1,10 @@
+# https://iammatthias.com robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://iammatthias.com/api/sitemap.xml
+
+# Disallow API endpoints except sitemap
+Disallow: /api/
+Allow: /api/sitemap.xml 
