@@ -13,6 +13,11 @@ interface ContentStore {
 	lastUpdated: Date;
 }
 
+// Helper function to sort content by date
+function sortContent(content: ContentItem[]): ContentItem[] {
+	return content.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
 let store: ContentStore | null = null;
 let initializationPromise: Promise<ContentStore> | null = null;
 let lastFetchAttempt = 0;
@@ -32,34 +37,58 @@ const getDefaultStore = (): ContentStore => ({
 // Function to transform the data structure from github.ts ContentItem to types/index.ts ContentItem
 function transformGithubItemToGlobalItem(
 	githubItem: import('$lib/utils/github').ContentItem
-): ContentItem {
-	return {
-		title: githubItem.frontmatter.title,
-		slug: githubItem.frontmatter.slug,
-		date: githubItem.frontmatter.created, // Assuming 'created' maps to 'date'
-		excerpt: githubItem.content?.split('\n')[0], // Optional: generate excerpt if content exists
-		metadata: {
-			updated: githubItem.frontmatter.updated,
-			published: githubItem.frontmatter.published,
-			tags: githubItem.frontmatter.tags
+): import('$lib/services/content').ContentItem {
+	const frontmatter = githubItem.frontmatter as Record<string, any>;
+	const title = frontmatter.title || formatSlug(frontmatter.slug);
+	const date = frontmatter.created || new Date().toISOString().split('T')[0];
+	const excerpt = frontmatter.excerpt || githubItem.content?.split('\n')[0] || '';
+	const type = frontmatter.path?.split('/')[0] || '';
+
+	// Extract all other metadata from frontmatter
+	const metadata = { ...frontmatter };
+	const fieldsToDelete = ['title', 'excerpt', 'date', 'created', 'slug'];
+	fieldsToDelete.forEach((field) => {
+		if (field in metadata) {
+			delete metadata[field];
 		}
+	});
+
+	return {
+		slug: frontmatter.slug,
+		title,
+		date,
+		content: githubItem.content,
+		excerpt,
+		type,
+		metadata
 	};
+}
+
+// Helper to format slug to title case
+function formatSlug(slug: string): string {
+	return slug
+		.split('-')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
 }
 
 export async function initializeStore(fetchFn: FetchFn): Promise<ContentStore> {
 	// If recent fetch attempt failed, use cooldown
 	const now = Date.now();
 	if (now - lastFetchAttempt < FETCH_COOLDOWN) {
+		console.log('[initializeStore] Using cooldown, returning existing store');
 		return store || getDefaultStore();
 	}
 
 	// Prevent multiple initializations running concurrently
 	if (initializationPromise) {
+		console.log('[initializeStore] Initialization already in progress');
 		return initializationPromise;
 	}
 
 	// If store exists and is recent enough (e.g., 1 hour in prod), return it
 	if (store && !dev && Date.now() - store.lastUpdated.getTime() < 3600000) {
+		console.log('[initializeStore] Using cached store');
 		return store;
 	}
 
@@ -68,7 +97,7 @@ export async function initializeStore(fetchFn: FetchFn): Promise<ContentStore> {
 
 	initializationPromise = (async () => {
 		try {
-			console.log('Initializing content store...');
+			console.log('[initializeStore] Starting content store initialization...');
 
 			// Retry logic for fetching content folders
 			let contentTypes: string[] = [];
@@ -77,10 +106,14 @@ export async function initializeStore(fetchFn: FetchFn): Promise<ContentStore> {
 			while (retries > 0) {
 				try {
 					contentTypes = await getContentFolders(fetchFn);
+					console.log('[initializeStore] Found content types:', contentTypes);
 					break; // Success, exit the retry loop
 				} catch (folderError) {
 					retries--;
-					console.error(`Error fetching content folders (retries left: ${retries}):`, folderError);
+					console.error(
+						`[initializeStore] Error fetching content folders (retries left: ${retries}):`,
+						folderError
+					);
 					if (retries === 0) throw folderError;
 					// Wait before retrying
 					await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -109,25 +142,42 @@ export async function initializeStore(fetchFn: FetchFn): Promise<ContentStore> {
 					Promise.all(
 						contentTypes.map(async (type) => {
 							try {
+								console.log(`[initializeStore] Loading content for type: ${type}`);
 								// Load content (returns github.ts ContentItem[])
 								const rawContent = await loadContent(type, fetchFn);
+								console.log(
+									`[initializeStore] Raw content for ${type}:`,
+									rawContent.length,
+									'items'
+								);
+
 								// Transform to the global ContentItem[] type
 								const content = rawContent.map(transformGithubItemToGlobalItem);
+								console.log(
+									`[initializeStore] Transformed content for ${type}:`,
+									content.length,
+									'items'
+								);
 
 								if (content.length > 0 || dev) {
-									contentMap.set(type, content); // Now using the correct type
+									// Sort content before storing in the map
+									contentMap.set(type, sortContent(content));
 
 									// Add to content children - remove the /content prefix since it's added by the parent route
 									contentChildren.push({
-										path: `/${type}`,
+										path: `/content/${type}`,
 										label: type
 											.split('-')
 											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
 											.join(' ')
 									});
+									console.log(`[initializeStore] Added route for ${type}`);
 								}
 							} catch (typeError) {
-								console.error(`Error loading content for type ${type}:`, typeError);
+								console.error(
+									`[initializeStore] Error loading content for type ${type}:`,
+									typeError
+								);
 								// Continue with other content types
 							}
 						})
@@ -135,7 +185,7 @@ export async function initializeStore(fetchFn: FetchFn): Promise<ContentStore> {
 					fetchTimeout
 				]);
 			} catch (timeoutError) {
-				console.error('Content fetching timed out:', timeoutError);
+				console.error('[initializeStore] Content fetching timed out:', timeoutError);
 				// Continue with partial data
 			}
 
@@ -146,6 +196,7 @@ export async function initializeStore(fetchFn: FetchFn): Promise<ContentStore> {
 					label: 'Content',
 					children: contentChildren
 				});
+				console.log('[initializeStore] Added content routes:', contentChildren.length, 'routes');
 			}
 
 			store = {
@@ -155,10 +206,14 @@ export async function initializeStore(fetchFn: FetchFn): Promise<ContentStore> {
 				lastUpdated: new Date()
 			};
 
-			console.log('Content store initialized.');
+			console.log('[initializeStore] Content store initialized with:', {
+				contentTypes: contentTypes.length,
+				contentMapSize: contentMap.size,
+				routes: routes.length
+			});
 			return store;
 		} catch (error) {
-			console.error('Failed to initialize content store:', error);
+			console.error('[initializeStore] Failed to initialize content store:', error);
 			// In case of error, return a minimal default store
 			store = getDefaultStore();
 			return store;

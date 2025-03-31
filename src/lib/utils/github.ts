@@ -1,4 +1,5 @@
 import matter from 'gray-matter';
+import { env } from '$env/dynamic/private';
 
 // Define a type for the fetch function to ensure consistency
 type FetchFn = typeof fetch;
@@ -19,66 +20,62 @@ export interface ContentItem {
 
 // Helper to fetch content from GitHub using their API
 export async function fetchFromGitHub(path = '', fetchFn: FetchFn) {
+	const contentPath = env.GITHUB_CONTENT_PATH || 'content';
+
+	// For content folders, we need to use the content path
+	// But don't add it twice if it's already in the path
+	const contentPrefix = path ? `${contentPath}/` : contentPath;
+	const fullPath = path.startsWith(`${contentPath}/`)
+		? path
+		: path
+			? `${contentPrefix}${path}`
+			: contentPrefix;
+
 	try {
+		console.log(`[fetchFromGitHub] Fetching content from path: ${fullPath}`);
 		const response = await fetchFn(
-			`/api/github?operation=fetchEntries&path=${encodeURIComponent(path)}`
+			`/api/github?operation=fetchEntries&path=${encodeURIComponent(fullPath)}`
 		);
+
 		if (!response.ok) {
 			const errorText = await response.text();
-			console.error('GitHub API error:', {
-				status: response.status,
-				error: errorText,
-				path
-			});
-			throw new Error(`GitHub API request failed: ${response.status} - ${errorText}`);
+			throw new Error(`API request failed: ${response.status} - ${errorText}`);
 		}
 
 		const result = await response.json();
+		console.log(`[fetchFromGitHub] Raw response for ${fullPath}:`, JSON.stringify(result, null, 2));
 
-		if (!result.repository) {
-			console.error('GitHub repository data missing:', {
-				result,
-				path
-			});
-			throw new Error('Repository data not found or not accessible');
+		if (!result.success || !result.data?.repository?.object) {
+			console.warn(`[fetchFromGitHub] No content found at path: ${fullPath}`);
+			return [];
 		}
 
-		// Handle both Tree and Blob responses
-		if (result.repository.object?.entries?.length) {
-			const entries = result.repository.object.entries
+		const objectData = result.data.repository.object;
+
+		// Handle directory (Tree) response
+		if (objectData.__typename === 'Tree' && objectData.entries) {
+			return objectData.entries
 				.filter((entry: any) => entry.object?.text)
 				.map((entry: any) => ({
 					id: entry.name,
 					markdown: entry.object.text
 				}));
+		}
 
-			if (entries.length === 0) {
-				console.warn('No markdown entries found:', {
-					path,
-					totalEntries: result.repository.object.entries.length
-				});
-			}
-
-			return entries;
-		} else if (result.repository.object?.text) {
+		// Handle single file (Blob) response
+		if (objectData.__typename === 'Blob' && objectData.text) {
 			return [
 				{
 					id: path.split('/').pop() || path,
-					markdown: result.repository.object.text
+					markdown: objectData.text
 				}
 			];
 		}
 
-		console.error('Unexpected GitHub response structure:', {
-			data: result,
-			path
-		});
-		throw new Error(`No valid data returned from GitHub for path: ${path}`);
+		console.warn(`[fetchFromGitHub] Unexpected response structure for path: ${fullPath}`);
+		return [];
 	} catch (error) {
-		console.error('GitHub fetch error:', {
-			error: error instanceof Error ? error.message : 'Unknown error',
-			path
-		});
+		console.error(`[fetchFromGitHub] Error fetching content:`, error);
 		throw error;
 	}
 }
@@ -91,116 +88,29 @@ export async function processMarkdownEntries(
 ): Promise<ContentItem[]> {
 	return entries
 		.map((entry) => {
-			const { markdown } = entry;
-			const { data: frontmatter, content } = matter(markdown);
+			try {
+				const { markdown } = entry;
+				const { data: frontmatter, content } = matter(markdown);
 
-			// Skip unpublished entries in production
-			if (!isDev && !frontmatter.published) {
+				// Skip unpublished entries in production
+				if (!isDev && !frontmatter.published) {
+					return null;
+				}
+
+				return {
+					frontmatter: {
+						...frontmatter,
+						path
+					},
+					content,
+					markdown
+				} as ContentItem;
+			} catch (error) {
+				console.error(`[processMarkdownEntries] Error processing entry ${entry.id}:`, error);
 				return null;
 			}
-
-			return {
-				frontmatter: {
-					...frontmatter,
-					path
-				},
-				content,
-				markdown
-			} as ContentItem;
 		})
 		.filter((entry): entry is ContentItem => entry !== null);
-}
-
-// Helper to handle GitHub API retries
-export async function fetchWithRetry(
-	path: string,
-	fetchFn: FetchFn,
-	maxRetries = 3,
-	baseDelay = 2000
-): Promise<any[]> {
-	let retries = maxRetries;
-	let delay = baseDelay;
-
-	while (retries > 0) {
-		try {
-			// Correctly call the internal API endpoint using fetchFn
-			const apiUrl = `/api/github?operation=fetchEntries&path=${encodeURIComponent(path)}`;
-			console.log(`[fetchWithRetry] Calling: ${apiUrl}`); // Log the API call
-			const response = await fetchFn(apiUrl);
-
-			if (!response.ok) {
-				const errorText = await response.text();
-				// Distinguish between 404 (potentially valid, just no content) and other errors
-				if (response.status === 404) {
-					console.warn(`[fetchWithRetry] Content not found (404) for path: ${path}`);
-					return []; // Return empty array if path not found
-				}
-				// Throw an error for other non-ok statuses to potentially trigger retry
-				throw new Error(
-					`API request failed for path ${path}: ${response.status} ${response.statusText} - ${errorText}`
-				);
-			}
-
-			const data = await response.json();
-
-			// Adapt based on the structure returned by the API endpoint
-			// The endpoint returns { repository: { object: { ... } } }
-			if (!data.repository?.object) {
-				console.warn(`[fetchWithRetry] Unexpected data structure for path ${path}:`, data);
-				return []; // Return empty if structure is wrong
-			}
-
-			const objectData = data.repository.object;
-
-			// Handle both Tree and Blob responses from the unified query
-			if (objectData.__typename === 'Tree' && objectData.entries) {
-				// Filter for entries that are Blobs and have text content
-				return objectData.entries
-					.filter((entry: any) => entry.type === 'blob' && entry.object?.text)
-					.map((entry: any) => ({
-						id: entry.name, // Use name as ID
-						markdown: entry.object.text
-					}));
-			} else if (objectData.__typename === 'Blob' && objectData.text) {
-				// If the path directly points to a file, return it as a single-item array
-				return [
-					{
-						id: path.split('/').pop() || path, // Extract filename for ID
-						markdown: objectData.text
-					}
-				];
-			} else {
-				console.warn(`[fetchWithRetry] No valid Tree entries or Blob text found for path ${path}`);
-				return []; // Return empty if neither Tree with valid entries nor Blob found
-			}
-		} catch (error) {
-			console.error(
-				`[fetchWithRetry] Error fetching path ${path} (retries left: ${retries - 1}):`,
-				error
-			);
-			retries--;
-			if (retries === 0) {
-				console.error(`[fetchWithRetry] Max retries reached for path ${path}. Giving up.`);
-				throw error; // Re-throw the final error after retries are exhausted
-			}
-
-			if (error instanceof Error) {
-				// Optional: Check for specific error types that shouldn't be retried (e.g., 400 Bad Request)
-				// if (error.message.includes('400 Bad Request')) throw error;
-
-				// Basic exponential backoff for retries
-				await new Promise((resolve) => setTimeout(resolve, delay));
-				delay *= 2;
-				console.log(`[fetchWithRetry] Retrying path ${path} after delay...`);
-			} else {
-				// If it's not an Error instance, re-throw immediately
-				throw error;
-			}
-		}
-	}
-	// Should not be reached if retries > 0, but provides a fallback
-	console.error(`[fetchWithRetry] Failed to fetch path ${path} after multiple retries.`);
-	return [];
 }
 
 // Cache for content data
@@ -215,18 +125,17 @@ export async function loadContent(path: string, fetchFn: FetchFn): Promise<Conte
 			return contentCache.get(path) || [];
 		}
 
-		// Path is expected to be relative to GITHUB_CONTENT_PATH
-		// The API endpoint /api/github will add the base path
-		const entries = await fetchWithRetry(path, fetchFn); // Pass path directly
-		const isDev = import.meta.env.DEV;
+		console.log(`[GitHub] Loading content for path: ${path}`);
+		const entries = await fetchFromGitHub(path, fetchFn);
+		const isDev = process.env.NODE_ENV === 'development';
 		const processedEntries = await processMarkdownEntries(entries, path, isDev);
 
 		// Cache the results
 		contentCache.set(path, processedEntries);
 		return processedEntries;
 	} catch (error) {
-		console.error(`Error loading content for ${path}:`, error);
-		throw error;
+		console.error(`[GitHub] Error loading content for ${path}:`, error);
+		return [];
 	}
 }
 
@@ -274,27 +183,27 @@ export async function getAllTags(fetchFn: FetchFn): Promise<Record<string, Conte
 // New function to dynamically discover content folders
 export async function getContentFolders(fetchFn: FetchFn): Promise<string[]> {
 	try {
-		// Make sure we're using the provided fetchFn, not global fetch
 		const response = await fetchFn('/api/github?operation=getFolders');
 		if (!response.ok) {
-			const errorText = await response.text(); // Get error details
+			const errorText = await response.text();
 			console.error(`Failed to fetch content folders (${response.status}): ${errorText}`);
 			throw new Error(`Failed to fetch content folders: ${response.status}`);
 		}
 
 		const result = await response.json();
-		if (!result.repository?.object?.entries) {
-			console.error('Unexpected response structure for content folders');
+
+		if (!result.data?.repository?.object?.entries) {
+			console.error('Unexpected response structure for content folders:', result);
 			return [];
 		}
 
 		// Filter for directories only
-		return result.repository.object.entries
+		return result.data.repository.object.entries
 			.filter((entry: { type: string }) => entry.type === 'tree')
 			.map((entry: { name: string }) => entry.name);
 	} catch (error) {
 		console.error('Error fetching content folders:', error);
-		throw error; // Rethrow the error for better error handling upstream
+		return [];
 	}
 }
 
@@ -323,7 +232,7 @@ export async function getAllMarkdownContent(path: string, fetchFn: FetchFn): Pro
 	try {
 		// Path is expected to be relative to GITHUB_CONTENT_PATH
 		// The API endpoint /api/github will add the base path
-		const entries = await fetchWithRetry(path, fetchFn); // Pass path directly
+		const entries = await fetchFromGitHub(path, fetchFn); // Pass path directly
 
 		// Process entries into GitHubFile format
 		return entries
@@ -353,7 +262,7 @@ export async function getMarkdownFile(path: string, fetchFn: FetchFn): Promise<G
 	try {
 		// Path is expected to be relative to GITHUB_CONTENT_PATH
 		// The API endpoint /api/github will add the base path
-		const entries = await fetchWithRetry(path, fetchFn); // Pass path directly
+		const entries = await fetchFromGitHub(path, fetchFn); // Pass path directly
 
 		if (!entries || entries.length === 0 || !entries[0]?.markdown) {
 			throw new Error(`No content found for path: ${path}`);

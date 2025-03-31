@@ -5,8 +5,16 @@ import type { RouteNode } from '$lib/utils/routes'; // Import RouteNode if not a
 // Default navigation (can be kept as a fallback)
 const DEFAULT_ROUTES: RouteNode[] = [
 	{ path: '/', label: 'Home' },
-	{ path: '/bio', label: 'Bio' }
-	// Remove default content route, let the store handle it
+	{ path: '/bio', label: 'Bio' },
+	{
+		path: '/content',
+		label: 'Content',
+		children: [
+			{ path: '/content/published', label: 'Published' },
+			{ path: '/content/drafts', label: 'Drafts' }
+		]
+	},
+	{ path: '/dev', label: 'Developer' }
 ];
 
 export const config = {

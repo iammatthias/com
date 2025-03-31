@@ -12,6 +12,8 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	try {
 		// Get the operation from the query string
 		const operation = url.searchParams.get('operation');
+		const path = url.searchParams.get('path');
+		const cleanPath = path?.replace(/^\/+|\/+$/g, '') || '';
 
 		// Check if GitHub token is configured
 		const token = env.GITHUB_TOKEN;
@@ -26,7 +28,6 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 		}
 
 		// For fetchEntries, path is required
-		const path = url.searchParams.get('path');
 		if (operation === OPERATIONS.fetchEntries && !path) {
 			throw error(400, 'Path is required for fetchEntries operation');
 		}
@@ -62,18 +63,15 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 				}
 			`.trim();
 		} else if (operation === OPERATIONS.fetchEntries) {
-			const cleanPath = path?.replace(/^\/+|\/+$/g, '') || '';
-			// const contentPathBase = env.GITHUB_CONTENT_PATH || 'content'; // Removed - base path is already included in cleanPath
-			// Construct the expression directly from the provided path
 			const fullPathExpression = `HEAD:${cleanPath}`;
-			variables.expression = fullPathExpression; // Use expression consistently
+			variables.expression = fullPathExpression;
 
-			// Query to get entries, handling both Tree (for folder listing) and Blob (for file content)
+			// Updated query to better handle both directory listings and file contents
 			query = `
 				query GetContentEntries($owner: String!, $repo: String!, $expression: String!) {
 					repository(owner: $owner, name: $repo) {
 						object(expression: $expression) {
-							__typename # Get the type of the object
+							__typename
 							... on Tree {
 								entries {
 									name
@@ -81,19 +79,19 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 									object {
 										... on Blob {
 											text
+											byteSize
 										}
 									}
 								}
 							}
 							... on Blob {
-								text # Directly get text if expression points to a file
+								text
+								byteSize
 							}
 						}
 					}
 				}
 			`.trim();
-			// Remove the unused 'path' variable specific to the old query structure
-			// delete variables.path;
 		}
 
 		// Log the request details (excluding sensitive token from query body itself)
@@ -144,28 +142,27 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 		// Parse and return the data
 		const data = await response.json();
 
+		// Log the raw response for debugging
+		console.log(`[GitHub API Raw Response for ${path}] Data:`, JSON.stringify(data, null, 2));
+
 		// Check for errors in the GraphQL response payload
 		if (data.errors && data.errors.length > 0) {
 			console.error(
 				`GraphQL errors for operation ${operation}:`,
 				JSON.stringify(data.errors, null, 2)
-			); // Pretty print errors
+			);
 			console.error(`Query Variables leading to error:`, apiRequestBody.variables);
 			console.error(`Query leading to error:\n${query}`);
-			// Provide the first GraphQL error message to the client
 			throw error(500, `GraphQL error: ${data.errors[0].message}. Check server logs for details.`);
 		}
 
-		// ---- TEMPORARY LOGGING ----
-		if (operation === OPERATIONS.fetchEntries) {
-			console.log(`[GitHub API Raw Response for ${path}] Data:`, JSON.stringify(data, null, 2));
-		}
-		// ---- END TEMPORARY LOGGING ----
-
-		// Log successful response data structure (optional, can be verbose)
-		// console.log(`[GitHub API Response] Operation: ${operation}, Data:`, JSON.stringify(data, null, 2));
-
-		return json(data.data); // Return only the data part of the response
+		// Return the data with additional context
+		return json({
+			success: true,
+			data: data.data,
+			operation,
+			path: cleanPath || 'root'
+		});
 	} catch (err) {
 		// Handle SvelteKit errors
 		if (err instanceof Error && 'status' in err) {

@@ -35,6 +35,20 @@ export async function getNavigationItems(): Promise<NavSection[]> {
 		});
 	}
 
+	// Developer section
+	const devItems: NavItem[] = [
+		{
+			href: '/dev',
+			label: 'Developer',
+			description: 'Development tools and documentation',
+			icon: 'code'
+		}
+	];
+
+	sections.push({
+		items: devItems
+	});
+
 	return sections;
 }
 

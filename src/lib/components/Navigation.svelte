@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import { fly } from 'svelte/transition';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { spring } from 'svelte/motion';
 	import { scale } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
@@ -243,35 +243,33 @@
 						<h3>Menu</h3>
 						<div class="sheet-links">
 							{#each routes as route}
-								{#if route.path !== '/'}
-									{#if route.children && route.children.length > 0}
-										<button class="sheet-link" on:click={() => showSection(route.label)}>
-											<span>{route.label}</span>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke-width="1.5"
-												stroke="currentColor"
-												class="chevron-icon"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													d="M8.25 4.5l7.5 7.5-7.5 7.5"
-												/>
-											</svg>
-										</button>
-									{:else}
-										<a
-											href={route.path}
-											class="sheet-link"
-											class:active={$page.url.pathname === route.path}
-											on:click={(e) => handleLinkClick(e, route.path)}
+								{#if route.children && route.children.length > 0}
+									<button class="sheet-link" on:click={() => showSection(route.label)}>
+										<span>{route.label}</span>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke-width="1.5"
+											stroke="currentColor"
+											class="chevron-icon"
 										>
-											{route.label}
-										</a>
-									{/if}
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												d="M8.25 4.5l7.5 7.5-7.5 7.5"
+											/>
+										</svg>
+									</button>
+								{:else}
+									<a
+										href={route.path}
+										class="sheet-link"
+										class:active={$page.url.pathname === route.path}
+										on:click={(e) => handleLinkClick(e, route.path)}
+									>
+										{route.label}
+									</a>
 								{/if}
 							{/each}
 						</div>
