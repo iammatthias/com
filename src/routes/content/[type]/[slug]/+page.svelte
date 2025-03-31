@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import { browser } from '$app/environment';
 	import { toastStore } from '$lib/store/toast';
 	import { formatContentType } from '$lib/utils/formatters';
@@ -59,21 +60,21 @@
 	});
 </script>
 
-<div class="page">
+<div class="page" in:fade>
 	{#if item}
 		<article>
-			<section class="content">
-				<nav class="breadcrumbs">
-					<a href="/">Home</a>
-					<span>/</span>
-					<a href="/content">Content</a>
-					<span>/</span>
-					<a href={`/content/${contentType}`}>{formatContentType(contentType)}</a>
-					<span>/</span>
-					<span>{item.title}</span>
-				</nav>
+			<section class="breadcrumbs">
+				<a href="/">Home</a>
+				<span>/</span>
+				<a href="/content">Content</a>
+				<span>/</span>
+				<a href={`/content/${contentType}`}>{formatContentType(contentType)}</a>
+				<span>/</span>
+				<span>{item.title}</span>
+			</section>
 
-				<header>
+			<section class="hero">
+				<div class="hero-content">
 					{#if item.metadata?.tags}
 						<div class="tags">
 							{#each Array.isArray(item.metadata.tags) ? item.metadata.tags : [item.metadata.tags] as tag}
@@ -116,8 +117,12 @@
 							</a>
 						</div>
 					</div>
-				</header>
+				</div>
+			</section>
 
+			<hr class="divider divider-dark" />
+
+			<section class="content">
 				{#if item.metadata?.image}
 					<figure class="image">
 						<img src={item.metadata.image} alt={item.title} loading="lazy" />
@@ -173,19 +178,20 @@
 
 <style>
 	.page {
+		width: 100%;
 		max-width: var(--content-width);
 		margin: 0 auto;
-		padding: var(--space-8) var(--space-4);
 	}
 
 	.breadcrumbs {
-		margin-bottom: var(--space-8);
+		margin-block: var(--space-8);
 		color: var(--color-text-secondary);
 	}
 
 	.breadcrumbs a {
 		color: var(--color-text-secondary);
 		text-decoration: none;
+		transition: color var(--transition-fast);
 	}
 
 	.breadcrumbs a:hover {
@@ -196,14 +202,26 @@
 		margin: 0 var(--space-2);
 	}
 
-	header {
-		margin-bottom: var(--space-8);
+	.hero {
+		margin-block: var(--space-12);
 	}
 
-	h1 {
+	.hero-content {
+		max-width: 65ch;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	.hero h1 {
 		font-size: var(--text-4xl);
 		font-weight: 700;
+		letter-spacing: -0.02em;
 		margin-bottom: var(--space-4);
+		color: var(--color-text);
+	}
+
+	.content {
+		margin-block: var(--space-12);
 	}
 
 	.meta {
@@ -212,6 +230,7 @@
 		align-items: flex-start;
 		font-size: var(--text-sm);
 		color: var(--color-text-secondary);
+		margin-top: var(--space-4);
 	}
 
 	.dates {
@@ -242,6 +261,7 @@
 	.type {
 		color: var(--color-text-secondary);
 		text-decoration: none;
+		transition: color var(--transition-fast);
 	}
 
 	.type:hover {
@@ -252,26 +272,27 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-2);
+		justify-content: center;
 		margin-bottom: var(--space-4);
 	}
 
 	.tag {
-		font-size: var(--text-xs);
-		color: var(--color-text-secondary);
-		background-color: var(--color-bg-tertiary);
-		padding: var(--space-1) var(--space-2);
+		padding: var(--space-1) var(--space-3);
+		background-color: var(--color-bg-secondary);
 		border-radius: var(--radius-full);
+		color: var(--color-text-secondary);
 		text-decoration: none;
+		font-size: var(--text-sm);
 		transition: all var(--transition-fast);
 	}
 
 	.tag:hover {
-		color: white;
-		background-color: var(--color-accent);
+		background-color: var(--color-bg-hover);
+		color: var(--color-text);
 	}
 
 	.image {
-		margin: var(--space-8) 0;
+		margin-bottom: var(--space-8);
 	}
 
 	.image img {
@@ -281,25 +302,28 @@
 	}
 
 	.image figcaption {
-		margin-top: var(--space-2);
+		text-align: center;
 		font-size: var(--text-sm);
 		color: var(--color-text-secondary);
-		text-align: center;
+		margin-top: var(--space-2);
 	}
 
 	.body {
-		margin-bottom: var(--space-8);
+		max-width: 65ch;
+		margin: 0 auto;
 	}
 
 	footer {
-		margin-top: var(--space-8);
-		padding-top: var(--space-6);
+		margin-top: var(--space-12);
+		padding-top: var(--space-8);
 		border-top: 1px solid var(--color-border);
 	}
 
 	.back {
+		display: inline-block;
 		color: var(--color-text-secondary);
 		text-decoration: none;
+		transition: color var(--transition-fast);
 	}
 
 	.back:hover {
@@ -307,59 +331,42 @@
 	}
 
 	.footer-tags {
-		margin-top: var(--space-6);
+		margin-top: var(--space-8);
 	}
 
 	.footer-tags h3 {
 		font-size: var(--text-lg);
-		margin-bottom: var(--space-3);
-	}
-
-	.alert {
-		padding: var(--space-4);
-		border-radius: var(--radius-md);
-		margin-bottom: var(--space-6);
-	}
-
-	.alert.warning {
-		background-color: var(--color-warning-bg);
-		color: var(--color-warning-text);
-		border: 1px solid var(--color-warning-border);
-	}
-
-	.alert.error {
-		background-color: var(--color-error-bg);
-		color: var(--color-error-text);
-		border: 1px solid var(--color-error-border);
+		font-weight: 600;
+		margin-bottom: var(--space-4);
 	}
 
 	.loading {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		justify-content: center;
 		gap: var(--space-4);
-		padding: var(--space-8);
-		color: var(--color-text-secondary);
+		min-height: 50vh;
 	}
 
 	.spinner {
 		display: inline-block;
 		position: relative;
-		width: 40px;
-		height: 40px;
+		width: 80px;
+		height: 80px;
 	}
 
 	.spinner div {
 		box-sizing: border-box;
 		display: block;
 		position: absolute;
-		width: 32px;
-		height: 32px;
-		margin: 4px;
-		border: 4px solid var(--color-text-secondary);
+		width: 64px;
+		height: 64px;
+		margin: 8px;
+		border: 8px solid var(--color-text);
 		border-radius: 50%;
 		animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-		border-color: var(--color-text-secondary) transparent transparent transparent;
+		border-color: var(--color-text) transparent transparent transparent;
 	}
 
 	.spinner div:nth-child(1) {
@@ -384,14 +391,27 @@
 	}
 
 	@media (max-width: 768px) {
+		.hero {
+			margin-block: var(--space-8);
+		}
+
+		.hero h1 {
+			font-size: var(--text-3xl);
+		}
+
+		.content {
+			margin-block: var(--space-8);
+		}
+
 		.meta {
 			flex-direction: column;
 			gap: var(--space-4);
+			align-items: center;
 		}
 
 		.info {
 			flex-direction: column;
-			align-items: flex-start;
+			gap: var(--space-2);
 		}
 	}
 </style>

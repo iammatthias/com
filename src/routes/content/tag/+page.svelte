@@ -1,54 +1,52 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
-	import type { NavItem, NavSection } from '$lib/types/nav';
 
-	export let data: PageData;
+	interface TagData {
+		tags: string[];
+		tagCounts: Record<string, number>;
+		error?: string;
+	}
 
-	$: ({ sections, currentPath } = data);
-	$: isActive = (href: string) => currentPath === href || currentPath.startsWith(href + '/');
+	export let data: TagData;
+
+	$: tags = data.tags || [];
+	$: tagCounts = data.tagCounts || {};
 </script>
 
 <div class="page" in:fade>
 	<section class="breadcrumbs">
 		<a href="/">Home</a>
 		<span>/</span>
-		<span>Bio</span>
+		<a href="/content">Content</a>
+		<span>/</span>
+		<span>Tags</span>
 	</section>
 
 	<section class="hero">
 		<div class="hero-content">
-			<h1>Bio</h1>
-			<p>Welcome to my personal space. Here you can learn more about me and get in touch.</p>
+			<h1>Content Tags</h1>
+			<p>Browse content by tags</p>
 		</div>
 	</section>
 
 	<hr class="divider divider-dark" />
 
 	<section class="content">
-		<nav class="site-nav" aria-label="Site navigation">
-			{#each sections as section}
-				<div class="nav-section">
-					{#each section.items as item (item.href)}
-						<a
-							href={item.href}
-							class="nav-card"
-							class:active={isActive(item.href)}
-							data-sveltekit-preload
-							aria-current={isActive(item.href) ? 'page' : undefined}
-						>
-							{#if item.icon}
-								<span class="icon" aria-hidden="true">{item.icon}</span>
-							{/if}
-							<div class="nav-content">
-								<h2>{item.label}</h2>
-								<p>{item.description}</p>
-							</div>
-						</a>
-					{/each}
-				</div>
-			{/each}
-		</nav>
+		{#if tags.length === 0}
+			<div class="alert info" role="alert">
+				<p>No tags found. Add tags to your content to see them here.</p>
+			</div>
+		{:else}
+			<div class="tags-grid">
+				{#each tags as tag}
+					<a href={`/content/tag/${tag}`} class="tag">
+						<span class="tag-name">{tag}</span>
+						<span class="tag-count">{tagCounts[tag] || 0}</span>
+					</a>
+				{/each}
+			</div>
+		{/if}
 	</section>
 </div>
 
@@ -106,66 +104,57 @@
 		margin-block: var(--space-12);
 	}
 
-	.site-nav {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-8);
+	.tags-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: var(--space-4);
 		max-width: 800px;
 		margin-inline: auto;
 	}
 
-	.nav-section {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: var(--space-4);
-	}
-
-	.nav-card {
+	.tag {
 		display: flex;
-		align-items: flex-start;
-		gap: var(--space-4);
-		padding: var(--space-4);
+		justify-content: space-between;
+		align-items: center;
+		padding: var(--space-3) var(--space-4);
+		background-color: var(--color-bg-secondary);
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
-		text-decoration: none;
 		color: var(--color-text);
+		text-decoration: none;
 		transition: all var(--transition-fast);
-		background-color: var(--color-bg);
 	}
 
-	.nav-card:hover {
+	.tag:hover {
+		background-color: var(--color-bg-hover);
 		border-color: var(--color-primary);
 		transform: translateY(-2px);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	}
 
-	.nav-card.active {
-		border-color: var(--color-primary);
-		background-color: var(--color-bg-hover);
+	.tag-name {
+		font-weight: 500;
 	}
 
-	.icon {
-		flex-shrink: 0;
-		font-size: 1.5rem;
+	.tag-count {
+		background-color: var(--color-bg);
 		color: var(--color-text-secondary);
-	}
-
-	.nav-content {
-		flex-grow: 1;
-	}
-
-	.nav-content h2 {
-		font-size: var(--text-xl);
-		font-weight: 600;
-		margin: 0 0 var(--space-2);
-		color: var(--color-text);
-	}
-
-	.nav-content p {
+		padding: var(--space-1) var(--space-2);
+		border-radius: var(--radius-full);
 		font-size: var(--text-sm);
-		color: var(--color-text-secondary);
-		margin: 0;
-		line-height: 1.5;
+	}
+
+	.alert {
+		padding: var(--space-4);
+		border-radius: var(--radius-md);
+		margin-block: var(--space-4);
+		text-align: center;
+	}
+
+	.alert.info {
+		background-color: var(--color-info-bg);
+		color: var(--color-info-text);
+		border: 1px solid var(--color-info-border);
 	}
 
 	@media (max-width: 768px) {
@@ -185,12 +174,8 @@
 			margin-block: var(--space-8);
 		}
 
-		.nav-section {
+		.tags-grid {
 			grid-template-columns: 1fr;
-		}
-
-		.nav-card {
-			padding: var(--space-3);
 		}
 	}
 </style>

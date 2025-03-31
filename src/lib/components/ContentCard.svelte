@@ -39,7 +39,7 @@
 
 	// Handle tag click
 	function handleTagClick(tag: string) {
-		goto(`/tag/${tag}`);
+		goto(`/content/tag/${tag}`);
 	}
 </script>
 

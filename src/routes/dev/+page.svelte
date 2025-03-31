@@ -16,12 +16,16 @@
 		<span>Developer Dashboard</span>
 	</section>
 
-	<section class="header">
-		<h1>Developer Dashboard</h1>
-		<p>
-			This page provides tools to test and monitor the site's integration with external services.
-		</p>
+	<section class="hero">
+		<div class="hero-content">
+			<h1>Developer Dashboard</h1>
+			<p>
+				This page provides tools to test and monitor the site's integration with external services.
+			</p>
+		</div>
 	</section>
+
+	<hr class="divider divider-dark" />
 
 	<section class="content">
 		<div class="github-section">
@@ -181,19 +185,20 @@ Content goes here...</code
 
 <style>
 	.page {
+		width: 100%;
 		max-width: var(--content-width);
 		margin: 0 auto;
-		padding: var(--space-8) var(--space-4);
 	}
 
 	.breadcrumbs {
-		margin-bottom: var(--space-8);
+		margin-block: var(--space-8);
 		color: var(--color-text-secondary);
 	}
 
 	.breadcrumbs a {
 		color: var(--color-text-secondary);
 		text-decoration: none;
+		transition: color var(--transition-fast);
 	}
 
 	.breadcrumbs a:hover {
@@ -204,24 +209,32 @@ Content goes here...</code
 		margin: 0 var(--space-2);
 	}
 
-	.header {
-		margin-bottom: var(--space-8);
+	.hero {
+		margin-block: var(--space-12);
 	}
 
-	.header h1 {
-		font-size: var(--text-3xl);
+	.hero-content {
+		max-width: 65ch;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	.hero h1 {
+		font-size: var(--text-4xl);
 		font-weight: 700;
+		letter-spacing: -0.02em;
 		margin-bottom: var(--space-4);
 		color: var(--color-text);
 	}
 
-	.header p {
+	.hero p {
 		font-size: var(--text-lg);
+		line-height: 1.5;
 		color: var(--color-text-secondary);
 	}
 
 	.content {
-		margin-top: var(--space-8);
+		margin-block: var(--space-12);
 	}
 
 	.github-section,
@@ -248,50 +261,94 @@ Content goes here...</code
 
 	h4 {
 		font-size: var(--text-lg);
-		font-weight: 500;
-		margin-top: var(--space-4);
+		font-weight: 600;
+		margin-bottom: var(--space-2);
+		color: var(--color-text);
+	}
+
+	p {
+		margin-bottom: var(--space-4);
+		color: var(--color-text-secondary);
+	}
+
+	ul {
+		list-style: disc;
+		margin-left: var(--space-4);
+		margin-bottom: var(--space-4);
+	}
+
+	li {
 		margin-bottom: var(--space-2);
 		color: var(--color-text-secondary);
 	}
 
-	.links-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-		gap: var(--space-6);
-		margin-top: var(--space-4);
-	}
-
-	.links-section ul {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	.links-section li {
-		margin-bottom: var(--space-2);
-	}
-
-	.links-section a {
+	a {
 		color: var(--color-primary);
 		text-decoration: none;
 		transition: color var(--transition-fast);
 	}
 
-	.links-section a:hover {
+	a:hover {
 		color: var(--color-primary-dark);
 		text-decoration: underline;
 	}
 
-	.disabled-notice {
-		color: var(--color-text-secondary);
-		font-style: italic;
+	code {
+		font-family: var(--font-mono);
 		font-size: var(--text-sm);
+		padding: var(--space-1) var(--space-2);
+		background-color: var(--color-bg-secondary);
+		border-radius: var(--radius-sm);
+	}
+
+	pre {
+		background-color: var(--color-bg-secondary);
+		padding: var(--space-4);
+		border-radius: var(--radius-md);
+		overflow-x: auto;
+		margin-bottom: var(--space-4);
+	}
+
+	pre code {
+		padding: 0;
+		background-color: transparent;
+	}
+
+	.links-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: var(--space-8);
+		margin-top: var(--space-4);
+	}
+
+	.links-section {
+		display: grid;
+		gap: var(--space-2);
+	}
+
+	.disabled-notice {
+		font-size: var(--text-sm);
+		color: var(--color-text-tertiary);
+		font-style: italic;
+	}
+
+	.cache-details {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: var(--space-8);
+		margin-top: var(--space-4);
+	}
+
+	.cache-type {
+		background-color: var(--color-bg-secondary);
+		padding: var(--space-4);
+		border-radius: var(--radius-md);
 	}
 
 	.alert {
 		padding: var(--space-4);
 		border-radius: var(--radius-md);
-		margin: var(--space-4) 0;
+		margin-block: var(--space-4);
 	}
 
 	.alert-warning {
@@ -300,68 +357,27 @@ Content goes here...</code
 		border: 1px solid var(--color-warning-border);
 	}
 
-	.info-section {
-		background-color: var(--color-bg-secondary);
-		border-radius: var(--radius-md);
-		padding: var(--space-6);
-		margin-top: var(--space-8);
-	}
-
-	.info-section code {
-		font-family: var(--font-mono);
-		font-size: var(--text-sm);
-		padding: var(--space-1) var(--space-2);
-		background-color: var(--color-bg);
-		border-radius: var(--radius-sm);
-		color: var(--color-text);
-	}
-
-	.cache-details {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-		gap: var(--space-6);
-	}
-
-	.cache-type ul {
-		list-style: disc;
-		padding-left: var(--space-4);
-		margin: var(--space-2) 0;
-	}
-
-	.cache-type li {
-		margin-bottom: var(--space-2);
-		color: var(--color-text-secondary);
-	}
-
-	pre {
-		background-color: var(--color-bg);
-		border-radius: var(--radius-md);
-		padding: var(--space-4);
-		margin: var(--space-4) 0;
-		overflow-x: auto;
-	}
-
-	code {
-		font-family: var(--font-mono);
-		font-size: var(--text-sm);
-		color: var(--color-text);
-	}
-
 	@media (max-width: 768px) {
-		.page {
-			padding: var(--space-4);
+		.hero {
+			margin-block: var(--space-8);
 		}
 
-		.header h1 {
-			font-size: var(--text-2xl);
+		.hero h1 {
+			font-size: var(--text-3xl);
 		}
 
-		.header p {
+		.hero p {
 			font-size: var(--text-base);
 		}
 
+		.content {
+			margin-block: var(--space-8);
+		}
+
+		.links-grid,
 		.cache-details {
 			grid-template-columns: 1fr;
+			gap: var(--space-4);
 		}
 	}
 </style>

@@ -102,7 +102,7 @@ export const GET = async ({ fetch }) => {
 		// Add tag pages to sitemap
 		for (const tag of allTags) {
 			sitemap += `  <url>
-    <loc>${BASE_URL}/tag/${encodeURIComponent(tag)}</loc>
+    <loc>${BASE_URL}/content/tag/${encodeURIComponent(tag)}</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>\n`;

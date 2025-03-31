@@ -26,12 +26,20 @@ export const entries: EntryGenerator = async () => {
 	}
 };
 
-export const load = (async ({ params }) => {
+export const load = (async ({ params, fetch }) => {
 	try {
 		const { tag } = params;
 
+		if (!tag) {
+			throw error(400, 'Tag parameter is required');
+		}
+
 		// Get content for this tag
-		const items = await getContentByTag(tag);
+		const items = await getContentByTag(tag, fetch);
+
+		if (!items || items.length === 0) {
+			throw error(404, `No content found with tag: ${tag}`);
+		}
 
 		// Filter for published content using the imported dev flag
 		const publishedItems = filterPublishedContent(items, dev);
@@ -43,13 +51,17 @@ export const load = (async ({ params }) => {
 		return {
 			items: publishedItems,
 			tag,
-			isDev: dev
+			isDev: dev,
+			contentType: publishedItems[0].type || 'content'
 		};
 	} catch (err) {
 		console.error(`Error loading content for tag ${params.tag}:`, err);
 
-		if (err instanceof Error && err.message.includes('not found')) {
-			throw error(404, `No content found with tag: ${params.tag}`);
+		if (err instanceof Error) {
+			if (err.message.includes('not found')) {
+				throw error(404, `No content found with tag: ${params.tag}`);
+			}
+			throw error(500, err.message);
 		}
 
 		throw error(500, 'Failed to load content');

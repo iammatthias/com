@@ -1,4 +1,4 @@
-import { getContentByType, getContentFolders, type ContentItem } from './content';
+import { getContentByType, getContentTypes, type ContentItem } from './content';
 
 // Cache for tag data
 const tagCache = new Map<string, ContentItem[]>();
@@ -7,7 +7,7 @@ let allTagsCache: string[] | null = null;
 /**
  * Get all content items with a specific tag across all content types
  */
-export async function getContentByTag(tag: string): Promise<ContentItem[]> {
+export async function getContentByTag(tag: string, fetchFn?: typeof fetch): Promise<ContentItem[]> {
 	try {
 		// Check cache first
 		if (tagCache.has(tag)) {
@@ -18,7 +18,7 @@ export async function getContentByTag(tag: string): Promise<ContentItem[]> {
 		const normalizedTag = tag.toLowerCase().trim();
 
 		// Get all content types
-		const contentTypes = await getContentFolders();
+		const contentTypes = await getContentTypes(fetchFn);
 
 		// Collect all tagged content
 		const taggedContent: ContentItem[] = [];
@@ -26,11 +26,11 @@ export async function getContentByTag(tag: string): Promise<ContentItem[]> {
 		// Search for the tag in each content type
 		await Promise.all(
 			contentTypes.map(async (type) => {
-				const items = await getContentByType(type);
+				const items = await getContentByType(type, fetchFn || fetch);
 
 				// Filter items that have the tag
 				const withTag = items.filter((item) => {
-					const tags = item.metadata.tags;
+					const tags = item.metadata?.tags;
 
 					// Check if tags exist and handle different formats
 					if (!tags) return false;
@@ -51,7 +51,13 @@ export async function getContentByTag(tag: string): Promise<ContentItem[]> {
 					return false;
 				});
 
-				taggedContent.push(...withTag);
+				// Add type information to each item
+				const itemsWithType = withTag.map((item) => ({
+					...item,
+					type
+				}));
+
+				taggedContent.push(...itemsWithType);
 			})
 		);
 
@@ -66,29 +72,29 @@ export async function getContentByTag(tag: string): Promise<ContentItem[]> {
 		return sortedContent;
 	} catch (error) {
 		console.error(`Error fetching content with tag ${tag}:`, error);
-		return [];
+		throw error; // Re-throw to handle in the page load function
 	}
 }
 
 /**
  * Get all tags used across all content types
  */
-export async function getAllTags(): Promise<string[]> {
+export async function getAllTags(fetchFn?: typeof fetch): Promise<string[]> {
 	try {
 		// Use cache if available
 		if (allTagsCache !== null) {
 			return allTagsCache;
 		}
 
-		const contentTypes = await getContentFolders();
+		const contentTypes = await getContentTypes(fetchFn);
 		const tagSet = new Set<string>();
 
 		await Promise.all(
 			contentTypes.map(async (type) => {
-				const items = await getContentByType(type);
+				const items = await getContentByType(type, fetchFn || fetch);
 
 				items.forEach((item) => {
-					const tags = item.metadata.tags;
+					const tags = item.metadata?.tags;
 
 					if (!tags) return;
 
@@ -114,6 +120,6 @@ export async function getAllTags(): Promise<string[]> {
 		return allTags;
 	} catch (error) {
 		console.error('Error getting all tags:', error);
-		return [];
+		throw error; // Re-throw to handle in the page load function
 	}
 }

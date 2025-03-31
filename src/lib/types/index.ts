@@ -2,6 +2,7 @@ export interface ContentItem {
 	title: string;
 	slug: string;
 	date: string;
+	type: string;
 	excerpt?: string;
 	metadata?: {
 		updated?: string;

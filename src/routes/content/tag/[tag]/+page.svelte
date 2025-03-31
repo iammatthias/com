@@ -1,30 +1,34 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import ContentGrid from '$lib/components/ContentGrid.svelte';
 	import type { PageData } from './$types';
 	import { formatContentType } from '$lib/utils/formatters';
-	import type { ContentItem } from '$lib/types/content';
+	import type { ContentItem } from '$lib/types';
 
-	/** @type {import('./$types').PageData} */
-	export let data;
+	export let data: PageData;
 
 	$: taggedItems = data.items as ContentItem[];
 </script>
 
-<div class="page">
-	<section class="header">
-		<nav class="breadcrumbs">
-			<a href="/">Home</a>
-			<span>/</span>
-			<a href="/content">Content</a>
-			<span>/</span>
-			<a href={`/content/${data.contentType}`}>{formatContentType(data.contentType)}</a>
-			<span>/</span>
-			<span>Tag: {data.tag}</span>
-		</nav>
-
-		<h1>Posts tagged with <span class="highlight">{data.tag}</span></h1>
-		<p>Found {data.items.length} items with this tag</p>
+<div class="page" in:fade>
+	<section class="breadcrumbs">
+		<a href="/">Home</a>
+		<span>/</span>
+		<a href="/content">Content</a>
+		<span>/</span>
+		<a href="/content/tag">Tags</a>
+		<span>/</span>
+		<span>{data.tag}</span>
 	</section>
+
+	<section class="hero">
+		<div class="hero-content">
+			<h1>Tagged with <span class="highlight">{data.tag}</span></h1>
+			<p>Found {data.items.length} items with this tag</p>
+		</div>
+	</section>
+
+	<hr class="divider divider-dark" />
 
 	<section class="content">
 		<ContentGrid items={taggedItems} contentType={data.contentType} isDev={data.isDev} />
@@ -32,22 +36,15 @@
 </div>
 
 <style>
-	section {
+	.page {
 		width: 100%;
-	}
-
-	.header {
-		margin-block: var(--space-8);
-		text-align: center;
+		max-width: var(--content-width);
+		margin: 0 auto;
 	}
 
 	.breadcrumbs {
-		display: flex;
-		gap: var(--space-2);
-		margin-bottom: var(--space-6);
-		font-size: var(--text-sm);
-		color: var(--color-text-tertiary);
-		justify-content: center;
+		margin-block: var(--space-8);
+		color: var(--color-text-secondary);
 	}
 
 	.breadcrumbs a {
@@ -57,40 +54,60 @@
 	}
 
 	.breadcrumbs a:hover {
-		color: var(--color-accent);
+		color: var(--color-text);
 	}
 
-	h1 {
+	.breadcrumbs span {
+		margin: 0 var(--space-2);
+	}
+
+	.hero {
+		margin-block: var(--space-12);
+	}
+
+	.hero-content {
+		max-width: 65ch;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	.hero h1 {
 		font-size: var(--text-4xl);
+		font-weight: 700;
 		letter-spacing: -0.02em;
-		margin-bottom: var(--space-2);
+		margin-bottom: var(--space-4);
+		color: var(--color-text);
+	}
+
+	.hero p {
+		font-size: var(--text-lg);
+		line-height: 1.5;
+		color: var(--color-text-secondary);
 	}
 
 	.highlight {
-		color: var(--color-accent);
-		font-weight: 600;
-	}
-
-	p {
-		color: var(--color-text-secondary);
-		font-size: var(--text-lg);
+		color: var(--color-primary);
 	}
 
 	.content {
-		margin-block: var(--space-8);
+		margin-block: var(--space-12);
 	}
 
 	@media (max-width: 768px) {
-		.header {
-			margin-block: var(--space-6);
+		.hero {
+			margin-block: var(--space-8);
 		}
 
-		h1 {
+		.hero h1 {
 			font-size: var(--text-3xl);
 		}
 
-		p {
+		.hero p {
 			font-size: var(--text-base);
+		}
+
+		.content {
+			margin-block: var(--space-8);
 		}
 	}
 </style>

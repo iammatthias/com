@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
+
 	interface ContentItem {
 		slug: string;
 		title: string;
@@ -37,17 +39,21 @@
 	}
 </script>
 
-<div class="page">
+<div class="page" in:fade>
 	<section class="breadcrumbs">
 		<a href="/">Home</a>
 		<span>/</span>
 		<span>Content</span>
 	</section>
 
-	<section class="header">
-		<h1>All Content</h1>
-		<p>Browse through all content categories</p>
+	<section class="hero">
+		<div class="hero-content">
+			<h1>All Content</h1>
+			<p>Browse through all content categories</p>
+		</div>
 	</section>
+
+	<hr class="divider divider-dark" />
 
 	<section class="content">
 		{#if data.configError}
@@ -97,16 +103,14 @@
 
 <style>
 	.page {
+		width: 100%;
 		max-width: var(--content-width);
 		margin: 0 auto;
-		padding: var(--space-8) var(--space-4);
 	}
 
 	.breadcrumbs {
-		margin-bottom: var(--space-8);
+		margin-block: var(--space-8);
 		color: var(--color-text-secondary);
-		display: flex;
-		gap: var(--space-2);
 	}
 
 	.breadcrumbs a {
@@ -123,12 +127,17 @@
 		margin: 0 var(--space-2);
 	}
 
-	.header {
-		margin-bottom: var(--space-12);
+	.hero {
+		margin-block: var(--space-12);
+	}
+
+	.hero-content {
+		max-width: 65ch;
+		margin: 0 auto;
 		text-align: center;
 	}
 
-	.header h1 {
+	.hero h1 {
 		font-size: var(--text-4xl);
 		font-weight: 700;
 		letter-spacing: -0.02em;
@@ -136,18 +145,21 @@
 		color: var(--color-text);
 	}
 
-	.header p {
+	.hero p {
 		font-size: var(--text-lg);
+		line-height: 1.5;
 		color: var(--color-text-secondary);
 	}
 
 	.content {
-		margin-top: var(--space-8);
+		margin-block: var(--space-12);
 	}
 
 	.categories {
 		display: grid;
 		gap: var(--space-12);
+		max-width: 800px;
+		margin-inline: auto;
 	}
 
 	.category {
@@ -242,28 +254,33 @@
 	}
 
 	@media (max-width: 768px) {
-		.page {
-			padding: var(--space-4);
+		.hero {
+			margin-block: var(--space-8);
 		}
 
-		.header {
-			margin-bottom: var(--space-8);
-		}
-
-		.header h1 {
+		.hero h1 {
 			font-size: var(--text-3xl);
 		}
 
-		.header p {
+		.hero p {
 			font-size: var(--text-base);
+		}
+
+		.content {
+			margin-block: var(--space-8);
 		}
 
 		.categories {
 			gap: var(--space-8);
 		}
 
-		.title {
-			margin-right: var(--space-2);
+		.entry {
+			flex-direction: column;
+			gap: var(--space-1);
+		}
+
+		.date {
+			font-size: var(--text-xs);
 		}
 	}
 </style>
