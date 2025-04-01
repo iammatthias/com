@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
+	import Pagination from '$lib/components/Pagination.svelte';
 
 	interface ContentItem {
 		slug: string;
@@ -17,6 +18,12 @@
 		configError?: string;
 		error?: string;
 		isDev?: boolean;
+		pagination: {
+			currentPage: number;
+			totalPages: number;
+			totalItems: number;
+			itemsPerPage: number;
+		};
 	}
 
 	export let data: PageDataWithContent;
@@ -90,6 +97,13 @@
 					{/if}
 				{/each}
 			</div>
+
+			<Pagination
+				totalItems={data.pagination.totalItems}
+				itemsPerPage={data.pagination.itemsPerPage}
+				currentPage={data.pagination.currentPage}
+				baseUrl="/content"
+			/>
 		{:else}
 			<div class="alert info" role="alert">
 				<p>
@@ -132,9 +146,8 @@
 	}
 
 	.hero-content {
-		max-width: 65ch;
+		max-width: var(--content-width);
 		margin: 0 auto;
-		text-align: center;
 	}
 
 	.hero h1 {
@@ -157,26 +170,26 @@
 
 	.categories {
 		display: grid;
-		gap: var(--space-12);
-		max-width: 800px;
-		margin-inline: auto;
+		gap: var(--space-8);
 	}
 
 	.category {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		gap: var(--space-4);
 	}
 
 	.category h2 {
 		font-size: var(--text-2xl);
 		font-weight: 600;
-		color: var(--color-text);
+		margin: 0;
 		padding-bottom: var(--space-2);
 		border-bottom: 1px solid var(--color-border);
 	}
 
 	.entries {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		gap: var(--space-2);
 	}
 
@@ -184,55 +197,52 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: baseline;
-		padding-block: var(--space-2);
-		color: var(--color-text);
+		padding: var(--space-2) var(--space-3);
 		text-decoration: none;
-		border-bottom: 1px solid var(--color-border);
+		color: var(--color-text-primary);
+		border-radius: var(--radius-md);
 		transition: all var(--transition-fast);
 	}
 
 	.entry:hover {
-		color: var(--color-primary);
-		border-color: var(--color-primary);
+		background-color: var(--color-bg-secondary);
 	}
 
 	.title {
-		font-weight: 500;
-		flex: 1;
-		margin-right: var(--space-4);
 		display: flex;
 		align-items: center;
 		gap: var(--space-2);
 	}
 
 	.draft {
-		display: inline-block;
-		padding-inline: var(--space-2);
-		font-size: var(--text-xs);
-		font-weight: 500;
-		color: var(--color-warning-text);
-		background-color: var(--color-warning-bg);
-		border: 1px solid var(--color-warning-border);
+		font-size: var(--text-sm);
+		color: var(--color-text-tertiary);
+		padding: 0.1em 0.4em;
 		border-radius: var(--radius-sm);
+		background-color: var(--color-bg-tertiary);
 	}
 
 	.date {
 		font-size: var(--text-sm);
-		color: var(--color-text-secondary);
-		white-space: nowrap;
+		color: var(--color-text-tertiary);
 	}
 
 	.view-all {
-		color: var(--color-primary);
+		display: inline-flex;
+		align-items: center;
+		padding: var(--space-2) var(--space-4);
+		color: var(--color-text-secondary);
 		text-decoration: none;
-		font-size: var(--text-sm);
-		font-weight: 500;
-		transition: color var(--transition-fast);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		transition: all var(--transition-fast);
+		align-self: flex-start;
 	}
 
 	.view-all:hover {
-		color: var(--color-primary-dark);
-		text-decoration: underline;
+		color: var(--color-text-primary);
+		background-color: var(--color-bg-secondary);
+		border-color: var(--color-text-secondary);
 	}
 
 	.alert {

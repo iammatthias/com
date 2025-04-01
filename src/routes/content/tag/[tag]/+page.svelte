@@ -66,9 +66,8 @@
 	}
 
 	.hero-content {
-		max-width: 65ch;
+		max-width: var(--content-width);
 		margin: 0 auto;
-		text-align: center;
 	}
 
 	.hero h1 {

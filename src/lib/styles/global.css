@@ -137,6 +137,7 @@
 	--max-width: 72rem; /* 1152px - for full-width containers */
 	--content-width: 45rem; /* 720px - for article content */
 	--narrow-width: 35rem; /* 560px - for focused reading */
+	--reading-width: 65ch; /* Optimal line length for readability */
 
 	/* Container padding */
 	--container-padding-x: var(--space-4);

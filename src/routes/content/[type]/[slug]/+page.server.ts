@@ -1,9 +1,8 @@
 import { error } from '@sveltejs/kit';
-import { getContentItem } from '$lib/services/content';
-import { processMdsvex } from '$lib/utils/markdown';
+import { getStore } from '$lib/store/content-store';
 import { dev } from '$app/environment';
 import type { PageServerLoad } from './$types';
-import { getStore } from '$lib/store/content-store';
+import { processMdsvex } from '$lib/utils/markdown';
 
 // Enable Incremental Static Regeneration
 export const config = {
@@ -45,17 +44,11 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 			throw error(404, `Content type '${type}' not found`);
 		}
 
-		// Get the content item using the event fetch
-		const item = await getContentItem(type, slug, fetch);
+		// Get the content item from the store
+		const items = store.contentMap.get(type) || [];
+		const item = items.find((i) => i.slug === slug);
 
 		if (!item) {
-			// It's possible the item exists in GitHub but wasn't included in the store
-			// (e.g., unpublished in prod). The 404 here is still appropriate.
-			throw error(404, `${type} item '${slug}' not found`);
-		}
-
-		// Check if content is published
-		if (!dev && item.metadata.published === false) {
 			throw error(404, `${type} item '${slug}' not found`);
 		}
 

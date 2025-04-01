@@ -2,7 +2,13 @@
 import matter from 'gray-matter';
 import { env } from '$env/dynamic/private';
 import { loadContent } from '$lib/utils/github';
-import type { ContentItem as GitHubContentItem } from '$lib/utils/github';
+import {
+	getContentForType,
+	getContentBySlug as storeGetContentBySlug,
+	getAllContent,
+	type ContentItem
+} from '$lib/store/content-store';
+import type { ContentItem as ContentItemType } from '$lib/types';
 
 // Mark this module as server-only
 export const server = true;
@@ -18,12 +24,12 @@ export interface ContentItem {
 	metadata: Record<string, any>;
 }
 
+// Define a type for the fetch function
+type FetchFn = typeof fetch;
+
 // Cache content to avoid excessive API calls
 const contentCache = new Map<string, ContentItem[]>();
 const contentTypeCache = new Map<string, string[]>();
-
-// Define a type for the fetch function
-type FetchFn = typeof fetch;
 
 // Cache for content availability status
 const contentAvailabilityCache = new Map<string, boolean>();
@@ -47,39 +53,11 @@ export async function getContentByType(type: string, fetchFn: FetchFn): Promise<
 
 	try {
 		console.log(`[getContentByType] Fetching content for type ${type}`);
-		const entries = await loadContent(type, fetchFn);
-		const processedEntries = entries
-			.map((entry) => {
-				const frontmatter = entry.frontmatter as Record<string, any>;
-				const title = frontmatter.title || formatSlug(frontmatter.slug);
-				const date =
-					frontmatter.created || frontmatter.date || new Date().toISOString().split('T')[0];
-				const excerpt = frontmatter.excerpt || generateExcerpt(entry.content);
-
-				// Extract all other metadata from frontmatter
-				const metadata = { ...frontmatter };
-				const fieldsToDelete = ['title', 'excerpt', 'date', 'created', 'slug'];
-				fieldsToDelete.forEach((field) => {
-					if (field in metadata) {
-						delete metadata[field];
-					}
-				});
-
-				return {
-					slug: frontmatter.slug,
-					title,
-					date,
-					content: entry.content,
-					excerpt,
-					type,
-					metadata
-				};
-			})
-			.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+		const content = getContentForType(type);
 
 		// Update cache
-		contentCache.set(type, processedEntries);
-		return processedEntries;
+		contentCache.set(type, content);
+		return content;
 	} catch (error) {
 		console.error(`[getContentByType] Error loading content for ${type}:`, error);
 		return [];
@@ -93,8 +71,7 @@ export async function getContentItem(
 	fetchFn: FetchFn
 ): Promise<ContentItem | null> {
 	try {
-		const items = await getContentByType(type, fetchFn);
-		return items.find((item) => item.slug === slug) || null;
+		return storeGetContentBySlug(type, slug);
 	} catch (error) {
 		console.error(`[getContentItem] Error fetching item type '${type}', slug '${slug}':`, error);
 		return null;
@@ -110,28 +87,12 @@ export async function getContentTypes(fetchFn?: FetchFn): Promise<string[]> {
 	}
 
 	try {
-		const response = await (fetchFn || fetch)('/api/github?operation=getFolders');
-		if (!response.ok) {
-			const errorText = await response.text();
-			console.error(`Failed to fetch content folders (${response.status}): ${errorText}`);
-			throw new Error(`Failed to fetch content folders: ${response.status}`);
-		}
-
-		const result = await response.json();
-
-		if (!result.data?.repository?.object?.entries) {
-			console.error('Unexpected response structure for content folders:', result);
-			return [];
-		}
-
-		// Filter for directories only
-		const folders = result.data.repository.object.entries
-			.filter((entry: { type: string }) => entry.type === 'tree')
-			.map((entry: { name: string }) => entry.name);
+		const contentMap = getAllContent();
+		const types = Array.from(contentMap.keys());
 
 		// Update cache
-		contentTypeCache.set(cacheKey, folders);
-		return folders;
+		contentTypeCache.set(cacheKey, types);
+		return types;
 	} catch (error) {
 		console.error('[getContentTypes] Error:', error);
 		return [];

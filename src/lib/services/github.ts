@@ -1,6 +1,5 @@
 import { env } from '$env/dynamic/private';
 import matter from 'gray-matter';
-import { z } from 'zod';
 
 // Mark this as a server-only module
 export const server = true;
@@ -20,6 +19,7 @@ export interface GitHubContent {
 	type: 'file' | 'dir';
 	content?: string;
 	encoding?: 'base64';
+	id?: string; // Added for folder listing compatibility
 }
 
 export interface GitHubFile {
@@ -31,6 +31,9 @@ export interface GitHubFile {
 		date?: string;
 		category?: string;
 		tags?: string[] | string;
+		path: string;
+		excerpt?: string;
+		published?: boolean;
 		[key: string]: unknown;
 	};
 }
@@ -47,25 +50,12 @@ const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 const contentCache = new Map<string, CacheEntry<GitHubContent[]>>();
 const fileCache = new Map<string, CacheEntry<GitHubFile>>();
 const dirContentCache = new Map<string, CacheEntry<GitHubFile[]>>();
-
-// GitHub content schema
-export const contentSchema = z.object({
-	title: z.string(),
-	slug: z.string(),
-	created: z.string(),
-	updated: z.string(),
-	published: z.boolean(),
-	tags: z.array(z.string()),
-	excerpt: z.string().optional(),
-	path: z.string()
-});
-
-export type Content = z.infer<typeof contentSchema>;
+const folderCache = new Map<string, CacheEntry<string[]>>();
 
 /**
- * Make authenticated request to GitHub API
+ * Make authenticated request to GitHub API using REST
  */
-async function fetchFromGitHub(path: string): Promise<Response> {
+async function fetchFromGitHubREST(path: string): Promise<Response> {
 	if (!env.GITHUB_TOKEN) {
 		throw new Error('GitHub token is required. Please set the GITHUB_TOKEN environment variable.');
 	}
@@ -97,7 +87,6 @@ function isCacheValid<T>(cache: Map<string, CacheEntry<T>>, key: string): boolea
 export async function listMarkdownFiles(
 	path: string = env.GITHUB_CONTENT_PATH
 ): Promise<GitHubContent[]> {
-	// Check cache first
 	if (isCacheValid(contentCache, path)) {
 		console.log(`[GitHub] Using cached directory listing for ${path}`);
 		return contentCache.get(path)!.data;
@@ -105,7 +94,7 @@ export async function listMarkdownFiles(
 
 	try {
 		console.log(`[GitHub] Fetching directory listing for ${path}`);
-		const response = await fetchFromGitHub(path);
+		const response = await fetchFromGitHubREST(path);
 
 		if (!response.ok) {
 			const error = await response.json();
@@ -147,7 +136,7 @@ export async function getMarkdownFile(path: string): Promise<GitHubFile> {
 
 	try {
 		console.log(`[GitHub] Fetching file content for ${path}`);
-		const response = await fetchFromGitHub(path);
+		const response = await fetchFromGitHubREST(path);
 
 		if (!response.ok) {
 			const error = await response.json();
@@ -254,10 +243,27 @@ function extractFrontmatter(content: string): GitHubFile['frontmatter'] {
 	try {
 		// Use gray-matter to parse the frontmatter
 		const { data } = matter(content);
-		return data;
+		return {
+			...data,
+			path: data.path || '', // Ensure path is always set
+			title: data.title,
+			date: data.date,
+			category: data.category,
+			tags: data.tags,
+			excerpt: data.excerpt,
+			published: data.published
+		};
 	} catch (error) {
 		console.error('Error extracting frontmatter with gray-matter:', error);
-		return {};
+		return {
+			path: '', // Provide default path
+			title: '',
+			date: '',
+			category: '',
+			tags: [],
+			excerpt: '',
+			published: false
+		};
 	}
 }
 
@@ -278,8 +284,217 @@ export function invalidateGitHubCache(specificPath?: string): void {
 	}
 }
 
-// Helper to fetch content from GitHub using their API
-export async function fetchFromGitHub(path = '') {
+// Helper to process markdown entries
+export function processMarkdownEntries(
+	entries: GitHubContent[],
+	path: string,
+	isDev: boolean
+): GitHubFile[] {
+	return entries
+		.map((entry): GitHubFile | null => {
+			if (!entry.content) return null;
+
+			const content = Buffer.from(entry.content, 'base64').toString('utf-8');
+			const { data: frontmatter, content: parsedContent } = matter(content);
+
+			// Skip unpublished entries in production
+			if (!isDev && !frontmatter.published) {
+				return null;
+			}
+
+			// Extract slug from path (last part of the path without extension)
+			const pathParts = entry.path.split('/');
+			const filename = pathParts[pathParts.length - 1];
+			const slug = filename.replace(/\.(md|svx)$/, '');
+
+			const processedFile: GitHubFile = {
+				content: parsedContent,
+				path: entry.path,
+				slug,
+				frontmatter: {
+					...frontmatter,
+					path,
+					excerpt: frontmatter.excerpt || generateExcerpt(parsedContent)
+				}
+			};
+
+			return processedFile;
+		})
+		.filter((entry): entry is GitHubFile => entry !== null);
+}
+
+// Helper to handle GitHub API retries
+export async function fetchWithRetry(
+	path: string,
+	maxRetries = 3,
+	baseDelay = 2000
+): Promise<GitHubContent[]> {
+	let retries = maxRetries;
+	let delay = baseDelay;
+
+	while (retries > 0) {
+		try {
+			const response = await fetchFromGitHubREST(path);
+			if (!response.ok) {
+				throw new Error(`GitHub API error: ${response.status}`);
+			}
+			const data = (await response.json()) as GitHubContent | GitHubContent[];
+			return Array.isArray(data) ? data : [data];
+		} catch (error) {
+			retries--;
+			if (retries === 0) throw error;
+
+			if (error instanceof Error) {
+				// Handle rate limiting
+				if (error.message.includes('rate limit')) {
+					await new Promise((resolve) => setTimeout(resolve, delay));
+					delay *= 2; // Exponential backoff
+					continue;
+				}
+
+				// Handle other GitHub API errors
+				if (error.message.includes('GraphQL')) {
+					throw new Error(`GitHub API error for path ${path}: ${error.message}`);
+				}
+			}
+
+			// Handle unknown errors
+			throw new Error(
+				`Failed to fetch content from GitHub for path ${path}: ${
+					error instanceof Error ? error.message : 'Unknown error'
+				}`
+			);
+		}
+	}
+	return [];
+}
+
+// Generate excerpt from content
+function generateExcerpt(content: string): string {
+	try {
+		// Clean markdown content
+		const cleanContent = content
+			.replace(/#+\s+(.+)/g, '$1') // Extract heading text
+			.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Replace links with just text
+			.replace(/\*\*([^*]+)\*\*/g, '$1') // Remove bold
+			.replace(/\*([^*]+)\*/g, '$1') // Remove italic
+			.replace(/`([^`]+)`/g, '$1') // Remove inline code
+			.replace(/```[\s\S]+?```/g, '') // Remove code blocks
+			.replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
+			.replace(/\n{2,}/g, '\n\n') // Normalize line breaks
+			.trim();
+
+		// Find the first substantial paragraph
+		const paragraphs = cleanContent.split('\n\n');
+
+		// Look for any substantial paragraph
+		for (const paragraph of paragraphs) {
+			if (paragraph.trim().length >= 50) {
+				const excerpt = paragraph.trim();
+				return excerpt.length > 160 ? excerpt.substring(0, 157) + '...' : excerpt;
+			}
+		}
+
+		// Fallback to first 160 chars of the cleaned content
+		return cleanContent.length > 160 ? cleanContent.substring(0, 157) + '...' : cleanContent;
+	} catch (error) {
+		console.error('Error generating excerpt:', error);
+		return '';
+	}
+}
+
+// Export a function to get all content
+export async function getAllContent(type = ''): Promise<GitHubFile[]> {
+	try {
+		// Check cache first
+		if (isCacheValid(dirContentCache, type)) {
+			return dirContentCache.get(type)!.data;
+		}
+
+		const response = await fetchFromGitHubREST(type);
+		if (!response.ok) {
+			throw new Error('Failed to fetch content');
+		}
+
+		const entries = (await response.json()) as GitHubContent[];
+		const isDev = import.meta.env.DEV;
+
+		if (!entries || entries.length === 0) {
+			console.warn(`No entries returned for path: ${type}`);
+			return [];
+		}
+
+		const processedEntries = processMarkdownEntries(entries, type, isDev);
+
+		// Update cache with proper structure
+		dirContentCache.set(type, {
+			data: processedEntries,
+			timestamp: Date.now()
+		});
+
+		return processedEntries;
+	} catch (error) {
+		console.error(
+			`Error loading content for ${type}:`,
+			error instanceof Error ? error.message : 'Unknown error'
+		);
+		return [];
+	}
+}
+
+// Get content folders
+export async function getContentFolders(): Promise<string[]> {
+	try {
+		// Check if we've already cached the folders
+		if (isCacheValid(folderCache, 'folders')) {
+			return folderCache.get('folders')!.data;
+		}
+
+		const response = await fetchFromGitHubREST('');
+
+		if (!response.ok) {
+			throw new Error('Failed to fetch content folders');
+		}
+
+		const entries = (await response.json()) as GitHubContent[];
+		if (!entries || entries.length === 0) {
+			return [];
+		}
+
+		// Get folder names from entries
+		const folders = entries.map((entry) => entry.name);
+
+		// Cache the result
+		folderCache.set('folders', {
+			data: folders,
+			timestamp: Date.now()
+		});
+
+		return folders;
+	} catch (error) {
+		console.error('Error fetching content folders:', error);
+		return [];
+	}
+}
+
+// Get content by slug
+export async function getContentBySlug(type: string, slug: string): Promise<GitHubFile | null> {
+	try {
+		const entries = await getAllContent(type);
+		if (!entries || !Array.isArray(entries)) {
+			return null;
+		}
+		return entries.find((entry) => entry.frontmatter.slug === slug) || null;
+	} catch (error) {
+		console.error(`Error fetching content ${slug} in ${type}:`, error);
+		return null;
+	}
+}
+
+// Helper to fetch content from GitHub using GraphQL API
+export async function fetchFromGitHubGraphQL(
+	path = ''
+): Promise<Array<{ id: string; markdown: string }>> {
 	const githubToken = import.meta.env.VITE_GITHUB_TOKEN;
 
 	if (!githubToken) {
@@ -397,8 +612,8 @@ export async function fetchFromGitHub(path = '') {
 		// Handle both Tree and Blob responses
 		if (result.data.repository.object?.entries?.length) {
 			const entries = result.data.repository.object.entries
-				.filter((entry: any) => entry.object?.text)
-				.map((entry: any) => ({
+				.filter((entry: { object?: { text?: string } }) => entry.object?.text)
+				.map((entry: { name: string; object: { text: string } }) => ({
 					id: entry.name,
 					markdown: entry.object.text
 				}));
@@ -421,175 +636,5 @@ export async function fetchFromGitHub(path = '') {
 			throw error;
 		}
 		throw new Error('An unknown error occurred while fetching from GitHub');
-	}
-}
-
-// Helper to process markdown entries
-export function processMarkdownEntries(entries: any[], path: string, isDev: boolean) {
-	return entries
-		.map((entry) => {
-			const { markdown } = entry;
-			const { data: frontmatter, content } = matter(markdown);
-
-			// Skip unpublished entries in production
-			if (!isDev && !frontmatter.published) {
-				return null;
-			}
-
-			return {
-				frontmatter: {
-					...frontmatter,
-					path,
-					excerpt: frontmatter.excerpt || generateExcerpt(content)
-				},
-				content,
-				markdown
-			};
-		})
-		.filter((entry): entry is NonNullable<typeof entry> => entry !== null);
-}
-
-// Helper to handle GitHub API retries
-export async function fetchWithRetry(
-	path: string,
-	maxRetries = 3,
-	baseDelay = 2000
-): Promise<any[]> {
-	let retries = maxRetries;
-	let delay = baseDelay;
-
-	while (retries > 0) {
-		try {
-			const entries = await fetchFromGitHub(path);
-			return entries;
-		} catch (error) {
-			retries--;
-			if (retries === 0) throw error;
-
-			if (error instanceof Error) {
-				// Handle rate limiting
-				if (error.message.includes('rate limit')) {
-					await new Promise((resolve) => setTimeout(resolve, delay));
-					delay *= 2; // Exponential backoff
-					continue;
-				}
-
-				// Handle other GitHub API errors
-				if (error.message.includes('GraphQL')) {
-					throw new Error(`GitHub API error for path ${path}: ${error.message}`);
-				}
-			}
-
-			// Handle unknown errors
-			throw new Error(
-				`Failed to fetch content from GitHub for path ${path}: ${
-					error instanceof Error ? error.message : 'Unknown error'
-				}`
-			);
-		}
-	}
-	return [];
-}
-
-// Generate excerpt from content
-function generateExcerpt(content: string): string {
-	try {
-		// Clean markdown content
-		const cleanContent = content
-			.replace(/#+\s+(.+)/g, '$1') // Extract heading text
-			.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Replace links with just text
-			.replace(/\*\*([^*]+)\*\*/g, '$1') // Remove bold
-			.replace(/\*([^*]+)\*/g, '$1') // Remove italic
-			.replace(/`([^`]+)`/g, '$1') // Remove inline code
-			.replace(/```[\s\S]+?```/g, '') // Remove code blocks
-			.replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
-			.replace(/\n{2,}/g, '\n\n') // Normalize line breaks
-			.trim();
-
-		// Find the first substantial paragraph
-		const paragraphs = cleanContent.split('\n\n');
-
-		// Look for any substantial paragraph
-		for (const paragraph of paragraphs) {
-			if (paragraph.trim().length >= 50) {
-				const excerpt = paragraph.trim();
-				return excerpt.length > 160 ? excerpt.substring(0, 157) + '...' : excerpt;
-			}
-		}
-
-		// Fallback to first 160 chars of the cleaned content
-		return cleanContent.length > 160 ? cleanContent.substring(0, 157) + '...' : cleanContent;
-	} catch (error) {
-		console.error('Error generating excerpt:', error);
-		return '';
-	}
-}
-
-// Export a function to get all content
-export async function getAllContent(type = '') {
-	try {
-		// Check cache first
-		if (contentCache.has(type)) {
-			return contentCache.get(type);
-		}
-
-		const entries = await fetchWithRetry(type);
-		const isDev = import.meta.env.DEV;
-
-		if (!entries.length) {
-			console.warn(`No entries returned for path: ${type}`);
-			return [];
-		}
-
-		const processedEntries = processMarkdownEntries(entries, type, isDev);
-
-		// Update cache
-		contentCache.set(type, processedEntries);
-
-		return processedEntries;
-	} catch (error) {
-		console.error(
-			`Error loading content for ${type}:`,
-			error instanceof Error ? error.message : 'Unknown error'
-		);
-		return [];
-	}
-}
-
-// Get content folders
-export async function getContentFolders(): Promise<string[]> {
-	try {
-		// Check if we've already cached the folders
-		if (contentCache.has('folders')) {
-			return contentCache.get('folders');
-		}
-
-		const entries = await fetchFromGitHub('');
-
-		if (!entries || entries.length === 0) {
-			return [];
-		}
-
-		// Assuming each entry is a folder name
-		const folders = entries.map((entry) => entry.id);
-
-		// Cache the result
-		contentCache.set('folders', folders);
-
-		return folders;
-	} catch (error) {
-		console.error('Error fetching content folders:', error);
-		return [];
-	}
-}
-
-// Get content by slug
-export async function getContentBySlug(type: string, slug: string) {
-	try {
-		const entries = await getAllContent(type);
-		return entries.find((entry) => entry.frontmatter.slug === slug);
-	} catch (error) {
-		console.error(`Error fetching content ${slug} in ${type}:`, error);
-		return null;
 	}
 }

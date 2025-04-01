@@ -95,7 +95,7 @@
 	}
 
 	.hero-content {
-		max-width: 65ch;
+		max-width: var(--content-width);
 		margin: 0 auto;
 	}
 
@@ -188,7 +188,6 @@
 	}
 
 	.last-updated {
-		text-align: center;
 		font-size: var(--text-sm);
 		color: var(--color-text-tertiary);
 		margin-top: var(--space-8);

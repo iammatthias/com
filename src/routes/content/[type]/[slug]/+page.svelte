@@ -4,12 +4,35 @@
 	import { browser } from '$app/environment';
 	import { toastStore } from '$lib/store/toast';
 	import { formatContentType } from '$lib/utils/formatters';
+	import { generateHash } from '$lib/utils/hash';
+	import GenerativeHeader from '$lib/components/GenerativeHeader.svelte';
 	import type { PageData } from './$types';
+
+	interface ContentMetadata {
+		published?: boolean;
+		category?: string;
+		tags?: string | string[];
+		updated?: string;
+		image?: string;
+		imageCredit?: string;
+	}
+
+	interface ContentItem {
+		title: string;
+		date: string;
+		content: string;
+		processedContent?: string;
+		metadata?: ContentMetadata;
+	}
 
 	export let data: PageData;
 
-	$: contentType = data.contentType || '';
-	$: item = data.item;
+	$: item = data.item as ContentItem;
+	$: contentType = data.contentType;
+	$: isDev = data.isDev;
+
+	// Generate a deterministic seed for the header based on content metadata
+	$: headerSeed = item ? generateHash(item.title, item.date, item.metadata?.updated) : 'default';
 
 	onMount(() => {
 		if (browser && item?.content) {
@@ -63,6 +86,8 @@
 <div class="page" in:fade>
 	{#if item}
 		<article>
+			<GenerativeHeader seed={headerSeed} className="content-header" />
+
 			<section class="breadcrumbs">
 				<a href="/">Home</a>
 				<span>/</span>
@@ -207,9 +232,8 @@
 	}
 
 	.hero-content {
-		max-width: 65ch;
+		max-width: var(--content-width);
 		margin: 0 auto;
-		text-align: center;
 	}
 
 	.hero h1 {
@@ -272,7 +296,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-2);
-		justify-content: center;
 		margin-bottom: var(--space-4);
 	}
 
@@ -302,14 +325,13 @@
 	}
 
 	.image figcaption {
-		text-align: center;
 		font-size: var(--text-sm);
 		color: var(--color-text-secondary);
 		margin-top: var(--space-2);
 	}
 
 	.body {
-		max-width: 65ch;
+		max-width: var(--reading-width);
 		margin: 0 auto;
 	}
 
@@ -413,5 +435,11 @@
 			flex-direction: column;
 			gap: var(--space-2);
 		}
+	}
+
+	.content-header {
+		margin-bottom: var(--space-8);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
 	}
 </style>

@@ -81,9 +81,8 @@
 	}
 
 	.hero-content {
-		max-width: 65ch;
+		max-width: var(--content-width);
 		margin: 0 auto;
-		text-align: center;
 	}
 
 	.hero h1 {
@@ -148,7 +147,6 @@
 		padding: var(--space-4);
 		border-radius: var(--radius-md);
 		margin-block: var(--space-4);
-		text-align: center;
 	}
 
 	.alert.info {

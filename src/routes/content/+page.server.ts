@@ -1,13 +1,14 @@
-import { getStore, getContentForType } from '$lib/store/content-store';
+import { getStore } from '$lib/store/content-store';
 import { dev } from '$app/environment';
 import type { PageServerLoad } from './$types';
-import type { ContentItem } from '$lib/types';
-import { filterPublishedContent } from '$lib/utils/content-client';
 
-export const load: PageServerLoad = async ({ fetch }) => {
+const ITEMS_PER_PAGE = 10;
+
+export const load: PageServerLoad = async ({ fetch, url }) => {
 	try {
 		// Initialize or get the existing store
 		const store = await getStore(fetch);
+		const page = Number(url.searchParams.get('page')) || 1;
 
 		// Get content types from the store
 		const contentTypes = store.contentTypes;
@@ -21,52 +22,66 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		}
 
 		// Prepare the content map for the page, filtering and limiting
-		const pageContentMap: Record<string, ContentItem[]> = {};
+		const pageContentMap: Record<string, any[]> = {};
 		const contentTypeLastUpdated: Record<string, Date> = {};
+		const contentTypeTotals: Record<string, number> = {};
 
 		for (const type of contentTypes) {
 			// Get items from the store's map
 			const items = store.contentMap.get(type) || [];
 
 			if (items.length > 0) {
-				// Filter published content based on environment
-				// Note: The store initialization might already handle this depending on its logic
-				const filteredItems = filterPublishedContent(items);
+				// Sort by date descending before slicing
+				const sortedItems = items.sort(
+					(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+				);
 
-				if (filteredItems.length > 0) {
-					// Sort by date descending before slicing
-					const sortedItems = filteredItems.sort(
-						(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-					);
+				// Store total count for pagination
+				contentTypeTotals[type] = sortedItems.length;
 
-					// Store up to 10 most recent items for this page
-					pageContentMap[type] = sortedItems.slice(0, 10);
+				// Calculate pagination for this content type
+				const startIndex = (page - 1) * ITEMS_PER_PAGE;
+				const endIndex = startIndex + ITEMS_PER_PAGE;
 
-					// Store the most recent date for sorting types
-					contentTypeLastUpdated[type] = new Date(sortedItems[0].date);
-				}
+				// Store paginated items
+				pageContentMap[type] = sortedItems.slice(startIndex, endIndex);
+
+				// Store the most recent date for sorting types
+				contentTypeLastUpdated[type] = new Date(sortedItems[0].date);
 			}
 		}
 
-		// Sort content types by their most recent content
-		const sortedContentTypes = contentTypes
-			.filter((type) => contentTypeLastUpdated[type]) // Filter types that ended up with no publishable content
-			.sort((a, b) => {
-				const dateA = contentTypeLastUpdated[a];
-				const dateB = contentTypeLastUpdated[b];
-				return dateB.getTime() - dateA.getTime();
-			});
+		// Sort content types by most recently updated
+		const sortedTypes = contentTypes.sort((a, b) => {
+			const dateA = contentTypeLastUpdated[a] || new Date(0);
+			const dateB = contentTypeLastUpdated[b] || new Date(0);
+			return dateB.getTime() - dateA.getTime();
+		});
 
 		return {
-			contentTypes: sortedContentTypes,
-			contentMap: pageContentMap, // Return the processed map for the page
+			contentTypes: sortedTypes,
+			contentMap: pageContentMap,
+			pagination: {
+				currentPage: page,
+				totalPages: Math.max(
+					...Object.values(contentTypeTotals).map((total) => Math.ceil(total / ITEMS_PER_PAGE))
+				),
+				totalItems: Object.values(contentTypeTotals).reduce((sum, total) => sum + total, 0),
+				itemsPerPage: ITEMS_PER_PAGE
+			},
 			isDev: dev
 		};
 	} catch (error) {
-		console.error('Failed to load content from store:', error);
+		console.error('Error loading content:', error);
 		return {
 			contentTypes: [],
-			contentMap: {} as Record<string, ContentItem[]>,
+			contentMap: {},
+			pagination: {
+				currentPage: 1,
+				totalPages: 1,
+				totalItems: 0,
+				itemsPerPage: ITEMS_PER_PAGE
+			},
 			error: 'Failed to load content. Please try again later.'
 		};
 	}

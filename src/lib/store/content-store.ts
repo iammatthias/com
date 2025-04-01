@@ -3,6 +3,8 @@ import type { ContentItem } from '$lib/types';
 import { loadContent, getContentFolders } from '$lib/utils/github';
 import type { RouteNode } from '$lib/utils/routes';
 
+export type { ContentItem };
+
 // Define a type for the fetch function to ensure consistency
 type FetchFn = typeof fetch;
 
@@ -11,6 +13,14 @@ interface ContentStore {
 	contentMap: Map<string, ContentItem[]>;
 	routes: RouteNode[];
 	lastUpdated: Date;
+}
+
+// Helper function to filter content based on environment
+function filterContent(content: ContentItem[]): ContentItem[] {
+	if (dev) {
+		return content;
+	}
+	return content.filter((item) => item.metadata?.published !== false);
 }
 
 // Helper function to sort content by date
@@ -242,8 +252,78 @@ export async function refreshStore(fetchFn: FetchFn): Promise<ContentStore> {
 	return initializeStore(fetchFn);
 }
 
-export function getContentForType(type: string): ContentItem[] {
-	return store?.contentMap.get(type) || [];
+export function getContentForType(type: string, shouldFilter = true): ContentItem[] {
+	const content = store?.contentMap.get(type) || [];
+	return shouldFilter ? filterContent(content) : content;
+}
+
+export function getAllContent(shouldFilter = true): Map<string, ContentItem[]> {
+	if (!store) {
+		return new Map();
+	}
+
+	if (!shouldFilter) {
+		return store.contentMap;
+	}
+
+	const filteredMap = new Map<string, ContentItem[]>();
+	store.contentMap.forEach((content, type) => {
+		filteredMap.set(type, filterContent(content));
+	});
+	return filteredMap;
+}
+
+export function getContentBySlug(
+	type: string,
+	slug: string,
+	shouldFilter = true
+): ContentItem | null {
+	const content = getContentForType(type, shouldFilter);
+	return content.find((item) => item.slug === slug) || null;
+}
+
+export function getContentTags(type?: string, shouldFilter = true): string[] {
+	const tagSet = new Set<string>();
+	const content = type
+		? getContentForType(type, shouldFilter)
+		: Array.from(getAllContent(shouldFilter).values()).flat();
+
+	content.forEach((item) => {
+		const tags = item.metadata?.tags;
+		if (!tags) return;
+
+		if (Array.isArray(tags)) {
+			tags.forEach((tag) => tagSet.add(tag.toLowerCase().trim()));
+		} else if (typeof tags === 'string') {
+			tags
+				.split(',')
+				.map((t) => t.trim().toLowerCase())
+				.forEach((tag) => tagSet.add(tag));
+		}
+	});
+
+	return Array.from(tagSet);
+}
+
+export function getContentByTag(tag: string, shouldFilter = true): ContentItem[] {
+	const normalizedTag = tag.toLowerCase().trim();
+	const allContent = Array.from(getAllContent(shouldFilter).values()).flat();
+
+	return allContent.filter((item) => {
+		const tags = item.metadata?.tags;
+		if (!tags) return false;
+
+		if (Array.isArray(tags)) {
+			return tags.some((t) => t.toLowerCase().trim() === normalizedTag);
+		}
+		if (typeof tags === 'string') {
+			return tags
+				.split(',')
+				.map((t) => t.trim().toLowerCase())
+				.includes(normalizedTag);
+		}
+		return false;
+	});
 }
 
 export function getAllRoutes(): RouteNode[] {
