@@ -13,7 +13,7 @@ export const config = getDefaultConfig({
   projectId: projectId || "development-only-project-id",
   chains: [baseSepolia],
   transports: {
-    [baseSepolia.id]: http("https://rpc.ankr.com/base_sepolia"),
+    [baseSepolia.id]: http("https://base-sepolia.drpc.org"),
   },
   ssr: true, // Enable server-side rendering support
 });
