@@ -5,14 +5,21 @@ import { html } from "satori-html";
 import { Resvg } from "@resvg/resvg-js";
 
 export async function GET({ params }) {
-  const firstDashIndex = params.og.indexOf("-");
-  let path = params.og.substring(firstDashIndex + 1, params.og.indexOf("-", firstDashIndex + 1));
+  console.log("Original params.og:", params.og);
+
+  // Remove "og-" prefix if present (case-insensitive)
+  const cleanOg = params.og.toLowerCase().startsWith("og-") ? params.og.substring(3) : params.og;
+  console.log("After prefix removal:", cleanOg);
+
+  // Extract path and title
+  const parts = cleanOg.split("-");
+  let path = parts[0];
+  const title = parts.length > 1 ? decodeURIComponent(parts[1].replace(/\+/g, " ")) : undefined;
+
   // Simple decode for path
   path = path.replace(/&amp;/g, "&");
-
-  const encodedTitle =
-    firstDashIndex >= 0 ? params.og.substring(params.og.indexOf("-", firstDashIndex + 1) + 1) : undefined;
-  const title = encodedTitle ? decodeURIComponent(encodedTitle.replace(/\+/g, " ")) : undefined;
+  console.log("Final path:", path);
+  console.log("Title:", title);
 
   // fetch fonts to array buffer
   const font = await fetch(
