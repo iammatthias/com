@@ -15,7 +15,7 @@ export default defineConfig({
   output: "static",
   adapter: vercel({}),
   image: {
-    domains: ["https://wsrv.nl/"],
+    domains: ["silver-bitter-junglefowl-364.mypinata.cloud"],
   },
 
   prefetch: {
@@ -30,6 +30,7 @@ export default defineConfig({
     build: {
       target: "esnext",
     },
+    envPrefix: ["PINATA_"],
   },
 
   redirects: {

@@ -1,59 +1,81 @@
 ---
+import Img from "./Img.astro";
 const { sensor } = Astro.props;
+
+// Fetch images server-side
+let images: string[] = [];
+let errorMessage: string | null = null;
+
+try {
+  const response = await fetch(`https://image-api.office.pure---internet.com/images?sensor=${sensor}&type=daily`);
+
+  if (!response.ok) {
+    errorMessage = `Failed to fetch images: ${response.status} ${response.statusText}`;
+    console.error(errorMessage);
+  } else {
+    images = await response.json();
+  }
+} catch (error) {
+  errorMessage = `Error fetching images: ${error instanceof Error ? error.message : "Unknown error"}`;
+  console.error(errorMessage);
+}
 ---
 
-<div class='office-space' data-sensor={sensor}></div>
+<div class='office-space-container'>
+  <p class='scroll-indicator'>Scroll ↣</p>
+  <div class='office-space' data-sensor={sensor}>
+    {
+      errorMessage ? (
+        <div class='error-message'>{errorMessage}</div>
+      ) : images.length === 0 ? (
+        <div class='no-images'>No images available</div>
+      ) : (
+        images.map((path) => {
+          if (typeof path !== "string") {
+            console.error("Invalid image path:", path);
+            return null;
+          }
+          const imageUrl = `https://bucket.office.pure---internet.com/${path}`;
+          const proxyUrl = `${imageUrl}?img-width=800&img-format=webp&img-fit=contain`;
 
-<script>
-  // Initialize all office space components
-  const officeSpaces = document.querySelectorAll(".office-space");
-
-  async function loadImages(officeSpace: HTMLDivElement) {
-    const sensor = officeSpace.dataset.sensor;
-    if (!sensor) return;
-
-    try {
-      const response = await fetch(`https://image-api.office.pure---internet.com/images?sensor=${sensor}&type=daily`);
-      if (!response.ok) throw new Error("Failed to fetch images");
-
-      const imagePaths = await response.json();
-
-      imagePaths.forEach((path: any) => {
-        if (typeof path !== "string") {
-          console.error("Invalid image path:", path);
-          return;
-        }
-
-        const img = document.createElement("img");
-        const imageUrl = `https://bucket.office.pure---internet.com/${path}`;
-        const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(imageUrl)}&w=800&fit=contain&output=webp`;
-
-        img.src = proxyUrl;
-        img.alt = `Office space image from ${sensor}`;
-        img.loading = "lazy";
-        img.style.maxWidth = "100%";
-        img.style.height = "auto";
-
-        officeSpace.appendChild(img);
-      });
-    } catch (error) {
-      console.error("Error loading images:", error);
-      officeSpace.textContent = "Failed to load images";
+          return (
+            <div class='image-container'>
+              <Img src={proxyUrl} alt={`Office space image from ${sensor}`} />
+            </div>
+          );
+        })
+      )
     }
-  }
-
-  // Initialize each office space component
-  officeSpaces.forEach((space) => {
-    loadImages(space as HTMLDivElement);
-  });
-</script>
+  </div>
+</div>
 
 <style>
   .office-space {
+    position: relative;
     display: flex;
     flex-direction: row;
     width: 100%;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
+    overflow-x: scroll;
+  }
+
+  .scroll-indicator {
+    margin: 0 0 0 auto;
+    width: fit-content;
+  }
+
+  .image-container {
+    flex: 0 0 auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 40vh;
+  }
+
+  .error-message,
+  .no-images {
+    padding: 1rem;
+    color: #666;
+    font-style: italic;
   }
 </style>

@@ -1,0 +1,59 @@
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+const { contentLimit } = Astro.props;
+
+type GlassEntry = {
+  type: "glass";
+  width: number;
+  height: number;
+  src: string;
+  share_url: string;
+};
+
+type GlassCollectionEntry = CollectionEntry<"glass">;
+
+// Type guard function
+const isGlassEntry = (entry: any): entry is GlassCollectionEntry => {
+  return entry?.data?.image640x640 && entry?.data?.width && entry?.data?.height;
+};
+
+// Process glass entries efficiently
+const glassEntries: GlassEntry[] = ((await getCollection("glass")) || [])
+  .filter(isGlassEntry)
+  .sort((a, b) => Number(new Date(b.data.created_at)) - Number(new Date(a.data.created_at)))
+  .slice(0, contentLimit)
+  .map((entry) => ({
+    type: "glass",
+    width: entry.data.width,
+    height: entry.data.height,
+    src: entry.data.image640x640,
+    share_url: entry.data.share_url,
+  }));
+---
+
+{
+  glassEntries.map((entry) => (
+    <div class='glass-content'>
+      <a href={entry.share_url} target='_blank' rel='noopener noreferrer'>
+        <img src={entry.src} width={entry.width} height={entry.height} alt='Glass photo' loading='lazy' />
+      </a>
+    </div>
+  ))
+}
+
+<style>
+  .glass-content {
+    display: block;
+    line-height: 0;
+    aspect-ratio: 6/7;
+    object-fit: cover;
+    overflow: hidden;
+  }
+
+  .glass-content img {
+    width: 100%;
+    height: 100%;
+  }
+</style>

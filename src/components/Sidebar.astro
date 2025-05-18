@@ -1,0 +1,123 @@
+---
+
+---
+
+<aside>
+  <div class='sidebar-default' id='sidebar-trigger'>
+    <p>@day---break</p>
+  </div>
+  <div class='sidebar-iframe' id='sidebar-iframe'>
+    <iframe src='https://day---break.com' data-astro-transition-persist data-astro-transition-name='sidebar-iframe'
+    ></iframe>
+  </div>
+</aside>
+
+<style>
+  aside {
+    position: fixed;
+    top: var(--nav-height);
+    height: calc(100dvh - var(--nav-height) - var(--footer-height));
+    width: var(--aside-width);
+    z-index: 1;
+    background: var(--background);
+    transition: transform 0.3s ease-in-out;
+    contain: layout;
+  }
+  .sidebar-default {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    writing-mode: vertical-rl;
+    font-size: 12px;
+    padding: 12px;
+    height: 100%;
+    border-right: var(--border);
+    cursor: pointer;
+    background: var(--background);
+    contain: layout;
+  }
+  .sidebar-iframe {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100vw - var(--aside-width));
+    height: calc(100dvh - var(--nav-height) - var(--footer-height));
+    background: var(--background);
+    transition: transform 0.3s ease-in-out;
+    z-index: 999;
+    transform: translateX(-100%);
+    contain: layout;
+  }
+  .sidebar-iframe.active {
+    transform: translateX(var(--aside-width));
+  }
+  .sidebar-iframe iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* View transition styles */
+  ::view-transition-old(sidebar-iframe),
+  ::view-transition-new(sidebar-iframe) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+</style>
+
+<script>
+  function setupSidebar() {
+    const sidebarTrigger = document.getElementById("sidebar-trigger");
+    const sidebarIframe = document.getElementById("sidebar-iframe");
+    let isOpen = false;
+
+    // Store the iframe state in sessionStorage
+    const storeIframeState = () => {
+      sessionStorage.setItem("sidebarOpen", isOpen.toString());
+    };
+
+    // Restore the iframe state
+    const restoreIframeState = () => {
+      const storedState = sessionStorage.getItem("sidebarOpen");
+      if (storedState === "true") {
+        isOpen = true;
+        sidebarIframe?.classList.add("active");
+      }
+    };
+
+    if (sidebarTrigger && sidebarIframe) {
+      // Remove any existing listeners to prevent duplicates
+      sidebarTrigger.removeEventListener("click", toggleSidebar);
+      document.removeEventListener("click", handleOutsideClick);
+
+      // Add the listeners
+      sidebarTrigger.addEventListener("click", toggleSidebar);
+      document.addEventListener("click", handleOutsideClick);
+    }
+
+    function toggleSidebar() {
+      isOpen = !isOpen;
+      sidebarIframe?.classList.toggle("active", isOpen);
+      storeIframeState();
+    }
+
+    function handleOutsideClick(e: MouseEvent) {
+      if (isOpen && !sidebarIframe?.contains(e.target as Node) && !sidebarTrigger?.contains(e.target as Node)) {
+        isOpen = false;
+        sidebarIframe?.classList.remove("active");
+        storeIframeState();
+      }
+    }
+
+    // Restore state on setup
+    restoreIframeState();
+  }
+
+  // Initial setup
+  setupSidebar();
+
+  // Handle view transitions
+  document.addEventListener("astro:after-swap", setupSidebar);
+  document.addEventListener("astro:page-load", setupSidebar);
+</script>

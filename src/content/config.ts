@@ -5,20 +5,9 @@ const glass = defineCollection({
   loader: glassLoader(),
 });
 
-const posts = defineCollection({
-  loader: contentLoader({ path: "posts" }),
-});
-
-const art = defineCollection({
-  loader: contentLoader({ path: "art" }),
-});
-
-const notes = defineCollection({
-  loader: contentLoader({ path: "notes" }),
-});
-
-const recipes = defineCollection({
-  loader: contentLoader({ path: "recipes" }),
+// Define a dynamic content collection that will handle all content types
+const content = defineCollection({
+  loader: contentLoader(),
 });
 
 const tags = defineCollection({
@@ -27,9 +16,6 @@ const tags = defineCollection({
 
 export const collections = {
   glass,
-  posts,
-  art,
-  notes,
-  recipes,
+  content,
   tags,
 };

@@ -1,7 +1,9 @@
 ---
 import { Head } from "astro-capo";
+// @ts-ignore
 import { SEO } from "astro-seo";
 import PostHog from "@components/posthog.astro";
+import { ClientRouter } from "astro:transitions";
 // styles
 import "@/styles/reset.css";
 import "@/styles/global.css";
@@ -10,7 +12,7 @@ import "@/styles/typography.css";
 // components
 import Footer from "@components/Footer.astro";
 import Nav from "@components/Nav.astro";
-
+import Sidebar from "@components/Sidebar.astro";
 const { title, path } = Astro.props;
 
 let seoTitle = "@iammatthias";
@@ -39,8 +41,9 @@ if (title || path) {
 }
 ---
 
-<html lang='en'>
+<html lang='en' transition:animate='none'>
   <Head>
+    <ClientRouter fallback='animate' />
     <SEO
       charset='UTF-8'
       title={seoTitle}
@@ -89,53 +92,114 @@ if (title || path) {
     <PostHog />
   </Head>
   <body>
-    <Nav />
-    <slot />
-    <Footer />
+    <Nav transition:persist />
+    <Sidebar transition:persist />
+    <main transition:animate='fade'>
+      <slot />
+    </main>
+    <Footer transition:persist />
   </body>
 </html>
 
 <style>
+  :root {
+    --nav-height: 45px;
+    --footer-height: 45px;
+    --aside-width: 45px;
+  }
+
   body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
   }
+
+  main {
+    margin: 0 0 0 var(--aside-width);
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - var(--aside-width));
+    gap: 1px;
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+    position: relative;
+    contain: layout style paint;
+    will-change: opacity;
+  }
+
+  /* View transition styles */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      mix-blend-mode: normal;
+    }
+  }
+
+  /* Fade transition */
+  ::view-transition-old(main),
+  ::view-transition-new(main) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  ::view-transition-old(main) {
+    animation: fadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  ::view-transition-new(main) {
+    animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  /* Ensure content is properly contained during transitions */
+  ::view-transition-old(main) *,
+  ::view-transition-new(main) * {
+    contain: layout style paint;
+  }
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(main),
+    ::view-transition-new(main) {
+      animation: none;
+    }
+  }
+
+  /* Prevent transition conflicts with nav/sidebar */
+  nav,
+  aside {
+    z-index: 100;
+    position: relative;
+    contain: layout style paint;
+  }
 </style>
 
-<script type='module' src='https://cdn.jsdelivr.net/npm/lite-vimeo-embed/+esm'></script>
+<script is:inline type='module' src='https://cdn.jsdelivr.net/npm/lite-vimeo-embed/+esm'></script>
 
 <script>
-  function debounce(func: Function, wait: number) {
-    let timeout: ReturnType<typeof setTimeout>;
-    return function executedFunction(...args: any[]) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  }
-
-  function updateHeights() {
-    const navHeight = document.querySelector("nav")?.clientHeight;
-    const footerHeight = document.querySelector("footer")?.clientHeight;
-    // class .header
-    const headerHeight = document.querySelector(".header")?.clientHeight;
-
-    document.documentElement.style.setProperty("--nav-height", `${navHeight}px`);
-    document.documentElement.style.setProperty("--footer-height", `${footerHeight}px`);
-    document.documentElement.style.setProperty("--header-height", `${headerHeight}px`);
-  }
-
-  // Initial update
-  updateHeights();
-
-  // Debounced update on window resize
-  const debouncedUpdateHeights = debounce(updateHeights, 250);
-  window.addEventListener("resize", debouncedUpdateHeights);
-
   // Format time without seconds and update every minute
   const time = document.querySelector("time");
   function updateTime() {

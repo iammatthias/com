@@ -16,18 +16,10 @@ import Grid from "@components/MDX/Grid.astro";
 const markdownCache = new Map();
 
 export async function getStaticPaths() {
-  const [posts, art, notes, recipes] = await Promise.all([
-    getCollection("posts"),
-    getCollection("art"),
-    getCollection("notes"),
-    getCollection("recipes"),
-  ]);
-
-  // Combine all collections into one array
-  const allContent = [...posts, ...art, ...notes, ...recipes];
+  const content = await getCollection("content");
 
   // Filter entries to ensure they have path and slug
-  const entries = allContent
+  const entries = content
     .filter((entry) => entry.data?.path && entry.data?.slug)
     .map((entry) => ({
       params: { path: entry.data.path, slug: entry.data.slug },
@@ -64,10 +56,9 @@ const getCachedMarkdown = (content: string) => {
 const markdownContent = getCachedMarkdown(entry.body);
 ---
 
-<PageLayout title={entry.data.title} path={path}>
-  <main>
-    <section class='header'>
-      <p class='small capitalize'><a href={`/${entry.data.path}`}>{entry.data.path}</a></p>
+<PageLayout path={path}>
+  <div class='grid'>
+    <div class='post-meta'>
       <h1>{entry.data.title}</h1>
       <p>
         Published {new Date(entry.data.created).toLocaleDateString()}.
@@ -85,88 +76,86 @@ const markdownContent = getCachedMarkdown(entry.body);
           ))
         }
       </div>
-    </section>
+      <p class='small capitalize'><a href={`/${entry.data.path}`}>↢ {entry.data.path}</a></p>
+    </div>
     <article>
       <Markdown sanitize={{ allowComponents: true }} content={markdownContent} components={components} />
     </article>
-  </main>
+  </div>
 </PageLayout>
 
-<script src='https://player.vimeo.com/api/player.js'></script>
-
 <style>
-  main {
-    width: 100%;
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+  .grid {
+    display: grid;
+    grid-template-columns: calc(var(--meta-column) - var(--aside-width)) 1fr;
+    position: relative;
     min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
   }
 
-  .header {
+  .post-meta {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: var(--padding);
-    border-left: var(--border);
+    gap: 16px;
+    position: sticky;
+    top: calc(var(--nav-height));
+    height: fit-content;
+    align-self: start;
+    height: 100%;
+    max-height: calc(100vh - var(--nav-height) - var(--footer-height));
+    overflow-y: auto;
     border-right: var(--border);
-    border-bottom: var(--border);
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-    @media (max-width: 800px) {
-      border-left: none;
+    padding: 1rem;
+    @media (max-width: 768px) {
       border-right: none;
+    }
+
+    p,
+    .tags {
+      font-size: var(--fs-sm);
     }
   }
 
   article {
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - var(--header-height));
+    gap: 1rem;
+    padding: 1rem 2rem 2rem;
   }
 
   article > :global(*) {
-    border-left: var(--border);
-    border-right: var(--border);
-    max-width: 800px;
+    max-width: 600px;
     width: 100%;
-    margin: 0 auto;
-    padding: var(--padding);
-    &:not(:last-child) {
-      padding-bottom: 0;
-    }
-    &:has(+ .office-space, + script, + style) {
-      padding-bottom: var(--padding);
-    }
-    @media (max-width: 800px) {
-      border-left: none;
-      border-right: none;
-    }
   }
 
-  article > :global(.office-space) {
-    padding: 0;
-    border: var(--border);
-    max-width: 80vw;
+  article > :global(.office-space-container) {
     width: 100%;
+    max-width: 100%;
     margin: 0 auto;
-    overflow-x: scroll;
-    &:last-child {
-      margin-bottom: var(--padding);
-    }
-
-    @media (max-width: 800px) {
-      max-width: unset;
-      width: calc(100vw - 4rem);
-    }
-  }
-
-  .tags {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  .small {
-    font-size: 0.8rem;
+  article > :global(.sub-grid) {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+
+    .post-meta {
+      position: relative;
+      top: 0;
+      max-height: none;
+      overflow-y: visible;
+      padding: 16px;
+    }
   }
 </style>

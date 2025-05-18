@@ -18,73 +18,103 @@ const { entries } = currentTag.data;
 ---
 
 <PageLayout title={currentTag.data.tag} path='Tags'>
-  <main>
-    <header>
-      <a href='/tags'>All tags</a>
-
+  <div class='grid'>
+    <div class='meta'>
       <h1 class='title'>{currentTag.data.tag}</h1>
-      <p class='count'>{entries.length} entries</p>
-    </header>
+      <p class='small'>
+        {entries.length}
+        {entries.length === 1 ? "entry" : "entries"}
+      </p>
+      <p class='small'>
+        <a href='/tags'>↢ Tags</a>
+      </p>
+    </div>
+    <div class='tags-grid'>
+      {
+        entries.map((entry) => (
+          <div>
+            <h5>{entry.title}</h5>
 
-    {
-      entries.map((entry) => (
-        <div>
-          <a href={`/${entry.path}`}>{entry.path}</a>
-
-          <h3>
-            <a href={`/${entry.path}/${entry.slug}`}>{entry.title}</a>
-          </h3>
-
-          <p class='align-bottom small'>
-            <a href={`/${entry.path}/${entry.slug}`}>
+            <p class='small'>
               Published {new Date(entry.created).toLocaleDateString()}
-              <br />
-              {new Date(entry.updated).getTime() - new Date(entry.created).getTime() > 24 * 60 * 60 * 1000 &&
+              {entry.updated &&
+                new Date(entry.updated).getTime() - new Date(entry.created).getTime() > 24 * 60 * 60 * 1000 &&
                 `Last updated ${new Date(entry.updated).toLocaleDateString()}`}
-            </a>
-          </p>
-        </div>
-      ))
-    }
-  </main>
+            </p>
+            <div class='tags'>
+              {entry.tags.map((tag) => (
+                <span class='small'>
+                  #<a href={`/tags/${tag}`}>{tag}</a>
+                </span>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
 </PageLayout>
 
 <style>
-  main {
+  .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
+    grid-template-columns: calc(var(--meta-column) - var(--aside-width)) 1fr;
+
+    position: relative;
     min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
-    overflow: hidden;
-    align-content: start;
-    align-items: start;
-    gap: 1px;
   }
 
-  main > :global(*):not(.glass-content) {
-    aspect-ratio: 6/7;
-    min-height: 0;
-    min-width: 0;
-    outline: var(--border);
-    padding: var(--padding);
+  .tags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    align-content: start;
     @media (max-width: 768px) {
-      /* &:first-child {
-            aspect-ratio: unset;
-          } */
-      aspect-ratio: 7/6;
+      gap: 4rem;
     }
   }
 
-  main > div {
+  .tags-grid > div {
+    padding: 1rem;
+
+    @media (max-width: 768px) {
+      padding: 0;
+    }
+  }
+
+  .meta {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 16px;
+    position: sticky;
+    top: calc(var(--nav-height));
+    height: fit-content;
+    align-self: start;
+    height: 100%;
+    max-height: calc(100vh - var(--nav-height) - var(--footer-height));
+    overflow-y: auto;
+    border-right: var(--border);
+    padding: 1rem;
+    @media (max-width: 768px) {
+      border-right: none;
+    }
   }
 
-  .align-bottom {
-    margin-top: auto;
-  }
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
 
-  .small {
-    font-size: 0.8rem;
+    .meta {
+      position: relative;
+      top: 0;
+      max-height: none;
+      overflow-y: visible;
+      padding: 16px;
+    }
+
+    .tags-grid {
+      padding: 16px;
+    }
   }
 </style>

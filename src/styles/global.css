@@ -80,8 +80,11 @@
 }
 
 :root {
+  --fs-xs: clamp(0.6rem, 0.55vi + 0.66rem, 0.94rem);
   --fs-sm: clamp(0.8rem, 0.55vi + 0.66rem, 0.94rem);
-  --fs-base: clamp(1rem, 1vi + 0.75rem, 1.25rem);
+  --fs-base: 1rem;
+  --fs-h6: clamp(0.83rem, 0.55vi + 0.66rem, 0.94rem);
+  --fs-h5: clamp(1.15rem, 0.77vi + 0.83rem, 1.25rem);
   --fs-h4: clamp(1.25rem, 1.67vi + 0.83rem, 1.67rem);
   --fs-h3: clamp(1.56rem, 2.63vi + 0.9rem, 2.22rem);
   --fs-h2: clamp(1.95rem, 4.03vi + 0.95rem, 2.96rem);
@@ -89,6 +92,10 @@
   --lh: 1.6;
 }
 
+/* Helper Variables */
+:root {
+  --meta-column: 500px;
+}
 /* Base Styles */
 
 body {
@@ -104,4 +111,9 @@ body {
   overflow-wrap: anywhere;
   margin: 0;
   padding: 0;
+}
+
+progressive-image {
+  display: block;
+  width: 100%;
 }

@@ -2,13 +2,18 @@
 
 p {
   font-size: var(--fs-p);
-  font-weight: 200;
+  font-weight: 300;
   line-height: var(--lh);
+  color: light-dark(var(--paragraph-color-light), var(--paragraph-color-dark));
+  transition: color 0.2s ease;
 }
 
-small {
+small,
+.small {
   font-size: var(--fs-sm);
   color: light-dark(var(--grey-dark), var(--grey-light));
+  font-weight: 300;
+  letter-spacing: 0.01em;
 }
 
 h1,
@@ -18,37 +23,43 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  font-weight: 800;
-  line-height: var(--lh);
-  font-variation-settings: "wdth" 80;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: light-dark(var(--heading-color-light), var(--heading-color-dark));
+  transition: color 0.2s ease;
 }
 
 h1 {
   font-size: var(--fs-h1);
-}
-article h1 {
-  font-size: var(--fs-h2);
+  margin-bottom: 1.5rem;
 }
 
 h2 {
   font-size: var(--fs-h2);
-}
-article h2 {
-  font-size: var(--fs-h3);
+  margin-bottom: 1.25rem;
 }
 
 h3 {
   font-size: var(--fs-h3);
-}
-article h3 {
-  font-size: var(--fs-h4);
+  margin-bottom: 1rem;
 }
 
 h4 {
   font-size: var(--fs-h4);
+  margin-bottom: 0.75rem;
 }
-article h4 {
-  font-size: var(--fs-p);
+
+h5 {
+  font-size: var(--fs-h5);
+  margin-bottom: 0.5rem;
+}
+
+h6 {
+  font-size: var(--fs-h6);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* Lists */
@@ -56,22 +67,37 @@ ul,
 ol {
   margin: 0;
   padding-left: 1.5em;
+  list-style-position: outside;
 }
 
 li {
   color: inherit;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s ease;
 }
 
 li::marker {
+  color: light-dark(var(--blue), var(--blue-lighter));
+  transition: color 0.2s ease;
+}
+
+li:hover {
   color: light-dark(var(--blue), var(--blue-lighter));
 }
 
 /* Blockquotes */
 blockquote {
-  margin: 0;
-  padding-left: 1em;
-  border-left: 4px solid light-dark(var(--grey), var(--grey-dark));
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  border-left: 3px solid light-dark(var(--gold), var(--gold-lighter));
   font-style: italic;
+  background: light-dark(rgba(255, 187, 0, 0.05), rgba(255, 204, 0, 0.05));
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+blockquote:hover {
+  border-left-color: light-dark(var(--blue), var(--blue-lighter));
+  background: light-dark(rgba(0, 105, 148, 0.05), rgba(77, 172, 234, 0.05));
 }
 
 /* Code and Preformatted Text */
@@ -80,39 +106,40 @@ pre {
   font-family: var(--font-mono);
   background-color: light-dark(var(--code-background-light), var(--code-background-dark));
   color: light-dark(var(--text-color-light), var(--text-color-dark));
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 pre {
-  padding: 1em;
+  padding: 1.25rem;
   overflow: auto;
-  border: var(--border);
-  margin: 0;
+  border: 1px solid light-dark(var(--grey), var(--grey-dark));
+  border-radius: 4px;
+  margin: 1rem 0;
 }
 
 code {
   padding: 0.2em 0.4em;
   border-radius: 3px;
+  font-size: 0.9em;
 }
 
 /* Enhanced Link Styles */
 a {
   font-family: var(--font-heading);
   color: light-dark(var(--link-color-light), var(--link-color-dark));
-  text-decoration: underline;
-  text-decoration-color: light-dark(var(--link-color-light), var(--link-color-dark));
-  text-underline-offset: 0.2em;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.1em;
   transition: all 0.2s ease-in-out;
 }
 
 a:hover {
   color: light-dark(var(--link-hover-color-light), var(--link-hover-color-dark));
-  text-decoration-color: light-dark(var(--link-hover-color-light), var(--link-hover-color-dark));
-  text-underline-offset: 0.3em;
+  border-bottom-width: 2px;
 }
 
 a:active {
   color: light-dark(var(--link-active-color-light), var(--link-active-color-dark));
-  text-decoration-color: light-dark(var(--link-active-color-light), var(--link-active-color-dark));
   transform: translateY(1px);
 }
 
@@ -124,12 +151,10 @@ a:focus-visible {
 
 a:visited {
   color: light-dark(var(--link-visited-color-light), var(--link-visited-color-dark));
-  text-decoration-color: light-dark(var(--link-visited-color-light), var(--link-visited-color-dark));
 }
 
 a:visited:hover {
   color: light-dark(var(--link-hover-color-light), var(--link-hover-color-dark));
-  text-decoration-color: light-dark(var(--link-hover-color-light), var(--link-hover-color-dark));
 }
 
 /* Images */
@@ -142,33 +167,54 @@ img {
 hr {
   border: none;
   border-top: 1px solid light-dark(var(--grey), var(--grey-dark));
-  margin: 2em 0;
+  margin: 2rem 0;
+  transition: border-color 0.2s ease;
+}
+
+hr:hover {
+  border-color: light-dark(var(--blue), var(--blue-lighter));
 }
 
 b,
 strong {
-  font-weight: bold;
+  font-weight: 600;
+  color: light-dark(var(--blue-darker), var(--blue-lighter));
 }
 
 i,
 em {
   font-style: italic;
+  color: light-dark(var(--blue-darker), var(--blue-lighter));
 }
 
 sup,
 sub {
   font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
 }
 
 abbr,
 acronym {
   border-bottom: 1px dotted light-dark(var(--grey-dark), var(--grey-light));
   cursor: help;
+  transition: border-color 0.2s ease;
+}
+
+abbr:hover,
+acronym:hover {
+  border-color: light-dark(var(--blue), var(--blue-lighter));
 }
 
 address {
   font-style: normal;
   color: light-dark(var(--paragraph-color-light), var(--paragraph-color-dark));
+  transition: color 0.2s ease;
+}
+
+address:hover {
+  color: light-dark(var(--blue), var(--blue-lighter));
 }
 
 /* Forms */
@@ -181,23 +227,39 @@ button {
   color: light-dark(var(--text-color-light), var(--text-color-dark));
   background-color: light-dark(var(--background-color-light), var(--background-color-dark));
   border: 1px solid light-dark(var(--grey), var(--grey-dark));
-  padding: 0.5em;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  padding: 0.75em 1em;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+input:hover,
+textarea:hover,
+select:hover,
+button:hover {
+  border-color: light-dark(var(--blue), var(--blue-lighter));
+  background-color: light-dark(rgba(0, 105, 148, 0.02), rgba(77, 172, 234, 0.02));
 }
 
 input:focus,
 textarea:focus,
 select:focus,
 button:focus {
-  outline: 2px dashed var(--focus-outline);
+  outline: 2px solid var(--focus-outline);
   outline-offset: 2px;
-  border-color: light-dark(var(--gold), var(--gold-lighter));
+  border-color: light-dark(var(--blue), var(--blue-lighter));
+  background-color: light-dark(rgba(0, 105, 148, 0.05), rgba(77, 172, 234, 0.05));
 }
 
 label {
   display: inline-block;
   margin-bottom: 0.5em;
   color: light-dark(var(--text-color-light), var(--text-color-dark));
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+label:hover {
+  color: light-dark(var(--blue), var(--blue-lighter));
 }
 
 blockquote,
@@ -227,10 +289,15 @@ table {
   border-collapse: collapse;
   table-layout: fixed;
   width: 100%;
-  margin-block: 0.75rem;
+  margin-block: 1.5rem;
   color: light-dark(var(--text-color-light), var(--text-color-dark));
-  border: var(--border);
+  border: 1px solid light-dark(var(--grey), var(--grey-dark));
   font-size: var(--fs-sm);
+  transition: border-color 0.2s ease;
+}
+
+table:hover {
+  border-color: light-dark(var(--blue), var(--blue-lighter));
 }
 
 th,
@@ -261,15 +328,25 @@ tfoot {
 
 th,
 td {
-  border: 1px solid light-dark(var(--gold-lighter), var(--gold));
-  padding: 0.375rem 0.75rem;
+  border: 1px solid light-dark(var(--grey), var(--grey-dark));
+  padding: 0.75rem 1rem;
   vertical-align: baseline;
-  min-width: 4rem;
+  transition: all 0.2s ease;
+}
 
-  @media (max-width: 768px) {
-    padding: 0.25rem 0.5rem;
-    min-width: 3rem;
-  }
+th {
+  background: light-dark(var(--blue), var(--blue-darker));
+  color: var(--white);
+  font-weight: 600;
+  text-align: left;
+}
+
+td {
+  background-color: light-dark(var(--background-color-light), var(--background-color-dark));
+}
+
+tr:hover td {
+  background-color: light-dark(rgba(0, 105, 148, 0.02), rgba(77, 172, 234, 0.02));
 }
 
 tbody th {
@@ -317,4 +394,40 @@ td:not(:first-of-type) {
 
 .capitalize {
   text-transform: capitalize;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.font-light {
+  font-weight: 300;
+}
+
+.font-regular {
+  font-weight: 400;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.letter-spacing-tight {
+  letter-spacing: -0.02em;
+}
+
+.letter-spacing-wide {
+  letter-spacing: 0.05em;
 }

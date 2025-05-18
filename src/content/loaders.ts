@@ -1,7 +1,7 @@
 import { z } from "astro:content";
 import type { Loader } from "astro/loaders";
 import matter from "gray-matter";
-import { fetchFromGitHub } from "./helpers";
+import { fetchFromGitHub, fetchContentStructure } from "./helpers";
 
 // Shared content schema
 const contentSchema = z.object({
@@ -12,12 +12,20 @@ const contentSchema = z.object({
   published: z.boolean(),
   tags: z.array(z.string()),
   path: z.string(),
+  excerpt: z.string().optional(),
 });
 
 type ContentType = z.infer<typeof contentSchema>;
 
-// Cache for content data
-let contentCache: Map<string, any> | null = null;
+// Cache for content data with digest tracking
+let contentCache: Map<string, { entries: any[]; digests: Map<string, string> }> | null = null;
+let collectionsCache: string[] | null = null;
+
+// Cache for tag data
+let tagCache: Map<string, { data: any; digest: string }> | null = null;
+
+// Cache for Glass data
+let glassCache: Map<string, { data: any; digest: string }> | null = null;
 
 // Helper to process markdown entries
 async function processMarkdownEntries(entries: any[], path: string, isDev: boolean) {
@@ -31,10 +39,19 @@ async function processMarkdownEntries(entries: any[], path: string, isDev: boole
         return null;
       }
 
+      // Extract excerpt from content if not provided in frontmatter
+      const excerpt =
+        frontmatter.excerpt ||
+        content
+          .split("\n")[0]
+          .replace(/^#+\s*/, "")
+          .trim();
+
       return {
         frontmatter: {
           ...frontmatter,
           path,
+          excerpt, // Ensure excerpt is always present
         } as ContentType,
         content,
         markdown,
@@ -101,68 +118,104 @@ async function loadContent(path: string, logger: any): Promise<any[]> {
   }
 }
 
-export function contentLoader({ path = "" }: { path?: string }): Loader {
+export function contentLoader(): Loader {
   return {
     name: "content-loader",
     load: async ({ store, logger, generateDigest }) => {
       try {
-        // Return cached data if available and in the same path
-        if (contentCache?.has(path)) {
-          logger.info(`Using cached content data for ${path}`);
-          const cachedData = contentCache.get(path);
-          for (const entry of cachedData) {
-            store.set(entry);
+        // Fetch available collections if not cached
+        if (!collectionsCache) {
+          logger.info("Fetching content structure from GitHub");
+          collectionsCache = await fetchContentStructure();
+          if (collectionsCache) {
+            logger.info(`Found collections: ${collectionsCache.join(", ")}`);
+          } else {
+            logger.error("Failed to fetch collections structure");
+            return;
           }
-          return;
         }
 
-        logger.info(`Fetching content from GitHub path: ${path}`);
-
-        const entries = await fetchWithRetry(path);
-
-        if (!entries.length) {
-          logger.warn(`No entries returned from GitHub for path: ${path}`);
-          return;
-        }
-
-        const isDev = import.meta.env.DEV;
-
-        // Process entries
-        const processedEntries = await processMarkdownEntries(entries, path, isDev);
-
-        if (!processedEntries.length) {
-          logger.warn(`No valid entries found for path: ${path}`);
-          return;
-        }
-
-        // Store processed entries
-        const storeEntries = processedEntries.map((entry) => ({
-          id: entry.frontmatter.slug,
-          data: {
-            title: entry.frontmatter.title,
-            slug: entry.frontmatter.slug,
-            created: entry.frontmatter.created,
-            updated: entry.frontmatter.updated,
-            published: entry.frontmatter.published,
-            tags: entry.frontmatter.tags,
-            path: entry.frontmatter.path,
-          },
-          body: entry.content,
-          digest: generateDigest(entry.markdown),
-        }));
-
-        // Update cache
+        // Initialize cache if not exists
         if (!contentCache) {
           contentCache = new Map();
         }
-        contentCache.set(path, storeEntries);
 
-        // Store entries
-        for (const entry of storeEntries) {
-          store.set(entry);
+        // Process each collection
+        for (const collection of collectionsCache) {
+          const collectionCache = contentCache.get(collection) || { entries: [], digests: new Map() };
+          let needsUpdate = false;
+
+          // Check if we need to fetch new content
+          if (!collectionCache.entries.length) {
+            needsUpdate = true;
+          }
+
+          if (needsUpdate) {
+            logger.info(`Fetching content from GitHub path: ${collection}`);
+            const entries = await fetchWithRetry(collection);
+
+            if (!entries.length) {
+              logger.info(`Skipping empty collection: ${collection}`);
+              continue;
+            }
+
+            const isDev = import.meta.env.DEV;
+            const processedEntries = await processMarkdownEntries(entries, collection, isDev);
+
+            if (!processedEntries.length) {
+              logger.info(`Skipping collection with no valid entries: ${collection}`);
+              continue;
+            }
+
+            // Process entries and check digests
+            const storeEntries = processedEntries.map((entry) => {
+              const digest = generateDigest(entry.markdown);
+              const existingDigest = collectionCache.digests.get(entry.frontmatter.slug);
+
+              // Only update if digest changed or entry is new
+              if (digest !== existingDigest) {
+                needsUpdate = true;
+                collectionCache.digests.set(entry.frontmatter.slug, digest);
+              }
+
+              return {
+                id: entry.frontmatter.slug,
+                data: {
+                  title: entry.frontmatter.title,
+                  slug: entry.frontmatter.slug,
+                  created: entry.frontmatter.created,
+                  updated: entry.frontmatter.updated,
+                  published: entry.frontmatter.published,
+                  tags: entry.frontmatter.tags,
+                  path: entry.frontmatter.path,
+                  excerpt: entry.frontmatter.excerpt,
+                },
+                body: entry.content,
+                digest,
+              };
+            });
+
+            // Update cache
+            collectionCache.entries = storeEntries;
+            contentCache.set(collection, collectionCache);
+
+            // Only store entries if there were changes
+            if (needsUpdate) {
+              for (const entry of storeEntries) {
+                store.set(entry);
+              }
+              logger.info(`Updated ${storeEntries.length} entries from GitHub for ${collection}`);
+            } else {
+              logger.info(`No changes detected for ${collection}, using cached data`);
+            }
+          } else {
+            // Use cached data
+            logger.info(`Using cached content data for ${collection}`);
+            for (const entry of collectionCache.entries) {
+              store.set(entry);
+            }
+          }
         }
-
-        logger.info(`Successfully loaded ${storeEntries.length} entries from GitHub for ${path}`);
       } catch (error) {
         logger.error(`Error loading entries: ${error instanceof Error ? error.message : "Unknown error"}`);
         throw error; // Propagate error to prevent partial content loading
@@ -177,20 +230,37 @@ export function contentLoader({ path = "" }: { path?: string }): Loader {
 export function tagLoader(): Loader {
   return {
     name: "tag-loader",
-    load: async ({ store, parseData, logger }) => {
+    load: async ({ store, parseData, logger, generateDigest }) => {
       try {
-        const collections = ["posts", "art", "notes", "recipes"];
-        const tagMap = new Map<string, Set<z.infer<typeof contentSchema>>>();
+        // Initialize tag cache if not exists
+        if (!tagCache) {
+          tagCache = new Map();
+        }
+
+        // Fetch available collections if not cached
+        if (!collectionsCache) {
+          logger.info("Fetching content structure from GitHub");
+          collectionsCache = await fetchContentStructure();
+          if (collectionsCache) {
+            logger.info(`Found collections: ${collectionsCache.join(", ")}`);
+          } else {
+            logger.error("Failed to fetch collections structure");
+            return;
+          }
+        }
+
+        const tagMap = new Map<string, Set<ContentType>>();
+        let needsUpdate = false;
 
         // Load all content first
-        const contentPromises = collections.map((path) => loadContent(path, logger));
+        const contentPromises = collectionsCache.map((path) => loadContent(path, logger));
         const contentResults = await Promise.all(contentPromises);
 
         // Process content for tags
-        collections.forEach((path, index) => {
+        collectionsCache.forEach((path, index) => {
           const entries = contentResults[index];
           if (!entries?.length) {
-            logger.warn(`No valid entries found for ${path}`);
+            logger.info(`Skipping empty collection: ${path}`);
             return;
           }
 
@@ -198,7 +268,7 @@ export function tagLoader(): Loader {
             const { frontmatter } = entry;
             if (!frontmatter.tags?.length) return;
 
-            frontmatter.tags.forEach((tag) => {
+            frontmatter.tags.forEach((tag: string) => {
               const normalizedTag = tag.toLowerCase().trim();
               if (!tagMap.has(normalizedTag)) {
                 tagMap.set(normalizedTag, new Set());
@@ -209,28 +279,53 @@ export function tagLoader(): Loader {
         });
 
         if (!tagMap.size) {
-          logger.warn("No tags found in any collection");
+          logger.info("No tags found in any collection");
           return;
         }
 
         // Store processed tags
         for (const [tag, entries] of tagMap.entries()) {
-          const parsedData = await parseData({
-            id: tag,
-            data: {
-              tag,
-              entries: Array.from(entries),
-              count: entries.size,
-            },
-          });
+          const tagData = {
+            tag,
+            entries: Array.from(entries),
+            count: entries.size,
+          };
 
-          store.set({
-            id: tag,
-            data: parsedData,
-          });
+          // Generate digest for tag data
+          const digest = generateDigest(tagData);
+          const existingTag = tagCache.get(tag);
+
+          // Only update if digest changed or tag is new
+          if (!existingTag || existingTag.digest !== digest) {
+            needsUpdate = true;
+            const parsedData = await parseData({
+              id: tag,
+              data: tagData,
+            });
+
+            store.set({
+              id: tag,
+              data: parsedData,
+              digest,
+            });
+
+            // Update cache
+            tagCache.set(tag, { data: parsedData, digest });
+          } else {
+            // Use cached data
+            store.set({
+              id: tag,
+              data: existingTag.data,
+              digest: existingTag.digest,
+            });
+          }
         }
 
-        logger.info(`Successfully processed ${tagMap.size} tags from all collections`);
+        if (needsUpdate) {
+          logger.info(`Successfully processed ${tagMap.size} tags from all collections`);
+        } else {
+          logger.info(`No changes detected in tags, using cached data`);
+        }
       } catch (error) {
         logger.error(`Error processing tags: ${error instanceof Error ? error.message : "Unknown error"}`);
         throw error;
@@ -244,31 +339,59 @@ export function tagLoader(): Loader {
   };
 }
 
-// Glass loader remains unchanged
 export function glassLoader(): Loader {
   // Configure the loader
   const feedUrl = new URL(`https://glass.photo/api/v2/users/iam/posts?limit=50`);
 
   return {
     name: "glass-loader",
-    load: async ({ store, parseData, logger }): Promise<void> => {
+    load: async ({ store, parseData, logger, generateDigest }): Promise<void> => {
       try {
-        const response = await fetch(feedUrl);
-        const data = await response.json();
-
-        for (const post of data) {
-          const parsedPost = await parseData({
-            id: post.id, // Ensure you provide a unique ID for each post
-            data: post,
-          });
-
-          store.set({
-            id: parsedPost.id,
-            data: parsedPost,
-          });
+        // Initialize Glass cache if not exists
+        if (!glassCache) {
+          glassCache = new Map();
         }
 
-        logger.info(`Loaded ${data.length} posts from Glass.`);
+        const response = await fetch(feedUrl);
+        const data = await response.json();
+        let needsUpdate = false;
+
+        for (const post of data) {
+          // Generate digest for post data
+          const digest = generateDigest(post);
+          const existingPost = glassCache.get(post.id);
+
+          // Only update if digest changed or post is new
+          if (!existingPost || existingPost.digest !== digest) {
+            needsUpdate = true;
+            const parsedPost = await parseData({
+              id: post.id,
+              data: post,
+            });
+
+            store.set({
+              id: parsedPost.id,
+              data: parsedPost,
+              digest,
+            });
+
+            // Update cache
+            glassCache.set(post.id, { data: parsedPost, digest });
+          } else {
+            // Use cached data
+            store.set({
+              id: post.id,
+              data: existingPost.data,
+              digest: existingPost.digest,
+            });
+          }
+        }
+
+        if (needsUpdate) {
+          logger.info(`Updated ${data.length} posts from Glass.`);
+        } else {
+          logger.info(`No changes detected in Glass posts, using cached data`);
+        }
       } catch (error) {
         if (error instanceof Error) {
           logger.error(`Failed to load Glass posts: ${error.message}`);

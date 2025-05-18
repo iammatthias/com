@@ -225,86 +225,93 @@ const colors = generateColors(hash);
 ---
 
 <PageLayout path='Onchain Analytics' title={hash}>
-  <main>
-    <section class='header'>
-      <p>{hash}</p>
-    </section>
-    <article>
-      <svg viewBox='-10 -10 140 160' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg'>
+  <article>
+    <div class='container'>
+      <a href='/onchain-analytics' class='back'>image.pngBack</a>
+      <svg
+        viewBox='-10 -10 140 160'
+        preserveAspectRatio='xMidYMid meet'
+        xmlns='http://www.w3.org/2000/svg'
+        style='display: block;'
+      >
+        <defs>
+          <clipPath id='clip-bg'>
+            <rect x='-10' y='-10' width='140' height='160'></rect>
+          </clipPath>
+        </defs>
         <!-- Background -->
         <rect x='-10' y='-10' width='140' height='160' fill={colors[0]} opacity='0.15'></rect>
+        <g clip-path='url(#clip-bg)'>
+          <!-- Background Pattern -->
+          {patterns.background.map((path) => <path d={path} fill={colors[1]} opacity='0.15' />)}
 
-        <!-- Background Pattern -->
-        {patterns.background.map((path) => <path d={path} fill={colors[1]} opacity='0.15' />)}
-
-        <!-- Primary Regions with Patterns -->
-        {
-          patterns.patterns.map((pattern, i) => (
-            <>
-              {pattern.type === "cells"
-                ? pattern.elements.map((path) => (
-                    <path d={path} fill={colors[1 + (i % (colors.length - 1))]} opacity='0.95' />
-                  ))
-                : pattern.elements.map((path) => (
-                    <path
-                      d={path}
-                      fill='none'
-                      stroke={colors[1 + (i % (colors.length - 1))]}
-                      stroke-width='0.4'
-                      opacity='0.9'
-                    />
-                  ))}
-            </>
-          ))
-        }
+          <!-- Primary Regions with Patterns -->
+          {
+            patterns.patterns.map((pattern, i) => (
+              <>
+                {pattern.type === "cells"
+                  ? pattern.elements.map((path) => (
+                      <path d={path} fill={colors[1 + (i % (colors.length - 1))]} opacity='0.95' />
+                    ))
+                  : pattern.elements.map((path) => (
+                      <path
+                        d={path}
+                        fill='none'
+                        stroke={colors[1 + (i % (colors.length - 1))]}
+                        stroke-width='0.4'
+                        opacity='0.9'
+                      />
+                    ))}
+              </>
+            ))
+          }
+        </g>
       </svg>
-    </article>
-  </main>
+      <p>{hash}</p>
+    </div>
+  </article>
 </PageLayout>
 
 <style>
-  main {
-    width: 100%;
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
-    background-color: var(--bg);
-  }
-
-  .header {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: var(--padding);
-    border-left: var(--border);
-    border-right: var(--border);
-    border-bottom: var(--border);
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-    @media (max-width: 800px) {
-      border-left: none;
-      border-right: none;
-    }
-  }
-
   article {
     max-width: 800px;
     width: 100%;
+    min-height: calc(100vh - var(--nav-height) - var(--footer-height));
+    height: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
+    align-items: center;
     padding: var(--padding);
-    border-left: var(--border);
-    border-right: var(--border);
-    border-bottom: var(--border);
-    @media (max-width: 800px) {
-      border-left: none;
-      border-right: none;
-    }
+  }
+
+  .container {
+    width: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    max-height: 90vh;
+    /* Prevent overflow and constrain SVG */
+    overflow: hidden;
+    max-width: 100vw;
+  }
+
+  p,
+  a {
+    font-size: var(--fs-xs);
   }
 
   svg {
     width: 100%;
     height: auto;
     margin: 0 auto;
+    display: block;
+    /* Maintain aspect ratio for modern browsers */
+    aspect-ratio: 7 / 8;
+    max-width: 100%;
+    max-height: 80vh;
   }
 </style>

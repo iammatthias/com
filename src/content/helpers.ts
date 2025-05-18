@@ -143,3 +143,81 @@ export async function fetchFromGitHub(path = "") {
     throw new Error("An unknown error occurred while fetching from GitHub");
   }
 }
+
+// Helper to fetch content directory structure from GitHub
+export async function fetchContentStructure() {
+  const githubToken = import.meta.env.GITHUB;
+
+  if (!githubToken) {
+    throw new Error("GitHub token is not configured in environment variables");
+  }
+
+  const query = `
+    query fetchContentStructure($owner: String!, $name: String!) {
+      repository(owner: $owner, name: $name) {
+        object(expression: "HEAD:content") {
+          ... on Tree {
+            entries {
+              name
+              type
+              object {
+                ... on Tree {
+                  entries {
+                    name
+                    type
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    owner: "iammatthias",
+    name: "obsidian_cms",
+  };
+
+  try {
+    const response = await fetch("https://api.github.com/graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `bearer ${githubToken}`,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`GitHub API HTTP error: ${response.status} ${errorText}`);
+      throw new Error(`GitHub API request failed: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (result.errors) {
+      console.error("GraphQL Errors:", result.errors);
+      throw new Error(`GraphQL Error: ${JSON.stringify(result.errors)}`);
+    }
+
+    if (!result.data?.repository?.object?.entries) {
+      throw new Error("No content structure found");
+    }
+
+    // Extract collection names from the content directory
+    const collections = result.data.repository.object.entries
+      .filter((entry: any) => entry.type === "tree")
+      .map((entry: any) => entry.name);
+
+    return collections;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching content structure:", error);
+      throw error;
+    }
+    throw new Error("An unknown error occurred while fetching content structure");
+  }
+}

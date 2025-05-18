@@ -2,14 +2,19 @@
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 
-const { showTags = true, showGlass = false, collection = "all", contentLimit } = Astro.props;
+const { showTags = false, showCategory = false, showExcerpts = false, collection = "all", contentLimit } = Astro.props;
 
-// Optimize type definitions
-type BaseEntry = {
-  type: string;
+// Function to normalize collection name for display
+const normalizeCollectionName = (slug: string): string => {
+  if (slug === "all") return "All Content";
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 };
 
-interface ContentEntry extends BaseEntry {
+// Optimize type definitions
+interface ContentEntry {
   type: "content";
   title: string;
   slug: string;
@@ -18,50 +23,26 @@ interface ContentEntry extends BaseEntry {
   published: boolean;
   tags: string[];
   path: string;
+  excerpt?: string;
 }
 
-interface GlassEntry extends BaseEntry {
-  type: "glass";
-  width: number;
-  height: number;
-  src: string;
-  share_url: string;
-}
+type ContentCollectionEntry = CollectionEntry<"content">;
 
-type ContentCollectionEntry = CollectionEntry<"posts" | "art" | "notes" | "recipes">;
-type GlassCollectionEntry = CollectionEntry<"glass">;
-
-// Get collections efficiently
-const collections = new Map<string, Promise<ContentCollectionEntry[] | GlassCollectionEntry[]>>([
-  ["posts", getCollection("posts")],
-  ["art", getCollection("art")],
-  ["notes", getCollection("notes")],
-  ["recipes", getCollection("recipes")],
-  ["glass", getCollection("glass")],
-]);
-
-// Type guard functions
+// Type guard function
 const isContentEntry = (entry: any): entry is ContentCollectionEntry => {
   return entry?.data?.title && entry?.data?.created && entry?.data?.slug;
 };
 
-const isGlassEntry = (entry: any): entry is GlassCollectionEntry => {
-  return entry?.data?.image640x640 && entry?.data?.width && entry?.data?.height;
-};
+// Get all content entries
+const allEntries = await getCollection("content");
+const contentEntries = allEntries.filter(isContentEntry);
 
-// Efficient content fetching
-const getContentEntries = async (): Promise<ContentCollectionEntry[]> => {
-  if (collection === "all") {
-    const results = await Promise.all(["posts", "art", "notes", "recipes"].map((key) => collections.get(key)));
-    return results.flat().filter(isContentEntry);
-  }
-  const result = (await collections.get(collection)) || [];
-  return result.filter(isContentEntry);
-};
+// Filter by collection if specified
+const filteredEntries =
+  collection === "all" ? contentEntries : contentEntries.filter((entry) => entry.data.path === collection);
 
 // Process content efficiently
-const contentEntries = await getContentEntries();
-const validContent = contentEntries.filter((entry) => entry?.data?.created);
+const validContent = filteredEntries.filter((entry) => entry?.data?.created);
 
 // Optimize sorting
 const sortedContent = validContent
@@ -69,7 +50,7 @@ const sortedContent = validContent
   .slice(0, contentLimit || validContent.length);
 
 // Transform to ContentEntry efficiently
-const firstEntries: ContentEntry[] = sortedContent.map((entry) => ({
+const entries: ContentEntry[] = sortedContent.map((entry) => ({
   type: "content",
   title: entry.data.title,
   slug: entry.data.slug,
@@ -78,57 +59,33 @@ const firstEntries: ContentEntry[] = sortedContent.map((entry) => ({
   published: entry.data.published,
   tags: entry.data.tags,
   path: entry.data.path,
+  excerpt: entry.data.excerpt,
 }));
-
-// Process glass entries efficiently
-const glassEntries: GlassEntry[] = showGlass
-  ? ((await collections.get("glass")) || [])
-      .filter(isGlassEntry)
-      .sort((a, b) => Number(new Date(b.data.created_at)) - Number(new Date(a.data.created_at)))
-      .slice(0, Math.floor(firstEntries.length / 3))
-      .map((entry) => ({
-        type: "glass",
-        width: entry.data.width,
-        height: entry.data.height,
-        src: entry.data.image640x640,
-        share_url: entry.data.share_url,
-      }))
-  : [];
-
-// Optimize combination logic
-const combinedEntries = showGlass
-  ? firstEntries.reduce(
-      (acc, entry, index) => {
-        const glassIndex = Math.floor(index / 3);
-        if (glassIndex < glassEntries.length && index % 3 === 0) {
-          acc.push(glassEntries[glassIndex], entry);
-        } else {
-          acc.push(entry);
-        }
-        return acc;
-      },
-      [] as (ContentEntry | GlassEntry)[]
-    )
-  : firstEntries;
 ---
 
-{
-  combinedEntries.map((entry) =>
-    entry.type === "glass" ? (
-      <div class='glass-content'>
-        <a href={entry.share_url} target='_blank' rel='noopener noreferrer'>
-          <img src={entry.src} width={entry.width} height={entry.height} alt='Glass photo' loading='lazy' />
-        </a>
-      </div>
-    ) : (
-      <div class='recent-content'>
-        <p>
-          <a href={`/${entry.path}`}>{entry.path}</a>
-        </p>
-        <h2>
-          <a href={`/${entry.path}/${entry.slug}`}>{entry.title}</a>
-        </h2>
+<div class='recent-content-container'>
+  {
+    showCategory && (
+      <h2>
+        <a href={`/${collection}`}>{normalizeCollectionName(collection)}</a>
+      </h2>
+    )
+  }
+  {
+    entries.map((entry) => (
+      <div class={`recent-content ${showCategory == false && "hide-first-border"}`}>
+        <a href={`/${entry.path}/${entry.slug}`}>
+          <h3>{entry.title}</h3>
 
+          <p class='small'>
+            Published {new Date(entry.created).toLocaleDateString()}
+            {entry.updated &&
+              new Date(entry.updated).getTime() - new Date(entry.created).getTime() > 24 * 60 * 60 * 1000 &&
+              `Last updated ${new Date(entry.updated).toLocaleDateString()}`}
+          </p>
+
+          {showExcerpts && entry.excerpt && <p class='small'>{entry.excerpt}</p>}
+        </a>
         {showTags && (
           <div class='tags'>
             {entry.tags.map((tag) => (
@@ -138,45 +95,50 @@ const combinedEntries = showGlass
             ))}
           </div>
         )}
-        <p class='align-bottom small'>
-          <a href={`/${entry.path}/${entry.slug}`}>
-            Published {new Date(entry.created).toLocaleDateString()}
-            <br />
-            {new Date(entry.updated).getTime() - new Date(entry.created).getTime() > 24 * 60 * 60 * 1000 &&
-              `Last updated ${new Date(entry.updated).toLocaleDateString()}`}
-          </a>
-        </p>
+      </div>
+    ))
+  }
+  {
+    contentLimit && validContent.length > contentLimit && (
+      <div class='view-all'>
+        <a href={`/${collection}`}>View all {collection}</a>
       </div>
     )
-  )
-}
+  }
+</div>
 
 <style>
+  a {
+    text-decoration: none;
+    border-bottom: none;
+    color: inherit;
+  }
+
   h2 {
-    font-size: var(--fs-h3);
+    font-size: var(--fs-h4);
+    text-transform: uppercase;
+    padding-bottom: 0.5rem;
+  }
+  h3 {
+    font-size: var(--fs-h5);
   }
 
-  .glass-content {
-    display: block;
-    line-height: 0;
-    aspect-ratio: 6/7;
-    object-fit: cover;
-    overflow: hidden;
-  }
-
-  .glass-content img {
-    width: 100%;
-    height: 100%;
-  }
-
-  .recent-content {
+  .recent-content-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
 
-  .align-bottom {
-    margin-top: auto;
+  .recent-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-top: var(--border);
+    padding-top: 1rem;
+  }
+
+  .hide-first-border:first-child {
+    border-top: none;
   }
 
   .tags {
@@ -186,6 +148,22 @@ const combinedEntries = showGlass
   }
 
   .small {
-    font-size: 0.8rem;
+    font-size: var(--fs-sm);
+  }
+
+  .view-all {
+    margin-top: 0.5rem;
+    text-align: right;
+  }
+
+  .view-all a {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    border-bottom: var(--border);
+    font-style: italic;
+  }
+
+  .view-all a:hover {
+    text-decoration: underline;
   }
 </style>

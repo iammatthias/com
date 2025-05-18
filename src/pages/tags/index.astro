@@ -9,51 +9,90 @@ const tags = await getCollection("tags");
 ---
 
 <PageLayout path='Tags'>
-  <main>
-    <h1>Tags</h1>
-    {
-      tags.map((tag) => (
-        <div class='tag'>
-          <h3>
-            <a href={`/tags/${tag.data.tag}/`}>{tag.data.tag}</a>
-          </h3>
-          {tag.data.entries.map((entry) => (
-            <a href={`/${entry.path}/${entry.slug}/`}>{entry.title}</a>
-          ))}
-        </div>
-      ))
-    }
-  </main>
+  <div class='grid'>
+    <div class='meta'>
+      <h1>Tags</h1>
+    </div>
+    <div class='tags-grid'>
+      {
+        tags.map((tag) => (
+          <div class='tag'>
+            <h5>
+              <a href={`/tags/${tag.data.tag}/`}>{tag.data.tag}</a>
+            </h5>
+            {/* {tag.data.entries.map((entry) => (
+              <a href={`/${entry.path}/${entry.slug}/`}>{entry.title}</a>
+            ))} */}
+            <p class='small'>
+              {tag.data.entries.length} {tag.data.entries.length === 1 ? "post" : "posts"}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
 </PageLayout>
 
 <style>
-  main {
+  .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
+    grid-template-columns: calc(var(--meta-column) - var(--aside-width)) 1fr;
+
+    position: relative;
     min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
-    overflow: hidden;
-    align-content: start;
-    align-items: start;
-    gap: 1px;
   }
 
-  main > :global(*):not(.glass-content) {
-    aspect-ratio: 6/7;
-    min-height: 0;
-    min-width: 0;
-    outline: var(--border);
-    padding: var(--padding);
+  .tags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    align-content: start;
     @media (max-width: 768px) {
-      /* &:first-child {
-          aspect-ratio: unset;
-        } */
-      aspect-ratio: 7/6;
+      gap: 4rem;
     }
   }
 
-  .tag {
+  .tags-grid > div {
+    padding: 1rem;
+
+    @media (max-width: 768px) {
+      padding: 0;
+    }
+  }
+
+  .meta {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 16px;
+    position: sticky;
+    top: calc(var(--nav-height));
+    height: fit-content;
+    align-self: start;
+    height: 100%;
+    max-height: calc(100vh - var(--nav-height) - var(--footer-height));
+    overflow-y: auto;
+    border-right: var(--border);
+    padding: 1rem;
+    @media (max-width: 768px) {
+      border-right: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+
+    .meta {
+      position: relative;
+      top: 0;
+      max-height: none;
+      overflow-y: visible;
+      padding: 16px;
+    }
+
+    .tags-grid {
+      padding: 16px;
+    }
   }
 </style>

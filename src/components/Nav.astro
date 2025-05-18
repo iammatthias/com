@@ -1,5 +1,9 @@
 ---
+import { getCollection } from "astro:content";
 
+// Get unique content paths for navigation
+const content = await getCollection("content");
+const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
 ---
 
 <nav>
@@ -14,23 +18,30 @@
   </div>
   <div class='dropdown-menu'>
     <a href='/'>Home</a>
-    <a href='/posts'>Posts</a>
-    <a href='/art'>Art</a>
-    <a href='/notes'>Notes</a>
-    <a href='/recipes'>Recipes</a>
+    {contentPaths.map((path) => <a href={`/${path}`}>{path}</a>)}
     <a href='/social'>Social</a>
     <a href='/resume'>Resume</a>
-    <!-- <a href='/onchain-analytics'>Onchain Analytics</a> -->
+    <a href='/onchain-analytics'>Onchain Analytics</a>
   </div>
 </nav>
 
 <script>
-  const menuButton = document.querySelector(".menu-button");
-  const dropdownMenu = document.querySelector(".dropdown-menu");
+  function setupMenu() {
+    const menuButton = document.querySelector(".menu-button");
+    const dropdownMenu = document.querySelector(".dropdown-menu");
 
-  menuButton?.addEventListener("click", () => {
+    if (menuButton && dropdownMenu) {
+      // Remove any existing listeners to prevent duplicates
+      menuButton.removeEventListener("click", toggleMenu);
+      // Add the listener
+      menuButton.addEventListener("click", toggleMenu);
+    }
+  }
+
+  function toggleMenu() {
+    const dropdownMenu = document.querySelector(".dropdown-menu");
     dropdownMenu?.classList.toggle("show");
-  });
+  }
 
   // Update time every minute
   function updateTime() {
@@ -41,8 +52,14 @@
     }
   }
 
+  // Initial setup
+  setupMenu();
   updateTime();
   setInterval(updateTime, 60000);
+
+  // Handle view transitions
+  document.addEventListener("astro:after-swap", setupMenu);
+  document.addEventListener("astro:page-load", setupMenu);
 </script>
 
 <style>
@@ -63,8 +80,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
+    font-size: 12px;
+    padding: 12px;
     border-right: var(--border);
+    height: var(--nav-height);
+    box-sizing: border-box;
   }
 
   .nav-item:first-child {
@@ -102,11 +122,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
+    font-size: 14px;
+    padding: 12px;
     text-decoration: none;
     color: var(--color);
     border-bottom: var(--border);
     transition: background-color 0.3s ease;
+    text-transform: uppercase;
   }
 
   .dropdown-menu a:last-child {

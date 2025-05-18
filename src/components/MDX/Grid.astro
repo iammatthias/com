@@ -2,15 +2,6 @@
 
 ---
 
-<div class='grid'>
+<div class='sub-grid'>
   <slot />
 </div>
-
-<style>
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
-    gap: 1.5rem;
-    width: 100%;
-  }
-</style>

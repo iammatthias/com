@@ -1,13 +1,15 @@
 ---
 const { id, "aspect-ratio": aspectRatio } = Astro.props;
 
-let paddingBottom;
+let paddingBottom: string;
 
 if (typeof aspectRatio === "string" && aspectRatio.includes("/")) {
   // Handle fraction format like "1/1" or "6/7"
   const [width, height] = aspectRatio.split("/").map(Number);
   if (!isNaN(width) && !isNaN(height) && width > 0) {
     paddingBottom = `${(height / width) * 100}%`;
+  } else {
+    paddingBottom = "56.25%"; // Fallback to 16:9 if invalid fraction
   }
 } else if (!isNaN(Number(aspectRatio))) {
   // Handle numeric aspect ratio directly
