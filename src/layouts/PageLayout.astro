@@ -93,10 +93,12 @@ if (title || path) {
   </Head>
   <body>
     <Nav transition:persist />
-    <Sidebar transition:persist />
-    <main transition:animate='fade'>
-      <slot />
-    </main>
+    <div class='page-layout'>
+      <Sidebar transition:persist />
+      <main transition:animate='fade'>
+        <slot />
+      </main>
+    </div>
     <Footer transition:persist />
   </body>
 </html>
@@ -106,24 +108,60 @@ if (title || path) {
     --nav-height: 45px;
     --footer-height: 45px;
     --aside-width: 45px;
+    --article-max-width: 100%;
   }
 
   body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    position: relative;
+  }
+
+  .page-layout {
+    display: flex;
+    flex-direction: row;
   }
 
   main {
-    margin: 0 0 0 var(--aside-width);
+    position: relative;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    width: calc(100% - var(--aside-width));
+    width: 100%;
     gap: 1px;
     min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
     position: relative;
     contain: layout style paint;
     will-change: opacity;
+  }
+
+  /* Ensure article container respects max width */
+  .article-container {
+    width: 100%;
+    max-width: var(--article-max-width);
+    margin: 0 auto;
+    overflow-x: hidden;
+  }
+
+  /* Handle pre elements within article container */
+  .article-container pre {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre;
+    word-wrap: normal;
+    margin: 1em 0;
+    padding: 1em;
+    background: var(--theme-code-background);
+    border-radius: 4px;
+  }
+
+  /* Ensure code blocks don't cause horizontal scroll on the page */
+  .article-container pre code {
+    display: block;
+    overflow-x: auto;
+    white-space: pre;
+    word-wrap: normal;
   }
 
   /* View transition styles */
@@ -198,17 +236,3 @@ if (title || path) {
 </style>
 
 <script is:inline type='module' src='https://cdn.jsdelivr.net/npm/lite-vimeo-embed/+esm'></script>
-
-<script>
-  // Format time without seconds and update every minute
-  const time = document.querySelector("time");
-  function updateTime() {
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    time!.textContent = formattedTime;
-    time!.setAttribute("datetime", now.toISOString());
-  }
-
-  updateTime();
-  setInterval(updateTime, 60000);
-</script>

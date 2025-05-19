@@ -64,9 +64,11 @@ const sortedPaths = contentPaths.sort((pathA, pathB) => {
   .grid {
     display: grid;
     grid-template-columns: calc(var(--meta-column) - var(--aside-width)) 1fr;
-
     position: relative;
     min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+    @media (max-width: 1023px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   .recent-content-grid {
@@ -74,16 +76,9 @@ const sortedPaths = contentPaths.sort((pathA, pathB) => {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1rem;
     align-content: start;
-    @media (max-width: 768px) {
-      gap: 4rem;
-    }
-  }
-
-  .recent-content-grid > div {
     padding: 1rem;
-
-    @media (max-width: 768px) {
-      padding: 0;
+    @media (max-width: 1023px) {
+      padding: 2rem 1rem;
     }
   }
 
@@ -100,16 +95,14 @@ const sortedPaths = contentPaths.sort((pathA, pathB) => {
     overflow-y: auto;
     border-right: var(--border);
     padding: 1rem;
-    @media (max-width: 768px) {
+    @media (max-width: 1023px) {
       border-right: none;
+      border-bottom: var(--border);
+      padding: 2rem 1rem;
     }
   }
 
   @media (max-width: 768px) {
-    .grid {
-      grid-template-columns: 1fr;
-    }
-
     .meta {
       position: relative;
       top: 0;

@@ -43,7 +43,21 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
     dropdownMenu?.classList.toggle("show");
   }
 
-  // Update time every minute
+  let timeUpdateInterval: ReturnType<typeof setInterval> | undefined;
+
+  function setupTime() {
+    // Clear any existing interval
+    if (timeUpdateInterval) {
+      clearInterval(timeUpdateInterval);
+    }
+
+    // Initial update
+    updateTime();
+
+    // Set up new interval
+    timeUpdateInterval = setInterval(updateTime, 60000);
+  }
+
   function updateTime() {
     const timeElement = document.querySelector("time");
     if (timeElement) {
@@ -54,12 +68,24 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
 
   // Initial setup
   setupMenu();
-  updateTime();
-  setInterval(updateTime, 60000);
+  setupTime();
 
   // Handle view transitions
-  document.addEventListener("astro:after-swap", setupMenu);
-  document.addEventListener("astro:page-load", setupMenu);
+  document.addEventListener("astro:after-swap", () => {
+    setupMenu();
+    setupTime();
+  });
+  document.addEventListener("astro:page-load", () => {
+    setupMenu();
+    setupTime();
+  });
+
+  // Cleanup on page unload
+  document.addEventListener("astro:before-swap", () => {
+    if (timeUpdateInterval) {
+      clearInterval(timeUpdateInterval);
+    }
+  });
 </script>
 
 <style>
@@ -73,7 +99,7 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
 
   .nav-content {
     display: grid;
-    grid-template-columns: 400px 1fr 400px;
+    grid-template-columns: max-content 1fr max-content;
   }
 
   .nav-item {
@@ -81,19 +107,19 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
     justify-content: center;
     align-items: center;
     font-size: 12px;
-    padding: 12px;
+    padding: 12px 24px;
     border-right: var(--border);
     height: var(--nav-height);
     box-sizing: border-box;
+    white-space: nowrap;
   }
 
   .nav-item:first-child {
-    @media (max-width: 768px) {
-      display: none;
-    }
+    justify-content: flex-start;
   }
 
   .nav-item:last-child {
+    justify-content: flex-end;
     border-right: none;
   }
 
@@ -142,12 +168,18 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
   @media (max-width: 768px) {
     .nav-content {
       grid-template-columns: 1fr;
+      padding: 0;
     }
 
     .nav-item {
       border-right: none;
     }
 
+    .nav-item:last-child {
+      border-bottom: none;
+    }
+
+    .nav-item:first-child,
     .nav-item.time {
       display: none;
     }

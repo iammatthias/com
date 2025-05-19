@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wdth,wght@0,18..144,87..112,300..900;1,18..144,87..112,300..900&display=swap");
 
 /* Color Variables */
 :root {
@@ -73,9 +73,8 @@
 
 /* Font Family Variables */
 :root {
-  --font-body: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
-    "Open Sans", "Helvetica Neue", sans-serif;
-  --font-heading: "Bricolage Grotesque", "New York", "Times New Roman", Times, serif;
+  --font-body: "Merriweather", "New York", "Times New Roman", Times, serif;
+  --font-heading: "Merriweather", "New York", "Times New Roman", Times, serif;
   --font-mono: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Monaco, "Liberation Mono", Consolas, monospace;
 }
 

@@ -6,6 +6,10 @@ p {
   line-height: var(--lh);
   color: light-dark(var(--paragraph-color-light), var(--paragraph-color-dark));
   transition: color 0.2s ease;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings: "wdth" 87;
 }
 
 small,
@@ -28,6 +32,10 @@ h6 {
   letter-spacing: -0.02em;
   color: light-dark(var(--heading-color-light), var(--heading-color-dark));
   transition: color 0.2s ease;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-style: normal;
+  font-variation-settings: "wdth" 112;
 }
 
 h1 {
@@ -93,6 +101,10 @@ blockquote {
   font-style: italic;
   background: light-dark(rgba(255, 187, 0, 0.05), rgba(255, 204, 0, 0.05));
   transition: border-color 0.2s ease, background-color 0.2s ease;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: italic;
+  font-variation-settings: "wdth" 100;
 }
 
 blockquote:hover {
@@ -111,10 +123,24 @@ pre {
 
 pre {
   padding: 1.25rem;
-  overflow: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid light-dark(var(--grey), var(--grey-dark));
   border-radius: 4px;
   margin: 1rem 0;
+  width: 100%;
+  max-width: 100%;
+  white-space: pre;
+  word-wrap: normal;
+}
+
+@media (max-width: 768px) {
+  pre {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 1rem;
+    max-width: calc(100vw - var(--aside-width) - 4rem) !important;
+  }
 }
 
 code {

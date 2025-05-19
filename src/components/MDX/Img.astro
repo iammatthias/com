@@ -41,9 +41,6 @@ if (!cid) {
   console.error("[Img.astro] Invalid image source:", src);
 }
 
-// Reduced srcset sizes to minimize API calls
-const sizes = [{ width: 800 }];
-
 // Function to get signed URL from Pinata
 async function getSignedUrl(cid: string) {
   try {

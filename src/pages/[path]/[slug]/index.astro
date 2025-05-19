@@ -70,7 +70,7 @@ const markdownContent = getCachedMarkdown(entry.body);
       <div class='tags'>
         {
           entry.data.tags.map((tag: any) => (
-            <span class='small'>
+            <span>
               #<a href={`/tags/${tag}`}>{tag}</a>
             </span>
           ))
@@ -78,9 +78,11 @@ const markdownContent = getCachedMarkdown(entry.body);
       </div>
       <p class='small capitalize'><a href={`/${entry.data.path}`}>↢ {entry.data.path}</a></p>
     </div>
-    <article>
-      <Markdown sanitize={{ allowComponents: true }} content={markdownContent} components={components} />
-    </article>
+    <div class='article-container'>
+      <article>
+        <Markdown sanitize={{ allowComponents: true }} content={markdownContent} components={components} />
+      </article>
+    </div>
   </div>
 </PageLayout>
 
@@ -90,6 +92,9 @@ const markdownContent = getCachedMarkdown(entry.body);
     grid-template-columns: calc(var(--meta-column) - var(--aside-width)) 1fr;
     position: relative;
     min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+    @media (max-width: 1159px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   .post-meta {
@@ -105,13 +110,16 @@ const markdownContent = getCachedMarkdown(entry.body);
     overflow-y: auto;
     border-right: var(--border);
     padding: 1rem;
-    @media (max-width: 768px) {
+    @media (max-width: 1159px) {
       border-right: none;
+      max-width: 600px;
+      position: relative;
+      top: 0;
     }
 
     p,
     .tags {
-      font-size: var(--fs-sm);
+      font-size: 12px;
     }
   }
 
@@ -125,6 +133,12 @@ const markdownContent = getCachedMarkdown(entry.body);
   article > :global(*) {
     max-width: 600px;
     width: 100%;
+  }
+
+  article > :global(pre) {
+    @media (max-width: 1159px) {
+      max-width: calc(100vw - var(--aside-width) - 4rem);
+    }
   }
 
   article > :global(.office-space-container) {
@@ -143,6 +157,11 @@ const markdownContent = getCachedMarkdown(entry.body);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
     gap: 1.5rem;
+
+    &:has(> .image-container:nth-of-type(1):nth-last-of-type(1)) {
+      max-width: 600px;
+      margin: 0;
+    }
   }
 
   @media (max-width: 768px) {
@@ -159,3 +178,51 @@ const markdownContent = getCachedMarkdown(entry.body);
     }
   }
 </style>
+
+<script>
+  // Function to update article max width
+  function updateArticleMaxWidth() {
+    const article = document.querySelector(".article-container");
+    const aside = document.querySelector("aside");
+    const meta = document.querySelector(".post-meta, .meta");
+
+    if (article) {
+      // Get window width
+      const windowWidth = window.innerWidth;
+
+      // Get aside width (default to CSS variable if element not found)
+      const asideWidth = aside
+        ? aside.getBoundingClientRect().width
+        : parseInt(getComputedStyle(document.documentElement).getPropertyValue("--aside-width"));
+
+      // Get meta width (default to CSS variable if element not found)
+      const metaWidth = meta
+        ? meta.getBoundingClientRect().width
+        : parseInt(getComputedStyle(document.documentElement).getPropertyValue("--meta-column"));
+
+      // Calculate available width
+      const availableWidth = windowWidth - asideWidth - metaWidth;
+
+      // Set the article max width
+      document.documentElement.style.setProperty("--article-max-width", `${availableWidth}px`);
+    }
+  }
+
+  // Update on initial page load
+  document.addEventListener("astro:page-load", () => {
+    console.log("Page load event");
+    setTimeout(updateArticleMaxWidth, 0);
+  });
+
+  // Update after view transitions
+  document.addEventListener("astro:after-swap", () => {
+    console.log("After swap event");
+    setTimeout(updateArticleMaxWidth, 0);
+  });
+
+  // Update on resize
+  window.addEventListener("resize", updateArticleMaxWidth);
+
+  // Initial call for first page load
+  setTimeout(updateArticleMaxWidth, 0);
+</script>
