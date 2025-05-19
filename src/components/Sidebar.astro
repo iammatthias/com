@@ -80,15 +80,6 @@
       sessionStorage.setItem("sidebarOpen", isOpen.toString());
     };
 
-    // Restore the iframe state
-    const restoreIframeState = () => {
-      const storedState = sessionStorage.getItem("sidebarOpen");
-      if (storedState === "true") {
-        isOpen = true;
-        sidebarIframe?.classList.add("active");
-      }
-    };
-
     if (sidebarTrigger && sidebarIframe) {
       // Remove any existing listeners to prevent duplicates
       sidebarTrigger.removeEventListener("click", toggleSidebar);
@@ -105,16 +96,13 @@
       storeIframeState();
     }
 
-    function handleOutsideClick(e: MouseEvent) {
-      if (isOpen && !sidebarIframe?.contains(e.target as Node) && !sidebarTrigger?.contains(e.target as Node)) {
+    function handleOutsideClick(e) {
+      if (isOpen && !sidebarIframe?.contains(e.target) && !sidebarTrigger?.contains(e.target)) {
         isOpen = false;
         sidebarIframe?.classList.remove("active");
         storeIframeState();
       }
     }
-
-    // Restore state on setup
-    restoreIframeState();
   }
 
   // Initial setup
