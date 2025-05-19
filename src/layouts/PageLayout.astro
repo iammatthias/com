@@ -3,7 +3,6 @@ import { Head } from "astro-capo";
 // @ts-ignore
 import { SEO } from "astro-seo";
 import PostHog from "@components/posthog.astro";
-import { ClientRouter } from "astro:transitions";
 // styles
 import "@/styles/reset.css";
 import "@/styles/global.css";
@@ -41,9 +40,8 @@ if (title || path) {
 }
 ---
 
-<html lang='en' transition:animate='none'>
+<html lang='en'>
   <Head>
-    <ClientRouter fallback='animate' />
     <SEO
       charset='UTF-8'
       title={seoTitle}
@@ -92,14 +90,14 @@ if (title || path) {
     <PostHog />
   </Head>
   <body>
-    <Nav transition:persist />
+    <Nav />
     <div class='page-layout'>
-      <Sidebar transition:persist />
-      <main transition:animate='fade'>
+      <Sidebar />
+      <main>
         <slot />
       </main>
     </div>
-    <Footer transition:persist />
+    <Footer />
   </body>
 </html>
 
@@ -132,8 +130,6 @@ if (title || path) {
     gap: 1px;
     min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
     position: relative;
-    contain: layout style paint;
-    will-change: opacity;
   }
 
   /* Ensure article container respects max width */
@@ -164,74 +160,11 @@ if (title || path) {
     word-wrap: normal;
   }
 
-  /* View transition styles */
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-  }
-
-  /* Dark mode support */
-  @media (prefers-color-scheme: dark) {
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      mix-blend-mode: normal;
-    }
-  }
-
-  /* Fade transition */
-  ::view-transition-old(main),
-  ::view-transition-new(main) {
-    animation: none;
-    mix-blend-mode: normal;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes fadeOut {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-
-  ::view-transition-old(main) {
-    animation: fadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  ::view-transition-new(main) {
-    animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  /* Ensure content is properly contained during transitions */
-  ::view-transition-old(main) *,
-  ::view-transition-new(main) * {
-    contain: layout style paint;
-  }
-
-  /* Respect reduced motion preferences */
-  @media (prefers-reduced-motion: reduce) {
-    ::view-transition-old(main),
-    ::view-transition-new(main) {
-      animation: none;
-    }
-  }
-
   /* Prevent transition conflicts with nav/sidebar */
   nav,
   aside {
     z-index: 100;
     position: relative;
-    contain: layout style paint;
   }
 </style>
 
