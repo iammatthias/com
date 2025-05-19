@@ -10,17 +10,6 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
   <div class='grid'>
     <div class='meta'>
       <h1>Onchain Analytics</h1>
-      <p>Started: 12315477</p>
-    </div>
-    <article>
-      <h1>Onchain Analytics</h1>
-      <p>
-        This site briefly used a homebrew analytics system. It was built on an annonymous session management system that
-        leveraged keccak256 hashes and the blockchain — you can <a
-          class='break'
-          href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more it here</a
-        >.
-      </p>
       <p>
         Recording started at block number <a
           href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
@@ -31,8 +20,16 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
           smart contracts
         </a> are verified on Basescan.
       </p>
-
-      <OnchainAnalytics client:only='react' />
+    </div>
+    <article>
+      <p>
+        This site briefly used a homebrew analytics system. It was built on an annonymous session management system that
+        leveraged keccak256 hashes and the blockchain — you can <a
+          class='break'
+          href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more it here</a
+        >.
+      </p>
+      <OnchainAnalytics client:only='react' contractAddress={CONTRACT_ADDRESS} />
     </article>
   </div>
 </PageLayout>

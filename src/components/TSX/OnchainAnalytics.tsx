@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { baseSepoliaClient } from "@/lib/viemProvider";
 import styles from "./OnchainAnalytics.module.css";
 
-const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT as `0x${string}`;
-
 // ABI fragments for the analytics contract
 const analyticsABI = [
   {
@@ -54,7 +52,7 @@ interface Event {
   count: number;
 }
 
-function AnalyticsContent() {
+export default function OnchainAnalytics({ contractAddress }: { contractAddress: `0x${string}` }) {
   const [pageViews, setPageViews] = useState<PageView[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [sessionCount, setSessionCount] = useState<bigint>(0n);
@@ -66,22 +64,22 @@ function AnalyticsContent() {
       try {
         const [count, views, events, ids] = await Promise.all([
           baseSepoliaClient.readContract({
-            address: CONTRACT_ADDRESS,
+            address: contractAddress,
             abi: analyticsABI,
             functionName: "getSessionCount",
           }),
           baseSepoliaClient.readContract({
-            address: CONTRACT_ADDRESS,
+            address: contractAddress,
             abi: analyticsABI,
             functionName: "getAllPageViews",
           }),
           baseSepoliaClient.readContract({
-            address: CONTRACT_ADDRESS,
+            address: contractAddress,
             abi: analyticsABI,
             functionName: "getAllEvents",
           }),
           baseSepoliaClient.readContract({
-            address: CONTRACT_ADDRESS,
+            address: contractAddress,
             abi: analyticsABI,
             functionName: "getAllSessionIds",
           }),
@@ -130,6 +128,8 @@ function AnalyticsContent() {
 
     fetchData();
   }, []);
+
+  console.log("CONTRACT_ADDRESS", contractAddress);
 
   return (
     <div className={styles.container}>
@@ -196,8 +196,4 @@ function AnalyticsContent() {
       )}
     </div>
   );
-}
-
-export default function OnchainAnalytics() {
-  return <AnalyticsContent />;
 }

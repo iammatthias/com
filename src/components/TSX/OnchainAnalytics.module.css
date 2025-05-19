@@ -1,28 +1,12 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .container > :global(*) {
   max-width: 600px;
   width: 100%;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th,
-.table td {
-  padding: 0.5rem;
-  text-align: left;
-  border-bottom: var(--border);
-}
-
-.table th {
-  font-weight: bold;
 }
 
 .sessionHashes {
