@@ -1,6 +1,6 @@
 /* Text Elements */
 
-p {
+* {
   font-size: var(--fs-p);
   font-weight: 300;
   line-height: var(--lh);
@@ -157,6 +157,10 @@ a {
   border-bottom: 1px solid currentColor;
   padding-bottom: 0.1em;
   transition: all 0.2s ease-in-out;
+  font-optical-sizing: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  font-variation-settings: inherit;
 }
 
 a:hover {
