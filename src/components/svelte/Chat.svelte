@@ -35,13 +35,9 @@
   // Suggested prompts
   // cover posts, notes, recipes, art, open source projects, etc
   const prompts = [
-    "What is your latest post about?",
-    "What is your latest recipe?",
+    "What are your recent posts?",
+    "What are your recent recipes?",
     "Tell me about your work at day---break",
-    "What cameras do you use?",
-    "Show me your recent projects",
-    "Where can I find you on social media?",
-    "What's your technical background?",
   ];
 
   function scrollToBottom() {
