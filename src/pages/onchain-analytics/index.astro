@@ -1,7 +1,7 @@
 ---
 // layouts
 import PageLayout from "@/layouts/PageLayout.astro";
-import OnchainAnalytics from "@/components/TSX/OnchainAnalytics";
+import OnchainAnalytics from "@/components/svelte/OnchainAnalytics.svelte";
 
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 ---
@@ -29,7 +29,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
           href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more it here</a
         >.
       </p>
-      <OnchainAnalytics client:only='react' contractAddress={CONTRACT_ADDRESS} />
+      <OnchainAnalytics client:only='svelte' contractAddress={CONTRACT_ADDRESS} />
     </article>
   </div>
 </PageLayout>

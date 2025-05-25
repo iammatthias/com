@@ -1,9 +1,5 @@
 import { defineCollection } from "astro:content";
-import { glassLoader, contentLoader, tagLoader } from "./loaders";
-
-const glass = defineCollection({
-  loader: glassLoader(),
-});
+import { contentLoader, tagLoader } from "./loaders";
 
 // Define a dynamic content collection that will handle all content types
 const content = defineCollection({
@@ -15,7 +11,6 @@ const tags = defineCollection({
 });
 
 export const collections = {
-  glass,
   content,
   tags,
 };

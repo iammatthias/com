@@ -1,3 +1,16 @@
+// Helper to add timeout to fetch requests
+function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number = 10000): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  return fetch(url, {
+    ...options,
+    signal: controller.signal,
+  }).finally(() => {
+    clearTimeout(timeoutId);
+  });
+}
+
 // Helper to fetch content from GitHub using their API
 export async function fetchFromGitHub(path = "") {
   const githubToken = import.meta.env.GITHUB;
@@ -10,12 +23,16 @@ export async function fetchFromGitHub(path = "") {
 
   // Test token with a simpler API call first
   try {
-    const testResponse = await fetch("https://api.github.com/user", {
-      headers: {
-        Authorization: `bearer ${githubToken}`,
-        Accept: "application/vnd.github.v3+json",
+    const testResponse = await fetchWithTimeout(
+      "https://api.github.com/user",
+      {
+        headers: {
+          Authorization: `bearer ${githubToken}`,
+          Accept: "application/vnd.github.v3+json",
+        },
       },
-    });
+      10000
+    );
 
     if (!testResponse.ok) {
       const testError = await testResponse.text();
@@ -42,14 +59,18 @@ export async function fetchFromGitHub(path = "") {
 
   try {
     // First verify repository access
-    const repoResponse = await fetch("https://api.github.com/graphql", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `bearer ${githubToken}`,
+    const repoResponse = await fetchWithTimeout(
+      "https://api.github.com/graphql",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `bearer ${githubToken}`,
+        },
+        body: JSON.stringify({ query: repoQuery }),
       },
-      body: JSON.stringify({ query: repoQuery }),
-    });
+      15000
+    );
 
     const repoResult = await repoResponse.json();
 
@@ -87,14 +108,18 @@ export async function fetchFromGitHub(path = "") {
       expression,
     };
 
-    const response = await fetch("https://api.github.com/graphql", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `bearer ${githubToken}`,
+    const response = await fetchWithTimeout(
+      "https://api.github.com/graphql",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `bearer ${githubToken}`,
+        },
+        body: JSON.stringify({ query, variables }),
       },
-      body: JSON.stringify({ query, variables }),
-    });
+      20000
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -181,14 +206,18 @@ export async function fetchContentStructure() {
   };
 
   try {
-    const response = await fetch("https://api.github.com/graphql", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `bearer ${githubToken}`,
+    const response = await fetchWithTimeout(
+      "https://api.github.com/graphql",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `bearer ${githubToken}`,
+        },
+        body: JSON.stringify({ query, variables }),
       },
-      body: JSON.stringify({ query, variables }),
-    });
+      15000
+    );
 
     if (!response.ok) {
       const errorText = await response.text();

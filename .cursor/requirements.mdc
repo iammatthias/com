@@ -1,0 +1,147 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Personal Website Implementation: Complete Requirements & Project Breakdown
+
+We are using bun, astro, and svelte
+
+## Project Overview
+
+A modern personal website built with Astro and Svelte that uses AI to dynamically adapt its UI to different content types. The site will pull content from a private GitHub repository via GraphQL, organize it using Astro Content Collections, and implement a custom RAG (Retrieval Augmented Generation) system to enhance navigation and content discovery through natural language.
+
+## Core Requirements
+
+### Technical Requirements
+
+1. **Framework & Architecture**
+
+   * Astro as the core framework with static generation and SSR islands
+   * Svelte for interactive UI components
+   * AI-SDK for AI integration
+   * GitHub GraphQL API for content fetching
+   * Custom RAG system with digest-based indexing and in-memory vector search
+
+2. **Content Types Support**
+
+   * Long-form content (posts)
+   * Short-form content (notes)
+   * Visual content (art/galleries)
+   * Mixed content (melange)
+   * Recipes with structured data
+   * Open-source projects
+
+3. **AI Features**
+
+   * Content-aware UI generation
+   * Natural language navigation
+   * Content summarization
+   * Enhanced semantic + keyword hybrid search
+   * Recommendations based on content relationships
+
+4. **Design & UX**
+
+   * Dieter Rams-inspired minimalist aesthetic
+   * Mediterranean color accents for key elements
+   * Responsive design for all device types
+   * Dark and light mode with elegant color transitions
+   * Subtle animations and transitions
+   * Accessibility-first approach
+
+5. **SEO & Performance**
+
+   * Permalink preservation for existing content
+   * Structured data for all content types
+   * Optimized Core Web Vitals
+   * Comprehensive metadata strategy
+   * Sitemap and robots.txt integration
+
+6. **Content Management**
+
+   * GitHub-based content storage
+   * Automated content synchronization
+   * Content validation against schemas
+   * Flexible frontmatter format support
+
+## RAG System Implementation
+
+### Architecture
+
+* Digest-based static RAG index generation at build time
+* Content is chunked, embedded, tokenized, and stored in a local JSON file (`public/.rag-index.json`)
+* No external database or vector store is used
+* Hybrid scoring strategy: cosine similarity + keyword overlap
+
+### Build-Time Index Script
+
+* Script reads Markdown files from Astro Content Collections
+* Uses `sha256` to detect file changes (digest)
+* Chunks content using sentence or paragraph splitting
+* Embeds each chunk using AI-SDK
+* Tokenizes each chunk for keyword match scoring
+* Saves results to a local index file: `.rag-index.json`
+
+### SSR Search Endpoint
+
+* Astro API route at `/api/search`
+* Accepts query string
+* Loads `.rag-index.json` into memory
+* Computes embedding + keyword tokens for query
+* Ranks results using a combined score
+* Returns top N relevant chunks with metadata
+
+### Frontend Search Component
+
+* Implemented as a Svelte island
+* Provides interactive search experience
+* Hits `/api/search` with user queries
+* Displays unified results (semantic + keyword)
+
+### Benefits
+
+* Zero runtime DB dependency
+* Fast and efficient local search
+* Works offline post-deploy
+* Easily expandable to new content types
+
+### Deprecated Approach
+
+* Removed prior SSR-based RAG implementation relying on full re-indexing and external vector storage
+* Static + SSR island model provides better performance and lower complexity
+
+## Updates to Implementation Plan
+
+#### Week 4 (Updated)
+
+##### Day 17: Content Indexing System
+
+* Task 1: Design digest-based indexing strategy
+* Task 2: Create content parser with chunking and tokenization
+* Task 3: Generate vector embeddings at build time
+* Task 4: Store indexed chunks in local `.rag-index.json`
+
+##### Day 18: RAG Architecture
+
+* Task 1: Remove external vector storage
+* Task 2: Implement unified hybrid scoring (keywords + embeddings)
+* Task 3: Build static index generation script
+* Task 4: Connect index to search endpoint
+
+##### Day 19: AI Endpoints
+
+* Task 1: Replace old `/api/ai/search` with `/api/search`
+* Task 2: Optimize memory usage and response time
+* Task 3: Ensure slug/title metadata is returned in results
+* Task 4: Update summarization and navigation to use new local search results
+
+##### Day 20: Caching & Optimization
+
+* Task 1: Cache `.rag-index.json` during SSR
+* Task 2: Ensure efficient query tokenization and embedding
+* Task 3: Improve chunk scoring precision
+* Task 4: Test edge cases and fallback logic
+
+## Summary
+
+The site now uses a hybrid static generation + SSR island model. The RAG system is fully local and statically built, using digest tracking to avoid redundant indexing and JSON-based storage for rapid in-memory retrieval. This setup eliminates runtime DB dependencies and aligns better with the minimalist, high-performance goals of the architecture.
