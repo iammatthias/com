@@ -75,16 +75,34 @@ export async function getProfileContent(cid: string): Promise<string> {
  * @param query - The semantic query string
  * @param returnFile - If true, returns the file content for the top match
  * @param contentType - Filter by content type ('profile', 'content', or undefined for all)
+ * @param includeRecencyContext - If true, includes current date context for better recency matching
  * @returns Query result from Pinata
  */
 export async function queryPinataVectors(
   query: string,
   returnFile = false,
-  contentType?: "profile" | "content"
+  contentType?: "profile" | "content",
+  includeRecencyContext = false
 ): Promise<any> {
+  let enhancedQuery = query;
+
+  // Add current date context for recency-aware queries
+  if (includeRecencyContext) {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.toLocaleString("default", { month: "long" });
+    const currentDateString = currentDate.toISOString().split("T")[0]; // YYYY-MM-DD format
+
+    // Enhance query with temporal context
+    enhancedQuery = `${query} current date ${currentDateString} year ${currentYear} month ${currentMonth} recent latest new`;
+
+    console.log(`[PINATA_QUERY] Original query: "${query}"`);
+    console.log(`[PINATA_QUERY] Enhanced with recency context: "${enhancedQuery}"`);
+  }
+
   const result = (await pinata.files.private.queryVectors({
     groupId: PINATA_VECTOR_GROUP_ID,
-    query,
+    query: enhancedQuery,
     returnFile,
   })) as any; // Type as any since Pinata SDK types may not be complete
 

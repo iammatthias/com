@@ -34,11 +34,7 @@
 
   // Suggested prompts
   // cover posts, notes, recipes, art, open source projects, etc
-  const prompts = [
-    "What are your recent posts?",
-    "What are your recent recipes?",
-    "Tell me about your work at day---break",
-  ];
+  const prompts = ["What are your recent posts?", "What are your recent recipes?", "Tell me about your recent work"];
 
   function scrollToBottom() {
     if (chatEndRef) chatEndRef.scrollIntoView({ behavior: "smooth" });
@@ -221,18 +217,11 @@
 <!-- <p style="color: red; font-size: 0.9em;">DEBUG: input = "{input}"</p>
 <p style="color: red; font-size: 0.9em;">DEBUG: loading = {loading ? "true" : "false"}</p> -->
 
-<div class="intro">
-  <h1>Hi, I'm Matthias</h1>
-  <p>I'm a photographer turned growth technologist. Over the years I've worked in travel, fintech, and ecommerce.</p>
-  <p>These days I run day---break, a marketing consultancy focused on growth and lifecycle automation.</p>
-</div>
-
 <div class="chat-container" aria-label="RAG Chat Interface">
   <div class="messages" role="log" aria-live="polite">
     {#each messages as msg, i}
       <div class="message {msg.role}">
         <div class="bubble">
-          <span class="role-label">{msg.role === "user" ? "You" : "Matthias"}:</span>
           {#if msg.role === "assistant"}
             <span class="content">{@html parseMarkdown(msg.content)}</span>
           {:else}
@@ -267,7 +256,6 @@
     {#if loading}
       <div class="message assistant">
         <div class="bubble">
-          <span class="role-label">Matthias:</span>
           <span class="loader"></span>
         </div>
       </div>
@@ -310,14 +298,13 @@
 </div>
 
 <style>
-  .intro,
   .chat-container {
     width: 100%;
-    max-width: 600px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    padding: 1rem 1rem 0;
   }
 
   /* Minimal, color-scheme-respecting chat style */
@@ -326,12 +313,14 @@
     flex-direction: column;
     height: 100%;
     gap: 1rem;
+    margin-top: auto;
   }
   .messages {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
+    padding: 0 0.5rem;
   }
   .message {
     outline: none;
@@ -367,12 +356,7 @@
     margin-right: 0.5em;
     color: var(--blue);
   }
-  .message.user .role-label {
-    color: var(--blue);
-  }
-  .message.assistant .role-label {
-    color: var(--gold-darker);
-  }
+
   .context-toggle {
     margin-top: 0.25rem;
     background: none;
@@ -412,11 +396,12 @@
   .chat-input-container {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
     position: sticky;
-    bottom: calc(var(--footer-height) + 1rem + 1px);
+    bottom: 0;
     background: var(--background);
     z-index: 100;
+    padding: 0 0 1rem;
   }
 
   .chat-input {
@@ -477,9 +462,6 @@
     gap: 0.5rem;
     flex-wrap: wrap;
     vertical-align: middle;
-    margin-top: 0.5rem;
-    padding: 0.5rem 0 0 0;
-    border-top: 1px solid var(--grey);
     font-size: var(--fs-xs);
     color: var(--grey-dark);
   }

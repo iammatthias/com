@@ -91,10 +91,12 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
 <style>
   nav {
     position: sticky;
-    top: 0;
+    top: 1rem;
     z-index: 101;
     background-color: var(--background);
-    border-bottom: var(--border);
+    border: var(--border);
+    border-radius: 5rem;
+    margin-top: 1rem;
   }
 
   .nav-content {
