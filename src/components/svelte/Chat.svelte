@@ -27,66 +27,221 @@
   let messages: Message[] = [];
   let input = "";
   let loading = false;
-  let error: string | null = null;
   let showContext: boolean[] = [false];
   let inputRef: HTMLInputElement | null = null;
   let chatEndRef: HTMLDivElement | null = null;
+
+  // Session management
+  const SESSION_STORAGE_KEY = "rag-chat-session";
+  let sessionId = "";
+
+  // Generate or load session ID
+  function initializeSession() {
+    const stored = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (stored) {
+      try {
+        const session = JSON.parse(stored);
+        sessionId = session.id;
+        messages = session.messages || [];
+        showContext = new Array(messages.length).fill(false);
+        console.log(`[SESSION] Loaded session ${sessionId} with ${messages.length} messages`);
+      } catch (e) {
+        console.warn("[SESSION] Failed to parse stored session, creating new one");
+        createNewSession();
+      }
+    } else {
+      createNewSession();
+    }
+  }
+
+  function createNewSession() {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    messages = [];
+    showContext = [];
+    saveSession();
+    console.log(`[SESSION] Created new session ${sessionId}`);
+  }
+
+  function saveSession() {
+    try {
+      const session = {
+        id: sessionId,
+        messages,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+      console.log(`[SESSION] Saved session ${sessionId} with ${messages.length} messages`);
+    } catch (e) {
+      console.warn("[SESSION] Failed to save session:", e);
+    }
+  }
 
   // Suggested prompts
   // cover posts, notes, recipes, art, open source projects, etc
   const prompts = ["What are your recent posts?", "What are your recent recipes?", "Tell me about your recent work"];
 
-  function scrollToBottom() {
-    if (chatEndRef) chatEndRef.scrollIntoView({ behavior: "smooth" });
+  function scrollToBottom(smooth = true) {
+    if (chatEndRef) {
+      // Use double requestAnimationFrame to ensure DOM has fully updated
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (chatEndRef) {
+            chatEndRef.scrollIntoView({
+              behavior: smooth ? "smooth" : "auto",
+              block: "end",
+              inline: "nearest",
+            });
+          }
+        });
+      });
+    }
+  }
+
+  // Debounced scroll function to prevent multiple rapid scroll calls
+  let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
+  function debouncedScrollToBottom(smooth = true, delay = 0) {
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
+    scrollTimeout = setTimeout(() => {
+      scrollToBottom(smooth);
+      scrollTimeout = null;
+    }, delay);
   }
 
   async function sendMessage(messageOverride?: string) {
-    error = null;
     const trimmed = (messageOverride !== undefined ? messageOverride : input).trim();
     if (!trimmed || loading) return;
+
+    // Add user message
     messages = [...messages, { role: "user", content: trimmed }];
     input = "";
     loading = true;
     showContext = [...showContext, false];
-    try {
-      const res = await fetch("/api/rag-chat.json", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
 
-        // Handle blocked messages differently than other errors
-        if (err.blocked) {
-          // Remove the user message that was blocked
-          messages = messages.slice(0, -1);
-          showContext = showContext.slice(0, -1);
-          // Show the suggestion as a helpful message
-          error = err.error || "This question isn't something I can help with.";
+    // Scroll to show the user message immediately, then prepare for loading indicator
+    await tick();
+    scrollToBottom(true);
+
+    // Retry logic for cold starts
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`[FRONTEND] Attempt ${attempt}/${maxRetries} - Sending request:`, {
+          message: trimmed,
+          sessionId: sessionId,
+        });
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+        const res = await fetch("/api/rag-chat.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: trimmed,
+            sessionId: sessionId,
+          }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        console.log(`[FRONTEND] Attempt ${attempt} - Fetch completed, response object:`, res);
+        console.log("[FRONTEND] Response status:", res.status, res.statusText);
+        console.log("[FRONTEND] Response headers:", Object.fromEntries(res.headers.entries()));
+
+        if (!res.ok) {
+          console.error("[FRONTEND] API request failed with status:", res.status);
+          const responseText = await res.text();
+          console.error("[FRONTEND] Error response body:", responseText);
+
+          let err: any = {};
+          try {
+            err = JSON.parse(responseText);
+          } catch (parseError) {
+            console.error("[FRONTEND] Failed to parse error response as JSON:", parseError);
+            err = { error: `Server error (${res.status}): ${responseText}` };
+          }
+
+          // For any error, add an assistant message explaining the issue
+          messages = [
+            ...messages,
+            {
+              role: "assistant",
+              content: err.error || `Sorry, I encountered an error (${res.status}). Please try again.`,
+              context: [],
+            },
+          ];
+          showContext = [...showContext, false];
+          saveSession();
           return;
         }
 
-        throw new Error(err.error || "Unknown error");
+        const responseText = await res.text();
+        console.log("[FRONTEND] Raw response text:", responseText);
+
+        let data: ChatResponse;
+        try {
+          data = JSON.parse(responseText);
+          console.log("[FRONTEND] Parsed response:", data);
+          console.log("[FRONTEND] Context received:", data.context);
+          console.log("[FRONTEND] Context length:", data.context?.length || 0);
+        } catch (parseError) {
+          console.error("[FRONTEND] Failed to parse response as JSON:", parseError);
+          console.error("[FRONTEND] Response text was:", responseText);
+          throw new Error(`Invalid JSON response: ${parseError}`);
+        }
+
+        // Add assistant response
+        messages = [...messages, { role: "assistant", content: data.answer, context: data.context }];
+        showContext = [...showContext, false];
+
+        // Save session after successful exchange
+        saveSession();
+
+        // Success! Reset loading state and scroll
+        loading = false;
+        await tick();
+        debouncedScrollToBottom(true, 100);
+        inputRef?.focus();
+        return;
+      } catch (e) {
+        console.error(`[FRONTEND] Attempt ${attempt} failed:`, e);
+        lastError = e instanceof Error ? e : new Error(String(e));
+
+        // If this is the last attempt, don't retry
+        if (attempt === maxRetries) {
+          break;
+        }
+
+        // Wait before retrying (exponential backoff)
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+        console.log(`[FRONTEND] Retrying in ${delay}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
-      const data: ChatResponse = await res.json();
-      console.log("[FRONTEND] Received response:", data);
-      console.log("[FRONTEND] Context received:", data.context);
-      console.log("[FRONTEND] Context length:", data.context?.length || 0);
-      messages = [...messages, { role: "assistant", content: data.answer, context: data.context }];
-      showContext = [...showContext, false];
-      await tick();
-    } catch (e) {
-      // Remove the user message for non-blocked errors too
-      messages = messages.slice(0, -1);
-      showContext = showContext.slice(0, -1);
-      error = e instanceof Error ? e.message : String(e);
-    } finally {
-      loading = false;
-      // Refocus the input after message processing completes
-      await tick();
-      inputRef?.focus();
     }
+
+    // If we get here, all retries failed
+    console.error("[FRONTEND] All retry attempts failed, last error:", lastError);
+    const errorMessage = lastError?.message || "Unknown error";
+    messages = [
+      ...messages,
+      {
+        role: "assistant",
+        content: `Sorry, I'm having trouble connecting right now. Error: ${errorMessage}. Please try again in a moment.`,
+        context: [],
+      },
+    ];
+    showContext = [...showContext, false];
+    saveSession();
+
+    // Always reset loading state and scroll
+    loading = false;
+    await tick();
+    debouncedScrollToBottom(true, 100);
+    inputRef?.focus();
   }
 
   function handleKeydown(e: KeyboardEvent) {
@@ -96,10 +251,13 @@
     }
   }
 
-  function toggleContext(idx: number) {
+  async function toggleContext(idx: number) {
     console.log(`[FRONTEND] Toggling context for message ${idx}`);
     console.log(`[FRONTEND] Message context:`, messages[idx]?.context);
     showContext = showContext.map((v, i) => (i === idx ? !v : v));
+    // Scroll to bottom after context toggle to ensure visibility
+    await tick();
+    debouncedScrollToBottom(true, 200);
   }
 
   function handlePromptClick(prompt: string) {
@@ -108,12 +266,27 @@
   }
 
   onMount(async () => {
+    // Initialize session and load any existing messages
+    initializeSession();
     // Focus input on mount
     if (inputRef) inputRef.focus();
+    // Scroll to bottom if there are existing messages
+    if (messages.length > 0) {
+      await tick();
+      debouncedScrollToBottom(true, 300);
+    }
   });
 
-  // Scroll to bottom when messages change
-  $: messages, scrollToBottom();
+  // Scroll to bottom when messages change (with debouncing to prevent conflicts)
+  $: if (messages.length > 0) {
+    debouncedScrollToBottom(true, 100);
+  }
+
+  // Scroll to bottom when loading state changes (to show/hide loading indicator)
+  $: if (loading) {
+    // Small delay to ensure loading indicator is rendered, use immediate scroll
+    debouncedScrollToBottom(false, 150);
+  }
 
   // Simple markdown parser for chat messages
   function parseMarkdown(text: string): string {
@@ -262,9 +435,6 @@
     {/if}
     <div tabindex="-1" aria-hidden="true" bind:this={chatEndRef}></div>
   </div>
-  {#if error}
-    <div class="error" role="alert">{error}</div>
-  {/if}
   <div class="chat-input-container">
     <form class="input-row" on:submit|preventDefault={() => sendMessage()} autocomplete="off">
       <label for="chat-input" class="sr-only">Type your message</label>
@@ -320,11 +490,16 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 0 0.5rem;
+    padding: 0 0.5rem 2rem 0.5rem; /* Minimal bottom padding for sticky input */
+    overflow-y: auto;
   }
   .message {
     outline: none;
     margin-bottom: 0.5rem;
+  }
+
+  .message:last-child {
+    margin-bottom: 1rem; /* Extra space for the last message */
   }
   .bubble {
     display: flex;
@@ -435,16 +610,6 @@
     color: var(--grey);
     cursor: not-allowed;
   }
-  .error {
-    color: var(--terracotta-darker);
-    background: var(--terracotta-lighter);
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
-    text-align: center;
-    font-size: 1rem;
-    border: var(--border);
-  }
   .sr-only {
     position: absolute;
     width: 1px;
@@ -487,6 +652,9 @@
       padding: 0.5rem;
       min-height: 70vh;
     }
+    .messages {
+      padding: 0 0.25rem 1.5rem 0.25rem; /* Minimal bottom padding for mobile */
+    }
     .bubble {
       font-size: 0.97rem;
       padding: 0.6rem 0.8rem;
@@ -502,7 +670,7 @@
     width: 2px;
     height: 2px;
     display: inline-block;
-    margin-top: 4px;
+    margin: 8px 0; /* Add vertical margin for better visibility */
     position: relative;
     border-radius: 2px;
     color: var(--color);

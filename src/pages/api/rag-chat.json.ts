@@ -187,6 +187,7 @@ function isReasonablyOnTopic(message: string): ValidationResult {
 
 interface ChatRequest {
   message: string;
+  sessionId?: string;
 }
 
 interface ChatResponse {
@@ -283,11 +284,14 @@ async function shouldRAG(message: string, enhancedContext: string, apiKey: strin
     return "RAG";
   }
 
-  const routingPrompt = `User: "${message}"
+  const routingPrompt = `User message: "${message}"
 
-Looking for something specific I've built/written, or just chatting?
+Determine if this needs specific content from Matthias's posts/projects (RAG) or can be handled as general conversation (CONVERSATION).
 
-RAG or CONVERSATION`;
+Use RAG for: specific projects, technical details, recipes, tutorials, things he's built
+Use CONVERSATION for: general chat, opinions, simple questions
+
+Respond only: RAG or CONVERSATION`;
 
   const result = await callGemini(routingPrompt, apiKey);
   console.log(`[ROUTING] User message: "${message}"`);
@@ -404,7 +408,7 @@ function filterAndPrioritizeByContentType(matches: any[], contentType?: string):
 
   // Log all matches with their paths for debugging
   matches.forEach((match, idx) => {
-    const matchPath = match.keyvalues?.path || match.path;
+    const matchPath = match.path || match.keyvalues?.path;
     console.log(`[CONTENT_TYPE] Match ${idx + 1}: "${match.title || match.slug}" has path: "${matchPath}"`);
   });
 
@@ -413,7 +417,7 @@ function filterAndPrioritizeByContentType(matches: any[], contentType?: string):
   const otherMatches: any[] = [];
 
   for (const match of matches) {
-    const matchPath = match.keyvalues?.path || match.path;
+    const matchPath = match.path || match.keyvalues?.path;
 
     // Check if this match is from the requested content type
     if (matchPath === contentType) {
@@ -448,7 +452,7 @@ function filterAndPrioritizeByContentType(matches: any[], contentType?: string):
     console.log(`[CONTENT_TYPE] ⚠️  No exact matches found for content type ${contentType}, using all matches`);
     console.log(
       `[CONTENT_TYPE] Available paths in results: ${matches
-        .map((m) => m.keyvalues?.path || m.path || "no-path")
+        .map((m) => m.path || m.keyvalues?.path || "no-path")
         .join(", ")}`
     );
     return matches;
@@ -494,17 +498,15 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
     const userMessage = body.message.trim();
+    const sessionId = body.sessionId || "unknown";
+
+    console.log(`[SESSION] Processing message for session: ${sessionId}`);
 
     // Content validation - check for inappropriate content and jailbreak attempts
     console.log(`[VALIDATION] Checking message: "${userMessage}"`);
     const contentValidation = await validateMessageContent(userMessage, apiKey);
     if (!contentValidation.isValid) {
       console.log(`[VALIDATION] Blocked message - reason: ${contentValidation.reason}`);
-
-      // Add processing delay to simulate realistic thinking time (0.5-1.5 seconds for validation)
-      const validationDelay = Math.floor(Math.random() * 1000) + 500; // 500-1500ms
-      console.log(`[PROCESSING] Adding ${validationDelay}ms delay for validation response`);
-      await new Promise((resolve) => setTimeout(resolve, validationDelay));
 
       // Return as normal chat response with angry faces instead of error
       const angryResponse: ChatResponse = {
@@ -522,11 +524,6 @@ export const POST: APIRoute = async ({ request }) => {
     const topicValidation = isReasonablyOnTopic(userMessage);
     if (!topicValidation.isValid) {
       console.log(`[VALIDATION] Off-topic message - reason: ${topicValidation.reason}`);
-
-      // Add processing delay to simulate realistic thinking time (0.5-1.5 seconds for validation)
-      const validationDelay = Math.floor(Math.random() * 1000) + 500; // 500-1500ms
-      console.log(`[PROCESSING] Adding ${validationDelay}ms delay for validation response`);
-      await new Promise((resolve) => setTimeout(resolve, validationDelay));
 
       // Return as normal chat response with angry faces instead of error
       const angryResponse: ChatResponse = {
@@ -673,6 +670,7 @@ export const POST: APIRoute = async ({ request }) => {
             text,
             title: jsonData.title || match.keyvalues?.name,
             slug: jsonData.slug || match.keyvalues?.slug,
+            path: jsonData.path || match.keyvalues?.path, // Add path field
             permalink:
               jsonData.permalink ||
               match.keyvalues?.permalink ||
@@ -876,17 +874,19 @@ export const POST: APIRoute = async ({ request }) => {
       }
 
       // Use enhanced context for conversation mode
-      const convoPrompt = `You're Matthias. Talk like you do on Warpcast - conversational, practical, curious.
+      const convoPrompt = `You are Matthias responding to someone asking about your work and interests. Be conversational, practical, and curious like you are on Warpcast.
 
+Context about you:
 ${enhancedContext}
 
 User: "${userMessage}"
 
-${contextSuggestions ? `Related content: ${contextSuggestions}` : ""}
+${contextSuggestions ? `Related content available: ${contextSuggestions}` : ""}
 
-Keep it short and helpful. Ask what they're actually trying to build if it's not clear. Max 150 words.`;
+Respond naturally as yourself, but only reference specific projects, tools, or experiences that are mentioned in the context above. If asked about something not in your context, say "I haven't written about that" or "That's not something I've shared publicly." Ask what they're trying to build if unclear. Max 150 words.`;
 
-      const answer = await callGemini(convoPrompt, apiKey);
+      let answer = await callGemini(convoPrompt, apiKey);
+
       const response: ChatResponse = {
         answer,
         context: contextMatches.map(
@@ -907,11 +907,6 @@ Keep it short and helpful. Ask what they're actually trying to build if it's not
       console.log(`[RESPONSE] Final response being sent:`, response);
       console.log(`[RESPONSE] Context length: ${response.context.length}`);
 
-      // Add processing delay to simulate realistic thinking time (1-3 seconds)
-      const processingDelay = Math.floor(Math.random() * 2000) + 1000; // 1000-3000ms
-      console.log(`[PROCESSING] Adding ${processingDelay}ms delay to simulate processing`);
-      await new Promise((resolve) => setTimeout(resolve, processingDelay));
-
       return new Response(JSON.stringify(response), {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -926,14 +921,14 @@ Keep it short and helpful. Ask what they're actually trying to build if it's not
         // For personal queries, use context data directly
         const contextString = contextMatches.map((c) => c.text).join("\n\n");
 
-        const personalPrompt = `You're Matthias responding based on your personal info.
+        const personalPrompt = `You are Matthias responding to someone asking about your personal background and work.
 
-Personal Context:
+Your personal information:
 ${contextString}
 
 User: "${userMessage}"
 
-Answer conversationally like you're explaining to a friend. Keep it under 150 words. Use "you can just..." for simple solutions.`;
+Answer conversationally as yourself based on the information above. If something isn't covered in your profile information, say "I haven't shared that publicly" or "That's not in my bio." Keep it under 150 words.`;
 
         answer = await callGemini(personalPrompt, apiKey);
       } else {
@@ -954,21 +949,24 @@ Answer conversationally like you're explaining to a friend. Keep it under 150 wo
           recencyNote = `\n\nNote: Content sorted by recency (newest first based on created date). Focus on the most recent items.`;
         }
 
-        const prompt = `You're Matthias responding based on your content.
+        const prompt = `You are Matthias responding to someone asking about your work and projects.
 
-Relevant posts: ${contextString}${recencyNote}
+Your published content:
+${contextString}${recencyNote}
 
 User: "${userMessage}"
 
-Answer based on what you've actually built. If it's simple, start with "you can just..." and explain briefly. Ask follow-ups if they need specifics. Max 150 words.`;
+Answer naturally as yourself based on what you've written above. If something isn't covered in your posts, say "I haven't written about that" or "That's not something I've shared." Be helpful and conversational. Max 150 words.`;
 
         answer = await callGemini(prompt, apiKey);
       }
     } else {
       // No relevant published information found
-      const fallbackPrompt = `User: "${userMessage}"
+      const fallbackPrompt = `You are Matthias. The user asked: "${userMessage}"
 
-Haven't written about this specifically. What are you trying to build?`;
+You don't have any published content that covers this topic. Respond naturally that you haven't written about this, and ask what they're trying to build to see if you can help in another way.
+
+Be helpful and conversational, but don't make up information about your experience with this topic.`;
 
       answer = await callGemini(fallbackPrompt, apiKey);
     }
@@ -992,11 +990,6 @@ Haven't written about this specifically. What are you trying to build?`;
     };
     console.log(`[RESPONSE] Final response being sent:`, response);
     console.log(`[RESPONSE] Context length: ${response.context.length}`);
-
-    // Add processing delay to simulate realistic thinking time (1-3 seconds)
-    const processingDelay = Math.floor(Math.random() * 2000) + 1000; // 1000-3000ms
-    console.log(`[PROCESSING] Adding ${processingDelay}ms delay to simulate processing`);
-    await new Promise((resolve) => setTimeout(resolve, processingDelay));
 
     return new Response(JSON.stringify(response), {
       status: 200,
