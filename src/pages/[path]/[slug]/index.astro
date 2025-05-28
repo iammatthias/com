@@ -57,7 +57,7 @@ const getCachedMarkdown = (content: string) => {
 const markdownContent = getCachedMarkdown(entry.body);
 ---
 
-<PageLayout path={path}>
+<PageLayout path={path} title={entry.data.title}>
   <div class='content'>
     <div class='back-link'>
       <a href={`/${entry.data.path}`}>↢ {entry.data.path}</a>
