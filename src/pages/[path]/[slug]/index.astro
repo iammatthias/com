@@ -11,7 +11,7 @@ import Img from "@/components/MDX/Img.astro";
 import OfficeSpace from "@/components/MDX/OfficeSpace.astro";
 import Vimeo from "@components/MDX/Vimeo.astro";
 import Grid from "@components/MDX/Grid.astro";
-import ContentChat from "@/components/svelte/ContentChat.svelte";
+import Chat from "@/components/svelte/Chat.svelte";
 
 // Cache for processed markdown content
 const markdownCache = new Map();
@@ -88,7 +88,7 @@ const markdownContent = getCachedMarkdown(entry.body);
     </article>
   </div>
 
-  <ContentChat entry={entry} client:only='svelte' />
+  <Chat entry={entry} client:only='svelte' />
 </PageLayout>
 
 <style>

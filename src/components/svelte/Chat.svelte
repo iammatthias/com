@@ -4,6 +4,9 @@
   import { marked } from "marked";
   import { CONVERSATION_STARTERS } from "../../lib/matthias-bot";
 
+  // Props - only entry needed, component behavior stays the same
+  export let entry: any = null;
+
   // Types
   type Role = "user" | "assistant";
   interface Message {
@@ -23,9 +26,10 @@
       cid?: string;
     }[];
   }
+
   interface ChatResponse {
     answer: string;
-    context: {
+    context?: {
       title?: string;
       slug?: string;
       permalink?: string;
@@ -41,74 +45,20 @@
   let showContext: boolean[] = [false];
   let inputRef: HTMLInputElement | null = null;
   let chatEndRef: HTMLDivElement | null = null;
+  let userIsScrolling = false;
+  let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
+  let messagesContainer: HTMLDivElement | null = null;
 
-  // Enhanced session management with cleanup
-  const SESSION_STORAGE_KEY = "rag-chat-session";
-  const MAX_STORED_MESSAGES = 50; // Limit stored messages to prevent bloat
-  const SESSION_CLEANUP_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
-  const MAX_SESSIONS_TO_KEEP = 5; // Keep only recent sessions
+  // Session management - same for both
+  const SESSION_STORAGE_KEY = "chat-session";
   let sessionId = "";
-  let cleanupInterval: ReturnType<typeof setInterval> | null = null;
 
-  // Storage cleanup functions
-  function cleanupOldSessions() {
-    try {
-      const allKeys = Object.keys(localStorage);
-      const sessionKeys = allKeys.filter((key) => key.startsWith("rag-chat-session"));
-
-      if (sessionKeys.length <= MAX_SESSIONS_TO_KEEP) return;
-
-      // Get session timestamps and sort by age
-      const sessions = sessionKeys
-        .map((key) => {
-          try {
-            const data = JSON.parse(localStorage.getItem(key) || "{}");
-            return { key, timestamp: data.timestamp || 0 };
-          } catch {
-            return { key, timestamp: 0 };
-          }
-        })
-        .sort((a, b) => b.timestamp - a.timestamp);
-
-      // Remove oldest sessions
-      const sessionsToRemove = sessions.slice(MAX_SESSIONS_TO_KEEP);
-      sessionsToRemove.forEach((session) => {
-        localStorage.removeItem(session.key);
-        console.log(`[CLEANUP] Removed old session: ${session.key}`);
-      });
-
-      console.log(`[CLEANUP] Cleaned up ${sessionsToRemove.length} old sessions`);
-    } catch (e) {
-      console.warn("[CLEANUP] Failed to cleanup old sessions:", e);
-    }
+  // Generate session ID
+  function createSession() {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    console.log(`[SESSION] Created new session ${sessionId}`);
   }
 
-  function cleanupCurrentSession() {
-    if (messages.length > MAX_STORED_MESSAGES) {
-      // Keep only recent messages
-      messages = messages.slice(-MAX_STORED_MESSAGES);
-      showContext = showContext.slice(-MAX_STORED_MESSAGES);
-      saveSession();
-      console.log(`[CLEANUP] Trimmed session to ${MAX_STORED_MESSAGES} messages`);
-    }
-  }
-
-  function checkStorageHealth() {
-    try {
-      // Check if localStorage is getting full
-      const testKey = "storage-test";
-      const testData = "x".repeat(1024); // 1KB test
-      localStorage.setItem(testKey, testData);
-      localStorage.removeItem(testKey);
-      return true;
-    } catch (e) {
-      console.warn("[STORAGE] Storage may be full, cleaning up...");
-      cleanupOldSessions();
-      return false;
-    }
-  }
-
-  // Generate or load session ID
   function initializeSession() {
     const stored = localStorage.getItem(SESSION_STORAGE_KEY);
     if (stored) {
@@ -121,34 +71,17 @@
         }));
         showContext = new Array(messages.length).fill(false);
         console.log(`[SESSION] Loaded session ${sessionId} with ${messages.length} messages`);
-
-        // Clean up if needed
-        cleanupCurrentSession();
       } catch (e) {
         console.warn("[SESSION] Failed to parse stored session, creating new one");
-        createNewSession();
+        createSession();
       }
     } else {
-      createNewSession();
+      createSession();
     }
-  }
-
-  function createNewSession() {
-    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    messages = [];
-    showContext = [];
-    saveSession();
-    console.log(`[SESSION] Created new session ${sessionId}`);
   }
 
   function saveSession() {
     try {
-      // Check storage health before saving
-      if (!checkStorageHealth()) {
-        console.warn("[SESSION] Storage issues detected, skipping save");
-        return;
-      }
-
       const session = {
         id: sessionId,
         messages: messages.map((msg) => ({
@@ -158,35 +91,39 @@
         timestamp: Date.now(),
       };
       localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
-      console.log(`[SESSION] Saved session ${sessionId} with ${messages.length} messages`);
     } catch (e) {
       console.warn("[SESSION] Failed to save session:", e);
-      // Try cleanup and retry once
-      cleanupOldSessions();
-      try {
-        const session = {
-          id: sessionId,
-          messages: messages.slice(-20), // Keep only last 20 messages as fallback
-          timestamp: Date.now(),
-        };
-        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
-        console.log("[SESSION] Saved session with reduced message count after cleanup");
-      } catch (e2) {
-        console.error("[SESSION] Failed to save session even after cleanup:", e2);
-      }
     }
   }
 
-  // Clear session function for user control
   function clearSession() {
     messages = [];
     showContext = [];
-    createNewSession();
+    createSession();
     console.log("[SESSION] Session cleared by user");
   }
 
-  // Use the centralized conversation starters
-  const prompts = CONVERSATION_STARTERS;
+  // Content-aware conversation starters - only difference in suggested questions
+  const getContentPrompts = () => {
+    if (!entry) return CONVERSATION_STARTERS;
+
+    const prompts = ["Summarize this"];
+
+    if (entry.data.path === "recipes") {
+      prompts.push("What ingredients do I need?", "How long does this take?", "Any substitutions?");
+    } else if (entry.data.path === "posts") {
+      prompts.push("What's the main point?", "Key takeaways?", "Related topics?");
+    } else if (entry.data.path === "art") {
+      prompts.push("What's the story behind this?", "Technical details?", "Inspiration?");
+    } else {
+      prompts.push("Explain the key concepts", "What should I know?", "Main highlights?");
+    }
+
+    return prompts;
+  };
+
+  // Use content-specific prompts if entry exists, otherwise general prompts
+  $: prompts = getContentPrompts();
 
   async function sendMessage(messageOverride?: string) {
     const trimmed = (messageOverride !== undefined ? messageOverride : input).trim();
@@ -205,133 +142,83 @@
 
     // Scroll to show the user message immediately
     await tick();
-    scrollToBottom();
+    smartScroll();
 
-    // Retry logic for cold starts
-    const maxRetries = 3;
-    let lastError: Error | null = null;
+    try {
+      console.log(`[CHAT] Sending message:`, trimmed);
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        console.log(`[FRONTEND] Attempt ${attempt}/${maxRetries} - Sending request:`, {
-          message: trimmed,
-          sessionId: sessionId,
-        });
+      // Prepare request body - same structure, API handles the difference
+      const requestBody: any = {
+        message: trimmed,
+        sessionId: sessionId,
+      };
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 45000); // Increased timeout for better responses
-
-        const res = await fetch("/api/rag-chat.json", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: trimmed,
-            sessionId: sessionId,
-          }),
-          signal: controller.signal,
-        });
-
-        clearTimeout(timeoutId);
-        console.log(`[FRONTEND] Attempt ${attempt} - Fetch completed, response object:`, res);
-        console.log("[FRONTEND] Response status:", res.status, res.statusText);
-
-        if (!res.ok) {
-          console.error("[FRONTEND] API request failed with status:", res.status);
-          const responseText = await res.text();
-          console.error("[FRONTEND] Error response body:", responseText);
-
-          let err: any = {};
-          try {
-            err = JSON.parse(responseText);
-          } catch (parseError) {
-            console.error("[FRONTEND] Failed to parse error response as JSON:", parseError);
-            err = { error: `Server error (${res.status}): ${responseText}` };
-          }
-
-          // For any error, add an assistant message explaining the issue
-          const errorMessage: Message = {
-            role: "assistant",
-            content: err.error || `Sorry, I encountered an error (${res.status}). Please try again.`,
-            context: [],
-            timestamp: Date.now(),
-          };
-          messages = [...messages, errorMessage];
-          showContext = [...showContext, false];
-          saveSession();
-          return;
-        }
-
-        const responseText = await res.text();
-        console.log("[FRONTEND] Raw response text:", responseText);
-
-        let data: ChatResponse;
-        try {
-          data = JSON.parse(responseText);
-          console.log("[FRONTEND] Parsed response:", data);
-          console.log("[FRONTEND] Context received:", data.context);
-          console.log("[FRONTEND] Context length:", data.context?.length || 0);
-        } catch (parseError) {
-          console.error("[FRONTEND] Failed to parse response as JSON:", parseError);
-          console.error("[FRONTEND] Response text was:", responseText);
-          throw new Error(`Invalid JSON response: ${parseError}`);
-        }
-
-        // Add assistant response with timestamp
-        const assistantMessage: Message = {
-          role: "assistant",
-          content: data.answer,
-          context: data.context,
-          timestamp: Date.now(),
+      // Add content data if available - API will use this for RAG vs vector search
+      if (entry) {
+        requestBody.content = {
+          title: entry.data.title,
+          slug: entry.data.slug,
+          path: entry.data.path,
+          body: entry.body,
+          tags: entry.data.tags,
+          created: entry.data.created,
+          updated: entry.data.updated,
         };
-        messages = [...messages, assistantMessage];
-        showContext = [...showContext, false];
-
-        // Save session after successful exchange
-        saveSession();
-
-        // Clean up if needed
-        cleanupCurrentSession();
-
-        // Success! Reset loading state and scroll
-        loading = false;
-        await tick();
-        scrollToBottom();
-        inputRef?.focus();
-        return;
-      } catch (e) {
-        console.error(`[FRONTEND] Attempt ${attempt} failed:`, e);
-        lastError = e instanceof Error ? e : new Error(String(e));
-
-        // If this is the last attempt, don't retry
-        if (attempt === maxRetries) {
-          break;
-        }
-
-        // Wait before retrying (exponential backoff)
-        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
-        console.log(`[FRONTEND] Retrying in ${delay}ms...`);
-        await new Promise((resolve) => setTimeout(resolve, delay));
       }
+
+      const res = await fetch("/api/chat.json", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log("[CHAT] Response status:", res.status);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("[CHAT] API request failed:", errorText);
+        throw new Error(`API request failed: ${res.status}`);
+      }
+
+      const data: ChatResponse = await res.json();
+      console.log("[CHAT] Response received:", data);
+
+      // Add assistant response with timestamp
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: data.answer,
+        context: data.context,
+        timestamp: Date.now(),
+      };
+      messages = [...messages, assistantMessage];
+      showContext = [...showContext, false];
+
+      // Save session after successful exchange
+      saveSession();
+
+      // Success! Reset loading state and scroll
+      loading = false;
+      await tick();
+      smartScroll();
+      inputRef?.focus();
+    } catch (e) {
+      console.error("[CHAT] Error:", e);
+      const errorMessage: Message = {
+        role: "assistant",
+        content: `Sorry, I'm having trouble right now. Please try again in a moment.`,
+        context: [],
+        timestamp: Date.now(),
+      };
+      messages = [...messages, errorMessage];
+      showContext = [...showContext, false];
+      saveSession();
+
+      // Always reset loading state and scroll
+      loading = false;
+      await tick();
+      smartScroll();
+      inputRef?.focus();
     }
-
-    // If we get here, all retries failed
-    console.error("[FRONTEND] All retry attempts failed, last error:", lastError);
-    const errorMessage = lastError?.message || "Unknown error";
-    const failureMessage: Message = {
-      role: "assistant",
-      content: `Sorry, I'm having trouble connecting right now. Error: ${errorMessage}. Please try again in a moment.`,
-      context: [],
-      timestamp: Date.now(),
-    };
-    messages = [...messages, failureMessage];
-    showContext = [...showContext, false];
-    saveSession();
-
-    // Always reset loading state and scroll
-    loading = false;
-    await tick();
-    scrollToBottom();
-    inputRef?.focus();
   }
 
   function handleKeydown(e: KeyboardEvent) {
@@ -342,12 +229,10 @@
   }
 
   async function toggleContext(idx: number) {
-    console.log(`[FRONTEND] Toggling context for message ${idx}`);
-    console.log(`[FRONTEND] Message context:`, messages[idx]?.context);
+    console.log(`[CONTEXT] Toggling context for message ${idx}`);
     showContext = showContext.map((v, i) => (i === idx ? !v : v));
-    // Scroll to bottom after context toggle to ensure visibility
     await tick();
-    scrollToBottom();
+    smartScroll();
   }
 
   function handlePromptClick(prompt: string) {
@@ -355,15 +240,43 @@
     sendMessage(prompt);
   }
 
+  function handleScroll() {
+    userIsScrolling = true;
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
+    scrollTimeout = setTimeout(() => {
+      userIsScrolling = false;
+    }, 1000);
+  }
+
+  function isNearBottom(): boolean {
+    if (!messagesContainer) return true;
+    const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+    return scrollHeight - scrollTop - clientHeight < 100;
+  }
+
+  function smartScroll() {
+    if (!userIsScrolling && isNearBottom()) {
+      requestAnimationFrame(() => {
+        scrollToBottom();
+      });
+    }
+  }
+
+  function scrollToBottom() {
+    if (chatEndRef) {
+      chatEndRef.scrollIntoView({
+        behavior: "auto",
+        block: "end",
+        inline: "nearest",
+      });
+    }
+  }
+
   onMount(async () => {
     // Initialize session and load any existing messages
     initializeSession();
-
-    // Set up periodic cleanup
-    cleanupInterval = setInterval(() => {
-      cleanupOldSessions();
-      cleanupCurrentSession();
-    }, SESSION_CLEANUP_INTERVAL);
 
     // Focus input on mount
     if (inputRef) inputRef.focus();
@@ -371,50 +284,52 @@
     // Scroll to bottom if there are existing messages
     if (messages.length > 0) {
       await tick();
-      scrollToBottom();
+      smartScroll();
+    }
+
+    // Set up scroll event listener
+    if (messagesContainer) {
+      messagesContainer.addEventListener("scroll", handleScroll);
     }
   });
 
   onDestroy(() => {
-    // Clean up interval
-    if (cleanupInterval) {
-      clearInterval(cleanupInterval);
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
+    if (messagesContainer) {
+      messagesContainer.removeEventListener("scroll", handleScroll);
     }
   });
 
   // Scroll to bottom when messages change
   $: if (messages.length > 0) {
-    tick().then(() => scrollToBottom());
+    tick().then(() => smartScroll());
   }
 
-  // Scroll to bottom when loading state changes (to show/hide loading indicator)
-  $: if (loading) {
-    // Small delay to ensure loading indicator is rendered, use immediate scroll
-    scrollToBottom();
+  // Scroll to bottom when loading state changes
+  $: if (loading && !userIsScrolling) {
+    smartScroll();
   }
 
   // Configure marked for safe rendering
   marked.setOptions({
-    breaks: true, // Convert line breaks to <br>
-    gfm: true, // GitHub Flavored Markdown
+    breaks: true,
+    gfm: true,
   });
 
-  // Safe markdown parser using marked
+  // Safe markdown parser
   function parseMarkdown(text: string): string {
     if (!text) return "";
 
     try {
-      // Use marked to parse markdown
       const html = marked.parse(text, { async: false }) as string;
-
-      // Basic XSS prevention - remove script tags and dangerous attributes
       return html
         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
         .replace(/on\w+="[^"]*"/gi, "")
         .replace(/javascript:/gi, "");
     } catch (error) {
       console.error("Markdown parsing error:", error);
-      // Fallback to escaped text if parsing fails
       return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
   }
@@ -433,101 +348,22 @@
     return date.toLocaleDateString();
   }
 
-  // Format context dates (handles string dates from content)
+  // Format context dates
   function formatContextDate(dateStr?: string): string {
     if (!dateStr) return "";
-
     try {
-      // Handle different date formats from content
-      let date: Date;
-
-      if (dateStr === "true" || dateStr === "false") {
-        return ""; // Skip boolean values
-      }
-
-      // Handle "YYYY-MM-DD HH:MM" format
-      if (dateStr.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/)) {
-        date = new Date(dateStr);
-      }
-      // Handle "YYYY-MM-DD" format
-      else if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        date = new Date(dateStr);
-      }
-      // Handle timestamp format
-      else if (/^\d+$/.test(dateStr)) {
-        date = new Date(parseInt(dateStr));
-      }
-      // Try parsing as-is
-      else {
-        date = new Date(dateStr);
-      }
-
-      // Check if date is valid
-      if (isNaN(date.getTime())) {
-        return "";
-      }
-
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return "";
       return date.toLocaleDateString();
     } catch (error) {
-      console.warn("Error formatting context date:", dateStr, error);
       return "";
-    }
-  }
-
-  // Filter context to only show sources that are likely referenced in the response
-  function filterRelevantContext(content: string, context: any[]): any[] {
-    if (!context || context.length === 0) return [];
-
-    const contentLower = content.toLowerCase();
-
-    return context.filter((ctx) => {
-      // Check if the title, slug, or key terms from the content are mentioned
-      const title = (ctx.title || "").toLowerCase();
-      const slug = (ctx.slug || "").toLowerCase();
-
-      // If title or slug is mentioned in the response, include it
-      if (title && contentLower.includes(title)) return true;
-      if (slug && contentLower.includes(slug)) return true;
-
-      // Check for specific content type mentions
-      if (title.includes("recipe") && contentLower.includes("recipe")) return true;
-      if (title.includes("spice") && contentLower.includes("spice")) return true;
-      if (title.includes("halal") && contentLower.includes("halal")) return true;
-
-      // For very short responses, be more lenient
-      if (content.length < 200 && context.length <= 2) return true;
-
-      return false;
-    });
-  }
-
-  function scrollToBottom() {
-    if (chatEndRef) {
-      requestAnimationFrame(() => {
-        if (chatEndRef) {
-          chatEndRef.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-            inline: "nearest",
-          });
-        }
-      });
     }
   }
 </script>
 
-<div class="chat-container" aria-label="RAG Chat Interface">
-  <!-- Chat header with session controls -->
-  <div class="chat-header">
-    <div class="session-info">
-      <span class="session-id">Session: {sessionId.split("_")[1]}</span>
-      <span class="message-count">{messages.length} messages</span>
-    </div>
-    <button class="clear-session-btn" on:click={clearSession} title="Clear conversation"> Clear Chat </button>
-  </div>
-
-  <!-- Messages area - independent positioning -->
-  <div class="chat-messages" role="log" aria-live="polite">
+<div class="chat-container" aria-label="Chat Interface">
+  <!-- Messages area -->
+  <div class="chat-messages" role="log" aria-live="polite" bind:this={messagesContainer}>
     {#each messages as msg, i}
       <div class="message {msg.role}">
         <div class="message-header">
@@ -544,37 +380,34 @@
           {/if}
         </div>
         {#if msg.role === "assistant" && msg.context && msg.context.length > 0}
-          {@const filteredContext = filterRelevantContext(msg.content, msg.context)}
-          {#if filteredContext.length > 0}
-            <div class="context-section">
-              <button
-                class="context-toggle"
-                aria-expanded={showContext[i]}
-                aria-controls={`context-${i}`}
-                on:click={() => toggleContext(i)}
-              >
-                {showContext[i] ? "Hide sources" : `Sources (${filteredContext.length})`}
-              </button>
-              {#if showContext[i]}
-                <div class="context-list" id={`context-${i}`}>
-                  {#each filteredContext as ctx}
-                    <div class="context-item">
-                      {#if ctx.permalink}
-                        <a href={ctx.permalink} target="_blank" rel="noopener noreferrer" class="context-link">
-                          {ctx.title || ctx.slug || ctx.permalink}
-                        </a>
-                      {:else}
-                        <span class="context-title">{ctx.title || ctx.slug || "Untitled"}</span>
-                      {/if}
-                      {#if ctx.published || ctx.created}
-                        <span class="context-date">{formatContextDate(ctx.created || ctx.published)}</span>
-                      {/if}
-                    </div>
-                  {/each}
-                </div>
-              {/if}
-            </div>
-          {/if}
+          <div class="context-section">
+            <button
+              class="context-toggle"
+              aria-expanded={showContext[i]}
+              aria-controls={`context-${i}`}
+              on:click={() => toggleContext(i)}
+            >
+              {showContext[i] ? "Hide sources" : `Sources (${msg.context.length})`}
+            </button>
+            {#if showContext[i]}
+              <div class="context-list" id={`context-${i}`}>
+                {#each msg.context as ctx}
+                  <div class="context-item">
+                    {#if ctx.permalink}
+                      <a href={ctx.permalink} target="_blank" rel="noopener noreferrer" class="context-link">
+                        {ctx.title || ctx.slug || ctx.permalink}
+                      </a>
+                    {:else}
+                      <span class="context-title">{ctx.title || ctx.slug || "Untitled"}</span>
+                    {/if}
+                    {#if ctx.published || ctx.created}
+                      <span class="context-date">{formatContextDate(ctx.created || ctx.published)}</span>
+                    {/if}
+                  </div>
+                {/each}
+              </div>
+            {/if}
+          </div>
         {/if}
       </div>
     {/each}
@@ -593,8 +426,18 @@
   </div>
 </div>
 
-<!-- Chat input - independent positioning -->
+<!-- Chat input -->
 <div class="chat-input-container">
+  <!-- Chat header -->
+  <div class="chat-header">
+    <div class="session-info">
+      <span class="session-id">Session: {sessionId.split("_")[1]}</span>
+      <span class="message-count">{messages.length} messages</span>
+    </div>
+    {#if messages.length > 0}
+      <button class="clear-session-btn" on:click={clearSession} title="Clear conversation"> Clear Chat </button>
+    {/if}
+  </div>
   <form class="input-row" on:submit|preventDefault={() => sendMessage()} autocomplete="off">
     <label for="chat-input" class="sr-only">Type your message</label>
     <input
@@ -638,6 +481,7 @@
   }
 
   .chat-header {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -19,8 +19,6 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
   <div class='dropdown-menu'>
     <a href='/'>Home</a>
     {contentPaths.map((path) => <a href={`/${path}`}>{path}</a>)}
-    <a href='/social'>Social</a>
-    <a href='/resume'>Resume</a>
     <a href='/onchain-analytics'>Onchain Analytics</a>
   </div>
 </nav>
