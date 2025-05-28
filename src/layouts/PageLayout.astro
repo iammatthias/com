@@ -107,6 +107,7 @@ if (title || path) {
   body {
     display: flex;
     flex-direction: column;
+    gap: 1rem;
     min-height: 100vh;
     position: relative;
   }
@@ -118,13 +119,14 @@ if (title || path) {
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-    min-height: calc(100vh - var(--nav-height) - 1rem - 2px);
+    min-height: calc(100vh - var(--nav-height) - 2rem - 2px);
     position: relative;
+    flex: 1;
   }
 
+  /* Apply constraints to most content */
   ::global(nav),
-  ::global(main > *),
-  ::global(.chat-container) {
+  ::global(main > *) {
     width: 100%;
     max-width: 600px;
     margin: 0 auto;

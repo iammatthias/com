@@ -118,91 +118,7 @@ async function fetchWithRetry(path: string, maxRetries = 3, baseDelay = 2000): P
   });
 }
 
-// Simplified helper to create basic context
-async function createBasicContext(contextData: any, collections: string[], logger: any): Promise<string> {
-  try {
-    const contextParts: string[] = [];
-
-    // Add basic personal context
-    contextParts.push("PERSONAL CONTEXT");
-    contextParts.push(`Name: ${contextData.name}`);
-    contextParts.push(`Title: ${contextData.title}`);
-    contextParts.push(`Tagline: ${contextData.tagline}`);
-
-    if (contextData.biography) {
-      contextParts.push(`\nBIOGRAPHY: ${contextData.biography}`);
-    }
-
-    // Add current role and work information
-    if (contextData.currentRole) {
-      contextParts.push(`\nCURRENT WORK: ${contextData.currentRole}`);
-    }
-
-    // Add contact information
-    if (contextData.contact) {
-      contextParts.push(`\nCONTACT INFORMATION:`);
-      if (contextData.contact.email) {
-        contextParts.push(`Email: ${contextData.contact.email}`);
-      }
-      if (contextData.contact.company) {
-        contextParts.push(`Company: ${contextData.contact.company.name} (${contextData.contact.company.url})`);
-      }
-    }
-
-    // Add social media platforms
-    if (contextData.socialPlatforms && contextData.socialPlatforms.length > 0) {
-      contextParts.push(`\nSOCIAL MEDIA PLATFORMS:`);
-      contextData.socialPlatforms.forEach((platform: any) => {
-        const status = platform.status === "active" ? " (ACTIVE)" : " (inactive)";
-        contextParts.push(`${platform.name}${status}: ${platform.username} - ${platform.description}`);
-        if (platform.url) {
-          contextParts.push(`  URL: ${platform.url}`);
-        }
-      });
-    }
-
-    // Add work history (recent positions)
-    if (contextData.workHistory && contextData.workHistory.length > 0) {
-      contextParts.push(`\nRECENT WORK HISTORY:`);
-      // Include the first 3 most recent positions
-      contextData.workHistory.slice(0, 3).forEach((job: any) => {
-        contextParts.push(`${job.company} - ${job.role} (${job.period})`);
-        if (job.achievements && job.achievements.length > 0) {
-          contextParts.push(`  Key achievements: ${job.achievements.slice(0, 2).join("; ")}`);
-        }
-      });
-    }
-
-    // Add education
-    if (contextData.education && contextData.education.length > 0) {
-      contextParts.push(`\nEDUCATION:`);
-      contextData.education.forEach((edu: any) => {
-        contextParts.push(`${edu.institution} - ${edu.degree} (${edu.period})`);
-      });
-    }
-
-    // Add personal interests
-    if (contextData.personalInterests && contextData.personalInterests.length > 0) {
-      contextParts.push(`\nPERSONAL INTERESTS: ${contextData.personalInterests.join(", ")}`);
-    }
-
-    // Add philosophy
-    if (contextData.philosophy) {
-      contextParts.push(`\nPHILOSOPHY: ${contextData.philosophy}`);
-    }
-
-    // Add available collections
-    contextParts.push(`\nAVAILABLE COLLECTIONS: ${collections.join(", ")}`);
-
-    const basicContext = contextParts.join("\n");
-    logger.info(`Enhanced context created for ${collections.length} collections`);
-
-    return basicContext;
-  } catch (error) {
-    logger.error(`Error creating basic context: ${error instanceof Error ? error.message : "Unknown error"}`);
-    return JSON.stringify(contextData, null, 2);
-  }
-}
+// Note: createBasicContext function removed - now using full profile.md content directly
 
 // Helper to load content for a specific path with concurrency
 async function loadContent(path: string, logger: any): Promise<any[]> {
@@ -224,109 +140,7 @@ async function loadContent(path: string, logger: any): Promise<any[]> {
   }
 }
 
-// Helper to load and parse profile.md for context
-async function loadProfileContext(logger: any): Promise<any> {
-  try {
-    const profilePath = path.join(process.cwd(), "src/content/profile.md");
-    const profileContent = await fs.readFile(profilePath, "utf-8");
-
-    if (profileContent.trim().length === 0) {
-      logger.warn("Profile.md is empty");
-      return null;
-    }
-
-    // Parse the markdown frontmatter and content
-    const { data: frontmatter, content } = matter(profileContent);
-
-    // Extract context data from the markdown content and frontmatter
-    const contextData = {
-      name: "Matthias Jordan",
-      title: frontmatter.title || "Growth Engineer & Photographer",
-      tagline:
-        frontmatter.description ||
-        "Growth engineer with 10+ years building marketing systems that drive real business outcomes.",
-      biography: content.split("\n").slice(0, 10).join("\n"), // First few lines as biography
-      currentRole: "Owner at day---break - Growth engineering consultancy",
-      contact: {
-        email: "matthias@day---break.com",
-        company: {
-          name: "day---break",
-          url: "https://day---break.com",
-        },
-      },
-      socialPlatforms: [
-        {
-          name: "Warpcast",
-          username: "@iammatthias",
-          url: "https://warpcast.com/iammatthias",
-          status: "active",
-          description: "Farcaster is a 'sufficiently decentralized' social protocol",
-        },
-        {
-          name: "Glass",
-          username: "@iam",
-          url: "https://glass.photo/iam",
-          status: "active",
-          description: "Photography-centric platform where I post most of my pictures",
-        },
-        {
-          name: "GitHub",
-          username: "@iammatthias",
-          url: "https://github.com/iammatthias",
-          status: "active",
-          description: "Work and side projects",
-        },
-        {
-          name: "LinkedIn",
-          username: "@iammatthias",
-          url: "https://linkedin.com/in/iammatthias",
-          status: "active",
-          description: "Professional career snapshot",
-        },
-      ],
-      workHistory: [
-        {
-          company: "day---break",
-          role: "Owner",
-          period: "August 2024 - Present",
-          achievements: ["40% ROI improvement", "25% average customer LTV increase"],
-        },
-        {
-          company: "Ice Barrel",
-          role: "Performance Marketing & Web Dev Manager",
-          period: "Dec 2023 - Sep 2024",
-          achievements: ["150% online revenue increase", "600% conversion rate improvement"],
-        },
-        {
-          company: "Revance",
-          role: "Design System Engineer",
-          period: "Jan 2023 - Jun 2024",
-          achievements: ["40% development time reduction", "GTM and GA4 implementation"],
-        },
-      ],
-      education: [
-        {
-          institution: "Brooks Institute",
-          degree: "Bachelor's Degree, Commercial Photography",
-          period: "2010-2014",
-        },
-      ],
-      personalInterests: [
-        "Photography",
-        "Growth Engineering",
-        "Solar-powered computing",
-        "Decentralized content systems",
-      ],
-      philosophy:
-        "Most marketing problems are engineering problems in disguise. Build systems that scale, measure everything that matters, optimize relentlessly.",
-    };
-
-    return contextData;
-  } catch (error) {
-    logger.error(`Error loading profile.md: ${error instanceof Error ? error.message : "Unknown error"}`);
-    return null;
-  }
-}
+// Note: loadProfileContext function removed - now loading profile.md content directly
 
 export function contentLoader(): Loader {
   return {
@@ -556,25 +370,71 @@ ${entry.body}`;
         logger.info("Performing selective cleanup of Pinata vectors");
         const allDigests = new Map(currentDigests);
 
-        // Handle context vectorization
+        // Handle context files vectorization
         let contextNeedsVectorization = false;
-        try {
-          const contextData = await loadProfileContext(logger);
-          if (contextData && collectionsCache) {
-            const basicContext = await createBasicContext(contextData, collectionsCache, logger);
-            const contextDigest = generateDigest(basicContext);
-            allDigests.set("context", contextDigest);
+        let contextEntries: Array<{
+          entry: any;
+          digest: string;
+          content: string;
+          name: string;
+        }> = [];
 
-            const existingContextDigest = existingPinataDigests.get("context");
-            if (contextDigest !== existingContextDigest) {
-              contextNeedsVectorization = true;
-              logger.info(`Context needs vectorization`);
-            } else {
-              logger.info(`Context up to date`);
+        try {
+          // Load context files from the context folder
+          const contextPath = path.join(process.cwd(), "src/content/context");
+          const contextFiles = await fs.readdir(contextPath);
+          const markdownFiles = contextFiles.filter((file) => file.endsWith(".md"));
+
+          logger.info(`Found ${markdownFiles.length} context files to process`);
+
+          for (const file of markdownFiles) {
+            const filePath = path.join(contextPath, file);
+            const fileContent = await fs.readFile(filePath, "utf-8");
+
+            if (fileContent.trim().length > 0) {
+              const { data: frontmatter, content } = matter(fileContent);
+
+              // Create complete content with frontmatter and body for vectorization
+              const completeContent = `---
+${Object.entries(frontmatter)
+  .map(([key, value]) => {
+    if (Array.isArray(value)) {
+      return `${key}:\n${value.map((v) => `  - ${v}`).join("\n")}`;
+    }
+    return `${key}: ${value}`;
+  })
+  .join("\n")}
+---
+
+${content}`;
+
+              const contextDigest = generateDigest(completeContent);
+              const contextId = frontmatter.slug || file.replace(".md", "");
+              allDigests.set(contextId, contextDigest);
+
+              const existingContextDigest = existingPinataDigests.get(contextId);
+              if (contextDigest !== existingContextDigest) {
+                contextNeedsVectorization = true;
+                contextEntries.push({
+                  entry: frontmatter,
+                  digest: contextDigest,
+                  content: completeContent,
+                  name: contextId,
+                });
+                logger.info(`Context file needs vectorization: ${frontmatter.title || file}`);
+              } else {
+                logger.info(`Context file up to date: ${frontmatter.title || file}`);
+              }
             }
           }
+
+          if (contextNeedsVectorization) {
+            logger.info(`Context needs vectorization - ${contextEntries.length} files to process`);
+          } else {
+            logger.info(`All context files up to date`);
+          }
         } catch (err) {
-          logger.error(`Failed to process profile.md: ${err instanceof Error ? err.message : String(err)}`);
+          logger.error(`Failed to process context files: ${err instanceof Error ? err.message : String(err)}`);
         }
 
         // Clean up outdated vectors
@@ -620,26 +480,39 @@ ${entry.body}`;
           logger.info("No entries need vectorization - all vectors are up to date");
         }
 
-        // Vectorize context if needed
-        if (contextNeedsVectorization && collectionsCache) {
-          await VECTORIZE_LIMIT(async () => {
-            try {
-              const contextData = await loadProfileContext(logger);
-              if (contextData) {
-                const basicContext = await createBasicContext(contextData, collectionsCache!, logger);
-                logger.info("Vectorizing basic context");
-                const contextDigest = generateDigest(basicContext);
+        // Vectorize context files if needed
+        if (contextNeedsVectorization && contextEntries.length > 0) {
+          logger.info(`Vectorizing ${contextEntries.length} context files`);
+
+          const contextVectorizePromises = contextEntries.map((contextEntry) =>
+            VECTORIZE_LIMIT(async () => {
+              try {
                 const contextKeyvalues = {
-                  type: "context",
-                  name: "context",
-                  digest: contextDigest, // Include the digest as metadata
+                  type: "profile",
+                  name: contextEntry.name,
+                  slug: contextEntry.name,
+                  title: contextEntry.entry.title || contextEntry.name,
+                  digest: contextEntry.digest,
                 };
-                await uploadAndVectorizeText(basicContext, "context.txt", contextDigest, contextKeyvalues);
+                await uploadAndVectorizeText(
+                  contextEntry.content,
+                  `${contextEntry.name}.md`,
+                  contextEntry.digest,
+                  contextKeyvalues
+                );
+                logger.info(`Successfully vectorized context file: ${contextEntry.entry.title || contextEntry.name}`);
+              } catch (err) {
+                logger.error(
+                  `Failed to vectorize context file ${contextEntry.name}: ${
+                    err instanceof Error ? err.message : String(err)
+                  }`
+                );
               }
-            } catch (err) {
-              logger.error(`Failed to vectorize profile.md: ${err instanceof Error ? err.message : String(err)}`);
-            }
-          });
+            })
+          );
+
+          await Promise.all(contextVectorizePromises);
+          logger.info("All context files vectorized successfully");
         }
       } catch (error) {
         logger.error(`Error loading entries: ${error instanceof Error ? error.message : "Unknown error"}`);

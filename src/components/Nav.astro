@@ -102,6 +102,8 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
   .nav-content {
     display: grid;
     grid-template-columns: max-content 1fr max-content;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 5rem;
   }
 
   .nav-item {
@@ -135,9 +137,10 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
     top: 100%;
     left: 0;
     right: 0;
-    height: calc(100dvh - var(--nav-height));
     background-color: var(--background);
-    border-top: var(--border);
+    border-radius: 1.75rem;
+    border: var(--border);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
   }
 
   .dropdown-menu.show {
@@ -146,7 +149,6 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
   }
 
   .dropdown-menu a {
-    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -168,6 +170,11 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
   }
 
   @media (max-width: 768px) {
+    nav {
+      width: calc(100% - 2rem);
+      margin: 0 auto 1rem;
+    }
+
     .nav-content {
       grid-template-columns: 1fr;
       padding: 0;
@@ -176,7 +183,6 @@ const contentPaths = [...new Set(content.map((entry) => entry.data.path))];
     .nav-item {
       border-right: none;
     }
-
     .nav-item:last-child {
       border-bottom: none;
     }

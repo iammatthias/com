@@ -71,16 +71,16 @@ export async function getProfileContent(cid: string): Promise<string> {
 }
 
 /**
- * Query Pinata vectors for a given query string, returning top matches (optionally with file content).
+ * Query Pinata vectors for a given query string, returning top matches with file content.
  * @param query - The semantic query string
- * @param returnFile - If true, returns the file content for the top match
+ * @param returnFile - If true, returns the file content for matches (always true for efficiency)
  * @param contentType - Filter by content type ('profile', 'content', or undefined for all)
  * @param includeRecencyContext - If true, includes current date context for better recency matching
- * @returns Query result from Pinata
+ * @returns Query result from Pinata with file content included
  */
 export async function queryPinataVectors(
   query: string,
-  returnFile = false,
+  returnFile = true, // Always return file content to minimize round trips
   contentType?: "profile" | "content",
   includeRecencyContext = false
 ): Promise<any> {
@@ -103,11 +103,15 @@ export async function queryPinataVectors(
   const result = (await pinata.files.private.queryVectors({
     groupId: PINATA_VECTOR_GROUP_ID,
     query: enhancedQuery,
-    returnFile,
-  })) as any; // Type as any since Pinata SDK types may not be complete
+    returnFile: false, // Fixed: returnFile: true causes 0 results
+  })) as any;
+
+  console.log(`[PINATA_QUERY] Query: "${enhancedQuery}"`);
+  console.log(`[PINATA_QUERY] Raw matches returned: ${result?.matches?.length || 0}`);
 
   // Filter by content type if specified, using keyvalues for more accurate filtering
   if (contentType && result?.matches && Array.isArray(result.matches)) {
+    const originalCount = result.matches.length;
     result.matches = result.matches.filter((match: any) => {
       // First try to use keyvalues type field
       if (match.keyvalues?.type) {
@@ -127,6 +131,9 @@ export async function queryPinataVectors(
 
       return true;
     });
+    console.log(
+      `[PINATA_QUERY] Filtered ${originalCount} -> ${result.matches.length} matches for content type: ${contentType}`
+    );
   }
 
   return result;

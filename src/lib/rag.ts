@@ -13,6 +13,112 @@ export interface RAGChunk {
   };
 }
 
+// Core RAG functionality for content processing
+export interface ContentMatch {
+  file_id: string;
+  cid: string;
+  score: number;
+  text: string;
+  title?: string;
+  slug?: string;
+  permalink?: string;
+  published?: string;
+  updated?: string;
+  created?: string;
+}
+
+// Query analysis for better search targeting
+export interface QueryAnalysis {
+  isPersonalQuery: boolean;
+  isRecencyQuery: boolean;
+  contentType?: string;
+  searchTerms: string[];
+}
+
+// Analyze user query to determine search strategy
+export function analyzeUserQuery(message: string): QueryAnalysis {
+  const personalPatterns =
+    /\b(where do you work|what do you do|who are you|about you|your work|your job|your company|social media|are you on|contact|email|your background|your experience|day---break|tell me about yourself)\b/i;
+  const isPersonalQuery = personalPatterns.test(message);
+
+  const recencyPatterns = /\b(latest|recent|newest|last|new|current|updated)\b/i;
+  const isRecencyQuery = recencyPatterns.test(message);
+
+  // Determine content type for better search
+  let contentType: string | undefined;
+  if (isPersonalQuery) {
+    contentType = "profile";
+  } else if (/\b(recipe|recipes|cooking|food|meal|cook|bake)\b/i.test(message)) {
+    contentType = "recipes";
+  } else if (/\b(project|projects|work|build|building|development|coding)\b/i.test(message)) {
+    contentType = "projects";
+  } else if (/\b(photo|photos|photography|image|images|camera|cameras|gear)\b/i.test(message)) {
+    contentType = "photography";
+  } else if (/\b(post|posts|article|articles|blog|writing|write|wrote)\b/i.test(message)) {
+    contentType = "posts";
+  }
+
+  // Extract search terms
+  const searchTerms = extractSearchTerms(message, contentType);
+
+  return { isPersonalQuery, isRecencyQuery, contentType, searchTerms };
+}
+
+// Extract meaningful search terms from user message
+function extractSearchTerms(message: string, contentType?: string): string[] {
+  // Content-specific search optimization
+  const contentSearchTerms: Record<string, string[]> = {
+    profile: ["Matthias", "Jordan", "profile", "personal", "information", "background"],
+    recipes: ["recipe", "cooking", "food", "ingredient", "meal", "cook", "bake", "kitchen"],
+    projects: ["project", "development", "coding", "build", "programming", "software", "web", "app"],
+    photography: ["photography", "photo", "camera", "image", "picture", "gear", "equipment"],
+    posts: ["blog", "post", "article", "writing", "content", "thoughts", "opinion"],
+  };
+
+  if (contentType && contentSearchTerms[contentType]) {
+    return contentSearchTerms[contentType];
+  }
+
+  // Extract meaningful terms from the message
+  const words = message
+    .toLowerCase()
+    .replace(/[^\w\s]/g, " ")
+    .split(/\s+/)
+    .filter((word) => word.length > 2 && !STOPWORDS.has(word));
+
+  return words.slice(0, 10); // Limit to top 10 terms
+}
+
+// Process and format RAG context for prompts
+export function formatRAGContext(matches: ContentMatch[], isPersonalQuery: boolean = false): string {
+  if (matches.length === 0) return "";
+
+  return matches
+    .map((match) => {
+      const date = match.created || match.published || "unknown date";
+      const title = match.title || "Content";
+      return `${title} (${date}): ${match.text}`;
+    })
+    .join("\n\n");
+}
+
+// Generate content suggestions from matches
+export function extractContentSuggestions(matches: ContentMatch[]): string[] {
+  const suggestions: string[] = [];
+
+  for (const match of matches) {
+    if (match.title && !suggestions.includes(match.title)) {
+      suggestions.push(match.title);
+    } else if (match.slug && !suggestions.includes(match.slug)) {
+      suggestions.push(match.slug);
+    }
+
+    if (suggestions.length >= 3) break;
+  }
+
+  return suggestions;
+}
+
 // ---- STOPWORDS ----
 export const STOPWORDS = new Set([
   "a",

@@ -1,5 +1,5 @@
 ---
-import Img from "./Img.astro";
+// import Img from "./Img.astro";
 const { sensor } = Astro.props;
 
 // Fetch images server-side
@@ -40,7 +40,7 @@ try {
 
           return (
             <div class='image-container'>
-              <Img src={proxyUrl} alt={`Office space image from ${sensor}`} />
+              <img src={proxyUrl} alt={`Office space image from ${sensor}`} />
             </div>
           );
         })

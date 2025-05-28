@@ -11,6 +11,7 @@ import Img from "@/components/MDX/Img.astro";
 import OfficeSpace from "@/components/MDX/OfficeSpace.astro";
 import Vimeo from "@components/MDX/Vimeo.astro";
 import Grid from "@components/MDX/Grid.astro";
+import ContentChat from "@/components/svelte/ContentChat.svelte";
 
 // Cache for processed markdown content
 const markdownCache = new Map();
@@ -57,16 +58,20 @@ const markdownContent = getCachedMarkdown(entry.body);
 ---
 
 <PageLayout path={path}>
-  <div class='grid'>
-    <div class='post-meta'>
-      <h1>{entry.data.title}</h1>
-      <p>
-        Published {new Date(entry.data.created).toLocaleDateString()}.
-        {
-          new Date(entry.data.updated).getTime() - new Date(entry.data.created).getTime() > 24 * 60 * 60 * 1000 &&
-            `Last updated ${new Date(entry.data.updated).toLocaleDateString()}.`
-        }
-      </p>
+  <div class='content'>
+    <div class='back-link'>
+      <a href={`/${entry.data.path}`}>↢ {entry.data.path}</a>
+    </div>
+
+    <h1>{entry.data.title}</h1>
+
+    <div class='meta'>
+      <p>Published {new Date(entry.data.created).toLocaleDateString()}</p>
+      {
+        new Date(entry.data.updated).getTime() - new Date(entry.data.created).getTime() > 24 * 60 * 60 * 1000 && (
+          <p>Updated {new Date(entry.data.updated).toLocaleDateString()}</p>
+        )
+      }
       <div class='tags'>
         {
           entry.data.tags.map((tag: any) => (
@@ -76,153 +81,101 @@ const markdownContent = getCachedMarkdown(entry.body);
           ))
         }
       </div>
-      <p class='small capitalize'><a href={`/${entry.data.path}`}>↢ {entry.data.path}</a></p>
     </div>
-    <div class='article-container'>
-      <article>
-        <Markdown sanitize={{ allowComponents: true }} content={markdownContent} components={components} />
-      </article>
-    </div>
+
+    <article>
+      <Markdown sanitize={{ allowComponents: true }} content={markdownContent} components={components} />
+    </article>
   </div>
+
+  <ContentChat entry={entry} client:only='svelte' />
 </PageLayout>
 
 <style>
-  .grid {
-    display: grid;
-    grid-template-columns: calc(var(--meta-column) - var(--aside-width)) 1fr;
-    position: relative;
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
-    @media (max-width: 1159px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .post-meta {
+  .content {
+    width: 100%;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    position: sticky;
-    top: calc(var(--nav-height));
-    height: fit-content;
-    align-self: start;
-    height: 100%;
-    max-height: calc(100vh - var(--nav-height) - var(--footer-height));
-    overflow-y: auto;
-    border-right: var(--border);
-    padding: 1rem;
-    @media (max-width: 1159px) {
-      border-right: none;
-      max-width: 600px;
-      position: relative;
-      top: 0;
-    }
+    gap: 1rem;
+    padding: 0 1.5rem;
+    flex-shrink: 0;
+  }
 
-    p,
-    .tags {
-      font-size: 12px;
-    }
+  .back-link {
+    font-size: 0.9rem;
+    text-transform: capitalize;
+  }
+
+  .back-link a {
+    color: var(--grey-dark);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .back-link a:hover {
+    color: var(--color);
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    color: var(--color);
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--grey-dark);
+  }
+
+  .meta p {
+    margin: 0;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tags span {
+    font-size: 0.8rem;
+  }
+
+  .tags a {
+    color: var(--grey-dark);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .tags a:hover {
+    color: var(--color);
   }
 
   article {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 2rem 1rem;
-  }
-
-  article > :global(*) {
-    max-width: 600px;
-    width: 100%;
-  }
-
-  article > :global(pre) {
-    @media (max-width: 1159px) {
-      max-width: calc(100vw - var(--aside-width) - 4rem);
-    }
-  }
-
-  article > :global(.office-space-container) {
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  article > :global(.sub-grid) {
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
     gap: 1.5rem;
-
-    &:has(> .image-container:nth-of-type(1):nth-last-of-type(1)) {
-      max-width: 600px;
-      margin: 0;
-    }
+    line-height: 1.6;
+    margin-top: 1rem;
   }
 
   @media (max-width: 768px) {
-    .grid {
-      grid-template-columns: 1fr;
+    .content {
+      padding: 0 1rem;
     }
 
-    .post-meta {
-      position: relative;
-      top: 0;
-      max-height: none;
-      overflow-y: visible;
-      padding: 16px;
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    .meta {
+      font-size: 0.85rem;
     }
   }
 </style>
-
-<script>
-  // Function to update article max width
-  function updateArticleMaxWidth() {
-    const article = document.querySelector(".article-container");
-    const aside = document.querySelector("aside");
-    const meta = document.querySelector(".post-meta, .meta");
-
-    if (article) {
-      // Get window width
-      const windowWidth = window.innerWidth;
-
-      // Get aside width (default to CSS variable if element not found)
-      const asideWidth = aside
-        ? aside.getBoundingClientRect().width
-        : parseInt(getComputedStyle(document.documentElement).getPropertyValue("--aside-width"));
-
-      // Get meta width (default to CSS variable if element not found)
-      const metaWidth = meta
-        ? meta.getBoundingClientRect().width
-        : parseInt(getComputedStyle(document.documentElement).getPropertyValue("--meta-column"));
-
-      // Calculate available width
-      const availableWidth = windowWidth - asideWidth - metaWidth;
-
-      // Set the article max width
-      document.documentElement.style.setProperty("--article-max-width", `${availableWidth}px`);
-    }
-  }
-
-  // Update on initial page load
-  document.addEventListener("astro:page-load", () => {
-    console.log("Page load event");
-    setTimeout(updateArticleMaxWidth, 0);
-  });
-
-  // Update after view transitions
-  document.addEventListener("astro:after-swap", () => {
-    console.log("After swap event");
-    setTimeout(updateArticleMaxWidth, 0);
-  });
-
-  // Update on resize
-  window.addEventListener("resize", updateArticleMaxWidth);
-
-  // Initial call for first page load
-  setTimeout(updateArticleMaxWidth, 0);
-</script>
