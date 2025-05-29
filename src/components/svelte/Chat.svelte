@@ -429,15 +429,13 @@
 <!-- Chat input -->
 <div class="chat-input-container">
   <!-- Chat header -->
-  <div class="chat-header">
+  <!-- <div class="chat-header">
     <div class="session-info">
       <span class="session-id">Session: {sessionId.split("_")[1]}</span>
       <span class="message-count">{messages.length} messages</span>
     </div>
-    {#if messages.length > 0}
-      <button class="clear-session-btn" on:click={clearSession} title="Clear conversation"> Clear Chat </button>
-    {/if}
-  </div>
+    
+  </div> -->
   <form class="input-row" on:submit|preventDefault={() => sendMessage()} autocomplete="off">
     <label for="chat-input" class="sr-only">Type your message</label>
     <input
@@ -464,6 +462,9 @@
       {#each prompts as prompt}
         <button type="button" class="prompt-btn" on:click={() => handlePromptClick(prompt)}>{prompt}</button>
       {/each}
+      {#if messages.length > 0}
+        <button class="clear-session-btn" on:click={clearSession} title="Clear conversation"> Clear Chat </button>
+      {/if}
     </div>
   </div>
 </div>
@@ -486,7 +487,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 0.5rem;
-    border-bottom: 1px solid var(--grey-light);
+    flex-wrap: wrap;
   }
 
   .session-info {
@@ -505,7 +506,7 @@
     color: var(--grey-dark);
     border: none;
     border-radius: 0.5rem;
-    padding: 0.25rem 0.75rem;
+    padding: 0.25rem 0.75rem 0.1rem;
     font-size: 0.85rem;
     cursor: pointer;
     transition: background 0.2s;
@@ -580,10 +581,6 @@
   .message.assistant .bubble {
     border-left: 4px solid var(--gold);
     font-weight: 400;
-  }
-
-  .context-section {
-    border-top: 1px solid var(--grey-light);
   }
 
   .context-toggle {
