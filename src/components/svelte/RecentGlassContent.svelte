@@ -73,7 +73,13 @@
   {#each glassEntries as entry}
     <div class="glass-content">
       <a href={entry.share_url} target="_blank" rel="noopener noreferrer">
-        <img src={entry.src} width={entry.width} height={entry.height} alt="Glass photo" loading="lazy" />
+        <img
+          src={entry.src}
+          width={entry.width}
+          height={entry.height}
+          alt="A post originally published on Glass"
+          loading="lazy"
+        />
       </a>
     </div>
   {/each}

@@ -11,25 +11,25 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "^4.3.0",
-    "@astrojs/sitemap": "^3.4.0",
+    "@astrojs/sitemap": "^3.4.1",
     "@astrojs/svelte": "^7.1.0",
-    "@astrojs/vercel": "^8.1.4",
+    "@astrojs/vercel": "^8.1.5",
     "@google/generative-ai": "^0.24.1",
-    "@rainbow-me/rainbowkit": "^2.2.5",
+    "@rainbow-me/rainbowkit": "^2.2.6",
     "@resvg/resvg-js": "^2.6.2",
     "@types/marked": "^6.0.0",
-    "astro": "5.8.0",
+    "astro": "5.9.1",
     "astro-capo": "^0.0.1",
     "astro-remote": "^0.3.4",
     "astro-seo": "^0.8.4",
     "gray-matter": "^4.0.3",
     "marked": "^15.0.12",
     "p-limit": "^6.2.0",
-    "pinata": "^2.4.3",
-    "satori": "^0.13.1",
+    "pinata": "^2.4.5",
+    "satori": "^0.14.0",
     "satori-html": "^0.3.2",
-    "svelte": "^5.33.4",
+    "svelte": "^5.33.18",
     "typescript": "^5.8.3",
-    "viem": "^2.30.1"
+    "viem": "^2.31.0"
   }
 }

@@ -60,7 +60,7 @@
   }
 
   function initializeSession() {
-    const stored = localStorage.getItem(SESSION_STORAGE_KEY);
+    const stored = sessionStorage.getItem(SESSION_STORAGE_KEY);
     if (stored) {
       try {
         const session = JSON.parse(stored);
@@ -90,7 +90,7 @@
         })),
         timestamp: Date.now(),
       };
-      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+      sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
     } catch (e) {
       console.warn("[SESSION] Failed to save session:", e);
     }
@@ -100,6 +100,8 @@
     messages = [];
     showContext = [];
     createSession();
+    // Clear sessionStorage too
+    sessionStorage.removeItem(SESSION_STORAGE_KEY);
     console.log("[SESSION] Session cleared by user");
   }
 
