@@ -144,7 +144,7 @@
 
     // Scroll to show the user message immediately
     await tick();
-    smartScroll();
+    scrollToBottom();
 
     try {
       console.log(`[CHAT] Sending message:`, trimmed);
@@ -201,7 +201,7 @@
       // Success! Reset loading state and scroll
       loading = false;
       await tick();
-      smartScroll();
+      scrollToBottom();
       inputRef?.focus();
     } catch (e) {
       console.error("[CHAT] Error:", e);
@@ -218,7 +218,7 @@
       // Always reset loading state and scroll
       loading = false;
       await tick();
-      smartScroll();
+      scrollToBottom();
       inputRef?.focus();
     }
   }
@@ -234,7 +234,7 @@
     console.log(`[CONTEXT] Toggling context for message ${idx}`);
     showContext = showContext.map((v, i) => (i === idx ? !v : v));
     await tick();
-    smartScroll();
+    scrollToBottom();
   }
 
   function handlePromptClick(prompt: string) {
@@ -252,28 +252,21 @@
     }, 1000);
   }
 
-  function isNearBottom(): boolean {
-    if (!messagesContainer) return true;
-    const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
-    return scrollHeight - scrollTop - clientHeight < 100;
-  }
-
-  function smartScroll() {
-    if (!userIsScrolling && isNearBottom()) {
-      requestAnimationFrame(() => {
-        scrollToBottom();
-      });
-    }
-  }
-
   function scrollToBottom() {
     if (chatEndRef) {
       chatEndRef.scrollIntoView({
-        behavior: "auto",
-        block: "end",
+        behavior: "smooth",
+        block: "start",
         inline: "nearest",
       });
     }
+  }
+
+  // Always scroll for new messages - no need to check user scrolling for new content
+  function smartScroll() {
+    requestAnimationFrame(() => {
+      scrollToBottom();
+    });
   }
 
   onMount(async () => {
@@ -286,32 +279,30 @@
     // Scroll to bottom if there are existing messages
     if (messages.length > 0) {
       await tick();
-      smartScroll();
+      scrollToBottom();
     }
 
-    // Set up scroll event listener
-    if (messagesContainer) {
-      messagesContainer.addEventListener("scroll", handleScroll);
-    }
+    // Set up scroll event listener on window for native page scroll
+    window.addEventListener("scroll", handleScroll);
   });
 
   onDestroy(() => {
     if (scrollTimeout) {
       clearTimeout(scrollTimeout);
     }
-    if (messagesContainer) {
-      messagesContainer.removeEventListener("scroll", handleScroll);
-    }
+    window.removeEventListener("scroll", handleScroll);
   });
 
-  // Scroll to bottom when messages change
+  // Scroll to bottom when messages change - always show new messages
   $: if (messages.length > 0) {
-    tick().then(() => smartScroll());
+    tick().then(() => {
+      smartScroll();
+    });
   }
 
-  // Scroll to bottom when loading state changes
-  $: if (loading && !userIsScrolling) {
-    smartScroll();
+  // Scroll to bottom when loading state changes - always show loading indicator
+  $: if (loading) {
+    tick().then(() => smartScroll());
   }
 
   // Configure marked for safe rendering
@@ -475,7 +466,8 @@
   .chat-container {
     max-width: 600px;
     width: 100%;
-    margin: 0 auto;
+    height: 100%;
+    margin: auto auto 0;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -523,12 +515,11 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 0 0.5rem 2rem 0.5rem;
-    margin-bottom: 8rem; /* Space for fixed input */
+    padding: 0 0.5rem;
   }
 
   .message:last-child {
-    margin-bottom: 1rem;
+    margin-bottom: 0;
   }
 
   .message-header {
@@ -643,15 +634,13 @@
     margin-right: 0.25rem;
   }
 
-  /* Chat input - positioned independently */
+  /* Chat input - sticky positioning within document flow */
   .chat-input-container {
     max-width: 600px;
     width: 100%;
     margin: 0 auto;
-    position: fixed;
+    position: sticky;
     bottom: 0;
-    left: 0;
-    right: 0;
     background: var(--background);
     border-top: 1px solid var(--grey-light);
     padding: 1rem;
@@ -659,7 +648,6 @@
     flex-direction: column;
     gap: 1rem;
     z-index: 100;
-    /* Center the content with max-width like other elements */
     align-items: center;
   }
 
@@ -756,7 +744,7 @@
     }
 
     .chat-messages {
-      padding: 0 0.25rem 2rem 0.25rem;
+      padding: 0 0.25rem 1rem 0.25rem;
     }
 
     .bubble {
@@ -767,6 +755,10 @@
     .chat-input {
       font-size: 0.97rem;
       padding: 0.6rem 0.8rem;
+    }
+
+    .chat-input-container {
+      padding: 0.75rem;
     }
   }
 

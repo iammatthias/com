@@ -34,6 +34,7 @@ const contentSchema = z.object({
   tags: z.array(z.string()),
   path: z.string(),
   excerpt: z.string().optional(),
+  pinata_cid: z.string().optional(),
 });
 
 type ContentType = z.infer<typeof contentSchema>;
@@ -243,6 +244,7 @@ export function contentLoader(): Loader {
                         tags: entry.frontmatter.tags,
                         path: entry.frontmatter.path,
                         excerpt: entry.frontmatter.excerpt,
+                        pinata_cid: entry.frontmatter.pinata_cid,
                       },
                       body: entry.content,
                     };
@@ -447,6 +449,9 @@ ${content}`;
         if (entriesToVectorize.length > 0) {
           logger.info(`Vectorizing ${entriesToVectorize.length} new or updated entries`);
 
+          // Create a map to store CIDs for updating content records
+          const cidMap = new Map<string, string>();
+
           const vectorizePromises = entriesToVectorize.map(
             ({ entry, collection, digest, content, permalinkPath, name }) =>
               VECTORIZE_LIMIT(async () => {
@@ -464,9 +469,16 @@ ${content}`;
                     path: entry.path,
                   };
 
-                  // Upload raw markdown directly
-                  await uploadAndVectorizeText(content, entryName, digest, keyvalues);
-                  logger.info(`Successfully vectorized entry: ${name} (${entry.slug})`);
+                  // Upload and capture the CID
+                  const result = await uploadAndVectorizeText(content, entryName, digest, keyvalues);
+                  const cid = result?.cid || result?.IpfsHash;
+
+                  if (cid) {
+                    cidMap.set(entry.slug, cid);
+                    logger.info(`Successfully vectorized entry: ${name} (${entry.slug}) - CID: ${cid}`);
+                  } else {
+                    logger.warn(`Vectorized entry ${entry.slug} but no CID returned`);
+                  }
                 } catch (err) {
                   logger.error(
                     `Failed to vectorize entry ${entry.slug}: ${err instanceof Error ? err.message : String(err)}`
@@ -476,6 +488,41 @@ ${content}`;
           );
 
           await Promise.all(vectorizePromises);
+
+          // Update content records with CIDs
+          if (cidMap.size > 0) {
+            logger.info(`Updating ${cidMap.size} content records with CIDs`);
+
+            // Update cache with CIDs
+            for (const [collection, collectionCache] of contentCache!.entries()) {
+              const updatedEntries = collectionCache.entries.map((entry) => {
+                const cid = cidMap.get(entry.data.slug);
+                if (cid) {
+                  return {
+                    ...entry,
+                    data: {
+                      ...entry.data,
+                      pinata_cid: cid,
+                    },
+                  };
+                }
+                return entry;
+              });
+
+              // Update cache
+              contentCache!.set(collection, {
+                ...collectionCache,
+                entries: updatedEntries,
+              });
+
+              // Update store
+              updatedEntries.forEach((entry) => {
+                if (cidMap.has(entry.data.slug)) {
+                  store.set(entry);
+                }
+              });
+            }
+          }
         } else {
           logger.info("No entries need vectorization - all vectors are up to date");
         }

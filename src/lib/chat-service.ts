@@ -1,5 +1,13 @@
 // Unified Chat Service - handles both general Q&A and content-specific Q&A
 import { pinata, PINATA_VECTOR_GROUP_ID } from "./pinata";
+import {
+  generateGeneralChatPrompt,
+  generateContentChatPrompt,
+  buildConversationContext,
+  isRecencyQuery,
+  getValidationResponse,
+} from "./matthias-bot";
+import { getCollection } from "astro:content";
 
 // Types
 export interface Message {
@@ -19,6 +27,8 @@ export interface ChatContext {
   published?: string;
   updated?: string;
   created?: string;
+  collection?: string;
+  path?: string;
 }
 
 export interface GeneralChatRequest {
@@ -112,13 +122,6 @@ export function updateSession(sessionId: string, userMessage: string, assistantR
   session.lastActivity = Date.now();
 }
 
-function buildConversationContext(messages: Message[], maxMessages: number = 6): string {
-  if (messages.length === 0) return "";
-
-  const recentMessages = messages.slice(-maxMessages);
-  return recentMessages.map((msg) => `${msg.role === "user" ? "User" : "Matthias"}: ${msg.content}`).join("\n");
-}
-
 // Content validation
 export function validateMessage(message: string): { isValid: boolean; reason?: string; suggestion?: string } {
   const harmfulPatterns = [
@@ -132,7 +135,7 @@ export function validateMessage(message: string): { isValid: boolean; reason?: s
       return {
         isValid: false,
         reason: "inappropriate_content",
-        suggestion: "(¬_¬)",
+        suggestion: getValidationResponse("inappropriate"),
       };
     }
   }
@@ -141,112 +144,182 @@ export function validateMessage(message: string): { isValid: boolean; reason?: s
     return {
       isValid: false,
       reason: "message_too_long",
-      suggestion: "Please keep your questions concise.",
+      suggestion: getValidationResponse("tooLong"),
     };
   }
 
   return { isValid: true };
 }
 
-// Query analysis
-function isPersonalQuery(message: string): boolean {
-  const personalPatterns =
-    /\b(where do you work|what do you do|who are you|about you|your work|your job|your company|social media|contact|email|day---break|tell me about yourself)\b/i;
-  return personalPatterns.test(message);
+// Enhanced query interpretation using LLM
+interface QueryIntent {
+  contentTypes: string[];
+  isRecencyQuery: boolean;
+  timeframe?: string; // "recent", "latest", "last_month", etc.
+  specificTopics: string[];
+  semanticQuery: string; // Cleaned query for vector search
 }
 
-function isRecencyQuery(message: string): boolean {
-  const recencyPatterns = /\b(latest|recent|newest|last|new|current|updated|lately|recently|2024|2025)\b/i;
-  return recencyPatterns.test(message);
+async function interpretUserQuery(message: string, apiKey: string): Promise<QueryIntent> {
+  const interpretationPrompt = `Analyze this user query and extract their intent:
+
+User query: "${message}"
+
+Return ONLY a valid JSON object with this exact structure:
+{
+  "contentTypes": ["posts", "recipes", "art", "open-source"],
+  "isRecencyQuery": true/false,
+  "timeframe": "recent|latest|last_month|last_year",
+  "specificTopics": ["topic1", "topic2"],
+  "semanticQuery": "cleaned query for semantic search"
 }
 
-// RAG search
-async function searchContent(message: string): Promise<ChatContext[]> {
+Guidelines:
+- contentTypes: Array of relevant content types. Use all types ["posts", "recipes", "art", "open-source"] if query is general
+- isRecencyQuery: true if query asks for recent/latest/new content
+- timeframe: specific time indication or omit if not applicable
+- specificTopics: extract key topics/subjects from the query
+- semanticQuery: the core semantic meaning without recency/content type filters
+
+Examples:
+"What's your latest recipe?" → {"contentTypes": ["recipes"], "isRecencyQuery": true, "timeframe": "latest", "specificTopics": ["cooking"], "semanticQuery": "recipe cooking food"}
+"Tell me about your photography" → {"contentTypes": ["art"], "isRecencyQuery": false, "specificTopics": ["photography"], "semanticQuery": "photography art visual"}`;
+
   try {
-    // Enhance query for recency if needed
-    let searchQuery = message;
-    if (isRecencyQuery(message)) {
-      const currentYear = new Date().getFullYear();
-      searchQuery = `${message} ${currentYear} recent newest latest`;
+    const response = await callGemini(interpretationPrompt, apiKey);
+
+    // Extract JSON from response
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const intent = JSON.parse(jsonMatch[0]);
+      console.log(`[QUERY_INTENT] Interpreted:`, intent);
+      return intent;
     }
 
-    const result = (await pinata.files.private.queryVectors({
-      groupId: PINATA_VECTOR_GROUP_ID,
-      query: searchQuery,
-      returnFile: false,
-    })) as any;
+    // Fallback to basic interpretation
+    return {
+      contentTypes: ["posts", "recipes", "art", "open-source"],
+      isRecencyQuery: isRecencyQuery(message),
+      timeframe: isRecencyQuery(message) ? "recent" : undefined,
+      specificTopics: [],
+      semanticQuery: message,
+    };
+  } catch (error) {
+    console.error("Error interpreting query:", error);
+    // Fallback to basic interpretation
+    return {
+      contentTypes: ["posts", "recipes", "art", "open-source"],
+      isRecencyQuery: isRecencyQuery(message),
+      timeframe: isRecencyQuery(message) ? "recent" : undefined,
+      specificTopics: [],
+      semanticQuery: message,
+    };
+  }
+}
 
-    if (!result.matches || !Array.isArray(result.matches)) {
-      return [];
+// Enhanced content search using Astro API + direct CID lookup
+async function searchContentWithIntent(intent: QueryIntent): Promise<ChatContext[]> {
+  try {
+    console.log(`[SEARCH_INTENT] Processing intent:`, intent);
+
+    // Step 1: Get content from Astro API with proper filtering
+    const allContent = await getCollection("content");
+
+    // Filter by content types
+    let filteredContent = allContent.filter((item) => intent.contentTypes.includes(item.data.path));
+
+    // Apply recency filtering if needed
+    if (intent.isRecencyQuery) {
+      const now = new Date();
+      let cutoffDate = now;
+
+      if (intent.timeframe === "recent" || intent.timeframe === "latest") {
+        cutoffDate = new Date(now.getTime() - 3 * 30 * 24 * 60 * 60 * 1000); // 3 months
+      } else if (intent.timeframe === "last_month") {
+        cutoffDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 1 month
+      } else if (intent.timeframe === "last_year") {
+        cutoffDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000); // 1 year
+      }
+
+      filteredContent = filteredContent.filter((item) => {
+        const itemDate = new Date(item.data.created || item.data.updated || "1970-01-01");
+        return itemDate >= cutoffDate;
+      });
+
+      // Sort by date (most recent first)
+      filteredContent.sort((a, b) => {
+        const dateA = new Date(a.data.created || a.data.updated || "1970-01-01").getTime();
+        const dateB = new Date(b.data.created || b.data.updated || "1970-01-01").getTime();
+        return dateB - dateA;
+      });
     }
 
-    // Process matches
-    const processedMatches: ChatContext[] = [];
-    for (const match of result.matches.slice(0, 3)) {
-      try {
-        let text = "";
-        let jsonData: any = {};
-        let fileKeyvalues: any = {};
+    console.log(`[SEARCH_INTENT] Filtered to ${filteredContent.length} items by type and recency`);
 
-        // Get file metadata
-        if (match.file_id) {
-          try {
-            const fileInfo = await pinata.files.private.get(match.file_id);
-            if (fileInfo?.keyvalues) {
-              fileKeyvalues = fileInfo.keyvalues;
-            }
-          } catch (e) {
-            console.error(`Failed to get metadata for ${match.file_id}`);
+    // Step 2: If we have a semantic query and CIDs, use vector search on the filtered set
+    if (intent.semanticQuery.trim() && filteredContent.length > 0) {
+      const contentWithCids = filteredContent.filter((item) => (item.data as any).pinata_cid);
+
+      if (contentWithCids.length > 0) {
+        // Use vector search on the pre-filtered content
+        const result = (await pinata.files.private.queryVectors({
+          groupId: PINATA_VECTOR_GROUP_ID,
+          query: intent.semanticQuery,
+          returnFile: false,
+        })) as any;
+
+        if (result.matches && Array.isArray(result.matches)) {
+          // Match vector results with our filtered content
+          const matchedContent = result.matches
+            .map((match: any) => {
+              return contentWithCids.find(
+                (item) => (item.data as any).pinata_cid === match.cid || item.data.slug === match.keyvalues?.slug
+              );
+            })
+            .filter(Boolean)
+            .slice(0, 5); // Get top 5 semantic matches
+
+          if (matchedContent.length > 0) {
+            console.log(`[SEARCH_INTENT] Found ${matchedContent.length} semantic matches`);
+            return matchedContent.map((item) => ({
+              file_id: "", // Not needed anymore
+              cid: (item.data as any).pinata_cid || "",
+              score: 1.0,
+              text: `${item.data.title} - ${item.data.excerpt || ""}`,
+              title: item.data.title,
+              slug: item.data.slug,
+              permalink: `/${item.data.path}/${item.data.slug}`,
+              created: item.data.created,
+              updated: item.data.updated,
+              published: item.data.published ? item.data.created : undefined,
+              collection: item.data.path,
+              path: item.data.path,
+            }));
           }
         }
-
-        // Get file content
-        if (match.cid) {
-          try {
-            const fileContent = await pinata.gateways.private.get(match.cid);
-            if (fileContent?.data) {
-              const contentString =
-                typeof fileContent.data === "string" ? fileContent.data : fileContent.data.toString();
-
-              try {
-                jsonData = JSON.parse(contentString);
-                text = `${jsonData.title || ""} - ${jsonData.excerpt || ""}`.trim();
-                if (text.startsWith(" - ")) text = text.substring(3);
-              } catch {
-                text = contentString;
-                if (text.startsWith("---")) {
-                  const parts = text.split("---");
-                  if (parts.length >= 3) {
-                    text = parts.slice(2).join("---").trim();
-                  }
-                }
-              }
-            }
-          } catch (e) {
-            console.error(`Failed to get content for ${match.cid}`);
-          }
-        }
-
-        processedMatches.push({
-          file_id: match.file_id,
-          cid: match.cid,
-          score: match.score,
-          text: text || "Content available",
-          title: jsonData.title || fileKeyvalues?.name || "Content",
-          slug: jsonData.slug || fileKeyvalues?.slug,
-          permalink: jsonData.permalink || fileKeyvalues?.permalink,
-          published: jsonData.published || fileKeyvalues?.published,
-          updated: jsonData.updated || fileKeyvalues?.updated,
-          created: fileKeyvalues?.created || jsonData.created,
-        });
-      } catch (e) {
-        console.error("Error processing match:", e);
       }
     }
 
-    return processedMatches.filter((match) => match.text);
+    // Step 3: Fallback to date-sorted results from Astro API
+    const fallbackContent = filteredContent.slice(0, 3).map((item) => ({
+      file_id: "",
+      cid: (item.data as any).pinata_cid || "",
+      score: 1.0,
+      text: `${item.data.title} - ${item.data.excerpt || ""}`,
+      title: item.data.title,
+      slug: item.data.slug,
+      permalink: `/${item.data.path}/${item.data.slug}`,
+      created: item.data.created,
+      updated: item.data.updated,
+      published: item.data.published ? item.data.created : undefined,
+      collection: item.data.path,
+      path: item.data.path,
+    }));
+
+    console.log(`[SEARCH_INTENT] Returning ${fallbackContent.length} date-sorted results`);
+    return fallbackContent;
   } catch (error) {
-    console.error("Error searching content:", error);
+    console.error("Error in content search with intent:", error);
     return [];
   }
 }
@@ -307,48 +380,14 @@ async function processGeneralChat(request: GeneralChatRequest, apiKey: string): 
   const session = getSession(sessionId);
   const conversationContext = buildConversationContext(session.messages);
 
-  // Search for relevant content
-  const contextMatches = await searchContent(message);
+  // Step 1: Interpret user query using LLM
+  const intent = await interpretUserQuery(message, apiKey);
 
-  // Build prompt
-  const SYSTEM_PROMPT = `You are Matthias Jordan, a photographer turned growth technologist.
+  // Step 2: Search for relevant content using interpreted intent
+  const contextMatches = await searchContentWithIntent(intent);
 
-## About You:
-- You run day---break, a growth engineering consultancy focused on marketing systems and lifecycle automation
-- Former photographer who transitioned into growth technology
-- You enjoy photography, cooking, building solar-powered computers, and family time
-- You live in Southern California with your family
-- Your email is matthias@day---break.com
-
-## Your Communication Style:
-- Direct and informative (2-3 sentences typically)
-- Professional but approachable
-- Reference your actual experience when relevant
-- If you haven't written about something, say "I haven't written about that"`;
-
-  let prompt = SYSTEM_PROMPT;
-
-  if (conversationContext) {
-    prompt += `\n\n## Recent Conversation:\n${conversationContext}`;
-  }
-
-  if (contextMatches.length > 0) {
-    const isPersonal = isPersonalQuery(message);
-    const contextString = contextMatches
-      .map((match) => {
-        const date = match.created || match.published || "unknown date";
-        return `${match.title || "Content"} (${date}): ${match.text}`;
-      })
-      .join("\n\n");
-
-    if (isPersonal) {
-      prompt += `\n\n## Your Personal Information:\n${contextString}`;
-    } else {
-      prompt += `\n\n## Your Published Content:\n${contextString}`;
-    }
-  }
-
-  prompt += `\n\n## Current Message:\n"${message}"`;
+  // Build prompt using centralized function
+  const prompt = generateGeneralChatPrompt(message, conversationContext, contextMatches);
 
   // Get response
   const answer = await callGemini(prompt, apiKey);
@@ -369,31 +408,8 @@ async function processContentChat(request: ContentChatRequest, apiKey: string): 
   const session = getSession(sessionId, content.slug);
   const conversationContext = buildConversationContext(session.messages, 4);
 
-  // Build prompt
-  const SYSTEM_PROMPT = `You are continuing a conversation about specific content. Answer questions about the provided content naturally and directly.
-
-## Response Guidelines:
-- Answer based on the specific content provided
-- Keep responses conversational and concise (2-4 sentences typically)
-- Reference relevant parts of the content when helpful`;
-
-  let prompt = SYSTEM_PROMPT;
-
-  if (conversationContext) {
-    prompt += `\n\n## Recent Conversation:\n${conversationContext}`;
-  }
-
-  const contentType = content.path.slice(0, -1); // Remove 's' from 'posts', 'recipes', etc.
-  const formattedDate = new Date(content.created).toLocaleDateString();
-
-  prompt += `\n\n## The ${contentType.charAt(0).toUpperCase() + contentType.slice(1)} Content:`;
-  prompt += `\nTitle: ${content.title}`;
-  prompt += `\nPublished: ${formattedDate}`;
-  if (content.tags?.length > 0) {
-    prompt += `\nTags: ${content.tags.join(", ")}`;
-  }
-  prompt += `\n\nContent:\n${content.body}`;
-  prompt += `\n\n## User Question:\n"${message}"`;
+  // Build prompt using centralized function
+  const prompt = generateContentChatPrompt(message, content, conversationContext);
 
   // Get response
   const answer = await callGemini(prompt, apiKey);

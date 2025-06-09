@@ -1,124 +1,141 @@
 /**
  * Matthias-bot: Core personality and conversation system
- * This module defines the personality, conversation style, and system prompts
- * for the Matthias chatbot, separate from RAG functionality.
+ * Single source of truth for all chat prompts and personality
  */
 
-// Core personality and context
-export const MATTHIAS_SYSTEM_PROMPT = `You are Matthias Jordan, a photographer turned growth technologist. You run day---break, a marketing consultancy focused on growth and lifecycle automation.
+// Core personality and context - consolidated system prompt
+export const MATTHIAS_SYSTEM_PROMPT = `You are Matthias Jordan, a photographer turned growth technologist.
+
+## About You:
+- You run day---break, a growth engineering consultancy focused on marketing systems and lifecycle automation
+- Former photographer who transitioned into growth technology
+- You enjoy photography, cooking, building solar-powered computers, and family time
+- You live in Southern California with your family
+- Your email is matthias@day---break.com
 
 ## Your Communication Style:
-- Direct and informative
+- Direct and informative (2-3 sentences typically)
 - Professional but approachable
-- Focus on providing useful information
-- Avoid unnecessary pleasantries or casual conversation
-- Stay on topic and relevant to the user's needs
-
-## Your Background:
-- Former photographer who transitioned into growth technology
-- Runs day---break marketing consultancy
-- Enjoys cooking, photography, building solar-powered computers
-- Lives with family and values personal time
-- Active on social media and maintains a personal website/blog
-
-## Response Guidelines:
-- Keep responses focused and informative (2-3 sentences typically)
-- Reference previous conversation only when directly relevant
-- If you don't know something, say "I haven't written about that" or "That's not something I've shared publicly"
-- Don't make up information about your experience
-- Provide helpful information that aligns with your actual knowledge and experience
-- Avoid asking follow-up questions unless they serve a specific purpose
-
-## Response Style:
-- Clear and concise
-- Avoid overly casual language or unnecessary conversation
-- Use "I" statements when discussing your work/experience
-- Focus on answering the user's question directly
-- Offer relevant information based on your expertise`;
+- Reference your actual experience when relevant
+- If you haven't written about something, say "I haven't written about that"`;
 
 // Enhanced context about Matthias (fallback when profile isn't available)
 export const MATTHIAS_FALLBACK_CONTEXT = `I'm Matthias, a photographer turned growth technologist. I run day---break, a marketing consultancy focused on growth and lifecycle automation. I enjoy photography, cooking, building solar-powered computers, and family time.`;
 
-// Conversation flow helpers
-export interface ConversationContext {
-  messages: Array<{ role: "user" | "assistant"; content: string; timestamp?: number }>;
-  enhancedContext?: string;
-  sessionId: string;
+// Query analysis helpers
+export function isPersonalQuery(message: string): boolean {
+  const personalPatterns =
+    /\b(where do you work|what do you do|who are you|about you|your work|your job|your company|social media|contact|email|day---break|tell me about yourself)\b/i;
+  return personalPatterns.test(message);
 }
 
-export interface ResponseContext {
-  userMessage: string;
-  conversationHistory: string;
-  ragContext?: string;
-  enhancedProfile?: string;
-  isPersonalQuery?: boolean;
-  isRecencyQuery?: boolean;
-  contentSuggestions?: string;
+export function isRecencyQuery(message: string): boolean {
+  const recencyPatterns = /\b(latest|recent|newest|last|new|current|updated|lately|recently|2024|2025)\b/i;
+  return recencyPatterns.test(message);
 }
 
-/**
- * Generate a conversation prompt for Matthias-bot
- */
-export function generateConversationPrompt(context: ResponseContext): string {
-  const { userMessage, conversationHistory, ragContext, enhancedProfile, isPersonalQuery, contentSuggestions } =
-    context;
+export function isRecipeQuery(message: string): boolean {
+  const recipePatterns = /\b(recipe|recipes|cooking|food|dish|meal|ingredient|cook|bake|kitchen|culinary)\b/i;
+  return recipePatterns.test(message);
+}
 
-  let prompt = MATTHIAS_SYSTEM_PROMPT;
+export function isArtQuery(message: string): boolean {
+  const artPatterns = /\b(art|artwork|photo|photography|image|picture|visual|creative|artist)\b/i;
+  return artPatterns.test(message);
+}
 
-  // Add enhanced profile if available
-  if (enhancedProfile) {
-    prompt += `\n\n## Your Complete Profile:\n${enhancedProfile}`;
-  }
+export function isCodeQuery(message: string): boolean {
+  const codePatterns = /\b(code|coding|programming|development|project|github|open.?source|software|tech)\b/i;
+  return codePatterns.test(message);
+}
 
-  // Add conversation history if available
+// Conversation context building
+export function buildConversationContext(
+  messages: Array<{ role: string; content: string }>,
+  maxMessages: number = 6
+): string {
+  if (messages.length === 0) return "";
+
+  const recentMessages = messages.slice(-maxMessages);
+  return recentMessages.map((msg) => `${msg.role === "user" ? "User" : "Matthias"}: ${msg.content}`).join("\n");
+}
+
+// Content chat prompt generation
+export function generateContentChatPrompt(
+  message: string,
+  content: {
+    title: string;
+    slug: string;
+    path: string;
+    body: string;
+    tags: string[];
+    created: string;
+    updated: string;
+  },
+  conversationHistory?: string
+): string {
+  const CONTENT_SYSTEM_PROMPT = `You are continuing a conversation about specific content. Answer questions about the provided content naturally and directly.
+
+## Response Guidelines:
+- Answer based on the specific content provided
+- Keep responses conversational and concise (2-4 sentences typically)
+- Reference relevant parts of the content when helpful`;
+
+  let prompt = CONTENT_SYSTEM_PROMPT;
+
   if (conversationHistory) {
     prompt += `\n\n## Recent Conversation:\n${conversationHistory}`;
   }
 
-  // Add RAG context if available
-  if (ragContext) {
-    if (isPersonalQuery) {
-      prompt += `\n\n## Your Personal Information (use this to answer):\n${ragContext}`;
-    } else {
-      prompt += `\n\n## Your Published Content (reference when relevant):\n${ragContext}`;
-    }
-  }
+  const contentType = content.path.slice(0, -1); // Remove 's' from 'posts', 'recipes', etc.
+  const formattedDate = new Date(content.created).toLocaleDateString();
 
-  // Add content suggestions if available
-  if (contentSuggestions) {
-    prompt += `\n\n## Related Content Available:\n${contentSuggestions}`;
+  prompt += `\n\n## The ${contentType.charAt(0).toUpperCase() + contentType.slice(1)} Content:`;
+  prompt += `\nTitle: ${content.title}`;
+  prompt += `\nPublished: ${formattedDate}`;
+  if (content.tags?.length > 0) {
+    prompt += `\nTags: ${content.tags.join(", ")}`;
   }
-
-  // Add the current user message
-  prompt += `\n\n## Current Message:\n"${userMessage}"`;
-
-  // Add specific instructions based on query type
-  if (isPersonalQuery) {
-    prompt += `\n\n## Instructions:\nAnswer directly about your personal background and work based on your profile information above. Include specific details from your profile when relevant. If something isn't covered, say you haven't shared that publicly.`;
-  } else if (ragContext) {
-    prompt += `\n\n## Instructions:\nAnswer based on your published content above. Reference specific projects, recipes, or posts when relevant. If the topic isn't covered in your content, say you haven't written about it.`;
-  } else {
-    prompt += `\n\n## Instructions:\nYou don't have specific published content about this topic. Acknowledge that directly and provide any relevant general information from your background if applicable.`;
-  }
+  prompt += `\n\nContent:\n${content.body}`;
+  prompt += `\n\n## User Question:\n"${message}"`;
 
   return prompt;
 }
 
-/**
- * Generate a fallback prompt when no RAG context is available
- */
-export function generateFallbackPrompt(context: ResponseContext): string {
-  const { userMessage, conversationHistory } = context;
-
+// General chat prompt generation
+export function generateGeneralChatPrompt(
+  message: string,
+  conversationHistory?: string,
+  contextMatches?: Array<{
+    title?: string;
+    text: string;
+    created?: string;
+    published?: string;
+  }>
+): string {
   let prompt = MATTHIAS_SYSTEM_PROMPT;
-  prompt += `\n\n## Your Basic Context:\n${MATTHIAS_FALLBACK_CONTEXT}`;
 
   if (conversationHistory) {
     prompt += `\n\n## Recent Conversation:\n${conversationHistory}`;
   }
 
-  prompt += `\n\n## Current Message:\n"${userMessage}"`;
-  prompt += `\n\n## Instructions:\nYou don't have specific published content about this topic. State that you haven't written about this and provide any relevant general information from your background if applicable. Don't make up information.`;
+  if (contextMatches && contextMatches.length > 0) {
+    const isPersonal = isPersonalQuery(message);
+    const contextString = contextMatches
+      .map((match) => {
+        const date = match.created || match.published || "unknown date";
+        return `${match.title || "Content"} (${date}): ${match.text}`;
+      })
+      .join("\n\n");
+
+    if (isPersonal) {
+      prompt += `\n\n## Your Personal Information:\n${contextString}`;
+    } else {
+      prompt += `\n\n## Your Published Content:\n${contextString}`;
+    }
+  }
+
+  prompt += `\n\n## Current Message:\n"${message}"`;
 
   return prompt;
 }
