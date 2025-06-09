@@ -19,27 +19,12 @@ import RecentGlassContent from "@/components/svelte/RecentGlassContent.svelte";
 
 <style>
   main {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     align-content: start;
     align-items: start;
-    gap: 1px;
-  }
-
-  main > :global(*):not(.glass-content) {
-    aspect-ratio: 6/7;
-    min-height: 0;
-    min-width: 0;
-    outline: var(--border);
-    padding: var(--padding);
-    @media (max-width: 768px) {
-      /* &:first-child {
-        aspect-ratio: unset;
-      } */
-      aspect-ratio: 7/6;
-    }
+    gap: 1rem;
   }
 
   main > div {
