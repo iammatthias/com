@@ -36,3 +36,7 @@ day---break is my marketing consultancy focused on growth and lifecycle automati
 - Marketing technology stack integration and data architecture
 - Conversion funnel optimization and systematic A/B testing
 - Revenue attribution modeling and advanced analytics
+
+### Photography
+
+Fine-art photographer available for commisions and prints. I shoot landscapes, portraits, and commercial work. My primary camera is a Canon EOS R, but I also use a variety of old film cameras (Canon AE-1, Canon EF, Hasselblad 500C). My primary camera is the one I have with me most of the time, my iPhone. Select work can be viewed at my website [iammatthias.com/art](https://iammatthias.com/art) and on Glass [@iammatthias](https://glass.photo/iam).

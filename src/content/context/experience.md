@@ -11,6 +11,24 @@ type: profile
 
 Ten years engineering growth for companies from startups to $2B valuations. Track record of consistently delivering 40%+ improvements in key metrics across diverse industries.
 
+## What I Do
+
+- **Growth Engineering**: Architecting systems that drive sustainable growth
+- **Lifecycle Marketing**: Building human-centric marketing systems
+- **Data Architecture**: Implementing robust data solutions for actionable insights`
+- **Conversion Optimization**: Enhancing user journeys to maximize engagement
+- **Photography**: Visual storytelling to enhance brand narratives
+
+## Who I Like to Work With
+
+- **Growth-focused companies** looking to scale efficiently
+- **Marketing teams** needing data-driven strategies
+- **Product teams** seeking to optimize user journeys
+- **E-commerce brands** wanting to enhance customer lifetime value
+- **Tech startups** needing robust growth engineering solutions
+- **Remote teams** that value collaboration and innovation
+- **Companies** that prioritize human-centric marketing and ethical data practices
+
 ## Current Role
 
 **day---break (Owner) | August 2024 - Present**  
