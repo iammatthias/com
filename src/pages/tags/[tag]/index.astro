@@ -86,31 +86,19 @@ const { entries } = currentTag.data;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    position: sticky;
-    top: calc(var(--nav-height));
+
     height: fit-content;
     align-self: start;
     height: 100%;
     max-height: calc(100vh - var(--nav-height) - var(--footer-height));
     overflow-y: auto;
-    border-right: var(--border);
+
     padding: 1rem;
-    @media (max-width: 768px) {
-      border-right: none;
-    }
   }
 
   @media (max-width: 768px) {
     .grid {
       grid-template-columns: 1fr;
-    }
-
-    .meta {
-      position: relative;
-      top: 0;
-      max-height: none;
-      overflow-y: visible;
-      padding: 16px;
     }
 
     .tags-grid {

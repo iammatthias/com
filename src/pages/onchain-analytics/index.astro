@@ -1,7 +1,7 @@
 ---
 // layouts
 import PageLayout from "@/layouts/PageLayout.astro";
-import OnchainAnalytics from "@/components/TSX/OnchainAnalytics";
+import OnchainAnalytics from "@/components/svelte/OnchainAnalytics.svelte";
 
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 ---
@@ -29,7 +29,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
           href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more it here</a
         >.
       </p>
-      <OnchainAnalytics client:only='react' contractAddress={CONTRACT_ADDRESS} />
+      <OnchainAnalytics client:only='svelte' contractAddress={CONTRACT_ADDRESS} />
     </article>
   </div>
 </PageLayout>
@@ -46,14 +46,11 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    position: sticky;
-    top: calc(var(--nav-height));
     height: fit-content;
     align-self: start;
     height: 100%;
     max-height: calc(100vh - var(--nav-height) - var(--footer-height));
     overflow-y: auto;
-    border-right: var(--border);
     padding: 1rem;
     p,
     .tags {
@@ -71,20 +68,5 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
   article > :global(*) {
     max-width: 600px;
     width: 100%;
-  }
-
-  @media (max-width: 768px) {
-    .grid {
-      grid-template-columns: 1fr;
-    }
-
-    .meta {
-      position: relative;
-      top: 0;
-      max-height: none;
-      overflow-y: visible;
-      padding: 16px;
-      border-right: none;
-    }
   }
 </style>

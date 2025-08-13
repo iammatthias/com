@@ -35,39 +35,19 @@ const extractCid = (url: string) => {
   return null;
 };
 
+// Convert CID to gateway URL
+const getGatewayUrl = (cid: string) => {
+  return `https://silver-bitter-junglefowl-364.mypinata.cloud/ipfs/${cid}`;
+};
+
 const cid = extractCid(src);
 
 if (!cid) {
   console.error("[Img.astro] Invalid image source:", src);
 }
 
-// Function to get signed URL from Pinata
-async function getSignedUrl(cid: string) {
-  try {
-    const baseUrl = "http://localhost:4321";
-    const response = await fetch(`${baseUrl}/api/pinata?cid=${encodeURIComponent(cid)}`, {
-      method: "POST",
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `Failed to get signed URL: ${response.status}`);
-    }
-
-    const data = await response.json();
-    if (!data.url) {
-      throw new Error("No URL returned from Pinata API");
-    }
-
-    return data.url;
-  } catch (error) {
-    console.error("[Img.astro] Error fetching signed URL:", error);
-    return null;
-  }
-}
-
-// Only get the default image URL if it's a priority image
-const defaultSrc = priority && cid ? (await getSignedUrl(cid)) || "" : "";
+// Get the gateway URL for the image
+const gatewayUrl = cid ? getGatewayUrl(cid) : "";
 ---
 
 <div class='image-container' data-cid={cid}>
@@ -82,7 +62,14 @@ const defaultSrc = priority && cid ? (await getSignedUrl(cid)) || "" : "";
         fill='#9CA3AF'></path>
     </svg>
   </div>
-  <img src={defaultSrc} alt={alt} loading={priority ? "eager" : "lazy"} class='responsive-image' data-cid={cid} />
+  <img
+    src={priority ? gatewayUrl : ""}
+    alt={alt}
+    loading={priority ? "eager" : "lazy"}
+    class='responsive-image'
+    data-cid={cid}
+    data-gateway-url={gatewayUrl}
+  />
 </div>
 
 <style>
@@ -134,37 +121,23 @@ const defaultSrc = priority && cid ? (await getSignedUrl(cid)) || "" : "";
 </style>
 
 <script>
-  // Simple image loader with viewport-based loading
+  // Simplified image loader with viewport-based loading
   class ImageLoader {
     private observer: IntersectionObserver;
     private loadedImages = new Set<string>();
     private loadingImages = new Set<string>();
     private retryCount = new Map<string, number>();
     private maxRetries = 2;
-    private pendingLoads = new Set<string>();
-    private debounceTimeout: number | null = null;
-    private lastScrollTime = 0;
-    private scrollThrottle = 500; // ms between scroll events
-    private loadQueue: Array<{ img: HTMLImageElement; cid: string }> = [];
-    private processingQueue = false;
 
     constructor() {
       this.observer = new IntersectionObserver(
         (entries) => {
-          const now = Date.now();
-          if (now - this.lastScrollTime < this.scrollThrottle) {
-            return;
-          }
-          this.lastScrollTime = now;
-
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               const img = entry.target as HTMLImageElement;
               const cid = img.dataset.cid;
-              if (cid && !this.loadedImages.has(cid) && !this.loadingImages.has(cid) && !this.pendingLoads.has(cid)) {
-                this.pendingLoads.add(cid);
-                this.loadQueue.push({ img, cid });
-                this.scheduleQueueProcessing();
+              if (cid && !this.loadedImages.has(cid) && !this.loadingImages.has(cid)) {
+                this.loadImage(img, cid);
               }
             }
           });
@@ -176,64 +149,26 @@ const defaultSrc = priority && cid ? (await getSignedUrl(cid)) || "" : "";
       );
     }
 
-    private scheduleQueueProcessing() {
-      if (this.debounceTimeout) {
-        clearTimeout(this.debounceTimeout);
-      }
-
-      this.debounceTimeout = window.setTimeout(() => {
-        this.processQueue();
-      }, 250); // Debounce for 250ms
-    }
-
-    private async processQueue() {
-      if (this.processingQueue || this.loadQueue.length === 0) return;
-      this.processingQueue = true;
-
-      try {
-        // Process one image at a time
-        const { img, cid } = this.loadQueue.shift()!;
-        await this.loadImage(img, cid);
-
-        // Add a small delay between processing images
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        // Process next image if queue is not empty
-        if (this.loadQueue.length > 0) {
-          this.scheduleQueueProcessing();
-        }
-      } finally {
-        this.processingQueue = false;
-      }
-    }
-
     async loadImage(img: HTMLImageElement, cid: string) {
       if (this.loadingImages.has(cid)) return;
       this.loadingImages.add(cid);
-      this.pendingLoads.delete(cid);
 
       const container = img.closest(".image-container");
       const placeholder = container?.querySelector(".placeholder");
       if (!container || !placeholder) return;
 
+      const gatewayUrl = img.dataset.gatewayUrl;
+      if (!gatewayUrl) {
+        console.error("[ImageLoader] No gateway URL found for CID:", cid);
+        this.loadingImages.delete(cid);
+        return;
+      }
+
       try {
-        const response = await fetch(`/api/pinata?cid=${encodeURIComponent(cid)}`, {
-          method: "POST",
-          headers: {
-            "Cache-Control": "no-cache",
-            Pragma: "no-cache",
-          },
-        });
-
-        if (!response.ok) throw new Error(`Failed to load image: ${response.status}`);
-
-        const data = await response.json();
-        if (!data.url) throw new Error("No URL returned");
-
         // Create a new image to test loading
         const testImage = new Image();
         testImage.onload = () => {
-          img.src = data.url;
+          img.src = gatewayUrl;
           img.classList.add("loaded");
           placeholder.classList.add("hidden");
           this.loadedImages.add(cid);
@@ -242,8 +177,9 @@ const defaultSrc = priority && cid ? (await getSignedUrl(cid)) || "" : "";
         testImage.onerror = () => {
           this.handleError(img, cid, placeholder);
         };
-        testImage.src = data.url;
+        testImage.src = gatewayUrl;
       } catch (error) {
+        console.error("[ImageLoader] Error loading image:", error);
         this.handleError(img, cid, placeholder);
       }
     }
@@ -255,8 +191,7 @@ const defaultSrc = priority && cid ? (await getSignedUrl(cid)) || "" : "";
         setTimeout(
           () => {
             this.loadingImages.delete(cid);
-            this.loadQueue.push({ img, cid });
-            this.scheduleQueueProcessing();
+            this.loadImage(img, cid);
           },
           Math.pow(2, retries) * 1000
         ); // Exponential backoff
@@ -264,6 +199,7 @@ const defaultSrc = priority && cid ? (await getSignedUrl(cid)) || "" : "";
         img.classList.add("error");
         placeholder.classList.remove("hidden");
         this.loadingImages.delete(cid);
+        console.error("[ImageLoader] Failed to load image after retries:", cid);
       }
     }
 
@@ -276,9 +212,6 @@ const defaultSrc = priority && cid ? (await getSignedUrl(cid)) || "" : "";
     }
 
     destroy() {
-      if (this.debounceTimeout) {
-        clearTimeout(this.debounceTimeout);
-      }
       this.observer.disconnect();
     }
   }
