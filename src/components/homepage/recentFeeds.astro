@@ -1,0 +1,38 @@
+---
+
+---
+
+<section>
+  <h2>feeds</h2>
+  <p>blogs I like that have rss</p>
+  <div class='grid'>
+    <ul><li>item 1</li><li>item 2</li><li>item 3</li></ul>
+  </div>
+</section>
+
+<style>
+  section {
+    margin-top: auto;
+    min-height: calc(50vh - 2rem);
+    border-top: 1px solid var(--color-border);
+    padding: 2rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    grid-wrap: wrap;
+  }
+  .grid > ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .grid > ul > li {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+</style>

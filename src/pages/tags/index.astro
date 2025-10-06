@@ -1,85 +1,78 @@
 ---
-// layout
-import PageLayout from "@/layouts/PageLayout.astro";
-
-// content
 import { getCollection } from "astro:content";
+import DefaultLayout from "@layouts/defaultLayouts.astro";
+import type { TagData } from "@lib/tags-loader";
 
-const tags = await getCollection("tags");
+type TagEntry = {
+  id: string;
+  data: TagData;
+};
+
+const tags = (await getCollection("tags")) as TagEntry[];
+
+// Sort by count (most used first)
+tags.sort((a, b) => b.data.count - a.data.count);
 ---
 
-<PageLayout path='Tags'>
-  <div class='grid'>
-    <div class='meta'>
-      <h1>Tags</h1>
-    </div>
-    <div class='tags-grid'>
-      {
-        tags.map((tag) => (
-          <div class='tag'>
-            <h5>
-              <a href={`/tags/${tag.data.tag}/`}>{tag.data.tag}</a>
-            </h5>
-            {/* {tag.data.entries.map((entry) => (
-              <a href={`/${entry.path}/${entry.slug}/`}>{entry.title}</a>
-            ))} */}
-            <p class='small'>
-              {tag.data.entries.length} {tag.data.entries.length === 1 ? "post" : "posts"}
-            </p>
-          </div>
-        ))
-      }
-    </div>
-  </div>
-</PageLayout>
+<DefaultLayout>
+  <Fragment slot='main'>
+    <section>
+      <h1>All Tags</h1>
+      <p>{tags.length} tags</p>
+
+      <div class='tags-grid'>
+        {
+          tags.map((tag) => (
+            <a href={`/tags/${tag.id}`} class='tag-card'>
+              <h2>{tag.data.name}</h2>
+              <p class='count'>
+                {tag.data.count} {tag.data.count === 1 ? "collection" : "collections"}
+              </p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </Fragment>
+</DefaultLayout>
 
 <style>
-  .grid {
-    display: grid;
-    grid-template-columns: calc(var(--meta-column) - var(--aside-width)) 1fr;
+  section {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 
-    position: relative;
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+  h1 {
+    margin-bottom: 0.5rem;
   }
 
   .tags-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
-    align-content: start;
-    @media (max-width: 768px) {
-      gap: 4rem;
-    }
+    margin-top: 2rem;
   }
 
-  .tags-grid > div {
+  .tag-card {
+    border: 1px solid var(--color-border);
     padding: 1rem;
-
-    @media (max-width: 768px) {
-      padding: 0;
-    }
+    text-decoration: none;
+    color: inherit;
   }
 
-  .meta {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    height: fit-content;
-    align-self: start;
-    height: 100%;
-    max-height: calc(100vh - var(--nav-height) - var(--footer-height));
-    overflow-y: auto;
-
-    padding: 1rem;
+  .tag-card:hover {
+    background: var(--color-surface);
   }
 
-  @media (max-width: 768px) {
-    .grid {
-      grid-template-columns: 1fr;
-    }
+  .tag-card h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+  }
 
-    .tags-grid {
-      padding: 16px;
-    }
+  .count {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    margin: 0;
   }
 </style>

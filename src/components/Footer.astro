@@ -3,44 +3,32 @@
 ---
 
 <footer>
-  <div>© {new Date().getFullYear()}</div>
-
-  <div class='hide-on-mobile'><a href='/resume'>RESUME</a></div>
-  <div class='hide-on-mobile'><a href='/social'>SOCIAL</a></div>
+  <p><a href='/about#social'>Social</a></p>
+  <p><a href='/tags'>Tags</a></p>
+  <p><a href='/rss.xml'>RSS</a></p>
+  <p><a href='/sitemap-index.xml'>Sitemap</a></p>
 </footer>
 
 <style>
   footer {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin-top: auto;
     position: sticky;
-    bottom: 0px;
-    z-index: 100;
-    border-top: var(--border);
-    background-color: var(--background);
-    font-size: 12px;
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
+    bottom: 1rem;
+    background: var(--color-background);
+    z-index: 1000;
+    box-shadow:
+      0px 1px 0px 0px var(--color-border),
+      0px 16px 0px 0px var(--color-background);
   }
 
-  footer > div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 12px;
-    &:not(:last-child) {
-      border-right: var(--border);
-    }
-    @media (max-width: 768px) {
-      &:first-child {
-        border-right: none;
-      }
-      &:not(:first-child) {
-        display: none;
-      }
-    }
+  footer > * {
+    border-right: 1px solid var(--color-border);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    width: fit-content;
   }
 </style>

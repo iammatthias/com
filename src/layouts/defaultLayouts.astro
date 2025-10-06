@@ -1,0 +1,44 @@
+---
+import "@src/styles/reset.css";
+import "@src/styles/globals.css";
+import Nav from "@components/nav.astro";
+import Footer from "@components/footer.astro";
+---
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='alternate' type='application/rss+xml' title='iammatthias - All Content' href='/rss.xml' />
+    <link rel='sitemap' href='/sitemap-index.xml' />
+  </head>
+  <body>
+    <div class='with-sidebar'>
+      <main>
+        <Nav />
+        <slot name='main' />
+        <Footer />
+      </main>
+      <slot name='sidebar' />
+    </div>
+  </body>
+</html>
+
+<style>
+  .with-sidebar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .with-sidebar > :first-child {
+    flex-basis: 0;
+    flex-grow: 999;
+    min-inline-size: 50%;
+    min-height: calc(100vh - 2rem);
+  }
+
+  .with-sidebar > * {
+    border: 1px solid var(--color-border);
+  }
+</style>

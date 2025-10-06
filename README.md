@@ -1,41 +1,43 @@
-      :::::::::::            :::          :::   :::
-         :+:              :+: :+:       :+:+: :+:+:
-        +:+             +:+   +:+     +:+ +:+:+ +:+
-       +#+            +#++:++#++:    +#+  +:+  +#+
-      +#+            +#+     +#+    +#+       +#+
-     #+#            #+#     #+#    #+#       #+#
+# Astro Starter Kit: Minimal
 
-########### ### ### ### ###
-
-        :::   :::           :::    :::::::::::   :::::::::::       :::    :::       :::::::::::           :::        ::::::::
-      :+:+: :+:+:        :+: :+:      :+:           :+:           :+:    :+:           :+:             :+: :+:     :+:    :+:
-    +:+ +:+:+ +:+      +:+   +:+     +:+           +:+           +:+    +:+           +:+            +:+   +:+    +:+
-
-+#+ +:+ +#+ +#++:++#++: +#+ +#+ +#++:++#++ +#+ +#++:++#++: +#++:++#++
-+#+ +#+ +#+ +#+ +#+ +#+ +#+ +#+ +#+ +#+ +#+ +#+
-#+# #+# #+# #+# #+# #+# #+# #+# #+# #+# #+# #+# #+#
-
-###
-
+```sh
+bun create astro@latest -- --template minimal
 ```
 
-### hi
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-After a few years on NextJS with various content backends (Contentful, Hygraph, Sanity, Tina, etc.), I've embraced a new approach.
+## 🚀 Project Structure
 
-The front-end is built with [Astro](https://astro.build/), and the content is authored in [Obsidian](https://obsidian.md/). The markdown files are stored in a private repo on Github, and pulled into the Astro site through the Github GraphQL API.
+Inside of your Astro project, you'll see the following folders and files:
 
-Images that are added to the markdown in Obsidian are uploaded to a [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) bucket, and the URLs are replaced in the markdown files. In Astro, these images are optimized and cached through [Pinata](https://www.pinata.cloud/).
-
-The site is hosted on [Vercel](https://vercel.com/), and I'm using [PostHog](https://posthog.com/) for some basic analytics.
-
-> The code is provided as-is, and I'm not planning to provide support for this setup. Feel free to use it as inspiration for your own projects.
-
-### built with
-
-- [Astro](https://astro.build/)
-- [Obsidian](https://obsidian.md/)
-- [Vercel](https://vercel.com/)
-- [Pinata](https://www.pinata.cloud/)
-- [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/)
+```text
+/
+├── public/
+├── src/
+│   └── pages/
+│       └── index.astro
+└── package.json
 ```
+
+Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+
+There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+
+Any static assets, like images, can be placed in the `public/` directory.
+
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `bun install`             | Installs dependencies                            |
+| `bun dev`             | Starts local dev server at `localhost:4321`      |
+| `bun build`           | Build your production site to `./dist/`          |
+| `bun preview`         | Preview your build locally, before deploying     |
+| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `bun astro -- --help` | Get help using the Astro CLI                     |
+
+## 👀 Want to learn more?
+
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

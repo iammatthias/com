@@ -1,26 +1,14 @@
 ---
-// layout
-import PageLayout from "@/layouts/PageLayout.astro";
-import Chat from "@/components/svelte/Chat.svelte";
+import DefaultLayout from "@layouts/defaultLayouts.astro";
+import HeroSection from "@components/homepage/heroSection.astro";
+import RecentContent from "@components/homepage/recentContent.astro";
+import RecentFeeds from "@components/homepage/recentFeeds.astro";
 ---
 
-<PageLayout>
-  <div class='intro'>
-    <h1>Hi, I'm Matthias</h1>
-    <p>I'm a photographer turned growth technologist. Over the years I've worked in travel, fintech, and ecommerce.</p>
-    <p>These days I run day---break, a marketing consultancy focused on growth and lifecycle automation.</p>
-  </div>
-  <Chat client:only='svelte' />
-</PageLayout>
-
-<style>
-  .intro {
-    width: 100%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 0 1.5rem;
-    flex-shrink: 0;
-  }
-</style>
+<DefaultLayout>
+  <Fragment slot='main'>
+    <HeroSection />
+    <RecentContent />
+    <!-- <RecentFeeds /> -->
+  </Fragment>
+</DefaultLayout>
