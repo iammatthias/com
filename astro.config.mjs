@@ -6,13 +6,17 @@ import rehypeUnwrapImages from "rehype-unwrap-images";
 
 import sitemap from "@astrojs/sitemap";
 
+import cloudflare from "@astrojs/cloudflare";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://iammatthias.com",
   integrations: [react(), sitemap()],
+
   markdown: {
     rehypePlugins: [rehypeUnwrapImages],
   },
+
   redirects: {
     "/art": {
       status: 302,
@@ -75,4 +79,6 @@ export default defineConfig({
       destination: "/content/posts/1699332127006-revisiting-obsidian-as-a-cms",
     },
   },
+
+  adapter: cloudflare(),
 });
