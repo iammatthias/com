@@ -1,6 +1,10 @@
 ---
 import DefaultLayout from "@layouts/defaultLayouts.astro";
 
+const title = "About - @iammatthias";
+const description = "Hi, I am Matthias. I'm a photographer turned growth engineer working on the future of the web.";
+const ogImage = "/api/og-about.png";
+
 const socialLinks = [
   {
     name: "Farcaster",
@@ -54,7 +58,7 @@ const socialLinks = [
 ];
 ---
 
-<DefaultLayout>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
   <Fragment slot='main'>
     <section>
       <p>Hi, I am Matthias.</p>

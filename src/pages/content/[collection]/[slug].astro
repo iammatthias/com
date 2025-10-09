@@ -39,9 +39,13 @@ interface Props {
 const { entry } = Astro.props;
 const { collection, slug } = Astro.params;
 const { Content } = await render(entry as any);
+
+const title = entry.data.title || slug;
+const description = entry.data.description || `${title} - ${collection}`;
+const ogImage = `/api/og-${collection}-${encodeURIComponent(title || '')}.png`;
 ---
 
-<DefaultLayout>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
   <Fragment slot='main'>
     <article>
       <nav class='breadcrumb'>

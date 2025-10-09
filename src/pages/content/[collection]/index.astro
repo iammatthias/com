@@ -38,9 +38,13 @@ entries.forEach((entry) => {
     });
   }
 });
+
+const title = `${collection} - @iammatthias`;
+const description = `Browse ${entries.length} items in ${collection}`;
+const ogImage = `/api/og-${collection}.png`;
 ---
 
-<DefaultLayout>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
   <Fragment slot='main'>
     <section>
       <nav class='breadcrumb'>

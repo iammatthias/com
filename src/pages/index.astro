@@ -2,10 +2,14 @@
 import DefaultLayout from "@layouts/defaultLayouts.astro";
 import HeroSection from "@components/homepage/heroSection.astro";
 import RecentContent from "@components/homepage/recentContent.astro";
-import RecentFeeds from "@components/homepage/recentFeeds.astro";
+// import RecentFeeds from "@components/homepage/recentFeeds.astro";
+
+const title = "@iammatthias";
+const description = "Personal site of Matthias Jordan - photographer turned growth engineer";
+const ogImage = "/api/og.png";
 ---
 
-<DefaultLayout>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
   <Fragment slot='main'>
     <HeroSection />
     <RecentContent />

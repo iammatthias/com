@@ -59,9 +59,13 @@ entriesWithTag.sort((a, b) => {
   const dateB = new Date(b.data.created || 0).getTime();
   return dateB - dateA;
 });
+
+const title = `#${tagName} - @iammatthias`;
+const description = `${entriesWithTag.length} ${entriesWithTag.length === 1 ? "entry" : "entries"} tagged with ${tagName}`;
+const ogImage = `/api/og-tags-${encodeURIComponent(tagName as string)}.png`;
 ---
 
-<DefaultLayout>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
   <Fragment slot='main'>
     <section>
       <nav class='breadcrumb'>

@@ -12,9 +12,13 @@ const tags = (await getCollection("tags")) as TagEntry[];
 
 // Sort by count (most used first)
 tags.sort((a, b) => b.data.count - a.data.count);
+
+const title = "All Tags - @iammatthias";
+const description = `Browse ${tags.length} tags`;
+const ogImage = "/api/og-tags.png";
 ---
 
-<DefaultLayout>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
   <Fragment slot='main'>
     <section>
       <h1>All Tags</h1>

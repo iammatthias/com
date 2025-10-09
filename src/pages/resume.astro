@@ -64,9 +64,13 @@ const resumeData = [
     ],
   },
 ];
+
+const title = "Resume - @iammatthias";
+const description = "Professional experience and education history";
+const ogImage = "/api/og-resume.png";
 ---
 
-<DefaultLayout>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
   <Fragment slot='main'>
     {
       resumeData.map((section) => (

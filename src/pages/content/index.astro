@@ -34,9 +34,13 @@ const allEntriesWithCollection = (
     const dateB = new Date(b.data.created).getTime();
     return dateB - dateA; // Most recent first
   });
+
+const title = "All Content - @iammatthias";
+const description = `Browse all ${allEntriesWithCollection.length} items across collections`;
+const ogImage = "/api/og-content.png";
 ---
 
-<DefaultLayout>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
   <Fragment slot='main'>
     <section>
       <h1>All Content</h1>

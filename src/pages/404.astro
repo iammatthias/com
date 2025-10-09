@@ -15,9 +15,13 @@ const sessionData = [
 
 const hash = keccak_256(new TextEncoder().encode(sessionData));
 const seed = parseInt(bytesToHex(hash).slice(0, 8), 16);
+
+const title = "404 - Page Not Found";
+const description = "The page you're looking for doesn't exist";
+const ogImage = "/api/og-404.png";
 ---
 
-<DefaultLayout>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
   <Fragment slot='main'>
     <section>
       <BlackHole seed={seed} client:load />
