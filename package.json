@@ -17,6 +17,7 @@
     "@astrojs/rss": "^4.0.12",
     "@astrojs/sitemap": "^3.6.0",
     "@cloudflare/agents": "^0.0.16",
+    "@cloudflare/pages-plugin-vercel-og": "^0.1.2",
     "@modelcontextprotocol/sdk": "^1.19.1",
     "@noble/hashes": "^2.0.1",
     "@react-three/drei": "^10.7.6",
