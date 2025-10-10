@@ -115,6 +115,10 @@
 body {
   font-size: 16px;
   padding: 1rem;
+  padding-top: calc(env(safe-area-inset-top) + 1rem);
+  padding-right: calc(env(safe-area-inset-right) + 1rem);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  padding-left: calc(env(safe-area-inset-left) + 1rem);
   font-family: -apple-system-ui-serif, ui-serif, "Georgia", serif;
   background-color: var(--color-background);
   color: var(--color-foreground);
