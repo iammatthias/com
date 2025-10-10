@@ -1,0 +1,3 @@
+[submodule "worker-og"]
+	path = worker-og
+	url = https://github.com/iammatthias/og.git

@@ -13,17 +13,20 @@ interface Props {
 const {
   title = "@iammatthias",
   description = "Personal site of Matthias Jordan",
-  ogImage = "/api/og.png",
+  ogImage = "/",
 } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-// Use current origin for OG images in development, Astro.site in production
-const ogImageURL = import.meta.env.DEV ? new URL(ogImage, Astro.url.origin) : new URL(ogImage, Astro.site);
+// Use OG subdomain for production, localhost for development
+const ogImageURL = import.meta.env.DEV
+  ? new URL(ogImage, "http://localhost:8787")
+  : new URL(ogImage, "https://og.iammatthias.com");
 ---
 
 <html lang='en'>
   <head>
     <meta charset='utf-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <meta name='theme-color' content='#0F1419' />
 
     <title>{title}</title>
     <meta name='description' content={description} />

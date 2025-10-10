@@ -12,13 +12,14 @@
         <meta property="og:type" content="website"/>
         <meta property="og:title" content="{title} - RSS Feed"/>
         <meta property="og:description" content="{description}"/>
-        <meta property="og:image" content="{link}api/og.png"/>
+        <meta property="og:image" content="https://og.iammatthias.com/"/>
         <meta property="og:url" content="{link}/rss.xml"/>
 
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:title" content="{title} - RSS Feed"/>
         <meta name="twitter:description" content="{description}"/>
-        <meta name="twitter:image" content="{link}/api/og.png"/>
+        <meta name="twitter:image" content="https://og.iammatthias.com/"/>
+        <meta name="theme-color" content="#0F1419">
 
         <style>
           * {
