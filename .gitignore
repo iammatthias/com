@@ -28,5 +28,4 @@ pnpm-debug.log*
 .vercel
 
 # temporary exclude for wrangler 
-wrangler.toml
 worker/
