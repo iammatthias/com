@@ -102,6 +102,7 @@ export default defineConfig({
     platformProxy: {
       enabled: false,
     },
+    wasmModuleImports: true,
   }),
 
   vite: {
