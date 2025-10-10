@@ -1,108 +1,195 @@
 ---
-// layout
-import PageLayout from "@/layouts/PageLayout.astro";
-
-// content
 import { getCollection } from "astro:content";
+import DefaultLayout from "@layouts/defaultLayouts.astro";
+import { getGitHubCollections, type GitHubContentData } from "@lib/github-loader";
+import type { TagData } from "@lib/tags-loader";
+
+type TagEntry = {
+  id: string;
+  data: TagData;
+};
+
+type Entry = {
+  id: string;
+  data: GitHubContentData;
+  collection: string;
+};
 
 export async function getStaticPaths() {
-  const tags = await getCollection("tags");
+  const tags = (await getCollection("tags")) as TagEntry[];
+
   return tags.map((tag) => ({
-    params: { tag: tag.data.tag },
-    props: { currentTag: tag },
+    params: { tag: tag.id },
+    props: { tag },
   }));
 }
 
-const { currentTag } = Astro.props;
-const { entries } = currentTag.data;
+interface Props {
+  tag: TagEntry;
+}
+
+const { tag } = Astro.props;
+const tagName = Astro.params.tag;
+
+// Get all collections
+const GITHUB_OWNER = "iammatthias";
+const GITHUB_REPO = "obsidian_cms";
+const GITHUB_TOKEN = import.meta.env.GITHUB;
+const collectionNames = await getGitHubCollections(GITHUB_OWNER, GITHUB_REPO, GITHUB_TOKEN, "main", "content");
+
+// Get all entries from all collections and filter by tag
+const entriesWithTag: Entry[] = [];
+
+for (const collectionName of collectionNames) {
+  const entries = (await getCollection(collectionName as any)) as Entry[];
+
+  for (const entry of entries) {
+    if (entry.data.tags?.includes(tagName as string)) {
+      entriesWithTag.push({
+        ...entry,
+        collection: collectionName,
+      });
+    }
+  }
+}
+
+// Sort by created date (most recent first)
+entriesWithTag.sort((a, b) => {
+  const dateA = new Date(a.data.created || 0).getTime();
+  const dateB = new Date(b.data.created || 0).getTime();
+  return dateB - dateA;
+});
+
+const title = `#${tagName} - @iammatthias`;
+const description = `${entriesWithTag.length} ${entriesWithTag.length === 1 ? "entry" : "entries"} tagged with ${tagName}`;
+const ogImage = `/api/og-tags-${encodeURIComponent(tagName as string)}.png`;
 ---
 
-<PageLayout title={currentTag.data.tag} path='Tags'>
-  <div class='grid'>
-    <div class='meta'>
-      <h1 class='title'>{currentTag.data.tag}</h1>
-      <p class='small'>
-        {entries.length}
-        {entries.length === 1 ? "entry" : "entries"}
-      </p>
-      <p class='small'>
-        <a href='/tags'>↢ Tags</a>
-      </p>
-    </div>
-    <div class='tags-grid'>
-      {
-        entries.map((entry) => (
-          <div>
-            <h5>{entry.title}</h5>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
+  <Fragment slot='main'>
+    <section>
+      <nav class='breadcrumb'>
+        <a href='/tags'>All Tags</a> / {tagName}
+      </nav>
 
-            <p class='small'>
-              Published {new Date(entry.created).toLocaleDateString()}
-              {entry.updated &&
-                new Date(entry.updated).getTime() - new Date(entry.created).getTime() > 24 * 60 * 60 * 1000 &&
-                `Last updated ${new Date(entry.updated).toLocaleDateString()}`}
-            </p>
-            <div class='tags'>
-              {entry.tags.map((tag) => (
-                <span class='small'>
-                  #<a href={`/tags/${tag}`}>{tag}</a>
-                </span>
-              ))}
-            </div>
-          </div>
-        ))
-      }
-    </div>
-  </div>
-</PageLayout>
+      <h1>#{tagName}</h1>
+      <div class='header-meta'>
+        <p class='count'>{entriesWithTag.length} {entriesWithTag.length === 1 ? "entry" : "entries"}</p>
+      </div>
+
+      <div class='entries-list'>
+        {
+          entriesWithTag.map((entry) => (
+            <article class='entry-card'>
+              <h2>
+                <a href={`/content/${entry.collection}/${entry.id}`}>{entry.data.title}</a>
+              </h2>
+              <p class='collection'>{entry.collection}</p>
+              {entry.data.excerpt && <p class='excerpt'>{entry.data.excerpt}</p>}
+              <div class='meta'>
+                <time datetime={entry.data.created}>{new Date(entry.data.created).toLocaleDateString()}</time>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+  </Fragment>
+</DefaultLayout>
 
 <style>
-  .grid {
-    display: grid;
-    grid-template-columns: calc(var(--meta-column) - var(--aside-width)) 1fr;
-
-    position: relative;
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+  section {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
   }
 
-  .tags-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  .breadcrumb {
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    margin-bottom: 1rem;
+  }
+
+  .breadcrumb a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
     gap: 1rem;
-    align-content: start;
-    @media (max-width: 768px) {
-      gap: 4rem;
-    }
+    margin-bottom: 2rem;
   }
 
-  .tags-grid > div {
-    padding: 1rem;
+  .count {
+    color: var(--color-muted);
+    margin: 0;
+  }
 
-    @media (max-width: 768px) {
-      padding: 0;
-    }
+  .rss-link {
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--color-border);
+    padding: 0.25rem 0.5rem;
+  }
+
+  .rss-link:hover {
+    background: var(--color-surface);
+  }
+
+  .entries-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .entry-card {
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+  }
+
+  .entry-card h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+  }
+
+  .entry-card h2 a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .entry-card h2 a:hover {
+    text-decoration: underline;
+  }
+
+  .collection {
+    color: var(--color-muted);
+    margin: 0 0 0.5rem 0;
+    text-transform: capitalize;
+  }
+
+  .excerpt {
+    color: var(--color-invisibles);
+    margin: 0 0 1rem 0;
+    line-height: 1.6;
   }
 
   .meta {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    height: fit-content;
-    align-self: start;
-    height: 100%;
-    max-height: calc(100vh - var(--nav-height) - var(--footer-height));
-    overflow-y: auto;
-
-    padding: 1rem;
-  }
-
-  @media (max-width: 768px) {
-    .grid {
-      grid-template-columns: 1fr;
-    }
-
-    .tags-grid {
-      padding: 16px;
-    }
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--color-muted);
   }
 </style>

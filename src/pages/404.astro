@@ -1,35 +1,72 @@
 ---
-// layout
-import PageLayout from "@/layouts/PageLayout.astro";
-import RecentContent from "@/components/RecentContent.astro";
-import RecentGlassContent from "@/components/svelte/RecentGlassContent.svelte";
+export const prerender = false;
+import DefaultLayout from "@layouts/defaultLayouts.astro";
+import BlackHole from "@src/components/BlackHole";
+import { keccak_256 } from "@noble/hashes/sha3.js";
+import { bytesToHex } from "@noble/hashes/utils.js";
+
+// Generate seed from session details
+const sessionData = [
+  Astro.request.headers.get("user-agent") || "",
+  Astro.request.headers.get("accept-language") || "",
+  Astro.clientAddress || "",
+  Date.now().toString(),
+].join("|");
+
+const hash = keccak_256(new TextEncoder().encode(sessionData));
+const seed = parseInt(bytesToHex(hash).slice(0, 8), 16);
+
+const title = "404 - Page Not Found";
+const description = "The page you're looking for doesn't exist";
+const ogImage = "/api/og-404.png";
 ---
 
-<PageLayout path='404'>
-  <main>
-    <div>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
+  <Fragment slot='main'>
+    <section>
+      <BlackHole seed={seed} client:load />
       <h1>404</h1>
-      <p>Page not found.</p>
-      <p>You don't have to go home, but you can't stay here.</p>
-    </div>
-    <RecentContent showTags={true} contentLimit={16} />
-    <RecentGlassContent contentLimit={5} />
-  </main>
-</PageLayout>
+      <p>Page not found</p>
+      <a href='/'>Return home</a>
+    </section>
+  </Fragment>
+</DefaultLayout>
 
 <style>
-  main {
+  section {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    align-content: start;
-    align-items: start;
-    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 7rem + 3px);
+    color: white;
+    text-align: center;
+    padding: 2rem;
   }
 
-  main > div {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  section h1 {
+    font-size: 6rem;
+    margin: 0;
+    font-weight: 900;
+  }
+
+  section p {
+    font-size: 1.5rem;
+    margin: 1rem 0 2rem 0;
+    opacity: 0.8;
+  }
+
+  section a {
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid white;
+    transition: background 0.2s;
+  }
+
+  section a:hover {
+    background: rgba(255, 255, 255, 0.1);
   }
 </style>

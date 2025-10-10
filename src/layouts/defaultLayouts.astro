@@ -1,0 +1,89 @@
+---
+import "@src/styles/reset.css";
+import "@src/styles/globals.css";
+import Nav from "@components/nav.astro";
+import Footer from "@components/footer.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title = "@iammatthias",
+  description = "Personal site of Matthias Jordan",
+  ogImage = "/api/og.png",
+} = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// Use current origin for OG images in development, Astro.site in production
+const ogImageURL = import.meta.env.DEV ? new URL(ogImage, Astro.url.origin) : new URL(ogImage, Astro.site);
+---
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+
+    <title>{title}</title>
+    <meta name='description' content={description} />
+    <link rel='canonical' href={canonicalURL} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property='og:type' content='website' />
+    <meta property='og:url' content={canonicalURL} />
+    <meta property='og:title' content={title} />
+    <meta property='og:description' content={description} />
+    <meta property='og:image' content={ogImageURL} />
+
+    <!-- Twitter -->
+    <meta property='twitter:card' content='summary_large_image' />
+    <meta property='twitter:url' content={canonicalURL} />
+    <meta property='twitter:title' content={title} />
+    <meta property='twitter:description' content={description} />
+    <meta property='twitter:image' content={ogImageURL} />
+
+    <link rel='alternate' type='application/rss+xml' title='iammatthias - All Content' href='/rss.xml' />
+    <link rel='sitemap' href='/sitemap-index.xml' />
+
+    <link
+      rel='icon'
+      href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☼</text></svg>'
+    />
+  </head>
+  <body>
+    <div class='with-sidebar'>
+      <main>
+        <Nav />
+        <slot name='main' />
+        <Footer />
+      </main>
+      <slot name='sidebar' />
+    </div>
+  </body>
+</html>
+
+<style>
+  .with-sidebar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    min-height: calc(100vh - 2rem);
+  }
+
+  .with-sidebar > :first-child {
+    flex-basis: 0;
+    flex-grow: 999;
+    min-inline-size: 50%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .with-sidebar > * {
+    border: 1px solid var(--color-border);
+  }
+
+  main > :not(nav):not(footer) {
+    flex: 1;
+  }
+</style>

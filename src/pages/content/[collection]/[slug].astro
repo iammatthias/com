@@ -1,0 +1,161 @@
+---
+import { getCollection, render } from "astro:content";
+import DefaultLayout from "@layouts/defaultLayouts.astro";
+import { getGitHubCollections, type GitHubContentData } from "@lib/github-loader";
+import Sidebar from "@components/sidebar/index.astro";
+
+type Entry = {
+  id: string;
+  data: GitHubContentData;
+};
+
+export async function getStaticPaths() {
+  const GITHUB_OWNER = "iammatthias";
+  const GITHUB_REPO = "obsidian_cms";
+  const GITHUB_TOKEN = import.meta.env.GITHUB;
+
+  const collectionNames = await getGitHubCollections(GITHUB_OWNER, GITHUB_REPO, GITHUB_TOKEN, "main", "content");
+
+  const paths = await Promise.all(
+    collectionNames.map(async (collectionName) => {
+      const entries = (await getCollection(collectionName as any)) as Entry[];
+      return entries.map((entry) => ({
+        params: {
+          collection: collectionName,
+          slug: entry.id,
+        },
+        props: { entry },
+      }));
+    })
+  );
+
+  return paths.flat();
+}
+
+interface Props {
+  entry: Entry;
+}
+
+const { entry } = Astro.props;
+const { collection, slug } = Astro.params;
+const { Content } = await render(entry as any);
+
+const title = entry.data.title || slug;
+const description = entry.data.description || `${title} - ${collection}`;
+const ogImage = `/api/og-${collection}-${encodeURIComponent(title || '')}.png`;
+---
+
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
+  <Fragment slot='main'>
+    <article>
+      <nav class='breadcrumb'>
+        <a href='/content'>All Content</a> / <a href={`/content/${collection}`}>{collection}</a> / {slug}
+      </nav>
+
+      <header>
+        <h1>{entry.data.title}</h1>
+
+        <div class='meta'>
+          <time datetime={entry.data.created}>
+            Created: {new Date(entry.data.created).toLocaleDateString()}
+          </time>
+          <time datetime={entry.data.updated}>
+            Updated: {new Date(entry.data.updated).toLocaleDateString()}
+          </time>
+        </div>
+
+        {
+          entry.data.tags && entry.data.tags.length > 0 && (
+            <div class='tags'>
+              {entry.data.tags.map((tag: string) => (
+                <a href={`/tags/${tag}`} class='tag'>
+                  {tag}
+                </a>
+              ))}
+            </div>
+          )
+        }
+
+        {entry.data.excerpt && <p class='excerpt'>{entry.data.excerpt}</p>}
+      </header>
+
+      <div class='content'>
+        <Content />
+      </div>
+    </article>
+  </Fragment>
+  <!-- <Sidebar slot='sidebar'>
+    <h2>sidebar</h2>
+  </Sidebar> -->
+</DefaultLayout>
+
+<style>
+  article {
+    padding: 1rem;
+    max-width: 800px;
+    margin: 0 auto 5rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumb a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  header {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    margin-bottom: 1rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .tag {
+    background: var(--color-surface);
+    padding: 0.25rem 0.75rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .tag:hover {
+    background: var(--color-surface);
+    opacity: 0.8;
+  }
+
+  .excerpt {
+    font-style: italic;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .content {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+</style>

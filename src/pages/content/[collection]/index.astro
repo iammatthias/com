@@ -1,0 +1,247 @@
+---
+import { getCollection } from "astro:content";
+import DefaultLayout from "@layouts/defaultLayouts.astro";
+import { getGitHubCollections, type GitHubContentData } from "@lib/github-loader";
+
+export async function getStaticPaths() {
+  const GITHUB_OWNER = "iammatthias";
+  const GITHUB_REPO = "obsidian_cms";
+  const GITHUB_TOKEN = import.meta.env.GITHUB;
+
+  const collectionNames = await getGitHubCollections(GITHUB_OWNER, GITHUB_REPO, GITHUB_TOKEN, "main", "content");
+
+  return collectionNames.map((collection) => ({
+    params: { collection },
+  }));
+}
+
+type Entry = {
+  id: string;
+  data: GitHubContentData;
+};
+
+const { collection } = Astro.params;
+
+// Get all entries in this collection
+// Note: Entries are already filtered by published status and sorted by recency at the loader level
+const entries = (await getCollection(collection as any)) as Entry[];
+
+// Group by tags if available
+const byTag = new Map<string, Entry[]>();
+entries.forEach((entry) => {
+  if (entry.data.tags) {
+    entry.data.tags.forEach((tag: string) => {
+      if (!byTag.has(tag)) {
+        byTag.set(tag, []);
+      }
+      byTag.get(tag)!.push(entry);
+    });
+  }
+});
+
+const title = `${collection} - @iammatthias`;
+const description = `Browse ${entries.length} items in ${collection}`;
+const ogImage = `/api/og-${collection}.png`;
+---
+
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
+  <Fragment slot='main'>
+    <section>
+      <nav class='breadcrumb'>
+        <a href='/content'>All Content</a> / {collection}
+      </nav>
+
+      <h1>{collection}</h1>
+      <div class='header-meta'>
+        <p class='count'>{entries.length} items</p>
+        <a href={`/content/${collection}/rss.xml`} class='rss-link'>RSS</a>
+      </div>
+
+      <div class='entries-list'>
+        {
+          entries.map((entry) => (
+            <article class='entry-card'>
+              <h2>
+                <a href={`/content/${collection}/${entry.id}`}>{entry.data.title}</a>
+              </h2>
+              {entry.data.excerpt && <p class='excerpt'>{entry.data.excerpt}</p>}
+              <div class='meta'>
+                <time datetime={entry.data.created}>Created: {new Date(entry.data.created).toLocaleDateString()}</time>
+                {entry.data.tags && entry.data.tags.length > 0 && (
+                  <div class='tags'>
+                    {entry.data.tags.map((tag: string) => (
+                      <a href={`/tags/${tag}`} class='tag'>
+                        {tag}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      {
+        byTag.size > 0 && (
+          <aside class='tags-sidebar'>
+            <h3>Filter by tag</h3>
+            <div class='tag-cloud'>
+              {Array.from(byTag.entries())
+                .sort((a, b) => b[1].length - a[1].length)
+                .map(([tag, items]) => (
+                  <button class='tag-filter' data-tag={tag}>
+                    {tag} <span class='tag-count'>({items.length})</span>
+                  </button>
+                ))}
+            </div>
+          </aside>
+        )
+      }
+    </section>
+  </Fragment>
+</DefaultLayout>
+
+<style>
+  section {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .breadcrumb {
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    margin-bottom: 1rem;
+  }
+
+  .breadcrumb a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  h1 {
+    margin-bottom: 0.5rem;
+    text-transform: capitalize;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .count {
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  .rss-link {
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--color-border);
+    padding: 0.25rem 0.5rem;
+  }
+
+  .rss-link:hover {
+    background: var(--color-surface);
+  }
+
+  .entries-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .entry-card {
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+  }
+
+  .entry-card h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+  }
+
+  .entry-card h2 a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .entry-card h2 a:hover {
+    text-decoration: underline;
+  }
+
+  .excerpt {
+    margin: 0 0 1rem 0;
+    line-height: 1.6;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background: var(--color-surface);
+    padding: 0.25rem 0.5rem;
+
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .tag:hover {
+    background: var(--color-surface);
+    opacity: 0.8;
+  }
+
+  .tags-sidebar {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .tags-sidebar h3 {
+    margin: 0 0 1rem 0;
+  }
+
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag-filter {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    padding: 0.5rem 1rem;
+    color: var(--color-foreground);
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .tag-filter:hover {
+    background: var(--color-surface);
+    opacity: 0.8;
+  }
+
+  .tag-count {
+    color: var(--color-muted);
+  }
+</style>

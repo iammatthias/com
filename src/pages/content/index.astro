@@ -1,0 +1,187 @@
+---
+import { getCollection } from "astro:content";
+import DefaultLayout from "@layouts/defaultLayouts.astro";
+import { getGitHubCollections, type GitHubContentData } from "@lib/github-loader";
+
+type Entry = {
+  id: string;
+  data: GitHubContentData;
+};
+
+// Get all collection names
+const GITHUB_OWNER = "iammatthias";
+const GITHUB_REPO = "obsidian_cms";
+const GITHUB_TOKEN = import.meta.env.GITHUB;
+
+const collectionNames = await getGitHubCollections(GITHUB_OWNER, GITHUB_REPO, GITHUB_TOKEN, "main", "content");
+
+// Get all entries from all collections and flatten into one array
+// Note: Entries are already filtered by published status and sorted by recency at the loader level
+const allEntriesWithCollection = (
+  await Promise.all(
+    collectionNames.map(async (name) => {
+      const entries = (await getCollection(name as any)) as Entry[];
+      return entries.map((entry) => ({
+        ...entry,
+        collection: name,
+      }));
+    })
+  )
+)
+  .flat()
+  .sort((a, b) => {
+    const dateA = new Date(a.data.created).getTime();
+    const dateB = new Date(b.data.created).getTime();
+    return dateB - dateA; // Most recent first
+  });
+
+const title = "All Content - @iammatthias";
+const description = `Browse all ${allEntriesWithCollection.length} items across collections`;
+const ogImage = "/api/og-content.png";
+---
+
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
+  <Fragment slot='main'>
+    <section>
+      <h1>All Content</h1>
+      <div class='header-meta'>
+        <p class='count'>{allEntriesWithCollection.length} items</p>
+        <a href='/rss.xml' class='rss-link'>RSS</a>
+      </div>
+
+      <div class='entries-list'>
+        {
+          allEntriesWithCollection.map((entry) => (
+            <article class='entry-card'>
+              <h2>
+                <a href={`/content/${entry.collection}/${entry.id}`}>{entry.data.title}</a>
+              </h2>
+              {entry.data.excerpt && <p class='excerpt'>{entry.data.excerpt}</p>}
+              <div class='meta'>
+                <time datetime={entry.data.created}>Created: {new Date(entry.data.created).toLocaleDateString()}</time>
+                <a href={`/content/${entry.collection}`} class='collection-link'>
+                  {entry.collection}
+                </a>
+                {entry.data.tags && entry.data.tags.length > 0 && (
+                  <div class='tags'>
+                    {entry.data.tags.map((tag: string) => (
+                      <a href={`/tags/${tag}`} class='tag'>
+                        {tag}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+  </Fragment>
+</DefaultLayout>
+
+<style>
+  section {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .count {
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  .rss-link {
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--color-border);
+    padding: 0.25rem 0.5rem;
+  }
+
+  .rss-link:hover {
+    background: var(--color-surface);
+  }
+
+  .entries-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .entry-card {
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+  }
+
+  .entry-card h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+  }
+
+  .entry-card h2 a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .entry-card h2 a:hover {
+    text-decoration: underline;
+  }
+
+  .excerpt {
+    margin: 0 0 1rem 0;
+    line-height: 1.6;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+  .collection-link {
+    text-decoration: none;
+    color: inherit;
+    text-transform: capitalize;
+    padding: 0.25rem 0.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .collection-link:hover {
+    opacity: 0.8;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background: var(--color-surface);
+    padding: 0.25rem 0.5rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .tag:hover {
+    background: var(--color-surface);
+    opacity: 0.8;
+  }
+</style>

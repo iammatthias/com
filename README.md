@@ -1,31 +1,31 @@
-      :::::::::::            :::          :::   :::
-         :+:              :+: :+:       :+:+: :+:+:
-        +:+             +:+   +:+     +:+ +:+:+ +:+
-       +#+            +#++:++#++:    +#+  +:+  +#+
-      +#+            +#+     +#+    +#+       +#+
-     #+#            #+#     #+#    #+#       #+#
+```
 
-########### ### ### ### ###
+`7MMF'
+  MM
+  MM       ,6"Yb.  `7MMpMMMb.pMMMb.
+  MM      8)   MM    MM    MM    MM
+  MM       ,pm9MM    MM    MM    MM
+  MM      8M   MM    MM    MM    MM
+.JMML.    `Moo9^Yo..JMML  JMML  JMML.
 
-        :::   :::           :::    :::::::::::   :::::::::::       :::    :::       :::::::::::           :::        ::::::::
-      :+:+: :+:+:        :+: :+:      :+:           :+:           :+:    :+:           :+:             :+: :+:     :+:    :+:
-    +:+ +:+:+ +:+      +:+   +:+     +:+           +:+           +:+    +:+           +:+            +:+   +:+    +:+
 
-+#+ +:+ +#+ +#++:++#++: +#+ +#+ +#++:++#++ +#+ +#++:++#++: +#++:++#++
-+#+ +#+ +#+ +#+ +#+ +#+ +#+ +#+ +#+ +#+ +#+ +#+
-#+# #+# #+# #+# #+# #+# #+# #+# #+# #+# #+# #+# #+#
 
-###
+                                       ,,          ,,
+`7MMM.     ,MMF'         mm     mm   `7MM          db
+  MMMb    dPMM           MM     MM     MM
+  M YM   ,M MM   ,6"Yb.mmMMmm mmMMmm   MMpMMMb.  `7MM   ,6"Yb.  ,pP"Ybd
+  M  Mb  M' MM  8)   MM  MM     MM     MM    MM    MM  8)   MM  8I   `"
+  M  YM.P'  MM   ,pm9MM  MM     MM     MM    MM    MM   ,pm9MM  `YMMMa.
+  M  `YM'   MM  8M   MM  MM     MM     MM    MM    MM  8M   MM  L.   I8
+.JML. `'  .JMML.`Moo9^Yo.`Mbmo  `Mbmo.JMML  JMML..JMML.`Moo9^Yo.M9mmmP'
 
 ```
 
 ### hi
 
-After a few years on NextJS with various content backends (Contentful, Hygraph, Sanity, Tina, etc.), I've embraced a new approach.
+This is the latest version of my site. It is built with [Astro](https://astro.build/), and the content is authored in [Obsidian](https://obsidian.md/) and stored in a private repo.
 
-The front-end is built with [Astro](https://astro.build/), and the content is authored in [Obsidian](https://obsidian.md/). The markdown files are stored in a private repo on Github, and pulled into the Astro site through the Github GraphQL API.
-
-Images that are added to the markdown in Obsidian are uploaded to a [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) bucket, and the URLs are replaced in the markdown files. In Astro, these images are optimized and cached through [Pinata](https://www.pinata.cloud/).
+Images hosted on Pinata IPFS.
 
 The site is hosted on [Vercel](https://vercel.com/), and I'm using [PostHog](https://posthog.com/) for some basic analytics.
 
@@ -35,7 +35,5 @@ The site is hosted on [Vercel](https://vercel.com/), and I'm using [PostHog](htt
 
 - [Astro](https://astro.build/)
 - [Obsidian](https://obsidian.md/)
-- [Vercel](https://vercel.com/)
 - [Pinata](https://www.pinata.cloud/)
-- [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/)
-```
+- [Cloudflare](https://www.cloudflare.com/)

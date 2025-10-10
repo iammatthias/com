@@ -1,0 +1,199 @@
+---
+
+---
+
+<details id='sidebar' class='sidebar' open>
+  <summary class='sidebar-toggle' aria-label='Toggle sidebar'>
+    <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+      <path d='M3 6h18M3 12h18M3 18h18'></path>
+    </svg>
+  </summary>
+  <div class='sidebar-content'>
+    <slot />
+  </div>
+</details>
+
+<style is:global>
+  .sidebar {
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Desktop styles */
+  @media (min-width: 800px) {
+    .sidebar {
+      flex-basis: calc(50ch - 32px);
+      flex-grow: 1;
+      max-height: calc(100vh - 2rem);
+      position: sticky;
+      top: 1rem;
+      padding: 0;
+      transition:
+        flex-basis 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.collapsed {
+      flex-basis: 2.5rem;
+      flex-grow: 0;
+      min-width: 2.5rem;
+      max-width: 2.5rem;
+    }
+
+    .sidebar-content {
+      padding: 1rem;
+      opacity: 1;
+      visibility: visible;
+      margin-top: auto;
+      transition:
+        opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.1s,
+        padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.collapsed .sidebar-content {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      padding: 0;
+      transition:
+        opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+    }
+  }
+
+  /* Mobile styles */
+  @media (max-width: 799px) {
+    .sidebar {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      background: var(--color-background);
+      z-index: 1000;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar:not([open]) {
+      height: auto;
+    }
+
+    .sidebar[open] {
+      height: calc(100vh - 2rem);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0.5rem;
+      min-height: 2.5rem;
+      list-style: none;
+      flex-shrink: 0;
+    }
+
+    .sidebar-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .sidebar-toggle svg {
+      margin: 0;
+    }
+
+    .sidebar-content {
+      padding: 0 1rem 1rem 1rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .sidebar:not([open]) .sidebar-content {
+      display: none;
+    }
+  }
+
+  @media (min-width: 800px) {
+    .sidebar-toggle {
+      cursor: pointer;
+    }
+  }
+
+  .sidebar-toggle {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    padding: 0.25rem;
+    color: var(--color-foreground);
+    transition: background-color 0.2s ease;
+    z-index: 10;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar-toggle:hover {
+    background-color: var(--color-surface);
+  }
+</style>
+
+<script is:inline>
+  // Apply collapsed state immediately to prevent flash (desktop only)
+  (function () {
+    const isDesktop = window.innerWidth >= 800;
+
+    if (isDesktop) {
+      const savedState = localStorage.getItem("sidebar-collapsed");
+      const isCollapsed = savedState === "true";
+
+      if (isCollapsed) {
+        const style = document.createElement("style");
+        style.textContent =
+          ".sidebar { flex-basis: 2.5rem !important; min-width: 2.5rem !important; max-width: 2.5rem !important; flex-grow: 0 !important; } .sidebar-content { opacity: 0 !important; visibility: hidden !important; padding: 0 !important; }";
+        document.head.appendChild(style);
+
+        document.addEventListener("DOMContentLoaded", function () {
+          setTimeout(function () {
+            style.remove();
+          }, 0);
+        });
+      }
+    }
+  })();
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const sidebar = document.getElementById("sidebar") as HTMLDetailsElement;
+    const toggleButton = document.querySelector(".sidebar-toggle") as HTMLElement;
+
+    if (!sidebar || !toggleButton) return;
+
+    const isDesktop = window.innerWidth >= 800;
+
+    if (isDesktop) {
+      // Desktop: use class-based toggle and prevent details behavior
+      const savedState = localStorage.getItem("sidebar-collapsed");
+      const isCollapsed = savedState === "true";
+
+      if (isCollapsed) {
+        sidebar.classList.add("collapsed");
+      }
+
+      toggleButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        sidebar.classList.toggle("collapsed");
+        const isNowCollapsed = sidebar.classList.contains("collapsed");
+        localStorage.setItem("sidebar-collapsed", isNowCollapsed.toString());
+      });
+    }
+    // Mobile: native details/summary behavior - no JS needed
+  });
+</script>

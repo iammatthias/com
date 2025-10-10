@@ -1,6 +1,6 @@
 ---
 export const prerender = false;
-import PageLayout from "@/layouts/PageLayout.astro";
+import DefaultLayout from "@layouts/defaultLayouts.astro";
 
 function hashToNumbers(hash: string): number[] {
   const cleanHash = hash.replace("0x", "");
@@ -222,12 +222,16 @@ if (!hash) throw new Error("Hash parameter is required");
 
 const patterns = generatePatternData(hash);
 const colors = generateColors(hash);
+
+const title = `Session ${hash.slice(0, 8)}... - @iammatthias`;
+const description = `Unique generative art pattern for session ${hash}`;
+const ogImage = `/api/og-session-${hash}.png`;
 ---
 
-<PageLayout path='Onchain Analytics' title={hash}>
-  <article>
-    <div class='container'>
-      <a href='/onchain-analytics' class='back'>image.pngBack</a>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
+  <Fragment slot='main'>
+    <article>
+      <a href='/onchain-analytics' class='back'>Back</a>
       <svg
         viewBox='-10 -10 140 160'
         preserveAspectRatio='xMidYMid meet'
@@ -268,40 +272,22 @@ const colors = generateColors(hash);
         </g>
       </svg>
       <p>{hash}</p>
-    </div>
-  </article>
-</PageLayout>
+    </article>
+  </Fragment>
+</DefaultLayout>
 
 <style>
   article {
-    max-width: 800px;
-    width: 100%;
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height));
-    height: 100%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: var(--padding);
-  }
-
-  .container {
-    width: auto;
-    flex: 1;
+    padding: 1rem;
+    max-width: 600px;
+    margin: 0 auto 5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    max-height: 90vh;
-    /* Prevent overflow and constrain SVG */
-    overflow: hidden;
-    max-width: 100vw;
-  }
-
-  p,
-  a {
-    font-size: var(--fs-xs);
+    width: 100%;
+    text-align: center;
   }
 
   svg {
@@ -309,9 +295,13 @@ const colors = generateColors(hash);
     height: auto;
     margin: 0 auto;
     display: block;
-    /* Maintain aspect ratio for modern browsers */
     aspect-ratio: 7 / 8;
-    max-width: 100%;
-    max-height: 80vh;
+    max-height: 70vh;
+  }
+
+  p {
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 0.8rem;
   }
 </style>

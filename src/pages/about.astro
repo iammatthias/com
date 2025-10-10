@@ -1,0 +1,137 @@
+---
+import DefaultLayout from "@layouts/defaultLayouts.astro";
+
+const title = "About - @iammatthias";
+const description = "Hi, I am Matthias. I'm a photographer turned growth engineer working on the future of the web.";
+const ogImage = "/api/og-about.png";
+
+const socialLinks = [
+  {
+    name: "Farcaster",
+    url: "https://farcaster.xyz/iammatthias",
+    username: "@iammatthias",
+    blurb:
+      'Farcaster is a "sufficiently decentralized" social protocol. There are multiple clients, but I use Warpcast.',
+  },
+  {
+    name: "Glass",
+    url: "https://glass.photo/iam",
+    username: "@iam",
+    blurb: "Glass is a photography-centric platform, and is where I post most of my pictures.",
+  },
+  {
+    name: "Instagram",
+    url: "https://instagram.com/iammatthias",
+    username: "@iammatthias",
+    blurb: "Not as active as it used to be, I share pictures on Glass these days.",
+  },
+  {
+    name: "Threads",
+    url: "https://www.threads.net/@iammatthias",
+    username: "@iammatthias",
+    blurb: "Mostly inactive.",
+  },
+  {
+    name: "GitHub",
+    url: "https://github.com/iammatthias",
+    username: "@iammatthias",
+    blurb: "Work and side projects.",
+  },
+  {
+    name: "LinkedIn",
+    url: "https://linkedin.com/in/iammatthias",
+    username: "@iammatthias",
+    blurb: "An up-to-date snapshot of my professional career.",
+  },
+  {
+    name: "Mastodon",
+    url: "https://mastodon.social/@iammatthias",
+    username: "@iammatthias",
+    blurb: "I maintain an account, but I am not active.",
+  },
+  {
+    name: "Twitter",
+    url: "https://twitter.com/iammatthias",
+    username: "@iammatthias",
+    blurb: "I maintain an account, but I have deleted almost all content.",
+  },
+];
+---
+
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
+  <Fragment slot='main'>
+    <section>
+      <p>Hi, I am Matthias.</p>
+      <p>
+        I'm a photographer turned growth engineer. I've gotten to do some really cool things along the way, and now I'm
+        working on the future of the web.
+      </p>
+      <p>
+        Currently I run DevRel at <a href='https://www.pinata.cloud/' title='Pinata'>Pinata</a> and have a small growth consultancy
+        called
+        <a href='https://day---break.com/' title='day---break'>day---break</a> on the side.
+      </p>
+      <p>Based in Southern California, I spend a lot of time cooking and behind the lens when I'm not at my desk.</p>
+    </section>
+    <section id='social'>
+      <h2>Find me online</h2>
+      <ul>
+        {
+          socialLinks.map((link) => (
+            <li>
+              <a href={link.url}>
+                {link.name} <span class='username'>{link.username}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </Fragment>
+</DefaultLayout>
+
+<style>
+  section {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: fit-content;
+    min-height: calc(50vh - 5rem);
+  }
+
+  section > * {
+    max-width: 64ch;
+    word-wrap: pretty;
+  }
+
+  #social ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  #social li {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1rem;
+  }
+
+  #social li:last-child {
+    border-bottom: none;
+  }
+
+  #social li a {
+    text-decoration: none;
+    color: inherit;
+    font-weight: 700;
+  }
+
+  #social li a:hover {
+    text-decoration: underline;
+  }
+
+  .username {
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+</style>

@@ -1,72 +1,116 @@
 ---
-// layouts
-import PageLayout from "@/layouts/PageLayout.astro";
-import OnchainAnalytics from "@/components/svelte/OnchainAnalytics.svelte";
+import DefaultLayout from "@layouts/defaultLayouts.astro";
+import OnchainAnalytics from "@components/OnchainAnalytics";
 
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
+
+const title = "Onchain Analytics - @iammatthias";
+const description = "Homebrew analytics system built on anonymous session management with keccak256 hashes and blockchain";
+const ogImage = "/api/og-onchain-analytics.png";
 ---
 
-<PageLayout path='Onchain Analytics' }>
-  <div class='grid'>
-    <div class='meta'>
-      <h1>Onchain Analytics</h1>
-      <p>
-        Recording started at block number <a
-          href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
-          >12315477
-        </a>, and is no longer collecting data. The <a
-          href=`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code#L1`
-        >
-          smart contracts
-        </a> are verified on Basescan.
-      </p>
-    </div>
+<DefaultLayout title={title} description={description} ogImage={ogImage}>
+  <Fragment slot='main'>
     <article>
-      <p>
-        This site briefly used a homebrew analytics system. It was built on an annonymous session management system that
-        leveraged keccak256 hashes and the blockchain — you can <a
-          class='break'
-          href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more it here</a
-        >.
-      </p>
-      <OnchainAnalytics client:only='svelte' contractAddress={CONTRACT_ADDRESS} />
+      <nav class='breadcrumb'>
+        <a href='/content'>All Content</a> / Onchain Analytics
+      </nav>
+
+      <div class='content'>
+        <h1>Onchain Analytics</h1>
+        <p>
+          Recording started at block number <a
+            href='https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8'
+            >12315477
+          </a>, and is no longer collecting data. The <a
+            href=`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code#L1`
+          >
+            smart contracts
+          </a> are verified on Basescan.
+        </p>
+        <p>
+          This site briefly used a homebrew analytics system. It was built on an annonymous session management system
+          that leveraged keccak256 hashes and the blockchain — you can <a
+            class='break'
+            href='https://iammatthias.com/posts/1712329304675-onchain-hit-counter'>read more it here</a
+          >.
+        </p>
+        <OnchainAnalytics client:only='react' contractAddress={CONTRACT_ADDRESS} />
+      </div>
     </article>
-  </div>
-</PageLayout>
+  </Fragment>
+  <!-- <Sidebar slot='sidebar'>
+    <h2>sidebar</h2>
+  </Sidebar> -->
+</DefaultLayout>
 
 <style>
-  .grid {
-    display: grid;
-    grid-template-columns: calc(var(--meta-column) - var(--aside-width)) 1fr;
-    position: relative;
-    min-height: calc(100vh - var(--nav-height) - var(--footer-height) - 4px);
+  article {
+    padding: 1rem;
+    max-width: 800px;
+    margin: 0 auto 5rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumb a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  header {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .meta {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    height: fit-content;
-    align-self: start;
-    height: 100%;
-    max-height: calc(100vh - var(--nav-height) - var(--footer-height));
-    overflow-y: auto;
-    padding: 1rem;
-    p,
-    .tags {
-      font-size: var(--fs-sm);
-    }
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    margin-bottom: 1rem;
   }
 
-  article {
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .tag {
+    background: var(--color-surface);
+    padding: 0.25rem 0.75rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .tag:hover {
+    background: var(--color-surface);
+    opacity: 0.8;
+  }
+
+  .excerpt {
+    font-style: italic;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .content {
+    max-width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-  }
-
-  article > :global(*) {
-    max-width: 600px;
-    width: 100%;
+    gap: 1.5rem;
   }
 </style>
