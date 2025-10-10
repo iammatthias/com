@@ -107,6 +107,18 @@ export default defineConfig({
   vite: {
     plugins: [rawFonts(['.ttf'])],
     assetsInclude: ['**/*.wasm'],
+    resolve: {
+      alias: {
+        '@src': path.resolve('./src'),
+        '@styles': path.resolve('./src/styles'),
+        '@components': path.resolve('./src/components'),
+        '@layouts': path.resolve('./src/layouts'),
+        '@pages': path.resolve('./src/pages'),
+        '@mastra': path.resolve('./src/mastra'),
+        '@actions': path.resolve('./src/actions'),
+        '@lib': path.resolve('./src/lib'),
+      },
+    },
     ssr: {
       external: ["buffer", "path", "fs"].map((i) => `node:${i}`),
       noExternal: ['@cf-wasm/resvg'],
