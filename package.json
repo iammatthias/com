@@ -6,26 +6,23 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "mcp:dev": "wrangler dev",
-    "mcp:deploy": "wrangler deploy"
+    "astro": "astro"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.0.0",
-    "@astrojs/cloudflare": "^12.6.9",
+    "@ai-sdk/openai": "^2.0.46",
+    "@astrojs/cloudflare": "^12.6.10",
     "@astrojs/react": "^4.4.0",
     "@astrojs/rss": "^4.0.12",
     "@astrojs/sitemap": "^3.6.0",
+    "@cf-wasm/resvg": "^0.1.24",
     "@cloudflare/agents": "^0.0.16",
-    "@cloudflare/pages-plugin-vercel-og": "^0.1.2",
     "@modelcontextprotocol/sdk": "^1.19.1",
     "@noble/hashes": "^2.0.1",
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.3.0",
-    "@resvg/resvg-js": "^2.6.2",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
-    "astro": "^5.14.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "astro": "^5.14.3",
     "pinata": "^2.5.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -34,9 +31,9 @@
     "satori-html": "^0.3.2",
     "three": "^0.180.0",
     "viem": "^2.38.0",
-    "zod": "^3"
+    "zod": "^4"
   },
   "devDependencies": {
-    "wrangler": "^4.42.0"
+    "wrangler": "^4.42.1"
   }
 }

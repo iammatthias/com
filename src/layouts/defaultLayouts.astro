@@ -10,7 +10,11 @@ interface Props {
   ogImage?: string;
 }
 
-const { title = "@iammatthias", description = "Personal site of Matthias Jordan", ogImage = "/api/og.png" } = Astro.props;
+const {
+  title = "@iammatthias",
+  description = "Personal site of Matthias Jordan",
+  ogImage = "/api/og.png",
+} = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 // Use current origin for OG images in development, Astro.site in production
 const ogImageURL = import.meta.env.DEV ? new URL(ogImage, Astro.url.origin) : new URL(ogImage, Astro.site);
@@ -41,6 +45,11 @@ const ogImageURL = import.meta.env.DEV ? new URL(ogImage, Astro.url.origin) : ne
 
     <link rel='alternate' type='application/rss+xml' title='iammatthias - All Content' href='/rss.xml' />
     <link rel='sitemap' href='/sitemap-index.xml' />
+
+    <link
+      rel='icon'
+      href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☼</text></svg>'
+    />
   </head>
   <body>
     <div class='with-sidebar'>

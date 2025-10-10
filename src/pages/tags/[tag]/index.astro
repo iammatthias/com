@@ -75,7 +75,6 @@ const ogImage = `/api/og-tags-${encodeURIComponent(tagName as string)}.png`;
       <h1>#{tagName}</h1>
       <div class='header-meta'>
         <p class='count'>{entriesWithTag.length} {entriesWithTag.length === 1 ? "entry" : "entries"}</p>
-        <a href={`/tags/${tagName}/rss.xml`} class='rss-link'>RSS</a>
       </div>
 
       <div class='entries-list'>

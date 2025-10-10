@@ -1,5 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import fs from 'node:fs';
+import path from 'node:path';
 
 import react from "@astrojs/react";
 import rehypeUnwrapImages from "rehype-unwrap-images";
@@ -7,6 +9,38 @@ import rehypeUnwrapImages from "rehype-unwrap-images";
 import sitemap from "@astrojs/sitemap";
 
 import cloudflare from "@astrojs/cloudflare";
+
+/**
+ * @param {string[]} extensions
+ * @returns {import('vite').Plugin}
+ */
+function rawFonts(extensions) {
+  return {
+    name: 'vite-plugin-raw-fonts',
+    enforce: /** @type {const} */ ('pre'),
+    resolveId(id, importer) {
+      if (extensions.some(ext => id.includes(ext))) {
+        if (id.startsWith('.')) {
+          const resolvedPath = path.resolve(path.dirname(importer || ''), id);
+          return resolvedPath;
+        }
+        return id;
+      }
+    },
+    load(id) {
+      if (extensions.some(ext => id.includes(ext))) {
+        try {
+          const buffer = fs.readFileSync(id);
+          return `export default new Uint8Array([${Array.from(buffer).join(',')}]);`;
+        } catch (error) {
+          const err = /** @type {Error} */ (error);
+          console.error('Error loading font:', err.message);
+          throw error;
+        }
+      }
+    }
+  };
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -22,33 +56,17 @@ export default defineConfig({
       status: 302,
       destination: "/content/art",
     },
-    "/art/[...slug]": {
-      status: 302,
-      destination: "/content/art/[...slug]",
-    },
     "/open-source": {
       status: 302,
       destination: "/content/open-source",
     },
-    "/open-source/[...slug]": {
-      status: 302,
-      destination: "/content/open-source/[...slug]",
-    },
-    posts: {
+    "/posts": {
       status: 302,
       destination: "/content/posts",
     },
-    "/posts/[...slug]": {
-      status: 302,
-      destination: "/content/posts/[...slug]",
-    },
-    recipes: {
+    "/recipes": {
       status: 302,
       destination: "/content/recipes",
-    },
-    "/recipes/[...slug]": {
-      status: 302,
-      destination: "/content/recipes/[...slug]",
     },
     "/post/1563778800000": {
       status: 302,
@@ -82,13 +100,16 @@ export default defineConfig({
 
   adapter: cloudflare({
     platformProxy: {
-      enabled: true,
+      enabled: false,
     },
   }),
 
   vite: {
+    plugins: [rawFonts(['.ttf'])],
+    assetsInclude: ['**/*.wasm'],
     ssr: {
-      external: ["node:buffer"],
+      external: ["buffer", "path", "fs"].map((i) => `node:${i}`),
+      noExternal: ['@cf-wasm/resvg'],
     },
   },
 });

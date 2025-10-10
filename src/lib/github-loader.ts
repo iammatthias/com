@@ -250,7 +250,7 @@ function parseYaml(yaml: string): Record<string, any> {
 }
 
 /**
- * Get all available collections from the GitHub repo
+ * Get all available collections from the GitHub repo that have published content
  */
 export async function getGitHubCollections(
   owner: string,
@@ -259,6 +259,8 @@ export async function getGitHubCollections(
   branch = 'main',
   contentPath = 'content'
 ): Promise<string[]> {
+  const isDev = import.meta.env.DEV;
+
   const query = `
     query($owner: String!, $repo: String!, $expression: String!) {
       repository(owner: $owner, name: $repo) {
@@ -267,6 +269,19 @@ export async function getGitHubCollections(
             entries {
               name
               type
+              object {
+                ... on Tree {
+                  entries {
+                    name
+                    type
+                    object {
+                      ... on Blob {
+                        text
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -298,8 +313,27 @@ export async function getGitHubCollections(
 
   const entries = result.data?.repository?.object?.entries || [];
 
-  // Return only directories (folders)
-  return entries
-    .filter((entry: any) => entry.type === 'tree')
-    .map((entry: any) => entry.name);
+  // Filter directories and check if they have published content
+  const validCollections: string[] = [];
+
+  for (const entry of entries) {
+    if (entry.type === 'tree') {
+      const markdownFiles = entry.object?.entries?.filter(
+        (file: any) => file.type === 'blob' && file.name.endsWith('.md')
+      ) || [];
+
+      // Check if any markdown files have published: true
+      const hasPublishedContent = markdownFiles.some((file: any) => {
+        const content = file.object?.text || '';
+        const { frontmatter } = parseFrontmatter(content);
+        return isDev || frontmatter.published === true;
+      });
+
+      if (hasPublishedContent) {
+        validCollections.push(entry.name);
+      }
+    }
+  }
+
+  return validCollections;
 }
