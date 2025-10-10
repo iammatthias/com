@@ -7,6 +7,19 @@
       <head>
         <title><xsl:value-of select="title"/> - RSS Feed</title>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <!-- Open Graph / Social Media -->
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="{title} - RSS Feed"/>
+        <meta property="og:description" content="{description}"/>
+        <meta property="og:image" content="{link}api/og.png"/>
+        <meta property="og:url" content="{link}/rss.xml"/>
+
+        <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:title" content="{title} - RSS Feed"/>
+        <meta name="twitter:description" content="{description}"/>
+        <meta name="twitter:image" content="{link}/api/og.png"/>
+
         <style>
           * {
             margin: 0;
