@@ -18,7 +18,7 @@
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:title" content="{title} - RSS Feed"/>
         <meta name="twitter:description" content="{description}"/>
-        <meta name="twitter:image" content="https://og.iammatthias.com/"/>
+        <meta name="twitter:image" content="https://og.iammatthias.com/RSS"/>
         <meta name="theme-color" content="#0F1419"/>
 
         <style>
