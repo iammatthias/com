@@ -59,6 +59,9 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            @media (max-width: 768px) {
+              padding: 1rem;
+            }
           }
 
           h1, h2, h3, h4, h5, h6 {
@@ -129,6 +132,9 @@
             border: 1px solid #ffb800;
             border: 1px solid color(display-p3 1 0.75 0);
             padding: 1.5rem;
+            @media (max-width: 768px) {
+              padding: 1rem;
+            }
           }
 
           .item h2 a {

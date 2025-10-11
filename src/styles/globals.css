@@ -130,10 +130,9 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    box-shadow:
-      inset 0px -16px 0px 0px var(--color-background),
-      inset 0px 16px 0px 0px var(--color-background);
+    box-shadow: inset 0px 0px 0px 16px var(--color-background), inset 0px 0px 0px 17px var(--color-caret);
     pointer-events: none;
+    z-index: 9999;
   }
 }
 
@@ -239,8 +238,10 @@ code {
 
 pre {
   padding: 1.5rem;
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
   background: var(--color-surface);
-
   overflow-x: auto;
 }
 

@@ -10,11 +10,7 @@ interface Props {
   ogImage?: string;
 }
 
-const {
-  title = "@iammatthias",
-  description = "Personal site of Matthias Jordan",
-  ogImage = "/",
-} = Astro.props;
+const { title = "@iammatthias", description = "Personal site of Matthias Jordan", ogImage = "/" } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 // Use OG subdomain for production, localhost for development
 const ogImageURL = import.meta.env.DEV
@@ -26,7 +22,9 @@ const ogImageURL = import.meta.env.DEV
   <head>
     <meta charset='utf-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover' />
-    <meta name='theme-color' content='#0F1419' />
+
+    <meta name='color-scheme' content='light dark' />
+    <meta name='theme-color' content='#0f1419' />
 
     <title>{title}</title>
     <meta name='description' content={description} />
@@ -63,6 +61,9 @@ const ogImageURL = import.meta.env.DEV
       </main>
       <slot name='sidebar' />
     </div>
+    <div class='veil' aria-hidden='true'>
+      <div class='veil-overlay'></div>
+    </div>
   </body>
 </html>
 
@@ -71,7 +72,7 @@ const ogImageURL = import.meta.env.DEV
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    min-height: calc(100vh - 2rem);
+    min-height: calc(100dvh - 2rem);
   }
 
   .with-sidebar > :first-child {
@@ -82,11 +83,33 @@ const ogImageURL = import.meta.env.DEV
     flex-direction: column;
   }
 
-  .with-sidebar > * {
+  /* .with-sidebar > * {
     border: 1px solid var(--color-border);
-  }
+  } */
 
   main > :not(nav):not(footer) {
     flex: 1;
+  }
+
+  .veil {
+    display: none;
+  }
+  @supports (-webkit-touch-callout: none) {
+    .veil {
+      position: sticky;
+      top: 0;
+      z-index: 10000;
+      display: block;
+      pointer-events: none;
+    }
+    .veil-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      backdrop-filter: blur(1px);
+    }
   }
 </style>

@@ -2,6 +2,7 @@
 import DefaultLayout from "@layouts/defaultLayouts.astro";
 import HeroSection from "@components/homepage/heroSection.astro";
 import RecentContent from "@components/homepage/recentContent.astro";
+import RecentGlass from "@components/RecentGlass";
 // import RecentFeeds from "@components/homepage/recentFeeds.astro";
 
 const title = "@iammatthias";
@@ -13,6 +14,7 @@ const ogImage = "/";
   <Fragment slot='main'>
     <HeroSection />
     <RecentContent />
+    <RecentGlass client:load />
     <!-- <RecentFeeds /> -->
   </Fragment>
 </DefaultLayout>

@@ -5,7 +5,8 @@ import OnchainAnalytics from "@components/OnchainAnalytics";
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT;
 
 const title = "Onchain Analytics - @iammatthias";
-const description = "Homebrew analytics system built on anonymous session management with keccak256 hashes and blockchain";
+const description =
+  "Homebrew analytics system built on anonymous session management with keccak256 hashes and blockchain";
 const ogImage = "/onchain-analytics";
 ---
 
@@ -46,7 +47,15 @@ const ogImage = "/onchain-analytics";
 
 <style>
   article {
-    padding: 1rem;
+    padding: 2rem;
+    @media (max-width: 768px) {
+      padding: 1rem;
+    }
+    @media (max-width: 768px) {
+      padding: 1rem;
+    }
+    max-width: 1200px;
+    margin: 0 auto;
     max-width: 800px;
     margin: 0 auto 5rem;
   }

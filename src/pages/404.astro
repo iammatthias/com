@@ -40,10 +40,15 @@ const ogImage = "/404";
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 7rem + 3px);
+    height: calc(100dvh - 7rem + 3px);
     color: white;
     text-align: center;
     padding: 2rem;
+    @media (max-width: 768px) {
+      padding: 1rem;
+    }
+    max-width: 1200px;
+    margin: 0 auto;
   }
 
   section h1 {
