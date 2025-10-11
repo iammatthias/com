@@ -123,17 +123,6 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   caret-color: var(--color-caret);
-  &:before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    box-shadow: inset 0px 0px 0px 16px var(--color-background), inset 0px 0px 0px 17px var(--color-caret);
-    pointer-events: none;
-    z-index: 9999;
-  }
 }
 
 ::selection {

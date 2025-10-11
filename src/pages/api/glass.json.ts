@@ -33,10 +33,6 @@ export const GET: APIRoute = async ({ url }) => {
     const limitParam = url.searchParams.get("limit");
     const limit = limitParam ? parseInt(limitParam) : 50;
 
-    console.log(`URL: ${url.toString()}`);
-    console.log(`Limit param: ${limitParam}`);
-    console.log(`Fetching Glass photos from external API (limit: ${limit})`);
-
     // Fetch directly from Glass API
     const glassResponse = await glassLimit(async () => {
       // Glass.photo API endpoint - this may need to be adjusted based on their actual API
@@ -50,8 +46,6 @@ export const GET: APIRoute = async ({ url }) => {
           "User-Agent": "iammatthias.com/1.0", // Identify our site
         },
       });
-
-      console.log(response);
 
       if (!response.ok) {
         throw new Error(`Glass API responded with ${response.status}: ${response.statusText}`);
@@ -96,8 +90,6 @@ export const GET: APIRoute = async ({ url }) => {
             }
           : undefined,
       }));
-
-    console.log(`Successfully fetched ${validPhotos.length} photos from Glass API`);
 
     return new Response(JSON.stringify(validPhotos), {
       status: 200,

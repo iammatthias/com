@@ -73,6 +73,19 @@ const ogImageURL = import.meta.env.DEV
     flex-wrap: wrap;
     gap: 1rem;
     min-height: calc(100dvh - 2rem);
+    &:before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      box-shadow:
+        inset 0px 0px 0px 16px var(--color-background),
+        inset 0px 0px 0px 17px var(--color-caret);
+      pointer-events: none;
+      z-index: 9999;
+    }
   }
 
   .with-sidebar > :first-child {
@@ -95,6 +108,10 @@ const ogImageURL = import.meta.env.DEV
     display: none;
   }
   @supports (-webkit-touch-callout: none) {
+    /* .with-sidebar:before {
+      display: none;
+    } */
+
     .veil {
       position: sticky;
       top: 0;

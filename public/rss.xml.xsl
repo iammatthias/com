@@ -19,7 +19,7 @@
         <meta name="twitter:title" content="{title} - RSS Feed"/>
         <meta name="twitter:description" content="{description}"/>
         <meta name="twitter:image" content="https://og.iammatthias.com/"/>
-        <meta name="theme-color" content="#0F1419">
+        <meta name="theme-color" content="#0F1419"/>
 
         <style>
           * {
@@ -59,9 +59,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
-            @media (max-width: 768px) {
-              padding: 1rem;
-            }
           }
 
           h1, h2, h3, h4, h5, h6 {
@@ -132,9 +129,6 @@
             border: 1px solid #ffb800;
             border: 1px solid color(display-p3 1 0.75 0);
             padding: 1.5rem;
-            @media (max-width: 768px) {
-              padding: 1rem;
-            }
           }
 
           .item h2 a {
@@ -182,12 +176,22 @@
             background: #1a1d23;
             background: color(display-p3 0.1 0.11 0.14);
           }
-          
+
+          @media (max-width: 768px) {
+            .container {
+              padding: 1rem;
+            }
+
+            .item {
+              padding: 1rem;
+            }
+          }
+
           @media (max-width: 640px) {
             body {
               padding: 0.5rem;
             }
-            
+
             .header h1 {
               font-size: 2.5em;
             }
