@@ -3,42 +3,49 @@
 ---
 
 <nav>
-  <p><a href='/'>Home</a></p>
-  <p><a href='/content'>Content</a></p>
-  <p><a href='/about'>About</a></p>
-  <p><span id='time'></span></p>
+    <p><a href="/">Home</a></p>
+    <p><a href="/content">Content</a></p>
+    <p><a href="/about">About</a></p>
+    <p><a href="/now">Now</a></p>
+    <p><span id="time"></span></p>
 </nav>
 
 <style>
-  nav {
-    border: 1px solid var(--color-border);
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    position: sticky;
-    top: 1rem;
-    background: var(--color-background);
-    z-index: 1000;
-  }
-
-  nav > * {
-    border-right: 1px solid var(--color-border);
-    padding: 0.25rem 0.5rem;
-    font-size: 0.8rem;
-    width: fit-content;
-    &:last-child {
-      border-right: none;
-      border-left: 1px solid var(--color-border);
-      margin-left: auto;
+    nav {
+        border: 1px solid var(--color-border);
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        position: sticky;
+        top: 1rem;
+        background: var(--color-background);
+        z-index: 1000;
     }
-  }
+
+    nav > * {
+        border-right: 1px solid var(--color-border);
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        width: fit-content;
+        &:last-child {
+            border-right: none;
+            border-left: 1px solid var(--color-border);
+            margin-left: auto;
+        }
+    }
 </style>
 
 <script>
-  // just time, no date. hour and minute. update every minute on the minue. hide seconds.
-  const time = document.getElementById("time")!;
-  time.innerHTML = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
-  setInterval(() => {
-    time.innerHTML = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
-  }, 60000);
+    // just time, no date. hour and minute. update every minute on the minue. hide seconds.
+    const time = document.getElementById("time")!;
+    time.innerHTML = new Date().toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+    setInterval(() => {
+        time.innerHTML = new Date().toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    }, 60000);
 </script>

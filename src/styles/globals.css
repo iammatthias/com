@@ -1,6 +1,6 @@
 :root {
-  /* Previous theme - commented out */
-  /* --color-background: #121113;
+    /* Previous theme - commented out */
+    /* --color-background: #121113;
   --color-foreground: #ffffff;
   --color-caret: #ffffff;
   --color-invisibles: #333333;
@@ -36,103 +36,103 @@
   --color-accent: var(--color-string);
   --color-accent-secondary: var(--color-number); */
 
-  /* Mediterranean Night Sailboat Theme */
-  /* Base theme colors */
-  --color-background: #0f1419;
-  --color-background: color(display-p3 0.06 0.08 0.1);
-  --color-foreground: #f1faee;
-  --color-foreground: color(display-p3 0.95 0.98 0.94);
-  --color-caret: #ffb800;
-  --color-caret: color(display-p3 1 0.75 0);
-  --color-invisibles: #1b4965;
-  --color-invisibles: color(display-p3 0.1 0.3 0.42);
-  --color-line-highlight: #1a1d2355;
-  --color-line-highlight: color(display-p3 0.1 0.11 0.14 / 0.33);
-  --color-selection: #1b4965;
-  --color-selection: color(display-p3 0.1 0.3 0.42);
-  --color-selection-foreground: #fefae0;
-  --color-selection-foreground: color(display-p3 1 0.98 0.88);
+    /* Mediterranean Night Sailboat Theme */
+    /* Base theme colors */
+    --color-background: #0f1419;
+    --color-background: color(display-p3 0.06 0.08 0.1);
+    --color-foreground: #f1faee;
+    --color-foreground: color(display-p3 0.95 0.98 0.94);
+    --color-caret: #ffb800;
+    --color-caret: color(display-p3 1 0.75 0);
+    --color-invisibles: #1b4965;
+    --color-invisibles: color(display-p3 0.1 0.3 0.42);
+    --color-line-highlight: #1a1d2355;
+    --color-line-highlight: color(display-p3 0.1 0.11 0.14 / 0.33);
+    --color-selection: #1b4965;
+    --color-selection: color(display-p3 0.1 0.3 0.42);
+    --color-selection-foreground: #fefae0;
+    --color-selection-foreground: color(display-p3 1 0.98 0.88);
 
-  /* Syntax colors */
-  --color-comment: #6b8ca3;
-  --color-comment: color(display-p3 0.42 0.55 0.64);
-  --color-string: #ffb800;
-  --color-string: color(display-p3 1 0.75 0);
-  --color-number: #ff5733;
-  --color-number: color(display-p3 1 0.35 0.2);
-  --color-constant: #ff5733;
-  --color-constant: color(display-p3 1 0.35 0.2);
-  --color-variable: #d4d4d4;
-  --color-variable: color(display-p3 0.84 0.84 0.84);
-  --color-keyword: #2a6f97;
-  --color-keyword: color(display-p3 0.16 0.45 0.62);
-  --color-storage: #2a6f97;
-  --color-storage: color(display-p3 0.16 0.45 0.62);
-  --color-storage-type: #a68a64;
-  --color-storage-type: color(display-p3 0.66 0.56 0.42);
-  --color-class: #ff9a3d;
-  --color-class: color(display-p3 1 0.62 0.24);
-  --color-function: #a68a64;
-  --color-function: color(display-p3 0.66 0.56 0.42);
-  --color-parameter: #8b9bb3;
-  --color-parameter: color(display-p3 0.55 0.62 0.72);
-  --color-tag: #2a6f97;
-  --color-tag: color(display-p3 0.16 0.45 0.62);
-  --color-attribute: #8b9bb3;
-  --color-attribute: color(display-p3 0.55 0.62 0.72);
-  --color-punctuation: #f1faee;
-  --color-punctuation: color(display-p3 0.95 0.98 0.94);
-  --color-text: #d4d4d4;
-  --color-text: color(display-p3 0.84 0.84 0.84);
-  --color-language-literal: #8b9bb3;
-  --color-language-literal: color(display-p3 0.55 0.62 0.72);
+    /* Syntax colors */
+    --color-comment: #6b8ca3;
+    --color-comment: color(display-p3 0.42 0.55 0.64);
+    --color-string: #ffb800;
+    --color-string: color(display-p3 1 0.75 0);
+    --color-number: #ff5733;
+    --color-number: color(display-p3 1 0.35 0.2);
+    --color-constant: #ff5733;
+    --color-constant: color(display-p3 1 0.35 0.2);
+    --color-variable: #d4d4d4;
+    --color-variable: color(display-p3 0.84 0.84 0.84);
+    --color-keyword: #2a6f97;
+    --color-keyword: color(display-p3 0.16 0.45 0.62);
+    --color-storage: #2a6f97;
+    --color-storage: color(display-p3 0.16 0.45 0.62);
+    --color-storage-type: #a68a64;
+    --color-storage-type: color(display-p3 0.66 0.56 0.42);
+    --color-class: #ff9a3d;
+    --color-class: color(display-p3 1 0.62 0.24);
+    --color-function: #a68a64;
+    --color-function: color(display-p3 0.66 0.56 0.42);
+    --color-parameter: #8b9bb3;
+    --color-parameter: color(display-p3 0.55 0.62 0.72);
+    --color-tag: #2a6f97;
+    --color-tag: color(display-p3 0.16 0.45 0.62);
+    --color-attribute: #8b9bb3;
+    --color-attribute: color(display-p3 0.55 0.62 0.72);
+    --color-punctuation: #f1faee;
+    --color-punctuation: color(display-p3 0.95 0.98 0.94);
+    --color-text: #d4d4d4;
+    --color-text: color(display-p3 0.84 0.84 0.84);
+    --color-language-literal: #8b9bb3;
+    --color-language-literal: color(display-p3 0.55 0.62 0.72);
 
-  /* Status colors */
-  --color-invalid: #2a6f97;
-  --color-invalid: color(display-p3 0.16 0.45 0.62);
-  --color-invalid-deprecated: #ff5733;
-  --color-invalid-deprecated: color(display-p3 1 0.35 0.2);
-  --color-deleted: #2a6f97;
-  --color-deleted: color(display-p3 0.16 0.45 0.62);
-  --color-inserted: #ffb800;
-  --color-inserted: color(display-p3 1 0.75 0);
-  --color-changed: #ff5733;
-  --color-changed: color(display-p3 1 0.35 0.2);
-  --color-ignored: #6b8ca3;
-  --color-ignored: color(display-p3 0.42 0.55 0.64);
-  --color-untracked: #1b4965;
-  --color-untracked: color(display-p3 0.1 0.3 0.42);
+    /* Status colors */
+    --color-invalid: #2a6f97;
+    --color-invalid: color(display-p3 0.16 0.45 0.62);
+    --color-invalid-deprecated: #ff5733;
+    --color-invalid-deprecated: color(display-p3 1 0.35 0.2);
+    --color-deleted: #2a6f97;
+    --color-deleted: color(display-p3 0.16 0.45 0.62);
+    --color-inserted: #ffb800;
+    --color-inserted: color(display-p3 1 0.75 0);
+    --color-changed: #ff5733;
+    --color-changed: color(display-p3 1 0.35 0.2);
+    --color-ignored: #6b8ca3;
+    --color-ignored: color(display-p3 0.42 0.55 0.64);
+    --color-untracked: #1b4965;
+    --color-untracked: color(display-p3 0.1 0.3 0.42);
 
-  /* Semantic colors derived from theme */
-  --color-border: var(--color-string);
-  --color-surface: #1a1d23;
-  --color-surface: color(display-p3 0.1 0.11 0.14);
-  --color-muted: var(--color-comment);
-  --color-accent: var(--color-string);
-  --color-accent-secondary: var(--color-number);
+    /* Semantic colors derived from theme */
+    --color-border: var(--color-string);
+    --color-surface: #1a1d23;
+    --color-surface: color(display-p3 0.1 0.11 0.14);
+    --color-muted: var(--color-comment);
+    --color-accent: var(--color-string);
+    --color-accent-secondary: var(--color-number);
 }
 
 body {
-  font-size: 16px;
-  padding: 1rem;
-  padding-top: calc(env(safe-area-inset-top) + 1rem);
-  padding-right: calc(env(safe-area-inset-right) + 1rem);
-  padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
-  padding-left: calc(env(safe-area-inset-left) + 1rem);
-  font-family: -apple-system-ui-serif, ui-serif, "Georgia", serif;
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-  caret-color: var(--color-caret);
+    font-size: 16px;
+    padding: 1rem;
+    padding-top: calc(env(safe-area-inset-top) + 1rem);
+    padding-right: calc(env(safe-area-inset-right) + 1rem);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+    padding-left: calc(env(safe-area-inset-left) + 1rem);
+    font-family: -apple-system-ui-serif, ui-serif, "Georgia", serif;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    caret-color: var(--color-caret);
 }
 
 ::selection {
-  background-color: var(--color-selection);
-  color: var(--color-selection-foreground);
+    background-color: var(--color-selection);
+    color: var(--color-selection-foreground);
 }
 
 ::-moz-selection {
-  background-color: var(--color-selection);
-  color: var(--color-selection-foreground);
+    background-color: var(--color-selection);
+    color: var(--color-selection-foreground);
 }
 
 /* Typography - Content styles for markdown rendering */
@@ -143,140 +143,156 @@ h3,
 h4,
 h5,
 h6 {
-  line-height: 1.2;
-  font-weight: 700;
+    line-height: 1.2;
+    font-weight: 700;
 }
 
 h1 {
-  font-size: 3.5em;
+    font-size: 3.5em;
 }
 
 h2 {
-  font-size: 1.75rem;
+    font-size: 1.75rem;
 }
 
 h3 {
-  font-size: 1.5rem;
+    font-size: 1.5rem;
 }
 
 h4 {
-  font-size: 1.25rem;
+    font-size: 1.25rem;
 }
 
 h5 {
-  font-size: 1.1rem;
+    font-size: 1.1rem;
 }
 
 h6 {
-  font-size: 1rem;
+    font-size: 1rem;
 }
 
 p {
-  line-height: 1.6;
+    line-height: 1.6;
 }
 
 a {
-  color: inherit;
-  text-decoration: underline;
+    color: inherit;
+    text-decoration: underline;
 }
 
 a:hover {
-  opacity: 0.7;
+    opacity: 0.7;
 }
 
 ol,
 ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-left: 2rem;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-left: 2rem;
 }
 
 ol {
-  list-style: decimal;
+    list-style: decimal;
 }
 
 ul {
-  list-style: disc;
+    list-style: disc;
 }
 
 li {
-  font-family: ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
-  font-size: 0.8rem;
+    font-family:
+        ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono",
+        "Ubuntu Mono", monospace;
+    font-size: 0.8rem;
 }
 
 blockquote {
-  padding: 0.5rem 0.75rem;
-  border-left: 4px solid var(--color-border);
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 0.5rem 0.75rem;
+    border-left: 4px solid var(--color-border);
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial,
+        sans-serif;
 }
 
 code,
 pre,
 table {
-  font-family: ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
-  font-size: 0.75rem;
+    font-family:
+        ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono",
+        "Ubuntu Mono", monospace;
+    font-size: 0.75rem;
 }
 
 code {
-  font-size: 0.9em;
-  padding: 0.2rem 0.4rem;
-  background: var(--color-surface);
+    font-size: 0.9em;
+    padding: 0.2rem 0.4rem;
+    background: var(--color-surface);
 }
 
 pre {
-  padding: 1.5rem;
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
-  background: var(--color-surface);
-  overflow-x: auto;
+    padding: 1.5rem;
+    @media (max-width: 768px) {
+        padding: 1rem;
+    }
+    background: var(--color-surface);
+    overflow-x: auto;
 }
 
 pre code {
-  padding: 0;
-  background: transparent;
+    padding: 0;
+    background: transparent;
 }
 
 table {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 th,
 td {
-  padding: 0.25rem;
-  border: 1px solid var(--color-border);
-  text-align: left;
-  vertical-align: top;
+    padding: 0.25rem;
+    border: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
 }
 
 th {
-  background: var(--color-surface);
+    background: var(--color-surface);
 }
 
 img {
-  max-width: 100%;
-  height: auto;
+    max-width: 100%;
+    height: auto;
 }
 
 hr {
-  border: none;
-  border-top: 1px solid var(--color-border);
+    border: none;
+    border-top: 1px solid var(--color-border);
 }
 
 figcaption {
-  font-size: 0.9rem;
-  color: var(--color-muted);
-  text-align: center;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    text-align: center;
 }
 
 .heavy {
-  font-weight: 900;
+    font-weight: 900;
 }
 
 .tag {
-  font-family: ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
-  font-size: 0.6rem;
+    font-family:
+        ui-monospace, SFMono-Regular, ui-monospace, Monaco, "Andale Mono",
+        "Ubuntu Mono", monospace;
+    font-size: 0.6rem;
+}
+
+.muted {
+    color: var(--color-muted);
+}
+
+.muted p {
+    font-size: 0.9rem;
 }

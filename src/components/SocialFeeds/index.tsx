@@ -4,8 +4,11 @@ import "./SocialFeeds.css";
 // Shared types
 interface BasePost {
   createdAt: string;
-  text: string;
   postUrl: string;
+}
+
+interface TextPost extends BasePost {
+  text: string;
 }
 
 // Bluesky types
@@ -43,7 +46,7 @@ type BlueskyEmbed =
   | BlueskyExternal
   | BlueskyQuote;
 
-interface BlueskyPost extends BasePost {
+interface BlueskyPost extends TextPost {
   uri: string;
   cid: string;
   embeds: BlueskyEmbed[];
@@ -57,9 +60,29 @@ interface FarcasterEmbed {
   castHash?: string;
 }
 
-interface FarcasterPost extends BasePost {
+interface FarcasterPost extends TextPost {
   hash: string;
   embeds: FarcasterEmbed[];
+}
+
+// Glass types
+interface GlassExif {
+  camera?: string;
+  lens?: string;
+  aperture?: string;
+  focal_length?: string;
+  iso?: string;
+  exposure_time?: string;
+}
+
+interface GlassPost extends BasePost {
+  id: string;
+  width: number;
+  height: number;
+  image640x640: string;
+  share_url: string;
+  caption: string;
+  exif?: GlassExif;
 }
 
 // 5 days in milliseconds
@@ -278,6 +301,60 @@ function FarcasterPostCard({ post }: { post: FarcasterPost }) {
   );
 }
 
+// Glass post card
+function GlassPostCard({ post }: { post: GlassPost }) {
+  return (
+    <article className="social-post social-post-glass">
+      <a
+        href={post.postUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="social-post-link"
+      >
+        <time className="social-time" dateTime={post.createdAt}>
+          {formatDate(post.createdAt)}
+        </time>
+      </a>
+      <a
+        href={post.postUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="social-image"
+      >
+        <img
+          src={post.image640x640}
+          alt={post.caption || "Photo from Glass"}
+          loading="lazy"
+          width={post.width}
+          height={post.height}
+        />
+      </a>
+      {post.caption && <p className="social-text">{post.caption}</p>}
+      {post.exif && (
+        <div className="social-exif">
+          {post.exif.camera && <span>{post.exif.camera}</span>}
+          {post.exif.lens && <span>{post.exif.lens}</span>}
+          {(post.exif.aperture ||
+            post.exif.focal_length ||
+            post.exif.iso ||
+            post.exif.exposure_time) && (
+            <span>
+              {[
+                post.exif.aperture,
+                post.exif.focal_length,
+                post.exif.iso,
+                post.exif.exposure_time,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </span>
+          )}
+        </div>
+      )}
+    </article>
+  );
+}
+
 interface SocialFeedsProps {
   limit?: number;
 }
@@ -285,8 +362,10 @@ interface SocialFeedsProps {
 export default function SocialFeeds({ limit = 10 }: SocialFeedsProps) {
   const [blueskyPosts, setBlueskyPosts] = useState<BlueskyPost[]>([]);
   const [farcasterPosts, setFarcasterPosts] = useState<FarcasterPost[]>([]);
+  const [glassPosts, setGlassPosts] = useState<GlassPost[]>([]);
   const [blueskyLoading, setBlueskyLoading] = useState(true);
   const [farcasterLoading, setFarcasterLoading] = useState(true);
+  const [glassLoading, setGlassLoading] = useState(true);
 
   useEffect(() => {
     // Fetch Bluesky
@@ -302,31 +381,57 @@ export default function SocialFeeds({ limit = 10 }: SocialFeedsProps) {
       .then((data) => setFarcasterPosts(data))
       .catch((err) => console.error("Farcaster error:", err))
       .finally(() => setFarcasterLoading(false));
+
+    // Fetch Glass
+    fetch(`/api/glass.json?limit=${limit}&_=${Date.now()}`)
+      .then((res) => res.json())
+      .then((data: any[]) => {
+        // Transform Glass API response to match our types
+        const posts: GlassPost[] = data.map((photo) => ({
+          id: photo.id,
+          width: photo.width,
+          height: photo.height,
+          image640x640: photo.image640x640,
+          share_url: photo.share_url,
+          createdAt: photo.created_at,
+          postUrl: photo.share_url,
+          caption: photo.caption || "",
+          exif: photo.exif,
+        }));
+        setGlassPosts(posts);
+      })
+      .catch((err) => console.error("Glass error:", err))
+      .finally(() => setGlassLoading(false));
   }, [limit]);
 
-  const isLoading = blueskyLoading || farcasterLoading;
+  const isLoading = blueskyLoading || farcasterLoading || glassLoading;
 
   // Filter to only fresh posts (within last 5 days)
   const freshBlueskyPosts = filterFreshPosts(blueskyPosts);
   const freshFarcasterPosts = filterFreshPosts(farcasterPosts);
+  const freshGlassPosts = filterFreshPosts(glassPosts);
 
   const blueskyActive = !blueskyLoading && freshBlueskyPosts.length > 0;
   const farcasterActive = !farcasterLoading && freshFarcasterPosts.length > 0;
+  const glassActive = !glassLoading && freshGlassPosts.length > 0;
 
-  if (isLoading) {
-    return <div className="social-loading">Loading social feeds...</div>;
-  }
+  // Build feeds array with most recent post time for sorting
+  type FeedConfig = {
+    name: string;
+    active: boolean;
+    mostRecent: number;
+    render: () => JSX.Element;
+  };
 
-  if (!blueskyActive && !farcasterActive) {
-    return null; // No active feeds
-  }
-
-  return (
-    <div
-      className={`social-feeds ${blueskyActive && farcasterActive ? "social-feeds-two" : "social-feeds-one"}`}
-    >
-      {blueskyActive && (
-        <details className="social-column" open>
+  const feeds: FeedConfig[] = [
+    {
+      name: "bluesky",
+      active: blueskyActive,
+      mostRecent: freshBlueskyPosts[0]
+        ? new Date(freshBlueskyPosts[0].createdAt).getTime()
+        : 0,
+      render: () => (
+        <details className="social-column" open key="bluesky">
           <summary>Bluesky</summary>
           <div className="social-feed">
             {freshBlueskyPosts.map((post) => (
@@ -343,10 +448,16 @@ export default function SocialFeeds({ limit = 10 }: SocialFeedsProps) {
             </a>
           </div>
         </details>
-      )}
-
-      {farcasterActive && (
-        <details className="social-column" open>
+      ),
+    },
+    {
+      name: "farcaster",
+      active: farcasterActive,
+      mostRecent: freshFarcasterPosts[0]
+        ? new Date(freshFarcasterPosts[0].createdAt).getTime()
+        : 0,
+      render: () => (
+        <details className="social-column" open key="farcaster">
           <summary>Farcaster</summary>
           <div className="social-feed">
             {freshFarcasterPosts.map((post) => (
@@ -363,7 +474,59 @@ export default function SocialFeeds({ limit = 10 }: SocialFeedsProps) {
             </a>
           </div>
         </details>
-      )}
+      ),
+    },
+    {
+      name: "glass",
+      active: glassActive,
+      mostRecent: freshGlassPosts[0]
+        ? new Date(freshGlassPosts[0].createdAt).getTime()
+        : 0,
+      render: () => (
+        <details className="social-column" open key="glass">
+          <summary>Glass</summary>
+          <div className="social-feed">
+            {freshGlassPosts.map((post) => (
+              <GlassPostCard key={post.id} post={post} />
+            ))}
+          </div>
+          <div className="social-view-all">
+            <a
+              href="https://glass.photo/iam"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View more on Glass →
+            </a>
+          </div>
+        </details>
+      ),
+    },
+  ];
+
+  // Filter active feeds and sort by most recent post
+  const activeFeeds = feeds
+    .filter((feed) => feed.active)
+    .sort((a, b) => b.mostRecent - a.mostRecent);
+
+  if (isLoading) {
+    return <div className="social-loading">Loading social feeds...</div>;
+  }
+
+  if (activeFeeds.length === 0) {
+    return null; // No active feeds
+  }
+
+  const gridClass =
+    activeFeeds.length === 3
+      ? "social-feeds-three"
+      : activeFeeds.length === 2
+        ? "social-feeds-two"
+        : "social-feeds-one";
+
+  return (
+    <div className={`social-feeds ${gridClass}`}>
+      {activeFeeds.map((feed) => feed.render())}
     </div>
   );
 }
