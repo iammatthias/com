@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 
 // PDS configuration
 const USER_DID = "did:plc:p5xem22ammiafn5kxonaksfa";
-const PDS_HOST = "https://farfield.systems";
+const PDS_HOST = "https://pds.iammatthias.com";
 
 // Raw record types from PDS
 interface BlobRef {
