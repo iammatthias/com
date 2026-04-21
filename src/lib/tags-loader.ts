@@ -1,5 +1,5 @@
 import type { Loader, LoaderContext } from "astro/loaders";
-import { z } from "astro:schema";
+import { z } from "astro/zod";
 import { ensureCachePopulated, getCachedTagMap } from "./github-loader";
 
 interface TagsLoaderOptions {
@@ -75,6 +75,6 @@ export function tagsLoader(options: TagsLoaderOptions): Loader {
         throw error;
       }
     },
-    schema: async () => tagsSchema,
+    schema: tagsSchema,
   };
 }

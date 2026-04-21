@@ -99,10 +99,7 @@ export default defineConfig({
   },
 
   adapter: cloudflare({
-    platformProxy: {
-      enabled: false,
-    },
-    wasmModuleImports: true,
+    prerenderEnvironment: 'node',
   }),
 
   vite: {

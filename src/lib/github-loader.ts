@@ -1,5 +1,5 @@
 import type { Loader, LoaderContext } from "astro/loaders";
-import { z } from "astro:schema";
+import { z } from "astro/zod";
 
 interface GitHubLoaderOptions {
   owner: string;
@@ -323,7 +323,7 @@ export function githubLoader(options: GitHubLoaderOptions): Loader {
         throw error;
       }
     },
-    schema: async () => githubContentSchema,
+    schema: githubContentSchema,
   };
 }
 

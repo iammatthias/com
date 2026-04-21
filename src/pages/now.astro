@@ -8,12 +8,7 @@ const description =
 const ogImage = "/now";
 
 const socialLinks = [
-    {
-        name: "Bluesky",
-        url: "https://bsky.app/profile/iammatthias.com",
-        username: "@iammatthias.com",
-        blurb: 'I run my own PDS at <a href="farfield.systems">farfield.systems</a>, and am increasingly active. ',
-    },
+
     {
         name: "Glass",
         url: "https://glass.photo/iam",
@@ -26,7 +21,12 @@ const socialLinks = [
         username: "@iammatthias",
         blurb: 'Farcaster is a "sufficiently decentralized" social protocol. There are multiple clients, but I use Warpcast.',
     },
-
+    {
+        name: "Bluesky",
+        url: "https://bsky.app/profile/iammatthias.com",
+        username: "@iammatthias.com",
+        blurb: 'Not as active as it used to be',
+    },
     {
         name: "Instagram",
         url: "https://instagram.com/iammatthias",
@@ -74,14 +74,13 @@ const socialLinks = [
             <ul>
                 <li>DevRel @ pinata</li>
                 <li>Building <a href="https://llm-txt.fun">LLM TXT</a></li>
-                <li>Building <a href="https://manifest.page">Manifest</a></li>
                 <li>
                     Cooking - check out my collection of <a href="/recipes"
                         >recipes</a
                     >
                 </li>
             </ul>
-            <p class="muted">Last updated January 3rd, 2026</p>
+            <p class="muted">Last updated April 1st, 2026</p>
         </section>
         <section>
             <h3>Updates</h3>
@@ -102,7 +101,7 @@ const socialLinks = [
                                 </a>
                                 <br />
                             </>
-                            <small>{link.blurb}</small>
+                            <!-- <small>{link.blurb}</small> -->
                         </li>
                     ))
                 }
