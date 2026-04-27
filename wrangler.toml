@@ -11,8 +11,7 @@ binding = "SESSION"
 
 # Non-sensitive runtime config (safe to commit). Anything sensitive belongs
 # elsewhere:
-#   - Runtime secrets (PINATA_JWT, PINATA_VECTOR_API_KEY, SYNDICATE_KEY):
-#       `wrangler secret put NAME`  -> encrypted, persists across deploys.
+#   - Runtime secret (PINATA_JWT): `wrangler secret put PINATA_JWT`
 #   - Build-time secret (GITHUB, used by content.config.ts at build time):
 #       Dashboard -> Worker -> Settings -> Build -> "Build variables and
 #       secrets" -> add as Secret.
@@ -21,4 +20,3 @@ binding = "SESSION"
 PUBLIC_ANALYTICS_CONTRACT = "0x29867a886F96e84196fa47DEe2Fb4a5853412C03"
 PINATA_GATEWAY_URL = "cdn.iammatthias.com"
 PINATA_GROUP_ID = "0196fa3e-be6b-73a6-9299-31ccaaa117e5"
-SYNDICATE_ID = "55f9130d-c381-47eb-a28f-6cc8684d162a"
