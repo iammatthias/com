@@ -14,12 +14,17 @@ const GITHUB_TOKEN = import.meta.env.GITHUB;
 
 const collectionNames = await getGitHubCollections(GITHUB_OWNER, GITHUB_REPO, GITHUB_TOKEN, "main", "content");
 
-// Get recent entries from each collection
-// Note: Entries are already filtered by published status and sorted by recency at the loader level
+// Get recent entries from each collection. The loader sorts at insertion
+// time, but Astro's content store doesn't guarantee insertion order on
+// read, so re-sort here.
 const recentByCollection = await Promise.all(
   collectionNames.map(async (name) => {
     try {
-      const entries = (await getCollection(name as any)) as Entry[];
+      const entries = ((await getCollection(name as any)) as Entry[]).sort(
+        (a, b) =>
+          new Date(b.data.created || 0).getTime() -
+          new Date(a.data.created || 0).getTime(),
+      );
       return {
         name,
         recent: entries.slice(0, 3),

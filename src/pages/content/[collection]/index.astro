@@ -22,9 +22,14 @@ type Entry = {
 
 const { collection } = Astro.params;
 
-// Get all entries in this collection
-// Note: Entries are already filtered by published status and sorted by recency at the loader level
-const entries = (await getCollection(collection as any)) as Entry[];
+// Get all entries in this collection. Re-sort by created desc — the loader
+// sorts at insertion time, but Astro's content store doesn't guarantee
+// insertion order on read.
+const entries = ((await getCollection(collection as any)) as Entry[]).sort(
+  (a, b) =>
+    new Date(b.data.created || 0).getTime() -
+    new Date(a.data.created || 0).getTime(),
+);
 
 // Group by tags if available
 const byTag = new Map<string, Entry[]>();

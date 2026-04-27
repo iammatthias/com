@@ -33,7 +33,11 @@ export async function GET(context: APIContext) {
     return new Response('Collection not found', { status: 404 });
   }
 
-  const entries = (await getCollection(collection as any)) as Entry[];
+  const entries = ((await getCollection(collection as any)) as Entry[]).sort(
+    (a, b) =>
+      new Date(b.data.created || 0).getTime() -
+      new Date(a.data.created || 0).getTime(),
+  );
 
   return rss({
     title: `${collection} - iammatthias`,
