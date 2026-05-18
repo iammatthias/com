@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!--
+    Azulejo-inspired favicon: rounded square tile with an 8-pointed
+    star (two overlapping squares, the second rotated 45° — a classic
+    octogram motif found across Iberian, Moorish, and Persian tile
+    work). Colors are pulled from the site's design tokens; the
+    `prefers-color-scheme` media query swaps them for dark mode so
+    the icon always sits comfortably in the browser chrome.
+  -->
+  <style>
+    .bg { fill: #f5efe5; }
+    .fg { fill: #1c1a16; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1c1a16; }
+      .fg { fill: #ece6da; }
+    }
+  </style>
+  <rect class="bg" width="32" height="32" rx="3"/>
+  <g class="fg" transform="translate(16 16)">
+    <rect x="-8" y="-8" width="16" height="16"/>
+    <rect x="-8.5" y="-8.5" width="17" height="17" transform="rotate(45)"/>
+  </g>
+</svg>

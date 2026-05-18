@@ -1,0 +1,71 @@
+---
+export const prerender = false;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FeedCard from "../../components/FeedCard.astro";
+import { getLiveCollection, getLiveEntry } from "astro:content";
+import { setResponseCacheHeaders } from "../../lib/cache";
+import type { DocumentData } from "../../lib/farfield-loader";
+
+const slug = Astro.params.publication;
+if (!slug) {
+    return new Response("Publication slug required", { status: 400 });
+}
+
+const { entry: pubEntry, error: pubError } = await getLiveEntry(
+    "publications",
+    slug,
+);
+if (pubError || !pubEntry) {
+    return new Response(null, { status: 404 });
+}
+const pub = pubEntry.data;
+
+let items: DocumentData[] = [];
+const {
+    entries,
+    error,
+    cacheHint,
+} = await getLiveCollection("documents", { publication: slug });
+if (error) {
+    console.error(`[/${slug}] Farfield fetch failed:`, error);
+} else {
+    items = entries.map((e) => e.data);
+}
+
+setResponseCacheHeaders(Astro.response, cacheHint, {
+    extraTags: pubEntry.cacheHint?.tags,
+});
+---
+
+<BaseLayout
+    title={pub.name}
+    description={pub.description ?? `${pub.name} — iammatthias`}
+    ogImage={`/${pub.slug}`}
+>
+    <header class="page-header">
+        <h1>{pub.name}</h1>
+        {pub.description && <p>{pub.description}</p>}
+        <p class="meta">
+            <a href={`/${pub.slug}/rss.xml`}>RSS</a>
+            <span> · </span>
+            <span>{items.length} {items.length === 1 ? "entry" : "entries"}</span>
+        </p>
+    </header>
+
+    {items.length === 0 ? (
+        <p class="feed-empty">No entries published yet.</p>
+    ) : (
+        <ul class="feed-grid">
+            {items.map((item) => (
+                <FeedCard
+                    href={item.href}
+                    title={item.title}
+                    description={item.description}
+                    publishedAt={item.publishedAt}
+                />
+            ))}
+        </ul>
+    )}
+</BaseLayout>
+

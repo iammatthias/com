@@ -1,0 +1,155 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import type { MenuMeta } from "@lib/menu";
+
+export const menu: MenuMeta = { group: "personal", order: 2 };
+
+const resumeData = [
+    {
+        section: "Present",
+        entries: [
+            { date: "2025 → Current", company: "Pinata", position: "DevRel" },
+            {
+                date: "2024 → Current",
+                company: "day---break",
+                position: "Owner",
+            },
+            {
+                date: "2012 → Current",
+                company: "Photographer",
+                position: "Fine art & freelance",
+            },
+        ],
+    },
+    {
+        section: "Historic",
+        entries: [
+            {
+                date: "2023 → 2024",
+                company: "Ice Barrel (Contractor)",
+                position: "Web Development & Performance Marketing Manager",
+            },
+            {
+                date: "2022 → 2024",
+                company: "Opul (Contractor)",
+                position: "Design System Engineer",
+            },
+            {
+                date: "2021 → 2022",
+                company: "Tornado",
+                position: "Growth Engineer",
+            },
+            {
+                date: "2018 → 2021",
+                company: "Aspiration",
+                position: "CRM Architect",
+            },
+            {
+                date: "2016 → 2018",
+                company: "Surf Air",
+                position: "Product & Marketing Coordinator",
+            },
+        ],
+    },
+    {
+        section: "Education",
+        entries: [
+            {
+                date: "2010 → 2014",
+                company: "Brooks Institute",
+                position: "Bachelors Degree, Commercial Photography",
+            },
+        ],
+    },
+];
+---
+
+<BaseLayout
+    title="Resume"
+    description="Professional experience and education history"
+    ogImage="/resume"
+>
+    <article class="prose">
+        <h1>Resume</h1>
+        {resumeData.map((section) => (
+            <section>
+                <h2>{section.section}</h2>
+                <dl>
+                    {section.entries.map((entry) => (
+                        <div class="entry">
+                            <dt>{entry.company}</dt>
+                            <dd class="position">{entry.position}</dd>
+                            <dd class="date">{entry.date}</dd>
+                        </div>
+                    ))}
+                </dl>
+            </section>
+        ))}
+    </article>
+</BaseLayout>
+
+<style>
+    .prose {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+        max-width: 60ch;
+    }
+
+    .prose > h1 {
+        font-family: var(--font-serif);
+    }
+
+    .prose section {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--color-border);
+    }
+
+    .prose section:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+    }
+
+    .prose h2 {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-weight: var(--fw-normal);
+    }
+
+    dl {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+        margin: 0;
+    }
+
+    .entry {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    dt {
+        font-family: var(--font-serif);
+        font-size: var(--fs-lg);
+        font-weight: var(--fw-medium);
+    }
+
+    dd {
+        margin: 0;
+    }
+
+    .position {
+        font-size: var(--fs-base);
+    }
+
+    .date {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+    }
+</style>

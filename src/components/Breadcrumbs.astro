@@ -1,0 +1,79 @@
+---
+// Typographic breadcrumb trail. Items with `href` render as links;
+// the last item (or any item without `href`) is the current page,
+// rendered as plain text. The "home" crumb is intentionally NOT
+// included here — the brand link in the header already does that
+// job, and repeating it would double up.
+
+export interface BreadcrumbItem {
+    label: string;
+    href?: string;
+}
+
+interface Props {
+    items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+            {items.map((item, i) => (
+                <li>
+                    {item.href ? (
+                        <a href={item.href}>{item.label}</a>
+                    ) : (
+                        <span aria-current="page">{item.label}</span>
+                    )}
+                    {i < items.length - 1 && (
+                        <span class="sep" aria-hidden="true"> / </span>
+                    )}
+                </li>
+            ))}
+        </ol>
+    </nav>
+)}
+
+<style>
+    .breadcrumbs {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+        line-height: var(--lh-tight);
+        /* Breathing room before the page heading. Pages that need a
+           tighter relationship can override this with a scoped rule. */
+        margin-bottom: var(--space-5);
+    }
+
+    ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+    }
+
+    li {
+        list-style: none;
+        display: inline;
+    }
+
+    .breadcrumbs a {
+        color: inherit;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.15em;
+    }
+
+    .breadcrumbs [aria-current="page"] {
+        color: var(--color-fg);
+    }
+
+    .sep {
+        color: var(--color-border);
+        padding: 0 0.25em;
+    }
+</style>

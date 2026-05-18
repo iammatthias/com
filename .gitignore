@@ -31,3 +31,6 @@ pnpm-debug.log*
 
 # claude code
 .claude/
+
+# etc
+/scripts

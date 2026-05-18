@@ -1,0 +1,218 @@
+---
+// Detail view for a single feed entry. Renders the resolved media
+// gallery, the markdown body (rendered inline), and a colophon
+// pointing at the underlying Farfield record.
+
+export const prerender = false;
+
+import { marked } from "marked";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import RecordColophon from "../../components/RecordColophon.astro";
+import { getLiveEntry } from "astro:content";
+import { LiveEntryNotFoundError } from "astro/content/runtime";
+import { setResponseCacheHeaders } from "../../lib/cache";
+import { fmtDateLong, hashSeed } from "../../lib/format";
+import { tilePreset } from "../../lib/images";
+import {
+    blobURL,
+    resolveBodyMedia,
+    type FeedEntryData,
+} from "../../lib/farfield-loader";
+import { wsrvUrl, wsrvSrcSet } from "../../lib/farfield";
+
+const rkey = Astro.params.rkey;
+if (!rkey) return new Response(null, { status: 404 });
+
+const { entry, error, cacheHint } = await getLiveEntry("feedEntries", rkey);
+if (error) {
+    if (LiveEntryNotFoundError.is(error)) {
+        return new Response(null, { status: 404 });
+    }
+    console.error(`[/feed/${rkey}] Farfield fetch failed:`, error);
+    return new Response(null, { status: 502 });
+}
+if (!entry) return new Response(null, { status: 404 });
+const item: FeedEntryData = entry.data;
+
+setResponseCacheHeaders(Astro.response, cacheHint);
+
+// Derive a short text preview from the markdown body for title / OG
+// description — strip embed URIs, headings, basic chrome.
+const bodyText = item.body
+    .replace(/!\[[^\]]*\]\((blob|series):\/\/[^)]+\)/g, "")
+    .replace(/[*_`>#]+/g, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+const bodySnippet = bodyText.slice(0, 60).trim();
+const title = bodySnippet || `Entry ${rkey}`;
+const description = bodyText.slice(0, 180).trim() || "Feed entry.";
+
+// Render the body's prose only — media is shown separately below as a
+// gallery, so we strip embeds from the markdown before parsing to
+// avoid duplicating each image.
+const bodyProse = item.body.replace(
+    /!\[[^\]]*\]\((blob|series):\/\/[a-z0-9-]+\)\s*/g,
+    "",
+);
+const bodyHtml = bodyProse.trim()
+    ? (marked.parse(bodyProse, { async: false }) as string)
+    : "";
+
+const media = await resolveBodyMedia(item.body);
+
+const recordUrl = `https://feed.farfield.systems/api/posts/${encodeURIComponent(rkey)}`;
+const bannerSeed = hashSeed(`feed/${rkey}`);
+---
+
+<BaseLayout
+    title={title}
+    description={description}
+    ogType="article"
+>
+    <article class="entry">
+        <header class="entry-hero">
+            <p class="dateline">
+                <time datetime={item.createdAt}>{fmtDateLong(item.createdAt)}</time>
+            </p>
+            {bodyHtml && <div class="note" set:html={bodyHtml} />}
+        </header>
+
+        {media.length > 0 && (
+            <div
+                class:list={[
+                    "entry-media",
+                    { "entry-media--gallery": media.length > 1 },
+                ]}
+            >
+                {(() => {
+                    const preset = tilePreset(media.length > 1);
+                    // Pick a sensible `src` fallback near the middle of
+                    // the chosen widths so non-srcset clients don't pull
+                    // the biggest variant.
+                    const fallbackW = preset.widths[Math.floor(preset.widths.length / 2)] ?? 720;
+                    return media.map((m) => {
+                        const src = blobURL(m.cid);
+                        return (
+                            <figure
+                                class="entry-tile"
+                                style={
+                                    m.meta?.dominantColor
+                                        ? `background:${m.meta.dominantColor}`
+                                        : undefined
+                                }
+                            >
+                                <img
+                                    src={wsrvUrl(src, fallbackW)}
+                                    srcset={wsrvSrcSet(src, preset.widths)}
+                                    sizes={preset.sizes}
+                                    width={m.meta?.width ?? 960}
+                                    height={m.meta?.height ?? 720}
+                                    alt={m.alt ?? ""}
+                                    loading="eager"
+                                    decoding="async"
+                                />
+                            </figure>
+                        );
+                    });
+                })()}
+            </div>
+        )}
+
+        <RecordColophon
+            seed={bannerSeed}
+            fields={[
+                { label: "collection", value: "feed" },
+                { label: "id", value: item.rkey },
+                { label: "record cid", value: item.cid },
+                { label: "record", value: recordUrl, href: recordUrl },
+                {
+                    label: "created",
+                    value: item.createdAt,
+                    datetime: item.createdAt,
+                },
+                {
+                    label: "updated",
+                    value: item.updatedAt,
+                    datetime: item.updatedAt,
+                },
+            ]}
+        />
+    </article>
+</BaseLayout>
+
+<style>
+    .entry {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+    }
+
+    .entry-hero {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .dateline {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+    }
+
+    /* The body renders as standard reading prose — feed posts are
+       short essays, not display copy, so the typography matches the
+       rest of the doc bodies on the site. Inner <p> tags get inter-
+       paragraph spacing since globals.css zeroes default margins. */
+    .note {
+        margin: 0;
+        font-size: var(--fs-base);
+        line-height: var(--lh-relaxed);
+        text-wrap: pretty;
+    }
+
+    .note :global(p) {
+        margin: 0 0 var(--space-3);
+    }
+
+    .note :global(p:last-child) {
+        margin-bottom: 0;
+    }
+
+    .note :global(a) {
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.15em;
+    }
+
+    .entry-media {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .entry-media--gallery {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+    }
+
+    @media (min-width: 640px) {
+        .entry-media--gallery {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .entry-tile {
+        margin: 0;
+        overflow: hidden;
+        border-radius: var(--radius);
+    }
+
+    .entry-tile img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+</style>

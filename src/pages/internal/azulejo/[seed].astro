@@ -1,0 +1,67 @@
+---
+/**
+ * Internal snapshot page: renders one AzulejoTile at high resolution
+ * with no chrome, so a headless browser (scripts/snapshot-azulejos.mjs)
+ * can capture it as a PNG for use in the OG worker.
+ *
+ * Not linked from anywhere; noindex'd. Visit /internal/azulejo/<seed>
+ * (any 32-bit integer or string) during dev to preview.
+ */
+import AzulejoTile from "@components/AzulejoTile";
+
+export const prerender = false; // SSR — we generate any seed on demand
+
+const { seed: rawSeed } = Astro.params;
+const seed = rawSeed ? Number.parseInt(rawSeed, 10) : Date.now();
+const safeSeed = Number.isFinite(seed) ? seed : Date.now();
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex,nofollow" />
+        <title>Azulejo {safeSeed}</title>
+        <style is:inline>
+            /* `is:inline` keeps these resets strictly within this
+               snapshot page's served HTML. Astro 6 leaves `html`/`body`
+               selectors global in scoped <style> blocks, which made the
+               `background: transparent` here bleed onto the rest of
+               the site during dev. */
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background: transparent;
+            }
+            /*
+              Render the tile at exactly the snapshot viewport dimensions
+              and pin it to the top-left so Playwright's `canvas.screenshot()`
+              captures the canvas at its full intrinsic size. Earlier
+              flex-centered layout was squashing the canvas horizontally
+              when the tile size exceeded the viewport.
+            */
+            #tile {
+                position: fixed;
+                top: 0;
+                left: 0;
+            }
+            /*
+              Hide Astro's dev toolbar so it doesn't overlap the canvas
+              in the screenshot. The toolbar mounts as a custom element
+              at the bottom of <body>; display: none drops it from layout
+              entirely.
+            */
+            astro-dev-toolbar,
+            astro-dev-overlay {
+                display: none !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="tile">
+            <AzulejoTile client:only="react" seed={safeSeed} size={256} />
+        </div>
+    </body>
+</html>

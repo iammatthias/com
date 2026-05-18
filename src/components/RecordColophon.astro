@@ -1,0 +1,127 @@
+---
+// Colophon that surfaces the underlying Farfield record behind a
+// rendered page — thin terrazzo banner alongside a monospace metadata
+// block. Used by /[publication]/[slug] (entries) and /feed/[rkey]
+// (posts). The fields list is supplied by the caller so each surface
+// can label the row appropriately (rkey vs id, etc).
+
+import TerrazzoBanner from "./TerrazzoBanner";
+
+export interface ColophonField {
+    label: string;
+    /** Plain text content. */
+    value: string;
+    /** Optional href — renders the value as an external link. */
+    href?: string;
+    /** Optional ISO timestamp — adds a <time datetime="…"> wrapper. */
+    datetime?: string;
+}
+
+interface Props {
+    /** Stable seed for the terrazzo banner so a given record always
+     *  paints the same tile pattern. */
+    seed: number;
+    fields: ColophonField[];
+}
+
+const { seed, fields } = Astro.props;
+---
+
+<footer class="colophon">
+    <div class="colophon-banner">
+        <TerrazzoBanner client:visible seed={seed} />
+    </div>
+    <dl class="colophon-meta">
+        {fields.map((f) => (
+            <div>
+                <dt>{f.label}</dt>
+                <dd>
+                    {f.href ? (
+                        <a href={f.href} rel="noopener">{f.value}</a>
+                    ) : f.datetime ? (
+                        <time datetime={f.datetime}>{f.value}</time>
+                    ) : (
+                        f.value
+                    )}
+                </dd>
+            </div>
+        ))}
+    </dl>
+</footer>
+
+<style>
+    .colophon {
+        padding-top: var(--space-5);
+        border-top: 1px solid var(--color-border);
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+        gap: var(--space-5);
+        align-items: stretch;
+    }
+
+    @media (max-width: 640px) {
+        .colophon {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* The banner stretches to fill its grid cell, so on desktop it
+       inherits the metadata block's height (typically ~140-180px),
+       making the strip naturally thin. On mobile, it stacks above the
+       metadata at a fixed thin height. */
+    .colophon-banner {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--radius);
+        min-height: 140px;
+        background: var(--color-border);
+    }
+
+    @media (max-width: 640px) {
+        .colophon-banner {
+            height: 96px;
+            min-height: 0;
+        }
+    }
+
+    .colophon-meta {
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        line-height: var(--lh-normal);
+        color: var(--color-muted);
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .colophon-meta > div {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15em;
+        word-break: break-all;
+    }
+
+    .colophon-meta dt {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.65rem;
+        color: var(--color-muted);
+        opacity: 0.7;
+    }
+
+    .colophon-meta dd {
+        margin: 0;
+        color: var(--color-fg);
+    }
+
+    .colophon-meta a {
+        color: inherit;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.15em;
+    }
+
+    .colophon-meta a:hover {
+        text-decoration-thickness: 2px;
+    }
+</style>

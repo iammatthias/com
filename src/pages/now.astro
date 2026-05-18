@@ -1,0 +1,239 @@
+---
+// SSR — feed entries pulled live from Farfield so new updates appear
+// without a rebuild. Cache-Control is set below from the loader's hint.
+export const prerender = false;
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FeedEntryCard from "../components/FeedEntryCard.astro";
+import { getLiveCollection } from "astro:content";
+import { setResponseCacheHeaders } from "../lib/cache";
+import {
+    entriesOf,
+    resolveBodyMedia,
+    type FeedEntryData,
+    type ResolvedMedia,
+} from "../lib/farfield-loader";
+import type { MenuMeta } from "@lib/menu";
+
+export const menu: MenuMeta = { group: "personal", order: 1 };
+
+const {
+    entries: rawEntries,
+    error: feedError,
+    cacheHint,
+} = await getLiveCollection("feedEntries");
+if (feedError) {
+    console.error("[/now] Farfield feed entries fetch failed:", feedError);
+}
+const feedItems: FeedEntryData[] = entriesOf<FeedEntryData>(rawEntries);
+
+setResponseCacheHeaders(Astro.response, cacheHint);
+
+// Resolve each entry's body to a flat media list at render time.
+const mediaByRkey = new Map<string, ResolvedMedia[]>(
+    await Promise.all(
+        feedItems.map(async (it) =>
+            [it.rkey, await resolveBodyMedia(it.body)] as const,
+        ),
+    ),
+);
+
+const socialLinks = [
+    {
+        name: "Glass",
+        url: "https://glass.photo/iam",
+        username: "@iam",
+    },
+    {
+        name: "GitHub",
+        url: "https://github.com/iammatthias",
+        username: "@iammatthias",
+    },
+    {
+        name: "LinkedIn",
+        url: "https://linkedin.com/in/iammatthias",
+        username: "@iammatthias",
+    },
+    {
+        name: "Bluesky",
+        url: "https://bsky.app/profile/iammatthias.com",
+        username: "@iammatthias.com",
+    },
+    {
+        name: "Farcaster",
+        url: "https://farcaster.xyz/iammatthias",
+        username: "@iammatthias",
+    },
+    {
+        name: "Instagram",
+        url: "https://instagram.com/iammatthias",
+        username: "@iammatthias",
+    },
+];
+---
+
+<BaseLayout
+    title="Now"
+    description="What I'm working on right now."
+    ogImage="/now"
+>
+    <article class="prose">
+        <h1>Now</h1>
+
+        <section class="bio">
+            <p>Hi, I am Matthias.</p>
+            <p>
+                I'm a photographer turned developer relations engineer. I've
+                gotten to do some really cool things along the way, and now I'm
+                working on the future of the web.
+            </p>
+            <p>
+                This site is my cozy corner on the web — a collection of
+                thoughts, projects, and ideas. You can keep up with my career on
+                my <a href="/resume">resume</a>.
+            </p>
+            <p>
+                Currently based in Southern California, where I spend a lot of
+                time cooking or behind the lens when I'm not at my desk.
+            </p>
+        </section>
+
+        <section>
+            <h2>Working on</h2>
+            <ul>
+                <li>DevRel @ Pinata</li>
+                <li>
+                    Cooking — see <a href="/recipes">recipes</a>
+                </li>
+                <li>Photographing — see <a href="/art">art</a></li>
+            </ul>
+        </section>
+
+        <section class="updates">
+            <h2>
+                Recent updates{" "}
+                <a href="/feed" class="updates-link">see all →</a>
+            </h2>
+            {
+                feedItems.length === 0 ? (
+                    <p class="feed-empty">Nothing recent.</p>
+                ) : (
+                    <ul class="feed feed--compact">
+                        {feedItems.map((item) => (
+                            <FeedEntryCard
+                                item={item}
+                                media={mediaByRkey.get(item.rkey) ?? []}
+                            />
+                        ))}
+                    </ul>
+                )
+            }
+        </section>
+
+        <section>
+            <h2>Find me</h2>
+            <ul class="links">
+                {
+                    socialLinks.map((link) => (
+                        <li>
+                            <a href={link.url}>
+                                {link.name}{" "}
+                                <span class="username">{link.username}</span>
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </section>
+    </article>
+</BaseLayout>
+
+<style>
+    .prose {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+        max-width: 60ch;
+    }
+
+    .prose > h1 {
+        font-family: var(--font-serif);
+    }
+
+    .prose section {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .prose h2 {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-weight: var(--fw-normal);
+    }
+
+    /* "See all →" link sitting next to the section heading. Sized as a
+       small footnote, not as part of the heading itself. */
+    .updates-link {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+        text-decoration: none;
+        margin-left: var(--space-2);
+        white-space: nowrap;
+    }
+
+    .updates-link:hover {
+        color: var(--color-fg);
+        text-decoration: underline;
+    }
+
+    .prose ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .prose li {
+        font-size: var(--fs-base);
+        line-height: var(--lh-relaxed);
+    }
+
+    /* Bio paragraphs (merged in from the old /about page). Comfortable
+       reading size, slightly relaxed leading. The wrapping section's
+       own gap separates the paragraphs from each other. */
+    .bio p {
+        font-size: var(--fs-base);
+        line-height: var(--lh-relaxed);
+        text-wrap: pretty;
+    }
+
+    .bio p:first-child {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-xl);
+    }
+
+    .username {
+        color: var(--color-muted);
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+    }
+
+    /* Compact override for the feed embed: the standalone /feed list
+       has roomier spacing; inside this page's section the feed reads
+       better with tighter gaps. Targets the global `.feed` / `.feed-item`
+       classes from globals.css via `:global(...)`. */
+    .updates :global(.feed--compact) {
+        gap: var(--space-5);
+    }
+
+    .updates :global(.feed--compact .feed-item) {
+        gap: var(--space-2);
+        padding-top: var(--space-4);
+    }
+</style>

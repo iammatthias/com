@@ -1,0 +1,1089 @@
+---
+export const prerender = false;
+
+import { marked } from "marked";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import RecordColophon from "../../components/RecordColophon.astro";
+import { getLiveEntry } from "astro:content";
+import { LiveEntryNotFoundError } from "astro/content/runtime";
+import {
+    blobURL,
+    getBlobMeta,
+    getSeries,
+    type DocumentData,
+} from "../../lib/farfield-loader";
+import {
+    extractBodyEmbeds,
+    wsrvUrl,
+    wsrvSrcSet,
+    type BlobMeta,
+} from "../../lib/farfield";
+import { setResponseCacheHeaders } from "../../lib/cache";
+import { fmtDateLong as fmtDate, hashSeed } from "../../lib/format";
+import {
+    FIG_WIDTHS,
+    FIG_SIZES,
+    SERIES_WIDTHS,
+    SERIES_SIZES,
+    ZOOM_WIDTHS,
+    ZOOM_QUALITY,
+    ZOOM_SIZES,
+    ZOOM_FALLBACK_WIDTH,
+} from "../../lib/images";
+
+const publicationSlug = Astro.params.publication;
+const docSlug = Astro.params.slug;
+if (!publicationSlug || !docSlug) {
+    return new Response(null, { status: 404 });
+}
+
+const { entry, error, cacheHint } = await getLiveEntry("documents", {
+    publication: publicationSlug,
+    slug: docSlug,
+});
+if (error) {
+    // Astro wraps "no such entry" as `LiveEntryNotFoundError` rather
+    // than returning `entry === undefined`, so we have to discriminate
+    // here. Unknown errors are upstream failures → 502; missing
+    // records (slug typos, deleted docs, stale links) → 404.
+    if (LiveEntryNotFoundError.is(error)) {
+        return new Response(null, { status: 404 });
+    }
+    console.error(
+        `[/${publicationSlug}/${docSlug}] Farfield fetch failed:`,
+        error,
+    );
+    return new Response(null, { status: 502 });
+}
+if (!entry) {
+    return new Response(null, { status: 404 });
+}
+const item: DocumentData = entry.data;
+
+setResponseCacheHeaders(Astro.response, cacheHint);
+
+/** Escape a string for safe inclusion inside an HTML attribute value. */
+function attr(value: string): string {
+    return value
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;");
+}
+
+function zoomAttrs(src: string, alt: string, w: number, h: number): string {
+    return (
+        `data-zoom-src="${attr(wsrvUrl(src, ZOOM_FALLBACK_WIDTH, { quality: ZOOM_QUALITY }))}" ` +
+        `data-zoom-srcset="${attr(wsrvSrcSet(src, ZOOM_WIDTHS, { quality: ZOOM_QUALITY }))}" ` +
+        `data-zoom-sizes="${attr(ZOOM_SIZES)}" ` +
+        `data-zoom-alt="${attr(alt)}" ` +
+        `data-zoom-w="${w}" data-zoom-h="${h}"`
+    );
+}
+
+/**
+ * `<figure>` for a single inline blob. Width/height/dominantColor come
+ * from the blob's `/meta` endpoint when available — gives the browser
+ * a stable aspect-ratio box and a placeholder fill before the wsrv
+ * variant lands. `meta === null` means the blob exists (URL still
+ * works) but has no recorded metadata; we render with safe defaults.
+ */
+function renderEmbedFigure(
+    cid: string,
+    alt: string,
+    meta: BlobMeta | null,
+): string {
+    const src = blobURL(cid);
+    const w = meta?.width ?? 960;
+    const h = meta?.height ?? 720;
+    const styleAttr = meta?.dominantColor
+        ? ` style="background:${meta.dominantColor}"`
+        : "";
+    return (
+        `<figure class="doc-figure"${styleAttr}>` +
+        `<button type="button" class="zoom-btn" ${zoomAttrs(src, alt, w, h)} aria-label="View image larger">` +
+        `<img src="${wsrvUrl(src, 960)}" srcset="${wsrvSrcSet(src, FIG_WIDTHS)}" ` +
+        `sizes="${FIG_SIZES}" width="${w}" height="${h}" ` +
+        `alt="${attr(alt)}" loading="lazy" decoding="async" />` +
+        `</button>` +
+        `</figure>`
+    );
+}
+
+/** A `<figure>` tile inside a series gallery — narrower srcset. */
+function renderSeriesTile(
+    cid: string,
+    alt: string,
+    meta: BlobMeta | null,
+): string {
+    const src = blobURL(cid);
+    const w = meta?.width ?? 960;
+    const h = meta?.height ?? 720;
+    const styleAttr = meta?.dominantColor
+        ? ` style="background:${meta.dominantColor}"`
+        : "";
+    return (
+        `<figure class="series-tile"${styleAttr}>` +
+        `<button type="button" class="zoom-btn" ${zoomAttrs(src, alt, w, h)} aria-label="View image larger">` +
+        `<img src="${wsrvUrl(src, 640)}" srcset="${wsrvSrcSet(src, SERIES_WIDTHS)}" ` +
+        `sizes="${SERIES_SIZES}" width="${w}" height="${h}" ` +
+        `alt="${attr(alt)}" loading="lazy" decoding="async" />` +
+        `</button>` +
+        `</figure>`
+    );
+}
+
+/**
+ * Resolve a `series://<slug>` reference into a masonry gallery block.
+ * The series's body is markdown — typically a list of `blob://` image
+ * embeds. Extract those, fetch each blob's meta, render as series
+ * tiles. Other content in the series body is ignored for now (galleries
+ * are image-only). Returns "" if the series is missing or empty.
+ */
+async function renderSeriesGallery(slug: string): Promise<string> {
+    const series = await getSeries(slug);
+    if (!series?.body) return "";
+    const embeds = extractBodyEmbeds(series.body).filter(
+        (e) => e.scheme === "blob",
+    );
+    if (embeds.length === 0) return "";
+    const metas = await Promise.all(embeds.map((e) => getBlobMeta(e.id)));
+    const tiles = embeds
+        .map((e, i) => renderSeriesTile(e.id, e.alt, metas[i]))
+        .join("");
+    return `<div class="series-grid">${tiles}</div>`;
+}
+
+/**
+ * GFM-style alert blockquotes:
+ *   > [!NOTE]
+ *   > Body text
+ * Marked emits these as plain `<blockquote><p>[!NOTE]\nBody…</p></blockquote>`.
+ * Rewrite to a semantic `<aside class="callout callout-note">` with the
+ * label split out as its own paragraph for styling. Handles the five
+ * canonical types and tolerates either single-line or multi-paragraph
+ * bodies inside the quote.
+ */
+function transformAlerts(html: string): string {
+    return html.replace(
+        /<blockquote>\s*<p>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*?)<\/p>([\s\S]*?)<\/blockquote>/gi,
+        (_match, rawType, firstBody, rest) => {
+            const type = rawType.toLowerCase();
+            const label = rawType[0] + rawType.slice(1).toLowerCase();
+            const first = firstBody.trim()
+                ? `<p>${firstBody.trim()}</p>`
+                : "";
+            return (
+                `<aside class="callout callout-${type}" data-callout="${type}">` +
+                `<p class="callout-label">${label}</p>${first}${rest}` +
+                `</aside>`
+            );
+        },
+    );
+}
+
+/**
+ * Render a markdown body, resolving Farfield's `blob://<cid>` and
+ * `series://<slug>` embeds to figure / gallery HTML and rewriting GFM
+ * alert blockquotes to semantic callouts.
+ *
+ * Embeds are pre-replaced with HTML comment placeholders before marked
+ * sees the source so its inline parser can't mangle them. After marked
+ * emits HTML the placeholders are swapped for the resolved figures
+ * (or dropped silently if the underlying record can't be found).
+ */
+async function renderMarkdownBody(body: string): Promise<string> {
+    interface Embed { alt: string; scheme: "blob" | "series"; id: string }
+    const embeds: Embed[] = [];
+    const preprocessed = body.replace(
+        /!\[([^\]]*)\]\((blob|series):\/\/([a-z0-9-]+)\)/g,
+        (_match, alt: string, scheme: string, id: string) => {
+            const idx = embeds.length;
+            embeds.push({ alt, scheme: scheme as "blob" | "series", id });
+            return `\n\n<!--FARFIELD_EMBED:${idx}-->\n\n`;
+        },
+    );
+
+    // Resolve each embed to its rendered HTML in parallel:
+    //   - blob://<cid>    → single <figure> (sized via /blobs/<cid>/meta)
+    //   - series://<slug> → masonry gallery (series body → tile grid)
+    const rendered = await Promise.all(
+        embeds.map(async (e) => {
+            if (e.scheme === "series") {
+                return renderSeriesGallery(e.id);
+            }
+            const meta = await getBlobMeta(e.id);
+            return renderEmbedFigure(e.id, e.alt, meta);
+        }),
+    );
+
+    let html = marked.parse(preprocessed, { async: false }) as string;
+
+    html = html.replace(
+        /<!--FARFIELD_EMBED:(\d+)-->/g,
+        (_, idx: string) => rendered[Number(idx)] ?? "",
+    );
+    html = transformAlerts(html);
+    return html;
+}
+
+// Content is a single markdown body with inline `blob://` / `series://`
+// embeds. `renderMarkdownBody` resolves each one and stitches in the
+// final HTML.
+const bodyHtml = item.body ? await renderMarkdownBody(item.body) : "";
+
+/**
+ * Word count + reading time. Farfield bodies are raw markdown — strip
+ * embed syntax and basic markup to get a clean prose word count. 220
+ * wpm is the standard adult reading rate for comfortably-paced screen
+ * text. Rounded up; floored at 1.
+ */
+function readingTime(body: string | undefined): {
+    words: number;
+    minutes: number;
+} {
+    if (!body) return { words: 0, minutes: 0 };
+    const plain = body
+        .replace(/!\[[^\]]*\]\((blob|series):\/\/[^)]+\)/g, "")
+        .replace(/[*_`>#]+/g, " ")
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+        .trim();
+    const words = plain.split(/\s+/).filter(Boolean).length;
+    const minutes = Math.max(1, Math.ceil(words / 220));
+    return { words, minutes };
+}
+
+const reading = readingTime(item.body);
+
+/**
+ * Pull `<h2>` / `<h3>` headings out of the rendered body and inject an
+ * `id` on each so the TOC can deep-link. Returns the modified HTML +
+ * the TOC structure for the sidebar.
+ */
+function buildToc(html: string): {
+    html: string;
+    entries: { id: string; text: string; level: 2 | 3 }[];
+} {
+    const entries: { id: string; text: string; level: 2 | 3 }[] = [];
+    // Decode the entities marked emits inside heading HTML so the TOC
+    // text reads as plain characters (`&amp;` → `&`, `&quot;` → `"`,
+    // etc.). Astro re-escapes the resulting string when interpolated
+    // with `{entry.text}`, so without this step we double-encode and
+    // the sidebar shows literal `&amp;`.
+    const decodeEntities = (s: string) =>
+        s
+            .replace(/&amp;/g, "&")
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'")
+            .replace(/&apos;/g, "'")
+            .replace(/&#x?([0-9a-fA-F]+);/g, (_m, code: string) =>
+                String.fromCodePoint(
+                    code.startsWith("x") || code.startsWith("X")
+                        ? parseInt(code.slice(1), 16)
+                        : parseInt(code, 10),
+                ),
+            );
+    const slug = (s: string) =>
+        decodeEntities(s)
+            .toLowerCase()
+            .replace(/<[^>]+>/g, "")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+            .slice(0, 60) || "section";
+    const used = new Set<string>();
+    const dedupe = (base: string) => {
+        let id = base;
+        let n = 2;
+        while (used.has(id)) id = `${base}-${n++}`;
+        used.add(id);
+        return id;
+    };
+    const out = html.replace(
+        /<h([23])([^>]*)>([\s\S]*?)<\/h\1>/g,
+        (match, lvl, attrs: string, inner: string) => {
+            // Respect any id already on the heading.
+            const idMatch = attrs.match(/\bid=["']([^"']+)["']/);
+            const id = idMatch ? idMatch[1] : dedupe(slug(inner));
+            const level = Number(lvl) as 2 | 3;
+            const text = decodeEntities(inner.replace(/<[^>]+>/g, "")).trim();
+            entries.push({ id, text, level });
+            if (idMatch) return match;
+            return `<h${lvl}${attrs} id="${id}">${inner}</h${lvl}>`;
+        },
+    );
+    return { html: out, entries };
+}
+
+// Always build the TOC so we can decide based on actual heading count
+// (not a word-count proxy). Bodies with fewer than two headings drop
+// the navigation chrome — there's nothing to navigate.
+const { html: bodyWithIds, entries: tocEntries } = buildToc(bodyHtml);
+// Art docs lean on full-width masonry series for `## Section` headings;
+// the desktop TOC sidebar narrows the body column and squeezes those
+// galleries into 2-up instead of 3-up. Skip the sidebar for that
+// publication — the prose is short enough that navigation by scroll
+// is fine, and the masonry gets the room it needs.
+const TOC_DISABLED_PUBLICATIONS = new Set(["art"]);
+const showToc =
+    tocEntries.length >= 2 &&
+    !TOC_DISABLED_PUBLICATIONS.has(item.publication.slug);
+
+// Stable seed for the colophon's terrazzo banner — same record key →
+// same pattern, forever.
+const bannerSeed = hashSeed(`${item.collection}/${item.rkey}`);
+
+// Farfield's record-viewer URL — points at the JSON record on the
+// content service so curious readers can see the raw data behind a
+// post. The new API takes just the slug (rkey); collection is implied.
+const recordUrl = `https://content.farfield.systems/api/entries/${encodeURIComponent(item.rkey)}`;
+---
+
+<BaseLayout
+    title={item.title}
+    description={item.description}
+    ogImage={`/${item.publication.slug}-${encodeURIComponent(item.title)}`}
+    ogType="article"
+    breadcrumbs={[
+        {
+            label: item.publication.name.toLowerCase(),
+            href: `/${item.publication.slug}`,
+        },
+    ]}
+>
+    <article class="doc">
+        <header class="doc-hero">
+            <h1>{item.title}</h1>
+            <p class="dateline">
+                <time datetime={item.publishedAt}>{fmtDate(item.publishedAt)}</time>
+                {reading.minutes > 0 && (
+                    <>
+                        <span aria-hidden="true"> · </span>
+                        <span>{reading.minutes} min read</span>
+                    </>
+                )}
+            </p>
+            {item.description && <p class="lede">{item.description}</p>}
+        </header>
+
+        {showToc && (
+            <details class="doc-toc">
+                <summary class="doc-toc__summary">
+                    <span class="doc-toc__label">On this page</span>
+                    <span class="doc-toc__count" aria-hidden="true">
+                        {tocEntries.length} sections
+                    </span>
+                </summary>
+                <ul>
+                    {tocEntries.map((entry) => (
+                        <li class:list={[`toc-level-${entry.level}`]}>
+                            <a href={`#${entry.id}`}>{entry.text}</a>
+                        </li>
+                    ))}
+                </ul>
+            </details>
+        )}
+
+        <div class="doc-body" set:html={bodyWithIds} />
+
+        {item.tags.length > 0 && (
+            <footer class="doc-tags">
+                <span class="tags-label">tagged</span>
+                <ul>
+                    {item.tags.map((t) => (
+                        <li>
+                            <a href={`/tags/${encodeURIComponent(t)}`}>{t}</a>
+                        </li>
+                    ))}
+                </ul>
+            </footer>
+        )}
+
+        <!--
+          Colophon: a thin terrazzo banner alongside the metadata block.
+          Banner seed is FNV-hashed from the record key so the tile
+          pattern is permanent for that document. The metadata block
+          surfaces collection / rkey / cid / timestamps, with the record
+          URL linking back to the raw Farfield JSON.
+        -->
+        <RecordColophon
+            seed={bannerSeed}
+            fields={[
+                { label: "collection", value: item.collection },
+                { label: "rkey", value: item.rkey },
+                { label: "record cid", value: item.cid },
+                { label: "record", value: recordUrl, href: recordUrl },
+                {
+                    label: "created",
+                    value: item.publishedAt,
+                    datetime: item.publishedAt,
+                },
+                {
+                    label: "updated",
+                    value: item.updatedAt,
+                    datetime: item.updatedAt,
+                },
+            ]}
+        />
+    </article>
+
+    <!--
+      Image lightbox. Single `<dialog>` reused for every figure on the
+      page — populated on click with the originating image's high-res
+      wsrv URL. Native <dialog> handles ESC, focus trap, and scroll
+      lock for free. Backdrop click closes; an explicit close button is
+      always present for touch users.
+    -->
+    <dialog id="image-lightbox" class="lightbox" aria-label="Image viewer">
+        <button type="button" class="lightbox-close" aria-label="Close" data-lightbox-close>×</button>
+        <button type="button" class="lightbox-nav lightbox-prev" aria-label="Previous image" data-lightbox-prev>‹</button>
+        <button type="button" class="lightbox-nav lightbox-next" aria-label="Next image" data-lightbox-next>›</button>
+        <span class="lightbox-counter" data-lightbox-counter aria-live="polite"></span>
+        <img class="lightbox-thumb" alt="" aria-hidden="true" />
+        <img class="lightbox-img" alt="" fetchpriority="high" decoding="async" />
+    </dialog>
+
+    <script>
+        const dialog = document.getElementById("image-lightbox");
+        if (dialog instanceof HTMLDialogElement) {
+            const img = dialog.querySelector(".lightbox-img");
+            const thumb = dialog.querySelector(".lightbox-thumb");
+            const counter = dialog.querySelector("[data-lightbox-counter]");
+            const prevBtn = dialog.querySelector("[data-lightbox-prev]");
+            const nextBtn = dialog.querySelector("[data-lightbox-next]");
+
+            // Collection of zoomable buttons + current index. Rebuilt
+            // each time the lightbox opens so dynamically-rendered
+            // content (HMR, future client-side mutations) stays in sync.
+            let triggers: HTMLElement[] = [];
+            let index = 0;
+
+            const collectTriggers = () =>
+                Array.from(
+                    document.querySelectorAll<HTMLElement>("[data-zoom-src]"),
+                );
+
+            /**
+             * Fire-and-forget preload for a sibling image at the same
+             * viewport bucket the lightbox img is using. The browser
+             * caches the result; the actual <img> load later is a
+             * memory hit instead of a network round-trip to wsrv.
+             */
+            const preloadFor = (btn: HTMLElement | undefined) => {
+                if (!btn) return;
+                const preload = new Image();
+                preload.srcset = btn.dataset.zoomSrcset ?? "";
+                preload.sizes = btn.dataset.zoomSizes ?? "100vw";
+                preload.src = btn.dataset.zoomSrc ?? "";
+            };
+
+            const showAt = (i: number) => {
+                if (!(img instanceof HTMLImageElement)) return;
+                if (triggers.length === 0) return;
+                // Wrap-around: -1 → last, length → 0.
+                index = (i + triggers.length) % triggers.length;
+                const btn = triggers[index];
+
+                // Steal the already-loaded thumbnail from the
+                // originating figure as an instant placeholder. Cleared
+                // (via the .is-loaded class) once the high-res arrives.
+                const triggerImg = btn.querySelector("img");
+                if (
+                    thumb instanceof HTMLImageElement &&
+                    triggerImg instanceof HTMLImageElement
+                ) {
+                    thumb.src = triggerImg.currentSrc || triggerImg.src;
+                    thumb.srcset = "";
+                }
+                dialog.classList.remove("is-loaded");
+
+                // Order matters: set srcset + sizes BEFORE src, so the
+                // browser's responsive selection runs against the full
+                // candidate list and doesn't briefly download the
+                // fallback src as a wasted request.
+                img.srcset = btn.dataset.zoomSrcset ?? "";
+                img.sizes = btn.dataset.zoomSizes ?? "100vw";
+                img.src = btn.dataset.zoomSrc ?? "";
+                img.alt = btn.dataset.zoomAlt ?? "";
+                const w = btn.dataset.zoomW;
+                const h = btn.dataset.zoomH;
+                if (w) img.setAttribute("width", w);
+                if (h) img.setAttribute("height", h);
+                if (counter instanceof HTMLElement) {
+                    counter.textContent =
+                        triggers.length > 1
+                            ? `${index + 1} / ${triggers.length}`
+                            : "";
+                }
+                // Hide prev/next when there's only one image to view.
+                const showNav = triggers.length > 1;
+                if (prevBtn instanceof HTMLElement) {
+                    prevBtn.hidden = !showNav;
+                }
+                if (nextBtn instanceof HTMLElement) {
+                    nextBtn.hidden = !showNav;
+                }
+
+                // Warm prev / next so swiping is instant. wsrv TTFB is
+                // 1–2s cold, so paying it now (while the user is
+                // looking at the current image) hides the latency on
+                // the very next click.
+                if (triggers.length > 1) {
+                    preloadFor(triggers[(index + 1) % triggers.length]);
+                    preloadFor(
+                        triggers[(index - 1 + triggers.length) % triggers.length],
+                    );
+                }
+            };
+
+            // Reveal the full-res image (and drop the thumbnail behind
+            // it) once it's decoded — until then, the user sees the
+            // thumb. `is-loaded` swaps the visual stack.
+            if (img instanceof HTMLImageElement) {
+                img.addEventListener("load", () => {
+                    dialog.classList.add("is-loaded");
+                });
+            }
+
+            // Open on click anywhere in a `.zoom-btn` (figures wrap their
+            // image in one). Delegated so it covers `set:html` content.
+            document.addEventListener("click", (event) => {
+                const target = event.target;
+                if (!(target instanceof Element)) return;
+                const btn = target.closest<HTMLElement>("[data-zoom-src]");
+                if (!btn) return;
+                event.preventDefault();
+                triggers = collectTriggers();
+                const i = triggers.indexOf(btn);
+                showAt(i >= 0 ? i : 0);
+                dialog.showModal();
+            });
+
+            // Close handlers — explicit button, backdrop click. ESC is
+            // already handled natively by <dialog>.
+            dialog.addEventListener("click", (event) => {
+                const t = event.target;
+                if (!(t instanceof Element)) return;
+                // The backdrop is `<dialog>` itself; clicks on inner
+                // controls (img, nav buttons) shouldn't dismiss.
+                if (t === dialog) {
+                    dialog.close();
+                } else if (t.closest("[data-lightbox-close]")) {
+                    dialog.close();
+                } else if (t.closest("[data-lightbox-prev]")) {
+                    showAt(index - 1);
+                } else if (t.closest("[data-lightbox-next]")) {
+                    showAt(index + 1);
+                }
+            });
+
+            // Arrow-key nav while the modal is open.
+            dialog.addEventListener("keydown", (event) => {
+                if (event.key === "ArrowLeft") {
+                    event.preventDefault();
+                    showAt(index - 1);
+                } else if (event.key === "ArrowRight") {
+                    event.preventDefault();
+                    showAt(index + 1);
+                }
+            });
+
+            // Touch swipe — horizontal-dominant gestures cycle images.
+            // 50px threshold separates swipes from incidental drags
+            // while pinch-zooming or scrolling.
+            let touchStartX = 0;
+            let touchStartY = 0;
+            dialog.addEventListener(
+                "touchstart",
+                (event) => {
+                    const t = event.touches[0];
+                    if (!t) return;
+                    touchStartX = t.clientX;
+                    touchStartY = t.clientY;
+                },
+                { passive: true },
+            );
+            dialog.addEventListener(
+                "touchend",
+                (event) => {
+                    const t = event.changedTouches[0];
+                    if (!t) return;
+                    const dx = t.clientX - touchStartX;
+                    const dy = t.clientY - touchStartY;
+                    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) {
+                        return;
+                    }
+                    if (dx > 0) showAt(index - 1);
+                    else showAt(index + 1);
+                },
+                { passive: true },
+            );
+
+            // Clear the src on close so the bandwidth isn't held by an
+            // off-screen high-res image until the next open.
+            dialog.addEventListener("close", () => {
+                if (img instanceof HTMLImageElement) {
+                    img.src = "";
+                    img.srcset = "";
+                }
+                if (thumb instanceof HTMLImageElement) {
+                    thumb.src = "";
+                }
+                dialog.classList.remove("is-loaded");
+            });
+        }
+    </script>
+</BaseLayout>
+
+<style>
+    /* The article-level gap is the rhythm that separates hero, body,
+       tags, and colophon. Each section uses its own internal gap for
+       finer-grained spacing. */
+    article {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-7);
+    }
+
+    /* Reworked hero: serif italic title leads, dateline sits right
+       under it as a small italic line, lede follows with breathing
+       room. The article's gap separates the hero from the content
+       blocks — no margin-bottom needed here. */
+    .doc-hero {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .doc-hero h1 {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-weight: var(--fw-normal);
+        font-size: clamp(var(--fs-3xl), 6vw, var(--fs-4xl));
+        line-height: 1.05;
+        letter-spacing: -0.015em;
+        text-wrap: balance;
+    }
+
+    .dateline {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+    }
+
+    .lede {
+        margin-top: var(--space-3);
+        font-size: var(--fs-lg);
+        line-height: var(--lh-relaxed);
+        color: var(--color-fg);
+        text-wrap: pretty;
+        max-width: 60ch;
+    }
+
+    .doc-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-5);
+        font-size: var(--fs-base);
+        line-height: var(--lh-relaxed);
+    }
+
+    /* Doc-specific heading typography. Tables, lists, code, blockquote,
+       hr, etc. are handled in globals.css — no per-page overrides for
+       those. The :global(...) selectors here target the markdown
+       renderer's output (which doesn't carry the layout's scope hash). */
+    .doc-body :global(h2) {
+        font-family: var(--font-serif);
+        font-size: var(--fs-2xl);
+        margin-top: var(--space-3);
+    }
+
+    .doc-body :global(h3) {
+        font-family: var(--font-serif);
+        font-size: var(--fs-xl);
+        margin-top: var(--space-2);
+    }
+
+    /* Tighten list internals when they appear in a flex-gap container,
+       since `gap` already handles between-item spacing at the prose
+       level. */
+    .doc-body :global(ul),
+    .doc-body :global(ol) {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    /* Markdown-embedded inline images should fill the reading column
+       crisply; the rounded radius matches our other media. */
+    .doc-body :global(img) {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: var(--radius);
+    }
+
+    /* TOC is a native <details> sitting inline near the top of the
+       article — same on every viewport. No grid columns; body stays
+       full-width. Sticky so the summary follows the reader down the
+       page; opening the panel expands the list in place. Background
+       + z-index keep it readable when content scrolls behind. */
+    .doc-toc {
+        font-size: var(--fs-sm);
+        line-height: var(--lh-relaxed);
+        padding: var(--space-3) 0;
+        border-top: 1px solid var(--color-border);
+        border-bottom: 1px solid var(--color-border);
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: var(--color-bg);
+    }
+
+    /* Bound the open list so a 30-entry TOC doesn't cover the whole
+       viewport — readers can scroll inside the panel instead. */
+    .doc-toc ul {
+        max-height: calc(100dvh - 6rem);
+        overflow-y: auto;
+    }
+
+    .doc-toc__summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-3);
+        cursor: pointer;
+        user-select: none;
+        list-style: none;
+    }
+
+    /* Hide the native disclosure marker — chevron pseudo below
+       matches the typographic style of the site. */
+    .doc-toc__summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .doc-toc__summary::after {
+        content: "";
+        width: 0.5em;
+        height: 0.5em;
+        border-right: 1px solid currentColor;
+        border-bottom: 1px solid currentColor;
+        transform: rotate(45deg) translate(-25%, -25%);
+        color: var(--color-muted);
+        transition: transform 150ms var(--ease);
+    }
+
+    .doc-toc[open] .doc-toc__summary::after {
+        transform: rotate(-135deg) translate(-25%, -25%);
+    }
+
+    .doc-toc__label {
+        font-family: var(--font-serif);
+        font-style: italic;
+        color: var(--color-muted);
+        font-size: var(--fs-sm);
+    }
+
+    .doc-toc__count {
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        color: var(--color-muted);
+        margin-right: auto;
+        margin-left: var(--space-3);
+    }
+
+    .doc-toc ul {
+        list-style: none;
+        margin: var(--space-3) 0 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35em;
+    }
+
+    .doc-toc li {
+        list-style: none;
+    }
+
+    .doc-toc .toc-level-3 {
+        padding-left: var(--space-3);
+        font-size: var(--fs-xs);
+    }
+
+    .doc-toc a {
+        color: var(--color-muted);
+        text-decoration: none;
+        text-wrap: balance;
+    }
+
+    .doc-toc a:hover {
+        color: var(--color-fg);
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+    }
+
+    /* `.doc-figure` and the masonry tiles below come from `set:html`,
+       so they don't carry the layout's scope hash — target them via
+       `:global(...)` to ensure styles land. */
+    .doc-body :global(.doc-figure) {
+        margin: 0;
+        overflow: hidden;
+        border-radius: var(--radius);
+    }
+
+    .doc-body :global(.doc-figure img) {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    /* Series gallery — CSS multi-column gives a true waterfall masonry
+       layout across all evergreens (Safari's native `grid-template-rows:
+       masonry` is still spec-experimental). Tiles use `break-inside:
+       avoid` so each figure stays whole inside its column. Columns step
+       down at narrower breakpoints so tiles never get too cramped. */
+    .doc-body :global(.series-grid) {
+        column-count: 3;
+        column-gap: var(--space-3);
+        margin: var(--space-3) 0;
+    }
+
+    @media (max-width: 768px) {
+        .doc-body :global(.series-grid) {
+            column-count: 2;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .doc-body :global(.series-grid) {
+            column-count: 1;
+        }
+    }
+
+    .doc-body :global(.series-tile) {
+        margin: 0 0 var(--space-3);
+        overflow: hidden;
+        border-radius: var(--radius);
+        break-inside: avoid;
+    }
+
+    .doc-body :global(.series-tile img) {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    /* Each clickable image lives inside a transparent <button> so the
+       click target is a real focusable control (keyboard + screen
+       readers get the affordance), with no visible chrome. Cursor
+       gives a zoom-in hint on hover, mirroring the modal action. */
+    .doc-body :global(.zoom-btn) {
+        display: block;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        background: transparent;
+        cursor: zoom-in;
+        color: inherit;
+        font: inherit;
+    }
+
+    .doc-body :global(.zoom-btn:focus-visible) {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
+    }
+
+    /* ---------- lightbox ---------- */
+
+    .lightbox {
+        /* Native <dialog>'s default is a small auto-sized box centered
+           on viewport. Stretch it to fill the screen so the image can
+           freely scale to either dimension. Background is set on the
+           dialog itself (rather than backdrop) so the close button
+           reads against a stable surface. */
+        padding: 0;
+        border: 0;
+        margin: 0;
+        width: 100vw;
+        max-width: 100vw;
+        height: 100dvh;
+        max-height: 100dvh;
+        background: var(--color-bg);
+        color: var(--color-fg);
+        overflow: hidden;
+    }
+
+    .lightbox::backdrop {
+        background: rgba(0, 0, 0, 0.7);
+    }
+
+    .lightbox-img,
+    .lightbox-thumb {
+        display: block;
+        max-width: 100vw;
+        max-height: 100dvh;
+        width: auto;
+        height: auto;
+        margin: 0 auto;
+        /* Center via absolute positioning — flex inside <dialog> is
+           fiddly with top-layer rendering. */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        object-fit: contain;
+    }
+
+    /* The thumbnail is the already-loaded low-res image stolen from
+       the originating figure. It paints instantly so the modal never
+       feels empty while wsrv serves the high-res. A slight blur masks
+       the upscale; opacity ramp gives a clean handoff once the
+       high-res arrives. */
+    .lightbox-thumb {
+        filter: blur(8px);
+        transform: translate(-50%, -50%) scale(1.02);
+        opacity: 1;
+        transition: opacity 250ms ease;
+        z-index: 0;
+    }
+
+    .lightbox-img {
+        opacity: 0;
+        transition: opacity 200ms ease;
+        z-index: 1;
+    }
+
+    .lightbox.is-loaded .lightbox-img {
+        opacity: 1;
+    }
+
+    .lightbox.is-loaded .lightbox-thumb {
+        opacity: 0;
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: var(--space-4);
+        right: var(--space-4);
+        z-index: 1;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+        border: 0;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        font-size: 1.5rem;
+        line-height: 1;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .lightbox-close:hover,
+    .lightbox-close:focus-visible {
+        background: rgba(0, 0, 0, 0.8);
+        outline: none;
+    }
+
+    /* Prev / next controls — centered vertically on each edge, hidden
+       on touch-only viewports (swipe is the primary nav there) but
+       still focusable via keyboard. Pointer-only restriction keeps the
+       UI clean on phones without hiding affordance from a11y trees. */
+    .lightbox-nav {
+        position: absolute;
+        top: 50%;
+        z-index: 1;
+        transform: translateY(-50%);
+        width: 3rem;
+        height: 3rem;
+        padding: 0;
+        border: 0;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        font-size: 2rem;
+        line-height: 1;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .lightbox-prev {
+        left: var(--space-4);
+    }
+
+    .lightbox-next {
+        right: var(--space-4);
+    }
+
+    .lightbox-nav:hover,
+    .lightbox-nav:focus-visible {
+        background: rgba(0, 0, 0, 0.8);
+        outline: none;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+        /* Hide nav buttons on touch — swipe handles it. Still rendered
+           in the DOM so focus order + screen-reader announcements work. */
+        .lightbox-nav {
+            display: none;
+        }
+    }
+
+    /* "3 / 81" counter, bottom center. Small, subtle. */
+    .lightbox-counter {
+        position: absolute;
+        bottom: var(--space-4);
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+        padding: 0.25rem 0.75rem;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        border-radius: 999px;
+    }
+
+    .lightbox-counter:empty {
+        display: none;
+    }
+
+    .doc-tags {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: var(--space-3);
+        padding-top: var(--space-5);
+        border-top: 1px solid var(--color-border);
+        font-size: var(--fs-sm);
+    }
+
+    .tags-label {
+        font-family: var(--font-serif);
+        font-style: italic;
+        color: var(--color-muted);
+    }
+
+    .doc-tags ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .doc-tags li {
+        list-style: none;
+    }
+
+    .doc-tags a {
+        color: var(--color-muted);
+        text-decoration-thickness: 1px;
+    }
+
+    .doc-tags a:hover {
+        color: var(--color-fg);
+    }
+</style>

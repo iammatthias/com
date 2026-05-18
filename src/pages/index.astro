@@ -1,0 +1,341 @@
+---
+// SSR — homepage feed pulls from the Farfield live collection so new
+// posts appear without a rebuild. Underlying Farfield fetches are TTL-
+// cached per-isolate; the response carries Cache-Control so Cloudflare
+// edge-caches the rendered HTML for 60s with stale-while-revalidate.
+export const prerender = false;
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FeedCard from "../components/FeedCard.astro";
+import { getLiveCollection } from "astro:content";
+import { setResponseCacheHeaders } from "../lib/cache";
+import type { DocumentData } from "../lib/farfield-loader";
+
+// Glass is fetched on the client — the inline `<script>` below hits
+// /api/glass-pick.json after first paint and injects the photo +
+// caption. Keeps Glass's latency out of the server TTFB entirely.
+const {
+    entries: feedEntries,
+    error: feedError,
+    cacheHint,
+} = await getLiveCollection("documents");
+
+let feed: DocumentData[] = [];
+if (feedError) {
+    console.error("[index] Farfield feed fetch failed:", feedError);
+} else {
+    feed = feedEntries.map((e) => e.data);
+}
+
+// Translate the loader's cacheHint into HTTP cache headers. See
+// lib/cache.ts for the actual policy (s-maxage=60, swr=300) — one
+// helper so we don't drift across pages.
+setResponseCacheHeaders(Astro.response, cacheHint);
+---
+
+<BaseLayout>
+    <!--
+      `cover` is the above-fold opener: arch + figcaption + intro copy
+      share one viewport-height container. The arch takes whatever
+      vertical space the intro doesn't need; the intro takes its
+      content height. Both fit before the reader has to scroll. The
+      feed lives below as a separate section.
+    -->
+    <section class="cover">
+        <figure class="hero">
+            <div class="arch-frame">
+                <!--
+                  Arch is hydrated client-side from /api/glass-pick.json
+                  after first paint. Server renders an empty window —
+                  the border + placeholder background read as a "frame
+                  waiting for an image" for the ~100ms before the
+                  client fetch lands. data-glass-window is the
+                  injection target.
+                -->
+                <div class="arch-window" data-glass-window></div>
+            </div>
+
+            <!--
+              Reserved figcaption slot — empty on server render, filled
+              by the same client script. Pre-allocates min-height so
+              the populated metadata doesn't push the layout when it
+              arrives.
+            -->
+            <figcaption data-glass-caption hidden></figcaption>
+        </figure>
+
+        <section class="intro" aria-label="Introduction">
+            <p class="greeting">Hi, I am Matthias.</p>
+            <p>
+                This is my cozy corner on the web. A collection of thoughts,
+                projects, ideas, and recipes.
+            </p>
+        </section>
+    </section>
+
+    <section class="feed" aria-labelledby="feed-heading">
+        <h2 id="feed-heading">Recent</h2>
+        {
+            feed.length === 0 ? (
+                <p class="feed-empty">No entries to show right now.</p>
+            ) : (
+                <ul class="feed-grid">
+                    {feed.map((item) => (
+                        <FeedCard
+                            href={item.href}
+                            title={item.title}
+                            description={item.description}
+                            publishedAt={item.publishedAt}
+                            kind={item.publication.name.toLowerCase()}
+                        />
+                    ))}
+                </ul>
+            )
+        }
+    </section>
+
+    {
+        /*
+      Client-side Glass hydration. The server skips the Glass fetch
+      entirely — this script kicks off after first paint, hits the
+      cached /api/glass-pick.json endpoint, and injects the photo +
+      figcaption metadata into the slots reserved in markup.
+
+      Why client-side: Glass adds ~200ms of round-trip latency the
+      page renderer has no other reason to pay. Deferring it gets the
+      Astro response out faster; the visible photo lands ~100–200ms
+      later but the rest of the page is interactive immediately.
+    */
+    }
+    <script>
+        interface GlassPick {
+            src: string;
+            srcset: string;
+            sizes: string;
+            width: number;
+            height: number;
+            alt: string;
+            prominentColor: string | null;
+            seriesTitle: string | null;
+            shareUrl: string | null;
+            equipment: string | null;
+            settings: string | null;
+            captureDate: string | null;
+        }
+
+        async function hydrateGlass() {
+            const win = document.querySelector("[data-glass-window]");
+            const cap = document.querySelector("[data-glass-caption]");
+            if (!(win instanceof HTMLElement)) return;
+
+            let pick: GlassPick | null = null;
+            try {
+                const res = await fetch("/api/glass-pick.json");
+                if (res.ok) pick = (await res.json()) as GlassPick;
+            } catch {
+                return; // network blip — leave the placeholder visible
+            }
+            if (!pick) return;
+
+            // Paint the prominent color first so the image fades in
+            // against the photo's own tone instead of the neutral
+            // border placeholder.
+            if (pick.prominentColor) {
+                win.style.background = pick.prominentColor;
+                win.style.borderColor = pick.prominentColor;
+            }
+
+            const img = document.createElement("img");
+            img.src = pick.src;
+            img.srcset = pick.srcset;
+            img.sizes = pick.sizes;
+            img.width = pick.width;
+            img.height = pick.height;
+            img.alt = pick.alt;
+            img.loading = "eager";
+            img.decoding = "async";
+            img.setAttribute("fetchpriority", "high");
+            win.appendChild(img);
+
+            if (!(cap instanceof HTMLElement)) return;
+            const parts: HTMLElement[] = [];
+            if (pick.seriesTitle) {
+                const span = document.createElement("span");
+                span.className = "title";
+                if (pick.shareUrl) {
+                    const a = document.createElement("a");
+                    a.href = pick.shareUrl;
+                    a.rel = "noopener";
+                    a.textContent = pick.seriesTitle;
+                    span.appendChild(a);
+                } else {
+                    span.textContent = pick.seriesTitle;
+                }
+                parts.push(span);
+            }
+            for (const line of [
+                pick.equipment,
+                pick.settings,
+                pick.captureDate,
+            ]) {
+                if (!line) continue;
+                const s = document.createElement("span");
+                s.textContent = line;
+                parts.push(s);
+            }
+            if (parts.length > 0) {
+                cap.replaceChildren(...parts);
+                cap.hidden = false;
+            }
+        }
+
+        hydrateGlass();
+    </script>
+</BaseLayout>
+
+<style>
+    /*
+     * `.cover` groups the hero and the intro. Sizing is no longer
+     * locked to a viewport-fitting height — the arch frame is pinned
+     * to a vh-derived height so the arch reads at a consistent size
+     * across photos, and the caption is allowed to flow underneath at
+     * its natural length (it may extend past the fold on shorter
+     * viewports, which is fine).
+     */
+    .cover {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-5);
+        width: 100%;
+    }
+
+    .hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-5);
+        margin: 0;
+        width: 100%;
+    }
+
+    /* Personal intro that sits between the arch and the feed. The
+       greeting reads as a serif-italic lead; the bio paragraph follows
+       at body size, comfortably wide. Both are centered as a column
+       within the content max-width but left-aligned internally for
+       readable line lengths. */
+    .intro {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        width: 100%;
+        max-width: 60ch;
+    }
+
+    .intro .greeting {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-2xl);
+        line-height: var(--lh-tight);
+    }
+
+    .intro p {
+        font-size: var(--fs-base);
+        line-height: var(--lh-relaxed);
+        text-wrap: pretty;
+    }
+
+    .arch-frame {
+        /* Fixed vh-based height — the arch reads at a consistent size
+           regardless of the photo or its caption. Scales with viewport
+           so it looks proportional on phones, laptops, and large
+           screens alike. The 6:7 window inside derives its width from
+           this height (and is then capped at 100% width on narrow
+           mobile viewports). */
+        height: 70dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .arch-window {
+        /* Maintain 6:7 (w:h). Height comes from the frame; width
+           derives from aspect-ratio, capped by the parent's content
+           width so it can never overflow on narrow viewports. */
+        aspect-ratio: 6 / 7;
+        height: 100%;
+        width: auto;
+        max-width: 100%;
+
+        /* Arch shape: a true circular semicircle on top, flat on bottom.
+           For a circular arc, top corners' Y-radius must equal half the
+           box width — which is (3/7) of the height when aspect is 6:7,
+           expressed precisely as calc(300% / 7). */
+        border-top-left-radius: 50% calc(300% / 7);
+        border-top-right-radius: 50% calc(300% / 7);
+
+        overflow: hidden;
+        background: var(--color-border);
+        /* Frame the photo in its own prominent color — the same
+           accent we show as the loading bg, applied inline above. The
+           fallback (--color-border) keeps a subtle frame when the
+           Glass post lacks a prominent_color hint. */
+        border: 6px solid var(--color-border);
+    }
+
+    .arch-window img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    figcaption {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.15em;
+        text-align: center;
+        font-size: var(--fs-xs);
+        /* lh-tight stacked four lines feels cramped; relaxed +
+           a small inter-line gap gives the metadata room to breathe
+           without ballooning vertically. */
+        line-height: var(--lh-relaxed);
+        color: var(--color-muted);
+        text-wrap: balance;
+    }
+
+    figcaption .title {
+        color: var(--color-fg);
+        font-weight: var(--fw-medium);
+    }
+
+    figcaption a {
+        text-decoration-thickness: 1px;
+    }
+
+    /* ---------- recent feed (below the fold) ---------- */
+
+    .feed {
+        /* breathing room between the hero (which fills ~1 viewport) and
+           the start of the index, so it reads as a fresh section when
+           the reader scrolls down */
+        margin-top: var(--space-8);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+        width: 100%;
+    }
+
+    .feed h2 {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-weight: var(--fw-normal);
+    }
+
+    /* `.feed-grid` / `.card*` / `.feed-empty` live in globals.css
+       because every list surface (homepage, content, publication
+       indexes, tag pages) needs the same primitive. */
+</style>

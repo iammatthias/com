@@ -1,0 +1,104 @@
+---
+export const prerender = false;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getLiveCollection } from "astro:content";
+import { setResponseCacheHeaders } from "../../lib/cache";
+import type { MenuMeta } from "@lib/menu";
+
+export const menu: MenuMeta = { group: "archive", order: 2 };
+
+let tags: { tag: string; count: number }[] = [];
+const {
+    entries: docEntries,
+    error,
+    cacheHint,
+} = await getLiveCollection("documents");
+if (error) {
+    console.error("[/tags] Farfield fetch failed:", error);
+} else {
+    // Aggregate tag counts client-side rather than asking the loader to
+    // do it — keeps the loader's surface minimal and lets the same
+    // collection fetch serve both this page and the per-tag pages.
+    const counts = new Map<string, number>();
+    for (const e of docEntries) {
+        for (const t of e.data.tags) {
+            counts.set(t, (counts.get(t) ?? 0) + 1);
+        }
+    }
+    tags = [...counts.entries()]
+        .map(([tag, count]) => ({ tag, count }))
+        .sort(
+            (a, b) => b.count - a.count || a.tag.localeCompare(b.tag),
+        );
+}
+
+setResponseCacheHeaders(Astro.response, cacheHint);
+---
+
+<BaseLayout title="Tags" description="All tags across the site, by frequency.">
+    <header class="page-header">
+        <h1>Tags</h1>
+        <p>{tags.length} unique tags across the archive.</p>
+    </header>
+
+    {tags.length === 0 ? (
+        <p class="feed-empty">No tags yet.</p>
+    ) : (
+        <ul class="tag-cloud">
+            {tags.map(({ tag, count }) => (
+                <li>
+                    <a href={`/tags/${encodeURIComponent(tag)}`}>
+                        <span class="tag-name">{tag}</span>
+                        <span class="tag-count">{count}</span>
+                    </a>
+                </li>
+            ))}
+        </ul>
+    )}
+</BaseLayout>
+
+<style>
+    /* `.page-header` + `.feed-empty` live in globals.css. The
+       per-page header italics override below tightens the muted
+       `<p>` for this surface — it's a stat line, not prose. */
+    .page-header p {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+    }
+
+    .tag-cloud {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+    }
+
+    .tag-cloud li {
+        list-style: none;
+    }
+
+    .tag-cloud a {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.4em;
+        text-decoration: none;
+    }
+
+    .tag-cloud a:hover .tag-name {
+        text-decoration: underline;
+    }
+
+    .tag-name {
+        font-family: var(--font-serif);
+    }
+
+    .tag-count {
+        font-size: var(--fs-xs);
+        color: var(--color-muted);
+        font-variant-numeric: tabular-nums;
+    }
+</style>

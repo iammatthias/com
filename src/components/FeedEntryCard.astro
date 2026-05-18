@@ -1,0 +1,92 @@
+---
+// One entry in the Farfield feed — used by both /now (Recent updates)
+// and /feed (standalone list). Renders the resolved media gallery, the
+// full markdown body, and a stretched permalink to /feed/<rkey>. The
+// outer <ul class="feed"> and any list-level spacing are owned by the
+// parent so each context can tune density (compact on /now, roomier
+// on /feed/index).
+
+import { marked } from "marked";
+import { fmtDate } from "../lib/format";
+import { tilePreset } from "../lib/images";
+import {
+    blobURL,
+    type FeedEntryData,
+    type ResolvedMedia,
+} from "../lib/farfield-loader";
+import { wsrvUrl, wsrvSrcSet } from "../lib/farfield";
+
+interface Props {
+    item: FeedEntryData;
+    /** Pre-resolved by the parent so it can fan out the metadata
+     *  fetches in one Promise.all. */
+    media: ResolvedMedia[];
+}
+
+const { item, media } = Astro.props;
+
+/**
+ * Render the body as full markdown — embed URIs stripped because the
+ * gallery already shows the media. Same treatment on every surface so
+ * the card and the /feed/<rkey> detail view read identically.
+ */
+function renderBodyPreview(body: string): string {
+    const prose = body.replace(
+        /!\[[^\]]*\]\((blob|series):\/\/[a-z0-9-]+\)\s*/g,
+        "",
+    );
+    return prose.trim()
+        ? (marked.parse(prose, { async: false }) as string)
+        : "";
+}
+
+const noteHtml = renderBodyPreview(item.body);
+const preset = tilePreset(media.length > 1);
+const fallbackW =
+    preset.widths[Math.floor(preset.widths.length / 2)] ?? 720;
+---
+
+<li class="feed-item">
+    {media.length > 0 && (
+        <div
+            class:list={[
+                "feed-media",
+                { "feed-media--gallery": media.length > 1 },
+            ]}
+        >
+            {media.map((m) => {
+                const src = blobURL(m.cid);
+                return (
+                    <figure
+                        class="feed-tile"
+                        style={
+                            m.meta?.dominantColor
+                                ? `background:${m.meta.dominantColor}`
+                                : undefined
+                        }
+                    >
+                        <img
+                            src={wsrvUrl(src, fallbackW)}
+                            srcset={wsrvSrcSet(src, preset.widths)}
+                            sizes={preset.sizes}
+                            width={m.meta?.width ?? 960}
+                            height={m.meta?.height ?? 720}
+                            alt={m.alt ?? ""}
+                            loading="lazy"
+                            decoding="async"
+                        />
+                    </figure>
+                );
+            })}
+        </div>
+    )}
+    {noteHtml && <div class="feed-note" set:html={noteHtml} />}
+    <a
+        href={`/feed/${item.rkey}`}
+        class="feed-permalink"
+        aria-label={`Open feed entry from ${fmtDate(item.createdAt)}`}
+    >
+        <time datetime={item.createdAt}>{fmtDate(item.createdAt)}</time>
+        <span aria-hidden="true">→</span>
+    </a>
+</li>

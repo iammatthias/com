@@ -1,0 +1,79 @@
+---
+// Standalone view of the Farfield feed. Mirrors the embed under
+// "Recent updates" on /now but at full-page scale and links each entry
+// to its own detail page at `/feed/[rkey]`.
+
+export const prerender = false;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FeedEntryCard from "../../components/FeedEntryCard.astro";
+import { getLiveCollection } from "astro:content";
+import { setResponseCacheHeaders } from "../../lib/cache";
+import {
+    entriesOf,
+    resolveBodyMedia,
+    type FeedEntryData,
+    type ResolvedMedia,
+} from "../../lib/farfield-loader";
+
+// No `menu` export — /feed is reachable from /now's "see all →" link
+// and from per-entry breadcrumbs, but doesn't need its own slot in the
+// site nav.
+
+const {
+    entries: rawEntries,
+    error,
+    cacheHint,
+} = await getLiveCollection("feedEntries");
+if (error) {
+    console.error("[/feed] Farfield feed entries fetch failed:", error);
+}
+const items: FeedEntryData[] = entriesOf<FeedEntryData>(rawEntries);
+
+setResponseCacheHeaders(Astro.response, cacheHint);
+
+const title = "Feed";
+const description = "Short posts from iammatthias.";
+
+// Resolve each entry's body to a flat media list — feed cards show the
+// images alongside the text excerpt. Done up-front so the markup loop
+// below stays sync. Misses (rare) just render with text only.
+const mediaByRkey = new Map<string, ResolvedMedia[]>(
+    await Promise.all(
+        items.map(async (it) =>
+            [it.rkey, await resolveBodyMedia(it.body)] as const,
+        ),
+    ),
+);
+---
+
+<BaseLayout title={title} description={description} ogImage="/feed">
+    <header class="page-header">
+        <h1>{title}</h1>
+        <p>{description}</p>
+        <p class="meta">
+            <a href="/feed/rss.xml">RSS</a>
+            <span aria-hidden="true"> · </span>
+            <span>{items.length} {items.length === 1 ? "entry" : "entries"}</span>
+        </p>
+    </header>
+
+    {items.length === 0 ? (
+        <p class="feed-empty">Nothing recent.</p>
+    ) : (
+        <ul class="feed">
+            {items.map((item) => (
+                <FeedEntryCard
+                    item={item}
+                    media={mediaByRkey.get(item.rkey) ?? []}
+                />
+            ))}
+        </ul>
+    )}
+</BaseLayout>
+
+<style>
+    .page-header .meta a {
+        color: inherit;
+    }
+</style>

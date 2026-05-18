@@ -1,0 +1,34 @@
+---
+// Card markup for any list of document entries (homepage, content,
+// publication, tag pages). Styling lives in globals.css under
+// `.feed-grid` / `.card` / `.card-link` so every consumer is identical.
+//
+// Pass `showKind` when the surrounding context lacks a publication
+// label (e.g. homepage shows it, but a per-publication index doesn't
+// need to repeat the kind on every card).
+
+import { fmtDate } from "../lib/format";
+
+interface Props {
+    href: string;
+    title: string;
+    description?: string;
+    publishedAt: string;
+    /** Render the publication name as a kicker above the title. */
+    kind?: string;
+}
+
+const { href, title, description, publishedAt, kind } = Astro.props;
+---
+
+<li class="card">
+    <a href={href} class="card-link">
+        {kind && <span class="card-kind">{kind}</span>}
+        <h3>{title}</h3>
+        {description && <p>{description}</p>}
+        <span class="card-date">
+            —{" "}
+            <time datetime={publishedAt}>{fmtDate(publishedAt)}</time>
+        </span>
+    </a>
+</li>

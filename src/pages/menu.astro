@@ -1,0 +1,38 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import MenuLinks from "@components/MenuLinks.astro";
+---
+
+<BaseLayout title="Menu" description="Site navigation." ogImage="/menu" noindex>
+    <article class="menu-page">
+        <header>
+            <h1>Menu</h1>
+        </header>
+        <MenuLinks />
+    </article>
+</BaseLayout>
+
+<style>
+    .menu-page {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-7);
+        max-width: 60ch;
+    }
+
+    .menu-page header h1 {
+        font-family: var(--font-serif);
+    }
+
+    .back {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+        text-decoration: none;
+    }
+
+    .back:hover {
+        text-decoration: underline;
+    }
+</style>

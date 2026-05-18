@@ -1,0 +1,94 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import OnchainAnalytics from "@components/OnchainAnalytics";
+import type { MenuMeta } from "@lib/menu";
+
+export const menu: MenuMeta = {
+    group: "other",
+    label: "onchain analytics",
+    order: 1,
+};
+
+const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT as
+    | `0x${string}`
+    | undefined;
+---
+
+<BaseLayout
+    title="Onchain Analytics"
+    description="Homebrew analytics system built on anonymous session management with keccak256 hashes and the blockchain."
+    ogImage="/onchain-analytics"
+>
+    <article class="prose">
+        <header class="doc-header">
+            <h1>Onchain Analytics</h1>
+        </header>
+
+        <div class="lede">
+            <p>
+                Recording started at block <a
+                    href="https://sepolia.basescan.org/tx/0xc6fffb63218605b36b5cb7b07df1e66be77015e4ede9fe03b0356dd18d1fb8f8"
+                    >12315477</a
+                > and has since stopped.{" "}
+                {CONTRACT_ADDRESS && (
+                    <>
+                        The <a
+                            href={`https://sepolia.basescan.org/address/${CONTRACT_ADDRESS}#code`}
+                        >
+                            smart contracts
+                        </a> are verified on Basescan.
+                    </>
+                )}
+            </p>
+            <p>
+                This site briefly ran a homebrew analytics system — keccak256
+                session hashes and onchain page-view counts. <a
+                    href="/posts/1712329304675-onchain-hit-counter"
+                    >Notes on the system</a
+                >.
+            </p>
+        </div>
+
+        {CONTRACT_ADDRESS ? (
+            <OnchainAnalytics
+                client:only="react"
+                contractAddress={CONTRACT_ADDRESS}
+            />
+        ) : (
+            <p class="missing">
+                <code>PUBLIC_ANALYTICS_CONTRACT</code> not configured.
+            </p>
+        )}
+    </article>
+</BaseLayout>
+
+<style>
+    .prose {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+        max-width: 60ch;
+    }
+
+    .doc-header h1 {
+        font-family: var(--font-serif);
+    }
+
+    .lede {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        font-size: var(--fs-base);
+        line-height: var(--lh-relaxed);
+    }
+
+    .lede p {
+        text-wrap: pretty;
+    }
+
+    .missing {
+        font-family: var(--font-serif);
+        font-style: italic;
+        color: var(--color-muted);
+    }
+</style>

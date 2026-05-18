@@ -1,0 +1,78 @@
+---
+export const prerender = false;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FeedCard from "../../components/FeedCard.astro";
+import { getLiveCollection } from "astro:content";
+import { setResponseCacheHeaders } from "../../lib/cache";
+import type {
+    DocumentData,
+    PublicationData,
+} from "../../lib/farfield-loader";
+import type { MenuMeta } from "@lib/menu";
+
+export const menu: MenuMeta = {
+    group: "archive",
+    label: "all content",
+    order: 1,
+};
+
+let items: DocumentData[] = [];
+let pubs: PublicationData[] = [];
+
+const [docsResult, pubsResult] = await Promise.all([
+    getLiveCollection("documents"),
+    getLiveCollection("publications"),
+]);
+if (docsResult.error) {
+    console.error(
+        "[/content] Farfield documents fetch failed:",
+        docsResult.error,
+    );
+} else {
+    items = docsResult.entries.map((e) => e.data);
+}
+if (pubsResult.error) {
+    console.error(
+        "[/content] Farfield publications fetch failed:",
+        pubsResult.error,
+    );
+} else {
+    pubs = pubsResult.entries.map((e) => e.data);
+}
+
+setResponseCacheHeaders(Astro.response, docsResult.cacheHint, {
+    extraTags: pubsResult.cacheHint?.tags,
+});
+---
+
+<BaseLayout
+    title="Content"
+    description={`Browse all ${items.length} entries across publications.`}
+    ogImage="/content"
+>
+    <header class="page-header">
+        <h1>Content</h1>
+        <p>
+            {items.length} entries across {pubs.length} publications:{" "}
+            {pubs.map((pub, i) => (
+                <>
+                    <a href={`/${pub.slug}`}>{pub.name.toLowerCase()}</a>
+                    {i < pubs.length - 1 ? ", " : ""}
+                </>
+            ))}.
+        </p>
+    </header>
+
+    <ul class="feed-grid">
+        {items.map((item) => (
+            <FeedCard
+                href={item.href}
+                title={item.title}
+                description={item.description}
+                publishedAt={item.publishedAt}
+                kind={item.publication.name.toLowerCase()}
+            />
+        ))}
+    </ul>
+</BaseLayout>

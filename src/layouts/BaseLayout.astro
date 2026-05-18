@@ -1,0 +1,336 @@
+---
+import "../styles/globals.css";
+import MenuLinks from "../components/MenuLinks.astro";
+import Breadcrumbs, {
+    type BreadcrumbItem,
+} from "../components/Breadcrumbs.astro";
+import AzulejoTile from "../components/AzulejoTile";
+import "@fontsource/metamorphous";
+
+interface Props {
+    /** Page-specific title. Site name is appended automatically. */
+    title?: string;
+    /** Page-specific meta description. */
+    description?: string;
+    /**
+     * Path on the og worker (https://og.iammatthias.com). Defaults to "/"
+     * which renders the homepage card. Pass an absolute URL to override
+     * with an arbitrary image.
+     */
+    ogImage?: string;
+    /** og:type. Default "website"; use "article" for posts. */
+    ogType?: "website" | "article";
+    /** Override canonical URL. Defaults to current pathname under Astro.site. */
+    canonical?: string | URL;
+    /** Emit robots: noindex,nofollow. */
+    noindex?: boolean;
+    /**
+     * Breadcrumb trail rendered above the main content. Last item should
+     * have no `href` (current page). The brand link in the header is the
+     * implicit home, so this trail starts at the first sub-section.
+     */
+    breadcrumbs?: BreadcrumbItem[];
+}
+
+const SITE_NAME = "iammatthias";
+const SITE_URL = "https://iammatthias.com";
+const DEFAULT_DESCRIPTION = "Personal site of Matthias Jordan";
+
+const {
+    title,
+    description = DEFAULT_DESCRIPTION,
+    ogImage = "/",
+    ogType = "website",
+    canonical,
+    noindex = false,
+    breadcrumbs = [],
+} = Astro.props;
+
+// `siteOrigin` is intentionally derived from `Astro.site` (set in
+// astro.config.mjs to https://iammatthias.com), NOT from the request
+// host. The site is served on multiple hostnames (iammatthias.com +
+// iam.casa) but every emitted URL — rel="canonical", og:url,
+// twitter:url, sitemap entries, RSS <link> items — collapses to a
+// single canonical origin so search engines and social platforms
+// consolidate all authority on iammatthias.com. Don't replace this
+// with `Astro.url.origin` or anything host-aware: that would split
+// SEO juice across both hostnames.
+const siteOrigin = Astro.site?.toString() ?? SITE_URL;
+const canonicalURL = canonical
+    ? new URL(canonical, siteOrigin)
+    : new URL(Astro.url.pathname, siteOrigin);
+
+const isAbsolute = /^https?:\/\//i.test(ogImage);
+const ogOrigin = import.meta.env.DEV
+    ? "http://localhost:8787"
+    : "https://og.iammatthias.com";
+const ogImageURL = isAbsolute ? new URL(ogImage) : new URL(ogImage, ogOrigin);
+
+const fullTitle = title ? `${title} — ${SITE_NAME}` : SITE_NAME;
+const ogTitle = title ?? SITE_NAME;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
+        <meta name="generator" content={Astro.generator} />
+        <meta name="color-scheme" content="light dark" />
+        <!-- Theme color matches the warm cream / warm near-black bg
+             tokens in globals.css so the browser chrome blends with
+             the page rather than flashing pure white/black at load. -->
+        <meta
+            name="theme-color"
+            content="#f1ebdc"
+            media="(prefers-color-scheme: light)"
+        />
+        <meta
+            name="theme-color"
+            content="#1c1a16"
+            media="(prefers-color-scheme: dark)"
+        />
+
+        <title>{fullTitle}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonicalURL} />
+        {noindex && <meta name="robots" content="noindex,nofollow" />}
+
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+        <!-- Open Graph -->
+        <meta property="og:site_name" content={SITE_NAME} />
+        <meta property="og:type" content={ogType} />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImageURL} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={ogTitle} />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalURL} />
+        <meta name="twitter:title" content={ogTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImageURL} />
+
+        <!-- Feeds -->
+        <link
+            rel="alternate"
+            type="application/rss+xml"
+            title={`${SITE_NAME} RSS`}
+            href="/rss.xml"
+        />
+        <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+        <slot name="head" />
+    </head>
+    <body>
+        <header>
+            <slot name="header">
+                <a href="/">home</a>
+                <!--
+          Wrapper reserves the 32×32 layout slot before React hydrates,
+          so the header doesn't reflow when the tile mounts. Background
+          is the same neutral the tile renders against. The 45° rotation
+          turns the square tile into a diamond — applied to the wrapper
+          so it covers both the placeholder and the canvas seamlessly.
+        -->
+                <span class="header-tile">
+                    <AzulejoTile
+                        client:only="react"
+                        size={32}
+                        alt="iammatthias"
+                    />
+                </span>
+                <a href="/menu" data-menu-trigger>menu</a>
+            </slot>
+        </header>
+
+        <main>
+            {breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
+            <slot />
+        </main>
+
+        <footer>
+            <slot name="footer">
+                <small>© {new Date().getFullYear()} Matthias Jordan</small>
+            </slot>
+        </footer>
+
+        <!--
+      Progressive-enhancement menu. The header's `<a href="/menu">` link
+      navigates to /menu when JS is off; the script below intercepts the
+      click on any element with `[data-menu-trigger]` and opens this
+      <dialog> instead. Native <dialog> handles ESC, focus trap, and
+      backdrop scroll lock for free.
+    -->
+        <dialog id="site-menu" class="site-menu" aria-label="Site navigation">
+            <div class="site-menu__inner">
+                <button
+                    type="button"
+                    class="site-menu__close"
+                    aria-label="Close menu"
+                    data-menu-close>close</button
+                >
+                <MenuLinks />
+            </div>
+        </dialog>
+
+        <script>
+            const dialog = document.getElementById("site-menu");
+            if (dialog instanceof HTMLDialogElement) {
+                for (const trigger of document.querySelectorAll(
+                    "[data-menu-trigger]",
+                )) {
+                    trigger.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        dialog.showModal();
+                    });
+                }
+                for (const closer of dialog.querySelectorAll(
+                    "[data-menu-close]",
+                )) {
+                    closer.addEventListener("click", () => dialog.close());
+                }
+                // Click on the backdrop (i.e. on the <dialog> element itself,
+                // outside its inner content) closes the menu.
+                dialog.addEventListener("click", (event) => {
+                    if (event.target === dialog) dialog.close();
+                });
+                // Close after navigation so the menu doesn't linger on back.
+                dialog.addEventListener("click", (event) => {
+                    const target = event.target;
+                    if (target instanceof HTMLAnchorElement) dialog.close();
+                });
+            }
+        </script>
+    </body>
+</html>
+
+<style>
+    body {
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: var(--pad);
+        gap: var(--gap);
+    }
+
+    header,
+    footer {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: var(--content-max);
+    }
+
+    /*
+   * Header lays out as three equal-flex columns so the middle child is
+   * centered relative to the viewport regardless of the side children's
+   * widths. (`justify-content: space-between` would only center the
+   * middle child when the side children are equal width.)
+   */
+    header {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: var(--space-4);
+    }
+
+    /* :global() — slot children come from the page and don't carry the
+     layout's scope hash, so unscoped selectors are needed to target them. */
+    header > :global(:first-child) {
+        justify-self: start;
+    }
+
+    header > :global(:last-child) {
+        justify-self: end;
+    }
+
+    /* Header tile slot — fixed footprint + placeholder. The slot is 32×32
+     in layout flow regardless of React hydration state, so the header
+     doesn't reflow when the canvas mounts. The rotation makes the tile
+     read as a diamond. The astro-island and inner div fill the slot so
+     the canvas inherits the wrapper's transform.
+
+     Background uses the warm beige border token rather than --color-fg,
+     so the placeholder reads as a gentle diamond hint instead of
+     flashing solid near-black before the canvas paints. */
+    .header-tile {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        background: var(--color-border);
+        transform: rotate(45deg);
+        transform-origin: center;
+    }
+
+    .header-tile :global(astro-island),
+    .header-tile :global(astro-island > div) {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    main {
+        /* fills space between header and footer; content sits near the top */
+        flex: 1 0 auto;
+        width: 100%;
+        max-width: var(--content-max);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* ---------- site menu dialog ---------- */
+
+    .site-menu {
+        /* Native <dialog> centers itself on the viewport by default; we
+       style only the chrome. Backdrop scroll-lock is automatic. */
+        border: none;
+        padding: 0;
+        background: var(--color-bg);
+        color: var(--color-fg);
+        width: min(420px, calc(100% - var(--pad) * 2));
+        max-height: calc(100dvh - var(--pad) * 2);
+        border-radius: var(--radius);
+        /* Subtle warmth — doesn't read as a heavy modal */
+        box-shadow:
+            0 1px 0 var(--color-border),
+            0 24px 64px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .site-menu::backdrop {
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
+    }
+
+    .site-menu__inner {
+        padding: var(--space-6);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-5);
+    }
+
+    .site-menu__close {
+        align-self: flex-end;
+        background: none;
+        border: 0;
+        padding: 0;
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+        cursor: pointer;
+    }
+
+    .site-menu__close:hover {
+        color: var(--color-fg);
+        text-decoration: underline;
+    }
+</style>
