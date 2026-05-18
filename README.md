@@ -1,43 +1,41 @@
-# Astro Starter Kit: Minimal
-
-```sh
-bun create astro@latest -- --template minimal
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+`7MMF'
+  MM
+  MM       ,6"Yb.  `7MMpMMMb.pMMMb.
+  MM      8)   MM    MM    MM    MM
+  MM       ,pm9MM    MM    MM    MM
+  MM      8M   MM    MM    MM    MM
+.JMML.    `Moo9^Yo..JMML  JMML  JMML.
 
-## 🚀 Project Structure
 
-Inside of your Astro project, you'll see the following folders and files:
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+                                       ,,          ,,
+`7MMM.     ,MMF'         mm     mm   `7MM          db
+  MMMb    dPMM           MM     MM     MM
+  M YM   ,M MM   ,6"Yb.mmMMmm mmMMmm   MMpMMMb.  `7MM   ,6"Yb.  ,pP"Ybd
+  M  Mb  M' MM  8)   MM  MM     MM     MM    MM    MM  8)   MM  8I   `"
+  M  YM.P'  MM   ,pm9MM  MM     MM     MM    MM    MM   ,pm9MM  `YMMMa.
+  M  `YM'   MM  8M   MM  MM     MM     MM    MM    MM  8M   MM  L.   I8
+.JML. `'  .JMML.`Moo9^Yo.`Mbmo  `Mbmo.JMML  JMML..JMML.`Moo9^Yo.M9mmmP'
+
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+### hi
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+This is the latest version of my site — a 2026 typographic refresh built on [Astro](https://astro.build/) and deployed to [Cloudflare](https://www.cloudflare.com/) Workers. Content is authored on [Farfield](https://farfield.systems/) and pulled live at request time, so new posts surface without a rebuild.
 
-Any static assets, like images, can be placed in the `public/` directory.
+> The code is provided as-is, and I'm not planning to provide support for this setup. Feel free to use it as inspiration for your own projects.
 
-## 🧞 Commands
+### built with
 
-All commands are run from the root of the project, from a terminal:
+- [Astro](https://astro.build/) (SSR via [@astrojs/cloudflare](https://docs.astro.build/en/guides/integrations-guide/cloudflare/) + Live Content Collections)
+- [Farfield](https://farfield.systems/) for content + feed + blob storage
+- [Cloudflare Workers](https://workers.cloudflare.com/) for hosting and edge cache
+- [wsrv.nl](https://wsrv.nl/) for on-the-fly image transforms
+- [Pinata](https://pinata.cloud/) for IPFS pinning, where used
+- A small [`worker-og`](./worker-og) submodule that renders Open Graph images on the edge
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+### the older site
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+The previous incarnation of this site — Obsidian-authored, Vercel-hosted — lives on the [`v2025`](https://github.com/iammatthias/com/tree/v2025) branch.
