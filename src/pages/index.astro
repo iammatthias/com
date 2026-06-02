@@ -285,7 +285,14 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         border: 6px solid var(--color-border);
     }
 
-    .arch-window img {
+    /* `:global(img)` because the photo is injected client-side (see the
+       hydrateGlass script) — it never receives Astro's scoping attribute,
+       so a scoped `.arch-window img` rule would silently miss it and the
+       img would fall back to its intrinsic size + `object-fit: fill`,
+       only partially filling the arch. Scoping `.arch-window` still pins
+       this to the hero. cover + 100/100 makes the photo always fill the
+       window (cropping, never stretching) regardless of its aspect. */
+    .arch-window :global(img) {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -307,12 +314,16 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         text-wrap: balance;
     }
 
-    figcaption .title {
+    /* `:global` for the same reason as the arch img — the caption's
+       `.title` span and its link are built in the hydrateGlass script,
+       so they carry no scoping attribute and a scoped selector would
+       miss them. */
+    figcaption :global(.title) {
         color: var(--color-fg);
         font-weight: var(--fw-medium);
     }
 
-    figcaption a {
+    figcaption :global(a) {
         text-decoration-thickness: 1px;
     }
 

@@ -34,3 +34,4 @@ pnpm-debug.log*
 
 # etc
 /scripts
+.gstack/
