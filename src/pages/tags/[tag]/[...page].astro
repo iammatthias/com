@@ -1,10 +1,15 @@
 ---
+// Per-tag index. Single `[...page]` catch-all serves both `/tags/<tag>`
+// (page 1) and `/tags/<tag>/page/N`. The sibling `rss.xml.ts` (static)
+// outranks this for `/tags/<tag>/rss.xml`.
 export const prerender = false;
 
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import FeedCard from "../../../components/FeedCard.astro";
+import Pagination from "../../../components/Pagination.astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "../../../lib/cache";
+import { getPage, parsePageParam } from "../../../lib/pagination";
 import type { DocumentData } from "../../../lib/farfield-loader";
 
 const tag = Astro.params.tag;
@@ -12,31 +17,35 @@ if (!tag) {
     return Astro.redirect("/tags");
 }
 
+const page = parsePageParam(Astro.params.page);
+if (page === null) return new Response(null, { status: 404 });
+
 let items: DocumentData[] = [];
-const {
-    entries,
-    error,
-    cacheHint,
-} = await getLiveCollection("documents", { tag });
+const { entries, error, cacheHint } = await getLiveCollection("documents", {
+    tag,
+});
 if (error) {
     console.error(`[/tags/${tag}] Farfield fetch failed:`, error);
 } else {
     items = entries.map((e) => e.data);
 }
-const count = items.length;
 
-if (count === 0 && !error) {
-    // No entries with this tag — the tag itself doesn't exist on any
-    // current document. Rewrite to the tag index rather than serve an
-    // empty page (also bypasses caching of a not-really-here URL).
+// No entries carry this tag — the tag itself doesn't exist on any current
+// document. Rewrite to the tag index rather than serve an empty page
+// (also bypasses caching of a not-really-here URL).
+if (items.length === 0 && !error) {
     return Astro.rewrite("/tags");
 }
+
+const base = `/tags/${encodeURIComponent(tag)}`;
+const paged = getPage(items, page, base);
+if (!paged) return new Response(null, { status: 404 });
 
 setResponseCacheHeaders(Astro.response, cacheHint);
 ---
 
 <BaseLayout
-    title={`#${tag}`}
+    title={page > 1 ? `#${tag} — page ${page}` : `#${tag}`}
     description={`Entries tagged ${tag} — iammatthias.`}
     breadcrumbs={[
         { label: "tags", href: "/tags" },
@@ -46,14 +55,14 @@ setResponseCacheHeaders(Astro.response, cacheHint);
     <header class="page-header">
         <h1>{tag}</h1>
         <p class="meta">
-            <a href={`/tags/${encodeURIComponent(tag)}/rss.xml`}>RSS</a>
+            <a href={`${base}/rss.xml`}>RSS</a>
             <span aria-hidden="true"> · </span>
-            <span>{count} {count === 1 ? "entry" : "entries"}</span>
+            <span>{paged.total} {paged.total === 1 ? "entry" : "entries"}</span>
         </p>
     </header>
 
     <ul class="feed-grid">
-        {items.map((item) => (
+        {paged.items.map((item) => (
             <FeedCard
                 href={item.href}
                 title={item.title}
@@ -63,4 +72,10 @@ setResponseCacheHeaders(Astro.response, cacheHint);
             />
         ))}
     </ul>
+
+    <Pagination
+        page={paged.page}
+        totalPages={paged.totalPages}
+        basePath={base}
+    />
 </BaseLayout>

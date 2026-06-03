@@ -27,6 +27,11 @@ if (feedError) {
     feed = feedEntries.map((e) => e.data);
 }
 
+// The homepage feed is a teaser for the latest work — cap it and point
+// at the paginated /content index for the full archive.
+const RECENT_LIMIT = 12;
+const recent = feed.slice(0, RECENT_LIMIT);
+
 // Translate the loader's cacheHint into HTTP cache headers. See
 // lib/cache.ts for the actual policy (s-maxage=60, swr=300) — one
 // helper so we don't drift across pages.
@@ -74,13 +79,15 @@ setResponseCacheHeaders(Astro.response, cacheHint);
     </section>
 
     <section class="feed" aria-labelledby="feed-heading">
-        <h2 id="feed-heading">Recent</h2>
+        <h2 id="feed-heading">
+            Recent <a href="/content" class="see-all">see all →</a>
+        </h2>
         {
-            feed.length === 0 ? (
+            recent.length === 0 ? (
                 <p class="feed-empty">No entries to show right now.</p>
             ) : (
                 <ul class="feed-grid">
-                    {feed.map((item) => (
+                    {recent.map((item) => (
                         <FeedCard
                             href={item.href}
                             title={item.title}
@@ -344,6 +351,24 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         font-family: var(--font-serif);
         font-style: italic;
         font-weight: var(--fw-normal);
+    }
+
+    /* "see all →" footnote next to the Recent heading — mirrors the
+       same affordance on /now. Small, muted, doesn't compete with the
+       heading itself. */
+    .see-all {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+        text-decoration: none;
+        margin-left: var(--space-2);
+        white-space: nowrap;
+    }
+
+    .see-all:hover {
+        color: var(--color-fg);
+        text-decoration: underline;
     }
 
     /* `.feed-grid` / `.card*` / `.feed-empty` live in globals.css

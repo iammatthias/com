@@ -1,0 +1,62 @@
+---
+// Shared markup for the all-content index. Both `/content` (page 1, via
+// content/index.astro) and `/content/page/N` (via content/page/[page].astro)
+// render through this so the header + grid + pagination stay in one place.
+// Content uses an explicit index + page route (not a `[...page]` catch-all
+// like the other list surfaces) because the legacy `/content/...` redirects
+// in astro.config need a concrete `/content` route to target.
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FeedCard from "./FeedCard.astro";
+import Pagination from "./Pagination.astro";
+import type { PageData } from "../lib/pagination";
+import type {
+    DocumentData,
+    PublicationData,
+} from "../lib/farfield-loader";
+
+interface Props {
+    paged: PageData<DocumentData>;
+    pubs: PublicationData[];
+}
+
+const { paged, pubs } = Astro.props;
+const { page } = paged;
+---
+
+<BaseLayout
+    title={page > 1 ? `Content — page ${page}` : "Content"}
+    description={`Browse all ${paged.total} entries across publications.`}
+    ogImage="/content"
+>
+    <header class="page-header">
+        <h1>Content</h1>
+        <p>
+            {paged.total} entries across {pubs.length} publications:{" "}
+            {pubs.map((pub, i) => (
+                <>
+                    <a href={`/${pub.slug}`}>{pub.name.toLowerCase()}</a>
+                    {i < pubs.length - 1 ? ", " : ""}
+                </>
+            ))}.
+        </p>
+    </header>
+
+    <ul class="feed-grid">
+        {paged.items.map((item) => (
+            <FeedCard
+                href={item.href}
+                title={item.title}
+                description={item.description}
+                publishedAt={item.publishedAt}
+                kind={item.publication.name.toLowerCase()}
+            />
+        ))}
+    </ul>
+
+    <Pagination
+        page={paged.page}
+        totalPages={paged.totalPages}
+        basePath="/content"
+    />
+</BaseLayout>

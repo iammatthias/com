@@ -4,7 +4,8 @@ export const prerender = false;
 import { marked } from "marked";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RecordColophon from "../../components/RecordColophon.astro";
-import { getLiveEntry } from "astro:content";
+import FeedCard from "../../components/FeedCard.astro";
+import { getLiveCollection, getLiveEntry } from "astro:content";
 import { LiveEntryNotFoundError } from "astro/content/runtime";
 import {
     blobURL,
@@ -337,6 +338,42 @@ const bannerSeed = hashSeed(`${item.collection}/${item.rkey}`);
 // content service so curious readers can see the raw data behind a
 // post. The new API takes just the slug (rkey); collection is implied.
 const recordUrl = `https://content.farfield.systems/api/entries/${encodeURIComponent(item.rkey)}`;
+
+// Related reading: score every other document by shared-tag count, then
+// recency, and take the top few. The documents collection is already
+// warm in the per-isolate cache (MenuLinks fetches it on every page), so
+// this adds no real upstream cost. With no shared tags the score is
+// uniformly zero and it falls back to the most recent other posts.
+const RELATED_COUNT = 6;
+let related: DocumentData[] = [];
+{
+    const { entries: allDocs, error: relErr } =
+        await getLiveCollection("documents");
+    if (relErr) {
+        console.error(
+            `[/${publicationSlug}/${docSlug}] related-docs fetch failed:`,
+            relErr,
+        );
+    } else {
+        const sharedTags = (tags: string[]) =>
+            tags.filter((t) => item.tags.includes(t)).length;
+        related = allDocs
+            .map((e) => e.data as DocumentData)
+            .filter(
+                (d) =>
+                    !(
+                        d.collection === item.collection &&
+                        d.rkey === item.rkey
+                    ),
+            )
+            .sort(
+                (a, b) =>
+                    sharedTags(b.tags) - sharedTags(a.tags) ||
+                    b.publishedAt.localeCompare(a.publishedAt),
+            )
+            .slice(0, RELATED_COUNT);
+    }
+}
 ---
 
 <BaseLayout
@@ -397,6 +434,23 @@ const recordUrl = `https://content.farfield.systems/api/entries/${encodeURICompo
                     ))}
                 </ul>
             </footer>
+        )}
+
+        {related.length > 0 && (
+            <section class="doc-related" aria-label="Related posts">
+                <h2>Related</h2>
+                <ul class="feed-grid">
+                    {related.map((r) => (
+                        <FeedCard
+                            href={r.href}
+                            title={r.title}
+                            description={r.description}
+                            publishedAt={r.publishedAt}
+                            kind={r.publication.name.toLowerCase()}
+                        />
+                    ))}
+                </ul>
+            </section>
         )}
 
         <!--
@@ -1085,5 +1139,24 @@ const recordUrl = `https://content.farfield.systems/api/entries/${encodeURICompo
 
     .doc-tags a:hover {
         color: var(--color-fg);
+    }
+
+    /* Related posts grid under the article. Reuses the shared
+       `.feed-grid` / `.card` primitives from globals.css; only the
+       section heading and its top divider are local. */
+    .doc-related {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-5);
+        padding-top: var(--space-6);
+        border-top: 1px solid var(--color-border);
+    }
+
+    .doc-related h2 {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-weight: var(--fw-normal);
+        font-size: var(--fs-xl);
+        color: var(--color-muted);
     }
 </style>

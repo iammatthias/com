@@ -734,3 +734,115 @@ video {
     font-family: var(--font-serif);
     font-style: italic;
 }
+
+/* ---------- pagination ---------- */
+/*
+ * Numbered page nav for the document list surfaces (/content,
+ * publication indexes, tag pages). The feed uses infinite scroll
+ * (`.feed-more` below) instead. Page 1 is the bare index; pages 2+ live
+ * at `/<base>/page/N` — see src/lib/pagination.ts + Pagination.astro.
+ * Newest-first ordering means the left edge steps toward newer entries.
+ */
+.pagination {
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    font-family: var(--font-serif);
+    font-size: var(--fs-sm);
+}
+
+.pagination__edge {
+    font-style: italic;
+    color: var(--color-muted);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.pagination__edge:hover {
+    color: var(--color-fg);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.pagination__edge.is-disabled {
+    opacity: 0.35;
+}
+
+.pagination__pages {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.pagination__pages li {
+    list-style: none;
+}
+
+.pagination__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75em;
+    padding: 0.15em 0.4em;
+    text-decoration: none;
+    color: var(--color-muted);
+    border-radius: var(--radius);
+    font-variant-numeric: tabular-nums;
+}
+
+.pagination__num:hover {
+    color: var(--color-fg);
+}
+
+.pagination__num.is-current {
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+}
+
+.pagination__gap {
+    list-style: none;
+    color: var(--color-muted);
+}
+
+/* ---------- feed infinite-scroll sentinel ---------- */
+/*
+ * Sits below the `/feed` list. JS turns the link into an
+ * auto-appending scroll trigger; without JS it's a plain link to the
+ * next full page. The `[hidden]` status swaps in while a fetch is in
+ * flight (see feed/[...page].astro).
+ */
+.feed-more {
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--fs-sm);
+}
+
+.feed-more a {
+    color: var(--color-muted);
+    text-decoration: none;
+}
+
+.feed-more a:hover {
+    color: var(--color-fg);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.feed-more__status {
+    color: var(--color-muted);
+}

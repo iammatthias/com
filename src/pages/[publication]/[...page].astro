@@ -1,0 +1,90 @@
+---
+// Per-publication index. Single `[...page]` catch-all serves both
+// `/<pub>` (page 1) and `/<pub>/page/N`. Sibling routes win by Astro's
+// route priority: `[slug].astro` (a named param) outranks this rest
+// route for `/<pub>/<slug>`, and `rss.xml.ts` (static) outranks it for
+// `/<pub>/rss.xml`. So this only ever handles the bare index and the
+// `page/N` form.
+export const prerender = false;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FeedCard from "../../components/FeedCard.astro";
+import Pagination from "../../components/Pagination.astro";
+import { getLiveCollection, getLiveEntry } from "astro:content";
+import { setResponseCacheHeaders } from "../../lib/cache";
+import { getPage, parsePageParam } from "../../lib/pagination";
+import type { DocumentData } from "../../lib/farfield-loader";
+
+const slug = Astro.params.publication;
+if (!slug) {
+    return new Response("Publication slug required", { status: 400 });
+}
+
+const page = parsePageParam(Astro.params.page);
+if (page === null) return new Response(null, { status: 404 });
+
+const { entry: pubEntry, error: pubError } = await getLiveEntry(
+    "publications",
+    slug,
+);
+if (pubError || !pubEntry) {
+    return new Response(null, { status: 404 });
+}
+const pub = pubEntry.data;
+
+let items: DocumentData[] = [];
+const { entries, error, cacheHint } = await getLiveCollection("documents", {
+    publication: slug,
+});
+if (error) {
+    console.error(`[/${slug}] Farfield fetch failed:`, error);
+} else {
+    items = entries.map((e) => e.data);
+}
+
+const base = `/${slug}`;
+const paged = getPage(items, page, base);
+if (!paged) return new Response(null, { status: 404 });
+
+setResponseCacheHeaders(Astro.response, cacheHint, {
+    extraTags: pubEntry.cacheHint?.tags,
+});
+---
+
+<BaseLayout
+    title={page > 1 ? `${pub.name} — page ${page}` : pub.name}
+    description={pub.description ?? `${pub.name} — iammatthias`}
+    ogImage={`/${pub.slug}`}
+>
+    <header class="page-header">
+        <h1>{pub.name}</h1>
+        {pub.description && <p>{pub.description}</p>}
+        <p class="meta">
+            <a href={`/${pub.slug}/rss.xml`}>RSS</a>
+            <span> · </span>
+            <span>{paged.total} {paged.total === 1 ? "entry" : "entries"}</span>
+        </p>
+    </header>
+
+    {paged.total === 0 ? (
+        <p class="feed-empty">No entries published yet.</p>
+    ) : (
+        <>
+            <ul class="feed-grid">
+                {paged.items.map((item) => (
+                    <FeedCard
+                        href={item.href}
+                        title={item.title}
+                        description={item.description}
+                        publishedAt={item.publishedAt}
+                    />
+                ))}
+            </ul>
+            <Pagination
+                page={paged.page}
+                totalPages={paged.totalPages}
+                basePath={base}
+            />
+        </>
+    )}
+</BaseLayout>

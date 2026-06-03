@@ -1,26 +1,19 @@
 ---
-// All-content index, page 1. Pages 2+ live at /content/page/N
-// (content/page/[page].astro). Both render through ContentIndex.astro.
-// This is an explicit route (not a `[...page]` catch-all) so the legacy
-// `/content/...` redirects in astro.config have a concrete `/content`
-// destination to resolve against.
+// All-content index, pages 2+. Page 1 is /content (content/index.astro).
+// Both render through ContentIndex.astro.
 export const prerender = false;
 
-import ContentIndex from "../../components/ContentIndex.astro";
+import ContentIndex from "../../../components/ContentIndex.astro";
 import { getLiveCollection } from "astro:content";
-import { setResponseCacheHeaders } from "../../lib/cache";
-import { getPage } from "../../lib/pagination";
+import { setResponseCacheHeaders } from "../../../lib/cache";
+import { getPage, parsePageSegment } from "../../../lib/pagination";
 import type {
     DocumentData,
     PublicationData,
-} from "../../lib/farfield-loader";
-import type { MenuMeta } from "@lib/menu";
+} from "../../../lib/farfield-loader";
 
-export const menu: MenuMeta = {
-    group: "archive",
-    label: "all content",
-    order: 1,
-};
+const page = parsePageSegment(Astro.params.page);
+if (page === null) return new Response(null, { status: 404 });
 
 let items: DocumentData[] = [];
 let pubs: PublicationData[] = [];
@@ -46,8 +39,8 @@ if (pubsResult.error) {
     pubs = pubsResult.entries.map((e) => e.data);
 }
 
-// Page 1 always exists (empty set still renders an empty page 1).
-const paged = getPage(items, 1, "/content")!;
+const paged = getPage(items, page, "/content");
+if (!paged) return new Response(null, { status: 404 });
 
 setResponseCacheHeaders(Astro.response, docsResult.cacheHint, {
     extraTags: pubsResult.cacheHint?.tags,

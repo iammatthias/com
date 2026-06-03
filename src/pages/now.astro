@@ -25,11 +25,17 @@ const {
 if (feedError) {
     console.error("[/now] Farfield feed entries fetch failed:", feedError);
 }
-const feedItems: FeedEntryData[] = entriesOf<FeedEntryData>(rawEntries);
+// "Recent updates" is a teaser — cap it to the latest few; the full,
+// infinitely-scrolling list lives at /feed ("see all →" below).
+const RECENT_LIMIT = 5;
+const feedItems: FeedEntryData[] = entriesOf<FeedEntryData>(rawEntries).slice(
+    0,
+    RECENT_LIMIT,
+);
 
 setResponseCacheHeaders(Astro.response, cacheHint);
 
-// Resolve each entry's body to a flat media list at render time.
+// Resolve each (capped) entry's body to a flat media list at render time.
 const mediaByRkey = new Map<string, ResolvedMedia[]>(
     await Promise.all(
         feedItems.map(async (it) =>

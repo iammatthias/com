@@ -1,0 +1,94 @@
+---
+// Numbered page nav for the document list surfaces (/content,
+// publication indexes, tag pages). The feed uses infinite scroll
+// (`.feed-more`) instead, so it doesn't render this. Styling lives in
+// globals.css under `.pagination` so every consumer stays in lock-step.
+//
+// Lists sort newest-first, so a lower page number is newer: the left
+// edge ("← Newer") steps toward page 1, the right edge ("Older →")
+// toward the last page.
+
+import { pageHref } from "../lib/pagination";
+
+interface Props {
+    page: number;
+    totalPages: number;
+    /** Surface root, e.g. "/content". Page hrefs derive from this. */
+    basePath: string;
+}
+
+const { page, totalPages, basePath } = Astro.props;
+
+// Windowed page numbers with ellipses: always show first + last plus a
+// one-page window around the current page. Keeps the control compact on
+// a deep archive (40 pages) while staying one click from either end.
+function pageList(current: number, last: number): (number | "…")[] {
+    const include = new Set<number>([1, last, current]);
+    for (let i = current - 1; i <= current + 1; i++) {
+        if (i >= 1 && i <= last) include.add(i);
+    }
+    const sorted = [...include].sort((a, b) => a - b);
+    const out: (number | "…")[] = [];
+    let prev = 0;
+    for (const n of sorted) {
+        if (prev && n - prev > 1) out.push("…");
+        out.push(n);
+        prev = n;
+    }
+    return out;
+}
+
+const numbers = pageList(page, totalPages);
+const prevHref = page > 1 ? pageHref(basePath, page - 1) : null;
+const nextHref = page < totalPages ? pageHref(basePath, page + 1) : null;
+---
+
+{
+    totalPages > 1 && (
+        <nav class="pagination" aria-label="Pagination">
+            {prevHref ? (
+                <a class="pagination__edge" rel="prev" href={prevHref}>
+                    <span aria-hidden="true">←</span> Newer
+                </a>
+            ) : (
+                <span class="pagination__edge is-disabled">
+                    <span aria-hidden="true">←</span> Newer
+                </span>
+            )}
+
+            <ol class="pagination__pages">
+                {numbers.map((n) =>
+                    n === "…" ? (
+                        <li class="pagination__gap" aria-hidden="true">
+                            …
+                        </li>
+                    ) : (
+                        <li>
+                            <a
+                                class:list={[
+                                    "pagination__num",
+                                    { "is-current": n === page },
+                                ]}
+                                href={pageHref(basePath, n)}
+                                aria-label={`Page ${n}`}
+                                aria-current={n === page ? "page" : undefined}
+                            >
+                                {n}
+                            </a>
+                        </li>
+                    ),
+                )}
+            </ol>
+
+            {nextHref ? (
+                <a class="pagination__edge" rel="next" href={nextHref}>
+                    Older <span aria-hidden="true">→</span>
+                </a>
+            ) : (
+                <span class="pagination__edge is-disabled">
+                    Older <span aria-hidden="true">→</span>
+                </span>
+            )}
+        </nav>
+    )
+}
