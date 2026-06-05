@@ -400,7 +400,6 @@ let related: DocumentData[] = [];
                     </>
                 )}
             </p>
-            {item.description && <p class="lede">{item.description}</p>}
         </header>
 
         {showToc && (
@@ -700,9 +699,8 @@ let related: DocumentData[] = [];
     }
 
     /* Reworked hero: serif italic title leads, dateline sits right
-       under it as a small italic line, lede follows with breathing
-       room. The article's gap separates the hero from the content
-       blocks — no margin-bottom needed here. */
+       under it as a small italic line. The article's gap separates the
+       hero from the content blocks — no margin-bottom needed here. */
     .doc-hero {
         display: flex;
         flex-direction: column;
@@ -724,15 +722,6 @@ let related: DocumentData[] = [];
         font-style: italic;
         font-size: var(--fs-sm);
         color: var(--color-muted);
-    }
-
-    .lede {
-        margin-top: var(--space-3);
-        font-size: var(--fs-lg);
-        line-height: var(--lh-relaxed);
-        color: var(--color-fg);
-        text-wrap: pretty;
-        max-width: 60ch;
     }
 
     .doc-body {
