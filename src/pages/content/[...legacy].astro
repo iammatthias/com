@@ -1,0 +1,17 @@
+---
+// Legacy URL structure was `/content/<pub>/<slug>`; the redesign
+// flattens to `/<pub>/<slug>`. Rather than remap each old slug (rkeys
+// differ between the old GH-CMS and the current PDS), send all stray
+// `/content/...` URLs to the all-content index — readers land
+// somewhere coherent instead of a 404, and can navigate from there.
+//
+// This is a rest-param route instead of a config `redirects` entry on
+// purpose: rest params rank below static segments in Astro's route
+// priority, so `/content` (index) and `/content/page/N` (deep
+// pagination) win, while everything else under `/content/` falls
+// through to here. The old `/content/[publication]/[slug]` config
+// redirect matched `/content/page/2` and shadowed pagination.
+export const prerender = false;
+
+return Astro.redirect("/content", 301);
+---

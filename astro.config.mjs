@@ -13,14 +13,12 @@ export default defineConfig({
         // /about merged into /now during the redesign — preserve any
         // inbound links from the old site / search results / RSS readers.
         "/about": "/now",
-        // Legacy URL structure was `/content/<pub>/<slug>`; redesign
-        // flattens to `/<pub>/<slug>`. Rather than remap each old slug
-        // (rkeys differ between the old GH-CMS and the current PDS), we
-        // send all `/content/...` and old `/post/<timestamp>` URLs to
-        // the all-content index — readers land somewhere coherent
-        // instead of a 404, and can navigate from there.
-        "/content/[publication]/[slug]": "/content",
-        "/content/[publication]": "/content",
+        // Old `/post/<timestamp>` URLs go to the all-content index —
+        // readers land somewhere coherent instead of a 404. Legacy
+        // `/content/...` URLs are handled by the catch-all route at
+        // src/pages/content/[...legacy].astro rather than redirects
+        // here: a `/content/[publication]/[slug]` config redirect also
+        // captured `/content/page/N`, shadowing deep pagination.
         "/post/[id]": "/content",
     },
     adapter: cloudflare({
