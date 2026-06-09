@@ -16,7 +16,10 @@ export const prerender = false;
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import FeedEntryCard from "../../components/FeedEntryCard.astro";
 import { getLiveCollection } from "astro:content";
-import { setResponseCacheHeaders } from "../../lib/cache";
+import {
+    setResponseCacheHeaders,
+    deepPageCacheOptions,
+} from "../../lib/cache";
 import { getPage, pageHref, parsePageParam } from "../../lib/pagination";
 import {
     entriesOf,
@@ -41,7 +44,7 @@ const all: FeedEntryData[] = entriesOf<FeedEntryData>(rawEntries);
 const paged = getPage(all, page, "/feed");
 if (!paged) return new Response(null, { status: 404 });
 
-setResponseCacheHeaders(Astro.response, cacheHint);
+setResponseCacheHeaders(Astro.response, cacheHint, deepPageCacheOptions(page));
 
 const title = "Feed";
 const description = "Short posts from iammatthias.";

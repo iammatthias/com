@@ -5,7 +5,10 @@ export const prerender = false;
 
 import ContentIndex from "../../../components/ContentIndex.astro";
 import { getLiveCollection } from "astro:content";
-import { setResponseCacheHeaders } from "../../../lib/cache";
+import {
+    setResponseCacheHeaders,
+    deepPageCacheOptions,
+} from "../../../lib/cache";
 import { getPage, parsePageSegment } from "../../../lib/pagination";
 import type {
     DocumentData,
@@ -43,6 +46,7 @@ const paged = getPage(items, page, "/content");
 if (!paged) return new Response(null, { status: 404 });
 
 setResponseCacheHeaders(Astro.response, docsResult.cacheHint, {
+    ...deepPageCacheOptions(page),
     extraTags: pubsResult.cacheHint?.tags,
 });
 ---

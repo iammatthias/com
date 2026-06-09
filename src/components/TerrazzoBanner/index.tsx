@@ -101,10 +101,33 @@ export default function TerrazzoBanner({ seed, palette, style, className }: Prop
         const wrap = wrapRef.current;
         if (!wrap) return;
 
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            preserveDrawingBuffer: false,
-        });
+        // Pick palette + style deterministically (or use pinned values).
+        // Computed before the renderer so the no-WebGL fallback below
+        // can use the palette's matrix color.
+        const seedRng = mulberry32(seed);
+        const paletteNames = Object.keys(PALETTES);
+        const styleNames = Object.keys(STYLES);
+        const paletteName = (palette ?? paletteNames[Math.floor(seedRng() * paletteNames.length)]) as keyof typeof PALETTES;
+        const styleName = (style ?? styleNames[Math.floor(seedRng() * styleNames.length)]) as keyof typeof STYLES;
+        const pal = PALETTES[paletteName];
+        const stylePreset = STYLES[styleName];
+
+        let renderer: THREE.WebGLRenderer;
+        try {
+            renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                preserveDrawingBuffer: false,
+            });
+        } catch {
+            // WebGL unavailable (software renderers, exhausted context
+            // budget, headless browsers). Paint the wrap with the
+            // terrazzo matrix color so the colophon keeps its visual
+            // anchor instead of collapsing to an empty box.
+            wrap.style.background = pal[0];
+            return () => {
+                wrap.style.background = "";
+            };
+        }
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         const canvas = renderer.domElement;
         canvas.style.display = "block";
@@ -117,15 +140,6 @@ export default function TerrazzoBanner({ seed, palette, style, className }: Prop
         // aspect ratio. Initial values are placeholders.
         const camera = new THREE.OrthographicCamera(-0.5, 0.5, 0.5, -0.5, -10, 10);
         camera.position.z = 1;
-
-        // Pick palette + style deterministically (or use pinned values).
-        const seedRng = mulberry32(seed);
-        const paletteNames = Object.keys(PALETTES);
-        const styleNames = Object.keys(STYLES);
-        const paletteName = (palette ?? paletteNames[Math.floor(seedRng() * paletteNames.length)]) as keyof typeof PALETTES;
-        const styleName = (style ?? styleNames[Math.floor(seedRng() * styleNames.length)]) as keyof typeof STYLES;
-        const pal = PALETTES[paletteName];
-        const stylePreset = STYLES[styleName];
 
         // ────────── chip generation ──────────
         let chipsRoot: THREE.Group | null = null;

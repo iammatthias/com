@@ -8,7 +8,10 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import FeedCard from "../../../components/FeedCard.astro";
 import Pagination from "../../../components/Pagination.astro";
 import { getLiveCollection } from "astro:content";
-import { setResponseCacheHeaders } from "../../../lib/cache";
+import {
+    setResponseCacheHeaders,
+    deepPageCacheOptions,
+} from "../../../lib/cache";
 import { getPage, parsePageParam } from "../../../lib/pagination";
 import type { DocumentData } from "../../../lib/farfield-loader";
 
@@ -41,7 +44,7 @@ const base = `/tags/${encodeURIComponent(tag)}`;
 const paged = getPage(items, page, base);
 if (!paged) return new Response(null, { status: 404 });
 
-setResponseCacheHeaders(Astro.response, cacheHint);
+setResponseCacheHeaders(Astro.response, cacheHint, deepPageCacheOptions(page));
 ---
 
 <BaseLayout

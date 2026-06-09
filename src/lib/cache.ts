@@ -36,6 +36,16 @@ export interface CacheHeaderOptions {
  * passed response in place. Tag list is deduped — convenient when
  * merging hints from multiple loaders.
  */
+/**
+ * Cache options for paginated list surfaces. Page 1 is the live front
+ * of each surface and keeps the 60s default; deeper pages only change
+ * when new content lands (every item shifts one slot), so the edge can
+ * hold them 5× longer without anyone noticing staleness.
+ */
+export function deepPageCacheOptions(page: number): CacheHeaderOptions {
+    return page > 1 ? { maxAge: 300, swr: 600 } : {};
+}
+
 export function setResponseCacheHeaders(
     response: { headers: Headers },
     cacheHint?: CacheHintLike,
