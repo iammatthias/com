@@ -4,8 +4,8 @@ import MenuLinks from "../components/MenuLinks.astro";
 import Breadcrumbs, {
     type BreadcrumbItem,
 } from "../components/Breadcrumbs.astro";
-import AzulejoTile from "../components/AzulejoTile";
 import "@fontsource/metamorphous";
+import metamorphousWoff2 from "@fontsource/metamorphous/files/metamorphous-latin-400-normal.woff2?url";
 
 interface Props {
     /** Page-specific title. Site name is appended automatically. */
@@ -101,6 +101,18 @@ const ogTitle = title ?? SITE_NAME;
 
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+        <!-- Metamorphous is the serif used for all headings; preloading
+             the latin woff2 keeps the swap window short on first visit.
+             Same hashed asset the @fontsource CSS resolves to, so this
+             never double-downloads. -->
+        <link
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            href={metamorphousWoff2}
+            crossorigin
+        />
+
         <!-- Open Graph -->
         <meta property="og:site_name" content={SITE_NAME} />
         <meta property="og:type" content={ogType} />
@@ -135,18 +147,40 @@ const ogTitle = title ?? SITE_NAME;
             <slot name="header">
                 <a href="/">home</a>
                 <!--
-          Wrapper reserves the 32×32 layout slot before React hydrates,
-          so the header doesn't reflow when the tile mounts. Background
-          is the same neutral the tile renders against. The 45° rotation
-          turns the square tile into a diamond — applied to the wrapper
-          so it covers both the placeholder and the canvas seamlessly.
+          Header tile is one of the 100 pre-rendered azulejo snapshots
+          (worker-og/azulejo, mirrored into public/azulejo) instead of
+          the live WebGL AzulejoTile island. The island pulled React +
+          three.js (~250KB gz) onto every page for a 32px decorative
+          element; a 13KB JPG reads identically at this size. The
+          inline script picks a random tile per load to keep the
+          per-visit variance; <noscript> pins a fixed tile. The 45°
+          rotation turns the square into a diamond.
         -->
                 <span class="header-tile">
-                    <AzulejoTile
-                        client:only="react"
-                        size={32}
+                    <img
+                        id="header-azulejo"
+                        width="32"
+                        height="32"
                         alt="iammatthias"
+                        decoding="async"
                     />
+                    <script is:inline>
+                        {
+                            const n = String(
+                                1 + Math.floor(Math.random() * 100),
+                            ).padStart(3, "0");
+                            document.getElementById("header-azulejo").src =
+                                "/azulejo/" + n + ".jpg";
+                        }
+                    </script>
+                    <noscript>
+                        <img
+                            src="/azulejo/001.jpg"
+                            width="32"
+                            height="32"
+                            alt="iammatthias"
+                        />
+                    </noscript>
                 </span>
                 <a href="/menu" data-menu-trigger>menu</a>
             </slot>
@@ -254,14 +288,13 @@ const ogTitle = title ?? SITE_NAME;
     }
 
     /* Header tile slot — fixed footprint + placeholder. The slot is 32×32
-     in layout flow regardless of React hydration state, so the header
-     doesn't reflow when the canvas mounts. The rotation makes the tile
-     read as a diamond. The astro-island and inner div fill the slot so
-     the canvas inherits the wrapper's transform.
+     in layout flow regardless of image load state, so the header doesn't
+     reflow while the tile fetches. The rotation makes the tile read as a
+     diamond.
 
      Background uses the warm beige border token rather than --color-fg,
      so the placeholder reads as a gentle diamond hint instead of
-     flashing solid near-black before the canvas paints. */
+     flashing solid near-black before the image paints. */
     .header-tile {
         display: inline-block;
         width: 32px;
@@ -269,13 +302,14 @@ const ogTitle = title ?? SITE_NAME;
         background: var(--color-border);
         transform: rotate(45deg);
         transform-origin: center;
+        overflow: hidden;
     }
 
-    .header-tile :global(astro-island),
-    .header-tile :global(astro-island > div) {
+    .header-tile img {
         display: block;
         width: 100%;
         height: 100%;
+        object-fit: cover;
     }
 
     main {
