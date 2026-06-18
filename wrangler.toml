@@ -8,3 +8,9 @@ compatibility_date = "2024-09-23"
 # so CONTENT_READ_KEY / FEED_READ_KEY come back empty in prod → Farfield
 # 401 → empty content. See withastro/astro#16553.
 compatibility_flags = ["nodejs_compat", "nodejs_compat_populate_process_env"]
+
+# Preserve runtime secrets/vars set in the Cloudflare dashboard. Workers
+# Builds deploys with `wrangler deploy`, which by DEFAULT deletes any
+# bindings not declared here — that was silently wiping CONTENT_READ_KEY /
+# FEED_READ_KEY on every deploy, leaving prod unable to read Farfield.
+keep_vars = true
