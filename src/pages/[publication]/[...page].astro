@@ -17,6 +17,7 @@ import {
 } from "../../lib/cache";
 import { getPage, parsePageParam } from "../../lib/pagination";
 import type { DocumentData } from "../../lib/farfield-loader";
+import { isPreview } from "@lib/preview";
 
 const slug = Astro.params.publication;
 if (!slug) {
@@ -25,6 +26,8 @@ if (!slug) {
 
 const page = parsePageParam(Astro.params.page);
 if (page === null) return new Response(null, { status: 404 });
+
+const preview = isPreview(Astro);
 
 const { entry: pubEntry, error: pubError } = await getLiveEntry(
     "publications",
@@ -38,6 +41,7 @@ const pub = pubEntry.data;
 let items: DocumentData[] = [];
 const { entries, error, cacheHint } = await getLiveCollection("documents", {
     publication: slug,
+    preview,
 });
 if (error) {
     console.error(`[/${slug}] Farfield fetch failed:`, error);
@@ -81,6 +85,7 @@ setResponseCacheHeaders(Astro.response, cacheHint, {
                         title={item.title}
                         description={item.description}
                         publishedAt={item.publishedAt}
+                        draft={item.published === false}
                     />
                 ))}
             </ul>

@@ -14,12 +14,12 @@ import {
     type DocumentData,
 } from "../../lib/farfield-loader";
 import {
-    extractBodyEmbeds,
     wsrvUrl,
     wsrvSrcSet,
     type BlobMeta,
 } from "../../lib/farfield";
 import { setResponseCacheHeaders } from "../../lib/cache";
+import { isPreview } from "@lib/preview";
 import { fmtDateLong as fmtDate, hashSeed } from "../../lib/format";
 import {
     FIG_WIDTHS,
@@ -38,9 +38,12 @@ if (!publicationSlug || !docSlug) {
     return new Response(null, { status: 404 });
 }
 
+const preview = isPreview(Astro);
+
 const { entry, error, cacheHint } = await getLiveEntry("documents", {
     publication: publicationSlug,
     slug: docSlug,
+    preview,
 });
 if (error) {
     // Astro wraps "no such entry" as `LiveEntryNotFoundError` rather
@@ -134,22 +137,155 @@ function renderSeriesTile(
 }
 
 /**
- * Resolve a `series://<slug>` reference into a masonry gallery block.
- * The series's body is markdown — typically a list of `blob://` image
- * embeds. Extract those, fetch each blob's meta, render as series
- * tiles. Other content in the series body is ignored for now (galleries
- * are image-only). Returns "" if the series is missing or empty.
+ * A series body is markdown made of blank-line-separated blocks. We
+ * tokenize it in document order — image embeds vs everything else —
+ * so prose between images is preserved instead of dropped.
  */
-async function renderSeriesGallery(slug: string): Promise<string> {
+interface SeriesBlock {
+    type: "image" | "text";
+    /** blob cid (image blocks). */
+    cid?: string;
+    /** alt text (image blocks). */
+    alt?: string;
+    /** raw markdown (text blocks). */
+    raw: string;
+}
+
+function tokenizeSeries(body: string): SeriesBlock[] {
+    const IMG = /^!\[([^\]]*)\]\(blob:\/\/([a-z0-9]+)\)$/;
+    return body
+        .split(/\n\s*\n/)
+        .map((b) => b.trim())
+        .filter(Boolean)
+        .map((raw): SeriesBlock => {
+            const m = raw.match(IMG);
+            return m
+                ? { type: "image", alt: m[1], cid: m[2], raw }
+                : { type: "text", raw };
+        });
+}
+
+// Series that get the bespoke triptych layout (image · text · image).
+// Everything else renders generically — see `renderSeries`.
+const TRIPTYCH_SERIES = new Set(["phosphene"]);
+
+/** Render a text block from a series body as markdown. Strips any
+ *  blockquote `> ` markers first so a poem/quote renders as centered
+ *  prose — emphasis, hard line breaks, and paragraph splits intact —
+ *  rather than a bordered blockquote. */
+function renderStanza(raw: string): string {
+    const inner = raw
+        .split("\n")
+        .map((l) => l.replace(/^\s*>\s?/, ""))
+        .join("\n");
+    return transformAlerts(marked.parse(inner, { async: false }) as string);
+}
+
+/**
+ * Bespoke triptych renderer (phosphene): image · text · image, with an
+ * optional caption beneath. Blocks are grouped greedily — a leading
+ * image, the text up to the next image, the closing image, then any
+ * text before the following image becomes that triptych's caption. A
+ * triptych missing its second image degrades to image + text.
+ */
+async function renderSeriesTriptychs(blocks: SeriesBlock[]): Promise<string> {
+    const metas = new Map<string, BlobMeta | null>();
+    await Promise.all(
+        blocks
+            .filter((b) => b.type === "image")
+            .map(async (b) => {
+                metas.set(b.cid as string, await getBlobMeta(b.cid as string));
+            }),
+    );
+    const tile = (b: SeriesBlock) =>
+        renderSeriesTile(
+            b.cid as string,
+            b.alt ?? "",
+            metas.get(b.cid as string) ?? null,
+        );
+
+    const out: string[] = [];
+    let i = 0;
+    while (i < blocks.length) {
+        if (blocks[i].type !== "image") {
+            // Stray prose with no image to anchor it — centered stanza.
+            out.push(
+                `<p class="triptych-loose">${renderStanza(blocks[i].raw)}</p>`,
+            );
+            i++;
+            continue;
+        }
+        const left = blocks[i++];
+        const textParts: SeriesBlock[] = [];
+        while (i < blocks.length && blocks[i].type !== "image")
+            textParts.push(blocks[i++]);
+        const right =
+            i < blocks.length && blocks[i].type === "image"
+                ? blocks[i++]
+                : null;
+        const capParts: SeriesBlock[] = [];
+        while (i < blocks.length && blocks[i].type !== "image")
+            capParts.push(blocks[i++]);
+
+        const textHtml = textParts.map((t) => renderStanza(t.raw)).join("\n");
+        const capHtml = capParts.map((c) => renderStanza(c.raw)).join("\n");
+
+        out.push(
+            `<figure class="triptych">` +
+                `<div class="triptych__img">${tile(left)}</div>` +
+                `<div class="triptych__text">${textHtml}</div>` +
+                (right ? `<div class="triptych__img">${tile(right)}</div>` : "") +
+                (capHtml
+                    ? `<figcaption class="triptych__caption">${capHtml}</figcaption>`
+                    : "") +
+                `</figure>`,
+        );
+    }
+    return out.join("");
+}
+
+/**
+ * General series renderer: render every block in document order — text
+ * as markdown prose (callouts included), images as full-width figures.
+ * This is what makes an arbitrary image+text series "all render".
+ */
+async function renderSeriesFlow(blocks: SeriesBlock[]): Promise<string> {
+    const parts = await Promise.all(
+        blocks.map(async (b) => {
+            if (b.type === "image") {
+                const meta = await getBlobMeta(b.cid as string);
+                return renderEmbedFigure(b.cid as string, b.alt ?? "", meta);
+            }
+            const html = marked.parse(b.raw, { async: false }) as string;
+            return transformAlerts(html);
+        }),
+    );
+    return parts.join("\n");
+}
+
+/**
+ * Resolve a `series://<slug>` reference. Dispatch by shape:
+ *   - triptych series (phosphene) → bespoke image · text · image layout
+ *   - any series with prose       → text + images in document order
+ *   - pure-image series           → classic masonry gallery
+ * Returns "" if the series is missing or empty.
+ */
+async function renderSeries(slug: string): Promise<string> {
     const series = await getSeries(slug);
     if (!series?.body) return "";
-    const embeds = extractBodyEmbeds(series.body).filter(
-        (e) => e.scheme === "blob",
+    const blocks = tokenizeSeries(series.body);
+    const images = blocks.filter((b) => b.type === "image");
+    const hasText = blocks.some((b) => b.type === "text");
+    if (images.length === 0 && !hasText) return "";
+
+    if (TRIPTYCH_SERIES.has(slug)) return renderSeriesTriptychs(blocks);
+    if (hasText) return renderSeriesFlow(blocks);
+
+    const metas = await Promise.all(
+        images.map((b) => getBlobMeta(b.cid as string)),
     );
-    if (embeds.length === 0) return "";
-    const metas = await Promise.all(embeds.map((e) => getBlobMeta(e.id)));
-    const tiles = embeds
-        .map((e, i) => renderSeriesTile(e.id, e.alt, metas[i]))
+    const tiles = images
+        .map((b, i) => renderSeriesTile(b.cid as string, b.alt ?? "", metas[i]))
         .join("");
     return `<div class="series-grid">${tiles}</div>`;
 }
@@ -210,7 +346,7 @@ async function renderMarkdownBody(body: string): Promise<string> {
     const rendered = await Promise.all(
         embeds.map(async (e) => {
             if (e.scheme === "series") {
-                return renderSeriesGallery(e.id);
+                return renderSeries(e.id);
             }
             const meta = await getBlobMeta(e.id);
             return renderEmbedFigure(e.id, e.alt, meta);
@@ -348,7 +484,7 @@ const RELATED_COUNT = 6;
 let related: DocumentData[] = [];
 {
     const { entries: allDocs, error: relErr } =
-        await getLiveCollection("documents");
+        await getLiveCollection("documents", { preview });
     if (relErr) {
         console.error(
             `[/${publicationSlug}/${docSlug}] related-docs fetch failed:`,
@@ -390,6 +526,9 @@ let related: DocumentData[] = [];
 >
     <article class="doc">
         <header class="doc-hero">
+            {item.published === false && (
+                <p class="doc-draft">Draft — unpublished</p>
+            )}
             <h1>{item.title}</h1>
             <p class="dateline">
                 <time datetime={item.publishedAt}>{fmtDate(item.publishedAt)}</time>
@@ -707,6 +846,19 @@ let related: DocumentData[] = [];
         gap: var(--space-3);
     }
 
+    /* Draft marker on the article hero — only reachable in dev preview
+       mode, where it flags that this record isn't published yet. */
+    .doc-draft {
+        align-self: flex-start;
+        padding: 0.15em 0.6em;
+        border-radius: 999px;
+        background: var(--color-fg);
+        color: var(--color-bg);
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        letter-spacing: 0.03em;
+    }
+
     .doc-hero h1 {
         font-family: var(--font-serif);
         font-style: italic;
@@ -916,6 +1068,71 @@ let related: DocumentData[] = [];
         display: block;
         width: 100%;
         height: auto;
+    }
+
+    /* Triptych — image · text · image. A series flagged for the triptych
+       layout renders each grouping as a three-up panel: two images
+       flanking a centered stanza, with an optional technical caption
+       beneath. Comes through `set:html`, so target via :global. */
+    .doc-body :global(.triptych) {
+        display: grid;
+        grid-template-columns: 1fr minmax(0, 0.85fr) 1fr;
+        align-items: center;
+        gap: var(--space-4);
+        margin: var(--space-4) 0;
+    }
+
+    /* Series tiles inside a triptych panel drop the masonry tile's
+       bottom margin — the grid gap handles spacing here. */
+    .doc-body :global(.triptych__img .series-tile) {
+        margin: 0;
+    }
+
+    .doc-body :global(.triptych__text) {
+        text-align: center;
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-base);
+        line-height: var(--lh-relaxed);
+        text-wrap: balance;
+        padding: var(--space-3);
+    }
+
+    .doc-body :global(.triptych__text p) {
+        margin: 0;
+    }
+
+    /* Paragraphs after the first read as sub-notes (e.g. the lighting
+       line) — smaller and muted under the main stanza. */
+    .doc-body :global(.triptych__text p + p) {
+        margin-top: var(--space-3);
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+    }
+
+    .doc-body :global(.triptych__caption) {
+        grid-column: 1 / -1;
+        text-align: center;
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        color: var(--color-muted);
+        margin-top: var(--space-2);
+    }
+
+    .doc-body :global(.triptych-loose) {
+        text-align: center;
+        font-family: var(--font-serif);
+        font-style: italic;
+        color: var(--color-muted);
+    }
+
+    /* Stack vertically on narrow viewports: image, text, image, caption
+       read top-to-bottom (already DOM order). */
+    @media (max-width: 768px) {
+        .doc-body :global(.triptych) {
+            grid-template-columns: 1fr;
+            gap: var(--space-3);
+        }
     }
 
     /* Each clickable image lives inside a transparent <button> so the

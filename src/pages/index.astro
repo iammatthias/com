@@ -10,6 +10,9 @@ import FeedCard from "../components/FeedCard.astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "../lib/cache";
 import type { DocumentData } from "../lib/farfield-loader";
+import { isPreview } from "@lib/preview";
+
+const preview = isPreview(Astro);
 
 // Glass is fetched on the client — the inline `<script>` below hits
 // /api/glass-pick.json after first paint and injects the photo +
@@ -18,7 +21,7 @@ const {
     entries: feedEntries,
     error: feedError,
     cacheHint,
-} = await getLiveCollection("documents");
+} = await getLiveCollection("documents", { preview });
 
 let feed: DocumentData[] = [];
 if (feedError) {
@@ -94,6 +97,7 @@ setResponseCacheHeaders(Astro.response, cacheHint);
                             description={item.description}
                             publishedAt={item.publishedAt}
                             kind={item.publication.name.toLowerCase()}
+                            draft={item.published === false}
                         />
                     ))}
                 </ul>

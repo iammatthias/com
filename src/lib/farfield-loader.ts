@@ -67,9 +67,13 @@ async function memo<T>(key: string, load: () => Promise<T>): Promise<T> {
 // retries / errors don't multiply.
 const cachedCollections = () =>
     memo<Collection[]>("collections", getCollections);
-const cachedEntries = (collection?: string) =>
-    memo<Entry[]>(`entries:${collection ?? "_all"}`, () =>
-        getEntries(collection),
+// `drafts` is part of the cache key so the preview (published + drafts)
+// and normal (published-only) variants never share an entry. Drafts are
+// only ever fetched in dev preview mode.
+const cachedEntries = (collection?: string, drafts = false) =>
+    memo<Entry[]>(
+        `entries:${collection ?? "_all"}:${drafts ? "all" : "pub"}`,
+        () => getEntries(collection, { drafts }),
     );
 const cachedPosts = () => memo<Post[]>("posts", getPosts);
 
@@ -148,6 +152,13 @@ export interface DocumentData {
     title: string;
     /** Excerpt — explicit if Farfield carries one, else "". */
     description: string;
+    /**
+     * Whether Farfield has this entry published. Always `true` on
+     * surfaces that filter drafts out (the default); `false` only
+     * reaches a page in dev preview mode, where it drives the draft
+     * badge.
+     */
+    published: boolean;
     /** Relative path on this site. */
     href: string;
     /** Created — the field the site sorts by. */
@@ -222,6 +233,7 @@ function entryToDocument(
         cid: entry.cid,
         title: entry.title,
         description: entry.excerpt?.trim() ?? "",
+        published: entry.published,
         href: `/${entry.collection}/${entry.slug}`,
         publishedAt: entry.createdAt,
         updatedAt: entry.updatedAt,
@@ -231,9 +243,9 @@ function entryToDocument(
     };
 }
 
-async function loadAllDocuments(): Promise<DocumentData[]> {
+async function loadAllDocuments(drafts = false): Promise<DocumentData[]> {
     const [entries, pubs] = await Promise.all([
-        cachedEntries(),
+        cachedEntries(undefined, drafts),
         publicationsBySlug(),
     ]);
     const docs = entries
@@ -323,6 +335,11 @@ export function documentsLoader(): LiveLoader<
                         : undefined;
                 const fTag =
                     typeof filter?.tag === "string" ? filter.tag : undefined;
+                // Preview mode (dev only — see lib/preview.ts) keeps
+                // unpublished drafts in the list. Every other surface
+                // filters them out, since the authenticated content API
+                // now returns drafts alongside published entries.
+                const preview = filter?.preview === true;
 
                 let docs: DocumentData[];
                 if (fPub) {
@@ -330,7 +347,7 @@ export function documentsLoader(): LiveLoader<
                     // ?collection= query path — saves stitching the
                     // whole set when we only need one.
                     const [entries, pubs] = await Promise.all([
-                        cachedEntries(fPub),
+                        cachedEntries(fPub, preview),
                         publicationsBySlug(),
                     ]);
                     const pub = pubs.get(fPub);
@@ -340,8 +357,13 @@ export function documentsLoader(): LiveLoader<
                         b.publishedAt.localeCompare(a.publishedAt),
                     );
                 } else {
-                    docs = await loadAllDocuments();
+                    docs = await loadAllDocuments(preview);
                 }
+                // Belt-and-suspenders: preview fetches `?status=all`
+                // (published + drafts) and keeps everything; every other
+                // path fetches published-only, so this filter is a no-op
+                // there but guarantees a draft can never slip through.
+                if (!preview) docs = docs.filter((d) => d.published);
                 if (fTag) docs = docs.filter((d) => d.tags.includes(fTag));
 
                 const cacheTags = ["documents"];
@@ -386,6 +408,7 @@ export function documentsLoader(): LiveLoader<
                     typeof filter?.slug === "string" ? filter.slug : undefined;
                 const fId =
                     typeof filter?.id === "string" ? filter.id : undefined;
+                const preview = filter?.preview === true;
 
                 // Direct slug → Farfield path is cheapest. Use it when
                 // we have the slug; otherwise parse from the composite
@@ -400,10 +423,15 @@ export function documentsLoader(): LiveLoader<
                 if (!slug) return undefined;
 
                 const [entry, pubs] = await Promise.all([
-                    getEntry(slug),
+                    getEntry(slug, { drafts: preview }),
                     publicationsBySlug(),
                 ]);
                 if (!entry) return undefined;
+                // Drafts 404 like any missing record unless the request
+                // is in preview mode (dev only). The authenticated API
+                // returns drafts, so this guard is what keeps them off
+                // the live site.
+                if (!preview && entry.published === false) return undefined;
                 // Optional safety check: when a `publication` filter is
                 // provided, refuse to serve mismatched collections so
                 // `/recipes/foo` can't surface a `posts/foo` entry.

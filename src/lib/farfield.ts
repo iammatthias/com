@@ -14,16 +14,54 @@
 //   GET /blobs/<cid>/meta                        → BlobMeta | 404
 //
 // Notes:
-//   - The public API only returns published entries — no client-side
-//     filter needed.
+//   - `content.farfield.systems` and `feed.farfield.systems` gate reads
+//     behind bearer tokens (`CONTENT_READ_KEY` / `FEED_READ_KEY`);
+//     `blobs` stays public. The content admin key (`CONTENT_API_KEY`)
+//     also unlocks unpublished drafts, so that API can return
+//     `published: false` records — the loader filters those back out
+//     unless a request opts into preview mode.
 //   - Records are flat — `slug` is the rkey, no envelope.
 //   - Series bodies are markdown that get spliced into a parent body.
 //   - Feed posts no longer carry an explicit `link` field — links
 //     live inside the markdown body.
 
+import { getSecret } from "astro:env/server";
+
 const CONTENT = "https://content.farfield.systems";
 const FEED = "https://feed.farfield.systems";
 const BLOBS = "https://blobs.farfield.systems";
+
+/**
+ * Bearer auth per Farfield service. `content` and `feed` are gated;
+ * `blobs` is public (no header). Secrets are read lazily per-request
+ * rather than at module scope: on Cloudflare the binding is only
+ * populated inside request scope, so a top-level read would see
+ * `undefined`. In `astro dev` they resolve from `.env`.
+ *
+ * Keys:
+ *   - `CONTENT_READ_KEY` — published content. All normal traffic.
+ *   - `CONTENT_API_KEY`  — admin key; the only one the content API
+ *     returns drafts to (`?status=all`). Used exclusively by dev
+ *     preview mode (and only on GET reads — never to mutate), so it
+ *     never ships to production. Falls back to the read key if unset.
+ *   - `FEED_READ_KEY`    — read token for the feed service.
+ *
+ * A missing key yields no header → upstream 401, which the loaders
+ * surface as an empty collection (the pre-token broken state).
+ */
+function authHeaders(url: string, drafts = false): Record<string, string> {
+    let key: string | undefined;
+    if (url.startsWith(CONTENT)) {
+        key = drafts
+            ? getSecret("CONTENT_API_KEY") ?? getSecret("CONTENT_READ_KEY")
+            : getSecret("CONTENT_READ_KEY");
+    } else if (url.startsWith(FEED)) {
+        key = getSecret("FEED_READ_KEY");
+    } else {
+        return {}; // blobs — public
+    }
+    return key ? { Authorization: `Bearer ${key}` } : {};
+}
 
 // ---------- record shapes ---------------------------------------------------
 
@@ -184,7 +222,7 @@ function stamp(res: Response, body: ArrayBuffer, now: number): Response {
     return out;
 }
 
-async function cachedFetch(url: string): Promise<Response> {
+async function cachedFetch(url: string, drafts = false): Promise<Response> {
     const cache = getEdgeCache();
     const cached = cache
         ? await cache.match(url).catch(() => undefined)
@@ -198,13 +236,14 @@ async function cachedFetch(url: string): Promise<Response> {
     }
 
     // Past the soft TTL (or no cache hit) — fetch upstream, sending
-    // the cached ETag if we have one so Farfield can return 304.
-    const conditional: RequestInit = {};
+    // the cached ETag if we have one so Farfield can return 304. The
+    // content service also needs its bearer token on every request.
+    const headers: Record<string, string> = authHeaders(url, drafts);
     const cachedETag = cached?.headers.get("etag");
     if (cachedETag) {
-        conditional.headers = { "If-None-Match": cachedETag };
+        headers["If-None-Match"] = cachedETag;
     }
-    const res = await fetchWithRetry(url, conditional);
+    const res = await fetchWithRetry(url, { headers });
 
     // 304 Not Modified — content unchanged; refresh the soft TTL on
     // the cached body and serve it.
@@ -233,16 +272,16 @@ async function cachedFetch(url: string): Promise<Response> {
     return res;
 }
 
-async function getJSON<T>(url: string): Promise<T> {
-    const res = await cachedFetch(url);
+async function getJSON<T>(url: string, drafts = false): Promise<T> {
+    const res = await cachedFetch(url, drafts);
     if (!res.ok) {
         throw new Error(`Farfield ${url} failed: ${res.status} ${res.statusText}`);
     }
     return (await res.json()) as T;
 }
 
-async function getJSONOrNull<T>(url: string): Promise<T | null> {
-    const res = await cachedFetch(url);
+async function getJSONOrNull<T>(url: string, drafts = false): Promise<T | null> {
+    const res = await cachedFetch(url, drafts);
     if (res.status === 404) return null;
     if (!res.ok) {
         throw new Error(`Farfield ${url} failed: ${res.status} ${res.statusText}`);
@@ -259,17 +298,35 @@ export async function getCollections(): Promise<Collection[]> {
     return data.collections;
 }
 
-export async function getEntries(collection?: string): Promise<Entry[]> {
-    const url = collection
-        ? `${CONTENT}/api/entries?collection=${encodeURIComponent(collection)}`
-        : `${CONTENT}/api/entries`;
-    const data = await getJSON<{ entries: Entry[] }>(url);
+/**
+ * List entries. `opts.drafts` opts into preview mode: it adds
+ * `?status=all` (the API default is published-only) and authenticates
+ * with the write key — the only key the API returns drafts to. Used
+ * solely by dev preview; normal callers omit it and stay on the read
+ * key + published-only.
+ */
+export async function getEntries(
+    collection?: string,
+    opts: { drafts?: boolean } = {},
+): Promise<Entry[]> {
+    const params = new URLSearchParams();
+    if (collection) params.set("collection", collection);
+    // `status=all` → published + drafts. Without it the endpoint
+    // returns published-only regardless of which key is sent.
+    if (opts.drafts) params.set("status", "all");
+    const qs = params.toString();
+    const url = `${CONTENT}/api/entries${qs ? `?${qs}` : ""}`;
+    const data = await getJSON<{ entries: Entry[] }>(url, opts.drafts);
     return data.entries;
 }
 
-export function getEntry(slug: string): Promise<Entry | null> {
+export function getEntry(
+    slug: string,
+    opts: { drafts?: boolean } = {},
+): Promise<Entry | null> {
     return getJSONOrNull<Entry>(
         `${CONTENT}/api/entries/${encodeURIComponent(slug)}`,
+        opts.drafts,
     );
 }
 

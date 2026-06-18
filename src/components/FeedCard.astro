@@ -16,13 +16,16 @@ interface Props {
     publishedAt: string;
     /** Render the publication name as a kicker above the title. */
     kind?: string;
+    /** Mark this card as an unpublished draft (dev preview mode only). */
+    draft?: boolean;
 }
 
-const { href, title, description, publishedAt, kind } = Astro.props;
+const { href, title, description, publishedAt, kind, draft } = Astro.props;
 ---
 
-<li class="card">
+<li class:list={["card", { "card--draft": draft }]}>
     <a href={href} class="card-link">
+        {draft && <span class="card-draft">Draft</span>}
         {kind && <span class="card-kind">{kind}</span>}
         <h3>{title}</h3>
         {description && <p>{description}</p>}
@@ -32,3 +35,25 @@ const { href, title, description, publishedAt, kind } = Astro.props;
         </span>
     </a>
 </li>
+
+<style>
+    /* Draft marker — only ever shown in dev preview mode. A dashed
+       outline sets a draft card apart from its published neighbours;
+       the pill repeats the state in text for clarity. */
+    .card--draft {
+        outline: 1px dashed var(--color-muted);
+        outline-offset: 2px;
+        border-radius: var(--radius);
+    }
+
+    .card-draft {
+        align-self: flex-start;
+        padding: 0.1em 0.5em;
+        border-radius: 999px;
+        background: var(--color-fg);
+        color: var(--color-bg);
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        letter-spacing: 0.03em;
+    }
+</style>

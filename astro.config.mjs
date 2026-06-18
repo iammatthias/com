@@ -1,6 +1,6 @@
 // @ts-check
 import path from "node:path";
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
@@ -9,6 +9,40 @@ import cloudflare from "@astrojs/cloudflare";
 export default defineConfig({
     site: "https://iammatthias.com",
     integrations: [sitemap(), react()],
+    env: {
+        schema: {
+            // Bearer token for content.farfield.systems, which now gates
+            // reads (feed + blobs stay public). Server-only secret —
+            // never exposed to the client. Optional so builds without the
+            // key don't hard-fail at schema validation; a missing key
+            // simply yields 401s the loaders surface as empty content.
+            // Dev reads it from .env; prod from a Cloudflare secret.
+            CONTENT_READ_KEY: envField.string({
+                context: "server",
+                access: "secret",
+                optional: true,
+            }),
+            // Privileged write/admin key. The content API only returns
+            // drafts (`?status=all`) to this key, so it's used *only* by
+            // dev preview mode — and only on GET reads, never to mutate.
+            // Never set it in production; the preview gate is dev-only,
+            // so prod never reaches for it and the powerful key stays
+            // confined to local machines.
+            CONTENT_API_KEY: envField.string({
+                context: "server",
+                access: "secret",
+                optional: true,
+            }),
+            // Read token for feed.farfield.systems, which (like content)
+            // now gates reads. Production needs this set as a Cloudflare
+            // secret or the feed surfaces (/now, /feed, feed RSS) go empty.
+            FEED_READ_KEY: envField.string({
+                context: "server",
+                access: "secret",
+                optional: true,
+            }),
+        },
+    },
     redirects: {
         // /about merged into /now during the redesign — preserve any
         // inbound links from the old site / search results / RSS readers.

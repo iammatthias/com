@@ -50,6 +50,7 @@ const { page } = paged;
                 description={item.description}
                 publishedAt={item.publishedAt}
                 kind={item.publication.name.toLowerCase()}
+                draft={item.published === false}
             />
         ))}
     </ul>

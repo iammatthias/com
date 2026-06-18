@@ -4,6 +4,7 @@ import MenuLinks from "../components/MenuLinks.astro";
 import Breadcrumbs, {
     type BreadcrumbItem,
 } from "../components/Breadcrumbs.astro";
+import { isPreview } from "@lib/preview";
 import "@fontsource/metamorphous";
 import metamorphousWoff2 from "@fontsource/metamorphous/files/metamorphous-latin-400-normal.woff2?url";
 
@@ -68,6 +69,11 @@ const ogImageURL = isAbsolute ? new URL(ogImage) : new URL(ogImage, ogOrigin);
 
 const fullTitle = title ? `${title} — ${SITE_NAME}` : SITE_NAME;
 const ogTitle = title ?? SITE_NAME;
+
+// Draft-preview mode (dev only). When on, the whole site shows
+// unpublished Farfield drafts; the banner below makes that obvious and
+// offers a one-click exit. `isPreview` is always false in production.
+const previewMode = isPreview(Astro);
 ---
 
 <!doctype html>
@@ -143,6 +149,12 @@ const ogTitle = title ?? SITE_NAME;
         <slot name="head" />
     </head>
     <body>
+        {previewMode && (
+            <div class="preview-banner" role="status">
+                <span>Preview — showing unpublished drafts</span>
+                <a href={`${Astro.url.pathname}?preview=0`}>exit</a>
+            </div>
+        )}
         <header>
             <slot name="header">
                 <a href="/">home</a>
@@ -255,6 +267,35 @@ const ogTitle = title ?? SITE_NAME;
         align-items: center;
         padding: var(--pad);
         gap: var(--gap);
+    }
+
+    /* Dev-only draft-preview banner. Sticky at the top so it stays
+       visible while scrolling — a constant reminder the site is
+       showing unpublished content. Never rendered in production. */
+    .preview-banner {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        width: 100%;
+        max-width: var(--content-max);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-3);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius);
+        background: var(--color-fg);
+        color: var(--color-bg);
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        letter-spacing: 0.02em;
+    }
+
+    .preview-banner a {
+        color: inherit;
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+        font-weight: var(--fw-medium);
     }
 
     header,

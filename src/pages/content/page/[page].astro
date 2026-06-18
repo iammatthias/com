@@ -14,15 +14,18 @@ import type {
     DocumentData,
     PublicationData,
 } from "../../../lib/farfield-loader";
+import { isPreview } from "@lib/preview";
 
 const page = parsePageSegment(Astro.params.page);
 if (page === null) return new Response(null, { status: 404 });
+
+const preview = isPreview(Astro);
 
 let items: DocumentData[] = [];
 let pubs: PublicationData[] = [];
 
 const [docsResult, pubsResult] = await Promise.all([
-    getLiveCollection("documents"),
+    getLiveCollection("documents", { preview }),
     getLiveCollection("publications"),
 ]);
 if (docsResult.error) {

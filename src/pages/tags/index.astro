@@ -4,16 +4,19 @@ export const prerender = false;
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "../../lib/cache";
+import { isPreview } from "@lib/preview";
 import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = { group: "archive", order: 2 };
+
+const preview = isPreview(Astro);
 
 let tags: { tag: string; count: number }[] = [];
 const {
     entries: docEntries,
     error,
     cacheHint,
-} = await getLiveCollection("documents");
+} = await getLiveCollection("documents", { preview });
 if (error) {
     console.error("[/tags] Farfield fetch failed:", error);
 } else {
