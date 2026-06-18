@@ -49,14 +49,34 @@ const BLOBS = "https://blobs.farfield.systems";
  * A missing key yields no header → upstream 401, which the loaders
  * surface as an empty collection (the pre-token broken state).
  */
+/**
+ * Read a secret robustly across environments. `astro:env`'s `getSecret`
+ * resolves in `wrangler dev` but has been observed returning `undefined`
+ * (or throwing) in the *deployed* Cloudflare Worker, where it reads the
+ * `cloudflare:workers` env. So we fall back to `process.env`, which the
+ * Worker populates from its bindings when the
+ * `nodejs_compat_populate_process_env` flag is set (see wrangler.toml).
+ */
+export function readSecret(key: string): string | undefined {
+    try {
+        const v = getSecret(key);
+        if (typeof v === "string" && v) return v;
+    } catch {
+        // getSecret can throw if the runtime env context is unavailable.
+    }
+    const fromProcess = (globalThis as { process?: { env?: Record<string, string | undefined> } })
+        .process?.env?.[key];
+    return typeof fromProcess === "string" && fromProcess ? fromProcess : undefined;
+}
+
 function authHeaders(url: string, drafts = false): Record<string, string> {
     let key: string | undefined;
     if (url.startsWith(CONTENT)) {
         key = drafts
-            ? getSecret("CONTENT_API_KEY") ?? getSecret("CONTENT_READ_KEY")
-            : getSecret("CONTENT_READ_KEY");
+            ? readSecret("CONTENT_API_KEY") ?? readSecret("CONTENT_READ_KEY")
+            : readSecret("CONTENT_READ_KEY");
     } else if (url.startsWith(FEED)) {
-        key = getSecret("FEED_READ_KEY");
+        key = readSecret("FEED_READ_KEY");
     } else {
         return {}; // blobs — public
     }
