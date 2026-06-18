@@ -1,4 +1,10 @@
 name = "com"
 main = "@astrojs/cloudflare/entrypoints/server"
 compatibility_date = "2024-09-23"
-compatibility_flags = ["nodejs_compat"]
+# nodejs_compat_populate_process_env: makes the deployed Worker populate
+# process.env from its bindings (vars + secrets). Without it, astro:env's
+# getSecret() resolves locally (wrangler dev eagerly fills the
+# cloudflare:workers env) but returns undefined in the deployed Worker,
+# so CONTENT_READ_KEY / FEED_READ_KEY come back empty in prod → Farfield
+# 401 → empty content. See withastro/astro#16553.
+compatibility_flags = ["nodejs_compat", "nodejs_compat_populate_process_env"]
