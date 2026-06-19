@@ -8,7 +8,27 @@ import cloudflare from "@astrojs/cloudflare";
 // https://astro.build/config
 export default defineConfig({
     site: "https://iammatthias.com",
-    integrations: [sitemap(), react()],
+    integrations: [
+        sitemap(),
+        react(),
+        // Dev-only internal routes — injected only under `astro dev`, so
+        // they never ship in the production build. The azulejo snapshot
+        // page is tooling (scripts/snapshot-azulejos.mjs captures it from
+        // the dev server); it lives outside `src/pages/` so it isn't
+        // auto-routed, and is mounted here for `command === 'dev'`.
+        {
+            name: "dev-only-internal-routes",
+            hooks: {
+                "astro:config:setup": ({ command, injectRoute }) => {
+                    if (command !== "dev") return;
+                    injectRoute({
+                        pattern: "/internal/azulejo/[seed]",
+                        entrypoint: "./src/dev-routes/azulejo-seed.astro",
+                    });
+                },
+            },
+        },
+    ],
     env: {
         schema: {
             // Bearer token for content.farfield.systems, which now gates

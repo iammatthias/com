@@ -1,11 +1,13 @@
 ---
 /**
- * Internal snapshot page: renders one AzulejoTile at high resolution
+ * Internal snapshot route: renders one AzulejoTile at high resolution
  * with no chrome, so a headless browser (scripts/snapshot-azulejos.mjs)
  * can capture it as a PNG for use in the OG worker.
  *
- * Not linked from anywhere; noindex'd. Visit /internal/azulejo/<seed>
- * (any 32-bit integer or string) during dev to preview.
+ * DEV ONLY — this file lives outside `src/pages/`, and astro.config
+ * `injectRoute`s it at `/internal/azulejo/[seed]` only when
+ * `command === 'dev'`, so it never ships in the production build.
+ * Visit /internal/azulejo/<seed> (any 32-bit integer) during dev.
  */
 import AzulejoTile from "@components/AzulejoTile";
 
