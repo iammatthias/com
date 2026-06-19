@@ -3,9 +3,10 @@
 // publication, tag pages). Styling lives in globals.css under
 // `.feed-grid` / `.card` / `.card-link` so every consumer is identical.
 //
-// Pass `showKind` when the surrounding context lacks a publication
-// label (e.g. homepage shows it, but a per-publication index doesn't
-// need to repeat the kind on every card).
+// The card is self-contained: it emits no outer spacing. Vertical rhythm
+// between its parts is owned by `.card-link` — the layout component — via
+// the adjacent-sibling combinator in globals.css, so each gap can differ
+// without any child carrying its own margin.
 
 import { fmtDate } from "../lib/format";
 
@@ -25,29 +26,29 @@ const { href, title, description, publishedAt, kind, draft } = Astro.props;
 
 <li class:list={["card", { "card--draft": draft }]}>
     <a href={href} class="card-link">
-        {draft && <span class="card-draft">Draft</span>}
         {kind && <span class="card-kind">{kind}</span>}
         <h3>{title}</h3>
         {description && <p>{description}</p>}
-        <span class="card-date">
-            —{" "}
-            <time datetime={publishedAt}>{fmtDate(publishedAt)}</time>
-        </span>
+        <time class="card-date" datetime={publishedAt}>{fmtDate(publishedAt)}</time>
     </a>
 </li>
 
 <style>
-    /* Draft marker — only ever shown in dev preview mode. A dashed
-       outline sets a draft card apart from its published neighbours;
-       the pill repeats the state in text for clarity. */
+    /* Draft marker — dev preview only. A dashed outline sets a draft card
+       apart from its neighbours; the "Draft" pill is a pseudo-element on
+       the link (no extra DOM node, rendered only for draft cards). It's
+       the link's first flex item, so a single margin-bottom is the only
+       spacing this decoration contributes. */
     .card--draft {
         outline: 1px dashed var(--color-muted);
         outline-offset: 2px;
         border-radius: var(--radius);
     }
 
-    .card-draft {
+    .card--draft .card-link::before {
+        content: "Draft";
         align-self: flex-start;
+        margin-bottom: var(--space-2);
         padding: 0.1em 0.5em;
         border-radius: 999px;
         background: var(--color-fg);

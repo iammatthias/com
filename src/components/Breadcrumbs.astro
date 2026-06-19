@@ -43,9 +43,8 @@ const { items } = Astro.props;
         font-size: var(--fs-sm);
         color: var(--color-muted);
         line-height: var(--lh-tight);
-        /* Breathing room before the page heading. Pages that need a
-           tighter relationship can override this with a scoped rule. */
-        margin-bottom: var(--space-5);
+        /* No own margin — `main` owns the gap to the content that
+           follows (see BaseLayout: `main > .breadcrumbs + *`). */
     }
 
     ol {

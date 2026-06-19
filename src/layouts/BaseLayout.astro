@@ -362,6 +362,23 @@ const previewMode = isPreview(Astro);
         flex-direction: column;
     }
 
+    /* `main` owns the vertical rhythm between page sections via the
+       adjacent-sibling combinator (inconsistent gaps keyed on section
+       type), so no section emits its own outer margin. Default is the
+       generous section gap; the page header sits a touch closer to its
+       content, and breadcrumbs hug the heading they precede.
+       `:global()` because slot content carries the page's scope hash,
+       not the layout's. */
+    main > :global(* + *) {
+        margin-top: var(--space-8);
+    }
+    main > :global(.page-header + *) {
+        margin-top: var(--space-7);
+    }
+    main > :global(.breadcrumbs + *) {
+        margin-top: var(--space-5);
+    }
+
     /* ---------- site menu dialog ---------- */
 
     .site-menu {

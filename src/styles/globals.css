@@ -329,8 +329,10 @@ blockquote {
     line-height: var(--lh-relaxed);
 }
 
-blockquote > :is(p, ul, ol):not(:last-child) {
-    margin-bottom: var(--space-3);
+/* Spacing between a quote's own blocks, owned by the blockquote via the
+   adjacent-sibling combinator (the `cite` rule below tightens its gap). */
+blockquote > * + * {
+    margin-top: var(--space-3);
 }
 
 blockquote cite {
@@ -350,7 +352,7 @@ blockquote cite::before {
    per-class --callout-color override, used for the left rule, the
    italic-serif label, and a subtle tinted background. */
 .callout {
-    margin: 0;
+    /* No own margin — the prose container owns the gap around it. */
     padding: var(--space-3) var(--space-4);
     border-left: 3px solid var(--callout-color, var(--color-border));
     background: color-mix(
@@ -479,7 +481,9 @@ sup {
 hr {
     border: 0;
     border-top: 1px solid var(--color-border);
-    margin: var(--space-6) 0;
+    /* No own margin — the prose container owns the space around it
+       (consistent with the block reset above). */
+    margin: 0;
 }
 
 /* In-flow images: keep the responsive max-width default but constrain
@@ -518,7 +522,7 @@ video {
 .feed-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-    gap: var(--space-6);
+    gap: var(--space-5);
     align-items: start;
     margin: 0;
     padding: 0;
@@ -538,11 +542,24 @@ video {
 .card-link {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
     padding-top: var(--space-4);
     border-top: 1px solid var(--color-border);
     text-decoration: none;
     color: inherit;
+}
+
+/* Vertical rhythm via the adjacent-sibling combinator: each gap can
+   differ without any child emitting its own outer margin, so the card
+   stays self-contained. A default gap, with two exceptions — the kicker
+   hugs the title it labels, and the date sits a little lower. */
+.card-link > * + * {
+    margin-top: var(--space-2);
+}
+.card-link > .card-kind + h3 {
+    margin-top: var(--space-1);
+}
+.card-link > .card-date {
+    margin-top: var(--space-3);
 }
 
 .card-link h3 {
@@ -577,7 +594,12 @@ video {
     font-style: italic;
     font-size: var(--fs-sm);
     color: var(--color-muted);
-    margin-top: var(--space-1);
+}
+
+/* The dateline's em-dash is decoration, not content — a pseudo-element
+   keeps it out of the markup (and out of the <time>'s text). */
+.card-date::before {
+    content: "— ";
 }
 
 .feed-empty {
@@ -663,12 +685,10 @@ video {
     text-wrap: pretty;
 }
 
-.feed-note p {
-    margin: 0 0 var(--space-3);
-}
-
-.feed-note p:last-child {
-    margin-bottom: 0;
+/* Stacked prose blocks: spacing owned by the container via the
+   adjacent-sibling combinator, so no paragraph carries its own margin. */
+.feed-note > * + * {
+    margin-top: var(--space-3);
 }
 
 .feed-note a {
@@ -717,7 +737,8 @@ video {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    margin-bottom: var(--space-7);
+    /* No own margin — `main` owns the gap to the content below it
+       (see BaseLayout: `main > .page-header + *`). */
 }
 
 .page-header h1 {
@@ -744,7 +765,8 @@ video {
  * Newest-first ordering means the left edge steps toward newer entries.
  */
 .pagination {
-    margin-top: var(--space-8);
+    /* `main` owns the gap above (default `main > * + *`); the padding +
+       border below are the divider's own internal spacing. */
     padding-top: var(--space-5);
     border-top: 1px solid var(--color-border);
     display: flex;

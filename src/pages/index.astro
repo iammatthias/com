@@ -341,10 +341,8 @@ setResponseCacheHeaders(Astro.response, cacheHint);
     /* ---------- recent feed (below the fold) ---------- */
 
     .feed {
-        /* breathing room between the hero (which fills ~1 viewport) and
-           the start of the index, so it reads as a fresh section when
-           the reader scrolls down */
-        margin-top: var(--space-8);
+        /* The gap from the hero above is owned by `main` (default
+           `main > * + *`) — this section emits no outer margin. */
         display: flex;
         flex-direction: column;
         gap: var(--space-6);

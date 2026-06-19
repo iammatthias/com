@@ -178,7 +178,15 @@ function renderStanza(raw: string): string {
         .split("\n")
         .map((l) => l.replace(/^\s*>\s?/, ""))
         .join("\n");
-    return transformAlerts(marked.parse(inner, { async: false }) as string);
+    const html = transformAlerts(marked.parse(inner, { async: false }) as string);
+    // A trailing paragraph that is wholly emphasised (authored as `*…*`
+    // on its own line) is the capture note, not verse — tag it so the
+    // triptych styles it as metadata. The verse keeps its serif voice;
+    // the note reads as mono data beneath a hairline.
+    return html.replace(
+        /<p><em>([\s\S]*?)<\/em><\/p>(\s*)$/,
+        '<p class="stanza-note">$1</p>$2',
+    );
 }
 
 /**
@@ -232,9 +240,13 @@ async function renderSeriesTriptychs(blocks: SeriesBlock[]): Promise<string> {
 
         out.push(
             `<figure class="triptych">` +
-                `<div class="triptych__img">${tile(left)}</div>` +
+                `<div class="triptych__pair">` +
+                    `<div class="triptych__img">${tile(left)}</div>` +
+                    (right
+                        ? `<div class="triptych__img">${tile(right)}</div>`
+                        : "") +
+                `</div>` +
                 `<div class="triptych__text">${textHtml}</div>` +
-                (right ? `<div class="triptych__img">${tile(right)}</div>` : "") +
                 (capHtml
                     ? `<figcaption class="triptych__caption">${capHtml}</figcaption>`
                     : "") +
@@ -879,9 +891,23 @@ let related: DocumentData[] = [];
     .doc-body {
         display: flex;
         flex-direction: column;
-        gap: var(--space-5);
         font-size: var(--fs-base);
         line-height: var(--lh-relaxed);
+    }
+
+    /* Prose rhythm owned by the container via the adjacent-sibling
+       combinator (inconsistent gaps): a default between blocks, with
+       more room leading into section headings. No block carries its own
+       margin, so embeds (figures, triptychs, galleries) stay
+       self-contained and never double up. */
+    .doc-body > :global(* + *) {
+        margin-top: var(--space-5);
+    }
+    .doc-body > :global(* + h2) {
+        margin-top: var(--space-7);
+    }
+    .doc-body > :global(* + h3) {
+        margin-top: var(--space-6);
     }
 
     /* Doc-specific heading typography. Tables, lists, code, blockquote,
@@ -891,13 +917,11 @@ let related: DocumentData[] = [];
     .doc-body :global(h2) {
         font-family: var(--font-serif);
         font-size: var(--fs-2xl);
-        margin-top: var(--space-3);
     }
 
     .doc-body :global(h3) {
         font-family: var(--font-serif);
         font-size: var(--fs-xl);
-        margin-top: var(--space-2);
     }
 
     /* Tighten list internals when they appear in a flex-gap container,
@@ -1023,7 +1047,8 @@ let related: DocumentData[] = [];
        so they don't carry the layout's scope hash — target them via
        `:global(...)` to ensure styles land. */
     .doc-body :global(.doc-figure) {
-        margin: 0;
+        /* No vertical margin — the prose rhythm owns the gap (a class-
+           level `margin` here would out-specify it). */
         overflow: hidden;
         border-radius: var(--radius);
     }
@@ -1042,7 +1067,6 @@ let related: DocumentData[] = [];
     .doc-body :global(.series-grid) {
         column-count: 3;
         column-gap: var(--space-3);
-        margin: var(--space-3) 0;
     }
 
     @media (max-width: 768px) {
@@ -1070,53 +1094,72 @@ let related: DocumentData[] = [];
         height: auto;
     }
 
-    /* Triptych — image · text · image. A series flagged for the triptych
-       layout renders each grouping as a three-up panel: two images
-       flanking a centered stanza, with an optional technical caption
-       beneath. Comes through `set:html`, so target via :global. */
+    /* Triptych — a diptych pair with the verse as a shared caption.
+       The two images sit side by side as a related pair; the verse
+       (serif) and capture note (mono) read beneath as commentary on
+       them. Centered, constrained plate. Comes through `set:html`, so
+       target via :global. */
     .doc-body :global(.triptych) {
-        display: grid;
-        grid-template-columns: 1fr minmax(0, 0.85fr) 1fr;
-        align-items: center;
-        gap: var(--space-4);
-        margin: var(--space-4) 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-5);
+        max-width: 46rem;
+        /* Horizontal centering only — never set a vertical margin here,
+           or it out-specifies the prose container's rhythm and the
+           triptych jams against its neighbour. */
+        margin-inline: auto;
     }
 
-    /* Series tiles inside a triptych panel drop the masonry tile's
-       bottom margin — the grid gap handles spacing here. */
+    /* The image pair — two equal columns. */
+    .doc-body :global(.triptych__pair) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-4);
+    }
+
     .doc-body :global(.triptych__img .series-tile) {
         margin: 0;
     }
 
+    /* Caption block beneath the pair: verse + note, centered. */
     .doc-body :global(.triptych__text) {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-3);
         text-align: center;
-        font-family: var(--font-serif);
-        font-style: italic;
-        font-size: var(--fs-base);
-        line-height: var(--lh-relaxed);
-        text-wrap: balance;
-        padding: var(--space-3);
     }
 
+    /* The verse — serif italic, the lyrical voice of the piece. */
     .doc-body :global(.triptych__text p) {
         margin: 0;
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-lg);
+        line-height: var(--lh-relaxed);
+        text-wrap: balance;
+        color: var(--color-fg);
     }
 
-    /* Paragraphs after the first read as sub-notes (e.g. the lighting
-       line) — smaller and muted under the main stanza. */
-    .doc-body :global(.triptych__text p + p) {
-        margin-top: var(--space-3);
-        font-size: var(--fs-sm);
+    /* The capture note — mono + muted, clearly metadata rather than
+       another line of verse. */
+    .doc-body :global(.triptych__text .stanza-note) {
+        margin: 0;
+        font-family: var(--font-mono);
+        font-style: normal;
+        font-size: var(--fs-xs);
+        letter-spacing: 0.02em;
+        line-height: var(--lh-normal);
         color: var(--color-muted);
+        text-wrap: pretty;
     }
 
+    /* Optional trailing caption block (rare — most notes live inline). */
     .doc-body :global(.triptych__caption) {
-        grid-column: 1 / -1;
         text-align: center;
         font-family: var(--font-mono);
         font-size: var(--fs-xs);
         color: var(--color-muted);
-        margin-top: var(--space-2);
     }
 
     .doc-body :global(.triptych-loose) {
@@ -1124,15 +1167,6 @@ let related: DocumentData[] = [];
         font-family: var(--font-serif);
         font-style: italic;
         color: var(--color-muted);
-    }
-
-    /* Stack vertically on narrow viewports: image, text, image, caption
-       read top-to-bottom (already DOM order). */
-    @media (max-width: 768px) {
-        .doc-body :global(.triptych) {
-            grid-template-columns: 1fr;
-            gap: var(--space-3);
-        }
     }
 
     /* Each clickable image lives inside a transparent <button> so the
