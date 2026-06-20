@@ -837,6 +837,14 @@ let related: DocumentData[] = [];
             });
         }
     </script>
+
+    <!-- Render any ```mermaid code blocks the body carries into diagrams.
+         The module lazy-imports mermaid, so the library only downloads on
+         pages that actually contain one. -->
+    <script>
+        import { renderMermaid } from "../../lib/mermaid-client";
+        void renderMermaid();
+    </script>
 </BaseLayout>
 
 <style>
@@ -1056,6 +1064,26 @@ let related: DocumentData[] = [];
     .doc-body :global(.doc-figure img) {
         display: block;
         width: 100%;
+        height: auto;
+    }
+
+    /* mermaid diagrams are injected client-side (see mermaid-client.ts)
+       in place of the raw code block, so — like the figures above — they
+       arrive without the scope hash and need `:global`. The SVG is pinned
+       to its native size in JS (so labels never shrink to mush on a
+       phone); this scrolls it horizontally like a wide code block when it
+       outgrows the column. `safe center` centers it when it fits but
+       falls back to start-aligned when it overflows, so the left edge
+       stays reachable by scroll instead of being clipped. */
+    .doc-body :global(.mermaid-figure) {
+        margin: 0;
+        display: flex;
+        justify-content: safe center;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .doc-body :global(.mermaid-figure svg) {
         height: auto;
     }
 
