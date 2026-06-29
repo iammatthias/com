@@ -73,7 +73,13 @@ const ogTitle = title ?? SITE_NAME;
 // Draft-preview mode (dev only). When on, the whole site shows
 // unpublished Farfield drafts; the banner below makes that obvious and
 // offers a one-click exit. `isPreview` is always false in production.
-const previewMode = isPreview(Astro);
+//
+// Skip it on prerendered routes (resume, menu, 404, …): preview is a
+// per-request cookie/query decision that can't apply to a static page,
+// and reading `Astro.cookies` there reaches for `Astro.request.headers`,
+// which a prerendered page has no access to — Astro logs a warning on
+// every render. Static pages never show drafts, so `false` is correct.
+const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
 ---
 
 <!doctype html>
