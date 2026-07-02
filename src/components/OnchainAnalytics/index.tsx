@@ -137,8 +137,8 @@ export default function OnchainAnalytics({ contractAddress }: OnchainAnalyticsPr
 
         setSessionIds(ids as `0x${string}`[]);
       } catch (error) {
+        console.error("[onchain-analytics] fetch failed:", error);
         setErrorMsg("Error fetching analytics data: " + (error instanceof Error ? error.message : String(error)));
-        console.error(errorMsg);
       } finally {
         setIsLoading(false);
       }

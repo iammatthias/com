@@ -4,16 +4,16 @@
 // outranks this for `/tags/<tag>/rss.xml`.
 export const prerender = false;
 
-import BaseLayout from "../../../layouts/BaseLayout.astro";
-import FeedCard from "../../../components/FeedCard.astro";
-import Pagination from "../../../components/Pagination.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import FeedCard from "@components/FeedCard.astro";
+import Pagination from "@components/Pagination.astro";
 import { getLiveCollection } from "astro:content";
 import {
     setResponseCacheHeaders,
     deepPageCacheOptions,
-} from "../../../lib/cache";
-import { getPage, parsePageParam } from "../../../lib/pagination";
-import type { DocumentData } from "../../../lib/farfield-loader";
+} from "@lib/cache";
+import { getPage, parsePageParam } from "@lib/pagination";
+import { entriesOf, type DocumentData } from "@lib/farfield-loader";
 import { isPreview } from "@lib/preview";
 
 const tag = Astro.params.tag;
@@ -34,7 +34,7 @@ const { entries, error, cacheHint } = await getLiveCollection("documents", {
 if (error) {
     console.error(`[/tags/${tag}] Farfield fetch failed:`, error);
 } else {
-    items = entries.map((e) => e.data);
+    items = entriesOf<DocumentData>(entries);
 }
 
 // No entries carry this tag — the tag itself doesn't exist on any current

@@ -1,0 +1,94 @@
+---
+// Progressive-enhancement site menu. The header's `<a href="/menu">`
+// link navigates to /menu when JS is off; the script below intercepts
+// the click on any element with `[data-menu-trigger]` and opens this
+// <dialog> instead. Native <dialog> handles ESC, focus trap, and
+// backdrop scroll lock for free. Rendered once per page by BaseLayout.
+
+import MenuLinks from "./MenuLinks.astro";
+---
+
+<dialog id="site-menu" class="site-menu" aria-label="Site navigation">
+    <div class="site-menu__inner">
+        <button
+            type="button"
+            class="site-menu__close"
+            aria-label="Close menu"
+            data-menu-close>close</button
+        >
+        <MenuLinks />
+    </div>
+</dialog>
+
+<script>
+    const dialog = document.getElementById("site-menu");
+    if (dialog instanceof HTMLDialogElement) {
+        for (const trigger of document.querySelectorAll(
+            "[data-menu-trigger]",
+        )) {
+            trigger.addEventListener("click", (event) => {
+                event.preventDefault();
+                dialog.showModal();
+            });
+        }
+        for (const closer of dialog.querySelectorAll("[data-menu-close]")) {
+            closer.addEventListener("click", () => dialog.close());
+        }
+        // Click on the backdrop (i.e. on the <dialog> element itself,
+        // outside its inner content) closes the menu; so does a click
+        // on any link, so the menu doesn't linger on back-navigation.
+        dialog.addEventListener("click", (event) => {
+            const target = event.target;
+            if (target === dialog || target instanceof HTMLAnchorElement) {
+                dialog.close();
+            }
+        });
+    }
+</script>
+
+<style>
+    .site-menu {
+        /* Native <dialog> centers itself on the viewport by default; we
+           style only the chrome. Backdrop scroll-lock is automatic. */
+        border: none;
+        padding: 0;
+        background: var(--color-bg);
+        color: var(--color-fg);
+        width: min(420px, calc(100% - var(--pad) * 2));
+        max-height: calc(100dvh - var(--pad) * 2);
+        border-radius: var(--radius);
+        /* Subtle warmth — doesn't read as a heavy modal */
+        box-shadow:
+            0 1px 0 var(--color-border),
+            0 24px 64px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .site-menu::backdrop {
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
+    }
+
+    .site-menu__inner {
+        padding: var(--space-6);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-5);
+    }
+
+    .site-menu__close {
+        align-self: flex-end;
+        background: none;
+        border: 0;
+        padding: 0;
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+        cursor: pointer;
+    }
+
+    .site-menu__close:hover {
+        color: var(--color-fg);
+        text-decoration: underline;
+    }
+</style>

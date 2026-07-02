@@ -1,19 +1,16 @@
 ---
 // All-content index, page 1. Pages 2+ live at /content/page/N
-// (content/page/[page].astro). Both render through ContentIndex.astro.
-// This is an explicit route (not a `[...page]` catch-all) so the legacy
+// (content/page/[page].astro). Both render through ContentIndex.astro,
+// with fetch + error handling shared in @lib/content-index. This is an
+// explicit route (not a `[...page]` catch-all) so the legacy
 // `/content/...` redirects in astro.config have a concrete `/content`
 // destination to resolve against.
 export const prerender = false;
 
-import ContentIndex from "../../components/ContentIndex.astro";
-import { getLiveCollection } from "astro:content";
-import { setResponseCacheHeaders } from "../../lib/cache";
-import { getPage } from "../../lib/pagination";
-import type {
-    DocumentData,
-    PublicationData,
-} from "../../lib/farfield-loader";
+import ContentIndex from "@components/ContentIndex.astro";
+import { setResponseCacheHeaders } from "@lib/cache";
+import { loadContentIndex } from "@lib/content-index";
+import { getPage } from "@lib/pagination";
 import { isPreview } from "@lib/preview";
 import type { MenuMeta } from "@lib/menu";
 
@@ -24,37 +21,12 @@ export const menu: MenuMeta = {
 };
 
 const preview = isPreview(Astro);
-
-let items: DocumentData[] = [];
-let pubs: PublicationData[] = [];
-
-const [docsResult, pubsResult] = await Promise.all([
-    getLiveCollection("documents", { preview }),
-    getLiveCollection("publications"),
-]);
-if (docsResult.error) {
-    console.error(
-        "[/content] Farfield documents fetch failed:",
-        docsResult.error,
-    );
-} else {
-    items = docsResult.entries.map((e) => e.data);
-}
-if (pubsResult.error) {
-    console.error(
-        "[/content] Farfield publications fetch failed:",
-        pubsResult.error,
-    );
-} else {
-    pubs = pubsResult.entries.map((e) => e.data);
-}
+const { items, pubs, cacheHint, extraTags } = await loadContentIndex(preview);
 
 // Page 1 always exists (empty set still renders an empty page 1).
 const paged = getPage(items, 1, "/content")!;
 
-setResponseCacheHeaders(Astro.response, docsResult.cacheHint, {
-    extraTags: pubsResult.cacheHint?.tags,
-});
+setResponseCacheHeaders(Astro.response, cacheHint, { extraTags });
 ---
 
 <ContentIndex paged={paged} pubs={pubs} />

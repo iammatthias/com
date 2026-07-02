@@ -11,8 +11,8 @@
 // server's TTFB never pays Glass's latency.
 
 import type { APIRoute } from "astro";
-import { wsrvUrl, wsrvSrcSet } from "../../lib/farfield";
-import { ARCH_WIDTHS, ARCH_SIZES } from "../../lib/images";
+import { wsrvUrl, wsrvSrcSet } from "@lib/farfield";
+import { ARCH_WIDTHS, ARCH_SIZES } from "@lib/images";
 
 export const prerender = false;
 
@@ -100,20 +100,19 @@ function fmtCaptureDate(iso: string): string {
 
 export const GET: APIRoute = async () => {
     const posts = await fetchGlassPosts();
-    if (posts.length === 0) {
-        return new Response("null", {
+    // A 204 must have a null body — the Fetch spec makes
+    // `new Response("…", { status: 204 })` throw, which would turn a
+    // Glass outage into a 500 here. The client treats any unparseable
+    // body as "no pick" and keeps the placeholder.
+    const noPick = () =>
+        new Response(null, {
             status: 204,
             headers: { "Cache-Control": "no-store" },
         });
-    }
+    if (posts.length === 0) return noPick();
     const post = posts[Date.now() % posts.length];
     const featuredSrc = post.image1656x0 ?? post.image2048x2048 ?? null;
-    if (!featuredSrc) {
-        return new Response("null", {
-            status: 204,
-            headers: { "Cache-Control": "no-store" },
-        });
-    }
+    if (!featuredSrc) return noPick();
 
     const alt =
         post.series?.title ??

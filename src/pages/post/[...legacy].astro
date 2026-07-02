@@ -1,0 +1,11 @@
+---
+// Legacy `/post/<timestamp>` URLs (old site structure) go to the
+// all-content index — readers land somewhere coherent instead of a
+// 404. This used to be a config `redirects` entry ("/post/[id]" →
+// "/content"), but Astro 7 requires dynamic redirect destinations to
+// carry the source's params, so a many-to-one collapse must be a
+// route instead (same pattern as content/[...legacy].astro).
+export const prerender = false;
+
+return Astro.redirect("/content", 301);
+---

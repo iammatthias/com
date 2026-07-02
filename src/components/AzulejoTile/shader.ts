@@ -14,9 +14,8 @@ export const fragSrc = `
   uniform float uGround, uStraps;
   /* mutation slots — second motif merged with primary; -1.0 = no mutation */
   uniform float uCenter2, uWrapper2, uCornersB;
-  uniform float uV1, uV2, uV3;
+  uniform float uV1, uV2;
   uniform float uImp;
-  uniform float uBrushAngle;
   uniform vec2  uIperf;
   uniform vec3  uBg, uOl, uC1, uC2, uC3;
   uniform vec3  uGrout;
@@ -1657,10 +1656,24 @@ export const fragSrc = `
       groutOuterSDF += pert * 0.007 * (0.5 + 0.5 * imp);
     }
 
+    /* ── painter's registration — the design lands on the tile the way
+       a hand guides it: a hair off-center, a hair rotated. The tile
+       cut, grout, glaze, and lighting stay in true tile space; only
+       the painting wobbles. Seeded per tile via uIperf, so every tile
+       settles a little differently — one of the strongest "human hand"
+       tells on real azulejos. Amplitudes are capped so border frames
+       can graze, but never cross, the tile edge. */
+    vec2  regOff = (hash22(uIperf * 1.7 + vec2(3.1, 43.7)) - 0.5) * 0.014;
+    float regRot = (hash21(uIperf * 2.3 + vec2(7.7, 17.3)) - 0.5) * 0.045;
+    vec2 mp = rot(p - regOff, regRot);
+
+    /* kiln temperature drift for this firing — applied near the end */
+    float kiln = hash21(uIperf * 3.1 + vec2(13.0, 29.0)) - 0.5;
+
     /* domain warp — slow + fast octaves */
-    vec2 wLo = vec2(fbm(p * 2.5 + uIperf), fbm(p * 2.5 + uIperf + vec2(31.7, 12.3))) - 0.5;
-    vec2 wHi = vec2(fbm(p * 7.0 + uIperf), fbm(p * 7.0 + uIperf + vec2(13.7, 22.3))) - 0.5;
-    vec2 wp = p + (wLo * 0.012 + wHi * 0.010) * imp;
+    vec2 wLo = vec2(fbm(mp * 2.5 + uIperf), fbm(mp * 2.5 + uIperf + vec2(31.7, 12.3))) - 0.5;
+    vec2 wHi = vec2(fbm(mp * 7.0 + uIperf), fbm(mp * 7.0 + uIperf + vec2(13.7, 22.3))) - 0.5;
+    vec2 wp = mp + (wLo * 0.012 + wHi * 0.010) * imp;
 
     /* compose all SDF slots — straps merge with the main motif paint.
        Mutation: a second center/wrapper merges via SDF min; corners
@@ -1687,17 +1700,35 @@ export const fragSrc = `
       layers = mergeL(layers, dW2);
     }
 
+    /* ── per-motif hand jitter — every repeated corner/edge motif was
+       its own brush event, so each quadrant (corners) and each side
+       (edges) gets a hair of its own offset and rotation on top of the
+       whole-design registration. Corner jitter is keyed by quadrant
+       (its seams lie on the axes, where no corner motif lives); edge
+       jitter by side (seams on the diagonals, away from the edge
+       chains' midpoints) — so neither seam can cut through the motif
+       it perturbs. Rotation and translation preserve SDF distances,
+       so no scale correction is needed. */
+    vec2 quadKey = sign(wp + 1e-4);
+    vec2 wpQ = rot(wp - (hash22(uIperf + quadKey * 61.3) - 0.5) * 0.007,
+                   (hash21(uIperf + quadKey * 23.1) - 0.5) * 0.035);
+    float sideKey = (abs(wp.y) > abs(wp.x))
+        ? sign(wp.y + 1e-4) * 2.0
+        : sign(wp.x + 1e-4) * 3.0;
+    vec2 wpE = rot(wp - (hash22(uIperf + vec2(sideKey * 17.7, 9.1)) - 0.5) * 0.006,
+                   (hash21(uIperf + vec2(sideKey * 29.3, 4.7)) - 0.5) * 0.030);
+
     /* corners — bilateral mode if uCornersB >= 0:
        NE+SW (main diagonal) get motif A, NW+SE get motif B */
     if (uCornersB > -0.5) {
-      vec4 cA = dispCorners(uCorners,  wp, uV1);
-      vec4 cB = dispCorners(uCornersB, wp, uV2);
+      vec4 cA = dispCorners(uCorners,  wpQ, uV1);
+      vec4 cB = dispCorners(uCornersB, wpQ, uV2);
       bool mainDiag = (wp.x * wp.y) > 0.0;
       layers = mergeL(layers, mainDiag ? cA : cB);
     } else {
-      layers = mergeL(layers, dispCorners(uCorners, wp, uV1));
+      layers = mergeL(layers, dispCorners(uCorners, wpQ, uV1));
     }
-    layers = mergeL(layers, dispEdges  (uEdges,   wp, uV2));
+    layers = mergeL(layers, dispEdges  (uEdges,   wpE, uV2));
     layers = mergeL(layers, dispField  (uField,   wp, uV2));
     layers = mergeL(layers, dispStraps (uStraps,  wp));
     layers = mergeL(layers, dispFrame  (uFrame,   wp));
@@ -1828,6 +1859,31 @@ export const fragSrc = `
     float spot = smoothstep(0.80, 0.86, fbm(p * 9.0 + uIperf * 1.7));
     col = mix(col, vec3(0.28, 0.18, 0.10), spot * 0.22 * imp);
 
+    /* ── glaze crawl — a rare bare patch where the glaze pulled back
+       in the kiln and the biscuit shows through, taking the painted
+       design with it. Gated per tile: most tiles have none, so when
+       one appears it reads as that tile's personal flaw rather than
+       a house style. A glassy rim marks where the glaze beaded up. */
+    float crawlGate = step(0.62, hash21(uIperf * 5.7 + vec2(19.0, 3.0)));
+    float crawlN = fbm(p * 7.0 + uIperf * 4.3);
+    float crawl = smoothstep(0.865, 0.94, crawlN) * crawlGate;
+    float crawlRim = (smoothstep(0.80, 0.865, crawlN) -
+                      smoothstep(0.865, 0.94, crawlN)) * crawlGate;
+    vec3 crawlCol = clayWarmth * (0.86 + 0.18 * fbm(p * 55.0 + uIperf + 31.0));
+    col = mix(col, col * 1.06, max(crawlRim, 0.0) * 0.5);
+    col = mix(col, crawlCol, crawl * 0.85);
+
+    /* ── age fade — a soft abraded patch (about a quarter of tiles)
+       where decades of touch dulled the pigment back toward the
+       glaze. Painted areas lighten; bare glaze barely moves, so it
+       reads as wear on the design, not a smudge on the photo. */
+    float fadeGate = step(0.75, hash21(uIperf * 9.3 + vec2(2.0, 41.0)));
+    vec2 fadeC = (hash22(uIperf + vec2(19.0, 57.0)) - 0.5) * 0.5;
+    float fadeR = 0.12 + 0.16 * hash21(uIperf + vec2(67.0, 3.0));
+    float fade = (1.0 - smoothstep(fadeR * 0.35, fadeR, length(p - fadeC))) * fadeGate;
+    fade *= 0.55 + 0.45 * fbm(p * 9.0 + uIperf + 23.0);
+    col = mix(col, mix(col, uBg, 0.6), fade * 0.4);
+
     /* ── edge wear — concentrated near the tile boundary, asymmetric ── */
     float wearMask = smoothstep(-0.030, 0.000, tileSDF);
     float sideMask = 0.4 + 0.8 * fbm(p * 1.2 + uIperf * 2.0);
@@ -1869,6 +1925,56 @@ export const fragSrc = `
 
     /* tile vignette — applied before grout so grout stays uniform */
     col *= 1.0 - dot(p, p) * 0.13;
+
+    /* ── kiln drift — each firing leans a touch warm or cool, so tiles
+       from "different batches" sit differently against each other.
+       Applied to the tile only; grout is post-firing cement. */
+    col *= mix(vec3(1.025, 1.0, 0.972), vec3(0.975, 1.0, 1.028), 0.5 + kiln);
+
+    /* ── corner chips — each corner rolls independently for a seeded
+       bite where the glaze flaked and the warm biscuit shows. The
+       fracture line is fbm-roughened (conchoidal, not a neat disc)
+       and a darker rim marks the broken glaze edge. Matte: applied
+       after the specular pass, like the crawl. */
+    {
+      vec3 biscuit = clayWarmth * (0.82 + 0.22 * fbm(p * 40.0 + uIperf));
+      for (int i = 0; i < 4; i++) {
+        float fi = float(i);
+        float hRoll = hash21(uIperf + vec2(fi * 37.0, 11.0));
+        if (hRoll > 0.76) {
+          vec2 cs = vec2((i == 0 || i == 3) ? 1.0 : -1.0, (i < 2) ? 1.0 : -1.0);
+          vec2 off = (hash22(uIperf + vec2(fi * 71.0, 5.0)) - 0.5) * 0.02;
+          float chipR = 0.016 + 0.030 * hash21(uIperf + vec2(fi * 53.0, 29.0));
+          float chipSDF = length(p - (cs * 0.460 + off)) - chipR;
+          chipSDF += (fbm(p * 60.0 + uIperf + fi * 9.0) - 0.5) * 0.014;
+          float inTile = 1.0 - smoothstep(-0.001, 0.001, tileSDF);
+          float chip = (1.0 - smoothstep(-0.002, 0.002, chipSDF)) * inTile;
+          float rim = smoothstep(-0.009, -0.002, chipSDF) -
+                      smoothstep(-0.002, 0.002, chipSDF);
+          col = mix(col, col * 0.72, max(rim, 0.0) * inTile * 0.8);
+          col = mix(col, biscuit, chip);
+        }
+      }
+    }
+
+    /* ── structural hairline — a rare (about 1 in 7) long crack that
+       meanders edge to edge: a dark seam plus a faint light catch
+       alongside where the glaze edges tip toward the light. Distinct
+       from the fine craquelure net — this is the tile's one big scar. */
+    float hairGate = step(0.86, hash21(uIperf * 7.9 + vec2(5.0, 23.0)));
+    if (hairGate > 0.5) {
+      float hairAng = hash21(uIperf + vec2(77.0, 1.0)) * PI;
+      vec2 hairN = vec2(cos(hairAng), sin(hairAng));
+      float hairOff = (hash21(uIperf + vec2(91.0, 8.0)) - 0.5) * 0.5;
+      float along = dot(p, vec2(-hairN.y, hairN.x));
+      float hairD = dot(p, hairN) - hairOff
+                  + (fbm(vec2(along * 5.0, 3.7) + uIperf) - 0.5) * 0.06;
+      float inTileH = 1.0 - smoothstep(-0.006, 0.0, tileSDF);
+      float hair = (1.0 - smoothstep(0.0004, 0.0020, abs(hairD))) * inTileH;
+      float hairLite = (1.0 - smoothstep(0.0010, 0.0040, abs(hairD - 0.0045))) * inTileH;
+      col = mix(col, col * 0.58, hair * 0.60);
+      col = mix(col, col * 1.10, hairLite * 0.50);
+    }
 
     /* ── grout border ──
        Cement between tiles. Color is computed JS-side from the palette and

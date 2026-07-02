@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { mulberry32 } from "../AzulejoTile/recipe";
 
 // Adapted from the standalone `terrazzo.html` prototype. Key changes
 // for the banner use case:
@@ -39,18 +40,6 @@ const STYLES: Record<string, StylePreset> = {
     Shards:     { algo: "scatter",    density: 200, minSize: 5, maxSize: 90,  sides: 4, chaos: 78, sizeBias: 2.0 },
     Pebble:     { algo: "scatter",    density: 130, minSize: 8, maxSize: 60,  sides: 9, chaos: 22, sizeBias: 1.8 },
 };
-
-function mulberry32(seed: number): () => number {
-    let a = seed >>> 0;
-    return function () {
-        a |= 0;
-        a = (a + 0x6d2b79f5) | 0;
-        let t = a;
-        t = Math.imul(t ^ (t >>> 15), t | 1);
-        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-}
 
 function makeChipVerts(
     cx: number,
@@ -306,20 +295,30 @@ export default function TerrazzoBanner({ seed, palette, style, className }: Prop
         }
 
         // ────────── observe parent size ──────────
+        // `build()` regenerates and re-triangulates every chip, so
+        // coalesce resize bursts to one rebuild per frame — a live
+        // window drag fires ResizeObserver dozens of times per second.
+        // The final frame renders from the settled size, so the output
+        // for any given size is unchanged.
+        let rafId = 0;
         const ro = new ResizeObserver(() => {
-            const r = wrap.getBoundingClientRect();
-            const w = Math.max(1, Math.floor(r.width));
-            const h = Math.max(1, Math.floor(r.height));
-            if (w === lastWidth && h === lastHeight) return;
-            lastWidth = w;
-            lastHeight = h;
-            renderer.setSize(w, h, false);
-            const aspect = w / h;
-            build(aspect);
+            cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(() => {
+                const r = wrap.getBoundingClientRect();
+                const w = Math.max(1, Math.floor(r.width));
+                const h = Math.max(1, Math.floor(r.height));
+                if (w === lastWidth && h === lastHeight) return;
+                lastWidth = w;
+                lastHeight = h;
+                renderer.setSize(w, h, false);
+                const aspect = w / h;
+                build(aspect);
+            });
         });
         ro.observe(wrap);
 
         return () => {
+            cancelAnimationFrame(rafId);
             ro.disconnect();
             disposeChips();
             // Release the WebGL context explicitly. dispose() alone

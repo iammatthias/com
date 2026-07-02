@@ -6,15 +6,15 @@
 // parent so each context can tune density (compact on /now, roomier
 // on /feed/index).
 
-import { marked } from "marked";
-import { fmtDate } from "../lib/format";
-import { tilePreset } from "../lib/images";
+import { fmtDate } from "@lib/format";
+import { tilePreset } from "@lib/images";
 import {
     blobURL,
     type FeedEntryData,
     type ResolvedMedia,
-} from "../lib/farfield-loader";
-import { wsrvUrl, wsrvSrcSet } from "../lib/farfield";
+} from "@lib/farfield-loader";
+import { wsrvUrl, wsrvSrcSet } from "@lib/farfield";
+import { proseHtml } from "@lib/markdown-text";
 
 interface Props {
     item: FeedEntryData;
@@ -25,28 +25,29 @@ interface Props {
 
 const { item, media } = Astro.props;
 
-/**
- * Render the body as full markdown — embed URIs stripped because the
- * gallery already shows the media. Same treatment on every surface so
- * the card and the /feed/<rkey> detail view read identically.
- */
-function renderBodyPreview(body: string): string {
-    const prose = body.replace(
-        /!\[[^\]]*\]\((blob|series):\/\/[a-z0-9-]+\)\s*/g,
-        "",
-    );
-    return prose.trim()
-        ? (marked.parse(prose, { async: false }) as string)
-        : "";
-}
-
-const noteHtml = renderBodyPreview(item.body);
+// Body rendered as full markdown — embed URIs stripped because the
+// gallery already shows the media. Same treatment on every surface so
+// the card and the /feed/<rkey> detail view read identically.
+const noteHtml = proseHtml(item.body);
 const preset = tilePreset(media.length > 1);
 const fallbackW =
     preset.widths[Math.floor(preset.widths.length / 2)] ?? 720;
 ---
 
 <li class="feed-item">
+    <!-- Dateline leads the card — it's the entry's only header, so it
+         reads as context up top rather than an orphaned line at the
+         bottom. Its ::after still stretches the permalink hit area
+         across the whole card. -->
+    <a
+        href={`/feed/${item.rkey}`}
+        class="feed-permalink"
+        aria-label={`Open feed entry from ${fmtDate(item.createdAt)}`}
+    >
+        <time datetime={item.createdAt}>{fmtDate(item.createdAt)}</time>
+        <span aria-hidden="true">→</span>
+    </a>
+    {noteHtml && <div class="feed-note" set:html={noteHtml} />}
     {media.length > 0 && (
         <div
             class:list={[
@@ -80,13 +81,4 @@ const fallbackW =
             })}
         </div>
     )}
-    {noteHtml && <div class="feed-note" set:html={noteHtml} />}
-    <a
-        href={`/feed/${item.rkey}`}
-        class="feed-permalink"
-        aria-label={`Open feed entry from ${fmtDate(item.createdAt)}`}
-    >
-        <time datetime={item.createdAt}>{fmtDate(item.createdAt)}</time>
-        <span aria-hidden="true">→</span>
-    </a>
 </li>

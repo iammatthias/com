@@ -172,7 +172,7 @@ export interface DocumentData {
 
 export interface FeedEntryData {
     [key: string]: unknown;
-    /** Stable id from Farfield (`Post.id`). */
+    /** Stable id from Farfield (`Post.slug`). */
     rkey: string;
     /** CIDv1 fingerprint of the post's content. */
     cid: string;

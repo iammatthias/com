@@ -1,12 +1,13 @@
 ---
-import "../styles/globals.css";
-import MenuLinks from "../components/MenuLinks.astro";
+import "@styles/globals.css";
+import SiteMenu from "@components/SiteMenu.astro";
+import HeaderTile from "@components/HeaderTile.astro";
+import Schema from "@components/Schema.astro";
 import Breadcrumbs, {
     type BreadcrumbItem,
-} from "../components/Breadcrumbs.astro";
+} from "@components/Breadcrumbs.astro";
 import { isPreview } from "@lib/preview";
-import "@fontsource/metamorphous";
-import metamorphousWoff2 from "@fontsource/metamorphous/files/metamorphous-latin-400-normal.woff2?url";
+import { Font } from "astro:assets";
 
 interface Props {
     /** Page-specific title. Site name is appended automatically. */
@@ -23,19 +24,33 @@ interface Props {
     ogType?: "website" | "article";
     /** Override canonical URL. Defaults to current pathname under Astro.site. */
     canonical?: string | URL;
-    /** Emit robots: noindex,nofollow. */
+    /** Emit robots: noindex,nofollow (and drop the canonical). */
     noindex?: boolean;
     /**
      * Breadcrumb trail rendered above the main content. Last item should
      * have no `href` (current page). The brand link in the header is the
      * implicit home, so this trail starts at the first sub-section.
+     * Also emitted as BreadcrumbList JSON-LD.
      */
     breadcrumbs?: BreadcrumbItem[];
+    /**
+     * Article timestamps for article-shaped pages (doc detail, feed
+     * detail). Emits article:published_time / article:modified_time OG
+     * meta and a BlogPosting entity in the JSON-LD graph.
+     */
+    article?: {
+        publishedTime: string;
+        modifiedTime?: string;
+    };
+    /** The page is about the site's author (/now) — its JSON-LD
+     *  WebPage becomes a ProfilePage with the Person as mainEntity. */
+    profilePage?: boolean;
 }
 
 const SITE_NAME = "iammatthias";
 const SITE_URL = "https://iammatthias.com";
-const DEFAULT_DESCRIPTION = "Personal site of Matthias Jordan";
+const DEFAULT_DESCRIPTION =
+    "Matthias Jordan's cozy corner of the web. Photographs, projects, recipes, and notes, open and personal.";
 
 const {
     title,
@@ -45,6 +60,8 @@ const {
     canonical,
     noindex = false,
     breadcrumbs = [],
+    article,
+    profilePage = false,
 } = Astro.props;
 
 // `siteOrigin` is intentionally derived from `Astro.site` (set in
@@ -108,24 +125,38 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
 
         <title>{fullTitle}</title>
         <meta name="description" content={description} />
-        <link rel="canonical" href={canonicalURL} />
-        {noindex && <meta name="robots" content="noindex,nofollow" />}
+        <!-- Indexable pages get explicit snippet directives (let search
+             engines show full-size snippets/previews); noindex pages get
+             no canonical — the two are contradictory signals. -->
+        {noindex ? (
+            <meta name="robots" content="noindex,nofollow" />
+        ) : (
+            <>
+                <meta
+                    name="robots"
+                    content="max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+                />
+                <link rel="canonical" href={canonicalURL} />
+            </>
+        )}
 
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-        <!-- Metamorphous is the serif used for all headings; preloading
-             the latin woff2 keeps the swap window short on first visit.
-             Same hashed asset the @fontsource CSS resolves to, so this
-             never double-downloads. -->
-        <link
-            rel="preload"
-            as="font"
-            type="font/woff2"
-            href={metamorphousWoff2}
-            crossorigin
+        <!-- Metamorphous is the serif used for all headings. The Font
+             component emits the @font-face, defines --font-metamorphous
+             (with a metric-adjusted fallback so headings don't shift on
+             swap), and preloading the latin subset keeps the first-visit
+             swap window short (latin-ext stays lazy via unicode-range,
+             same as the old hand-written preload). globals.css maps
+             --font-serif onto it. -->
+        <Font
+            cssVariable="--font-metamorphous"
+            preload={[{ subset: "latin" }]}
         />
 
-        <!-- Open Graph -->
+        <!-- Open Graph. Twitter falls back to og:* for everything except
+             the card type, so the old twitter:url/title/description/image
+             duplicates are intentionally gone. -->
         <meta property="og:site_name" content={SITE_NAME} />
         <meta property="og:type" content={ogType} />
         <meta property="og:url" content={canonicalURL} />
@@ -135,13 +166,33 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content={ogTitle} />
-
-        <!-- Twitter -->
+        {article && (
+            <>
+                <meta
+                    property="article:published_time"
+                    content={article.publishedTime}
+                />
+                {article.modifiedTime && (
+                    <meta
+                        property="article:modified_time"
+                        content={article.modifiedTime}
+                    />
+                )}
+            </>
+        )}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={canonicalURL} />
-        <meta name="twitter:title" content={ogTitle} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={ogImageURL} />
+
+        <Schema
+            siteOrigin={siteOrigin}
+            siteName={SITE_NAME}
+            canonical={canonicalURL.toString()}
+            title={ogTitle}
+            description={description}
+            image={ogImageURL.toString()}
+            breadcrumbs={breadcrumbs}
+            article={article}
+            profilePage={profilePage}
+        />
 
         <!-- Feeds -->
         <link
@@ -150,7 +201,7 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
             title={`${SITE_NAME} RSS`}
             href="/rss.xml"
         />
-        <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
         <slot name="head" />
     </head>
@@ -164,42 +215,7 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
         <header>
             <slot name="header">
                 <a href="/">home</a>
-                <!--
-          Header tile is one of the 100 pre-rendered azulejo snapshots
-          (worker-og/azulejo, mirrored into public/azulejo) instead of
-          the live WebGL AzulejoTile island. The island pulled React +
-          three.js (~250KB gz) onto every page for a 32px decorative
-          element; a 13KB JPG reads identically at this size. The
-          inline script picks a random tile per load to keep the
-          per-visit variance; <noscript> pins a fixed tile. The 45°
-          rotation turns the square into a diamond.
-        -->
-                <span class="header-tile">
-                    <img
-                        id="header-azulejo"
-                        width="32"
-                        height="32"
-                        alt="iammatthias"
-                        decoding="async"
-                    />
-                    <script is:inline>
-                        {
-                            const n = String(
-                                1 + Math.floor(Math.random() * 100),
-                            ).padStart(3, "0");
-                            document.getElementById("header-azulejo").src =
-                                "/azulejo/" + n + ".jpg";
-                        }
-                    </script>
-                    <noscript>
-                        <img
-                            src="/azulejo/001.jpg"
-                            width="32"
-                            height="32"
-                            alt="iammatthias"
-                        />
-                    </noscript>
-                </span>
+                <HeaderTile />
                 <a href="/menu" data-menu-trigger>menu</a>
             </slot>
         </header>
@@ -215,72 +231,10 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
             </slot>
         </footer>
 
-        <!--
-      Progressive-enhancement menu. The header's `<a href="/menu">` link
-      navigates to /menu when JS is off; the script below intercepts the
-      click on any element with `[data-menu-trigger]` and opens this
-      <dialog> instead. Native <dialog> handles ESC, focus trap, and
-      backdrop scroll lock for free.
-    -->
-        <dialog id="site-menu" class="site-menu" aria-label="Site navigation">
-            <div class="site-menu__inner">
-                <button
-                    type="button"
-                    class="site-menu__close"
-                    aria-label="Close menu"
-                    data-menu-close>close</button
-                >
-                <MenuLinks />
-            </div>
-        </dialog>
+        <SiteMenu />
 
         <script>
-            const dialog = document.getElementById("site-menu");
-            if (dialog instanceof HTMLDialogElement) {
-                for (const trigger of document.querySelectorAll(
-                    "[data-menu-trigger]",
-                )) {
-                    trigger.addEventListener("click", (event) => {
-                        event.preventDefault();
-                        dialog.showModal();
-                    });
-                }
-                for (const closer of dialog.querySelectorAll(
-                    "[data-menu-close]",
-                )) {
-                    closer.addEventListener("click", () => dialog.close());
-                }
-                // Click on the backdrop (i.e. on the <dialog> element itself,
-                // outside its inner content) closes the menu.
-                dialog.addEventListener("click", (event) => {
-                    if (event.target === dialog) dialog.close();
-                });
-                // Close after navigation so the menu doesn't linger on back.
-                dialog.addEventListener("click", (event) => {
-                    const target = event.target;
-                    if (target instanceof HTMLAnchorElement) dialog.close();
-                });
-            }
-        </script>
-
-        <script>
-            // Image figures carry the blob's dominant colour as an inline
-            // background — a load-time placeholder that fills the
-            // aspect-ratio box before the bytes arrive. It must be cleared
-            // once the image loads, or it shows through transparent PNGs
-            // forever. (The homepage arch is a <div>, not a <figure>, so
-            // it keeps its frame colour.)
-            for (const fig of document.querySelectorAll(
-                'figure[style*="background"]',
-            )) {
-                const img = fig.querySelector("img");
-                if (!img) continue;
-                const clear = () => {
-                    (fig as HTMLElement).style.background = "";
-                };
-                if (img.complete) clear();
-                else img.addEventListener("load", clear, { once: true });
-            }
+            import "@src/scripts/clear-figure-placeholders";
         </script>
     </body>
 </html>
@@ -354,31 +308,6 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
         justify-self: end;
     }
 
-    /* Header tile slot — fixed footprint + placeholder. The slot is 32×32
-     in layout flow regardless of image load state, so the header doesn't
-     reflow while the tile fetches. The rotation makes the tile read as a
-     diamond.
-
-     Background uses the warm beige border token rather than --color-fg,
-     so the placeholder reads as a gentle diamond hint instead of
-     flashing solid near-black before the image paints. */
-    .header-tile {
-        display: inline-block;
-        width: 32px;
-        height: 32px;
-        background: var(--color-border);
-        transform: rotate(45deg);
-        transform-origin: center;
-        overflow: hidden;
-    }
-
-    .header-tile img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
     main {
         /* fills space between header and footer; content sits near the top */
         flex: 1 0 auto;
@@ -403,52 +332,5 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
     }
     main > :global(.breadcrumbs + *) {
         margin-top: var(--space-5);
-    }
-
-    /* ---------- site menu dialog ---------- */
-
-    .site-menu {
-        /* Native <dialog> centers itself on the viewport by default; we
-       style only the chrome. Backdrop scroll-lock is automatic. */
-        border: none;
-        padding: 0;
-        background: var(--color-bg);
-        color: var(--color-fg);
-        width: min(420px, calc(100% - var(--pad) * 2));
-        max-height: calc(100dvh - var(--pad) * 2);
-        border-radius: var(--radius);
-        /* Subtle warmth — doesn't read as a heavy modal */
-        box-shadow:
-            0 1px 0 var(--color-border),
-            0 24px 64px -12px rgba(0, 0, 0, 0.25);
-    }
-
-    .site-menu::backdrop {
-        background: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(2px);
-    }
-
-    .site-menu__inner {
-        padding: var(--space-6);
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-5);
-    }
-
-    .site-menu__close {
-        align-self: flex-end;
-        background: none;
-        border: 0;
-        padding: 0;
-        font-family: var(--font-serif);
-        font-style: italic;
-        font-size: var(--fs-sm);
-        color: var(--color-muted);
-        cursor: pointer;
-    }
-
-    .site-menu__close:hover {
-        color: var(--color-fg);
-        text-decoration: underline;
     }
 </style>

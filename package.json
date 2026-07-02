@@ -9,28 +9,28 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "smoke": "node scripts/smoke.mjs",
+    "overflow": "node scripts/overflow-check.mjs",
     "astro": "astro",
     "snapshot:azulejos": "node scripts/snapshot-azulejos.mjs"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.2.2",
-    "@astrojs/react": "^5.0.4",
-    "@astrojs/rss": "^4.0.18",
-    "@astrojs/sitemap": "^3.7.2",
-    "@fontsource/metamorphous": "^5.2.8",
-    "astro": "^6.1.10",
-    "marked": "^18.0.2",
-    "mermaid": "^11.15.0",
+    "@astrojs/cloudflare": "^14.1.0",
+    "@astrojs/react": "^6.0.0",
+    "@astrojs/rss": "^4.0.19",
+    "astro": "^7.0.5",
+    "marked": "^18.0.5",
+    "mermaid": "^11.16.0",
     "p-limit": "^7.3.0",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "three": "^0.184.0",
-    "viem": "^2.48.4"
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "three": "^0.185.1",
+    "viem": "^2.54.1"
   },
   "devDependencies": {
-    "@types/react": "^19.2.14",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@types/three": "^0.184.0",
-    "playwright": "^1.59.1"
+    "@types/three": "^0.185.0",
+    "playwright": "^1.61.1"
   }
 }

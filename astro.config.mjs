@@ -1,15 +1,26 @@
 // @ts-check
 import path from "node:path";
-import { defineConfig, envField } from "astro/config";
-import sitemap from "@astrojs/sitemap";
+import { defineConfig, envField, fontProviders } from "astro/config";
 import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
     site: "https://iammatthias.com",
+    // Prerendered pages emit `resume.html` instead of `resume/index.html`,
+    // so Cloudflare's asset layer serves `/resume` directly instead of
+    // 307-redirecting to `/resume/`. Keeps the served URL identical to
+    // internal links and rel=canonical (one URL form site-wide; the SSR
+    // half is enforced by src/middleware.ts).
+    build: {
+        format: "file",
+    },
+    // Prefetch links on hover — with the 60s edge cache on rendered HTML,
+    // the next page is usually in the browser before the click lands.
+    prefetch: {
+        prefetchAll: true,
+    },
     integrations: [
-        sitemap(),
         react(),
         // Dev-only internal routes — injected only under `astro dev`, so
         // they never ship in the production build. The azulejo snapshot
@@ -25,8 +36,33 @@ export default defineConfig({
                         pattern: "/internal/azulejo/[seed]",
                         entrypoint: "./src/dev-routes/azulejo-seed.astro",
                     });
+                    injectRoute({
+                        pattern: "/internal/terrazzo/[seed]",
+                        entrypoint: "./src/dev-routes/terrazzo-seed.astro",
+                    });
                 },
             },
+        },
+    ],
+    // Astro Fonts API replaces the old manual setup (@fontsource CSS
+    // import + hand-written preload <link> in BaseLayout). It serves
+    // the same files but adds a metric-adjusted fallback font, so text
+    // set in Metamorphous doesn't shift when the webfont swaps in —
+    // Metamorphous is metrically nothing like the generic serif that
+    // used to stand in for it. Font files are downloaded at build time
+    // and self-hosted under /_astro/fonts (immutable-cached via the
+    // adapter's _headers). The fontsource provider (vs npm) carries
+    // per-subset metadata, which the latin-only preload in BaseLayout
+    // filters on.
+    fonts: [
+        {
+            provider: fontProviders.fontsource(),
+            name: "Metamorphous",
+            cssVariable: "--font-metamorphous",
+            weights: [400],
+            styles: ["normal"],
+            subsets: ["latin"],
+            fallbacks: ["serif"],
         },
     ],
     env: {
@@ -67,19 +103,28 @@ export default defineConfig({
         // /about merged into /now during the redesign — preserve any
         // inbound links from the old site / search results / RSS readers.
         "/about": "/now",
-        // Old `/post/<timestamp>` URLs go to the all-content index —
-        // readers land somewhere coherent instead of a 404. Legacy
-        // `/content/...` URLs are handled by the catch-all route at
-        // src/pages/content/[...legacy].astro rather than redirects
-        // here: a `/content/[publication]/[slug]` config redirect also
-        // captured `/content/page/N`, shadowing deep pagination.
-        "/post/[id]": "/content",
+        // @astrojs/sitemap used to serve the index here; the dynamic
+        // endpoint (src/pages/sitemap.xml.ts) replaced it so SSR'd
+        // content pages are included. Preserve the registered URL.
+        "/sitemap-index.xml": "/sitemap.xml",
+        // Old `/post/<timestamp>` and `/content/...` URLs are handled
+        // by catch-all routes (src/pages/post/[...legacy].astro and
+        // src/pages/content/[...legacy].astro) rather than redirects
+        // here: Astro 7 requires a dynamic redirect's destination to
+        // carry the source params, so many-to-one collapses must be
+        // routes. (The /content one also predates that — a config
+        // redirect there shadowed /content/page/N pagination.)
     },
     adapter: cloudflare({
-        // Astro 6 + @astrojs/cloudflare 13.x: prerender pass runs on
-        // node, not in the workerd container, so build is faster and
-        // doesn't require workerd-compatible code at build time.
+        // Prerender pass runs on node, not in the workerd container,
+        // so build is faster and doesn't require workerd-compatible
+        // code at build time.
         prerenderEnvironment: "node",
+        // The site never uses astro:assets — every image is either a
+        // static /azulejo asset or proxied through wsrv.nl. Adapter 14
+        // defaults to 'cloudflare-binding', which wants an IMAGES
+        // binding provisioned at deploy; passthrough skips all that.
+        imageService: "passthrough",
     }),
     vite: {
         resolve: {
@@ -104,29 +149,15 @@ export default defineConfig({
             // lose state in confusing ways across edits.
             dedupe: ["react", "react-dom", "three"],
         },
-        optimizeDeps: {
-            // Pre-declare every dep the dev-mode crawl would otherwise
-            // discover lazily. Each late discovery triggers a deps
-            // re-optimize, which bumps the browserHash on `?v=` query
-            // strings. Pages mid-load end up with chunks from two
-            // generations — two React copies, a null dispatcher, and
-            // an "Invalid hook call" on the next render.
-            //
-            // jsx-runtime + jsx-dev-runtime sit next to React and are
-            // imported by the JSX that Astro's React renderer emits.
-            // @astrojs/react/client.js is the island hydration entry.
-            // The dev-toolbar entrypoint is what triggers the second
-            // reoptimize on the very first page that mounts an island.
-            include: [
-                "react",
-                "react-dom",
-                "react-dom/client",
-                "react/jsx-runtime",
-                "react/jsx-dev-runtime",
-                "three",
-                "@astrojs/react/client.js",
-                "astro/runtime/client/dev-toolbar/entrypoint.js",
-            ],
-        },
+        // NOTE: this config used to carry an `optimizeDeps.include` list
+        // (React + astro dev-toolbar entries) working around a Vite 5/6
+        // dev bug where late dep discovery re-optimized mid-load and
+        // produced two React copies ("Invalid hook call"). Under Astro 7
+        // / Vite 8's per-environment optimizer the list backfired: it
+        // pulled astro internals into the workerd SSR dep cache, whose
+        // hashed chunks went stale on re-optimize ("The file does not
+        // exist at …/deps_ssr/errors-data-*.js"). Removed — if the
+        // two-React dev bug ever resurfaces, prefer per-environment
+        // includes over resurrecting the old list.
     },
 });

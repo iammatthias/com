@@ -1,0 +1,132 @@
+---
+// JSON-LD structured data — a single linked @graph per page, following
+// the shape recommended in https://joost.blog/astro-seo-complete-guide/:
+// site-wide WebSite + Person entities, a WebPage for the current URL,
+// a BreadcrumbList when the page renders breadcrumbs, and a BlogPosting
+// when the page is an article. Entities reference each other via @id
+// so crawlers see one connected graph rather than floating fragments.
+//
+// The Person entity doubles as Knowledge-Panel groundwork (see
+// https://benobi.one/panel): the homepage WebPage is `about` the
+// Person, /now is a ProfilePage whose mainEntity is the Person, and
+// `sameAs` ties the entity to every off-site profile. All identity
+// facts come from lib/identity.ts.
+
+import type { BreadcrumbItem } from "./Breadcrumbs.astro";
+import { AUTHOR, SOCIAL_LINKS } from "@lib/identity";
+
+interface Props {
+    siteOrigin: string;
+    siteName: string;
+    /** Canonical URL of the current page. */
+    canonical: string;
+    title: string;
+    description: string;
+    /** Absolute URL of the page's OG image. */
+    image?: string;
+    breadcrumbs?: BreadcrumbItem[];
+    /** Present on article pages — becomes a BlogPosting entity. */
+    article?: {
+        publishedTime: string;
+        modifiedTime?: string;
+    };
+    /** The page is about the site's author (/now) — typed as a
+     *  ProfilePage with the Person as its mainEntity. */
+    profilePage?: boolean;
+}
+
+const {
+    siteOrigin,
+    siteName,
+    canonical,
+    title,
+    description,
+    image,
+    breadcrumbs = [],
+    article,
+    profilePage = false,
+} = Astro.props;
+
+const origin = siteOrigin.replace(/\/$/, "");
+const websiteId = `${origin}/#website`;
+const personId = `${origin}/#person`;
+const webpageId = `${canonical}#webpage`;
+const isHomepage = canonical === `${origin}/`;
+
+const graph: Record<string, unknown>[] = [
+    {
+        "@type": "WebSite",
+        "@id": websiteId,
+        url: `${origin}/`,
+        name: siteName,
+        publisher: { "@id": personId },
+    },
+    {
+        "@type": "Person",
+        "@id": personId,
+        name: AUTHOR.name,
+        alternateName: AUTHOR.alternateName,
+        description: AUTHOR.description,
+        knowsAbout: AUTHOR.knowsAbout,
+        url: `${origin}/`,
+        sameAs: SOCIAL_LINKS.map((l) => l.url),
+    },
+    {
+        "@type": profilePage ? "ProfilePage" : "WebPage",
+        "@id": webpageId,
+        url: canonical,
+        name: title,
+        description,
+        isPartOf: { "@id": websiteId },
+        // Anchor the entity: the homepage is *about* the Person, and a
+        // profile page's main entity *is* the Person.
+        ...(isHomepage && { about: { "@id": personId } }),
+        ...(profilePage && { mainEntity: { "@id": personId } }),
+        ...(image && { image }),
+        ...(article && {
+            datePublished: article.publishedTime,
+            ...(article.modifiedTime && {
+                dateModified: article.modifiedTime,
+            }),
+        }),
+    },
+];
+
+if (breadcrumbs.length > 0) {
+    graph.push({
+        "@type": "BreadcrumbList",
+        "@id": `${canonical}#breadcrumbs`,
+        itemListElement: [
+            // The header brand link is the implicit home crumb — mirror
+            // that here so the trail starts somewhere absolute.
+            { "@type": "ListItem", position: 1, name: "home", item: `${origin}/` },
+            ...breadcrumbs.map((crumb, i) => ({
+                "@type": "ListItem",
+                position: i + 2,
+                name: crumb.label,
+                ...(crumb.href && { item: `${origin}${crumb.href}` }),
+            })),
+        ],
+    });
+}
+
+if (article) {
+    graph.push({
+        "@type": "BlogPosting",
+        "@id": `${canonical}#article`,
+        headline: title,
+        description,
+        url: canonical,
+        mainEntityOfPage: { "@id": webpageId },
+        author: { "@id": personId },
+        publisher: { "@id": personId },
+        datePublished: article.publishedTime,
+        ...(article.modifiedTime && { dateModified: article.modifiedTime }),
+        ...(image && { image }),
+    });
+}
+
+const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
+---
+
+<script type="application/ld+json" set:html={jsonLd} is:inline />

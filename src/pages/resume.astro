@@ -1,5 +1,5 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = { group: "personal", order: 2 };
@@ -8,14 +8,13 @@ const resumeData = [
     {
         section: "Present",
         entries: [
-            { date: "2025 → Current", company: "Pinata", position: "DevRel" },
             {
-                date: "2024 → Current",
-                company: "day---break",
-                position: "Owner",
+                date: "2026 → Current",
+                company: "----------",
+                position: "Solutions Engineer",
             },
             {
-                date: "2012 → Current",
+                date: "Since I first picked up a camera until the day I die",
                 company: "Photographer",
                 position: "Fine art & freelance",
             },
@@ -24,6 +23,16 @@ const resumeData = [
     {
         section: "Historic",
         entries: [
+            {
+                date: "2025 → 2026",
+                company: "Pinata",
+                position: "Developer Relations",
+            },
+            {
+                date: "2024 → 2026",
+                company: "day---break",
+                position: "Owner",
+            },
             {
                 date: "2023 → 2024",
                 company: "Ice Barrel (Contractor)",
@@ -71,39 +80,30 @@ const resumeData = [
 >
     <article class="prose">
         <h1>Resume</h1>
-        {resumeData.map((section) => (
-            <section>
-                <h2>{section.section}</h2>
-                <dl>
-                    {section.entries.map((entry) => (
-                        <div class="entry">
-                            <dt>{entry.company}</dt>
-                            <dd class="position">{entry.position}</dd>
-                            <dd class="date">{entry.date}</dd>
-                        </div>
-                    ))}
-                </dl>
-            </section>
-        ))}
+        {
+            resumeData.map((section) => (
+                <section>
+                    <h2>{section.section}</h2>
+                    <dl>
+                        {section.entries.map((entry) => (
+                            <div class="entry">
+                                <dt>{entry.company}</dt>
+                                <dd class="date">{entry.date}</dd>
+                                <dd class="position">{entry.position}</dd>
+                            </div>
+                        ))}
+                    </dl>
+                </section>
+            ))
+        }
     </article>
 </BaseLayout>
 
 <style>
-    .prose {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-6);
-        max-width: 60ch;
-    }
-
-    .prose > h1 {
-        font-family: var(--font-serif);
-    }
+    /* `.prose` (column, rhythm, headings) comes from globals.css —
+       this page only adds the section dividers and the entry list. */
 
     .prose section {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-3);
         padding-top: var(--space-4);
         border-top: 1px solid var(--color-border);
     }
@@ -111,12 +111,6 @@ const resumeData = [
     .prose section:first-of-type {
         border-top: 0;
         padding-top: 0;
-    }
-
-    .prose h2 {
-        font-family: var(--font-serif);
-        font-style: italic;
-        font-weight: var(--fw-normal);
     }
 
     dl {
@@ -129,7 +123,7 @@ const resumeData = [
     .entry {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: var(--space-1);
     }
 
     dt {

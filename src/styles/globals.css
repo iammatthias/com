@@ -4,9 +4,10 @@
     --font-sans:
         ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-serif:
-        Metamorphous, ui-serif, Georgia, Cambria, "Times New Roman", Times,
-        serif;
+    /* --font-metamorphous is defined by the <Font> component in
+       BaseLayout (Astro Fonts API): the webfont plus a metric-adjusted
+       serif fallback, so headings keep their box while the font loads. */
+    --font-serif: var(--font-metamorphous, ui-serif, Georgia, serif);
     --font-mono:
         ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
         "Liberation Mono", monospace;
@@ -133,6 +134,12 @@ body {
     background: var(--color-bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Graceful overflow default, inherited by all text: a word only
+       breaks when it alone can't fit its line (long pasted URLs,
+       unbroken tokens in feed posts). Normal prose is unaffected.
+       Token-like contexts opt into harder breaking below; hashes/CIDs
+       keep their explicit `word-break: break-all`. */
+    overflow-wrap: break-word;
 }
 
 img,
@@ -260,6 +267,11 @@ samp {
     padding: 0.1em 0.35em;
     background: var(--color-border);
     border-radius: 3px;
+    /* Inline code is token-like (paths, env vars, URLs) with no natural
+       break points — allow breaks anywhere rather than letting a long
+       token push the column wide. `anywhere` also shrinks min-content,
+       so a token inside a flex/grid child can't blow the track out. */
+    overflow-wrap: anywhere;
 }
 
 kbd {
@@ -288,9 +300,14 @@ pre code {
     font-size: inherit;
 }
 
-/* Tables — full width by default, header row visually distinct. */
+/* Tables — full width by default, header row visually distinct.
+   `display: block` + overflow lets a table that's intrinsically wider
+   than the reading column scroll horizontally (same treatment as wide
+   code blocks) instead of stretching the page on narrow viewports. */
 table {
+    display: block;
     width: 100%;
+    overflow-x: auto;
     border-collapse: collapse;
     font-size: var(--fs-sm);
 }
@@ -643,24 +660,37 @@ video {
 }
 
 /* Lay-out for one or many media items inside a single entry. One
-   image fills the column; a gallery uses a 2-up grid that drops to
-   single-column on the narrowest viewports. */
+   image fills the column; multiple images become a carousel. */
 .feed-media {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
 }
 
+/* Threads-style carousel for multi-image entries: one row at a shared
+   height, each tile at its natural aspect ratio, horizontal scroll
+   with snap. The next tile peeking past the edge is the scroll
+   affordance — no JS, no controls. Tiles keep their width/height
+   attributes, so the browser reserves each tile's width from the
+   aspect ratio before the image loads. */
 .feed-media--gallery {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-2);
+    flex-direction: row;
+    align-items: stretch;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    /* The card's stretched permalink overlay sits above the card body;
+       lift the carousel over it so swipe/scroll gestures reach the
+       scroll container instead of the page. (Single images stay under
+       the overlay and keep click-through to the entry.) */
+    position: relative;
+    z-index: 1;
+    /* Scroll affordance is the peeking tile, as on every phone UI —
+       a scrollbar under the photos reads as clutter. */
+    scrollbar-width: none;
 }
 
-@media (min-width: 480px) {
-    .feed-media--gallery {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.feed-media--gallery::-webkit-scrollbar {
+    display: none;
 }
 
 .feed-tile {
@@ -673,6 +703,28 @@ video {
     display: block;
     width: 100%;
     height: auto;
+}
+
+.feed-media--gallery .feed-tile {
+    flex: none;
+    height: 340px;
+    /* Never let one wide tile fill the row completely — the sliver of
+       the next tile is what says "scroll me". */
+    max-width: calc(100% - var(--space-7));
+    scroll-snap-align: start;
+}
+
+.feed-media--gallery .feed-tile img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 480px) {
+    .feed-media--gallery .feed-tile {
+        height: 260px;
+    }
 }
 
 /* Full markdown body, same body size as the rest of the prose on
@@ -754,6 +806,54 @@ video {
     font-size: var(--fs-sm);
     font-family: var(--font-serif);
     font-style: italic;
+}
+
+/* ---------- shared prose-page primitive ---------- */
+/*
+ * Narrow reading pages (/now, /resume, /onchain-analytics). The page
+ * owns any extra section chrome (borders, list styling) via its own
+ * scoped styles; this primitive owns the column, the rhythm, and the
+ * heading voice so those pages can't drift apart.
+ */
+.prose {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    max-width: 60ch;
+}
+
+.prose h1 {
+    font-family: var(--font-serif);
+}
+
+.prose section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.prose h2 {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: var(--fw-normal);
+}
+
+/* "see all →" footnote sitting next to a section heading (homepage
+   Recent, /now Recent updates). Small, muted, doesn't compete with the
+   heading itself. */
+.see-all {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--fs-sm);
+    color: var(--color-muted);
+    text-decoration: none;
+    margin-left: var(--space-2);
+    white-space: nowrap;
+}
+
+.see-all:hover {
+    color: var(--color-fg);
+    text-decoration: underline;
 }
 
 /* ---------- pagination ---------- */

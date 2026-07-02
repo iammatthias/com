@@ -1,9 +1,9 @@
 ---
 export const prerender = false;
 
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import { getLiveCollection } from "astro:content";
-import { setResponseCacheHeaders } from "../../lib/cache";
+import { setResponseCacheHeaders } from "@lib/cache";
 import { isPreview } from "@lib/preview";
 import type { MenuMeta } from "@lib/menu";
 

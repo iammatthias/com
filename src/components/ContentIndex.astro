@@ -6,14 +6,14 @@
 // like the other list surfaces) because the legacy `/content/...` redirects
 // in astro.config need a concrete `/content` route to target.
 
-import BaseLayout from "../layouts/BaseLayout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import FeedCard from "./FeedCard.astro";
 import Pagination from "./Pagination.astro";
-import type { PageData } from "../lib/pagination";
+import type { PageData } from "@lib/pagination";
 import type {
     DocumentData,
     PublicationData,
-} from "../lib/farfield-loader";
+} from "@lib/farfield-loader";
 
 interface Props {
     paged: PageData<DocumentData>;

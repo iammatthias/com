@@ -19,6 +19,15 @@ export const FEED_SIZES =
     "(max-width: 768px) calc(100vw - 32px), 60ch";
 
 /**
+ * Feed gallery carousel tiles. Tiles render at a shared height
+ * (~340px desktop / ~260px mobile) with natural aspect ratios, so the
+ * typical rendered width lands between ~250px (portrait) and ~510px
+ * (3:2 landscape). 80vw on phones covers a near-full-width tile.
+ */
+export const CAROUSEL_WIDTHS = [320, 480, 640, 800];
+export const CAROUSEL_SIZES = "(max-width: 768px) 80vw, 520px";
+
+/**
  * Homepage arch (the Glass-sourced featured photo). The arch is
  * 70dvh tall × 6/7 aspect → about 60dvh wide. On mobile it shrinks to
  * column width minus body padding. Widths cover 1× → 2× retina across
@@ -41,18 +50,17 @@ export const ZOOM_SIZES = "100vw";
 export const ZOOM_FALLBACK_WIDTH = 1920;
 
 /**
- * Pick the right srcset widths + `sizes` string for a tile depending
- * on whether it's the only image in its row or one of several inside
- * a gallery. Sizes drives the browser's responsive selection — if
- * `sizes` overstates the rendered width, the browser fetches a
- * needlessly-large variant. Galleries lay out at roughly half-column,
- * so the smaller `SERIES_*` preset fits.
+ * Pick the right srcset widths + `sizes` string for a feed tile
+ * depending on whether it's the only image in its entry or one of
+ * several inside the gallery carousel. Sizes drives the browser's
+ * responsive selection — if `sizes` overstates the rendered width,
+ * the browser fetches a needlessly-large variant.
  */
 export function tilePreset(isGallery: boolean): {
     widths: readonly number[];
     sizes: string;
 } {
     return isGallery
-        ? { widths: SERIES_WIDTHS, sizes: SERIES_SIZES }
+        ? { widths: CAROUSEL_WIDTHS, sizes: CAROUSEL_SIZES }
         : { widths: FIG_WIDTHS, sizes: FIG_SIZES };
 }

@@ -111,7 +111,8 @@ export interface Entry {
     cid: string;
     title: string;
     excerpt?: string;
-    /** Markdown body — run through `resolveBody()` before rendering. */
+    /** Markdown body — `blob://` / `series://` embeds are resolved at
+     *  render time (see lib/doc-render.ts). */
     body: string;
     tags: string[];
     /** Always `true` on the public API; kept for type compatibility. */
@@ -402,53 +403,7 @@ export function wsrvSrcSet(
     return widths.map((w) => `${wsrvUrl(src, w, opts)} ${w}w`).join(", ");
 }
 
-// ---------- body resolution helpers ----------------------------------------
-
-/**
- * Async-aware `String.prototype.replace`. Used by `resolveBody`.
- */
-async function replaceAsync(
-    s: string,
-    re: RegExp,
-    fn: (match: string, ...groups: string[]) => Promise<string>,
-): Promise<string> {
-    const jobs: Promise<string>[] = [];
-    s.replace(re, (m, ...g) => {
-        jobs.push(fn(m, ...g));
-        return m;
-    });
-    const done = await Promise.all(jobs);
-    return s.replace(re, () => done.shift()!);
-}
-
-// Series slugs may contain hyphens (e.g. `vsco-california`); blob CIDs
-// are base32 (a–z + digits) and never carry one. The unified embed
-// regex is permissive enough to cover both — accidental hyphens in
-// a blob URI would be malformed input upstream regardless.
-const SERIES_EMBED_RE = /!\[[^\]]*\]\(series:\/\/([a-z0-9-]+)\)/g;
-const BLOB_REWRITE_RE = /blob:\/\/([a-z0-9]+)/g;
-
-/**
- * Run an entry/post body through Farfield's two custom URI schemes:
- *
- *   ![](series://<slug>)  → spliced with the series' own markdown body
- *   blob://<cid>          → rewritten to the blobs URL
- *
- * One level of series expansion. If a series body itself references
- * another series, the inner reference is left untouched — extend with
- * a recursive loop if that case ever appears in production.
- */
-export async function resolveBody(markdown: string): Promise<string> {
-    const spliced = await replaceAsync(
-        markdown,
-        SERIES_EMBED_RE,
-        async (_m, slug: string) => {
-            const s = await getSeries(slug);
-            return s?.body ?? "";
-        },
-    );
-    return spliced.replace(BLOB_REWRITE_RE, (_m, cid: string) => blobURL(cid));
-}
+// ---------- body embed helpers ----------------------------------------------
 
 /**
  * Extract just the embed scheme + id pairs from a body — without
@@ -464,11 +419,13 @@ export interface BodyEmbed {
 }
 
 /**
- * Strip-style regex (no captures around alt) that matches both blob://
- * and series:// embeds. Suitable for `.replace(..., "")` strip passes
- * and for `String.prototype.matchAll` extraction. Kept identical in
- * shape to FULL_EMBED_RE so consumers don't have to re-engineer the
- * slug character class. Exported so pages share one source of truth.
+ * Strip-style regex source (no captures around alt) that matches both
+ * blob:// and series:// embeds. Series slugs may contain hyphens (e.g.
+ * `vsco-california`); blob CIDs are base32 (a–z + digits) and never
+ * carry one — the unified class covers both. Kept identical in shape
+ * to FULL_EMBED_RE so consumers don't have to re-engineer the slug
+ * character class. Consumed by lib/markdown-text.ts, the one source of
+ * truth for strip/plain-text passes.
  */
 export const EMBED_PATTERN_SOURCE =
     "!\\[[^\\]]*\\]\\((?:blob|series)://[a-z0-9-]+\\)";

@@ -1,0 +1,55 @@
+---
+/**
+ * Internal snapshot route: renders one TerrazzoBanner at a fixed
+ * banner size with no chrome, so visual regression checks can capture
+ * a deterministic render for a given seed without depending on live
+ * Farfield content (the production banners live on doc/feed detail
+ * pages, which need the content API up).
+ *
+ * DEV ONLY — injected at /internal/terrazzo/[seed] by astro.config
+ * only when `command === 'dev'`, same as the azulejo route.
+ */
+import TerrazzoBanner from "@components/TerrazzoBanner";
+
+export const prerender = false;
+
+const { seed: rawSeed } = Astro.params;
+const seed = rawSeed ? Number.parseInt(rawSeed, 10) : 1;
+const safeSeed = Number.isFinite(seed) ? seed : 1;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex,nofollow" />
+        <title>Terrazzo {safeSeed}</title>
+        <style is:inline>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background: transparent;
+            }
+            /* Production-like banner footprint, pinned top-left so a
+               screenshot of the element is stable. */
+            #banner {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 800px;
+                height: 160px;
+            }
+            astro-dev-toolbar,
+            astro-dev-overlay {
+                display: none !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="banner">
+            <TerrazzoBanner client:only="react" seed={safeSeed} />
+        </div>
+    </body>
+</html>

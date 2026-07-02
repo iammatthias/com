@@ -1,56 +1,30 @@
 ---
 // All-content index, pages 2+. Page 1 is /content (content/index.astro).
-// Both render through ContentIndex.astro.
+// Both render through ContentIndex.astro, with fetch + error handling
+// shared in @lib/content-index.
 export const prerender = false;
 
-import ContentIndex from "../../../components/ContentIndex.astro";
-import { getLiveCollection } from "astro:content";
+import ContentIndex from "@components/ContentIndex.astro";
 import {
     setResponseCacheHeaders,
     deepPageCacheOptions,
-} from "../../../lib/cache";
-import { getPage, parsePageSegment } from "../../../lib/pagination";
-import type {
-    DocumentData,
-    PublicationData,
-} from "../../../lib/farfield-loader";
+} from "@lib/cache";
+import { loadContentIndex } from "@lib/content-index";
+import { getPage, parsePageSegment } from "@lib/pagination";
 import { isPreview } from "@lib/preview";
 
 const page = parsePageSegment(Astro.params.page);
 if (page === null) return new Response(null, { status: 404 });
 
 const preview = isPreview(Astro);
-
-let items: DocumentData[] = [];
-let pubs: PublicationData[] = [];
-
-const [docsResult, pubsResult] = await Promise.all([
-    getLiveCollection("documents", { preview }),
-    getLiveCollection("publications"),
-]);
-if (docsResult.error) {
-    console.error(
-        "[/content] Farfield documents fetch failed:",
-        docsResult.error,
-    );
-} else {
-    items = docsResult.entries.map((e) => e.data);
-}
-if (pubsResult.error) {
-    console.error(
-        "[/content] Farfield publications fetch failed:",
-        pubsResult.error,
-    );
-} else {
-    pubs = pubsResult.entries.map((e) => e.data);
-}
+const { items, pubs, cacheHint, extraTags } = await loadContentIndex(preview);
 
 const paged = getPage(items, page, "/content");
 if (!paged) return new Response(null, { status: 404 });
 
-setResponseCacheHeaders(Astro.response, docsResult.cacheHint, {
+setResponseCacheHeaders(Astro.response, cacheHint, {
     ...deepPageCacheOptions(page),
-    extraTags: pubsResult.cacheHint?.tags,
+    extraTags,
 });
 ---
 

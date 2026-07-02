@@ -1,5 +1,5 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Not found" description="That page doesn't exist." noindex>
@@ -7,11 +7,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <p class="kind">404</p>
         <h1>Not found</h1>
         <p>That page doesn't exist — or it moved during the redesign.</p>
+        <!-- Only evergreen routes here — publication slugs are dynamic
+             (they come from Farfield), so linking them from a static
+             404 would silently rot if collections change. -->
         <p>
-            Try the <a href="/">homepage</a>, browse the <a href="/posts">posts</a>,
-            <a href="/recipes">recipes</a>, <a href="/art">art</a>, or
-            <a href="/open-source">open source</a> archives, or wander the
-            <a href="/tags">tag index</a>.
+            Try the <a href="/">homepage</a>, browse
+            <a href="/content">all content</a> or the <a href="/feed">feed</a>,
+            or wander the <a href="/tags">tag index</a>.
         </p>
     </article>
 </BaseLayout>

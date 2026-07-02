@@ -21,7 +21,7 @@ import {
 interface Props {
     /**
      * Integer seed driving every random decision (palette, recipe,
-     * grout color, brush angle). Two tiles with the same seed render
+     * grout color, imperfections). Two tiles with the same seed render
      * identically. If omitted, defaults to the millisecond timestamp at
      * mount time so each page load gets a fresh tile.
      */
@@ -89,9 +89,8 @@ export default function AzulejoTile({
                 uEdges:    { value: 0 },  uField:   { value: 0 }, uFrame:   { value: 2 },
                 uStraps:   { value: 0 },  uGround:  { value: 0 },
                 uCenter2:  { value: -1 }, uWrapper2:{ value: -1}, uCornersB:{ value: -1 },
-                uV1:       { value: 0.5 },uV2:      { value: 0.5},uV3:      { value: 0.5 },
+                uV1:       { value: 0.5 }, uV2:      { value: 0.5 },
                 uImp:      { value: 0.65 },
-                uBrushAngle: { value: 0 },
                 uIperf:    { value: new THREE.Vector2() },
                 uBg:       { value: new THREE.Color() },
                 uOl:       { value: new THREE.Color() },
@@ -101,7 +100,9 @@ export default function AzulejoTile({
                 uGrout:    { value: new THREE.Color() },
                 uRes:      { value: new THREE.Vector2(size, size) },
             },
-            extensions: { derivatives: true } as never,
+            // (An `extensions: { derivatives: true }` option used to sit
+            // here for the shader's fwidth() calls — removed: derivatives
+            // are core in WebGL2 and three dropped the option entirely.)
         });
         scene.add(new THREE.Mesh(geom, material));
 
@@ -111,16 +112,25 @@ export default function AzulejoTile({
         const paletteIdx = Math.floor(rng() * palettes.length);
         const colorMode = pickColorMode(rng);
         const recipe = generateRecipe(rng, wildness);
-        const brushAngle = rng() * Math.PI * 2;
+        rng(); // burn — was brushAngle, a shader input that no longer
+        // exists; the draw stays so iperf/grout keep their values.
         const iperf: [number, number] = [rng() * 1000, rng() * 1000];
         const impJitter = 0.75 + rng() * 0.50;
         const groutCol = pickGroutColor(palettes[paletteIdx], rng);
+        // The painter grabs the wrong pot now and then — a rare seeded
+        // swap of the primary fill and accent colors, so two tiles with
+        // the same recipe can still be individuals. Drawn last so it
+        // never re-deals the draws above.
+        const potSwap = rng() < 0.05;
 
         const pal = palettes[paletteIdx];
         let eff = applyColorMode(pal, colorMode);
         if (recipe.mut && recipe.mut.paletteMix > 0.5) {
             const otherIdx = (paletteIdx + 1 + (effectiveSeed % (palettes.length - 1))) % palettes.length;
             eff = { ...eff, c2: [...palettes[otherIdx].c1] as [number, number, number] };
+        }
+        if (potSwap) {
+            eff = { ...eff, c1: eff.c3, c3: eff.c1 };
         }
 
         // ---------- bind uniforms ----------
@@ -139,7 +149,6 @@ export default function AzulejoTile({
         u.uV1.value = recipe.v1;
         u.uV2.value = recipe.v2;
         u.uImp.value = Math.max(0, Math.min(1, 0.65 * impJitter));
-        u.uBrushAngle.value = brushAngle;
         u.uIperf.value.set(iperf[0], iperf[1]);
         u.uBg.value.fromArray(eff.bg);
         u.uOl.value.fromArray(eff.ol);

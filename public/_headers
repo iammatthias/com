@@ -1,0 +1,10 @@
+# Security headers for static-asset responses (prerendered pages,
+# fonts, images). Cloudflare's _headers file only applies to assets —
+# SSR responses get the same set from src/middleware.ts. The adapter
+# appends its immutable /_astro/* cache rule to this file at build.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains

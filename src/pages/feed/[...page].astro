@@ -13,20 +13,21 @@
 
 export const prerender = false;
 
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import FeedEntryCard from "../../components/FeedEntryCard.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import FeedEntryCard from "@components/FeedEntryCard.astro";
+import FeedInfiniteScroll from "@components/FeedInfiniteScroll.astro";
 import { getLiveCollection } from "astro:content";
 import {
     setResponseCacheHeaders,
     deepPageCacheOptions,
-} from "../../lib/cache";
-import { getPage, pageHref, parsePageParam } from "../../lib/pagination";
+} from "@lib/cache";
+import { getPage, pageHref, parsePageParam } from "@lib/pagination";
 import {
     entriesOf,
     resolveBodyMedia,
     type FeedEntryData,
     type ResolvedMedia,
-} from "../../lib/farfield-loader";
+} from "@lib/farfield-loader";
 
 const page = parsePageParam(Astro.params.page);
 if (page === null) return new Response(null, { status: 404 });
@@ -94,108 +95,7 @@ const nextHref =
         </ul>
     )}
 
-    {nextHref && (
-        <nav class="feed-more" data-feed-more aria-label="More posts">
-            <a rel="next" href={nextHref} data-feed-next>Older posts →</a>
-            <span class="feed-more__status" data-feed-status hidden>
-                Loading older posts…
-            </span>
-        </nav>
-    )}
-
-    <script>
-        // Infinite scroll. When the "Older posts" sentinel nears the
-        // viewport, fetch the next full feed page, lift its `.feed-item`s
-        // into the current list, and advance the sentinel to that page's
-        // own next link. Guards against overlapping fetches and stops
-        // cleanly at the last page. With no IntersectionObserver (or JS
-        // off) the sentinel stays a plain click-through link.
-        (() => {
-            const list = document.querySelector("[data-feed-list]");
-            const more = document.querySelector("[data-feed-more]");
-            if (
-                !(list instanceof HTMLElement) ||
-                !(more instanceof HTMLElement)
-            ) {
-                return;
-            }
-
-            const link = more.querySelector("[data-feed-next]");
-            const status = more.querySelector("[data-feed-status]");
-
-            // Resolve an anchor's href against the live location. Reading
-            // `.href` off a DOMParser-built node is unreliable (no base
-            // URI), so always go through getAttribute + new URL.
-            const resolve = (el: Element | null): string | null => {
-                const raw = el?.getAttribute("href");
-                return raw ? new URL(raw, location.href).href : null;
-            };
-
-            let next = resolve(link);
-            let loading = false;
-            let done = false;
-
-            const setBusy = (busy: boolean) => {
-                if (link instanceof HTMLElement) link.hidden = busy;
-                if (status instanceof HTMLElement) status.hidden = !busy;
-            };
-
-            async function loadMore() {
-                if (loading || done || !next) return;
-                loading = true;
-                setBusy(true);
-                try {
-                    const res = await fetch(next);
-                    if (!res.ok) throw new Error(`feed page ${res.status}`);
-                    const doc = new DOMParser().parseFromString(
-                        await res.text(),
-                        "text/html",
-                    );
-                    const incoming = doc.querySelectorAll(
-                        "[data-feed-list] > .feed-item",
-                    );
-                    for (const node of incoming) {
-                        list!.appendChild(document.importNode(node, true));
-                    }
-                    next = resolve(doc.querySelector("[data-feed-next]"));
-                    if (!next) {
-                        done = true;
-                        more!.remove();
-                    } else {
-                        setBusy(false);
-                    }
-                } catch (err) {
-                    // Network/parse blip — restore the manual link so the
-                    // reader can still click through; retry on the next
-                    // intersection.
-                    console.error("[feed] load more failed:", err);
-                    setBusy(false);
-                } finally {
-                    loading = false;
-                }
-            }
-
-            // Progressive enhancement: a manual click appends inline
-            // instead of navigating away.
-            if (link instanceof HTMLAnchorElement) {
-                link.addEventListener("click", (ev) => {
-                    ev.preventDefault();
-                    loadMore();
-                });
-            }
-
-            if (!("IntersectionObserver" in window)) return;
-            const io = new IntersectionObserver(
-                (entries) => {
-                    for (const e of entries) {
-                        if (e.isIntersecting) loadMore();
-                    }
-                },
-                { rootMargin: "600px 0px" },
-            );
-            io.observe(more);
-        })();
-    </script>
+    {nextHref && <FeedInfiniteScroll nextHref={nextHref} />}
 </BaseLayout>
 
 <style>

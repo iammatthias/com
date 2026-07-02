@@ -7,16 +7,16 @@
 // `page/N` form.
 export const prerender = false;
 
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import FeedCard from "../../components/FeedCard.astro";
-import Pagination from "../../components/Pagination.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import FeedCard from "@components/FeedCard.astro";
+import Pagination from "@components/Pagination.astro";
 import { getLiveCollection, getLiveEntry } from "astro:content";
 import {
     setResponseCacheHeaders,
     deepPageCacheOptions,
-} from "../../lib/cache";
-import { getPage, parsePageParam } from "../../lib/pagination";
-import type { DocumentData } from "../../lib/farfield-loader";
+} from "@lib/cache";
+import { getPage, parsePageParam } from "@lib/pagination";
+import { entriesOf, type DocumentData } from "@lib/farfield-loader";
 import { isPreview } from "@lib/preview";
 
 const slug = Astro.params.publication;
@@ -46,7 +46,7 @@ const { entries, error, cacheHint } = await getLiveCollection("documents", {
 if (error) {
     console.error(`[/${slug}] Farfield fetch failed:`, error);
 } else {
-    items = entries.map((e) => e.data);
+    items = entriesOf<DocumentData>(entries);
 }
 
 const base = `/${slug}`;
