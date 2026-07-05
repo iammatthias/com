@@ -16,6 +16,7 @@
 import type { APIRoute } from "astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
+import { headFromGet } from "@lib/http";
 import {
     entriesOf,
     type DocumentData,
@@ -114,3 +115,5 @@ export const GET: APIRoute = async (context) => {
     });
     return response;
 };
+
+export const HEAD = headFromGet(GET);

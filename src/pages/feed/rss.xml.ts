@@ -5,6 +5,7 @@ import { setResponseCacheHeaders } from "@lib/cache";
 import { entriesOf, type FeedEntryData } from "@lib/farfield-loader";
 import { plainText } from "@lib/markdown-text";
 import { renderFeedBody } from "@lib/doc-render";
+import { headFromGet } from "@lib/http";
 
 export const prerender = false;
 
@@ -66,3 +67,5 @@ export const GET: APIRoute = async (context) => {
     setResponseCacheHeaders(response, collection.cacheHint);
     return response;
 };
+
+export const HEAD = headFromGet(GET);

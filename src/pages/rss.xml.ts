@@ -4,6 +4,7 @@ import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
 import { entriesOf, type DocumentData } from "@lib/farfield-loader";
 import { renderFeedBody } from "@lib/doc-render";
+import { headFromGet } from "@lib/http";
 
 export const prerender = false;
 
@@ -61,3 +62,5 @@ export const GET: APIRoute = async (context) => {
     setResponseCacheHeaders(response, cacheHint);
     return response;
 };
+
+export const HEAD = headFromGet(GET);

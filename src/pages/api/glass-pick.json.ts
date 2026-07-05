@@ -13,6 +13,7 @@
 import type { APIRoute } from "astro";
 import { wsrvUrl, wsrvSrcSet } from "@lib/farfield";
 import { ARCH_WIDTHS, ARCH_SIZES } from "@lib/images";
+import { headFromGet } from "@lib/http";
 
 export const prerender = false;
 
@@ -163,3 +164,5 @@ export const GET: APIRoute = async () => {
         },
     });
 };
+
+export const HEAD = headFromGet(GET);
