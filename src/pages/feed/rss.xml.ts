@@ -27,23 +27,38 @@ export const GET: APIRoute = async (context) => {
         return `Update from ${new Date(item.createdAt).toLocaleDateString("en-US", { timeZone: "UTC" })}`;
     };
 
+    const origin = (
+        context.site?.toString() ?? "https://iammatthias.com"
+    ).replace(/\/$/, "");
+
     const response = await rss({
         title: "iammatthias — feed",
         description: "Short posts from iammatthias.",
         site: context.site?.toString() ?? "https://iammatthias.com",
-        // Rendered HTML with embeds resolved to images, instead of the
-        // previous raw markdown — feed readers show prose and photos,
-        // not asterisks and embed URIs.
+        // Rendered HTML with embeds resolved to images, capped galleries,
+        // and a media:content thumb per item — see rss.xml.ts.
         items: await Promise.all(
-            items.map(async (item: FeedEntryData) => ({
-                title: itemTitle(item),
-                description: plainText(item.body).slice(0, 180),
-                content: await renderFeedBody(item.body),
-                link: `/feed/${item.rkey}`,
-                pubDate: new Date(item.createdAt),
-                categories: item.tags,
-            })),
+            items.map(async (item: FeedEntryData) => {
+                const canonical = `${origin}/feed/${item.rkey}`;
+                const content = await renderFeedBody(item.body, {
+                    maxImages: 6,
+                    moreUrl: canonical,
+                });
+                const thumb = content.match(/<img src="([^"]+)"/)?.[1];
+                return {
+                    title: itemTitle(item),
+                    description: plainText(item.body).slice(0, 180),
+                    content,
+                    link: `/feed/${item.rkey}`,
+                    pubDate: new Date(item.createdAt),
+                    categories: item.tags,
+                    ...(thumb && {
+                        customData: `<media:content url="${thumb}" medium="image" />`,
+                    }),
+                };
+            }),
         ),
+        xmlns: { media: "http://search.yahoo.com/mrss/" },
         customData: "<language>en-us</language>",
         stylesheet: "/rss.xml.xsl",
     });

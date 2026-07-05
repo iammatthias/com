@@ -312,8 +312,18 @@ export async function renderMarkdownBody(body: string): Promise<string> {
  * `series://<slug>` becomes that series' images in order. 960px keeps
  * reader downloads sane; no width/height attributes since blob meta
  * isn't worth a fetch-per-image on a full-collection feed.
+ *
+ * `maxImages` caps gallery-heavy items (an art post can carry hundreds
+ * of images, which balloons the feed to megabytes); when the cap trims
+ * anything and `moreUrl` is set, a "view the full gallery" link to the
+ * canonical page closes the item.
  */
-export async function renderFeedBody(body: string): Promise<string> {
+export async function renderFeedBody(
+    body: string,
+    opts: { maxImages?: number; moreUrl?: string } = {},
+): Promise<string> {
+    const maxImages = opts.maxImages ?? Number.POSITIVE_INFINITY;
+
     interface Embed { alt: string; scheme: "blob" | "series"; id: string }
     const embeds: Embed[] = [];
     const preprocessed = body.replace(
@@ -325,31 +335,43 @@ export async function renderFeedBody(body: string): Promise<string> {
         },
     );
 
-    const img = (cid: string, alt: string) =>
-        `<p><img src="${attr(wsrvUrl(blobURL(cid), 960))}" alt="${attr(alt)}" /></p>`;
+    const imgTag = (m: { cid: string; alt: string }) =>
+        `<p><img src="${attr(wsrvUrl(blobURL(m.cid), 960))}" alt="${attr(m.alt)}" /></p>`;
 
-    const rendered = await Promise.all(
-        embeds.map(async (e) => {
-            if (e.scheme === "blob") return img(e.id, e.alt);
+    // Resolve every embed to its ordered image list first, then walk
+    // the document order with the image budget so truncation always
+    // keeps the item's leading images.
+    const resolved = await Promise.all(
+        embeds.map(async (e): Promise<{ cid: string; alt: string }[]> => {
+            if (e.scheme === "blob") return [{ cid: e.id, alt: e.alt }];
             // Series: expand to its images (memoized per-record fetch).
             const series = await getSeries(e.id);
-            if (!series?.body) return "";
-            const inner = [];
-            for (const m of series.body.matchAll(
+            if (!series?.body) return [];
+            return [...series.body.matchAll(
                 /!\[([^\]]*)\]\(blob:\/\/([a-z0-9]+)\)/g,
-            )) {
-                inner.push(img(m[2], m[1]));
-            }
-            return inner.join("\n");
+            )].map((m) => ({ cid: m[2], alt: m[1] }));
         }),
     );
+
+    let emitted = 0;
+    let omitted = 0;
+    const rendered = resolved.map((imgs) => {
+        const take = imgs.slice(0, Math.max(0, maxImages - emitted));
+        emitted += take.length;
+        omitted += imgs.length - take.length;
+        return take.map(imgTag).join("\n");
+    });
 
     let html = marked.parse(preprocessed, { async: false }) as string;
     html = html.replace(
         /<!--FARFIELD_EMBED:(\d+)-->/g,
         (_, idx: string) => rendered[Number(idx)] ?? "",
     );
-    return transformAlerts(html);
+    html = transformAlerts(html);
+    if (omitted > 0 && opts.moreUrl) {
+        html += `<p><a href="${attr(opts.moreUrl)}">View the full gallery (${omitted} more photo${omitted === 1 ? "" : "s"}) →</a></p>`;
+    }
+    return html;
 }
 
 /**

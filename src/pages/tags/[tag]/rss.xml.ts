@@ -25,21 +25,37 @@ export const GET: APIRoute = async (context) => {
     // poll a dead URL forever).
     if (items.length === 0) return new Response(null, { status: 404 });
 
+    const origin = (
+        context.site?.toString() ?? "https://iammatthias.com"
+    ).replace(/\/$/, "");
+
     const response = await rss({
         title: `iammatthias — #${tag}`,
         description: `Entries tagged ${tag}.`,
         site: context.site?.toString() ?? "https://iammatthias.com",
-        // Full body, embeds resolved to images — see rss.xml.ts.
+        // Full body, capped galleries, media:content thumb — see rss.xml.ts.
         items: await Promise.all(
-            items.map(async (item: DocumentData) => ({
-                title: item.title,
-                description: item.description,
-                content: await renderFeedBody(item.body),
-                link: item.href,
-                pubDate: new Date(item.publishedAt),
-                categories: [item.publication.name, ...item.tags],
-            })),
+            items.map(async (item: DocumentData) => {
+                const canonical = `${origin}${item.href}`;
+                const content = await renderFeedBody(item.body, {
+                    maxImages: 6,
+                    moreUrl: canonical,
+                });
+                const thumb = content.match(/<img src="([^"]+)"/)?.[1];
+                return {
+                    title: item.title,
+                    description: item.description,
+                    content,
+                    link: item.href,
+                    pubDate: new Date(item.publishedAt),
+                    categories: [item.publication.name, ...item.tags],
+                    ...(thumb && {
+                        customData: `<media:content url="${thumb}" medium="image" />`,
+                    }),
+                };
+            }),
         ),
+        xmlns: { media: "http://search.yahoo.com/mrss/" },
         customData: "<language>en-us</language>",
         stylesheet: "/rss.xml.xsl",
     });

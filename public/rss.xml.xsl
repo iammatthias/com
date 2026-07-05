@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:media="http://search.yahoo.com/mrss/">
   <xsl:output method="html" encoding="UTF-8" indent="yes"/>
 
   <xsl:template match="/rss/channel">
@@ -184,6 +184,15 @@
             color: var(--color-muted);
           }
 
+          .item-thumb {
+            display: block;
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 0.25rem 0;
+          }
+
           .item-description {
             font-size: 1rem;
             line-height: 1.7;
@@ -249,6 +258,9 @@
       <p class="item-meta">
         <xsl:value-of select="pubDate"/>
       </p>
+      <xsl:if test="media:content/@url">
+        <img class="item-thumb" src="{media:content/@url}" alt="" loading="lazy"/>
+      </xsl:if>
       <div class="item-description">
         <xsl:value-of select="description"/>
       </div>
