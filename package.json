@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "rm -rf dist .astro node_modules/.astro && astro build",
     "preview": "astro preview",
     "smoke": "node scripts/smoke.mjs",
     "overflow": "node scripts/overflow-check.mjs",
