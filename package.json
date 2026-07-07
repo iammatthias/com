@@ -18,6 +18,7 @@
     "@astrojs/cloudflare": "^14.1.0",
     "@astrojs/react": "^6.0.0",
     "@astrojs/rss": "^4.0.19",
+    "@ternlight/base": "^0.1.0",
     "astro": "^7.0.5",
     "marked": "^18.0.5",
     "mermaid": "^11.16.0",

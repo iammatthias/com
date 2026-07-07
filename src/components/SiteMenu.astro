@@ -16,12 +16,114 @@ import MenuLinks from "./MenuLinks.astro";
             aria-label="Close menu"
             data-menu-close>close</button
         >
+        <!-- Semantic search over docs + feed. The embedding model
+             (ternlight, WASM) and the corpus only load on first focus —
+             see src/scripts/menu-search.ts. Until then this is an inert
+             input, and with JS off the dialog never opens anyway. -->
+        <div class="site-menu__search" role="search">
+            <input
+                type="search"
+                placeholder="Search everything…"
+                aria-label="Search the site"
+                autocomplete="off"
+                data-menu-search
+            />
+            <p class="site-menu__status" data-search-status hidden></p>
+            <ul class="site-menu__results" data-search-results hidden></ul>
+        </div>
         <MenuLinks />
     </div>
 </dialog>
 
 <script>
+    import type { SearchResult } from "@src/scripts/menu-search";
+
     const dialog = document.getElementById("site-menu");
+
+    /* ── semantic search (progressive, lazy) ─────────────────────── */
+    {
+        const input = document.querySelector("[data-menu-search]");
+        const status = document.querySelector("[data-search-status]");
+        const results = document.querySelector("[data-search-results]");
+
+        if (
+            input instanceof HTMLInputElement &&
+            status instanceof HTMLElement &&
+            results instanceof HTMLElement
+        ) {
+            type SearchModule = typeof import("@src/scripts/menu-search");
+            let modPromise: Promise<SearchModule> | null = null;
+            let warmed = false;
+
+            const load = () => {
+                modPromise ??= import("@src/scripts/menu-search");
+                return modPromise;
+            };
+
+            // Warm model + index on first focus so the first keystrokes
+            // already have a hot engine. The status line covers the
+            // one-time model download honestly.
+            const warm = async () => {
+                if (warmed) return;
+                warmed = true;
+                status.hidden = false;
+                status.textContent = "warming up search…";
+                try {
+                    const mod = await load();
+                    await mod.ensureIndex();
+                    status.hidden = true;
+                    if (input.value.trim()) run(input.value);
+                } catch (err) {
+                    console.error("[menu-search] failed to load:", err);
+                    status.textContent = "search is unavailable right now";
+                }
+            };
+
+            const render = (hits: SearchResult[], query: string) => {
+                results.replaceChildren(
+                    ...hits.map((hit) => {
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+                        a.href = hit.href;
+                        const kind = document.createElement("span");
+                        kind.className = "site-menu__result-kind";
+                        kind.textContent = hit.kind;
+                        const title = document.createElement("span");
+                        title.textContent = hit.title;
+                        a.append(title, kind);
+                        li.appendChild(a);
+                        return li;
+                    }),
+                );
+                results.hidden = hits.length === 0;
+                status.hidden = !(hits.length === 0 && query.trim());
+                if (hits.length === 0 && query.trim()) {
+                    status.textContent = "nothing close to that";
+                }
+            };
+
+            let seq = 0;
+            const run = async (query: string) => {
+                const ticket = ++seq;
+                const mod = await load();
+                const hits = await mod.search(query, 6);
+                if (ticket !== seq) return; // superseded by newer input
+                render(hits, query);
+            };
+
+            let debounce = 0;
+            input.addEventListener("focus", warm, { once: true });
+            input.addEventListener("input", () => {
+                clearTimeout(debounce);
+                if (!input.value.trim()) {
+                    render([], "");
+                    return;
+                }
+                debounce = window.setTimeout(() => run(input.value), 120);
+            });
+        }
+    }
+
     if (dialog instanceof HTMLDialogElement) {
         for (const trigger of document.querySelectorAll(
             "[data-menu-trigger]",
@@ -90,5 +192,77 @@ import MenuLinks from "./MenuLinks.astro";
     .site-menu__close:hover {
         color: var(--color-fg);
         text-decoration: underline;
+    }
+
+    /* ---------- search ---------- */
+
+    .site-menu__search {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .site-menu__search input {
+        width: 100%;
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-bg);
+        color: var(--color-fg);
+        font-size: var(--fs-base);
+    }
+
+    .site-menu__search input::placeholder {
+        color: var(--color-muted);
+        font-family: var(--font-serif);
+        font-style: italic;
+    }
+
+    .site-menu__status {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+    }
+
+    /* Result rows are created by the search script at runtime, so they
+       never carry this component's scope hash — style them via
+       :global() under the scoped list container. */
+    .site-menu__results {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .site-menu__results :global(li) {
+        list-style: none;
+    }
+
+    .site-menu__results :global(a) {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: var(--space-3);
+        text-decoration: none;
+        color: inherit;
+        font-family: var(--font-serif);
+        font-size: var(--fs-lg);
+    }
+
+    .site-menu__results :global(a:hover) {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.15em;
+    }
+
+    .site-menu__results :global(.site-menu__result-kind) {
+        flex: none;
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
     }
 </style>
