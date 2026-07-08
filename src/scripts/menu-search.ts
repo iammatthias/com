@@ -1,139 +1,108 @@
-// Client-side semantic search over the site's content, powered by
-// ternlight (ternary-quantized embeddings compiled to WASM, running
-// entirely in the browser — no search server, no API keys).
+// Main-thread client for the semantic menu search. All the heavy
+// lifting — the ternlight WASM model (~7 MB gz, one-time download,
+// immutable-cached), corpus embedding, and the IndexedDB vector
+// cache — lives in src/scripts/search-worker.ts and runs off-thread,
+// so warming the index never blocks the page.
 //
-// Loaded lazily: SiteMenu dynamic-imports this module on first focus
-// of the search field, and this module in turn pulls the ternlight
-// chunk (~7 MB gz, one-time; served hashed + immutable-cached). The
-// corpus comes from /api/search-corpus.json and gets embedded locally;
-// vectors are cached in IndexedDB keyed by each item's Farfield cid,
-// so only changed content is ever re-embedded on later visits.
+// SiteMenu dynamic-imports this module (during page idle, or on first
+// focus of the search field, whichever comes first) and talks through
+// ensureIndex()/search(). The worker protocol is defined in the worker
+// module; only its types are imported here, so nothing of the worker
+// leaks into the main bundle.
 
-interface CorpusItem {
-    href: string;
-    title: string;
-    kind: string;
-    cid: string;
-    text: string;
+import type {
+    WorkerHit,
+    WorkerRequest,
+    WorkerResponse,
+} from "@src/scripts/search-worker";
+
+export type SearchResult = WorkerHit;
+
+let worker: Worker | null = null;
+let readyPromise: Promise<void> | null = null;
+let ready = false;
+
+interface Pending {
+    resolve: (hits: SearchResult[]) => void;
+    reject: (err: Error) => void;
+}
+const pending = new Map<number, Pending>();
+let nextId = 0;
+
+function failAll(message: string) {
+    for (const p of pending.values()) p.reject(new Error(message));
+    pending.clear();
 }
 
-export interface SearchResult {
-    href: string;
-    title: string;
-    kind: string;
-    score: number;
-}
-
-const DB_NAME = "menu-search";
-const STORE = "vectors";
-
-/* ── minimal IndexedDB k/v (cid → Float32Array buffer) ─────────────── */
-
-function openDb(): Promise<IDBDatabase> {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, 1);
-        req.onupgradeneeded = () => req.result.createObjectStore(STORE);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
+function getWorker(): Worker {
+    if (worker) return worker;
+    worker = new Worker(new URL("./search-worker.ts", import.meta.url), {
+        type: "module",
     });
-}
-
-async function dbGetAll(db: IDBDatabase): Promise<Map<string, ArrayBuffer>> {
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE, "readonly").objectStore(STORE);
-        const keys = tx.getAllKeys();
-        const vals = tx.getAll();
-        vals.onsuccess = () => {
-            const out = new Map<string, ArrayBuffer>();
-            const ks = keys.result as string[];
-            (vals.result as ArrayBuffer[]).forEach((v, i) => out.set(ks[i], v));
-            resolve(out);
-        };
-        vals.onerror = () => reject(vals.error);
-    });
-}
-
-async function dbPutMany(
-    db: IDBDatabase,
-    entries: [string, ArrayBuffer][],
-    staleKeys: string[],
-): Promise<void> {
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE, "readwrite");
-        const store = tx.objectStore(STORE);
-        for (const key of staleKeys) store.delete(key);
-        for (const [key, value] of entries) store.put(value, key);
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-    });
-}
-
-/* ── index ──────────────────────────────────────────────────────────── */
-
-let indexPromise: Promise<{
-    items: CorpusItem[];
-    vectors: Float32Array[];
-    embed: (text: string) => Float32Array;
-}> | null = null;
-
-async function buildIndex() {
-    // Model chunk + corpus fetch in parallel; the model dominates.
-    const [{ embed }, corpusRes] = await Promise.all([
-        import("@ternlight/base"),
-        fetch("/api/search-corpus.json"),
-    ]);
-    const { items } = (await corpusRes.json()) as { items: CorpusItem[] };
-
-    // Vector cache: reuse anything whose cid is unchanged, embed the
-    // rest, prune entries whose content no longer exists.
-    let cached = new Map<string, ArrayBuffer>();
-    let db: IDBDatabase | null = null;
-    try {
-        db = await openDb();
-        cached = await dbGetAll(db);
-    } catch {
-        /* private browsing / quota — embed everything, skip persistence */
-    }
-
-    const vectors: Float32Array[] = [];
-    const fresh: [string, ArrayBuffer][] = [];
-    for (const item of items) {
-        const hit = cached.get(item.cid);
-        if (hit) {
-            vectors.push(new Float32Array(hit));
-        } else {
-            const v = embed(item.text);
-            vectors.push(v);
-            fresh.push([item.cid, v.buffer.slice(0) as ArrayBuffer]);
+    worker.addEventListener("message", (event: MessageEvent<WorkerResponse>) => {
+        const msg = event.data;
+        if (msg.type === "results") {
+            pending.get(msg.id)?.resolve(msg.hits);
+            pending.delete(msg.id);
+        } else if (msg.type === "error") {
+            if (msg.id !== undefined) {
+                pending.get(msg.id)?.reject(new Error(msg.message));
+                pending.delete(msg.id);
+            } else {
+                failAll(msg.message);
+            }
         }
-    }
-    if (db && fresh.length > 0) {
-        const live = new Set(items.map((i) => i.cid));
-        const stale = [...cached.keys()].filter((k) => !live.has(k));
-        dbPutMany(db, fresh, stale).catch(() => {});
-    }
-
-    return { items, vectors, embed };
+    });
+    // Uncaught worker failure (e.g. the wasm chunk failed to load) —
+    // surface it to whoever is awaiting warm-up or a query.
+    worker.addEventListener("error", (event) => {
+        failAll(event.message || "search worker crashed");
+    });
+    return worker;
 }
 
-/** Warm the model + index. Safe to call repeatedly. */
-export function ensureIndex(): Promise<unknown> {
-    indexPromise ??= buildIndex();
-    return indexPromise;
+/** True once the model + index are warm — callers can skip loading UI. */
+export function isReady(): boolean {
+    return ready;
+}
+
+/** Warm the model + index off-thread. Safe to call repeatedly. */
+export function ensureIndex(): Promise<void> {
+    readyPromise ??= new Promise<void>((resolve, reject) => {
+        const w = getWorker();
+        const onMessage = (event: MessageEvent<WorkerResponse>) => {
+            const msg = event.data;
+            if (msg.type === "ready") {
+                ready = true;
+                w.removeEventListener("message", onMessage);
+                resolve();
+            } else if (msg.type === "error" && msg.id === undefined) {
+                w.removeEventListener("message", onMessage);
+                reject(new Error(msg.message));
+            }
+        };
+        w.addEventListener("message", onMessage);
+        w.addEventListener("error", (event) => {
+            reject(new Error(event.message || "search worker crashed"));
+        });
+        w.postMessage({ type: "warm" } satisfies WorkerRequest);
+    });
+    return readyPromise;
 }
 
 /** Semantic top-K over the corpus. Resolves after ensureIndex(). */
 export async function search(query: string, topK = 8): Promise<SearchResult[]> {
     const q = query.trim();
     if (!q) return [];
-    const { items, vectors, embed } = await (indexPromise ?? buildIndex());
-    const qv = embed(q);
-    const scored = items.map((item, i) => {
-        const v = vectors[i];
-        let dot = 0;
-        for (let d = 0; d < qv.length; d++) dot += qv[d] * v[d];
-        return { href: item.href, title: item.title, kind: item.kind, score: dot };
+    await ensureIndex();
+    return new Promise((resolve, reject) => {
+        const id = ++nextId;
+        pending.set(id, { resolve, reject });
+        getWorker().postMessage({
+            type: "search",
+            id,
+            query: q,
+            topK,
+        } satisfies WorkerRequest);
     });
-    scored.sort((a, b) => b.score - a.score);
-    return scored.slice(0, topK);
 }

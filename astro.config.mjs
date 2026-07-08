@@ -149,6 +149,14 @@ export default defineConfig({
             // lose state in confusing ways across edits.
             dedupe: ["react", "react-dom", "three"],
         },
+        // The search worker (src/scripts/search-worker.ts) imports the
+        // ternlight WASM module, whose bundler glue uses top-level await.
+        // Vite's default worker format is iife, which can't express that
+        // — emit workers as ES modules instead (the worker is already
+        // spawned with { type: "module" }).
+        worker: {
+            format: "es",
+        },
         // NOTE: this config used to carry an `optimizeDeps.include` list
         // (React + astro dev-toolbar entries) working around a Vite 5/6
         // dev bug where late dep discovery re-optimized mid-load and

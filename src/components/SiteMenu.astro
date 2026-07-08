@@ -60,24 +60,50 @@ import MenuLinks from "./MenuLinks.astro";
                 return modPromise;
             };
 
-            // Warm model + index on first focus so the first keystrokes
-            // already have a hot engine. The status line covers the
-            // one-time model download honestly.
+            // Warm on focus as the fallback path. All heavy work (WASM
+            // compile, corpus embedding) happens in a Web Worker, so the
+            // status line is purely informational — the page stays
+            // responsive throughout. If the idle prefetch below already
+            // finished, this resolves instantly with no status flash.
             const warm = async () => {
                 if (warmed) return;
                 warmed = true;
-                status.hidden = false;
-                status.textContent = "warming up search…";
                 try {
                     const mod = await load();
+                    if (!mod.isReady()) {
+                        status.hidden = false;
+                        status.textContent = "warming up search…";
+                    }
                     await mod.ensureIndex();
                     status.hidden = true;
                     if (input.value.trim()) run(input.value);
                 } catch (err) {
                     console.error("[menu-search] failed to load:", err);
+                    status.hidden = false;
                     status.textContent = "search is unavailable right now";
                 }
             };
+
+            // Prefetch during page idle: the worker compiles the model
+            // and embeds the corpus off the main thread, so search is
+            // already hot when the menu opens. The model chunk is a
+            // one-time immutable-cached download; skip the eager path
+            // for users who asked to save data.
+            const saveData =
+                "connection" in navigator &&
+                (navigator.connection as { saveData?: boolean }).saveData;
+            if (!saveData) {
+                const idle =
+                    window.requestIdleCallback ??
+                    ((fn: () => void) => window.setTimeout(fn, 2000));
+                idle(() => {
+                    load()
+                        .then((mod) => mod.ensureIndex())
+                        .catch(() => {
+                            /* focus-time warm will surface the error */
+                        });
+                });
+            }
 
             const render = (hits: SearchResult[], query: string) => {
                 results.replaceChildren(
