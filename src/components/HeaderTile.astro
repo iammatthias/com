@@ -6,6 +6,10 @@
 // JPG reads identically at this size. The inline script picks a
 // random tile per load to keep the per-visit variance; <noscript>
 // pins a fixed tile. The 45° rotation turns the square into a diamond.
+//
+// Easter egg: clicking the tile fires the kiln again — a fresh pick
+// that's never the tile currently showing. Deliberately unadvertised
+// (no pointer cursor, no title); it's there for whoever tries.
 ---
 
 <span class="header-tile">
@@ -15,15 +19,23 @@
         height="32"
         alt="iammatthias"
         decoding="async"
+        draggable="false"
     />
     <script is:inline>
         {
-            const n = String(1 + Math.floor(Math.random() * 100)).padStart(
-                3,
-                "0",
-            );
-            document.getElementById("header-azulejo").src =
-                "/azulejo/" + n + ".jpg";
+            const img = document.getElementById("header-azulejo");
+            let current = 0;
+            const deal = () => {
+                let n;
+                do {
+                    n = 1 + Math.floor(Math.random() * 100);
+                } while (n === current);
+                current = n;
+                img.src =
+                    "/azulejo/" + String(n).padStart(3, "0") + ".jpg";
+            };
+            deal();
+            img.addEventListener("click", deal);
         }
     </script>
     <noscript>
@@ -60,5 +72,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        /* Rapid re-dealing shouldn't start a text selection. */
+        user-select: none;
     }
 </style>
