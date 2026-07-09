@@ -6,15 +6,15 @@
 // tokens (~95 words), so each item ships roughly that much text —
 // title-and-lead-weighted, which is where the signal lives anyway.
 //
-// Each item carries its Farfield `cid` (content hash): the client
-// caches vectors in IndexedDB keyed by cid, so re-embedding only
-// happens for content that actually changed.
+// Each item carries its Farfield `cid` (content hash): vectors are
+// cached by cid everywhere — the prebuilt /api/search-vectors.json
+// file, and the client's IndexedDB for anything newer than the build.
 
 import type { APIRoute } from "astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
 import { headFromGet } from "@lib/http";
-import { plainText } from "@lib/markdown-text";
+import { buildSearchCorpus } from "@lib/search-corpus";
 import {
     entriesOf,
     type DocumentData,
@@ -22,24 +22,6 @@ import {
 } from "@lib/farfield-loader";
 
 export const prerender = false;
-
-interface CorpusItem {
-    href: string;
-    title: string;
-    /** Kicker shown in results — publication name or "feed". */
-    kind: string;
-    /** Content hash — client-side vector cache key. */
-    cid: string;
-    /** What actually gets embedded (~95 words max is useful). */
-    text: string;
-}
-
-/** Title + description + lead of the body, trimmed near the model's
- *  input window so we don't ship text the embedding can't see. */
-function docText(d: DocumentData): string {
-    const lead = plainText(d.body).slice(0, 600);
-    return [d.title, d.description, lead].filter(Boolean).join(" — ");
-}
 
 export const GET: APIRoute = async () => {
     const [docsResult, feedResult] = await Promise.all([
@@ -58,28 +40,10 @@ export const GET: APIRoute = async () => {
         }
     }
 
-    const docs = entriesOf<DocumentData>(docsResult.entries);
-    const feed = entriesOf<FeedEntryData>(feedResult.entries);
-
-    const items: CorpusItem[] = [
-        ...docs.map((d) => ({
-            href: d.href,
-            title: d.title,
-            kind: d.publication.name.toLowerCase(),
-            cid: d.cid,
-            text: docText(d),
-        })),
-        ...feed.map((f) => {
-            const text = plainText(f.body);
-            return {
-                href: `/feed/${f.rkey}`,
-                title: text.slice(0, 80) || `Feed entry ${f.rkey}`,
-                kind: "feed",
-                cid: f.cid,
-                text: text.slice(0, 600),
-            };
-        }),
-    ];
+    const items = buildSearchCorpus(
+        entriesOf<DocumentData>(docsResult.entries),
+        entriesOf<FeedEntryData>(feedResult.entries),
+    );
 
     const response = new Response(JSON.stringify({ items }), {
         headers: { "Content-Type": "application/json" },

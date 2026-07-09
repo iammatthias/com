@@ -243,7 +243,11 @@ function entryToDocument(
     };
 }
 
-async function loadAllDocuments(drafts = false): Promise<DocumentData[]> {
+// Exported for the prerendered search-vectors endpoint, which runs at
+// build time where live collections aren't available.
+export async function loadAllDocuments(
+    drafts = false,
+): Promise<DocumentData[]> {
     const [entries, pubs] = await Promise.all([
         cachedEntries(undefined, drafts),
         publicationsBySlug(),
@@ -477,7 +481,9 @@ function postToFeedEntry(post: Post): FeedEntryData {
     };
 }
 
-async function loadAllFeedEntries(): Promise<FeedEntryData[]> {
+// Exported for the prerendered search-vectors endpoint (see
+// loadAllDocuments above).
+export async function loadAllFeedEntries(): Promise<FeedEntryData[]> {
     const posts = await cachedPosts();
     const items = posts.map(postToFeedEntry);
     items.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
