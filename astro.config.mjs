@@ -167,5 +167,81 @@ export default defineConfig({
         // exist at …/deps_ssr/errors-data-*.js"). Removed — if the
         // two-React dev bug ever resurfaces, prefer per-environment
         // includes over resurrecting the old list.
+        optimizeDeps: {
+            // Keep the ternlight engine OUT of dev pre-bundling. The
+            // optimizer separates the wasm-bindgen glue from its .wasm
+            // sidecar, so the engine dies at init in the search worker
+            // ("Cannot read … '__wbindgen_externrefs'") and dev search
+            // reports unavailable. Excluding it serves the glue
+            // unbundled, with the .wasm resolved relative to the real
+            // module path — same as the production build. (`exclude`
+            // is safe where the old `include` list wasn't: it only
+            // opts this one package out of prebundling.)
+            exclude: ["@ternlight/base"],
+            // Pre-bundle the React family (and mermaid, the one big
+            // lazy import) at startup so a cold/invalidated dep cache
+            // never discovers them mid-render. Lazy discovery is what
+            // produced the two-React "Invalid hook call" /
+            // "Cannot read properties of null (reading 'useRef')"
+            // errors: an island rendering while react re-optimized got
+            // react and react-dom from different optimizer snapshots.
+            // Unlike the old blanket list (see NOTE above), these are
+            // plain npm packages — no astro internals, so no stale
+            // deps_ssr chunks on re-optimize.
+            include: [
+                "react",
+                "react-dom/client",
+                "react/jsx-runtime",
+                "react/jsx-dev-runtime",
+                "mermaid",
+            ],
+        },
+        // Per-environment include for the workerd SSR env (vite 8
+        // environments API — the `vite.ssr.*` legacy path does not
+        // reach the cloudflare plugin's environment). Pre-optimizing
+        // the react family plus the astro internals that were being
+        // discovered lazily (each discovery = a program reload = a
+        // chance to strand an in-flight render) aims for zero mid-boot
+        // re-optimizations. Scoped to this env only — the unscoped
+        // include list of old is what backfired (see NOTE above).
+        environments: {
+            ssr: {
+                optimizeDeps: {
+                    include: [
+                        "react",
+                        "react-dom/server",
+                        "react/jsx-runtime",
+                        "react/jsx-dev-runtime",
+                        "astro/zod",
+                        "astro/virtual-modules/live-config",
+                        "astro/env/runtime",
+                        "astro/assets/services/noop",
+                    ],
+                },
+            },
+        },
+        // Warm the heavy module chains at boot. Dep discovery is lazy —
+        // driven by the first *request* — so after any cache
+        // invalidation (config edit, new dep) the first page load used
+        // to ride the re-optimization storm and could catch react and
+        // react-dom in different optimizer snapshots mid-render
+        // ("Invalid hook call" / "null (reading 'useRef')" from the
+        // deps_ssr chunks). Warming a doc page + the islands makes the
+        // storm run during startup idle instead, so it has settled
+        // before a human first navigates. (`ssr.optimizeDeps` can't do
+        // this: the workerd environment is owned by the cloudflare
+        // plugin and doesn't read it.)
+        server: {
+            warmup: {
+                ssrFiles: [
+                    "./src/pages/[publication]/[slug].astro",
+                    "./src/pages/index.astro",
+                ],
+                clientFiles: [
+                    "./src/components/TerrazzoBanner/index.tsx",
+                    "./src/components/AzulejoTile/index.tsx",
+                ],
+            },
+        },
     },
 });

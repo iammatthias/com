@@ -31,6 +31,20 @@ export const prerender = true;
 
 export const GET: APIRoute = async () => {
     const vectors: Record<string, string> = {};
+    // Dev renders prerendered routes on demand — which here would embed
+    // the whole corpus inside the dev worker on every request (~6 s of
+    // blocked CPU plus the 10 MB engine loaded into workerd), and a
+    // vite program reload landing mid-request severs the module runner
+    // ("Network connection lost"). The file is an accelerator, never a
+    // gate: ship it empty in dev and the search worker embeds items
+    // client-side, exactly as it does for content published after a
+    // build. `import.meta.env.DEV` is false during the real prerender.
+    if (import.meta.env.DEV) {
+        return new Response(
+            JSON.stringify({ model: SEARCH_MODEL, dims: SEARCH_DIMS, vectors }),
+            { headers: { "Content-Type": "application/json" } },
+        );
+    }
     try {
         const [docs, feed, { embed }] = await Promise.all([
             loadAllDocuments(),
