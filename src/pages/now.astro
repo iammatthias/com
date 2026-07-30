@@ -140,17 +140,15 @@ const socialLinks = SOCIAL_LINKS.filter((l) => !l.schemaOnly);
         gap: var(--space-2);
     }
 
-    .prose li {
+    /* List rows and bio paragraphs share the body voice; the bio
+       (merged in from the old /about page) additionally wraps pretty. */
+    .prose li,
+    .bio p {
         font-size: var(--fs-base);
         line-height: var(--lh-relaxed);
     }
 
-    /* Bio paragraphs (merged in from the old /about page). Comfortable
-       reading size, slightly relaxed leading. The wrapping section's
-       own gap separates the paragraphs from each other. */
     .bio p {
-        font-size: var(--fs-base);
-        line-height: var(--lh-relaxed);
         text-wrap: pretty;
     }
 

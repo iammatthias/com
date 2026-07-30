@@ -91,8 +91,11 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         text-decoration: none;
     }
 
+    /* The underline lands on the span (only the name, not the count),
+       so the base anchor's offset doesn't reach it — restate it. */
     .tag-cloud a:hover .tag-name {
         text-decoration: underline;
+        text-underline-offset: 0.15em;
     }
 
     .tag-name {

@@ -276,48 +276,51 @@
         opacity: 0;
     }
 
-    .lightbox-close {
+    /* Shared black-glass button chrome; close and prev/next differ
+       only in size and placement. */
+    .lightbox-close,
+    .lightbox-nav {
         position: absolute;
-        top: var(--space-4);
-        right: var(--space-4);
         z-index: 1;
-        width: 2.5rem;
-        height: 2.5rem;
         padding: 0;
         border: 0;
         background: rgba(0, 0, 0, 0.5);
         color: white;
-        font-size: 1.5rem;
         line-height: 1;
         border-radius: 50%;
         cursor: pointer;
     }
 
     .lightbox-close:hover,
-    .lightbox-close:focus-visible {
+    .lightbox-nav:hover {
         background: rgba(0, 0, 0, 0.8);
-        outline: none;
     }
 
-    /* Prev / next controls — centered vertically on each edge, hidden
-       on touch-only viewports (swipe is the primary nav there) but
-       still focusable via keyboard. Pointer-only restriction keeps the
-       UI clean on phones without hiding affordance from a11y trees. */
+    /* The global focus ring uses the theme accent, which can vanish
+       against the photo — a white ring on the darkened glass reads
+       everywhere. */
+    .lightbox-close:focus-visible,
+    .lightbox-nav:focus-visible {
+        background: rgba(0, 0, 0, 0.8);
+        outline: 2px solid white;
+        outline-offset: 2px;
+    }
+
+    .lightbox-close {
+        top: var(--space-4);
+        right: var(--space-4);
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.5rem;
+    }
+
+    /* Prev / next controls — centered vertically on each edge. */
     .lightbox-nav {
-        position: absolute;
         top: 50%;
-        z-index: 1;
         transform: translateY(-50%);
         width: 3rem;
         height: 3rem;
-        padding: 0;
-        border: 0;
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
         font-size: 2rem;
-        line-height: 1;
-        border-radius: 50%;
-        cursor: pointer;
     }
 
     .lightbox-prev {
@@ -328,15 +331,11 @@
         right: var(--space-4);
     }
 
-    .lightbox-nav:hover,
-    .lightbox-nav:focus-visible {
-        background: rgba(0, 0, 0, 0.8);
-        outline: none;
-    }
-
     @media (hover: none) and (pointer: coarse) {
-        /* Hide nav buttons on touch — swipe handles it. Still rendered
-           in the DOM so focus order + screen-reader announcements work. */
+        /* Touch-only viewports drop the nav buttons entirely — swipe
+           is the navigation there, and `display: none` does remove
+           them from focus order and the accessibility tree, which is
+           the intent: no invisible tab stops. */
         .lightbox-nav {
             display: none;
         }

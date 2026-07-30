@@ -633,13 +633,7 @@ video {
     text-wrap: pretty;
 }
 
-.card-kind {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: var(--fs-sm);
-    color: var(--color-muted);
-}
-
+.card-kind,
 .card-date {
     font-family: var(--font-serif);
     font-style: italic;
@@ -776,14 +770,7 @@ video {
     scroll-snap-align: start;
 }
 
-.feed-media--gallery .feed-tile img {
-    height: 100%;
-    width: auto;
-    max-width: 100%;
-    object-fit: cover;
-}
-
-.feed-media--gallery .feed-tile video {
+.feed-media--gallery .feed-tile :is(img, video) {
     height: 100%;
     width: auto;
     max-width: 100%;
@@ -813,11 +800,10 @@ video {
 }
 
 .feed-note a {
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.15em;
-    /* Lift body links above the stretched-link overlay below so
-       clicks on inline links navigate to the link's own href
-       rather than the card permalink. */
+    /* Underline metrics come from the base `a` rule. Lift body links
+       above the stretched-link overlay below so clicks on inline
+       links navigate to the link's own href rather than the card
+       permalink. */
     position: relative;
     z-index: 1;
 }
@@ -925,118 +911,12 @@ video {
     text-decoration: underline;
 }
 
-/* ---------- pagination ---------- */
-/*
- * Numbered page nav for the document list surfaces (/content,
- * publication indexes, tag pages). The feed uses infinite scroll
- * (`.feed-more` below) instead. Page 1 is the bare index; pages 2+ live
- * at `/<base>/page/N` — see src/lib/pagination.ts + Pagination.astro.
- * Newest-first ordering means the left edge steps toward newer entries.
- */
-.pagination {
-    /* `main` owns the gap above (default `main > * + *`); the padding +
-       border below are the divider's own internal spacing. */
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--color-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-    font-family: var(--font-serif);
-    font-size: var(--fs-sm);
-}
-
-.pagination__edge {
-    font-style: italic;
-    color: var(--color-muted);
-    text-decoration: none;
-    white-space: nowrap;
-}
-
-.pagination__edge:hover {
-    color: var(--color-fg);
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-}
-
-.pagination__edge.is-disabled {
-    opacity: 0.35;
-}
-
-.pagination__pages {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-}
-
-.pagination__pages li {
-    list-style: none;
-}
-
-.pagination__num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 1.75em;
-    padding: 0.15em 0.4em;
-    text-decoration: none;
-    color: var(--color-muted);
-    border-radius: var(--radius);
-    font-variant-numeric: tabular-nums;
-}
-
-.pagination__num:hover {
-    color: var(--color-fg);
-}
-
-.pagination__num.is-current {
-    color: var(--color-fg);
-    border: 1px solid var(--color-border);
-}
-
-.pagination__gap {
-    list-style: none;
-    color: var(--color-muted);
-}
-
-/* ---------- feed infinite-scroll sentinel ---------- */
-/*
- * Sits below the `/feed` list. JS turns the link into an
- * auto-appending scroll trigger; without JS it's a plain link to the
- * next full page. The `[hidden]` status swaps in while a fetch is in
- * flight (see feed/[...page].astro).
- */
-.feed-more {
-    margin-top: var(--space-7);
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--color-border);
-    display: flex;
-    justify-content: center;
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: var(--fs-sm);
-}
-
-.feed-more a {
-    color: var(--color-muted);
-    text-decoration: none;
-}
-
-.feed-more a:hover {
-    color: var(--color-fg);
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-}
-
-.feed-more__status {
-    color: var(--color-muted);
-}
+/* Pagination and the feed's infinite-scroll sentinel used to live
+   here; each is consumed by exactly one component, so their styles
+   moved into the components' own scoped blocks (Pagination.astro,
+   FeedInfiniteScroll.astro). Globals is for primitives that either
+   span surfaces or style `set:html` output, which never carries a
+   scope hash. */
 
 /* ── farfield recipes ─────────────────────────────────────────────────
    The tabular format from Cooking for Engineers: ingredients down the

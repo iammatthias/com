@@ -110,3 +110,34 @@ const { nextHref } = Astro.props;
         io.observe(more);
     })();
 </script>
+
+<style>
+    /* Sits below the `/feed` list. JS turns the link into an
+       auto-appending scroll trigger; without JS it's a plain link to
+       the next full page. The `[hidden]` status swaps in while a
+       fetch is in flight. */
+    .feed-more {
+        margin-top: var(--space-7);
+        padding-top: var(--space-5);
+        border-top: 1px solid var(--color-border);
+        display: flex;
+        justify-content: center;
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+    }
+
+    .feed-more a {
+        color: var(--color-muted);
+        text-decoration: none;
+    }
+
+    .feed-more a:hover {
+        color: var(--color-fg);
+        text-decoration: underline;
+    }
+
+    .feed-more__status {
+        color: var(--color-muted);
+    }
+</style>

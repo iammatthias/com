@@ -279,10 +279,12 @@ import MenuLinks from "./MenuLinks.astro";
         font-size: var(--fs-lg);
     }
 
+    /* Thin 1px hover underline — the deliberate serif-title treatment
+       (base a:hover is 2px, tuned for body links). Offset comes from
+       the base rule. */
     .site-menu__results :global(a:hover) {
         text-decoration: underline;
         text-decoration-thickness: 1px;
-        text-underline-offset: 0.15em;
     }
 
     .site-menu__results :global(.site-menu__result-kind) {

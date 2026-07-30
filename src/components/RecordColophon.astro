@@ -115,13 +115,9 @@ const { seed, fields } = Astro.props;
         color: var(--color-fg);
     }
 
+    /* Underline metrics (1px, 2px on hover) come from the base `a`
+       rules in globals. */
     .colophon-meta a {
         color: inherit;
-        text-decoration-thickness: 1px;
-        text-underline-offset: 0.15em;
-    }
-
-    .colophon-meta a:hover {
-        text-decoration-thickness: 2px;
     }
 </style>
