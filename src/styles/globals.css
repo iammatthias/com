@@ -88,6 +88,23 @@
     --callout-important: light-dark(#8a5e8a, #c49ac4);
     --callout-warning: light-dark(#9c7a3a, #ddc080);
     --callout-caution: light-dark(#a05538, #d8987a);
+
+    /* Selection-ramp stops — the palette the position-keyed text
+       selection walks top-to-bottom (scripts/selection-gradient.ts
+       mixes between adjacent stops per block): blue up top, down
+       through green and bronze into rust, plum at the foot of the
+       page. Dedicated values, not the callout tokens — those are
+       tuned as text ON cream, and as backgrounds UNDER cream they
+       bottomed out near 3:1. These are generated at uniform OKLCH
+       chroma with per-hue lightness pushed until every stop clears
+       5:1 against cream text (light) and 8:1 against ink (dark), so
+       every band in the ramp carries the same weight and the same
+       legibility. */
+    --sel-stop-0: light-dark(#41668d, #89b4e1);
+    --sel-stop-1: light-dark(#366e52, #80be9d);
+    --sel-stop-2: light-dark(#77602d, #c8ae75);
+    --sel-stop-3: light-dark(#895543, #e0a28c);
+    --sel-stop-4: light-dark(#7f567b, #d2a2cd);
 }
 
 /* Fallback: browsers without light-dark() support still get a
@@ -118,6 +135,23 @@
 *::before,
 *::after {
     box-sizing: border-box;
+}
+
+/* Text selection walks the palette down the page: each block carries
+   its own `--sel` (a color-mix between the --sel-stop-* tokens set by
+   scripts/selection-gradient.ts from the block's page position).
+   Custom properties inherit, so inline children — links, code, the
+   recipe amount spans — pick up their block's color. Anything the
+   script hasn't touched falls back to the first stop. */
+::selection {
+    background: var(--sel, var(--sel-stop-0));
+    color: var(--color-bg);
+}
+
+/* Selected media gets a wash, not a slab — an opaque selection
+   background over an image reads as a rendering glitch. */
+:is(img, video, svg)::selection {
+    background: color-mix(in srgb, var(--sel, var(--sel-stop-0)) 35%, transparent);
 }
 
 html {
