@@ -83,7 +83,8 @@ const cachedPosts = () => memo<Post[]>("posts", getPosts);
 export { getSeries, getBlobMeta, blobURL };
 
 /**
- * Walk an entry/post body and return every image embed it references,
+ * Walk an entry/post body and return every media embed it references
+ * (images and video/audio alike — consumers branch on `meta.mime`),
  * with each blob's `/meta` already resolved. Series embeds are
  * expanded — a `series://<slug>` becomes the blobs inside that series
  * body. Deduped (a cid that appears both inline and inside a series

@@ -12,6 +12,7 @@ import { marked } from "marked";
 import { blobURL, getBlobMeta, getSeries } from "./farfield-loader";
 import { wsrvUrl, wsrvSrcSet, type BlobMeta } from "./farfield";
 import { plainText, transformAlerts } from "./markdown-text";
+import { extractRecipes, recipeHtml, recipeSimpleHtml } from "./recipe";
 import {
     FIG_WIDTHS,
     FIG_SIZES,
@@ -31,6 +32,20 @@ function attr(value: string): string {
         .replace(/</g, "&lt;");
 }
 
+/**
+ * Rewrite link-syntax blob refs — `[name](blob://cid)`, the editor's
+ * file-attachment form — to absolute blob URLs so marked emits a
+ * working download link instead of a dead `blob://` href. Runs after
+ * embed extraction, which consumes the image-syntax (`![]`) refs, so
+ * only true file links remain by this point.
+ */
+function rewriteBlobLinks(markdown: string): string {
+    return markdown.replace(
+        /\]\(blob:\/\/([a-z0-9]+)\)/g,
+        (_m, cid: string) => `](${blobURL(cid)})`,
+    );
+}
+
 function zoomAttrs(src: string, alt: string, w: number, h: number): string {
     return (
         `data-zoom-src="${attr(wsrvUrl(src, ZOOM_FALLBACK_WIDTH, { quality: ZOOM_QUALITY }))}" ` +
@@ -39,6 +54,63 @@ function zoomAttrs(src: string, alt: string, w: number, h: number): string {
         `data-zoom-alt="${attr(alt)}" ` +
         `data-zoom-w="${w}" data-zoom-h="${h}"`
     );
+}
+
+/**
+ * What a blob renders as, from its sniffed mime. Farfield stores
+ * video/audio blobs with just {cid, size, mime, createdAt} — no
+ * dimensions, blurhash, or dominant color — so rendering branches on
+ * kind rather than metadata presence. Unknown or missing mimes fall
+ * back to the image path: wsrv resolves most legacy blobs, and a
+ * broken <img> beats silently dropping the embed.
+ */
+type MediaKind = "image" | "video" | "audio";
+
+function mediaKind(meta: BlobMeta | null): MediaKind {
+    const mime = meta?.mime ?? "";
+    if (mime.startsWith("video/")) return "video";
+    if (mime.startsWith("audio/")) return "audio";
+    return "image";
+}
+
+/**
+ * Players stream straight from the blob service — wsrv is image-only,
+ * and blobs answers Range requests (Safari refuses to play without
+ * 206s). `preload="metadata"` paints the first frame without pulling
+ * the file; `playsinline` keeps iOS from hijacking into fullscreen.
+ * The nested link is the no-video-support fallback.
+ */
+function videoTag(cid: string, alt: string): string {
+    const src = attr(blobURL(cid));
+    const label = alt ? ` aria-label="${attr(alt)}"` : "";
+    return (
+        `<video controls preload="metadata" playsinline${label} src="${src}">` +
+        `<a href="${src}">Watch the video</a>` +
+        `</video>`
+    );
+}
+
+function audioTag(cid: string, alt: string): string {
+    const src = attr(blobURL(cid));
+    const label = alt ? ` aria-label="${attr(alt)}"` : "";
+    return (
+        `<audio controls preload="metadata"${label} src="${src}">` +
+        `<a href="${src}">Listen to the audio</a>` +
+        `</audio>`
+    );
+}
+
+/** Video/audio variant of the doc figure and series tile — a player
+ *  instead of the zoomable wsrv image (no zoom button; the controls
+ *  are the interaction). */
+function renderMediaFigure(
+    figureClass: string,
+    kind: "video" | "audio",
+    cid: string,
+    alt: string,
+): string {
+    const inner = kind === "video" ? videoTag(cid, alt) : audioTag(cid, alt);
+    return `<figure class="${figureClass} ${figureClass}--${kind}">${inner}</figure>`;
 }
 
 /**
@@ -53,6 +125,8 @@ function renderEmbedFigure(
     alt: string,
     meta: BlobMeta | null,
 ): string {
+    const kind = mediaKind(meta);
+    if (kind !== "image") return renderMediaFigure("doc-figure", kind, cid, alt);
     const src = blobURL(cid);
     const w = meta?.width ?? 960;
     const h = meta?.height ?? 720;
@@ -76,6 +150,8 @@ function renderSeriesTile(
     alt: string,
     meta: BlobMeta | null,
 ): string {
+    const kind = mediaKind(meta);
+    if (kind !== "image") return renderMediaFigure("series-tile", kind, cid, alt);
     const src = blobURL(cid);
     const w = meta?.width ?? 960;
     const h = meta?.height ?? 720;
@@ -95,29 +171,30 @@ function renderSeriesTile(
 
 /**
  * A series body is markdown made of blank-line-separated blocks. We
- * tokenize it in document order — image embeds vs everything else —
- * so prose between images is preserved instead of dropped.
+ * tokenize it in document order — blob embeds (image or video, the
+ * tile renderer branches on mime) vs everything else — so prose
+ * between media is preserved instead of dropped.
  */
 interface SeriesBlock {
-    type: "image" | "text";
-    /** blob cid (image blocks). */
+    type: "media" | "text";
+    /** blob cid (media blocks). */
     cid?: string;
-    /** alt text (image blocks). */
+    /** alt text (media blocks). */
     alt?: string;
     /** raw markdown (text blocks). */
     raw: string;
 }
 
 function tokenizeSeries(body: string): SeriesBlock[] {
-    const IMG = /^!\[([^\]]*)\]\(blob:\/\/([a-z0-9]+)\)$/;
+    const EMBED = /^!\[([^\]]*)\]\(blob:\/\/([a-z0-9]+)\)$/;
     return body
         .split(/\n\s*\n/)
         .map((b) => b.trim())
         .filter(Boolean)
         .map((raw): SeriesBlock => {
-            const m = raw.match(IMG);
+            const m = raw.match(EMBED);
             return m
-                ? { type: "image", alt: m[1], cid: m[2], raw }
+                ? { type: "media", alt: m[1], cid: m[2], raw }
                 : { type: "text", raw };
         });
 }
@@ -157,7 +234,7 @@ async function renderSeriesTriptychs(blocks: SeriesBlock[]): Promise<string> {
     const metas = new Map<string, BlobMeta | null>();
     await Promise.all(
         blocks
-            .filter((b) => b.type === "image")
+            .filter((b) => b.type === "media")
             .map(async (b) => {
                 metas.set(b.cid as string, await getBlobMeta(b.cid as string));
             }),
@@ -172,7 +249,7 @@ async function renderSeriesTriptychs(blocks: SeriesBlock[]): Promise<string> {
     const out: string[] = [];
     let i = 0;
     while (i < blocks.length) {
-        if (blocks[i].type !== "image") {
+        if (blocks[i].type !== "media") {
             // Stray prose with no image to anchor it — centered stanza.
             out.push(
                 `<p class="triptych-loose">${renderStanza(blocks[i].raw)}</p>`,
@@ -182,14 +259,14 @@ async function renderSeriesTriptychs(blocks: SeriesBlock[]): Promise<string> {
         }
         const left = blocks[i++];
         const textParts: SeriesBlock[] = [];
-        while (i < blocks.length && blocks[i].type !== "image")
+        while (i < blocks.length && blocks[i].type !== "media")
             textParts.push(blocks[i++]);
         const right =
-            i < blocks.length && blocks[i].type === "image"
+            i < blocks.length && blocks[i].type === "media"
                 ? blocks[i++]
                 : null;
         const capParts: SeriesBlock[] = [];
-        while (i < blocks.length && blocks[i].type !== "image")
+        while (i < blocks.length && blocks[i].type !== "media")
             capParts.push(blocks[i++]);
 
         const textHtml = textParts.map((t) => renderStanza(t.raw)).join("\n");
@@ -221,7 +298,7 @@ async function renderSeriesTriptychs(blocks: SeriesBlock[]): Promise<string> {
 async function renderSeriesFlow(blocks: SeriesBlock[]): Promise<string> {
     const parts = await Promise.all(
         blocks.map(async (b) => {
-            if (b.type === "image") {
+            if (b.type === "media") {
                 const meta = await getBlobMeta(b.cid as string);
                 return renderEmbedFigure(b.cid as string, b.alt ?? "", meta);
             }
@@ -243,7 +320,7 @@ async function renderSeries(slug: string): Promise<string> {
     const series = await getSeries(slug);
     if (!series?.body) return "";
     const blocks = tokenizeSeries(series.body);
-    const images = blocks.filter((b) => b.type === "image");
+    const images = blocks.filter((b) => b.type === "media");
     const hasText = blocks.some((b) => b.type === "text");
     if (images.length === 0 && !hasText) return "";
 
@@ -260,19 +337,44 @@ async function renderSeries(slug: string): Promise<string> {
 }
 
 /**
+ * Swap each recipe placeholder for its rendered HTML. The placeholder
+ * is an HTML comment, which marked passes through as its own block —
+ * but a fence butted directly against prose can leave it inside a
+ * paragraph, so the `<p>`-wrapped form is unwrapped first.
+ */
+function substituteRecipes(
+    html: string,
+    blocks: string[],
+    render: (src: string) => string,
+): string {
+    blocks.forEach((src, i) => {
+        const out = render(src);
+        html = html
+            .replaceAll(`<p><!--ffrecipe${i}--></p>`, out)
+            .replaceAll(`<!--ffrecipe${i}-->`, out);
+    });
+    return html;
+}
+
+/**
  * Render a markdown body, resolving Farfield's `blob://<cid>` and
- * `series://<slug>` embeds to figure / gallery HTML and rewriting GFM
+ * `series://<slug>` embeds to figure / gallery HTML, expanding fenced
+ * ```recipe blocks into the grid + method view, and rewriting GFM
  * alert blockquotes to semantic callouts.
  *
- * Embeds are pre-replaced with HTML comment placeholders before marked
- * sees the source so its inline parser can't mangle them. After marked
- * emits HTML the placeholders are swapped for the resolved figures
- * (or dropped silently if the underlying record can't be found).
+ * Recipe blocks lift out first — before the embed pass and before
+ * marked sees the source — otherwise their YAML renders as a wall of
+ * code. Embeds are pre-replaced with HTML comment placeholders before
+ * marked sees the source so its inline parser can't mangle them.
+ * After marked emits HTML the placeholders are swapped for the
+ * resolved figures (or dropped silently if the underlying record
+ * can't be found).
  */
 export async function renderMarkdownBody(body: string): Promise<string> {
+    const { body: lifted, blocks: recipes } = extractRecipes(body);
     interface Embed { alt: string; scheme: "blob" | "series"; id: string }
     const embeds: Embed[] = [];
-    const preprocessed = body.replace(
+    const preprocessed = lifted.replace(
         /!\[([^\]]*)\]\((blob|series):\/\/([a-z0-9-]+)\)/g,
         (_match, alt: string, scheme: string, id: string) => {
             const idx = embeds.length;
@@ -294,24 +396,30 @@ export async function renderMarkdownBody(body: string): Promise<string> {
         }),
     );
 
-    let html = marked.parse(preprocessed, { async: false }) as string;
+    let html = marked.parse(rewriteBlobLinks(preprocessed), {
+        async: false,
+    }) as string;
 
     html = html.replace(
         /<!--FARFIELD_EMBED:(\d+)-->/g,
         (_, idx: string) => rendered[Number(idx)] ?? "",
     );
+    html = substituteRecipes(html, recipes, recipeHtml);
     html = transformAlerts(html);
     return html;
 }
 
 /**
  * RSS/feed-reader variant of `renderMarkdownBody`. Embeds resolve to
- * plain `<img>` tags with absolute wsrv URLs (readers can't run the
- * site's zoom buttons or masonry, and relative/`blob://` URLs render
- * as broken images) — a `blob://<cid>` becomes one image, a
- * `series://<slug>` becomes that series' images in order. 960px keeps
- * reader downloads sane; no width/height attributes since blob meta
- * isn't worth a fetch-per-image on a full-collection feed.
+ * plain media tags with absolute URLs (readers can't run the site's
+ * zoom buttons or masonry, and relative/`blob://` URLs render as
+ * broken images) — a `blob://<cid>` becomes one tag, a
+ * `series://<slug>` becomes that series' media in order. Images go
+ * through wsrv at 960px to keep reader downloads sane; video/audio
+ * stream straight from the blob service. Blob meta is fetched only
+ * for the embeds that survive the cap (needed to pick the tag), so a
+ * full-collection feed stays bounded at `maxImages` lookups per item
+ * — no width/height attributes, which would need meta for every image.
  *
  * `maxImages` caps gallery-heavy items (an art post can carry hundreds
  * of images, which balloons the feed to megabytes); when the cap trims
@@ -324,9 +432,12 @@ export async function renderFeedBody(
 ): Promise<string> {
     const maxImages = opts.maxImages ?? Number.POSITIVE_INFINITY;
 
+    // Recipe blocks render as a reader-safe list + numbered method —
+    // the grid depends on site CSS that feed readers strip.
+    const { body: lifted, blocks: recipes } = extractRecipes(body);
     interface Embed { alt: string; scheme: "blob" | "series"; id: string }
     const embeds: Embed[] = [];
-    const preprocessed = body.replace(
+    const preprocessed = lifted.replace(
         /!\[([^\]]*)\]\((blob|series):\/\/([a-z0-9-]+)\)/g,
         (_match, alt: string, scheme: string, id: string) => {
             const idx = embeds.length;
@@ -335,16 +446,24 @@ export async function renderFeedBody(
         },
     );
 
-    const imgTag = (m: { cid: string; alt: string }) =>
-        `<p><img src="${attr(wsrvUrl(blobURL(m.cid), 960))}" alt="${attr(m.alt)}" /></p>`;
+    const mediaTag = (m: { cid: string; alt: string }, meta: BlobMeta | null) => {
+        switch (mediaKind(meta)) {
+            case "video":
+                return `<p>${videoTag(m.cid, m.alt)}</p>`;
+            case "audio":
+                return `<p>${audioTag(m.cid, m.alt)}</p>`;
+            default:
+                return `<p><img src="${attr(wsrvUrl(blobURL(m.cid), 960))}" alt="${attr(m.alt)}" /></p>`;
+        }
+    };
 
-    // Resolve every embed to its ordered image list first, then walk
-    // the document order with the image budget so truncation always
-    // keeps the item's leading images.
+    // Resolve every embed to its ordered media list first, then walk
+    // the document order with the media budget so truncation always
+    // keeps the item's leading media.
     const resolved = await Promise.all(
         embeds.map(async (e): Promise<{ cid: string; alt: string }[]> => {
             if (e.scheme === "blob") return [{ cid: e.id, alt: e.alt }];
-            // Series: expand to its images (memoized per-record fetch).
+            // Series: expand to its media (memoized per-record fetch).
             const series = await getSeries(e.id);
             if (!series?.body) return [];
             return [...series.body.matchAll(
@@ -355,21 +474,31 @@ export async function renderFeedBody(
 
     let emitted = 0;
     let omitted = 0;
-    const rendered = resolved.map((imgs) => {
-        const take = imgs.slice(0, Math.max(0, maxImages - emitted));
-        emitted += take.length;
-        omitted += imgs.length - take.length;
-        return take.map(imgTag).join("\n");
-    });
+    const rendered = await Promise.all(
+        resolved.map(async (media) => {
+            // Budget bookkeeping stays synchronous (before any await)
+            // so document order decides what the cap keeps.
+            const take = media.slice(0, Math.max(0, maxImages - emitted));
+            emitted += take.length;
+            omitted += media.length - take.length;
+            const metas = await Promise.all(
+                take.map((m) => getBlobMeta(m.cid)),
+            );
+            return take.map((m, i) => mediaTag(m, metas[i])).join("\n");
+        }),
+    );
 
-    let html = marked.parse(preprocessed, { async: false }) as string;
+    let html = marked.parse(rewriteBlobLinks(preprocessed), {
+        async: false,
+    }) as string;
     html = html.replace(
         /<!--FARFIELD_EMBED:(\d+)-->/g,
         (_, idx: string) => rendered[Number(idx)] ?? "",
     );
+    html = substituteRecipes(html, recipes, recipeSimpleHtml);
     html = transformAlerts(html);
     if (omitted > 0 && opts.moreUrl) {
-        html += `<p><a href="${attr(opts.moreUrl)}">View the full gallery (${omitted} more photo${omitted === 1 ? "" : "s"}) →</a></p>`;
+        html += `<p><a href="${attr(opts.moreUrl)}">View the full gallery (${omitted} more) →</a></p>`;
     }
     return html;
 }
@@ -444,6 +573,10 @@ export function buildToc(html: string): {
     const out = html.replace(
         /<h([23])([^>]*)>([\s\S]*?)<\/h\1>/g,
         (match, lvl, attrs: string, inner: string) => {
+            // Recipe-block headings ("Method", phase names) are labels
+            // inside a component, not document sections — leave them
+            // un-id'd and out of the TOC.
+            if (/\bclass=["'][^"']*ff-recipe/.test(attrs)) return match;
             // Respect any id already on the heading.
             const idMatch = attrs.match(/\bid=["']([^"']+)["']/);
             const id = idMatch ? idMatch[1] : dedupe(slug(inner));

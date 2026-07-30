@@ -26,7 +26,8 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "three": "^0.185.1",
-    "viem": "^2.54.1"
+    "viem": "^2.54.1",
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",

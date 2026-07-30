@@ -6,6 +6,7 @@
 
 import { marked } from "marked";
 import { EMBED_PATTERN_SOURCE } from "./farfield";
+import { extractRecipes, recipeText } from "./recipe";
 
 /** Fresh embed regex per call — the `g` flag makes RegExp stateful. */
 function embedRe(): RegExp {
@@ -23,12 +24,20 @@ export function stripEmbeds(markdown: string): string {
 
 /**
  * Reduce a markdown body to a single line of plain text: embeds
- * dropped, links collapsed to their label, emphasis/heading/quote
- * markers stripped, whitespace normalized. Used for OG descriptions,
- * derived titles, and word counts.
+ * dropped, fenced ```recipe blocks collapsed to their human words
+ * (ingredients, steps, notes — not the YAML that carries them), links
+ * collapsed to their label, emphasis/heading/quote markers stripped,
+ * whitespace normalized. Used for OG descriptions, derived titles,
+ * search vectors, and word counts.
  */
 export function plainText(markdown: string): string {
-    return stripEmbeds(markdown)
+    const { body, blocks } = extractRecipes(markdown);
+    const withRecipes = blocks.length
+        ? body.replace(/<!--ffrecipe(\d+)-->/g, (_, i: string) =>
+              recipeText(blocks[Number(i)] ?? ""),
+          )
+        : body;
+    return stripEmbeds(withRecipes)
         .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
         .replace(/[*_`>#]+/g, " ")
         .replace(/\s+/g, " ")

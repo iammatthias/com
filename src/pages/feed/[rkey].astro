@@ -86,6 +86,34 @@ const bannerSeed = hashSeed(`feed/${rkey}`);
                     const fallbackW = preset.widths[Math.floor(preset.widths.length / 2)] ?? 720;
                     return media.map((m) => {
                         const src = blobURL(m.cid);
+                        const mime = m.meta?.mime ?? "";
+                        // Video/audio play straight from the blob
+                        // service — same dispatch as FeedEntryCard.
+                        if (mime.startsWith("video/")) {
+                            return (
+                                <figure class="feed-tile feed-tile--video">
+                                    <video
+                                        controls
+                                        preload="metadata"
+                                        playsinline
+                                        src={src}
+                                        aria-label={m.alt || undefined}
+                                    />
+                                </figure>
+                            );
+                        }
+                        if (mime.startsWith("audio/")) {
+                            return (
+                                <figure class="feed-tile feed-tile--audio">
+                                    <audio
+                                        controls
+                                        preload="metadata"
+                                        src={src}
+                                        aria-label={m.alt || undefined}
+                                    />
+                                </figure>
+                            );
+                        }
                         return (
                             <figure
                                 class="feed-tile"

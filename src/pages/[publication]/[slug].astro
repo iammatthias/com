@@ -233,6 +233,18 @@ let related: DocumentData[] = [];
         import { renderMermaid } from "@lib/mermaid-client";
         void renderMermaid();
     </script>
+
+    <!-- Recipe grids get their interactivity (step focus, ingredient
+         strike-off, serves scaling) only on pages that carry one — the
+         dynamic import keeps the chunk off every other doc page. -->
+    <script>
+        if (document.querySelector(".ff-recipe")) {
+            const { initRecipes } = await import(
+                "@src/scripts/recipe-interactive"
+            );
+            initRecipes();
+        }
+    </script>
 </BaseLayout>
 
 <style>
@@ -337,6 +349,24 @@ let related: DocumentData[] = [];
         width: 100%;
         height: auto;
         border-radius: var(--radius);
+    }
+
+    /* Video embeds — blob meta carries no dimensions for video, so
+       `aspect-ratio: auto 16/9` reserves a plausible box until the
+       metadata loads and the intrinsic ratio takes over. Black fill
+       reads as letterboxing while the first frame arrives. */
+    .doc-body :global(video) {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: auto 16 / 9;
+        border-radius: var(--radius);
+        background: #000;
+    }
+
+    .doc-body :global(audio) {
+        display: block;
+        width: 100%;
     }
 
     /* TOC is a native <details> sitting inline near the top of the

@@ -2,7 +2,8 @@
 //
 //   content  https://content.farfield.systems  collections + entries + series
 //   feed     https://feed.farfield.systems     short posts
-//   blobs    https://blobs.farfield.systems    image bytes + per-blob meta
+//   blobs    https://blobs.farfield.systems    media bytes + per-blob meta
+//            (images, plus video/audio served with Range support)
 //
 // Endpoints (final API):
 //   GET /api/collections                         → Collection[]
@@ -147,11 +148,19 @@ export interface Post {
 export interface BlobMeta {
     cid: string;
     size: number;
+    /** Sniffed content type — the renderer branches on this: image/*
+     *  gets the wsrv <img> pipeline, video/* and audio/* get native
+     *  players streaming straight from the blob service. */
     mime: string;
+    /** The image-derived fields below are present for decodable images
+     *  only — video/audio blobs carry just {cid, size, mime, createdAt}. */
     width?: number;
     height?: number;
     blurhash?: string;
     dominantColor?: string;
+    /** CID of a pre-generated ≤320px JPEG thumbnail (images only). */
+    thumbCid?: string;
+    createdAt?: string;
 }
 
 // ---------- HTTP layer with edge cache + ETag revalidation -----------------
