@@ -208,10 +208,24 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
                 ensureIndex(),
             ]);
             const qv = embed(msg.query);
+            // Lexical title boost on top of the embedding similarity.
+            // Pure cosine can rank a thematically-adjacent post above
+            // the one whose title literally contains the query
+            // ("machine vision" ranking under a feed note). Top hits
+            // spread by a few hundredths, so +0.15 for a title
+            // containing the whole query is decisive without letting
+            // keyword matches swamp semantics; an exact title doubles
+            // it.
+            const q = msg.query.trim().toLowerCase();
             const scored: WorkerHit[] = items.map((item, i) => {
                 const v = vectors[i];
                 let dot = 0;
                 for (let d = 0; d < qv.length; d++) dot += qv[d] * v[d];
+                const t = item.title.toLowerCase();
+                if (q.length >= 3) {
+                    if (t === q) dot += 0.3;
+                    else if (t.includes(q)) dot += 0.15;
+                }
                 return {
                     href: item.href,
                     title: item.title,

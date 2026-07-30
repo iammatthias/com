@@ -2,9 +2,23 @@
 # fonts, images). Cloudflare's _headers file only applies to assets —
 # SSR responses get the same set from src/middleware.ts. The adapter
 # appends its immutable /_astro/* cache rule to this file at build.
+#
+# The Content-Security-Policy is a copy of the one in
+# src/middleware.ts — keep the two in sync (see the comment there for
+# what each allowance is for). The prerendered onchain-analytics page
+# is why connect-src carries the Base Sepolia RPC.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://wsrv.nl https://blobs.farfield.systems; media-src 'self' https://blobs.farfield.systems; connect-src 'self' https://sepolia.base.org; font-src 'self'; worker-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
+# Prebuilt search vectors: immutable per deploy, ~230 KB. A short
+# browser cache skips the 304 revalidation on every visit; a stale
+# copy after a deploy is harmless — the model/dims guard plus the
+# IndexedDB layer absorb any drift, exactly as they do for content
+# published between builds.
+/api/search-vectors.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400

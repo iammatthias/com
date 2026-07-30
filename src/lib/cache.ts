@@ -63,10 +63,18 @@ export function setResponseCacheHeaders(
             cacheHint.lastModified.toUTCString(),
         );
     }
+    // Coarse tags only. The loaders emit one `doc-*`/`cid-*` pair per
+    // entry, which on list pages ballooned this header to ~11 KB of
+    // bytes shipped to every browser — and nothing consumes them:
+    // purge-by-tag is a Cloudflare Enterprise feature and no purge
+    // call exists. Surface-level tags (`documents`, `pub-*`, `tag-*`,
+    // `feed-entries`, …) keep the header a few dozen bytes and are
+    // the granularity any future purge would realistically use.
+    const FINE_TAG = /^(doc-|cid-|feed-entry-)/;
     const tags = [
         ...(cacheHint?.tags ?? []),
         ...(opts.extraTags ?? []),
-    ];
+    ].filter((t) => !FINE_TAG.test(t));
     if (tags.length > 0) {
         const deduped = [...new Set(tags)];
         response.headers.set("Cache-Tag", deduped.join(","));
