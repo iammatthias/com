@@ -52,59 +52,68 @@
     /*
    * Color tokens.
    *
-   * Warm off-white paper for light, warm near-black for dark — both
-   * tinted toward yellow rather than the pure ##ffffff / #000000 we
-   * had before so the page feels like it lives next to the serif
-   * typography rather than a corporate dashboard. Dark bg sits just
-   * off #1a1a1a (slightly warmer, slightly lighter).
+   * Cobalt ink on ivory paper — 18th-century French copperplate and
+   * toile de Jouy, blended with the Santorini/riviera blue the site
+   * already spoke through its azulejos. The text itself is the ink: a
+   * deep blue-black rather than a warm near-black, on paper that is
+   * cooler and brighter than the old cream but still ivory, never
+   * clinical white. Hairlines are the ink at low strength, the way an
+   * engraving's hatching is. The accent is true cobalt. Dark mode is
+   * the inverted plate: ivory ink on deep navy-black.
    *
    * `light-dark()` resolves automatically via the `color-scheme`
    * declaration, so we don't need a `prefers-color-scheme` media
    * query. Supported in all current evergreens (Chrome 123+,
    * Firefox 120+, Safari 17.5+). Flat fallback values are listed
    * first for older browsers — `light-dark()` overrides on parse.
+   *
+   * Every value is contrast-validated against its surface: fg 13:1,
+   * accent 7.2:1, muted and callout labels ≥4.8:1 in light; ≥5.6:1
+   * across the board in dark.
    */
     color-scheme: light dark;
 
-    --color-bg: #f1ebdc;
-    --color-fg: #1c1a16;
-    --color-muted: #7a7368;
-    --color-border: #e6dfd1;
-    --color-accent: #4a6b8a;
-    --color-accent-hover: #355176;
+    --color-bg: #f5f2e9;
+    --color-fg: #20293a;
+    --color-muted: #5f6a7a;
+    --color-border: #dfddd7;
+    --color-accent: #1e4d9b;
+    --color-accent-hover: #173d80;
 
-    --color-bg: light-dark(#f1ebdc, #1c1a16);
-    --color-fg: light-dark(#1c1a16, #ece6da);
-    --color-muted: light-dark(#7a7368, #8a8278);
-    --color-border: light-dark(#e6dfd1, #2e2a23);
-    --color-accent: light-dark(#4a6b8a, #8eb0d0);
-    --color-accent-hover: light-dark(#355176, #aac3da);
+    --color-bg: light-dark(#f5f2e9, #151a26);
+    --color-fg: light-dark(#20293a, #e9e6da);
+    --color-muted: light-dark(#5f6a7a, #8b93a5);
+    --color-border: light-dark(#dfddd7, #2a3142);
+    --color-accent: light-dark(#1e4d9b, #8fb4ee);
+    --color-accent-hover: light-dark(#173d80, #a9c6f4);
 
-    /* GFM alert callouts (NOTE/TIP/IMPORTANT/WARNING/CAUTION). Each
-       gets a muted version that reads as ink rather than UI in the
-       cream palette, with lighter variants for dark mode contrast. */
-    --callout-note: light-dark(#4a6b8a, #8eb0d0);
-    --callout-tip: light-dark(#5e8c6e, #9cc4a6);
-    --callout-important: light-dark(#8a5e8a, #c49ac4);
-    --callout-warning: light-dark(#9c7a3a, #ddc080);
-    --callout-caution: light-dark(#a05538, #d8987a);
+    /* GFM alert callouts (NOTE/TIP/IMPORTANT/WARNING/CAUTION). Note
+       takes the cobalt itself; tip/important cool toward laurel and
+       plum; warning and caution keep the riviera's sun — ochre and
+       terracotta — so the page isn't monochrome toile all the way
+       down. Lighter variants for dark-mode contrast. */
+    --callout-note: light-dark(#1e4d9b, #8fb4ee);
+    --callout-tip: light-dark(#3f7259, #93c4ab);
+    --callout-important: light-dark(#6f4e8c, #bda3d6);
+    --callout-warning: light-dark(#876322, #d9bc7d);
+    --callout-caution: light-dark(#a04a2e, #dc9678);
 
     /* Selection-ramp stops — the palette the position-keyed text
        selection walks top-to-bottom (scripts/selection-gradient.ts
-       mixes between adjacent stops per block): blue up top, down
-       through green and bronze into rust, plum at the foot of the
-       page. Dedicated values, not the callout tokens — those are
-       tuned as text ON cream, and as backgrounds UNDER cream they
-       bottomed out near 3:1. These are generated at uniform OKLCH
-       chroma with per-hue lightness pushed until every stop clears
-       5:1 against cream text (light) and 8:1 against ink (dark), so
-       every band in the ramp carries the same weight and the same
+       mixes between adjacent stops per block): cobalt up top, down
+       through laurel and bronze into terracotta, plum at the foot of
+       the page. Dedicated values, not the callout tokens — those are
+       tuned as text ON ivory, and as backgrounds UNDER ivory they'd
+       run too dark or too weak. Generated at uniform OKLCH chroma
+       with per-hue lightness pushed until every stop clears 5:1
+       against ivory selection text (light) and 8:1 against the navy
+       ink (dark), so every band carries the same weight and the same
        legibility. */
-    --sel-stop-0: light-dark(#41668d, #89b4e1);
-    --sel-stop-1: light-dark(#366e52, #80be9d);
-    --sel-stop-2: light-dark(#77602d, #c8ae75);
-    --sel-stop-3: light-dark(#895543, #e0a28c);
-    --sel-stop-4: light-dark(#7f567b, #d2a2cd);
+    --sel-stop-0: light-dark(#4c6798, #95b2e5);
+    --sel-stop-1: light-dark(#327354, #80be9d);
+    --sel-stop-2: light-dark(#7e6327, #c8ae75);
+    --sel-stop-3: light-dark(#925742, #e0a28c);
+    --sel-stop-4: light-dark(#7f5887, #caa3d3);
 }
 
 /* Fallback: browsers without light-dark() support still get a
@@ -113,12 +122,12 @@
 @supports not (color: light-dark(red, blue)) {
     @media (prefers-color-scheme: dark) {
         :root {
-            --color-bg: #1c1a16;
-            --color-fg: #ece6da;
-            --color-muted: #8a8278;
-            --color-border: #2e2a23;
-            --color-accent: #8eb0d0;
-            --color-accent-hover: #aac3da;
+            --color-bg: #151a26;
+            --color-fg: #e9e6da;
+            --color-muted: #8b93a5;
+            --color-border: #2a3142;
+            --color-accent: #8fb4ee;
+            --color-accent-hover: #a9c6f4;
         }
     }
 }
@@ -529,9 +538,11 @@ sup {
     top: -0.5em;
 }
 
+/* Section rule as a copperplate double line — the classic engraved
+   divider: a fine pair rather than a single hairline. */
 hr {
     border: 0;
-    border-top: 1px solid var(--color-border);
+    border-top: 3px double var(--color-border);
     /* No own margin — the prose container owns the space around it
        (consistent with the block reset above). */
     margin: 0;
