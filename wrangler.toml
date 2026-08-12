@@ -14,3 +14,13 @@ compatibility_flags = ["nodejs_compat", "nodejs_compat_populate_process_env"]
 # bindings not declared here — that was silently wiping CONTENT_READ_KEY /
 # FEED_READ_KEY on every deploy, leaving prod unable to read Farfield.
 keep_vars = true
+
+# Global, durable cache for cid-keyed immutable data: blob /meta JSON
+# (imm:v1:*) and rendered article HTML (render:v1:*). A cid is a content
+# hash, so entries never go stale — this is what keeps the site warm in
+# colos and isolates that have never served it. `caches.default` remains
+# the colo-local fast path in front of it. See lib/farfield.ts and
+# lib/render-cache.ts.
+[[kv_namespaces]]
+binding = "CONTENT_CACHE"
+id = "d355f4e9f7b8405caddfe8604029be78"

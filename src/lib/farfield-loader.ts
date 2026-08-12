@@ -101,20 +101,20 @@ export async function resolveBodyMedia(
     body: string,
 ): Promise<ResolvedMedia[]> {
     const embeds = extractBodyEmbeds(body);
-    const expanded: { cid: string; alt: string }[] = [];
-    for (const e of embeds) {
-        if (e.scheme === "blob") {
-            expanded.push({ cid: e.id, alt: e.alt });
-        } else {
-            const series = await getSeries(e.id);
-            if (!series?.body) continue;
-            for (const inner of extractBodyEmbeds(series.body)) {
-                if (inner.scheme === "blob") {
-                    expanded.push({ cid: inner.id, alt: inner.alt });
-                }
-            }
-        }
-    }
+    // Series expand in parallel — a body with several series embeds
+    // used to pay one upstream round trip per series, serially.
+    const expanded = (
+        await Promise.all(
+            embeds.map(async (e): Promise<{ cid: string; alt: string }[]> => {
+                if (e.scheme === "blob") return [{ cid: e.id, alt: e.alt }];
+                const series = await getSeries(e.id);
+                if (!series?.body) return [];
+                return extractBodyEmbeds(series.body)
+                    .filter((inner) => inner.scheme === "blob")
+                    .map((inner) => ({ cid: inner.id, alt: inner.alt }));
+            }),
+        )
+    ).flat();
     const seen = new Set<string>();
     const unique = expanded.filter((m) => {
         if (seen.has(m.cid)) return false;

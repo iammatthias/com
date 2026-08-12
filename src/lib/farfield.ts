@@ -27,6 +27,7 @@
 //     live inside the markdown body.
 
 import { getSecret } from "astro:env/server";
+import { getContentCache } from "./runtime-env";
 
 const CONTENT = "https://content.farfield.systems";
 const FEED = "https://feed.farfield.systems";
@@ -198,6 +199,70 @@ const SOFT_TTL_MS = 60_000;
 const HARD_TTL_SECONDS = 24 * 60 * 60; // 24 h
 const SWR_SECONDS = 60 * 60; // 1 h
 
+// ---------- immutable (cid-addressed) URLs ---------------------------------
+//
+// `/blobs/<cid>/meta` is derived from the exact bytes the cid hashes,
+// so for a given URL the 200 response can never change — no soft TTL,
+// no revalidation, cache forever. Two layers:
+//
+//   - `caches.default` (colo-local, evictable) with a year-long TTL
+//   - CONTENT_CACHE KV (global, durable) so a colo that has never seen
+//     the site still answers metas without touching the origin
+//
+// 404s (legacy blobs with no recorded meta) are negative-cached in KV
+// for a day: a backfill could mint the meta later, so "missing" must
+// be allowed to heal, but re-asking the origin on every render was
+// pure waste on gallery pages.
+
+const IMMUTABLE_URL_RE =
+    /^https:\/\/blobs\.farfield\.systems\/blobs\/[a-z0-9]+\/meta$/;
+const IMMUTABLE_TTL_SECONDS = 365 * 24 * 60 * 60; // 1 y (colo cache)
+const NEGATIVE_TTL_SECONDS = 24 * 60 * 60; // 404s may heal — 1 d
+const KV_PREFIX = "imm:v1:";
+
+async function kvGetImmutable(url: string): Promise<Response | undefined> {
+    const kv = await getContentCache();
+    if (!kv) return undefined;
+    try {
+        const { value, metadata } = await kv.getWithMetadata(
+            KV_PREFIX + url,
+            "text",
+        );
+        if (value === null) return undefined;
+        const status = (metadata as { s?: number } | null)?.s ?? 200;
+        if (status === 404) return new Response(null, { status: 404 });
+        return new Response(value, {
+            status: 200,
+            headers: {
+                "Content-Type": "application/json",
+                "x-cached-at": String(Date.now()),
+                "Cache-Control": `public, max-age=${IMMUTABLE_TTL_SECONDS}, immutable`,
+            },
+        });
+    } catch {
+        return undefined;
+    }
+}
+
+async function kvPutImmutable(
+    url: string,
+    body: string,
+    status: 200 | 404,
+): Promise<void> {
+    const kv = await getContentCache();
+    if (!kv) return;
+    try {
+        await kv.put(KV_PREFIX + url, body, {
+            metadata: { s: status },
+            ...(status === 404
+                ? { expirationTtl: NEGATIVE_TTL_SECONDS }
+                : {}),
+        });
+    } catch {
+        /* cache write failure never blocks the response */
+    }
+}
+
 function getEdgeCache(): Cache | undefined {
     const g = globalThis as { caches?: { default?: Cache } };
     return g.caches?.default;
@@ -238,7 +303,12 @@ function getCachedAt(res: Response): number {
 }
 
 /** Wrap a Response with our cache metadata + Cache-Control. */
-function stamp(res: Response, body: ArrayBuffer, now: number): Response {
+function stamp(
+    res: Response,
+    body: ArrayBuffer,
+    now: number,
+    ttlSeconds = HARD_TTL_SECONDS,
+): Response {
     const out = new Response(body, {
         status: res.status,
         statusText: res.statusText,
@@ -247,22 +317,45 @@ function stamp(res: Response, body: ArrayBuffer, now: number): Response {
     out.headers.set("x-cached-at", String(now));
     out.headers.set(
         "Cache-Control",
-        `public, max-age=${HARD_TTL_SECONDS}, s-maxage=${HARD_TTL_SECONDS}, stale-while-revalidate=${SWR_SECONDS}`,
+        `public, max-age=${ttlSeconds}, s-maxage=${ttlSeconds}, stale-while-revalidate=${SWR_SECONDS}`,
     );
     return out;
 }
 
 async function cachedFetch(url: string, drafts = false): Promise<Response> {
+    const immutable = IMMUTABLE_URL_RE.test(url);
     const cache = getEdgeCache();
     const cached = cache
         ? await cache.match(url).catch(() => undefined)
         : undefined;
     const now = Date.now();
 
+    // Immutable (cid-addressed) URLs: any cached copy is good forever —
+    // no soft TTL, no revalidation.
+    if (cached && immutable) {
+        return cached;
+    }
+
     // Within the soft TTL — cached copy is fresh enough, skip the
     // upstream round-trip entirely.
     if (cached && now - getCachedAt(cached) < SOFT_TTL_MS) {
         return cached;
+    }
+
+    // Immutable miss in this colo — try the global KV layer before the
+    // origin, and backfill the colo cache on a hit.
+    if (immutable) {
+        const fromKV = await kvGetImmutable(url);
+        if (fromKV) {
+            if (cache && fromKV.status === 200) {
+                try {
+                    await cache.put(url, fromKV.clone());
+                } catch {
+                    /* ignore */
+                }
+            }
+            return fromKV;
+        }
     }
 
     // Past the soft TTL (or no cache hit) — fetch upstream, sending
@@ -290,14 +383,26 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
         return refreshed;
     }
 
-    if (res.ok && cache) {
+    if (res.ok) {
         const body = await res.clone().arrayBuffer();
-        const cacheable = stamp(res, body, now);
-        try {
-            await cache.put(url, cacheable);
-        } catch {
-            /* ignore — fetch result still flows through */
+        if (cache) {
+            const cacheable = stamp(
+                res,
+                body,
+                now,
+                immutable ? IMMUTABLE_TTL_SECONDS : HARD_TTL_SECONDS,
+            );
+            try {
+                await cache.put(url, cacheable);
+            } catch {
+                /* ignore — fetch result still flows through */
+            }
         }
+        if (immutable) {
+            await kvPutImmutable(url, new TextDecoder().decode(body), 200);
+        }
+    } else if (immutable && res.status === 404) {
+        await kvPutImmutable(url, "", 404);
     }
     return res;
 }
