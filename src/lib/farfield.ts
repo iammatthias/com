@@ -175,8 +175,10 @@ export interface BlobMeta {
 //                   - 304 → reuse cached body; refresh the soft-TTL marker
 //                   - 200 → upstream content changed; replace cache
 //
-// `If-None-Match` is harmless on list endpoints (no ETag → server
-// returns 200 + body), so the same code path covers both.
+// List endpoints carry ETags too (a fingerprint over the member set,
+// weakened to `W/"…"` by Cloudflare in transit — the server matcher
+// accepts it back verbatim), so the same code path covers records and
+// lists alike.
 //
 // Soft TTL is the "don't bother revalidating yet" window — within it
 // we short-circuit. Past it, we revalidate. The 304 path is cheap
@@ -186,12 +188,14 @@ export interface BlobMeta {
  * How long to serve cached responses without contacting Farfield.
  *
  * Kept tight (60s) so that publishing content surfaces on the site
- * within roughly a minute. Records can validate cheaply past this
- * window via `If-None-Match: "<cid>"` → 304, so the tight TTL costs
- * almost nothing for record GETs. Lists (`/api/entries`, `/api/posts`,
- * `/api/collections`) don't expose ETags and pay a full re-fetch,
- * but the payloads are small JSON and the rendered HTML response
- * cache (set by pages via lib/cache.ts) absorbs the bulk of traffic.
+ * within roughly a minute. Past the window everything revalidates
+ * cheaply: records via `If-None-Match: "<cid>"` → 304, and lists
+ * (`/api/entries`, `/api/posts`, `/api/collections`) via their
+ * member-set fingerprint ETags → 304. A full body only re-downloads
+ * when content actually changed. (A slim `/api/entries?bodies=0`
+ * variant exists upstream — 46KB vs 318KB — but every consumer here
+ * shares one memoized full-list fetch, and 304s make the full list
+ * cheap; don't split the cache key without measuring first.)
  */
 const SOFT_TTL_MS = 60_000;
 /** Underlying max-age on stored Responses — sized to comfortably outlive

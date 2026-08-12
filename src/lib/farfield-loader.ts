@@ -29,10 +29,9 @@ import {
 // 60s TTL matches the soft TTL in `farfield.ts`'s edge cache layer.
 // Together: a single isolate handles bursts entirely in-memory; cross-
 // isolate hits within the window come from `caches.default`; past the
-// window, an `If-None-Match` revalidation against the cached CID
-// returns 304 when content is unchanged (cheap) or 200 with a fresh
-// payload when it isn't. Lists re-fetch their full body when the TTL
-// elapses (no ETag), but the payloads are small JSON.
+// window, an `If-None-Match` revalidation (record cid ETags and list
+// fingerprint ETags alike) returns 304 when content is unchanged
+// (cheap) or 200 with a fresh payload when it isn't.
 const TTL_MS = 60_000;
 
 interface CacheEntry<T> {
