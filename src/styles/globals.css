@@ -12,22 +12,45 @@
         ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
         "Liberation Mono", monospace;
 
-    --fs-xs: 0.75rem;
-    --fs-sm: 0.875rem;
-    --fs-base: 1rem;
-    --fs-lg: 1.125rem;
-    --fs-xl: 1.25rem;
-    --fs-2xl: 1.5rem;
-    --fs-3xl: 1.875rem;
-    --fs-4xl: 2.25rem;
+    /* Fluid type scale — every step interpolates linearly between a
+       390px floor and a 1280px ceiling (clamp keeps it pinned outside
+       that range). Body text runs 16→17px; display sizes spread wider
+       (the scale's ratio grows with the viewport: cramped phone lines
+       want smaller headings, a 720px column can carry bigger ones).
+       The rem term is what keeps user font-size preferences and zoom
+       working — never replace these with pure-vw values. Regenerate
+       with: px@390 + px@1280 → slope=(max-min)/890, vw=slope*100,
+       intercept=min-slope*390, all /16 into rem. */
+    --fs-xs: clamp(0.75rem, 0.7226rem + 0.112vw, 0.8125rem);
+    --fs-sm: clamp(0.875rem, 0.8476rem + 0.112vw, 0.9375rem);
+    --fs-base: clamp(1rem, 0.9726rem + 0.112vw, 1.0625rem);
+    --fs-lg: clamp(1.094rem, 1.053rem + 0.169vw, 1.1875rem);
+    --fs-xl: clamp(1.219rem, 1.15rem + 0.281vw, 1.375rem);
+    --fs-2xl: clamp(1.406rem, 1.256rem + 0.618vw, 1.75rem);
+    --fs-3xl: clamp(1.625rem, 1.406rem + 0.899vw, 2.125rem);
+    --fs-4xl: clamp(1.875rem, 1.546rem + 1.35vw, 2.625rem);
+    /* Hero/article titles — a 4xl with a higher floor so phone heroes
+       keep their presence. Pairs with --lh-display / --ls-display;
+       replaces the ad-hoc `clamp(var(--fs-3xl), 6vw, var(--fs-4xl))`
+       that used to live in the doc page. */
+    --fs-display: clamp(2rem, 1.726rem + 1.12vw, 2.625rem);
 
     --lh-tight: 1.2;
     --lh-normal: 1.5;
     --lh-relaxed: 1.7;
+    /* Display sizes need tighter leading than --lh-tight — at 40px+
+       the serif's built-in leading reads as gaps. */
+    --lh-display: 1.05;
 
     --fw-normal: 400;
     --fw-medium: 500;
     --fw-bold: 700;
+
+    /* Tracking. Display sizes tighten (big Metamorphous sets loose);
+       the uppercase micro-labels (recipe meta, section kickers) share
+       one caps tracking instead of the 0.07–0.09em drift they had. */
+    --ls-display: -0.015em;
+    --ls-caps: 0.08em;
 
     /* spacing scale (4px base) */
     --space-1: 0.25rem;
@@ -165,7 +188,9 @@
 
 html {
     -webkit-text-size-adjust: 100%;
-    text-rendering: optimizeLegibility;
+    /* (text-rendering: optimizeLegibility used to live here — modern
+       engines apply kerning and common ligatures by default, so it
+       was a no-op with a history of layout-perf footguns. Removed.) */
 }
 
 body {
@@ -183,6 +208,30 @@ body {
        Token-like contexts opt into harder breaking below; hashes/CIDs
        keep their explicit `word-break: break-all`. */
     overflow-wrap: break-word;
+    /* Site-wide wrapping default: `pretty` inherits into every
+       paragraph, list item, caption, and card blurb (the engine
+       optimizes rag and last-line orphans across the paragraph).
+       Headings override with `balance` below; `pre` is exempt via
+       white-space. The scattered per-element `text-wrap: pretty`
+       declarations this replaces have been removed. */
+    text-wrap: pretty;
+}
+
+/* Prose on narrow columns earns hyphenation — ragged-right at ~40ch
+   gets gappy without it, and `text-wrap: pretty` folds hyphenation
+   opportunities into its line-breaking decisions. The limits keep it
+   book-like (6-letter minimum word, 3 chars either side of the
+   break) rather than newspaper-aggressive. Wide viewports don't need
+   it; headings never hyphenate (balance + no `hyphens` set). */
+@media (max-width: 480px) {
+    .doc-body,
+    .feed-note,
+    .prose,
+    .card-link p {
+        -webkit-hyphens: auto;
+        hyphens: auto;
+        hyphenate-limit-chars: 6 3 3;
+    }
 }
 
 img,
@@ -205,6 +254,11 @@ h6 {
     font-weight: var(--fw-medium);
     text-wrap: balance;
     font-family: var(--font-serif);
+    /* Optical spacing: trim the half-leading above the cap height and
+       below the alphabetic baseline, so the gap you see next to a
+       heading is the gap the rhythm actually specified. Progressive —
+       engines without text-box simply keep the old half-leading. */
+    text-box: trim-both cap alphabetic;
 }
 
 h1 {
@@ -241,10 +295,6 @@ details {
     margin: 0;
 }
 
-p {
-    text-wrap: pretty;
-}
-
 small {
     font-size: var(--fs-sm);
     color: var(--color-muted);
@@ -271,6 +321,17 @@ ul ul ul {
     list-style: square;
 }
 
+/* Markers take the ink at reduced strength — the way an engraver
+   weights a bullet lighter than the text it introduces. Ordered lists
+   count in tabular figures so multi-digit lists keep a straight edge. */
+ul li::marker {
+    color: var(--color-muted);
+}
+ol li::marker {
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+}
+
 li {
     padding-left: 0.25em;
 }
@@ -285,11 +346,18 @@ a {
     color: inherit;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.15em;
-    transition: text-decoration-thickness var(--duration) var(--ease);
+    /* Resting underlines are hairlines at partial ink — present but
+       quiet, the engraving's underscore rather than a bar. Hover
+       brings them to full strength and weight. */
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    transition:
+        text-decoration-thickness var(--duration) var(--ease),
+        text-decoration-color var(--duration) var(--ease);
 }
 
 a:hover {
     text-decoration-thickness: 2px;
+    text-decoration-color: currentColor;
 }
 
 button,
@@ -353,6 +421,9 @@ table {
     overflow-x: auto;
     border-collapse: collapse;
     font-size: var(--fs-sm);
+    /* Tables are data: lining tabular figures so digit columns align
+       row over row regardless of the face's default numerals. */
+    font-variant-numeric: tabular-nums lining-nums;
 }
 
 th,
@@ -378,7 +449,9 @@ caption {
     text-align: left;
 }
 
-/* Blockquote: serif italic for the homey reading feel. */
+/* Blockquote: serif italic for the homey reading feel. An opening
+   quotation mark hangs into the margin where the engine supports
+   hanging-punctuation (WebKit today; harmless elsewhere). */
 blockquote {
     padding: var(--space-2) var(--space-5);
     border-left: 3px solid var(--color-border);
@@ -387,6 +460,7 @@ blockquote {
     color: var(--color-muted);
     font-size: var(--fs-lg);
     line-height: var(--lh-relaxed);
+    hanging-punctuation: first;
 }
 
 /* Spacing between a quote's own blocks, owned by the blockquote via the
@@ -443,7 +517,6 @@ blockquote cite::before {
 /* Inside a callout, paragraphs lose their browser default block
    margin (already true in our reset) but should still wrap normally. */
 .callout p {
-    text-wrap: pretty;
     line-height: var(--lh-relaxed);
 }
 
@@ -479,10 +552,29 @@ dd {
     margin: 0;
 }
 
-/* Details / summary — collapsible section with a typographic +/− toggle. */
+/* Details / summary — collapsible section with a typographic +/− toggle.
+   `interpolate-size` lets the content's `height: auto` participate in
+   transitions, so the panel glides open instead of snapping — the
+   modern replacement for the 0fr→1fr grid trick. Scoped to details
+   (not :root) so nothing else starts animating intrinsic sizes. */
 details {
     border-top: 1px solid var(--color-border);
     padding: var(--space-3) 0;
+    interpolate-size: allow-keywords;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    details::details-content {
+        block-size: 0;
+        overflow-y: clip;
+        transition:
+            block-size 250ms var(--ease),
+            content-visibility 250ms allow-discrete;
+    }
+
+    details[open]::details-content {
+        block-size: auto;
+    }
 }
 
 summary {
@@ -559,6 +651,27 @@ video {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
     border-radius: var(--radius);
+}
+
+/* ---------- cross-document view transitions ---------- */
+/* MPA navigation gets the default crossfade — paired with
+   prefetchAll, the next page is usually already in cache, so the
+   fade is what the eye sees instead of a paint flash. Header and
+   footer carry stable transition names: identical on both pages,
+   they hold still while the content fades through between them.
+   Engines without @view-transition navigate exactly as before. */
+@media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+        navigation: auto;
+    }
+
+    body > header {
+        view-transition-name: site-header;
+    }
+
+    body > footer {
+        view-transition-name: site-footer;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -641,7 +754,14 @@ video {
 .card-link p {
     font-size: var(--fs-base);
     line-height: var(--lh-relaxed);
-    text-wrap: pretty;
+    /* Long excerpts stop at four lines on cards — the full text lives
+       one click away. Standard line-clamp with the -webkit- spelling
+       for engines that still require the legacy trio. */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    overflow: hidden;
 }
 
 .card-kind,
@@ -801,7 +921,6 @@ video {
     margin: 0;
     font-size: var(--fs-base);
     line-height: var(--lh-relaxed);
-    text-wrap: pretty;
 }
 
 /* Stacked prose blocks: spacing owned by the container via the
@@ -865,7 +984,6 @@ video {
 
 .page-header p {
     color: var(--color-muted);
-    text-wrap: pretty;
 }
 
 .page-header .meta {
@@ -971,7 +1089,7 @@ video {
 .ff-recipe-meta dt {
     font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
+    letter-spacing: var(--ls-caps);
     opacity: 0.5;
 }
 .ff-recipe-meta dd { margin: 0; font-size: 0.88rem; }
@@ -981,7 +1099,7 @@ video {
 .ff-recipe-grid-wrap figcaption {
     font-size: 0.7rem;
     font-weight: 500;
-    letter-spacing: 0.08em;
+    letter-spacing: var(--ls-caps);
     text-transform: uppercase;
     color: var(--accent);
     margin-bottom: 0.45rem;
@@ -1065,7 +1183,7 @@ video {
 }
 /* Ingredient typography: the item name carries the weight, the amount
    reads as mono data beside it, the note as a quiet second line. */
-.ff-recipe-grid .ff-r-line { display: block; text-wrap: pretty; }
+.ff-recipe-grid .ff-r-line { display: block; }
 .ff-recipe-grid .ff-r-item { font-weight: 500; }
 .ff-recipe-grid .ff-r-amt {
     font-family: var(--font-mono);
@@ -1086,7 +1204,7 @@ video {
     font-size: 0.62rem;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.09em;
+    letter-spacing: var(--ls-caps);
     color: var(--accent);
     margin-bottom: 0.25rem;
 }
@@ -1167,7 +1285,7 @@ video {
     font-size: 0.65rem;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.09em;
+    letter-spacing: var(--ls-caps);
     color: var(--accent);
     padding-top: 0.9rem;
     border-bottom: 0;
@@ -1182,7 +1300,7 @@ video {
     font-family: var(--font-sans);
     font-size: 0.7rem;
     font-weight: 500;
-    letter-spacing: 0.08em;
+    letter-spacing: var(--ls-caps);
     text-transform: uppercase;
     opacity: 0.5;
     margin: 1.75rem 0 0.7rem;
@@ -1195,7 +1313,7 @@ video {
 }
 
 .ff-recipe-steps { padding-left: 1.35rem; }
-.ff-recipe-steps li { margin-top: 0.55rem; text-wrap: pretty; }
+.ff-recipe-steps li { margin-top: 0.55rem; }
 .ff-recipe-steps li::marker {
     font-variant-numeric: tabular-nums;
     opacity: 0.45;
@@ -1238,7 +1356,7 @@ video {
 .ff-recipe-controls .ff-rc-label {
     font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
+    letter-spacing: var(--ls-caps);
     opacity: 0.5;
 }
 .ff-recipe-controls button,
@@ -1350,7 +1468,7 @@ video {
     font-family: var(--font-mono);
     font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: var(--ls-caps);
     opacity: 0.6;
 }
 .ff-recipe-stage .ff-rs-title {

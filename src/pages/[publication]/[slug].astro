@@ -14,6 +14,7 @@ import { fmtDateLong as fmtDate, hashSeed } from "@lib/format";
 import { renderMarkdownBody, readingTime, buildToc } from "@lib/doc-render";
 import { cachedRender } from "@lib/render-cache";
 import { plainText } from "@lib/markdown-text";
+import { withLettrine } from "@lib/azulejo-cap";
 
 const publicationSlug = Astro.params.publication;
 const docSlug = Astro.params.slug;
@@ -72,6 +73,12 @@ const reading = readingTime(item.body);
 // (not a word-count proxy). Bodies with fewer than two headings drop
 // the navigation chrome — there's nothing to navigate.
 const { html: bodyWithIds, entries: tocEntries } = buildToc(bodyHtml);
+
+// Azulejo lettrine: the opening letter moves onto a generated tile,
+// seeded by the record's cid — same content, same tile, forever; an
+// edit re-fires it. Applied here (per request, outside the KV render
+// cache) so generator tweaks never need a RENDER_VERSION bump.
+const bodyWithCap = withLettrine(bodyWithIds, hashSeed(item.cid));
 // Art docs lean on full-width masonry series for `## Section` headings;
 // the desktop TOC sidebar narrows the body column and squeezes those
 // galleries into 2-up instead of 3-up. Skip the sidebar for that
@@ -179,7 +186,7 @@ let related: DocumentData[] = [];
             </details>
         )}
 
-        <div class="doc-body" set:html={bodyWithIds} />
+        <div class="doc-body" set:html={bodyWithCap} />
 
         {item.tags.length > 0 && (
             <footer class="doc-tags">
@@ -298,9 +305,12 @@ let related: DocumentData[] = [];
         font-family: var(--font-serif);
         font-style: italic;
         font-weight: var(--fw-normal);
-        font-size: clamp(var(--fs-3xl), 6vw, var(--fs-4xl));
-        line-height: 1.05;
-        letter-spacing: -0.015em;
+        /* Display tokens from globals — the fluid scale owns the
+           viewport interpolation now (this rule used to carry its own
+           clamp()/1.05/-0.015em copies). */
+        font-size: var(--fs-display);
+        line-height: var(--lh-display);
+        letter-spacing: var(--ls-display);
         text-wrap: balance;
     }
 
@@ -316,6 +326,70 @@ let related: DocumentData[] = [];
         flex-direction: column;
         font-size: var(--fs-base);
         line-height: var(--lh-relaxed);
+        /* The prose column is a size container so galleries and
+           triptychs respond to the width they actually get (the TOC
+           era proved viewport width lies about column width). */
+        container: doc-body / inline-size;
+    }
+
+    /* Azulejo lettrine (lib/azulejo-cap.ts) — a generated glazed tile
+       carrying the article's opening letter, seeded by the record cid.
+       Scoped palette: the --cap-* tokens are the generator's whole
+       color world, mapped here onto the site tokens (dark mode inverts
+       the plate for free); the polychrome modifiers repaint only the
+       corner furniture, from the sanctioned callout hues. The tile is
+       exactly three text lines square — `3lh` — with an em fallback
+       (5.1em = 3 × --lh-relaxed) for engines without lh units. */
+    .doc-body :global(.azulejo-cap) {
+        --cap-ground: var(--color-bg);
+        --cap-ink: var(--color-accent);
+        --cap-line: color-mix(in srgb, var(--color-accent) 62%, transparent);
+        --cap-wash: color-mix(in srgb, var(--color-accent) 30%, transparent);
+        --cap-accent2: var(--cap-ink);
+        float: left;
+        position: relative;
+        width: 5.1em;
+        height: 5.1em;
+        width: 3lh;
+        height: 3lh;
+        margin: 0.15em 0.75em 0.05em 0;
+    }
+
+    .doc-body :global(.azulejo-cap--laurel) {
+        --cap-accent2: var(--callout-tip);
+    }
+    .doc-body :global(.azulejo-cap--ochre) {
+        --cap-accent2: var(--callout-warning);
+    }
+    .doc-body :global(.azulejo-cap--plum) {
+        --cap-accent2: var(--callout-important);
+    }
+    .doc-body :global(.azulejo-cap--terracotta) {
+        --cap-accent2: var(--callout-caution);
+    }
+
+    .doc-body :global(.azulejo-cap__tile) {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    /* The letter is real text (selectable, read by screen readers),
+       centered over the tile; its size comes inline from the
+       generator, which flexes it per letter-width class. The small
+       translate seats the cap optically — centering the full em box
+       leaves caps riding high, since their descender space is empty. */
+    .doc-body :global(.azulejo-cap__letter) {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-family: var(--font-serif);
+        line-height: 1;
+        color: var(--cap-ink);
+        transform: translateY(0.05em);
     }
 
     /* Prose rhythm owned by the container via the adjacent-sibling
@@ -522,20 +596,22 @@ let related: DocumentData[] = [];
     /* Series gallery — CSS multi-column gives a true waterfall masonry
        layout across all evergreens (Safari's native `grid-template-rows:
        masonry` is still spec-experimental). Tiles use `break-inside:
-       avoid` so each figure stays whole inside its column. Columns step
-       down at narrower breakpoints so tiles never get too cramped. */
+       avoid` so each figure stays whole inside its column. Column count
+       steps down by CONTAINER width (the .doc-body size container
+       above), not viewport — the masonry responds to the room it
+       actually has, wherever the column ends up. */
     .doc-body :global(.series-grid) {
         column-count: 3;
         column-gap: var(--space-3);
     }
 
-    @media (max-width: 768px) {
+    @container doc-body (width <= 700px) {
         .doc-body :global(.series-grid) {
             column-count: 2;
         }
     }
 
-    @media (max-width: 480px) {
+    @container doc-body (width <= 440px) {
         .doc-body :global(.series-grid) {
             column-count: 1;
         }
@@ -570,11 +646,18 @@ let related: DocumentData[] = [];
         margin-inline: auto;
     }
 
-    /* The image pair — two equal columns. */
+    /* The image pair — two equal columns; stacks when the container
+       is too narrow for the pair to read as plates. */
     .doc-body :global(.triptych__pair) {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: var(--space-4);
+    }
+
+    @container doc-body (width <= 440px) {
+        .doc-body :global(.triptych__pair) {
+            grid-template-columns: 1fr;
+        }
     }
 
     .doc-body :global(.triptych__img .series-tile) {
