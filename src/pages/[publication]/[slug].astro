@@ -13,6 +13,7 @@ import { isPreview } from "@lib/preview";
 import { fmtDateLong as fmtDate, hashSeed } from "@lib/format";
 import { renderMarkdownBody, readingTime, buildToc } from "@lib/doc-render";
 import { cachedRender } from "@lib/render-cache";
+import { plainText } from "@lib/markdown-text";
 
 const publicationSlug = Astro.params.publication;
 const docSlug = Astro.params.slug;
@@ -47,6 +48,14 @@ if (!entry) {
 const item: DocumentData = entry.data;
 
 setResponseCacheHeaders(Astro.response, cacheHint);
+
+// Meta/OG description: the Farfield excerpt when one exists, else the
+// body's opening words. An entry without an excerpt used to ship
+// `<meta name="description" content="">` — an empty string is defined,
+// so it sailed past BaseLayout's default — and search results fell
+// back to whatever text the crawler grabbed.
+const metaDescription =
+    item.description || plainText(item.body).slice(0, 180).trim();
 
 // Content is a single markdown body with inline `blob://` / `series://`
 // embeds. `renderMarkdownBody` resolves each one and stitches in the
@@ -120,7 +129,7 @@ let related: DocumentData[] = [];
 
 <BaseLayout
     title={item.title}
-    description={item.description}
+    description={metaDescription}
     ogImage={`/${item.publication.slug}/${encodeURIComponent(item.title)}`}
     ogType="article"
     article={{
