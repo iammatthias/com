@@ -20,3 +20,32 @@ export function headFromGet(get: APIRoute): APIRoute {
         });
     };
 }
+
+/**
+ * Map over `items` with at most `limit` calls of `fn` in flight.
+ * Endpoints that render many Farfield-backed items (RSS bodies,
+ * llms-full.txt) use this instead of a bare Promise.all: an unbounded
+ * storm of upstream lookups contends for workerd's ~6 simultaneous
+ * connections per host, and under that pressure renders die with
+ * "Response closed due to connection limit".
+ */
+export async function mapWithConcurrency<T, R>(
+    items: readonly T[],
+    limit: number,
+    fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+    const out = new Array<R>(items.length);
+    let next = 0;
+    await Promise.all(
+        Array.from(
+            { length: Math.min(limit, items.length) },
+            async () => {
+                while (next < items.length) {
+                    const i = next++;
+                    out[i] = await fn(items[i], i);
+                }
+            },
+        ),
+    );
+    return out;
+}

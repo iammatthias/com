@@ -3,8 +3,8 @@ import type { APIRoute } from "astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
 import { entriesOf, type DocumentData } from "@lib/farfield-loader";
-import { renderFeedBody } from "@lib/doc-render";
-import { headFromGet } from "@lib/http";
+import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
+import { headFromGet, mapWithConcurrency } from "@lib/http";
 
 export const prerender = false;
 
@@ -13,7 +13,10 @@ export const GET: APIRoute = async (context) => {
     if (error) {
         console.error("[/rss.xml] Farfield fetch failed:", error);
     }
-    const items = entriesOf<DocumentData>(entries);
+    // Newest RSS_ITEM_CAP only, rendered a few at a time — this feed
+    // used to render every document at once and die on the workerd
+    // connection limit (served as an empty 404 to every feed reader).
+    const items = entriesOf<DocumentData>(entries).slice(0, RSS_ITEM_CAP);
 
     const origin = (
         context.site?.toString() ?? "https://iammatthias.com"
@@ -31,8 +34,10 @@ export const GET: APIRoute = async (context) => {
         // item carries a media:content thumbnail for reader list views
         // (and the styled browser preview, which can't unescape
         // content:encoded).
-        items: await Promise.all(
-            items.map(async (item: DocumentData) => {
+        items: await mapWithConcurrency(
+            items,
+            8,
+            async (item: DocumentData) => {
                 const canonical = `${origin}${item.href}`;
                 const content = await renderFeedBody(item.body, {
                     maxImages: 6,
@@ -50,7 +55,7 @@ export const GET: APIRoute = async (context) => {
                         customData: `<media:content url="${thumb}" medium="image" />`,
                     }),
                 };
-            }),
+            },
         ),
         xmlns: { media: "http://search.yahoo.com/mrss/" },
         customData: "<language>en-us</language>",

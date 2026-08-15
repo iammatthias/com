@@ -14,7 +14,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
-import { headFromGet } from "@lib/http";
+import { headFromGet, mapWithConcurrency } from "@lib/http";
 import { cachedRender } from "@lib/render-cache";
 import {
     composeDocumentMarkdown,
@@ -35,14 +35,15 @@ export const GET: APIRoute = async (context) => {
     }
     const docs = entriesOf<DocumentData>(entries);
 
-    const rendered = await Promise.all(
-        docs.map(async (doc) => {
-            const bodyMd = await cachedRender("mdbody", doc.cid, () =>
-                resolveEmbedsForMarkdown(doc.body),
-            );
-            return composeDocumentMarkdown(doc, bodyMd, origin);
-        }),
-    );
+    // Bounded concurrency: on a cold cache (fresh RENDER_VERSION) every
+    // doc resolves its series upstream, and an unbounded Promise.all
+    // storm would contend for workerd's per-host connection budget.
+    const rendered = await mapWithConcurrency(docs, 8, async (doc) => {
+        const bodyMd = await cachedRender("mdbody", doc.cid, () =>
+            resolveEmbedsForMarkdown(doc.body),
+        );
+        return composeDocumentMarkdown(doc, bodyMd, origin);
+    });
 
     const header = `# iammatthias — full content
 

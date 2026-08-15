@@ -410,6 +410,15 @@ export async function renderMarkdownBody(body: string): Promise<string> {
 }
 
 /**
+ * How many items an RSS feed carries — the standard "newest N" cap.
+ * Readers only need the recent window (archives live on the site and
+ * in llms-full.txt), and rendering every document's full body in one
+ * request is what used to overwhelm workerd's per-host connection
+ * budget and 404 the root and art feeds.
+ */
+export const RSS_ITEM_CAP = 25;
+
+/**
  * RSS/feed-reader variant of `renderMarkdownBody`. Embeds resolve to
  * plain media tags with absolute URLs (readers can't run the site's
  * zoom buttons or masonry, and relative/`blob://` URLs render as

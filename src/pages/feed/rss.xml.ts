@@ -4,8 +4,8 @@ import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
 import { entriesOf, type FeedEntryData } from "@lib/farfield-loader";
 import { plainText } from "@lib/markdown-text";
-import { renderFeedBody } from "@lib/doc-render";
-import { headFromGet } from "@lib/http";
+import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
+import { headFromGet, mapWithConcurrency } from "@lib/http";
 
 export const prerender = false;
 
@@ -17,7 +17,11 @@ export const GET: APIRoute = async (context) => {
             collection.error,
         );
     }
-    const items = entriesOf<FeedEntryData>(collection.entries);
+    // Newest RSS_ITEM_CAP, bounded render concurrency — see rss.xml.ts.
+    const items = entriesOf<FeedEntryData>(collection.entries).slice(
+        0,
+        RSS_ITEM_CAP,
+    );
 
     // Feed entries have a markdown body but no explicit title. Derive
     // a short plain-text title from the body; fall back to the date so
@@ -38,8 +42,10 @@ export const GET: APIRoute = async (context) => {
         site: context.site?.toString() ?? "https://iammatthias.com",
         // Rendered HTML with embeds resolved to images, capped galleries,
         // and a media:content thumb per item — see rss.xml.ts.
-        items: await Promise.all(
-            items.map(async (item: FeedEntryData) => {
+        items: await mapWithConcurrency(
+            items,
+            8,
+            async (item: FeedEntryData) => {
                 const canonical = `${origin}/feed/${item.rkey}`;
                 const content = await renderFeedBody(item.body, {
                     maxImages: 6,
@@ -57,7 +63,7 @@ export const GET: APIRoute = async (context) => {
                         customData: `<media:content url="${thumb}" medium="image" />`,
                     }),
                 };
-            }),
+            },
         ),
         xmlns: { media: "http://search.yahoo.com/mrss/" },
         customData: "<language>en-us</language>",

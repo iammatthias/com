@@ -4,8 +4,8 @@ import { getLiveCollection, getLiveEntry } from "astro:content";
 import { LiveEntryNotFoundError } from "astro/content/runtime";
 import { setResponseCacheHeaders } from "@lib/cache";
 import { entriesOf, type DocumentData } from "@lib/farfield-loader";
-import { renderFeedBody } from "@lib/doc-render";
-import { headFromGet } from "@lib/http";
+import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
+import { headFromGet, mapWithConcurrency } from "@lib/http";
 
 export const prerender = false;
 
@@ -38,7 +38,8 @@ export const GET: APIRoute = async (context) => {
     if (error) {
         console.error(`[/${slug}/rss.xml] Farfield fetch failed:`, error);
     }
-    const items = entriesOf<DocumentData>(entries);
+    // Newest RSS_ITEM_CAP, bounded render concurrency — see rss.xml.ts.
+    const items = entriesOf<DocumentData>(entries).slice(0, RSS_ITEM_CAP);
 
     const origin = (
         context.site?.toString() ?? "https://iammatthias.com"
@@ -49,8 +50,10 @@ export const GET: APIRoute = async (context) => {
         description: pub.description ?? `Latest entries from ${pub.name}.`,
         site: context.site?.toString() ?? "https://iammatthias.com",
         // Full body, capped galleries, media:content thumb — see rss.xml.ts.
-        items: await Promise.all(
-            items.map(async (item: DocumentData) => {
+        items: await mapWithConcurrency(
+            items,
+            8,
+            async (item: DocumentData) => {
                 const canonical = `${origin}${item.href}`;
                 const content = await renderFeedBody(item.body, {
                     maxImages: 6,
@@ -68,7 +71,7 @@ export const GET: APIRoute = async (context) => {
                         customData: `<media:content url="${thumb}" medium="image" />`,
                     }),
                 };
-            }),
+            },
         ),
         xmlns: { media: "http://search.yahoo.com/mrss/" },
         customData: "<language>en-us</language>",

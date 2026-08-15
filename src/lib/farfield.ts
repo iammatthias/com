@@ -373,9 +373,14 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
     const res = await fetchWithRetry(url, { headers });
 
     // 304 Not Modified — content unchanged; refresh the soft TTL on
-    // the cached body and serve it.
+    // the cached body and serve it. Read `cached` directly (no clone):
+    // nothing else consumes it, and an unread cache.match() body pins
+    // one of workerd's ~6 per-host connection slots until the runtime
+    // force-cancels it ("stalled HTTP response") — under a meta-heavy
+    // render that starvation surfaces as "Response closed due to
+    // connection limit" and killed the RSS feeds outright.
     if (res.status === 304 && cached) {
-        const body = await cached.clone().arrayBuffer();
+        const body = await cached.arrayBuffer();
         const refreshed = stamp(cached, body, now);
         if (cache) {
             try {
@@ -385,6 +390,17 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
             }
         }
         return refreshed;
+    }
+
+    // Any other status means the stale cached copy is being replaced
+    // or abandoned — release its unread body stream (see the 304 note
+    // above for why leaking it is fatal at gallery scale).
+    if (cached) {
+        try {
+            await cached.body?.cancel();
+        } catch {
+            /* ignore */
+        }
     }
 
     if (res.ok) {
@@ -411,9 +427,20 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
     return res;
 }
 
+/** Release a response body we won't read — an unread body pins a
+ *  connection slot (see the 304 note in cachedFetch). */
+async function discardBody(res: Response): Promise<void> {
+    try {
+        await res.body?.cancel();
+    } catch {
+        /* ignore */
+    }
+}
+
 async function getJSON<T>(url: string, drafts = false): Promise<T> {
     const res = await cachedFetch(url, drafts);
     if (!res.ok) {
+        await discardBody(res);
         throw new Error(`Farfield ${url} failed: ${res.status} ${res.statusText}`);
     }
     return (await res.json()) as T;
@@ -421,8 +448,12 @@ async function getJSON<T>(url: string, drafts = false): Promise<T> {
 
 async function getJSONOrNull<T>(url: string, drafts = false): Promise<T | null> {
     const res = await cachedFetch(url, drafts);
-    if (res.status === 404) return null;
+    if (res.status === 404) {
+        await discardBody(res);
+        return null;
+    }
     if (!res.ok) {
+        await discardBody(res);
         throw new Error(`Farfield ${url} failed: ${res.status} ${res.statusText}`);
     }
     return (await res.json()) as T;
