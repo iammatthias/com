@@ -362,26 +362,39 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
         }
     }
 
-    // Past the soft TTL (or no cache hit) — fetch upstream, sending
-    // the cached ETag if we have one so Farfield can return 304. The
-    // content service also needs its bearer token on every request.
-    const headers: Record<string, string> = authHeaders(url, drafts);
+    // Past the soft TTL (or no cache hit) — revalidate upstream.
+    //
+    // Buffer the stale body BEFORE the origin fetch: a cache.match()
+    // body held unread across an await is exactly what workerd's
+    // stall-reaper force-cancels under concurrency ("A stalled HTTP
+    // response was canceled to prevent deadlock"), and a reaped body
+    // then throws "Response closed due to connection limit" on the
+    // 304-refresh read. This is what 404'd the RSS feeds — many
+    // concurrent series revalidations each parked a cached body for a
+    // full upstream round-trip.
     const cachedETag = cached?.headers.get("etag");
-    if (cachedETag) {
+    let cachedBody: ArrayBuffer | undefined;
+    if (cached) {
+        try {
+            cachedBody = await cached.arrayBuffer();
+        } catch {
+            cachedBody = undefined;
+        }
+    }
+
+    // The content service also needs its bearer token on every
+    // request. Only offer the ETag when we actually hold the bytes a
+    // 304 would tell us to reuse.
+    const headers: Record<string, string> = authHeaders(url, drafts);
+    if (cachedETag && cachedBody !== undefined) {
         headers["If-None-Match"] = cachedETag;
     }
     const res = await fetchWithRetry(url, { headers });
 
     // 304 Not Modified — content unchanged; refresh the soft TTL on
-    // the cached body and serve it. Read `cached` directly (no clone):
-    // nothing else consumes it, and an unread cache.match() body pins
-    // one of workerd's ~6 per-host connection slots until the runtime
-    // force-cancels it ("stalled HTTP response") — under a meta-heavy
-    // render that starvation surfaces as "Response closed due to
-    // connection limit" and killed the RSS feeds outright.
-    if (res.status === 304 && cached) {
-        const body = await cached.arrayBuffer();
-        const refreshed = stamp(cached, body, now);
+    // the buffered body and serve it.
+    if (res.status === 304 && cached && cachedBody !== undefined) {
+        const refreshed = stamp(cached, cachedBody, now);
         if (cache) {
             try {
                 await cache.put(url, refreshed.clone());
@@ -390,17 +403,6 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
             }
         }
         return refreshed;
-    }
-
-    // Any other status means the stale cached copy is being replaced
-    // or abandoned — release its unread body stream (see the 304 note
-    // above for why leaking it is fatal at gallery scale).
-    if (cached) {
-        try {
-            await cached.body?.cancel();
-        } catch {
-            /* ignore */
-        }
     }
 
     if (res.ok) {
