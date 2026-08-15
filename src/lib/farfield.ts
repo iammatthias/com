@@ -551,6 +551,16 @@ export const EMBED_PATTERN_SOURCE =
 const FULL_EMBED_RE =
     /!\[([^\]]*)\]\((blob|series):\/\/([a-z0-9-]+)\)/g;
 
+/**
+ * Fresh capturing embed regex (alt, scheme, id) for consumers that
+ * rewrite embeds in place (lib/markdown-view.ts). A factory rather
+ * than the shared instance above because the `g` flag makes RegExp
+ * stateful under `.replace()` / `.exec()`.
+ */
+export function fullEmbedRe(): RegExp {
+    return new RegExp(FULL_EMBED_RE.source, "g");
+}
+
 export function extractBodyEmbeds(markdown: string): BodyEmbed[] {
     const out: BodyEmbed[] = [];
     for (const m of markdown.matchAll(FULL_EMBED_RE)) {

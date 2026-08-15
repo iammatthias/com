@@ -63,6 +63,7 @@ setResponseCacheHeaders(Astro.response, cacheHint, {
     title={page > 1 ? `${pub.name} — page ${page}` : pub.name}
     description={pub.description ?? `${pub.name} — iammatthias`}
     ogImage={`/${pub.slug}`}
+    markdownHref={`/${pub.slug}.md`}
 >
     <header class="page-header">
         <h1>{pub.name}</h1>

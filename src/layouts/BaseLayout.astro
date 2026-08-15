@@ -45,6 +45,13 @@ interface Props {
     /** The page is about the site's author (/now) — its JSON-LD
      *  WebPage becomes a ProfilePage with the Person as mainEntity. */
     profilePage?: boolean;
+    /**
+     * Path of this page's markdown twin (e.g. `/posts/foo.md`). Emits
+     * a `<link rel="alternate" type="text/markdown">` so agents and
+     * tools can find the plain-markdown version. Content pages set
+     * this; chrome-only pages leave it unset.
+     */
+    markdownHref?: string;
 }
 
 const SITE_NAME = "iammatthias";
@@ -62,6 +69,7 @@ const {
     breadcrumbs = [],
     article,
     profilePage = false,
+    markdownHref,
 } = Astro.props;
 
 // `siteOrigin` is intentionally derived from `Astro.site` (set in
@@ -202,6 +210,14 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
             href="/rss.xml"
         />
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+        {markdownHref && (
+            <link
+                rel="alternate"
+                type="text/markdown"
+                title="Markdown version"
+                href={markdownHref}
+            />
+        )}
 
         <slot name="head" />
     </head>

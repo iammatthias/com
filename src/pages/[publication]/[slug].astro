@@ -77,10 +77,10 @@ const showToc =
 // same pattern, forever.
 const bannerSeed = hashSeed(`${item.collection}/${item.rkey}`);
 
-// Farfield's record-viewer URL — points at the JSON record on the
-// content service so curious readers can see the raw data behind a
-// post. The new API takes just the slug (rkey); collection is implied.
-const recordUrl = `https://content.farfield.systems/api/entries/${encodeURIComponent(item.rkey)}`;
+// The page's markdown twin — same URL plus `.md`, served by
+// [slug].md.ts. Linked from the colophon (in place of the old raw
+// Farfield API link) and as <link rel="alternate"> in the head.
+const markdownPath = `${item.href}.md`;
 
 // Related reading: score every other document by shared-tag count, then
 // recency, and take the top few. The documents collection is already
@@ -133,6 +133,7 @@ let related: DocumentData[] = [];
             href: `/${item.publication.slug}`,
         },
     ]}
+    markdownHref={markdownPath}
 >
     <article class="doc">
         <header class="doc-hero">
@@ -205,8 +206,8 @@ let related: DocumentData[] = [];
           Colophon: a thin terrazzo banner alongside the metadata block.
           Banner seed is FNV-hashed from the record key so the tile
           pattern is permanent for that document. The metadata block
-          surfaces collection / rkey / cid / timestamps, with the record
-          URL linking back to the raw Farfield JSON.
+          surfaces collection / rkey / cid / timestamps, with the source
+          row linking to this page's markdown twin.
         -->
         <RecordColophon
             seed={bannerSeed}
@@ -214,7 +215,7 @@ let related: DocumentData[] = [];
                 { label: "collection", value: item.collection },
                 { label: "rkey", value: item.rkey },
                 { label: "record cid", value: item.cid },
-                { label: "record", value: recordUrl, href: recordUrl },
+                { label: "source", value: markdownPath, href: markdownPath },
                 {
                     label: "created",
                     value: item.publishedAt,

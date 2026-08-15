@@ -50,7 +50,9 @@ const bodyHtml = proseHtml(item.body);
 
 const media = await resolveBodyMedia(item.body);
 
-const recordUrl = `https://feed.farfield.systems/api/posts/${encodeURIComponent(rkey)}`;
+// The page's markdown twin — linked from the colophon (in place of
+// the old raw Farfield API link) and as <link rel="alternate">.
+const markdownPath = `/feed/${rkey}.md`;
 const bannerSeed = hashSeed(`feed/${rkey}`);
 ---
 
@@ -62,6 +64,7 @@ const bannerSeed = hashSeed(`feed/${rkey}`);
         publishedTime: item.createdAt,
         modifiedTime: item.updatedAt,
     }}
+    markdownHref={markdownPath}
 >
     <article class="entry">
         <header class="entry-hero">
@@ -146,7 +149,7 @@ const bannerSeed = hashSeed(`feed/${rkey}`);
                 { label: "collection", value: "feed" },
                 { label: "id", value: item.rkey },
                 { label: "record cid", value: item.cid },
-                { label: "record", value: recordUrl, href: recordUrl },
+                { label: "source", value: markdownPath, href: markdownPath },
                 {
                     label: "created",
                     value: item.createdAt,

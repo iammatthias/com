@@ -223,6 +223,16 @@ async function publicationsBySlug(): Promise<Map<string, PublicationData>> {
     return new Map(list.map((c) => [c.slug, publicationFrom(c)]));
 }
 
+/**
+ * The live set of publication slugs. Used by the middleware to decide
+ * whether a URL has a markdown twin worth content-negotiating toward
+ * — same memoized fetch the pages use, so it costs nothing extra.
+ */
+export async function publicationSlugSet(): Promise<Set<string>> {
+    const list = await cachedCollections();
+    return new Set(list.map((c) => c.slug));
+}
+
 function entryToDocument(
     entry: Entry,
     pub: PublicationData,

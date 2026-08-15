@@ -15,10 +15,12 @@
 import { getContentCache } from "./runtime-env";
 
 /**
- * Bump this whenever the render pipeline's *output markup* changes —
+ * Bump this whenever a render pipeline's *output* changes —
  * doc-render.ts (figures, series, callouts), recipe.ts (grid markup),
- * images.ts (widths/sizes) — or stale HTML will serve for up to the
- * TTL. Data-only changes (new content) never need a bump: new content
+ * images.ts (widths/sizes) for the HTML kinds, markdown-view.ts
+ * (embed resolution, the "mdbody"/"feedmdbody" kinds) for the
+ * markdown twins — or stale output will serve for up to the TTL.
+ * Data-only changes (new content) never need a bump: new content
  * means new cids.
  */
 const RENDER_VERSION = 1;

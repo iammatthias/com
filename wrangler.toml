@@ -15,6 +15,13 @@ compatibility_flags = ["nodejs_compat", "nodejs_compat_populate_process_env"]
 # FEED_READ_KEY on every deploy, leaving prod unable to read Farfield.
 keep_vars = true
 
+# Workers Logs — real request logs (dashboard: Workers → com →
+# Observability). Client-side analytics never see AI agents and other
+# non-JS readers; this records every invocation, so agent traffic on
+# the markdown twins / llms.txt is actually visible.
+[observability]
+enabled = true
+
 # Global, durable cache for cid-keyed immutable data: blob /meta JSON
 # (imm:v1:*) and rendered article HTML (render:v1:*). A cid is a content
 # hash, so entries never go stale — this is what keeps the site warm in

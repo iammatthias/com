@@ -1,4 +1,5 @@
-// Trailing-slash normalization + security headers for on-demand routes.
+// Trailing-slash normalization, markdown content negotiation, and
+// security headers for on-demand routes.
 //
 // One URL form site-wide: no trailing slash. `/now/` and `/now` used to
 // both render 200 with different rel=canonical values (canonical is
@@ -14,6 +15,7 @@
 // prerendered/static half.
 
 import { defineMiddleware } from "astro:middleware";
+import { publicationSlugSet } from "@lib/farfield-loader";
 
 /**
  * Content-Security-Policy — keep in sync with the copy in
@@ -63,8 +65,69 @@ const SECURITY_HEADERS: Record<string, string> = {
     ...(import.meta.env.PROD ? { "Content-Security-Policy": CSP } : {}),
 };
 
+// Points agents at the site map from any page (item 2 of the llms.txt
+// convention's discovery story; the <link rel="alternate"> in each
+// page's head is the other half). public/_headers carries the same
+// header for the prerendered pages.
+const LLMS_LINK = '</llms.txt>; rel="describedby"; type="text/markdown"';
+
+// Does the Accept header rank markdown strictly above HTML? Only
+// explicit types count — wildcard ranges (star-slash-star, text/*)
+// match both representations equally, so they can never tip the
+// choice. Ties go to HTML, the canonical representation. A browser's
+// default header (html high, wildcard at q=0.8) stays on HTML; an
+// agent's bare `Accept: text/markdown` gets markdown.
+function prefersMarkdown(accept: string | null): boolean {
+    if (!accept || !accept.toLowerCase().includes("markdown")) return false;
+    let md = 0;
+    let html = 0;
+    for (const part of accept.split(",")) {
+        const [rawType, ...params] = part.trim().split(";");
+        const type = rawType.trim().toLowerCase();
+        let q = 1;
+        for (const p of params) {
+            const [k, v] = p.trim().split("=");
+            if (k.trim() === "q") {
+                const n = Number(v);
+                if (Number.isFinite(n)) q = n;
+            }
+        }
+        if (type === "text/markdown" || type === "text/x-markdown") {
+            md = Math.max(md, q);
+        } else if (type === "text/html" || type === "application/xhtml+xml") {
+            html = Math.max(html, q);
+        }
+    }
+    return md > 0 && md > html;
+}
+
+/**
+ * The markdown twin for a pathname, or null when none exists. Twins
+ * cover the content surfaces only: `/<pub>` and `/<pub>/<slug>` (for
+ * live publication slugs), `/feed`, and `/feed/<rkey>`. The slug
+ * character class has no dot, so file-ish paths (`/posts/rss.xml`)
+ * and existing `.md` URLs never match. Collections come from the
+ * loader's memoized fetch; on upstream failure we just skip
+ * negotiation and serve HTML.
+ */
+async function markdownTwin(pathname: string): Promise<string | null> {
+    const m = pathname.match(/^\/([a-z0-9-]+)(?:\/([a-z0-9-]+))?$/);
+    if (!m) return null;
+    const [, first, second] = m;
+    if (first === "feed") {
+        return second ? `/feed/${second}.md` : "/feed.md";
+    }
+    try {
+        if (!(await publicationSlugSet()).has(first)) return null;
+    } catch {
+        return null;
+    }
+    return second ? `/${first}/${second}.md` : `/${first}.md`;
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
     const { pathname, search } = context.url;
+    const method = context.request.method;
 
     if (pathname !== "/" && pathname.endsWith("/")) {
         return context.redirect(
@@ -73,7 +136,39 @@ export const onRequest = defineMiddleware(async (context, next) => {
         );
     }
 
-    const response = await next();
+    // Markdown content negotiation: a URL with a markdown twin,
+    // requested with Accept ranking markdown above HTML, rewrites to
+    // the twin — same URL, markdown body. Content-Location names the
+    // concrete variant served, per RFC 9110.
+    const twin =
+        method === "GET" || method === "HEAD"
+            ? await markdownTwin(pathname)
+            : null;
+
+    let response: Response;
+    if (twin && prefersMarkdown(context.request.headers.get("accept"))) {
+        response = await next(twin + search);
+        response.headers.set("Content-Location", twin);
+    } else {
+        response = await next();
+    }
+
+    // Both variants of a negotiable resource vary on Accept — the
+    // canonical URL because it can answer with either representation,
+    // the .md URL so caches never fold it into the HTML entry.
+    if (twin || pathname.endsWith(".md")) {
+        response.headers.append("Vary", "Accept");
+    }
+
+    const contentType = response.headers.get("Content-Type") ?? "";
+    if (
+        !response.headers.has("Link") &&
+        (contentType.startsWith("text/html") ||
+            contentType.startsWith("text/markdown"))
+    ) {
+        response.headers.set("Link", LLMS_LINK);
+    }
+
     for (const [header, value] of Object.entries(SECURITY_HEADERS)) {
         if (!response.headers.has(header)) {
             response.headers.set(header, value);

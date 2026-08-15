@@ -15,6 +15,17 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://wsrv.nl https://blobs.farfield.systems; media-src 'self' https://blobs.farfield.systems; connect-src 'self' https://sepolia.base.org; font-src 'self'; worker-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
 
+# llms.txt discovery pointer on the prerendered pages — SSR responses
+# get the same header from src/middleware.ts (which can target by
+# content type; here each page is listed since /* would stamp every
+# font and image too).
+/resume
+  Link: </llms.txt>; rel="describedby"; type="text/markdown"
+/menu
+  Link: </llms.txt>; rel="describedby"; type="text/markdown"
+/onchain-analytics
+  Link: </llms.txt>; rel="describedby"; type="text/markdown"
+
 # Prebuilt search vectors: immutable per deploy, ~230 KB. A short
 # browser cache skips the 304 revalidation on every visit; a stale
 # copy after a deploy is harmless — the model/dims guard plus the
