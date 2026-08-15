@@ -253,19 +253,41 @@ export function azulejoCapHtml(letter: string, seed: number): string {
 }
 
 /**
- * Splice a lettrine into rendered body HTML: when the body opens with
- * a plain <p> whose first character is a letter, that character moves
- * into the generated tile. Anything else (gallery-first bodies,
- * markup-leading paragraphs) passes through untouched.
+ * Splice a lettrine into rendered body HTML, magazine-style: the
+ * plate sits where the prose starts, not necessarily at byte zero.
+ * Leading hero figures and headings are walked past, and the opening
+ * paragraph may begin with an inline wrapper (<a>/<em>/<strong> — the
+ * tile lands inside it, so a linked opener keeps its link). Bodies
+ * that never reach prose — recipe grids, pure galleries, blockquote
+ * openers — pass through untouched, as do paragraphs that start with
+ * punctuation (print convention drops the cap on quoted openers).
  */
+
+// Leading blocks a lettrine may skip: standalone doc figures,
+// headings, and link-label paragraphs (a <p> containing nothing but
+// anchors — the REPO/NPM rows on project pages; capping those turns
+// "REPO" into a tile plus "EPO"). All flat elements in the renderer's
+// output, so non-greedy matches are safe. Deliberately NOT skipped:
+// series grids, triptychs, recipes, callouts — prose after those
+// isn't an opening. A paragraph that merely STARTS with a link but
+// carries prose after it still gets its tile, inside the anchor.
+const LEAD_BLOCKS_RE =
+    /^(?:\s*(?:<figure class="doc-figure"[\s\S]*?<\/figure>|<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>|<p>(?:\s*<a\b[^>]*>[^<]*<\/a>\s*)+<\/p>))*/;
+
+const OPENING_LETTER_RE =
+    /^(\s*<p>(?:<(?:a|em|strong)\b[^>]*>)*)([A-Za-z0-9])/;
+
 export function withLettrine(bodyHtml: string, seed: number): string {
-    const m = bodyHtml.match(/^(\s*<p>)([A-Za-z0-9])/);
+    const lead = bodyHtml.match(LEAD_BLOCKS_RE)?.[0] ?? "";
+    const rest = bodyHtml.slice(lead.length);
+    const m = rest.match(OPENING_LETTER_RE);
     if (!m) return bodyHtml;
     const tile = azulejoCapHtml(m[2], seed);
     if (!tile) return bodyHtml;
     return (
+        lead +
         m[1] +
         tile +
-        bodyHtml.slice(m[1].length + m[2].length)
+        rest.slice(m[1].length + m[2].length)
     );
 }
