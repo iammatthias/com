@@ -250,14 +250,26 @@
 
   <xsl:template match="item">
     <li class="item">
-      <h2>
-        <a href="{link}">
-          <xsl:value-of select="title"/>
-        </a>
-      </h2>
-      <p class="item-meta">
-        <xsl:value-of select="pubDate"/>
-      </p>
+      <!-- Feed posts are titleless (microblog notes) — a derived title
+           would only duplicate the body below. When there's no title,
+           the dateline becomes the item's permalink instead. -->
+      <xsl:choose>
+        <xsl:when test="title[normalize-space()]">
+          <h2>
+            <a href="{link}">
+              <xsl:value-of select="title"/>
+            </a>
+          </h2>
+          <p class="item-meta">
+            <xsl:value-of select="pubDate"/>
+          </p>
+        </xsl:when>
+        <xsl:otherwise>
+          <p class="item-meta">
+            <a href="{link}"><xsl:value-of select="pubDate"/></a>
+          </p>
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:if test="media:content/@url">
         <img class="item-thumb" src="{media:content/@url}" alt="" loading="lazy"/>
       </xsl:if>

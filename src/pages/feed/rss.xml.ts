@@ -23,15 +23,6 @@ export const GET: APIRoute = async (context) => {
         RSS_ITEM_CAP,
     );
 
-    // Feed entries have a markdown body but no explicit title. Derive
-    // a short plain-text title from the body; fall back to the date so
-    // empty-prose entries still get a readable line in the feed.
-    const itemTitle = (item: FeedEntryData): string => {
-        const plain = plainText(item.body);
-        if (plain) return plain.length > 80 ? `${plain.slice(0, 80)}…` : plain;
-        return `Update from ${new Date(item.createdAt).toLocaleDateString("en-US", { timeZone: "UTC" })}`;
-    };
-
     const origin = (
         context.site?.toString() ?? "https://iammatthias.com"
     ).replace(/\/$/, "");
@@ -52,8 +43,13 @@ export const GET: APIRoute = async (context) => {
                     moreUrl: canonical,
                 });
                 const thumb = content.match(/<img src="([^"]+)"/)?.[1];
+                // Titleless items, per microblog/notes convention —
+                // feed posts have no real title, and a derived one just
+                // duplicates the body everywhere it appears (readers'
+                // list views and the styled browser page alike). RSS
+                // only requires title OR description; the stylesheet
+                // links the date instead when there's no title.
                 return {
-                    title: itemTitle(item),
                     description: plainText(item.body).slice(0, 180),
                     content,
                     link: `/feed/${item.rkey}`,
