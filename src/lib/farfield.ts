@@ -273,7 +273,28 @@ function getEdgeCache(): Cache | undefined {
 }
 
 /**
- * Outbound fetch with a single retry. The `User-Agent` header is
+ * Cap concurrent upstream fetches. workerd already queues at ~6 per
+ * host, but the node prerender pass has no such limit — a gallery
+ * page render once fired ~500 meta GETs inside a single second, and
+ * Cloudflare's edge answered a few with 409s that the origin never
+ * saw (confirmed against the origin access log: all 200s). Eight
+ * concurrent keeps builds brisk without tripping edge-side burst
+ * protections.
+ */
+import pLimit from "p-limit";
+const upstreamLimit = pLimit(8);
+
+/** Statuses worth one retry: transient edge/origin conditions. A 404
+ *  is a real answer and is never retried. */
+const RETRYABLE_STATUS = new Set([409, 429, 500, 502, 503, 504]);
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Outbound fetch with a single retry — on thrown network errors AND
+ * on retryable statuses (the edge occasionally mints 409/5xx under
+ * burst; one short-backoff retry beats freezing a degraded render
+ * into the incremental build cache). The `User-Agent` header is
  * required: workerd will otherwise short-circuit the request inside
  * Cloudflare's network (Farfield is Cloudflare-fronted) and the
  * unbound destination returns `internal error; reference = …`.
@@ -289,9 +310,17 @@ async function fetchWithRetry(
     };
     const opts: RequestInit = { ...init, headers };
     try {
+        const res = await fetch(input, opts);
+        if (!RETRYABLE_STATUS.has(res.status)) return res;
+        try {
+            await res.body?.cancel();
+        } catch {
+            /* ignore */
+        }
+        await sleep(150 + Math.random() * 150);
         return await fetch(input, opts);
-    } catch (err) {
-        await new Promise((r) => setTimeout(r, 80 + Math.random() * 80));
+    } catch {
+        await sleep(80 + Math.random() * 80);
         try {
             return await fetch(input, opts);
         } catch (err2) {
@@ -389,7 +418,7 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
     if (cachedETag && cachedBody !== undefined) {
         headers["If-None-Match"] = cachedETag;
     }
-    const res = await fetchWithRetry(url, { headers });
+    const res = await upstreamLimit(() => fetchWithRetry(url, { headers }));
 
     // 304 Not Modified — content unchanged; refresh the soft TTL on
     // the buffered body and serve it.
@@ -439,11 +468,23 @@ async function discardBody(res: Response): Promise<void> {
     }
 }
 
+/** Error text for a failed upstream response. Carries the cf-ray so a
+ *  mystery status can be correlated against the origin's access log
+ *  (a ray with no matching origin line = minted at the edge). */
+function upstreamError(url: string, res: Response): Error {
+    const ray = res.headers.get("cf-ray");
+    return new Error(
+        `Farfield ${url} failed: ${res.status} ${res.statusText}` +
+            (ray ? ` (cf-ray ${ray})` : ""),
+    );
+}
+
 async function getJSON<T>(url: string, drafts = false): Promise<T> {
     const res = await cachedFetch(url, drafts);
     if (!res.ok) {
+        const err = upstreamError(url, res);
         await discardBody(res);
-        throw new Error(`Farfield ${url} failed: ${res.status} ${res.statusText}`);
+        throw err;
     }
     return (await res.json()) as T;
 }
@@ -455,8 +496,9 @@ async function getJSONOrNull<T>(url: string, drafts = false): Promise<T | null> 
         return null;
     }
     if (!res.ok) {
+        const err = upstreamError(url, res);
         await discardBody(res);
-        throw new Error(`Farfield ${url} failed: ${res.status} ${res.statusText}`);
+        throw err;
     }
     return (await res.json()) as T;
 }
