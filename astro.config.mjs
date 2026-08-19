@@ -20,6 +20,17 @@ export default defineConfig({
     prefetch: {
         prefetchAll: true,
     },
+    // Incremental static builds (7.2 experimental): prerendered pages
+    // whose getStaticPaths() rows carry a `cacheKey` are skipped when
+    // both the key and the page's module graph are unchanged since the
+    // last build. Our cacheKeys are Farfield cids, so a publish-hook
+    // rebuild renders only what actually changed. The cache lives in
+    // node_modules/.astro — Workers Builds' build cache persists it
+    // (enable Build cache in the dashboard), and the build script must
+    // never rm it. Escape hatch: `astro build --force`.
+    experimental: {
+        incrementalBuild: true,
+    },
     integrations: [
         react(),
         // Dev-only internal routes — injected only under `astro dev`, so

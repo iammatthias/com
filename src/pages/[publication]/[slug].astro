@@ -1,71 +1,73 @@
 ---
-export const prerender = false;
+// Prerendered document detail. Every entry becomes a static page at
+// build time; `cacheKey` ties the page to the cids it renders (its
+// own + the related cards'), so incremental builds skip pages whose
+// content is unchanged. Freshness comes from the Farfield publish
+// hook triggering a rebuild — not from request-time fetching.
+export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import RecordColophon from "@components/RecordColophon.astro";
 import FeedCard from "@components/FeedCard.astro";
 import Lightbox from "@components/Lightbox.astro";
-import { getLiveCollection, getLiveEntry } from "astro:content";
-import { LiveEntryNotFoundError } from "astro/content/runtime";
-import { entriesOf, type DocumentData } from "@lib/farfield-loader";
-import { setResponseCacheHeaders } from "@lib/cache";
-import { isPreview } from "@lib/preview";
+import { getCollection } from "astro:content";
+import type { DocumentData } from "@lib/farfield-loader";
 import { fmtDateLong as fmtDate, hashSeed } from "@lib/format";
 import { renderMarkdownBody, readingTime, buildToc } from "@lib/doc-render";
-import { cachedRender } from "@lib/render-cache";
 import { plainText } from "@lib/markdown-text";
 import { withLettrine } from "@lib/azulejo-cap";
 
-const publicationSlug = Astro.params.publication;
-const docSlug = Astro.params.slug;
-if (!publicationSlug || !docSlug) {
-    return new Response(null, { status: 404 });
-}
-
-const preview = isPreview(Astro);
-
-const { entry, error, cacheHint } = await getLiveEntry("documents", {
-    publication: publicationSlug,
-    slug: docSlug,
-    preview,
-});
-if (error) {
-    // Astro wraps "no such entry" as `LiveEntryNotFoundError` rather
-    // than returning `entry === undefined`, so we have to discriminate
-    // here. Unknown errors are upstream failures → 502; missing
-    // records (slug typos, deleted docs, stale links) → 404.
-    if (LiveEntryNotFoundError.is(error)) {
-        return new Response(null, { status: 404 });
-    }
-    console.error(
-        `[/${publicationSlug}/${docSlug}] Farfield fetch failed:`,
-        error,
+export async function getStaticPaths() {
+    const all = (await getCollection("docs")).map(
+        (e) => e.data as DocumentData,
     );
-    return new Response(null, { status: 502 });
+    const RELATED_COUNT = 6;
+    return all.map((item) => {
+        // Related reading: shared-tag count, then recency. Computed at
+        // build so the page ships with its cards; drafts (dev-only in
+        // the store) never appear as related.
+        const sharedTags = (tags: string[]) =>
+            tags.filter((t) => item.tags.includes(t)).length;
+        const related = all
+            .filter(
+                (d) =>
+                    d.published !== false &&
+                    !(
+                        d.collection === item.collection &&
+                        d.rkey === item.rkey
+                    ),
+            )
+            .sort(
+                (a, b) =>
+                    sharedTags(b.tags) - sharedTags(a.tags) ||
+                    b.publishedAt.localeCompare(a.publishedAt),
+            )
+            .slice(0, RELATED_COUNT);
+        return {
+            params: { publication: item.collection, slug: item.rkey },
+            props: { item, related },
+            // The page renders its own body plus the related cards'
+            // titles/excerpts — any of those changing must re-render it.
+            cacheKey: [item.cid, ...related.map((r) => r.cid)].join(":"),
+        };
+    });
 }
-if (!entry) {
-    return new Response(null, { status: 404 });
-}
-const item: DocumentData = entry.data;
 
-setResponseCacheHeaders(Astro.response, cacheHint);
+const { item, related } = Astro.props as {
+    item: DocumentData;
+    related: DocumentData[];
+};
 
 // Meta/OG description: the Farfield excerpt when one exists, else the
-// body's opening words. An entry without an excerpt used to ship
-// `<meta name="description" content="">` — an empty string is defined,
-// so it sailed past BaseLayout's default — and search results fell
-// back to whatever text the crawler grabbed.
+// body's opening words (an empty string would sail past BaseLayout's
+// default and ship an empty meta description).
 const metaDescription =
     item.description || plainText(item.body).slice(0, 180).trim();
 
 // Content is a single markdown body with inline `blob://` / `series://`
-// embeds. `renderMarkdownBody` resolves each one and stitches in the
-// final HTML. The result is cached against the record's cid — same
-// content, same markup — so only the first render after a content (or
-// RENDER_VERSION) change pays for embed resolution.
-const bodyHtml = item.body
-    ? await cachedRender("doc", item.cid, () => renderMarkdownBody(item.body))
-    : "";
+// embeds, resolved here at build time. No runtime render caches — the
+// incremental build IS the cache now (unchanged cid, page skipped).
+const bodyHtml = item.body ? await renderMarkdownBody(item.body) : "";
 
 const reading = readingTime(item.body);
 
@@ -76,8 +78,7 @@ const { html: bodyWithIds, entries: tocEntries } = buildToc(bodyHtml);
 
 // Azulejo lettrine: the opening letter moves onto a generated tile,
 // seeded by the record's cid — same content, same tile, forever; an
-// edit re-fires it. Applied here (per request, outside the KV render
-// cache) so generator tweaks never need a RENDER_VERSION bump.
+// edit re-fires it.
 const bodyWithCap = withLettrine(bodyWithIds, hashSeed(item.cid));
 // Art docs lean on full-width masonry series for `## Section` headings;
 // the desktop TOC sidebar narrows the body column and squeezes those
@@ -94,44 +95,8 @@ const showToc =
 const bannerSeed = hashSeed(`${item.collection}/${item.rkey}`);
 
 // The page's markdown twin — same URL plus `.md`, served by
-// [slug].md.ts. Linked from the colophon (in place of the old raw
-// Farfield API link) and as <link rel="alternate"> in the head.
+// [slug].md.ts. Linked from the colophon and as <link rel="alternate">.
 const markdownPath = `${item.href}.md`;
-
-// Related reading: score every other document by shared-tag count, then
-// recency, and take the top few. The documents collection is already
-// warm in the per-isolate cache (MenuLinks fetches it on every page), so
-// this adds no real upstream cost. With no shared tags the score is
-// uniformly zero and it falls back to the most recent other posts.
-const RELATED_COUNT = 6;
-let related: DocumentData[] = [];
-{
-    const { entries: allDocs, error: relErr } =
-        await getLiveCollection("documents", { preview });
-    if (relErr) {
-        console.error(
-            `[/${publicationSlug}/${docSlug}] related-docs fetch failed:`,
-            relErr,
-        );
-    } else {
-        const sharedTags = (tags: string[]) =>
-            tags.filter((t) => item.tags.includes(t)).length;
-        related = entriesOf<DocumentData>(allDocs)
-            .filter(
-                (d) =>
-                    !(
-                        d.collection === item.collection &&
-                        d.rkey === item.rkey
-                    ),
-            )
-            .sort(
-                (a, b) =>
-                    sharedTags(b.tags) - sharedTags(a.tags) ||
-                    b.publishedAt.localeCompare(a.publishedAt),
-            )
-            .slice(0, RELATED_COUNT);
-    }
-}
 ---
 
 <BaseLayout

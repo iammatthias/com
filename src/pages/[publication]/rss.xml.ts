@@ -1,87 +1,73 @@
+// Per-publication RSS, prerendered. Regenerates on every build — the
+// Farfield publish hook is what keeps it fresh. Newest RSS_ITEM_CAP
+// entries with full bodies; see rss.xml.ts at the root for the item
+// shape rationale.
+
+export const prerender = true;
+
 import rss from "@astrojs/rss";
-import type { APIRoute } from "astro";
-import { getLiveCollection, getLiveEntry } from "astro:content";
-import { LiveEntryNotFoundError } from "astro/content/runtime";
-import { setResponseCacheHeaders } from "@lib/cache";
-import { entriesOf, type DocumentData } from "@lib/farfield-loader";
+import type { APIRoute, GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import type { DocumentData, PublicationData } from "@lib/farfield-loader";
 import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
-import { headFromGet, mapWithConcurrency } from "@lib/http";
+import { mapWithConcurrency } from "@lib/http";
 
-export const prerender = false;
-
-export const GET: APIRoute = async (context) => {
-    const slug = context.params.publication;
-    if (!slug) return new Response(null, { status: 404 });
-
-    const { entry: pubEntry, error: pubError } = await getLiveEntry(
-        "publications",
-        slug,
+export const getStaticPaths: GetStaticPaths = async () => {
+    const pubs = (await getCollection("pubs")).map(
+        (e) => e.data as PublicationData,
     );
-    // A missing publication is a real 404 (bad slug, deleted pub) — but a
-    // transient upstream failure must NOT be: feed readers unsubscribe on
-    // persistent 404s. Surface those as 503 + Retry-After so readers keep
-    // the subscription and try again.
-    if (pubError && !LiveEntryNotFoundError.is(pubError)) {
-        console.error(`[/${slug}/rss.xml] publication fetch failed:`, pubError);
-        return new Response(null, {
-            status: 503,
-            headers: { "Retry-After": "120" },
-        });
-    }
-    if (pubError || !pubEntry) return new Response(null, { status: 404 });
-    const pub = pubEntry.data;
-
-    const { entries, error, cacheHint } = await getLiveCollection(
-        "documents",
-        { publication: slug },
+    const docs = (await getCollection("docs")).map(
+        (e) => e.data as DocumentData,
     );
-    if (error) {
-        console.error(`[/${slug}/rss.xml] Farfield fetch failed:`, error);
-    }
-    // Newest RSS_ITEM_CAP, bounded render concurrency — see rss.xml.ts.
-    const items = entriesOf<DocumentData>(entries).slice(0, RSS_ITEM_CAP);
+    return pubs.map((pub) => {
+        const items = docs
+            .filter((d) => d.collection === pub.slug && d.published !== false)
+            .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+            .slice(0, RSS_ITEM_CAP);
+        return {
+            params: { publication: pub.slug },
+            props: { pub, items },
+            // Feed rendering re-fetches blob metas — skip it when the
+            // capped window is unchanged.
+            cacheKey: items.map((d) => d.cid).join(","),
+        };
+    });
+};
 
-    const origin = (
-        context.site?.toString() ?? "https://iammatthias.com"
-    ).replace(/\/$/, "");
+export const GET: APIRoute = async ({ props, site }) => {
+    const pub = props.pub as PublicationData;
+    const items = props.items as DocumentData[];
+    const origin = (site?.toString() ?? "https://iammatthias.com").replace(
+        /\/$/,
+        "",
+    );
 
-    const response = await rss({
+    return rss({
         title: `${pub.name} — iammatthias`,
         description: pub.description ?? `Latest entries from ${pub.name}.`,
-        site: context.site?.toString() ?? "https://iammatthias.com",
+        site: site?.toString() ?? "https://iammatthias.com",
         // Full body, capped galleries, media:content thumb — see rss.xml.ts.
-        items: await mapWithConcurrency(
-            items,
-            8,
-            async (item: DocumentData) => {
-                const canonical = `${origin}${item.href}`;
-                const content = await renderFeedBody(item.body, {
-                    maxImages: 6,
-                    moreUrl: canonical,
-                });
-                const thumb = content.match(/<img src="([^"]+)"/)?.[1];
-                return {
-                    title: item.title,
-                    description: item.description,
-                    content,
-                    link: item.href,
-                    pubDate: new Date(item.publishedAt),
-                    categories: item.tags,
-                    ...(thumb && {
-                        customData: `<media:content url="${thumb}" medium="image" />`,
-                    }),
-                };
-            },
-        ),
+        items: await mapWithConcurrency(items, 8, async (item) => {
+            const canonical = `${origin}${item.href}`;
+            const content = await renderFeedBody(item.body, {
+                maxImages: 6,
+                moreUrl: canonical,
+            });
+            const thumb = content.match(/<img src="([^"]+)"/)?.[1];
+            return {
+                title: item.title,
+                description: item.description,
+                content,
+                link: item.href,
+                pubDate: new Date(item.publishedAt),
+                categories: item.tags,
+                ...(thumb && {
+                    customData: `<media:content url="${thumb}" medium="image" />`,
+                }),
+            };
+        }),
         xmlns: { media: "http://search.yahoo.com/mrss/" },
         customData: "<language>en-us</language>",
         stylesheet: "/rss.xml.xsl",
     });
-
-    setResponseCacheHeaders(response, cacheHint, {
-        extraTags: pubEntry.cacheHint?.tags,
-    });
-    return response;
 };
-
-export const HEAD = headFromGet(GET);

@@ -1,62 +1,61 @@
 ---
-// Per-publication index. Single `[...page]` catch-all serves both
-// `/<pub>` (page 1) and `/<pub>/page/N`. Sibling routes win by Astro's
-// route priority: `[slug].astro` (a named param) outranks this rest
-// route for `/<pub>/<slug>`, and `rss.xml.ts` (static) outranks it for
-// `/<pub>/rss.xml`. So this only ever handles the bare index and the
-// `page/N` form.
-export const prerender = false;
+// Per-publication index, prerendered. Single `[...page]` catch-all
+// serves both `/<pub>` (page 1, param undefined) and `/<pub>/page/N`.
+// Sibling routes win by Astro's route priority: `[slug].astro` (a
+// named param) outranks this rest route for `/<pub>/<slug>`, and
+// `rss.xml.ts` (static) for `/<pub>/rss.xml`. cacheKey folds the
+// member cids, so a list page re-renders only when its slice of the
+// publication actually changes.
+export const prerender = true;
 
+import { createHash } from "node:crypto";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import FeedCard from "@components/FeedCard.astro";
 import Pagination from "@components/Pagination.astro";
-import { getLiveCollection, getLiveEntry } from "astro:content";
-import {
-    setResponseCacheHeaders,
-    deepPageCacheOptions,
-} from "@lib/cache";
-import { getPage, parsePageParam } from "@lib/pagination";
-import { entriesOf, type DocumentData } from "@lib/farfield-loader";
-import { isPreview } from "@lib/preview";
+import { getCollection } from "astro:content";
+import { getPage, PAGE_SIZE } from "@lib/pagination";
+import type { DocumentData, PublicationData } from "@lib/farfield-loader";
 
-const slug = Astro.params.publication;
-if (!slug) {
-    return new Response("Publication slug required", { status: 400 });
+export async function getStaticPaths() {
+    const pubs = (await getCollection("pubs")).map(
+        (e) => e.data as PublicationData,
+    );
+    const docs = (await getCollection("docs")).map(
+        (e) => e.data as DocumentData,
+    );
+    const paths = [];
+    for (const pub of pubs) {
+        const items = docs
+            .filter((d) => d.collection === pub.slug && d.published !== false)
+            .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+        const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+        for (let page = 1; page <= totalPages; page++) {
+            const slice = items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+            paths.push({
+                params: {
+                    publication: pub.slug,
+                    page: page === 1 ? undefined : `page/${page}`,
+                },
+                props: { pub, items, page },
+                cacheKey: createHash("sha1")
+                    .update(
+                        `${page}/${totalPages}:${slice.map((d) => d.cid).join(",")}`,
+                    )
+                    .digest("hex"),
+            });
+        }
+    }
+    return paths;
 }
 
-const page = parsePageParam(Astro.params.page);
-if (page === null) return new Response(null, { status: 404 });
+const { pub, items, page } = Astro.props as {
+    pub: PublicationData;
+    items: DocumentData[];
+    page: number;
+};
 
-const preview = isPreview(Astro);
-
-const { entry: pubEntry, error: pubError } = await getLiveEntry(
-    "publications",
-    slug,
-);
-if (pubError || !pubEntry) {
-    return new Response(null, { status: 404 });
-}
-const pub = pubEntry.data;
-
-let items: DocumentData[] = [];
-const { entries, error, cacheHint } = await getLiveCollection("documents", {
-    publication: slug,
-    preview,
-});
-if (error) {
-    console.error(`[/${slug}] Farfield fetch failed:`, error);
-} else {
-    items = entriesOf<DocumentData>(entries);
-}
-
-const base = `/${slug}`;
-const paged = getPage(items, page, base);
-if (!paged) return new Response(null, { status: 404 });
-
-setResponseCacheHeaders(Astro.response, cacheHint, {
-    extraTags: pubEntry.cacheHint?.tags,
-    ...deepPageCacheOptions(page),
-});
+const base = `/${pub.slug}`;
+const paged = getPage(items, page, base)!;
 ---
 
 <BaseLayout

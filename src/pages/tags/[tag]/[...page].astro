@@ -1,54 +1,58 @@
 ---
-// Per-tag index. Single `[...page]` catch-all serves both `/tags/<tag>`
-// (page 1) and `/tags/<tag>/page/N`. The sibling `rss.xml.ts` (static)
-// outranks this for `/tags/<tag>/rss.xml`.
-export const prerender = false;
+// Per-tag index, prerendered. `[...page]` serves `/tags/<tag>` and
+// `/tags/<tag>/page/N`; the sibling `rss.xml.ts` (static) outranks it
+// for `/tags/<tag>/rss.xml`. cacheKey folds the member cids per page.
+export const prerender = true;
 
+import { createHash } from "node:crypto";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import FeedCard from "@components/FeedCard.astro";
 import Pagination from "@components/Pagination.astro";
-import { getLiveCollection } from "astro:content";
-import {
-    setResponseCacheHeaders,
-    deepPageCacheOptions,
-} from "@lib/cache";
-import { getPage, parsePageParam } from "@lib/pagination";
-import { entriesOf, type DocumentData } from "@lib/farfield-loader";
-import { isPreview } from "@lib/preview";
+import { getCollection } from "astro:content";
+import { getPage, PAGE_SIZE } from "@lib/pagination";
+import type { DocumentData } from "@lib/farfield-loader";
 
-const tag = Astro.params.tag;
-if (!tag) {
-    return Astro.redirect("/tags");
+export async function getStaticPaths() {
+    const docs = (await getCollection("docs"))
+        .map((e) => e.data as DocumentData)
+        .filter((d) => d.published !== false)
+        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    const byTag = new Map<string, DocumentData[]>();
+    for (const d of docs) {
+        for (const t of d.tags) {
+            (byTag.get(t) ?? byTag.set(t, []).get(t)!).push(d);
+        }
+    }
+    const paths = [];
+    for (const [tag, items] of byTag) {
+        const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+        for (let page = 1; page <= totalPages; page++) {
+            const slice = items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+            paths.push({
+                params: {
+                    tag,
+                    page: page === 1 ? undefined : `page/${page}`,
+                },
+                props: { tag, items, page },
+                cacheKey: createHash("sha1")
+                    .update(
+                        `${page}/${totalPages}:${slice.map((d) => d.cid).join(",")}`,
+                    )
+                    .digest("hex"),
+            });
+        }
+    }
+    return paths;
 }
 
-const page = parsePageParam(Astro.params.page);
-if (page === null) return new Response(null, { status: 404 });
-
-const preview = isPreview(Astro);
-
-let items: DocumentData[] = [];
-const { entries, error, cacheHint } = await getLiveCollection("documents", {
-    tag,
-    preview,
-});
-if (error) {
-    console.error(`[/tags/${tag}] Farfield fetch failed:`, error);
-} else {
-    items = entriesOf<DocumentData>(entries);
-}
-
-// No entries carry this tag — the tag itself doesn't exist on any current
-// document. Rewrite to the tag index rather than serve an empty page
-// (also bypasses caching of a not-really-here URL).
-if (items.length === 0 && !error) {
-    return Astro.rewrite("/tags");
-}
+const { tag, items, page } = Astro.props as {
+    tag: string;
+    items: DocumentData[];
+    page: number;
+};
 
 const base = `/tags/${encodeURIComponent(tag)}`;
-const paged = getPage(items, page, base);
-if (!paged) return new Response(null, { status: 404 });
-
-setResponseCacheHeaders(Astro.response, cacheHint, deepPageCacheOptions(page));
+const paged = getPage(items, page, base)!;
 ---
 
 <BaseLayout

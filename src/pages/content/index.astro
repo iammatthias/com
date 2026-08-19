@@ -1,17 +1,15 @@
 ---
-// All-content index, page 1. Pages 2+ live at /content/page/N
-// (content/page/[page].astro). Both render through ContentIndex.astro,
-// with fetch + error handling shared in @lib/content-index. This is an
+// All-content index, page 1, prerendered. Pages 2+ live at
+// /content/page/N (content/page/[page].astro). Both render through
+// ContentIndex.astro with data from @lib/content-index. This is an
 // explicit route (not a `[...page]` catch-all) so the legacy
 // `/content/...` redirects in astro.config have a concrete `/content`
 // destination to resolve against.
-export const prerender = false;
+export const prerender = true;
 
 import ContentIndex from "@components/ContentIndex.astro";
-import { setResponseCacheHeaders } from "@lib/cache";
 import { loadContentIndex } from "@lib/content-index";
 import { getPage } from "@lib/pagination";
-import { isPreview } from "@lib/preview";
 import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = {
@@ -20,13 +18,10 @@ export const menu: MenuMeta = {
     order: 1,
 };
 
-const preview = isPreview(Astro);
-const { items, pubs, cacheHint, extraTags } = await loadContentIndex(preview);
+const { items, pubs } = await loadContentIndex();
 
 // Page 1 always exists (empty set still renders an empty page 1).
 const paged = getPage(items, 1, "/content")!;
-
-setResponseCacheHeaders(Astro.response, cacheHint, { extraTags });
 ---
 
 <ContentIndex paged={paged} pubs={pubs} />

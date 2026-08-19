@@ -521,8 +521,18 @@ export function blobURL(cid: string): string {
     return `${BLOBS}/blobs/${cid}`;
 }
 
-export function getBlobMeta(cid: string): Promise<BlobMeta | null> {
-    return getJSONOrNull<BlobMeta>(`${BLOBS}/blobs/${cid}/meta`);
+export async function getBlobMeta(cid: string): Promise<BlobMeta | null> {
+    try {
+        return await getJSONOrNull<BlobMeta>(`${BLOBS}/blobs/${cid}/meta`);
+    } catch (err) {
+        // Meta is decorative (dimensions, blurhash, mime hints) and
+        // every consumer already handles null. A transient upstream
+        // error must not kill a whole build or render over a missing
+        // width attribute — one flaky 409 here once failed the entire
+        // static build.
+        console.warn(`[farfield] blob meta ${cid} unavailable:`, err);
+        return null;
+    }
 }
 
 // ---------- wsrv image helpers ---------------------------------------------

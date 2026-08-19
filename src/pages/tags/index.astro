@@ -1,42 +1,25 @@
 ---
-export const prerender = false;
+// Tag cloud, prerendered from the build-time docs collection.
+export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
-import { getLiveCollection } from "astro:content";
-import { setResponseCacheHeaders } from "@lib/cache";
-import { isPreview } from "@lib/preview";
+import { getCollection } from "astro:content";
+import type { DocumentData } from "@lib/farfield-loader";
 import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = { group: "archive", order: 2 };
 
-const preview = isPreview(Astro);
-
-let tags: { tag: string; count: number }[] = [];
-const {
-    entries: docEntries,
-    error,
-    cacheHint,
-} = await getLiveCollection("documents", { preview });
-if (error) {
-    console.error("[/tags] Farfield fetch failed:", error);
-} else {
-    // Aggregate tag counts client-side rather than asking the loader to
-    // do it — keeps the loader's surface minimal and lets the same
-    // collection fetch serve both this page and the per-tag pages.
-    const counts = new Map<string, number>();
-    for (const e of docEntries) {
-        for (const t of e.data.tags) {
-            counts.set(t, (counts.get(t) ?? 0) + 1);
-        }
-    }
-    tags = [...counts.entries()]
-        .map(([tag, count]) => ({ tag, count }))
-        .sort(
-            (a, b) => b.count - a.count || a.tag.localeCompare(b.tag),
-        );
+const docs = (await getCollection("docs")).map(
+    (e) => e.data as DocumentData,
+);
+const counts = new Map<string, number>();
+for (const d of docs) {
+    if (d.published === false) continue;
+    for (const t of d.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
 }
-
-setResponseCacheHeaders(Astro.response, cacheHint);
+const tags = [...counts.entries()]
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
 ---
 
 <BaseLayout title="Tags" description="All tags across the site, by frequency.">

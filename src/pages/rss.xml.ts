@@ -1,71 +1,61 @@
+// Sitewide RSS, prerendered — regenerated on every build; the
+// Farfield publish hook keeps it fresh. Newest RSS_ITEM_CAP documents
+// with full bodies (embeds resolved to absolute URLs), capped
+// galleries, and a media:content thumbnail per item.
+
+export const prerender = true;
+
 import rss from "@astrojs/rss";
 import type { APIRoute } from "astro";
-import { getLiveCollection } from "astro:content";
-import { setResponseCacheHeaders } from "@lib/cache";
-import { entriesOf, type DocumentData } from "@lib/farfield-loader";
+import { getCollection } from "astro:content";
+import type { DocumentData } from "@lib/farfield-loader";
 import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
-import { headFromGet, mapWithConcurrency } from "@lib/http";
+import { mapWithConcurrency } from "@lib/http";
 
-export const prerender = false;
+export const GET: APIRoute = async ({ site }) => {
+    const items = (await getCollection("docs"))
+        .map((e) => e.data as DocumentData)
+        .filter((d) => d.published !== false)
+        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+        .slice(0, RSS_ITEM_CAP);
 
-export const GET: APIRoute = async (context) => {
-    const { entries, error, cacheHint } = await getLiveCollection("documents");
-    if (error) {
-        console.error("[/rss.xml] Farfield fetch failed:", error);
-    }
-    // Newest RSS_ITEM_CAP only, rendered a few at a time — this feed
-    // used to render every document at once and die on the workerd
-    // connection limit (served as an empty 404 to every feed reader).
-    const items = entriesOf<DocumentData>(entries).slice(0, RSS_ITEM_CAP);
+    const origin = (site?.toString() ?? "https://iammatthias.com").replace(
+        /\/$/,
+        "",
+    );
 
-    const origin = (
-        context.site?.toString() ?? "https://iammatthias.com"
-    ).replace(/\/$/, "");
-
-    const response = await rss({
+    return rss({
         title: "iammatthias",
         description:
             "Matthias Jordan's cozy corner of the web. Photographs, projects, recipes, and notes, open and personal.",
-        site: context.site?.toString() ?? "https://iammatthias.com",
+        site: site?.toString() ?? "https://iammatthias.com",
         // Full body with embeds resolved to absolute image URLs — posts
         // read complete (text AND images) inside feed readers instead of
         // forcing a click-through on an excerpt. Gallery-heavy items are
-        // capped with a canonical "view the full gallery" link, and each
-        // item carries a media:content thumbnail for reader list views
-        // (and the styled browser preview, which can't unescape
-        // content:encoded).
-        items: await mapWithConcurrency(
-            items,
-            8,
-            async (item: DocumentData) => {
-                const canonical = `${origin}${item.href}`;
-                const content = await renderFeedBody(item.body, {
-                    maxImages: 6,
-                    moreUrl: canonical,
-                });
-                const thumb = content.match(/<img src="([^"]+)"/)?.[1];
-                return {
-                    title: item.title,
-                    description: item.description,
-                    content,
-                    link: item.href,
-                    pubDate: new Date(item.publishedAt),
-                    categories: [item.publication.name, ...item.tags],
-                    ...(thumb && {
-                        customData: `<media:content url="${thumb}" medium="image" />`,
-                    }),
-                };
-            },
-        ),
+        // capped with a canonical "view the full gallery" link.
+        items: await mapWithConcurrency(items, 8, async (item) => {
+            const canonical = `${origin}${item.href}`;
+            const content = await renderFeedBody(item.body, {
+                maxImages: 6,
+                moreUrl: canonical,
+            });
+            const thumb = content.match(/<img src="([^"]+)"/)?.[1];
+            return {
+                title: item.title,
+                description: item.description,
+                content,
+                link: item.href,
+                pubDate: new Date(item.publishedAt),
+                categories: [item.publication.name, ...item.tags],
+                ...(thumb && {
+                    customData: `<media:content url="${thumb}" medium="image" />`,
+                }),
+            };
+        }),
         xmlns: { media: "http://search.yahoo.com/mrss/" },
         customData: "<language>en-us</language>",
         // Reference the XSL stylesheet so the feed renders as a styled
         // page when opened directly in a browser (raw XML otherwise).
         stylesheet: "/rss.xml.xsl",
     });
-
-    setResponseCacheHeaders(response, cacheHint);
-    return response;
 };
-
-export const HEAD = headFromGet(GET);

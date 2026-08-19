@@ -1,31 +1,47 @@
 ---
-// All-content index, pages 2+. Page 1 is /content (content/index.astro).
-// Both render through ContentIndex.astro, with fetch + error handling
-// shared in @lib/content-index.
-export const prerender = false;
+// All-content index, pages 2+, prerendered. Page 1 is /content
+// (content/index.astro). Both render through ContentIndex.astro with
+// data from @lib/content-index. cacheKey folds each page's member
+// cids so unchanged pages skip on incremental builds.
+export const prerender = true;
 
+import { createHash } from "node:crypto";
 import ContentIndex from "@components/ContentIndex.astro";
-import {
-    setResponseCacheHeaders,
-    deepPageCacheOptions,
-} from "@lib/cache";
 import { loadContentIndex } from "@lib/content-index";
-import { getPage, parsePageSegment } from "@lib/pagination";
-import { isPreview } from "@lib/preview";
+import { getPage, PAGE_SIZE } from "@lib/pagination";
+import type { ContentIndexData } from "@lib/content-index";
 
-const page = parsePageSegment(Astro.params.page);
-if (page === null) return new Response(null, { status: 404 });
+export async function getStaticPaths() {
+    const data = await loadContentIndex();
+    const totalPages = Math.max(
+        1,
+        Math.ceil(data.items.length / PAGE_SIZE),
+    );
+    const paths = [];
+    for (let page = 2; page <= totalPages; page++) {
+        const slice = data.items.slice(
+            (page - 1) * PAGE_SIZE,
+            page * PAGE_SIZE,
+        );
+        paths.push({
+            params: { page: String(page) },
+            props: { data, page },
+            cacheKey: createHash("sha1")
+                .update(
+                    `${page}/${totalPages}:${slice.map((d) => d.cid).join(",")}`,
+                )
+                .digest("hex"),
+        });
+    }
+    return paths;
+}
 
-const preview = isPreview(Astro);
-const { items, pubs, cacheHint, extraTags } = await loadContentIndex(preview);
+const { data, page } = Astro.props as {
+    data: ContentIndexData;
+    page: number;
+};
 
-const paged = getPage(items, page, "/content");
-if (!paged) return new Response(null, { status: 404 });
-
-setResponseCacheHeaders(Astro.response, cacheHint, {
-    ...deepPageCacheOptions(page),
-    extraTags,
-});
+const paged = getPage(data.items, page, "/content")!;
 ---
 
-<ContentIndex paged={paged} pubs={pubs} />
+<ContentIndex paged={paged} pubs={data.pubs} />

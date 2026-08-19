@@ -208,7 +208,8 @@ function humanize(slug: string): string {
         .join(" ");
 }
 
-function publicationFrom(collection: Collection): PublicationData {
+/** Exported for the build-time content-layer loader (see above). */
+export function publicationFrom(collection: Collection): PublicationData {
     return {
         slug: collection.slug,
         name: collection.name || humanize(collection.slug),
@@ -233,7 +234,9 @@ export async function publicationSlugSet(): Promise<Set<string>> {
     return new Set(list.map((c) => c.slug));
 }
 
-function entryToDocument(
+/** Exported for the build-time content-layer loader
+ *  (farfield-content-loader.ts) so both loaders share one mapping. */
+export function entryToDocument(
     entry: Entry,
     pub: PublicationData,
 ): DocumentData {
@@ -480,7 +483,8 @@ export function documentsLoader(): LiveLoader<
 
 // ---------- feed loader ----------------------------------------------------
 
-function postToFeedEntry(post: Post): FeedEntryData {
+/** Exported for the build-time content-layer loader (see above). */
+export function postToFeedEntry(post: Post): FeedEntryData {
     return {
         rkey: post.slug,
         cid: post.cid,

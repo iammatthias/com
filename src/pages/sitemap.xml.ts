@@ -1,11 +1,7 @@
-// Dynamic sitemap built from the live Farfield collections.
-//
-// @astrojs/sitemap could only see routes known at build time, which on
-// this SSR-first site meant the seven prerendered pages — none of the
-// documents, publications, tags, or feed entries. This endpoint pulls
-// the same live collections the pages render from, so the sitemap is
-// always in step with published content, and documents carry a real
-// <lastmod> from Farfield's updatedAt.
+// Sitemap, prerendered from the build-time collections. Regenerated
+// on every build — the Farfield publish hook (content and feed alike)
+// is what keeps it in step with published content, and documents
+// carry a real <lastmod> from Farfield's updatedAt.
 //
 // Deep pagination pages (`/…/page/N`) are intentionally excluded:
 // they're crawlable via the visible pagination links and shift with
@@ -13,15 +9,14 @@
 // `/menu` is noindex, and `/onchain-analytics/<hash>` portraits are
 // unbounded generative output — both excluded.
 
+export const prerender = true;
+
 import type { APIRoute } from "astro";
-import { getLiveCollection } from "astro:content";
-import { setResponseCacheHeaders } from "@lib/cache";
-import { headFromGet } from "@lib/http";
-import {
-    entriesOf,
-    type DocumentData,
-    type FeedEntryData,
-    type PublicationData,
+import { getCollection } from "astro:content";
+import type {
+    DocumentData,
+    FeedEntryData,
+    PublicationData,
 } from "@lib/farfield-loader";
 
 interface SitemapEntry {
@@ -40,31 +35,21 @@ function xmlEscape(s: string): string {
         .replace(/'/g, "&apos;");
 }
 
-export const prerender = false;
+export const GET: APIRoute = async ({ site }) => {
+    const origin = (site?.toString() ?? "https://iammatthias.com").replace(
+        /\/$/,
+        "",
+    );
 
-export const GET: APIRoute = async (context) => {
-    const origin = (
-        context.site?.toString() ?? "https://iammatthias.com"
-    ).replace(/\/$/, "");
-
-    const [docsResult, pubsResult, feedResult] = await Promise.all([
-        getLiveCollection("documents"),
-        getLiveCollection("publications"),
-        getLiveCollection("feedEntries"),
-    ]);
-    for (const [label, r] of [
-        ["documents", docsResult],
-        ["publications", pubsResult],
-        ["feedEntries", feedResult],
-    ] as const) {
-        if (r.error) {
-            console.error(`[/sitemap.xml] Farfield ${label} fetch failed:`, r.error);
-        }
-    }
-
-    const docs = entriesOf<DocumentData>(docsResult.entries);
-    const pubs = entriesOf<PublicationData>(pubsResult.entries);
-    const feed = entriesOf<FeedEntryData>(feedResult.entries);
+    const docs = (await getCollection("docs"))
+        .map((e) => e.data as DocumentData)
+        .filter((d) => d.published !== false);
+    const pubs = (await getCollection("pubs")).map(
+        (e) => e.data as PublicationData,
+    );
+    const feed = (await getCollection("posts")).map(
+        (e) => e.data as FeedEntryData,
+    );
 
     const tags = [...new Set(docs.flatMap((d) => d.tags))];
 
@@ -104,16 +89,7 @@ export const GET: APIRoute = async (context) => {
             .join("\n") +
         `\n</urlset>\n`;
 
-    const response = new Response(body, {
+    return new Response(body, {
         headers: { "Content-Type": "application/xml; charset=utf-8" },
     });
-    setResponseCacheHeaders(response, docsResult.cacheHint, {
-        extraTags: [
-            ...(pubsResult.cacheHint?.tags ?? []),
-            ...(feedResult.cacheHint?.tags ?? []),
-        ],
-    });
-    return response;
 };
-
-export const HEAD = headFromGet(GET);
