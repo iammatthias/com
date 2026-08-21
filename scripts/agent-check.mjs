@@ -344,6 +344,31 @@ for (const p of HTML_PAGES) {
     if (!broken) ok(`llms.txt: all ${paths.length} links resolve`);
 }
 
+// ---- every catalog URL resolves ---------------------------------------
+if (ORIGIN) {
+    // An entry pointing at something that 404s teaches agents the
+    // whole catalog is unreliable — we shipped exactly that once with
+    // an unpublished npm package.
+    const cat = await get("/.well-known/ai-catalog.json");
+    if (cat.status === 200) {
+        try {
+            const entries = JSON.parse(cat.body).entries ?? [];
+            for (const e of entries) {
+                if (!e.url) continue;
+                const res = await fetch(e.url, {
+                    method: "GET",
+                    headers: { "user-agent": "iammatthias-agent-check/1.0" },
+                }).catch(() => null);
+                if (!res || res.status >= 400) {
+                    fail(`ai-catalog ${e.identifier ?? e.url}`, `${e.url} -> ${res?.status ?? "unreachable"}`);
+                } else ok(`ai-catalog entry ${e.identifier?.split(":").pop() ?? e.url}`);
+            }
+        } catch (err) {
+            fail("ai-catalog entries", err.message);
+        }
+    }
+}
+
 // ---- per-section llms.txt + a sample markdown twin --------------------
 const { SECTION_SLUGS } = await import("../src/lib/agent-surface.ts").catch(
     () => ({ SECTION_SLUGS: ["art", "posts", "recipes", "melange", "open-source"] }),

@@ -148,6 +148,13 @@ export const AGENT_SKILLS: AgentSkill[] = [
     },
 ];
 
+// NOTE: the `iammatthias` CLI/SDK in packages/cli is written but not
+// published to npm, so it is deliberately absent from this list. A
+// catalog entry pointing at a package that 404s is worse than no
+// entry — it teaches an agent the catalog is unreliable. Re-add it
+// (type "cli", url https://www.npmjs.com/package/iammatthias) the day
+// it actually publishes.
+
 /** Machine-readable resources, mirrored into the ARD ai-catalog. */
 export const AGENT_RESOURCES = [
     {
@@ -194,15 +201,6 @@ export const AGENT_RESOURCES = [
             "The GraphQL schema as SDL, for codegen or reading without an introspection query.",
         url: `${SITE_ORIGIN}/schema.graphql`,
         mediaType: "text/plain",
-    },
-    {
-        id: "cli",
-        type: "cli",
-        name: "iammatthias CLI and SDK",
-        description:
-            "Zero-dependency npm package: a terminal reader for the site and a programmatic client for these endpoints. `npx iammatthias`.",
-        url: "https://www.npmjs.com/package/iammatthias",
-        mediaType: "application/json",
     },
     {
         id: "openapi",
