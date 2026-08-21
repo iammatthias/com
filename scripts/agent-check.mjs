@@ -34,6 +34,7 @@ const problems = [];
 // path added here stops being checked in CI.
 const SSR_ONLY = new Set([
     "/graphql",
+    "/.well-known/mcp",
     "/",
     "/now",
     "/feed",
@@ -172,10 +173,27 @@ await expectJSON(
     "/openapi.json",
 );
 
-await expectJSON(
-    "/.well-known/ai-catalog.json",
-    (d) => (Array.isArray(d.resources) && d.resources.length ? null : "no resources"),
+await expectJSON("/.well-known/ai-catalog.json", (d) => {
+    // Shape per the AI Catalog spec — a scan once accepted the file as
+    // "present but invalid", which scores the same as absent.
+    if (!d.specVersion) return "missing specVersion";
+    if (!d.host?.identifier) return "missing host.identifier";
+    if (!Array.isArray(d.entries) || !d.entries.length) return "entries is not a non-empty array";
+    for (const e of d.entries) {
+        if (!/^urn:ai:/.test(e.identifier ?? "")) return `entry ${e.displayName ?? "?"} has no urn:ai identifier`;
+        if (!e.type) return `entry ${e.identifier} has no media type`;
+        if (!e.url === !e.data) return `entry ${e.identifier} needs exactly one of url or data`;
+    }
+    return null;
+});
+await expectJSON("/.well-known/mcp", (d) =>
+    d.serverUrl ? null : "missing serverUrl",
 );
+await expectJSON("/.well-known/openapi.json", (d) =>
+    d.openapi ? null : "missing openapi version",
+);
+await expectMarkdown("/.well-known/pricing.md");
+await expectMarkdown("/developers/llms.txt");
 await expectJSON(
     "/.well-known/agent-card.json",
     (d) => (d.name && Array.isArray(d.skills) ? null : "missing name or skills"),
