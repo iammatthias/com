@@ -188,14 +188,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (
         (method === "GET" || method === "HEAD") &&
         pathname === "/" &&
-        prefersMarkdown(context.request.headers.get("accept"))
+        wantsMarkdown(context.request)
     ) {
         const body = await homepageMarkdown();
         const res = new Response(method === "HEAD" ? null : body, {
             headers: {
                 "Content-Type": "text/markdown; charset=utf-8",
                 "Content-Location": "/index.md",
-                Vary: "Accept, Accept-Encoding",
+                Vary: "Accept, Accept-Encoding, User-Agent",
                 "Cache-Control": "public, s-maxage=300",
                 Link: AGENT_LINKS,
             },
@@ -212,7 +212,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
             : null;
 
     let response: Response;
-    if (twin && prefersMarkdown(context.request.headers.get("accept"))) {
+    if (twin && wantsMarkdown(context.request)) {
         response = await next(twin + search);
         response.headers.set("Content-Location", twin);
     } else {
@@ -223,7 +223,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // canonical URL because it can answer with either representation,
     // the .md URL so caches never fold it into the HTML entry.
     if (twin || pathname.endsWith(".md")) {
-        response.headers.set("Vary", "Accept, Accept-Encoding");
+        // User-Agent matters here too: AI crawlers get markdown even
+        // when they ask for HTML, so a cache keyed only on Accept
+        // would hand a browser the crawler's variant.
+        response.headers.set("Vary", "Accept, Accept-Encoding, User-Agent");
     }
 
     const contentType = response.headers.get("Content-Type") ?? "";

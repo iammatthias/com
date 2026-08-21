@@ -67,6 +67,7 @@ async function get(p) {
         const res = await fetch(ORIGIN + p, {
             headers: { "user-agent": "iammatthias-agent-check/1.0" },
             redirect: "follow",
+            signal: AbortSignal.timeout(20000),
         });
         return {
             status: res.status,
@@ -358,6 +359,7 @@ if (ORIGIN) {
                 const res = await fetch(e.url, {
                     method: "GET",
                     headers: { "user-agent": "iammatthias-agent-check/1.0" },
+                    signal: AbortSignal.timeout(15000),
                 }).catch(() => null);
                 if (!res || res.status >= 400) {
                     fail(`ai-catalog ${e.identifier ?? e.url}`, `${e.url} -> ${res?.status ?? "unreachable"}`);
@@ -411,6 +413,7 @@ if (ORIGIN) {
     // with markdown, and say so in Vary.
     const md = await fetch(ORIGIN + "/", {
         headers: { accept: "text/markdown" },
+        signal: AbortSignal.timeout(20000),
     });
     const ct = md.headers.get("content-type") ?? "";
     if (!ct.includes("markdown")) fail("homepage Accept negotiation", `got ${ct}`);
@@ -422,6 +425,7 @@ if (ORIGIN) {
     // A 404 an agent can recover from: real status, markdown body.
     const nf = await fetch(`${ORIGIN}/definitely-not-a-real-path-${Date.now()}`, {
         headers: { accept: "text/markdown" },
+        signal: AbortSignal.timeout(20000),
     });
     const nfBody = await nf.text();
     if (nf.status !== 404) fail("agent 404 status", `got ${nf.status}`);
@@ -434,23 +438,27 @@ if (ORIGIN) {
     // Bot user agents get markdown even when they ask for HTML.
     const bot = await fetch(`${ORIGIN}/?bot=${Date.now()}`, {
         headers: { "user-agent": "ClaudeBot/1.0", accept: "text/html" },
+        signal: AbortSignal.timeout(20000),
     });
-    if (!(bot.headers.get("content-type") ?? "").includes("html")) {
+    if ((bot.headers.get("content-type") ?? "").includes("markdown")) {
         ok("bot-UA gets markdown");
-    } else ok("bot-UA served HTML (negotiation still available)");
+    } else fail("bot-UA markdown", bot.headers.get("content-type") ?? "none");
 
     // MCP must handshake even without a Content-Type header — Astro's
     // CSRF check used to 403 exactly that case.
     const bare = await fetch(`${ORIGIN}/.well-known/mcp`, {
         method: "POST",
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} }),
+        signal: AbortSignal.timeout(20000),
     });
     const bareBody = await bare.json().catch(() => null);
     if (bareBody?.result?.protocolVersion) ok("MCP handshake without content-type");
     else fail("MCP handshake without content-type", `status ${bare.status}`);
 
     // Versioned alias answers.
-    const v1 = await fetch(`${ORIGIN}/api/v1/content.json?limit=1`);
+    const v1 = await fetch(`${ORIGIN}/api/v1/content.json?limit=1`, {
+        signal: AbortSignal.timeout(20000),
+    });
     if (v1.status === 200) ok("/api/v1 alias");
     else fail("/api/v1 alias", `status ${v1.status}`);
 }
@@ -469,19 +477,24 @@ if (ORIGIN) {
     for (const ua of UAS) {
         const res = await fetch(`${ORIGIN}/?agentcheck=${Date.now()}`, {
             headers: { "user-agent": ua },
-        });
+            signal: AbortSignal.timeout(20000),
+        }).catch(() => null);
+        if (!res) {
+            fail(`crawler ${ua}`, "request timed out");
+            continue;
+        }
         if (res.status !== 200) fail(`crawler ${ua}`, `status ${res.status}`);
         else ok(`crawler ${ua}`);
     }
 
-    const home = await fetch(ORIGIN + "/");
+    const home = await fetch(ORIGIN + "/", { signal: AbortSignal.timeout(20000) });
     const link = home.headers.get("link") ?? "";
     for (const rel of ['rel="describedby"', 'rel="alternate"']) {
         if (!link.includes(rel)) fail(`Link header ${rel}`, `got "${link}"`);
         else ok(`Link header ${rel}`);
     }
 
-    const md = await fetch(`${ORIGIN}/posts.md`);
+    const md = await fetch(`${ORIGIN}/posts.md`, { signal: AbortSignal.timeout(20000) });
     if (!(md.headers.get("vary") ?? "").toLowerCase().includes("accept")) {
         fail("Vary: Accept on .md", `got "${md.headers.get("vary")}"`);
     } else ok("Vary: Accept on .md");
