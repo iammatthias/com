@@ -65,11 +65,19 @@ const SECURITY_HEADERS: Record<string, string> = {
     ...(import.meta.env.PROD ? { "Content-Security-Policy": CSP } : {}),
 };
 
-// Points agents at the site map from any page (item 2 of the llms.txt
-// convention's discovery story; the <link rel="alternate"> in each
-// page's head is the other half). public/_headers carries the same
-// header for the prerendered pages.
-const LLMS_LINK = '</llms.txt>; rel="describedby"; type="text/markdown"';
+// RFC 8288 Link header advertising the machine-readable surfaces, so
+// an agent learns them from whatever page it lands on. Keep in sync
+// with the `/*` block in public/_headers — that file covers static
+// assets, this covers the worker's own responses, and a scanner that
+// hits an SSR route must see the same set.
+const AGENT_LINKS = [
+    '</llms.txt>; rel="describedby"; type="text/markdown"',
+    '</index.md>; rel="alternate"; type="text/markdown"',
+    '</sitemap.xml>; rel="sitemap"; type="application/xml"',
+    '</openapi.json>; rel="service-desc"; type="application/json"',
+    '</.well-known/api-catalog>; rel="api-catalog"',
+    '</rss.xml>; rel="alternate"; type="application/rss+xml"',
+].join(", ");
 
 // Does the Accept header rank markdown strictly above HTML? Only
 // explicit types count — wildcard ranges (star-slash-star, text/*)
@@ -185,7 +193,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         (contentType.startsWith("text/html") ||
             contentType.startsWith("text/markdown"))
     ) {
-        response.headers.set("Link", LLMS_LINK);
+        response.headers.set("Link", AGENT_LINKS);
     }
 
     for (const [header, value] of Object.entries(SECURITY_HEADERS)) {

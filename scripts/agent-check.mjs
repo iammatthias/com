@@ -340,12 +340,20 @@ for (const s of SECTION_SLUGS) {
     if (spec.status === 200) {
         try {
             const d = JSON.parse(spec.body);
-            for (const p of Object.keys(d.paths ?? {})) {
+            for (const [p, ops] of Object.entries(d.paths ?? {})) {
                 if (ssrSkipped(p)) continue;
-                // Query-param-only endpoints still answer bare.
-                const r = await get(p);
-                if (r.status !== 200) fail(`openapi path ${p}`, `status ${r.status}`);
-                else ok(`openapi path ${p}`);
+                // Supply required params — an endpoint that demands one
+                // is *supposed* to 400 without it, so a bare probe
+                // would report correct behaviour as a failure.
+                const required = (ops.get?.parameters ?? []).filter((x) => x.required);
+                const qs = new URLSearchParams();
+                for (const param of required) {
+                    qs.set(param.name, param.schema?.type === "integer" ? "1" : "test");
+                }
+                const probe = qs.toString() ? `${p}?${qs}` : p;
+                const r = await get(probe);
+                if (r.status !== 200) fail(`openapi path ${probe}`, `status ${r.status}`);
+                else ok(`openapi path ${probe}`);
             }
         } catch {
             /* already reported above */
