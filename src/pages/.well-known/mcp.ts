@@ -21,8 +21,21 @@ import { POST as mcpPost, OPTIONS as mcpOptions } from "../mcp";
 export const POST = mcpPost;
 export const OPTIONS = mcpOptions;
 
-export const GET: APIRoute = () =>
-    new Response(
+export const GET: APIRoute = ({ request }) => {
+    // Same contract as /mcp: a Streamable HTTP client opening the
+    // optional SSE stream must get 405, not JSON, or it aborts the
+    // handshake.
+    if ((request.headers.get("accept") ?? "").includes("text/event-stream")) {
+        return new Response(null, {
+            status: 405,
+            headers: {
+                Allow: "POST, OPTIONS",
+                "Cache-Control": "no-store",
+                "Access-Control-Allow-Origin": "*",
+            },
+        });
+    }
+    return new Response(
         JSON.stringify(
             {
                 name: SITE_IDENTITY.name,
@@ -51,3 +64,4 @@ export const GET: APIRoute = () =>
             },
         },
     );
+};

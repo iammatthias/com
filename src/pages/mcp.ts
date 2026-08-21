@@ -22,14 +22,70 @@ import {
 import { resolveEmbedsForMarkdown } from "@lib/markdown-view";
 import { composeDocumentMarkdown } from "@lib/markdown-view";
 import { AGENT_SKILLS, SITE_IDENTITY, SITE_ORIGIN } from "@lib/agent-surface";
+import {
+    homepageMarkdown,
+    developersMarkdown,
+    authMarkdown,
+    pricingMarkdown,
+} from "@lib/agent-markdown";
 
 const PROTOCOL_VERSION = "2025-06-18";
+
+/**
+ * Resources an agent can read without calling a tool — the same
+ * documents served at their HTTP URLs, generated from the same
+ * functions so the two can't drift. The URI is the canonical URL, so
+ * a client can cite what it read.
+ */
+const RESOURCES = [
+    {
+        uri: `${SITE_ORIGIN}/index.md`,
+        name: "Site overview",
+        title: "Site overview",
+        description:
+            "What this site is, its sections, recent entries, and every machine-readable surface it offers.",
+        mimeType: "text/markdown",
+        load: homepageMarkdown,
+    },
+    {
+        uri: `${SITE_ORIGIN}/developers.md`,
+        name: "Developer documentation",
+        title: "Developer documentation",
+        description:
+            "HTTP endpoints, GraphQL, the MCP tools, markdown twins, error shapes, and caching guidance.",
+        mimeType: "text/markdown",
+        load: developersMarkdown,
+    },
+    {
+        uri: `${SITE_ORIGIN}/auth.md`,
+        name: "Authentication",
+        title: "Authentication",
+        description:
+            "How to authenticate (you don't — everything here is public and anonymous).",
+        mimeType: "text/markdown",
+        load: async () => authMarkdown(),
+    },
+    {
+        uri: `${SITE_ORIGIN}/pricing.md`,
+        name: "Pricing",
+        title: "Pricing",
+        description: "Cost and terms of use for this content (free).",
+        mimeType: "text/markdown",
+        load: async () => pricingMarkdown(),
+    },
+];
 
 const TOOLS = [
     {
         name: "search_site",
         title: "Search the site",
         description: AGENT_SKILLS[0].description,
+        annotations: {
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: false,
+        },
         inputSchema: {
             type: "object",
             properties: {
@@ -47,6 +103,12 @@ const TOOLS = [
     },
     {
         name: "get_document",
+        annotations: {
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: false,
+        },
         title: "Read one document",
         description: AGENT_SKILLS[1].description,
         inputSchema: {
@@ -63,12 +125,24 @@ const TOOLS = [
     },
     {
         name: "list_sections",
+        annotations: {
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: false,
+        },
         title: "List sections",
         description: AGENT_SKILLS[2].description,
         inputSchema: { type: "object", properties: {} },
     },
     {
         name: "list_recent",
+        annotations: {
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: false,
+        },
         title: "List recent content",
         description: AGENT_SKILLS[3].description,
         inputSchema: {
@@ -96,15 +170,18 @@ function rpcError(id: unknown, code: number, message: string, data?: unknown) {
     return json({ jsonrpc: "2.0", id, error: { code, message, data } });
 }
 
-function json(payload: unknown, status = 200) {
+function json(payload: unknown, status = 200, extra: Record<string, string> = {}) {
     return new Response(JSON.stringify(payload), {
         status,
         headers: {
             "Content-Type": "application/json; charset=utf-8",
             "Cache-Control": "no-store",
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "content-type, mcp-protocol-version",
+            "Access-Control-Allow-Headers":
+                "content-type, mcp-protocol-version, mcp-session-id",
+            "Access-Control-Expose-Headers": "mcp-session-id",
             "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            ...extra,
         },
     });
 }
@@ -175,12 +252,46 @@ async function callTool(name: string, args: Record<string, unknown>) {
     }
 }
 
+/** The initialize result — its own function so the handler can attach
+ *  a session header without duplicating the payload. */
+function initializeResult() {
+    return {
+        protocolVersion: PROTOCOL_VERSION,
+        capabilities: {
+            tools: { listChanged: false },
+            resources: { listChanged: false, subscribe: false },
+        },
+        serverInfo: {
+            name: SITE_IDENTITY.name,
+            title: SITE_IDENTITY.title,
+            version: "1.0.0",
+        },
+        instructions:
+            "Content from Matthias Jordan's personal site: essays on building software, photography and generative art with process notes, and tested recipes. Search first, then fetch a document for its full markdown. Everything is public — no credentials needed.",
+    };
+}
+
 export const OPTIONS: APIRoute = () => json({}, 204);
 
-/** GET returns the server card — useful in a browser, and a valid
- *  discovery response for agents that probe before connecting. */
-export const GET: APIRoute = () =>
-    json({
+/**
+ * GET serves two audiences. A Streamable HTTP client opening the
+ * optional server->client SSE stream gets 405: the spec requires
+ * either `text/event-stream` or 405, and answering it with JSON is
+ * what makes a strict client abort the handshake. Everyone else — a
+ * browser, a discovery probe — gets the server card.
+ */
+export const GET: APIRoute = ({ request }) => {
+    if ((request.headers.get("accept") ?? "").includes("text/event-stream")) {
+        return new Response(null, {
+            status: 405,
+            headers: {
+                Allow: "POST, OPTIONS",
+                "Cache-Control": "no-store",
+                "Access-Control-Allow-Origin": "*",
+            },
+        });
+    }
+    return json({
         name: SITE_IDENTITY.name,
         description: SITE_IDENTITY.summary,
         protocolVersion: PROTOCOL_VERSION,
@@ -189,6 +300,7 @@ export const GET: APIRoute = () =>
         authentication: "none",
         tools: TOOLS.map((t) => ({ name: t.name, description: t.description })),
     });
+};
 
 export const POST: APIRoute = async ({ request }) => {
     let body: {
@@ -208,17 +320,18 @@ export const POST: APIRoute = async ({ request }) => {
 
     switch (method) {
         case "initialize":
-            return rpcResult(id, {
-                protocolVersion: PROTOCOL_VERSION,
-                capabilities: { tools: { listChanged: false } },
-                serverInfo: {
-                    name: SITE_IDENTITY.name,
-                    title: SITE_IDENTITY.title,
-                    version: "1.0.0",
+            // The server holds no per-connection state, but clients
+            // expect a session id to exist and echo it on later
+            // requests — so mint one and accept whatever comes back.
+            return json(
+                {
+                    jsonrpc: "2.0",
+                    id,
+                    result: initializeResult(),
                 },
-                instructions:
-                    "Content from Matthias Jordan's personal site: essays on building software, photography and generative art with process notes, and tested recipes. Search first, then fetch a document for its full markdown. Everything is public — no credentials needed.",
-            });
+                200,
+                { "Mcp-Session-Id": crypto.randomUUID() },
+            );
 
         case "notifications/initialized":
             return new Response(null, { status: 202 });
@@ -247,7 +360,26 @@ export const POST: APIRoute = async ({ request }) => {
         }
 
         case "resources/list":
-            return rpcResult(id, { resources: [] });
+            return rpcResult(id, { resources: RESOURCES });
+
+        case "resources/read": {
+            const uri = String(params.uri ?? "");
+            const res = RESOURCES.find((r) => r.uri === uri);
+            if (!res) {
+                return rpcError(id, -32602, `Unknown resource: ${uri}`, {
+                    available: RESOURCES.map((r) => r.uri),
+                });
+            }
+            return rpcResult(id, {
+                contents: [
+                    {
+                        uri,
+                        mimeType: res.mimeType,
+                        text: await res.load(),
+                    },
+                ],
+            });
+        }
 
         case "prompts/list":
             return rpcResult(id, { prompts: [] });
