@@ -148,12 +148,10 @@ export const AGENT_SKILLS: AgentSkill[] = [
     },
 ];
 
-// NOTE: the `iammatthias` CLI/SDK in packages/cli is written but not
-// published to npm, so it is deliberately absent from this list. A
-// catalog entry pointing at a package that 404s is worse than no
-// entry — it teaches an agent the catalog is unreliable. Re-add it
-// (type "cli", url https://www.npmjs.com/package/iammatthias) the day
-// it actually publishes.
+// Only list resources that exist and answer. An entry pointing at a
+// 404 teaches an agent the whole catalog is unreliable — scripts/
+// agent-check.mjs walks every URL here on live runs for exactly that
+// reason.
 
 /** Machine-readable resources, mirrored into the ARD ai-catalog. */
 export const AGENT_RESOURCES = [
