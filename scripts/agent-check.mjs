@@ -34,7 +34,6 @@ const problems = [];
 // path added here stops being checked in CI.
 const SSR_ONLY = new Set([
     "/graphql",
-    "/api/license/verify",
     "/.well-known/mcp",
     "/",
     "/now",
@@ -253,23 +252,6 @@ if (ORIGIN) {
     const qb = await q.json().catch(() => null);
     if (Array.isArray(qb?.data?.sections) && qb.data.sections.length) ok("graphql sections query");
     else fail("graphql sections query", JSON.stringify(qb?.errors ?? qb).slice(0, 120));
-}
-
-// ---- licensing -----------------------------------------------------------
-await expectMarkdown("/license.md");
-await expectJSON("/api/license.json", (d) => {
-    if (!Array.isArray(d.works) || !d.works.length) return "no licensable works";
-    if (!d.price?.amount || !d.price?.network) return "price or network missing";
-    if (!d.terms?.url) return "terms url missing";
-    return null;
-});
-{
-    // The offer must be honest about what it sells: these documents
-    // once claimed there was nothing to buy.
-    const pricing = await get("/pricing.md");
-    if (pricing.status === 200 && /nothing to buy/i.test(pricing.body)) {
-        fail("/pricing.md", "still claims there is nothing to buy");
-    } else ok("/pricing.md reflects licensing");
 }
 
 // ---- trust anchors -----------------------------------------------------
