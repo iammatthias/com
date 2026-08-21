@@ -95,6 +95,13 @@ const Document = new GraphQLObjectType({
                 "CIDv1 content hash. Stable for identical content — cache against this.",
         },
         slug: { type: new GraphQLNonNull(GraphQLString) },
+        id: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: "Former alias for `cid`.",
+            deprecationReason:
+                "Renamed to `cid` to match the rest of the API. Retained until 2027-01-01; use `cid`.",
+            resolve: (item: ContentItem) => item.cid,
+        },
         title: { type: new GraphQLNonNull(GraphQLString) },
         section: { type: new GraphQLNonNull(GraphQLString) },
         excerpt: { type: new GraphQLNonNull(GraphQLString) },
@@ -217,9 +224,19 @@ const connectionArgs = {
     },
 };
 
+/**
+ * Cost model, declared in the schema so an agent can budget before it
+ * queries. Ours is shape-based rather than metered: connections cap at
+ * 100 per call, nesting cannot recurse, and `body` is the only field
+ * that costs an extra resolution per document.
+ */
+const COST_NOTE =
+    "Cost model: each connection returns at most 100 items (`first` is clamped). Field resolution is O(1) except `Document.body`, which resolves image embeds per document — request it only for documents you intend to read. Rate limits are Cloudflare's edge defaults, advertised on REST responses via the RateLimit header; there is no per-client quota or API key.";
+
 export const schema = new GraphQLSchema({
     description:
-        "Read-only access to the published content of iammatthias.com. Public and unauthenticated. Every list is a Relay connection; every document carries a cid you can cache against.",
+        "Read-only access to the published content of iammatthias.com. Public and unauthenticated. Every list is a Relay connection; every document carries a cid you can cache against. " +
+        COST_NOTE,
     query: new GraphQLObjectType({
         name: "Query",
         fields: {

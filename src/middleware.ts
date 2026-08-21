@@ -16,6 +16,8 @@
 
 import { defineMiddleware } from "astro:middleware";
 import { publicationSlugSet } from "@lib/farfield-loader";
+import { homepageMarkdown } from "@lib/agent-markdown";
+import { notFoundMarkdown } from "@lib/agent-markdown";
 
 /**
  * Content-Security-Policy — keep in sync with the copy in
@@ -133,6 +135,18 @@ async function markdownTwin(pathname: string): Promise<string | null> {
     return second ? `/${first}/${second}.md` : `/${first}.md`;
 }
 
+/** AI crawlers and agent runtimes, by user agent. Used to decide who
+ *  gets a markdown representation when they did not ask for one. */
+const AGENT_UA =
+    /(GPTBot|OAI-SearchBot|ChatGPT-User|ClaudeBot|Claude-User|Claude-SearchBot|PerplexityBot|Perplexity-User|Google-Extended|Applebot-Extended|DeepSeekBot|ora-agent|DuckAssistBot)/i;
+
+function wantsMarkdown(request: Request): boolean {
+    return (
+        prefersMarkdown(request.headers.get("accept")) ||
+        AGENT_UA.test(request.headers.get("user-agent") ?? "")
+    );
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
     const { pathname, search } = context.url;
     const method = context.request.method;
@@ -167,6 +181,31 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // requested with Accept ranking markdown above HTML, rewrites to
     // the twin — same URL, markdown body. Content-Location names the
     // concrete variant served, per RFC 9110.
+    // The homepage has no twin to rewrite to — /index.md is a static
+    // asset, which next() cannot reach — so serve the same markdown
+    // inline. This is the URL a cold-arriving agent hits first, and
+    // acceptmarkdown.com compliance is judged on it.
+    if (
+        (method === "GET" || method === "HEAD") &&
+        pathname === "/" &&
+        prefersMarkdown(context.request.headers.get("accept"))
+    ) {
+        const body = await homepageMarkdown();
+        const res = new Response(method === "HEAD" ? null : body, {
+            headers: {
+                "Content-Type": "text/markdown; charset=utf-8",
+                "Content-Location": "/index.md",
+                Vary: "Accept, Accept-Encoding",
+                "Cache-Control": "public, s-maxage=300",
+                Link: AGENT_LINKS,
+            },
+        });
+        for (const [h, v] of Object.entries(SECURITY_HEADERS)) {
+            if (!res.headers.has(h)) res.headers.set(h, v);
+        }
+        return res;
+    }
+
     const twin =
         method === "GET" || method === "HEAD"
             ? await markdownTwin(pathname)
@@ -184,7 +223,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // canonical URL because it can answer with either representation,
     // the .md URL so caches never fold it into the HTML entry.
     if (twin || pathname.endsWith(".md")) {
-        response.headers.append("Vary", "Accept");
+        response.headers.set("Vary", "Accept, Accept-Encoding");
     }
 
     const contentType = response.headers.get("Content-Type") ?? "";
@@ -194,6 +233,30 @@ export const onRequest = defineMiddleware(async (context, next) => {
             contentType.startsWith("text/markdown"))
     ) {
         response.headers.set("Link", AGENT_LINKS);
+    }
+
+    // Agent-recoverable 404s. A human gets the rendered page; a client
+    // that asked for markdown, or identifies as an AI crawler, gets a
+    // short document naming the indexes it should try instead. Status
+    // stays 404 either way — a soft 200 would teach agents every path
+    // exists.
+    if (
+        response.status === 404 &&
+        (method === "GET" || method === "HEAD") &&
+        wantsMarkdown(context.request)
+    ) {
+        response = new Response(
+            method === "HEAD" ? null : notFoundMarkdown(pathname),
+            {
+                status: 404,
+                headers: {
+                    "Content-Type": "text/markdown; charset=utf-8",
+                    "Cache-Control": "no-store",
+                    Vary: "Accept, Accept-Encoding, User-Agent",
+                    Link: AGENT_LINKS,
+                },
+            },
+        );
     }
 
     for (const [header, value] of Object.entries(SECURITY_HEADERS)) {

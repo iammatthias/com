@@ -21,7 +21,17 @@ export const GET: APIRoute = () => {
                 summary: op.summary,
                 description: op.description,
                 tags: ["content"],
-                parameters: op.params ?? [],
+                parameters: [
+                    ...(op.params ?? []),
+                    {
+                        name: "API-Version",
+                        in: "header",
+                        required: false,
+                        schema: { type: "string", enum: ["1"] },
+                        description:
+                            "Pin the API version. Omit to use the current version; the response always names the version that served it.",
+                    },
+                ],
                 responses: {
                     "200": {
                         description: "Success",
@@ -55,7 +65,25 @@ export const GET: APIRoute = () => {
             },
             license: { name: "All rights reserved", url: `${SITE_ORIGIN}/privacy` },
         },
-        servers: [{ url: SITE_ORIGIN, description: "Production" }],
+        servers: [
+            { url: SITE_ORIGIN, description: "Production (current version)" },
+            {
+                url: `${SITE_ORIGIN}/api/v1`,
+                description:
+                    "Version-pinned aliases of the query endpoints. Same behaviour as the unversioned paths; pin here if you need a surface guaranteed not to change shape.",
+            },
+        ],
+        "x-api-version": "1",
+        "x-deprecation-policy": {
+            summary:
+                "Breaking changes land at a new version path; the previous version keeps working for at least 180 days.",
+            signals: [
+                "Responses from a deprecated version carry RFC 9745 Deprecation and RFC 8594 Sunset headers.",
+                "Every response carries an API-Version header naming the version that served it.",
+                "Removals are announced at " + SITE_ORIGIN + "/developers before they ship.",
+            ],
+            minimumNoticeDays: 180,
+        },
         paths,
         components: {
             schemas: {

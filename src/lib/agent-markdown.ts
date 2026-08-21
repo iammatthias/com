@@ -75,6 +75,34 @@ Full specification: ${SITE_ORIGIN}/openapi.json · Notes: ${SITE_ORIGIN}/develop
 `;
 }
 
+/**
+ * The body of a 404 for a client that reads markdown. A dead end is
+ * only useless if it doesn't say where to go instead.
+ */
+export function notFoundMarkdown(pathname: string): string {
+    return `# 404 — no such page
+
+There is nothing at \`${pathname}\` on ${SITE_IDENTITY.name}.
+
+This is a genuine 404, not a soft error page: if you were crawling, that
+path does not exist and never did.
+
+## Where to look instead
+
+- [Site index](${SITE_ORIGIN}/llms.txt) — every published entry, with markdown links
+- [Whole corpus in one file](${SITE_ORIGIN}/llms-full.txt) — one request, no crawling
+- [Sitemap](${SITE_ORIGIN}/sitemap.xml) — every indexable URL with last-modified dates
+- [Developer documentation](${SITE_ORIGIN}/developers.md) — HTTP, GraphQL, and MCP surfaces
+- [Search](${SITE_ORIGIN}/api/search.json?q=YOUR+TERMS) — keyword search returning JSON
+
+## Common mistakes
+
+- Content lives under a section: \`/posts/<slug>\`, \`/art/<slug>\`, \`/recipes/<slug>\`
+- Append \`.md\` to any content URL for its markdown twin
+- Slugs are timestamped, e.g. \`/posts/1779066375000-farfield\` — get exact paths from the site index above
+`;
+}
+
 /** /auth.md — the honest walkthrough for a site with no auth. */
 export function authMarkdown(): string {
     return `${frontMatter({
@@ -231,6 +259,17 @@ Errors are RFC 9457 problem documents with \`code\`, \`detail\`, and a \`resolut
   "resolution": "Retry with a query, e.g. /api/search.json?q=cloudflare+workers."
 }
 \`\`\`
+
+## Test environment
+
+There is no separate sandbox, because there is nothing to sandbox: every
+endpoint is read-only. No request you can make will create, modify, or
+delete anything, so production is safe to exercise directly — hammer it,
+retry it, run it in CI. There is no key to obtain and no quota to burn.
+
+If you want a fixed dataset to test against rather than live content,
+${SITE_ORIGIN}/llms-full.txt is a single immutable-per-build snapshot of
+the whole corpus.
 
 ## Caching
 

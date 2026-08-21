@@ -20,6 +20,17 @@ export default defineConfig({
     prefetch: {
         prefetchAll: true,
     },
+    // Astro's CSRF origin check rejects POSTs whose Content-Type looks
+    // like a form submission — including requests that send no
+    // Content-Type at all — with "Cross-site POST form submissions are
+    // forbidden", before any route handler runs. That silently broke
+    // the MCP handshake for clients that omit the header, and it buys
+    // nothing here: the site has no cookies, no sessions, no auth, and
+    // no state-changing endpoint. There is no request to forge. Every
+    // POST route (/mcp, /graphql) is deliberately cross-origin.
+    security: {
+        checkOrigin: false,
+    },
     // Incremental static builds (7.2 experimental): prerendered pages
     // whose getStaticPaths() rows carry a `cacheKey` are skipped when
     // both the key and the page's module graph are unchanged since the

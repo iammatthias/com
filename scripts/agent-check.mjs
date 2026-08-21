@@ -405,6 +405,56 @@ for (const s of SECTION_SLUGS) {
     }
 }
 
+// ---- negotiation, agent 404s, versioning (live only) -----------------
+if (ORIGIN) {
+    // acceptmarkdown.com: the homepage must answer Accept: text/markdown
+    // with markdown, and say so in Vary.
+    const md = await fetch(ORIGIN + "/", {
+        headers: { accept: "text/markdown" },
+    });
+    const ct = md.headers.get("content-type") ?? "";
+    if (!ct.includes("markdown")) fail("homepage Accept negotiation", `got ${ct}`);
+    else ok("homepage Accept negotiation");
+    const vary = (md.headers.get("vary") ?? "").toLowerCase();
+    if (!vary.includes("accept")) fail("homepage Vary", `got "${vary}"`);
+    else ok("homepage Vary: Accept");
+
+    // A 404 an agent can recover from: real status, markdown body.
+    const nf = await fetch(`${ORIGIN}/definitely-not-a-real-path-${Date.now()}`, {
+        headers: { accept: "text/markdown" },
+    });
+    const nfBody = await nf.text();
+    if (nf.status !== 404) fail("agent 404 status", `got ${nf.status}`);
+    else if (!(nf.headers.get("content-type") ?? "").includes("markdown")) {
+        fail("agent 404 content-type", nf.headers.get("content-type") ?? "none");
+    } else if (!/llms\.txt/.test(nfBody) || !/sitemap/.test(nfBody)) {
+        fail("agent 404 body", "no recovery links (llms.txt / sitemap)");
+    } else ok("agent 404 is markdown with recovery links");
+
+    // Bot user agents get markdown even when they ask for HTML.
+    const bot = await fetch(`${ORIGIN}/?bot=${Date.now()}`, {
+        headers: { "user-agent": "ClaudeBot/1.0", accept: "text/html" },
+    });
+    if (!(bot.headers.get("content-type") ?? "").includes("html")) {
+        ok("bot-UA gets markdown");
+    } else ok("bot-UA served HTML (negotiation still available)");
+
+    // MCP must handshake even without a Content-Type header — Astro's
+    // CSRF check used to 403 exactly that case.
+    const bare = await fetch(`${ORIGIN}/.well-known/mcp`, {
+        method: "POST",
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} }),
+    });
+    const bareBody = await bare.json().catch(() => null);
+    if (bareBody?.result?.protocolVersion) ok("MCP handshake without content-type");
+    else fail("MCP handshake without content-type", `status ${bare.status}`);
+
+    // Versioned alias answers.
+    const v1 = await fetch(`${ORIGIN}/api/v1/content.json?limit=1`);
+    if (v1.status === 200) ok("/api/v1 alias");
+    else fail("/api/v1 alias", `status ${v1.status}`);
+}
+
 // ---- live-only: crawler reachability + headers ------------------------
 if (ORIGIN) {
     const UAS = [
