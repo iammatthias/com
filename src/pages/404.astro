@@ -1,4 +1,10 @@
 ---
+// On-demand, not prerendered: a static 404 is served by the asset
+// layer without invoking the Worker, so middleware never sees it and
+// cannot negotiate a markdown representation for agents. 404s are
+// rare enough that rendering them costs nothing.
+export const prerender = false;
+
 import BaseLayout from "@layouts/BaseLayout.astro";
 ---
 

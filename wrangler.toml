@@ -31,3 +31,12 @@ enabled = true
 [[kv_namespaces]]
 binding = "CONTENT_CACHE"
 id = "d355f4e9f7b8405caddfe8604029be78"
+
+# Let unknown paths fall through to the Worker instead of having the
+# asset layer serve 404.html directly. Without this the middleware
+# never sees a 404, so agents asking for markdown got the HTML error
+# page — the asset layer had already answered. Astro still renders the
+# same 404 page for humans; it just does it in the Worker, where
+# content negotiation can apply.
+[assets]
+not_found_handling = "none"
