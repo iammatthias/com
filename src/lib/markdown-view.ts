@@ -77,6 +77,10 @@ export function composeDocumentMarkdown(
     doc: DocumentData,
     bodyMd: string,
     origin: string,
+    /** Tag-scored neighbours, appended as a Related section so an
+     *  agent (or a crawler following .md) can move laterally instead
+     *  of returning to the index between every read. */
+    related: Array<Pick<DocumentData, "title" | "href" | "description">> = [],
 ): string {
     const lines = [
         "---",
@@ -99,6 +103,19 @@ export function composeDocumentMarkdown(
         bodyMd.trim(),
         "",
     ];
+    if (related.length) {
+        lines.push(
+            "---",
+            "",
+            "## Related",
+            "",
+            ...related.map(
+                (r) =>
+                    `- [${r.title}](${origin}${r.href}.md)${r.description ? `: ${r.description}` : ""}`,
+            ),
+            "",
+        );
+    }
     return lines.join("\n");
 }
 
