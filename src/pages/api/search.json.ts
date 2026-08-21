@@ -6,7 +6,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { searchContent } from "@lib/agent-data";
-import { jsonError } from "@lib/agent-http";
+import { apiHeaders, jsonError } from "@lib/agent-http";
 
 export const GET: APIRoute = async ({ url }) => {
     const q = url.searchParams.get("q");
@@ -36,6 +36,7 @@ export const GET: APIRoute = async ({ url }) => {
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
                 "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+                ...apiHeaders(),
             },
         },
     );

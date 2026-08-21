@@ -53,22 +53,45 @@ export const GET: APIRoute = async ({ site }) => {
 
     const tags = [...new Set(docs.flatMap((d) => d.tags))];
 
+    // Derived lastmod for aggregate pages: a section or tag index is
+    // as fresh as the newest thing in it. Evergreen pages take the
+    // newest publish date on the site, which is when their "recent"
+    // blocks last changed.
+    const newest = (subset: DocumentData[]): string | undefined =>
+        subset.length
+            ? subset
+                  .map((d) => d.updatedAt)
+                  .sort()
+                  .at(-1)
+            : undefined;
+    const siteNewest = newest(docs);
+    const tagNewest = (t: string) =>
+        newest(docs.filter((d) => d.tags.includes(t)));
+
     const entries: SitemapEntry[] = [
         // Evergreen pages. /menu is noindex; deep pagination excluded.
-        { loc: `${origin}/` },
-        { loc: `${origin}/now` },
+        { loc: `${origin}/`, lastmod: siteNewest },
+        { loc: `${origin}/now`, lastmod: siteNewest },
         { loc: `${origin}/resume` },
-        { loc: `${origin}/content` },
-        { loc: `${origin}/tags` },
-        { loc: `${origin}/feed` },
+        { loc: `${origin}/about` },
+        { loc: `${origin}/contact` },
+        { loc: `${origin}/privacy` },
+        { loc: `${origin}/developers` },
+        { loc: `${origin}/content`, lastmod: siteNewest },
+        { loc: `${origin}/tags`, lastmod: siteNewest },
+        { loc: `${origin}/feed`, lastmod: siteNewest },
         { loc: `${origin}/onchain-analytics` },
-        ...pubs.map((p) => ({ loc: `${origin}/${p.slug}` })),
+        ...pubs.map((p) => ({
+            loc: `${origin}/${p.slug}`,
+            lastmod: newest(docs.filter((d) => d.collection === p.slug)),
+        })),
         ...docs.map((d) => ({
             loc: `${origin}${d.href}`,
             lastmod: d.updatedAt,
         })),
         ...tags.map((t) => ({
             loc: `${origin}/tags/${encodeURIComponent(t)}`,
+            lastmod: tagNewest(t),
         })),
         ...feed.map((f) => ({
             loc: `${origin}/feed/${f.rkey}`,

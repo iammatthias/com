@@ -59,6 +59,8 @@ interface Props {
      * visible pagination control.
      */
     pagination?: { prev?: string | null; next?: string | null };
+    /** Q&A pairs emitted as FAQPage JSON-LD. */
+    faq?: Array<{ question: string; answer: string }>;
 }
 
 const SITE_NAME = "iammatthias";
@@ -78,6 +80,7 @@ const {
     profilePage = false,
     markdownHref,
     pagination,
+    faq,
 } = Astro.props;
 
 // `siteOrigin` is intentionally derived from `Astro.site` (set in
@@ -208,6 +211,7 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
             breadcrumbs={breadcrumbs}
             article={article}
             profilePage={profilePage}
+            faq={faq}
         />
 
         <!-- Feeds -->

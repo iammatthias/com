@@ -20,9 +20,24 @@ import MenuLinks from "./MenuLinks.astro";
              (ternlight, WASM) and the corpus only load on first focus —
              see src/scripts/menu-search.ts. Until then this is an inert
              input, and with JS off the dialog never opens anyway. -->
-        <div class="site-menu__search" role="search">
+        <!-- A real form, not a bare input: `toolname` /
+             `tooldescription` are WebMCP annotations that survive into
+             the server-rendered HTML, so an agent (or a scanner) can
+             see the capability without executing our JS. The GET action
+             is the same endpoint the client-side search calls, so
+             submitting without JS still lands somewhere useful. -->
+        <form
+            class="site-menu__search"
+            role="search"
+            action="/api/search.json"
+            method="get"
+            toolname="search_site"
+            tooldescription="Search Matthias Jordan's writing, photography notes, and recipes by keyword. Returns titles, excerpts, and links."
+            data-menu-search-form
+        >
             <input
                 type="search"
+                name="q"
                 placeholder="Search everything…"
                 aria-label="Search the site"
                 autocomplete="off"
@@ -30,7 +45,7 @@ import MenuLinks from "./MenuLinks.astro";
             />
             <p class="site-menu__status" data-search-status hidden></p>
             <ul class="site-menu__results" data-search-results hidden></ul>
-        </div>
+        </form>
         <MenuLinks />
     </div>
 </dialog>
@@ -39,6 +54,16 @@ import MenuLinks from "./MenuLinks.astro";
     import type { SearchResult } from "@src/scripts/menu-search";
 
     const dialog = document.getElementById("site-menu");
+
+    /* ── WebMCP: in-page tools for browser-resident agents ───────── */
+    import { registerWebMcpTools } from "@src/scripts/webmcp";
+    registerWebMcpTools();
+
+    /* The form's GET action is the no-JS fallback; with JS the search
+       runs in-page, so stop the navigation. */
+    document
+        .querySelector("[data-menu-search-form]")
+        ?.addEventListener("submit", (e) => e.preventDefault());
 
     /* ── semantic search (progressive, lazy) ─────────────────────── */
     {

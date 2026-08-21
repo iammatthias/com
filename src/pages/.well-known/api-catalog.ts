@@ -13,6 +13,26 @@ export const GET: APIRoute = () =>
                 linkset: [
                     {
                         anchor: SITE_ORIGIN,
+                        // `item` is what an RFC 9727 client walks to
+                        // enumerate the actual APIs; without it the
+                        // linkset describes a catalogue of nothing.
+                        item: [
+                            {
+                                href: `${SITE_ORIGIN}/openapi.json`,
+                                type: "application/json",
+                                title: "Content API (OpenAPI 3.1)",
+                            },
+                            {
+                                href: `${SITE_ORIGIN}/graphql`,
+                                type: "application/graphql-response+json",
+                                title: "GraphQL endpoint",
+                            },
+                            {
+                                href: `${SITE_ORIGIN}/mcp`,
+                                type: "application/json",
+                                title: "MCP server (Streamable HTTP)",
+                            },
+                        ],
                         "service-desc": [
                             {
                                 href: `${SITE_ORIGIN}/openapi.json`,

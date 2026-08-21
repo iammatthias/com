@@ -10,21 +10,42 @@ import {
     SITE_ORIGIN,
 } from "@lib/agent-surface";
 
-export const GET: APIRoute = () =>
+/** sha256 of the bytes an entry points at — v0.2.0 wants a digest so
+ *  a client can tell whether a skill changed without refetching. */
+async function digest(text: string): Promise<string> {
+    const buf = await crypto.subtle.digest(
+        "SHA-256",
+        new TextEncoder().encode(text),
+    );
+    return `sha256:${[...new Uint8Array(buf)]
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("")}`;
+}
+
+export const GET: APIRoute = async () =>
     new Response(
         JSON.stringify(
             {
-                version: "1.0",
+                $schema:
+                    "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+                version: "0.2.0",
                 name: SITE_IDENTITY.name,
                 description: SITE_IDENTITY.summary,
-                skills: AGENT_SKILLS.map((s) => ({
-                    name: s.name,
-                    title: s.title,
-                    description: s.description,
-                    endpoint: `${SITE_ORIGIN}/mcp`,
-                    protocol: "mcp",
-                    authentication: "none",
-                })),
+                skills: await Promise.all(
+                    AGENT_SKILLS.map(async (s) => ({
+                        name: s.name,
+                        title: s.title,
+                        description: s.description,
+                        type: "skill-md",
+                        url: `${SITE_ORIGIN}/.well-known/agent-skills/${s.name}.md`,
+                        digest: await digest(
+                            `${s.name}\n${s.title}\n${s.description}`,
+                        ),
+                        endpoint: `${SITE_ORIGIN}/mcp`,
+                        protocol: "mcp",
+                        authentication: "none",
+                    })),
+                ),
             },
             null,
             2,

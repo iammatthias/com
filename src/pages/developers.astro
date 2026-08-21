@@ -9,15 +9,41 @@ import { API_OPERATIONS, AGENT_SKILLS, AGENT_RESOURCES, SITE_ORIGIN } from "@lib
 import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = { group: "other", label: "developers", order: 3 };
+
+// Emitted as FAQPage JSON-LD. These are the questions an agent asks
+// before integrating, with answers short enough to be quoted whole.
+const faq = [
+    {
+        question: "Does the iammatthias.com API require authentication?",
+        answer: "No. Every endpoint, feed, and MCP tool is public and anonymous. Do not send an Authorization header; it is ignored.",
+    },
+    {
+        question: "What does the iammatthias.com API cost?",
+        answer: "Nothing. There is no account, no API key, and no paid tier. Rate limits are Cloudflare's edge defaults.",
+    },
+    {
+        question: "Does iammatthias.com have an MCP server?",
+        answer: "Yes, at https://iammatthias.com/mcp over Streamable HTTP with no authentication. It exposes search_site, get_document, list_sections, and list_recent.",
+    },
+    {
+        question: "How do I get a page from iammatthias.com as markdown?",
+        answer: "Append .md to any content URL. The whole corpus is available in one request at https://iammatthias.com/llms-full.txt.",
+    },
+    {
+        question: "Can I use content from iammatthias.com for AI training?",
+        answer: "No. The site's Content-Signal policy is search=yes, ai-input=yes, ai-train=no. Quoting with attribution and a link to the canonical URL is welcome.",
+    },
+];
 ---
 
 <BaseLayout
-    title="Developers"
+    title="iammatthias.com API, GraphQL & MCP — Developer Documentation"
     description="Machine-readable access to iammatthias.com: JSON endpoints, an MCP server, markdown twins, and the full corpus in one file. Public, free, no key required."
     markdownHref="/developers.md"
+    faq={faq}
 >
     <header class="page-header">
-        <h1>Developers</h1>
+        <h1>iammatthias.com developer documentation</h1>
         <p>
             This site publishes its content in machine-readable form. Everything
             is public, unauthenticated, and free — no account, no API key, no

@@ -45,6 +45,7 @@ const {
     breadcrumbs = [],
     article,
     profilePage = false,
+    faq = [],
 } = Astro.props;
 
 const origin = siteOrigin.replace(/\/$/, "");
@@ -83,6 +84,12 @@ const graph: Record<string, unknown>[] = [
         ...(isHomepage && { about: { "@id": personId } }),
         ...(profilePage && { mainEntity: { "@id": personId } }),
         ...(image && { image }),
+        // Which parts of the page are worth reading aloud. Assistants
+        // use this to avoid narrating navigation chrome.
+        speakable: {
+            "@type": "SpeakableSpecification",
+            cssSelector: [".page-header h1", ".page-header p", ".intro", ".doc-hero"],
+        },
         ...(article && {
             datePublished: article.publishedTime,
             ...(article.modifiedTime && {
@@ -107,6 +114,19 @@ if (breadcrumbs.length > 0) {
                 ...(crumb.href && { item: `${origin}${crumb.href}` }),
             })),
         ],
+    });
+}
+
+if (faq.length > 0) {
+    graph.push({
+        "@type": "FAQPage",
+        "@id": `${canonical}#faq`,
+        isPartOf: { "@id": webpageId },
+        mainEntity: faq.map((f) => ({
+            "@type": "Question",
+            name: f.question,
+            acceptedAnswer: { "@type": "Answer", text: f.answer },
+        })),
     });
 }
 

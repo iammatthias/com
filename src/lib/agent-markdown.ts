@@ -12,11 +12,35 @@ import {
 } from "./agent-surface";
 import { listContent, listSections } from "./agent-data";
 
+/**
+ * Frontmatter block for a served markdown document. Agents read this
+ * as metadata instead of scraping the body for a title.
+ */
+function frontMatter(fields: {
+    title: string;
+    description: string;
+    canonical: string;
+}): string {
+    return [
+        "---",
+        `title: ${JSON.stringify(fields.title)}`,
+        `description: ${JSON.stringify(fields.description)}`,
+        `canonical: ${fields.canonical}`,
+        `last-updated: ${new Date().toISOString().slice(0, 10)}`,
+        "---",
+        "",
+    ].join("\n");
+}
+
 /** The homepage as markdown — what the site is, and how to use it. */
 export async function homepageMarkdown(): Promise<string> {
     const sections = await listSections();
     const recent = await listContent({ limit: 10 });
-    return `# ${SITE_IDENTITY.title}
+    return `${frontMatter({
+        title: `${SITE_IDENTITY.title} — site overview`,
+        description: SITE_IDENTITY.summary,
+        canonical: `${SITE_ORIGIN}/index.md`,
+    })}# ${SITE_IDENTITY.title}
 
 ${SITE_IDENTITY.summary}
 
@@ -53,7 +77,12 @@ Full specification: ${SITE_ORIGIN}/openapi.json · Notes: ${SITE_ORIGIN}/develop
 
 /** /auth.md — the honest walkthrough for a site with no auth. */
 export function authMarkdown(): string {
-    return `# Authentication
+    return `${frontMatter({
+        title: "Authentication — iammatthias.com",
+        description:
+            "How agents authenticate with iammatthias.com: they don't. Everything is public and anonymous.",
+        canonical: `${SITE_ORIGIN}/auth.md`,
+    })}# Authentication
 
 There is no authentication. Every endpoint, page, feed, and MCP tool on ${SITE_IDENTITY.name} is public and anonymous.
 
@@ -126,7 +155,12 @@ Questions: ${SITE_IDENTITY.email}
 /** /developers.md — the human-and-agent readable API notes. */
 export async function developersMarkdown(): Promise<string> {
     const sections = await listSections();
-    return `# Developer notes
+    return `${frontMatter({
+        title: "iammatthias.com developer documentation — API, GraphQL, MCP",
+        description:
+            "HTTP endpoints, GraphQL, the MCP server, markdown twins, error shapes, and caching for iammatthias.com. Public, free, no key required.",
+        canonical: `${SITE_ORIGIN}/developers.md`,
+    })}# Developer notes
 
 ${SITE_IDENTITY.name} publishes its content in machine-readable form. Everything here is public, unauthenticated, and free — see ${SITE_ORIGIN}/auth.md and ${SITE_ORIGIN}/pricing.md.
 

@@ -34,6 +34,7 @@ const problems = [];
 // path added here stops being checked in CI.
 const SSR_ONLY = new Set([
     "/graphql",
+    "/api/content.json",
     "/.well-known/mcp",
     "/",
     "/now",
