@@ -54,7 +54,7 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         <GlassArch />
 
         <section class="intro" aria-label="Introduction">
-            <p class="greeting">Hi, I am Matthias.</p>
+            <h1 class="greeting">Hi, I am Matthias.</h1>
             <p>
                 This is my cozy corner on the web. A collection of
                 photographs, projects, recipes, and notes.
@@ -119,10 +119,15 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         max-width: 60ch;
     }
 
+    /* The greeting IS the homepage's h1 — it's the one line that names
+       what this page is. Kept at --fs-2xl and normal weight rather than
+       the global h1's size/medium weight: the arch above it is the
+       visual hero, and a heavier line here would fight it. */
     .intro .greeting {
         font-family: var(--font-serif);
         font-style: italic;
         font-size: var(--fs-2xl);
+        font-weight: var(--fw-normal);
         line-height: var(--lh-tight);
     }
 

@@ -24,6 +24,17 @@
 /*
   Link: </llms.txt>; rel="describedby"; type="text/markdown"
 
+# Markdown twins are a distinct representation of the same resource as
+# their HTML page, so caches must key them separately (acceptmarkdown.com).
+# Static assets bypass the middleware that used to set this.
+/*.md
+  Vary: Accept
+  Content-Type: text/markdown; charset=utf-8
+/llms.txt
+  Vary: Accept
+/llms-full.txt
+  Vary: Accept
+
 # Prebuilt search vectors: immutable per deploy, ~230 KB. A short
 # browser cache skips the 304 revalidation on every visit; a stale
 # copy after a deploy is harmless — the model/dims guard plus the
