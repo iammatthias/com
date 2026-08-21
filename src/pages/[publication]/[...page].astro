@@ -63,6 +63,7 @@ const paged = getPage(items, page, base)!;
     description={pub.description ?? `${pub.name} — iammatthias`}
     ogImage={`/${pub.slug}`}
     markdownHref={`/${pub.slug}.md`}
+    pagination={{ prev: paged.prevHref, next: paged.nextHref }}
 >
     <header class="page-header">
         <h1>{pub.name}</h1>

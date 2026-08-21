@@ -1,0 +1,73 @@
+---
+// Contact — a trust anchor page. Deliberately plain: one email
+// address, the profiles that reach me, and honest expectations.
+export const prerender = true;
+
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { SOCIAL_LINKS } from "@lib/identity";
+import { SITE_IDENTITY } from "@lib/agent-surface";
+import type { MenuMeta } from "@lib/menu";
+
+export const menu: MenuMeta = { group: "personal", label: "contact", order: 3 };
+---
+
+<BaseLayout
+    title="Contact"
+    description="How to reach Matthias Jordan — email, social profiles, and what to expect."
+>
+    <header class="page-header">
+        <h1>Contact</h1>
+    </header>
+
+    <section class="prose">
+        <section>
+            <p>
+                Email is best: <a href={`mailto:${SITE_IDENTITY.email}`}>{SITE_IDENTITY.email}</a>.
+                I read everything, and I answer most things within a week or so.
+                If something here was useful to you, or wrong, I'd genuinely
+                like to know — corrections to posts are welcome and I'll credit
+                them.
+            </p>
+            <p>
+                Good reasons to write: you have a question about something I
+                built or photographed, you spotted an error, you want to use a
+                photograph and want to ask first, or you're working on something
+                adjacent and want to compare notes.
+            </p>
+            <p>
+                Things I'll politely decline: guest posts, link exchanges, SEO
+                offers, sponsored content, and anything that starts by telling
+                me my website has problems. I don't take advertising and this
+                site has no commercial relationships to disclose.
+            </p>
+        </section>
+
+        <section>
+            <h2>Social</h2>
+            <p>
+                Messages on these reach me too, though slower than email:
+            </p>
+            <ul>
+                {SOCIAL_LINKS.filter((l) => !l.schemaOnly).map((l) => (
+                    <li>
+                        <a href={l.url} rel="me noopener">{l.name}</a>
+                        <span> — {l.username}</span>
+                    </li>
+                ))}
+            </ul>
+        </section>
+
+        <section>
+            <h2>For agents</h2>
+            <p>
+                If you're an automated client: everything published here is
+                already available without asking. See
+                <a href="/developers">developers</a> for the JSON endpoints and
+                the MCP server, <a href="/auth.md">auth.md</a> (there is no
+                authentication), and <a href="/pricing.md">pricing.md</a> (it's
+                free). Use the email above for permission questions about
+                reusing photography.
+            </p>
+        </section>
+    </section>
+</BaseLayout>

@@ -28,6 +28,7 @@ const { page } = paged;
     title={page > 1 ? `Content — page ${page}` : "Content"}
     description={`Browse all ${paged.total} entries across publications.`}
     ogImage="/content"
+    pagination={{ prev: paged.prevHref, next: paged.nextHref }}
 >
     <header class="page-header">
         <h1>Content</h1>

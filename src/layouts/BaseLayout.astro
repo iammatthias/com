@@ -52,6 +52,13 @@ interface Props {
      * this; chrome-only pages leave it unset.
      */
     markdownHref?: string;
+    /**
+     * Paginated surfaces pass their neighbours so `<link rel="prev">`
+     * / `rel="next"` land in `<head>` (where the spec requires them),
+     * letting crawlers traverse past page 1 without parsing the
+     * visible pagination control.
+     */
+    pagination?: { prev?: string | null; next?: string | null };
 }
 
 const SITE_NAME = "iammatthias";
@@ -70,6 +77,7 @@ const {
     article,
     profilePage = false,
     markdownHref,
+    pagination,
 } = Astro.props;
 
 // `siteOrigin` is intentionally derived from `Astro.site` (set in
@@ -218,6 +226,8 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
                 href={markdownHref}
             />
         )}
+        {pagination?.prev && <link rel="prev" href={pagination.prev} />}
+        {pagination?.next && <link rel="next" href={pagination.next} />}
 
         <slot name="head" />
     </head>

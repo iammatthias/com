@@ -62,6 +62,7 @@ const paged = getPage(items, page, base)!;
         { label: "tags", href: "/tags" },
         { label: tag },
     ]}
+    pagination={{ prev: paged.prevHref, next: paged.nextHref }}
 >
     <header class="page-header">
         <h1>{tag}</h1>

@@ -1,0 +1,87 @@
+---
+// Privacy — a trust anchor page, and short because the honest answer
+// is short: this site collects almost nothing.
+export const prerender = true;
+
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { SITE_IDENTITY } from "@lib/agent-surface";
+import type { MenuMeta } from "@lib/menu";
+
+export const menu: MenuMeta = { group: "other", label: "privacy", order: 4 };
+---
+
+<BaseLayout
+    title="Privacy"
+    description="What iammatthias.com collects: essentially nothing. No analytics, no cookies, no tracking, no accounts."
+>
+    <header class="page-header">
+        <h1>Privacy</h1>
+    </header>
+
+    <section class="prose">
+        <section>
+            <h2>The short version</h2>
+            <p>
+                This site sets no cookies, runs no analytics, embeds no tracking
+                pixels, and has no accounts to sign into. There is no consent
+                banner because there is nothing to consent to.
+            </p>
+        </section>
+
+        <section>
+            <h2>What is logged</h2>
+            <p>
+                The site runs on Cloudflare Workers. Cloudflare records standard
+                request logs — IP address, user agent, requested URL, response
+                status, timing — as part of serving and protecting the site.
+                I use these only to debug problems and to see whether automated
+                clients can reach the content. They are retained on Cloudflare's
+                default schedule and I don't export, sell, or combine them with
+                anything else.
+            </p>
+            <p>
+                Images are served through wsrv.nl, an image-resizing proxy, and
+                from blobs.farfield.systems, my own server. Requesting a page
+                means your browser also contacts those hosts, which see the same
+                basic request metadata.
+            </p>
+        </section>
+
+        <section>
+            <h2>What runs in your browser</h2>
+            <p>
+                Search is the only substantial script, and it runs entirely
+                locally: the page downloads a small model and computes matches
+                on your device. Your queries are never sent anywhere. Results
+                are cached in your browser's own storage and never leave it.
+            </p>
+            <p>
+                One page — the onchain analytics portrait — reads a public
+                testnet contract from your browser if you visit it. No wallet
+                connection is requested and nothing is written.
+            </p>
+        </section>
+
+        <section>
+            <h2>Your data</h2>
+            <p>
+                I hold no account data because there are no accounts. If you
+                email me, I keep that email in my mailbox like any other
+                correspondence, and I won't add you to anything. Ask me to
+                delete it and I will.
+            </p>
+        </section>
+
+        <section>
+            <h2>Content</h2>
+            <p>
+                Writing, photographs, and generative work are © Matthias Jordan,
+                all rights reserved. Quoting with attribution and a link is
+                welcome. Ask before republishing whole works.
+            </p>
+            <p>
+                Questions: <a href={`mailto:${SITE_IDENTITY.email}`}>{SITE_IDENTITY.email}</a>
+            </p>
+        </section>
+    </section>
+</BaseLayout>

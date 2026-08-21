@@ -22,6 +22,10 @@ export interface PageData<T> {
     pageSize: number;
     /** Surface root, e.g. "/content" or "/tags/cooking". No trailing slash. */
     basePath: string;
+    /** Neighbour hrefs, or null at the ends — fed to `<link rel="prev">`
+     *  / `rel="next"` in the head so crawlers can traverse the archive. */
+    prevHref: string | null;
+    nextHref: string | null;
 }
 
 /**
@@ -67,6 +71,8 @@ export function getPage<T>(
         total,
         pageSize,
         basePath,
+        prevHref: page > 1 ? pageHref(basePath, page - 1) : null,
+        nextHref: page < totalPages ? pageHref(basePath, page + 1) : null,
     };
 }
 

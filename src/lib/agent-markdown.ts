@@ -1,0 +1,209 @@
+// Markdown bodies for the agent-facing root documents (/index.md,
+// /llms.md, /auth.md, /pricing.md, /developers.md). Kept together so
+// the story they tell stays consistent, and generated from
+// agent-surface.ts so URLs can't go stale.
+
+import {
+    AGENT_RESOURCES,
+    AGENT_SKILLS,
+    API_OPERATIONS,
+    SITE_IDENTITY,
+    SITE_ORIGIN,
+} from "./agent-surface";
+import { listContent, listSections } from "./agent-data";
+
+/** The homepage as markdown — what the site is, and how to use it. */
+export async function homepageMarkdown(): Promise<string> {
+    const sections = await listSections();
+    const recent = await listContent({ limit: 10 });
+    return `# ${SITE_IDENTITY.title}
+
+${SITE_IDENTITY.summary}
+
+Maintained by ${SITE_IDENTITY.owner}. Canonical site: ${SITE_ORIGIN}
+
+## What you can do here
+
+Everything is public and free — no account, no API key, no rate-limit tier.
+
+- **Read any page as markdown.** Append \`.md\` to any content URL (\`/posts/<slug>\` → \`/posts/<slug>.md\`).
+- **Take the whole corpus in one fetch.** ${SITE_ORIGIN}/llms-full.txt
+- **Search or query it.** JSON endpoints below, or the MCP server at ${SITE_ORIGIN}/mcp
+- **Follow it.** RSS at ${SITE_ORIGIN}/rss.xml, per-section feeds at \`/<section>/rss.xml\`
+
+## Sections
+
+${sections.map((s) => `- **${s.slug}** — ${s.name}, ${s.entries} entries${s.description ? `. ${s.description}` : ""}. Index: ${SITE_ORIGIN}/${s.slug}.md`).join("\n")}
+
+## Recent
+
+${recent.map((i) => `- ${i.published.slice(0, 10)} [${i.title}](${i.markdownUrl})`).join("\n")}
+
+## Machine-readable resources
+
+${AGENT_RESOURCES.map((r) => `- [${r.name}](${r.url}) — ${r.description}`).join("\n")}
+
+## HTTP endpoints
+
+${API_OPERATIONS.map((o) => `- \`GET ${o.path}\` — ${o.summary}`).join("\n")}
+
+Full specification: ${SITE_ORIGIN}/openapi.json · Notes: ${SITE_ORIGIN}/developers.md
+`;
+}
+
+/** /auth.md — the honest walkthrough for a site with no auth. */
+export function authMarkdown(): string {
+    return `# Authentication
+
+There is no authentication. Every endpoint, page, feed, and MCP tool on ${SITE_IDENTITY.name} is public and anonymous.
+
+## Discover
+
+Machine-readable descriptions of this site live at:
+
+- ${SITE_ORIGIN}/.well-known/oauth-protected-resource — RFC 9728 metadata, declaring no authorization servers and no required scopes
+- ${SITE_ORIGIN}/.well-known/ai-catalog.json — every agentic resource this site publishes
+- ${SITE_ORIGIN}/openapi.json — the HTTP API surface
+- ${SITE_ORIGIN}/.well-known/mcp/server-card.json — the MCP server and its tools
+
+## Pick a method
+
+None to pick. Send a plain request. Do not send an \`Authorization\` header; it is ignored.
+
+\`\`\`
+curl ${SITE_ORIGIN}/api/search.json?q=cloudflare
+\`\`\`
+
+## Register
+
+No registration. There is no \`register_uri\` because there is no credential to register for. Identity type: \`anonymous\`.
+
+## Claim and use a credential
+
+Not applicable — no credential exists to claim, present, or refresh.
+
+## Errors
+
+Requests fail only on their own merits, never on identity. Errors are RFC 9457 problem documents (\`application/problem+json\`) carrying \`code\`, \`detail\`, and a \`resolution\` string that says how to fix and retry. You will never receive a \`401\` or a \`WWW-Authenticate\` challenge from this site.
+
+## Revocation
+
+Nothing to revoke.
+
+## Etiquette
+
+Identify yourself with a descriptive \`User-Agent\`. Prefer \`/llms-full.txt\` (one request for the whole corpus) over crawling page by page. Cache by the \`cid\` field — it is a content hash, so an unchanged \`cid\` means unchanged bytes.
+`;
+}
+
+/** /pricing.md — "free" stated in the machine-readable place agents look. */
+export function pricingMarkdown(): string {
+    return `# Pricing
+
+Free. There is nothing to buy on ${SITE_IDENTITY.name}, and no paid tier exists.
+
+| Tier | Price | Limits | Auth |
+| --- | --- | --- | --- |
+| Public | $0 | Cloudflare's default edge rate limits | None |
+
+## What that covers
+
+- Every page, in HTML and markdown
+- The full corpus at ${SITE_ORIGIN}/llms-full.txt
+- All JSON endpoints listed in ${SITE_ORIGIN}/openapi.json
+- The MCP server at ${SITE_ORIGIN}/mcp
+
+## Terms
+
+This is a personal site, not a commercial service. There is no SLA, no support contract, and no uptime guarantee — it is one Worker in front of a homelab.
+
+Content (writing, photographs, generative art) is © ${SITE_IDENTITY.owner}, all rights reserved. Quoting with attribution and a link to the canonical URL is welcome; republishing whole works or training on the photography archive is not.
+
+Questions: ${SITE_IDENTITY.email}
+`;
+}
+
+/** /developers.md — the human-and-agent readable API notes. */
+export async function developersMarkdown(): Promise<string> {
+    const sections = await listSections();
+    return `# Developer notes
+
+${SITE_IDENTITY.name} publishes its content in machine-readable form. Everything here is public, unauthenticated, and free — see ${SITE_ORIGIN}/auth.md and ${SITE_ORIGIN}/pricing.md.
+
+## Quickstart
+
+\`\`\`bash
+# Search the site
+curl "${SITE_ORIGIN}/api/search.json?q=cloudflare+workers"
+
+# List everything in one section
+curl "${SITE_ORIGIN}/api/content.json?section=recipes"
+
+# Read one document as markdown
+curl "${SITE_ORIGIN}/posts/1779066375000-farfield.md"
+
+# The whole corpus in a single request
+curl "${SITE_ORIGIN}/llms-full.txt"
+\`\`\`
+
+## HTTP endpoints
+
+${API_OPERATIONS.map(
+    (o) =>
+        `### \`GET ${o.path}\`\n\n${o.description}\n\n${
+            o.params?.length
+                ? o.params
+                      .map(
+                          (p) =>
+                              `- \`${p.name}\`${p.required ? " (required)" : ""} — ${p.description}`,
+                      )
+                      .join("\n")
+                : "No parameters."
+        }`,
+).join("\n\n")}
+
+Full OpenAPI 3.1 specification: ${SITE_ORIGIN}/openapi.json
+
+## MCP server
+
+Streamable HTTP at \`${SITE_ORIGIN}/mcp\`. No authentication. Tools:
+
+${AGENT_SKILLS.map((s) => `- \`${s.name}\` — ${s.description}`).join("\n")}
+
+Add it to a client that speaks MCP:
+
+\`\`\`json
+{ "mcpServers": { "iammatthias": { "url": "${SITE_ORIGIN}/mcp" } } }
+\`\`\`
+
+Preview it without connecting: ${SITE_ORIGIN}/.well-known/mcp/server-card.json
+
+## Markdown twins
+
+Every content URL has a markdown twin at the same path plus \`.md\`, carrying front matter (title, section, dates, tags, \`cid\`, canonical \`html:\` URL) with \`blob://\` and \`series://\` embeds resolved to public image URLs.
+
+Section indexes: ${sections.map((s) => `\`/${s.slug}.md\``).join(", ")}. Scoped context per section: \`/<section>/llms.txt\`.
+
+## Errors
+
+Errors are RFC 9457 problem documents with \`code\`, \`detail\`, and a \`resolution\` telling you how to retry:
+
+\`\`\`json
+{
+  "type": "${SITE_ORIGIN}/developers#missing_query",
+  "status": 400,
+  "code": "missing_query",
+  "detail": "The 'q' parameter is required and must not be empty.",
+  "resolution": "Retry with a query, e.g. /api/search.json?q=cloudflare+workers."
+}
+\`\`\`
+
+## Caching
+
+Every record carries a \`cid\` — a CIDv1 content hash. Same \`cid\`, same bytes, forever. Cache against it and skip refetching unchanged documents.
+
+## Source
+
+The site is open source: ${SITE_IDENTITY.repo}
+`;
+}

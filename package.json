@@ -7,13 +7,15 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "rm -rf dist .astro && astro build",
-    "build:force": "rm -rf dist .astro node_modules/.astro && astro build --force",
+    "build": "rm -rf dist .astro && astro build && node scripts/agent-check.mjs",
+    "build:force": "rm -rf dist .astro node_modules/.astro && astro build --force && node scripts/agent-check.mjs",
     "preview": "astro preview",
     "smoke": "node scripts/smoke.mjs",
     "overflow": "node scripts/overflow-check.mjs",
     "astro": "astro",
-    "snapshot:azulejos": "node scripts/snapshot-azulejos.mjs"
+    "snapshot:azulejos": "node scripts/snapshot-azulejos.mjs",
+    "agent:check": "node scripts/agent-check.mjs",
+    "agent:check:live": "node scripts/agent-check.mjs --url https://iammatthias.com"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.3",

@@ -1,0 +1,112 @@
+---
+// Developer / agent notes. The HTML twin of /developers.md — same
+// facts, rendered for a person. Both are generated from
+// lib/agent-surface.ts so neither can drift from what answers.
+export const prerender = true;
+
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { API_OPERATIONS, AGENT_SKILLS, AGENT_RESOURCES, SITE_ORIGIN } from "@lib/agent-surface";
+import type { MenuMeta } from "@lib/menu";
+
+export const menu: MenuMeta = { group: "other", label: "developers", order: 3 };
+---
+
+<BaseLayout
+    title="Developers"
+    description="Machine-readable access to iammatthias.com: JSON endpoints, an MCP server, markdown twins, and the full corpus in one file. Public, free, no key required."
+    markdownHref="/developers.md"
+>
+    <header class="page-header">
+        <h1>Developers</h1>
+        <p>
+            This site publishes its content in machine-readable form. Everything
+            is public, unauthenticated, and free — no account, no API key, no
+            paid tier.
+        </p>
+        <p class="meta"><a href="/developers.md">this page as markdown</a></p>
+    </header>
+
+    <section class="prose">
+        <section>
+            <h2>Quickstart</h2>
+            <pre><code>{`# Search the site
+curl "${SITE_ORIGIN}/api/search.json?q=cloudflare+workers"
+
+# List one section
+curl "${SITE_ORIGIN}/api/content.json?section=recipes"
+
+# Read a document as markdown
+curl "${SITE_ORIGIN}/posts/1779066375000-farfield.md"
+
+# The whole corpus in one request
+curl "${SITE_ORIGIN}/llms-full.txt"`}</code></pre>
+        </section>
+
+        <section>
+            <h2>HTTP endpoints</h2>
+            <dl>
+                {API_OPERATIONS.map((op) => (
+                    <>
+                        <dt><code>GET {op.path}</code></dt>
+                        <dd>{op.description}</dd>
+                    </>
+                ))}
+            </dl>
+            <p>
+                Full specification: <a href="/openapi.json">openapi.json</a>.
+                Errors are RFC 9457 problem documents carrying a
+                <code>resolution</code> field that says how to retry.
+            </p>
+        </section>
+
+        <section>
+            <h2>MCP server</h2>
+            <p>
+                Streamable HTTP at <code>{SITE_ORIGIN}/mcp</code>, no
+                authentication. Add it to any MCP client:
+            </p>
+            <pre><code>{`{ "mcpServers": { "iammatthias": { "url": "${SITE_ORIGIN}/mcp" } } }`}</code></pre>
+            <ul>
+                {AGENT_SKILLS.map((s) => (
+                    <li><code>{s.name}</code> — {s.description}</li>
+                ))}
+            </ul>
+            <p>
+                Preview the tools without connecting:
+                <a href="/.well-known/mcp/server-card.json">server-card.json</a>.
+            </p>
+        </section>
+
+        <section>
+            <h2>Markdown twins</h2>
+            <p>
+                Every content URL has a markdown twin at the same path plus
+                <code>.md</code>, with front matter (title, dates, tags, content
+                hash, canonical URL) and images resolved to public URLs. Section
+                indexes live at <code>/&lt;section&gt;.md</code>, and each
+                section has scoped context at <code>/&lt;section&gt;/llms.txt</code>.
+            </p>
+        </section>
+
+        <section>
+            <h2>Everything else</h2>
+            <ul>
+                {AGENT_RESOURCES.map((r) => (
+                    <li><a href={r.url}>{r.name}</a> — {r.description}</li>
+                ))}
+            </ul>
+        </section>
+
+        <section>
+            <h2>Caching and etiquette</h2>
+            <p>
+                Every record carries a <code>cid</code>, a CIDv1 content hash:
+                same cid, same bytes, forever. Cache against it rather than
+                refetching. Prefer <a href="/llms-full.txt">llms-full.txt</a> to
+                crawling page by page, and send a descriptive
+                <code>User-Agent</code>. The site is open source at
+                <a href="https://github.com/iammatthias/com">github.com/iammatthias/com</a>.
+            </p>
+        </section>
+    </section>
+</BaseLayout>

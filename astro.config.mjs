@@ -111,9 +111,10 @@ export default defineConfig({
         },
     },
     redirects: {
-        // /about merged into /now during the redesign — preserve any
-        // inbound links from the old site / search results / RSS readers.
-        "/about": "/now",
+        // (/about used to redirect to /now. It's a real page again —
+        // durable biography there, "lately" on /now — because agents
+        // check /about, /contact and /privacy to decide whether a site
+        // is a real entity worth citing.)
         // @astrojs/sitemap used to serve the index here; the dynamic
         // endpoint (src/pages/sitemap.xml.ts) replaced it so SSR'd
         // content pages are included. Preserve the registered URL.

@@ -136,6 +136,25 @@ export const onRequest = defineMiddleware(async (context, next) => {
         );
     }
 
+    // ?mode=agent — hand an agent the machine-readable view of this
+    // page instead of the rendered one. On the homepage that's the
+    // markdown site map; anywhere with a markdown twin, that twin.
+    // Cheap for an agent that arrives from search with no other
+    // context, and harmless for everyone else.
+    if (
+        (method === "GET" || method === "HEAD") &&
+        context.url.searchParams.get("mode") === "agent"
+    ) {
+        const target =
+            pathname === "/"
+                ? "/index.md"
+                : ((await markdownTwin(pathname)) ?? "/index.md");
+        // A redirect rather than an internal rewrite: the markdown
+        // twins are static assets, which the asset layer serves before
+        // the worker's router — `next(target)` can't reach them.
+        return context.redirect(target, 302);
+    }
+
     // Markdown content negotiation: a URL with a markdown twin,
     // requested with Accept ranking markdown above HTML, rewrites to
     // the twin — same URL, markdown body. Content-Location names the

@@ -21,8 +21,11 @@
 # images/fonts are the cost of not maintaining a per-section list of
 # dynamic publication paths). SSR responses still get it from
 # src/middleware.ts.
+# RFC 8288 Link headers advertise the machine-readable surfaces on
+# every response, so an agent learns them from any page it lands on
+# without fetching the homepage first.
 /*
-  Link: </llms.txt>; rel="describedby"; type="text/markdown"
+  Link: </llms.txt>; rel="describedby"; type="text/markdown", </index.md>; rel="alternate"; type="text/markdown", </sitemap.xml>; rel="sitemap"; type="application/xml", </openapi.json>; rel="service-desc"; type="application/json", </.well-known/api-catalog>; rel="api-catalog", </rss.xml>; rel="alternate"; type="application/rss+xml"
 
 # Markdown twins are a distinct representation of the same resource as
 # their HTML page, so caches must key them separately (acceptmarkdown.com).
@@ -30,10 +33,18 @@
 /*.md
   Vary: Accept
   Content-Type: text/markdown; charset=utf-8
+
+# llms.txt files are markdown by convention (llmstxt.org); the asset
+# layer would otherwise serve them as text/plain on the .txt extension.
 /llms.txt
   Vary: Accept
+  Content-Type: text/markdown; charset=utf-8
 /llms-full.txt
   Vary: Accept
+  Content-Type: text/markdown; charset=utf-8
+/*/llms.txt
+  Vary: Accept
+  Content-Type: text/markdown; charset=utf-8
 
 # Prebuilt search vectors: immutable per deploy, ~230 KB. A short
 # browser cache skips the 304 revalidation on every visit; a stale
