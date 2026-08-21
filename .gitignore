@@ -33,5 +33,8 @@ pnpm-debug.log*
 .claude/
 
 # etc
-/scripts
+# Local scratch tooling stays untracked — except the agent-surface gate,
+# which `bun run build` invokes and therefore has to exist in CI.
+/scripts/*
+!/scripts/agent-check.mjs
 .gstack/
