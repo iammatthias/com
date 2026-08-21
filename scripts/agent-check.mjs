@@ -33,6 +33,7 @@ const problems = [];
 // only be verified against a live origin. Keep this list tight — a
 // path added here stops being checked in CI.
 const SSR_ONLY = new Set([
+    "/graphql",
     "/",
     "/now",
     "/feed",
@@ -201,6 +202,39 @@ await expectJSON(
     "/.well-known/oauth-protected-resource",
     (d) => (d.resource ? null : "missing resource"),
 );
+
+// ---- GraphQL -----------------------------------------------------------
+await expect200("/schema.graphql");
+{
+    const sdl = await get("/schema.graphql");
+    if (sdl.status === 200) {
+        for (const needed of ["type Query", "DocumentConnection", "PageInfo", "QueryError"]) {
+            if (!sdl.body.includes(needed)) fail("schema.graphql", `missing ${needed}`);
+            else ok(`schema.graphql declares ${needed}`);
+        }
+    }
+}
+if (ORIGIN) {
+    // Introspection must be public — an auth-gated schema is
+    // undiscoverable, which defeats the point of publishing one.
+    const res = await fetch(`${ORIGIN}/graphql`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ query: "{__schema{queryType{name}}}" }),
+    });
+    const body = await res.json().catch(() => null);
+    if (body?.data?.__schema?.queryType?.name === "Query") ok("graphql introspection");
+    else fail("graphql introspection", `status ${res.status}`);
+
+    const q = await fetch(`${ORIGIN}/graphql`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ query: "{sections{slug entryCount}}" }),
+    });
+    const qb = await q.json().catch(() => null);
+    if (Array.isArray(qb?.data?.sections) && qb.data.sections.length) ok("graphql sections query");
+    else fail("graphql sections query", JSON.stringify(qb?.errors ?? qb).slice(0, 120));
+}
 
 // ---- trust anchors -----------------------------------------------------
 for (const p of ["/about", "/contact", "/privacy"]) {

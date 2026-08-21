@@ -178,6 +178,33 @@ export const AGENT_RESOURCES = [
         mediaType: "application/json",
     },
     {
+        id: "graphql",
+        type: "graphql",
+        name: "GraphQL endpoint",
+        description:
+            "Typed, introspectable GraphQL over the same content: search, list, and read documents in one round trip. Relay connections, schema-modeled errors, no authentication.",
+        url: `${SITE_ORIGIN}/graphql`,
+        mediaType: "application/json",
+    },
+    {
+        id: "graphql-sdl",
+        type: "schema",
+        name: "GraphQL schema (SDL)",
+        description:
+            "The GraphQL schema as SDL, for codegen or reading without an introspection query.",
+        url: `${SITE_ORIGIN}/schema.graphql`,
+        mediaType: "text/plain",
+    },
+    {
+        id: "cli",
+        type: "cli",
+        name: "iammatthias CLI and SDK",
+        description:
+            "Zero-dependency npm package: a terminal reader for the site and a programmatic client for these endpoints. `npx iammatthias`.",
+        url: "https://www.npmjs.com/package/iammatthias",
+        mediaType: "application/json",
+    },
+    {
         id: "openapi",
         type: "openapi",
         name: "OpenAPI specification",

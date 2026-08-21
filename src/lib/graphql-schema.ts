@@ -68,6 +68,9 @@ const Section = new GraphQLObjectType({
         entryCount: {
             type: new GraphQLNonNull(GraphQLInt),
             description: "Number of published documents in this section.",
+            // The data layer calls this `entries`; the schema uses the
+            // clearer name and maps it here.
+            resolve: (s: { entries: number }) => s.entries,
         },
         url: {
             type: new GraphQLNonNull(GraphQLString),
