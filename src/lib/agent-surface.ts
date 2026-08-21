@@ -89,6 +89,14 @@ export const API_OPERATIONS: ApiOperation[] = [
         ],
     },
     {
+        path: "/api/license.json",
+        operationId: "listLicensableWorks",
+        summary: "Licensable works and terms",
+        description:
+            "Every image available for usage licensing, with price, settlement network, and the licence terms. Purchasing happens at /api/license/{id} over MPP or x402; this catalogue is free to read.",
+        contentType: "application/json",
+    },
+    {
         path: "/api/search.json",
         operationId: "searchContent",
         summary: "Keyword search across the site",
@@ -211,6 +219,15 @@ export const AGENT_RESOURCES = [
         description:
             "OpenAPI 3.1 description of the site's public read-only JSON endpoints.",
         url: `${SITE_ORIGIN}/openapi.json`,
+        mediaType: "application/json",
+    },
+    {
+        id: "licensing",
+        type: "payments",
+        name: "Image licensing (MPP / x402)",
+        description:
+            "Usage licences for the art photography, $5 USDC over HTTP 402. The licence is the product — files are public; what is sold is the right to use them plus a signed, verifiable grant.",
+        url: `${SITE_ORIGIN}/api/license.json`,
         mediaType: "application/json",
     },
     {

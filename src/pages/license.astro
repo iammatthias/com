@@ -1,0 +1,108 @@
+---
+// Image licensing terms — the human-readable half of what
+// /api/license/{id} sells. Deliberately blunt about the fact that the
+// files are public: a buyer should know they are purchasing rights,
+// not access.
+export const prerender = true;
+
+import BaseLayout from "@layouts/BaseLayout.astro";
+import {
+    LICENSE_NETWORK,
+    LICENSE_PRICE_USDC,
+    LICENSE_TERMS,
+} from "@lib/licensing";
+import { SITE_IDENTITY, SITE_ORIGIN } from "@lib/agent-surface";
+---
+
+<BaseLayout
+    title="Image licensing"
+    description={`Licence a photograph from iammatthias.com for $${LICENSE_PRICE_USDC} USDC. Editorial and personal use, perpetual, non-exclusive, attribution required.`}
+>
+    <header class="page-header">
+        <h1>Image licensing</h1>
+        <p>
+            Photographs and generative work in the art section can be licensed
+            for ${LICENSE_PRICE_USDC} USDC, paid over MPP or x402.
+        </p>
+    </header>
+
+    <section class="prose">
+        <section>
+            <h2>What you are buying</h2>
+            <p>
+                <strong>Rights, not access.</strong> The image files on this
+                site are publicly reachable and always will be — anyone can
+                fetch one without paying, and this licence does not change
+                that. What it grants is permission to <em>use</em> a specific
+                image, and a signed record proving you hold that permission.
+            </p>
+            <p>
+                That distinction matters if you or a client need to be legally
+                clean. Downloading a file is not a licence; using someone's
+                photograph commercially without one is infringement whether or
+                not the bytes were easy to get.
+            </p>
+        </section>
+
+        <section>
+            <h2>Terms</h2>
+            <ul>
+                <li><strong>Scope</strong> — editorial and personal use</li>
+                <li><strong>Duration</strong> — perpetual, does not expire</li>
+                <li><strong>Exclusivity</strong> — non-exclusive; the same image may be licensed to others</li>
+                <li><strong>Attribution</strong> — required: credit {SITE_IDENTITY.owner} with a link to the work's page</li>
+                <li><strong>Resale and sublicensing</strong> — not permitted</li>
+                <li><strong>AI training</strong> — not permitted, consistent with this site's <code>Content-Signal: ai-train=no</code></li>
+            </ul>
+            <p>
+                One licence covers one image. Need something these terms do not
+                cover — exclusivity, print runs, a whole series, or training
+                rights? Email <a href={`mailto:${SITE_IDENTITY.email}`}>{SITE_IDENTITY.email}</a>.
+            </p>
+        </section>
+
+        <section>
+            <h2>How to buy</h2>
+            <p>
+                Payment is <a href="https://mpp.dev">MPP</a> over HTTP 402;
+                x402 clients work too, since x402's exact-charge flow maps onto
+                MPP's charge intent. Settlement is USDC on {LICENSE_NETWORK.name}.
+            </p>
+            <pre><code>{`# See what's licensable
+curl ${SITE_ORIGIN}/api/license.json
+
+# Request a licence — returns 402 with payment details
+curl ${SITE_ORIGIN}/api/license/<id>
+
+# Pay it with an MPP-capable client
+npx mppx ${SITE_ORIGIN}/api/license/<id>`}</code></pre>
+            <p>
+                A successful payment returns a signed licence naming the work,
+                you, the terms, and the payment that bought it. Keep it — it is
+                the evidence.
+            </p>
+        </section>
+
+        <section>
+            <h2>Verifying a licence</h2>
+            <p>
+                Anyone can check a licence without trusting whoever presents
+                it. POST the grant exactly as issued to
+                <code>{SITE_ORIGIN}/api/license/verify</code>; any alteration to
+                the body invalidates the signature.
+            </p>
+        </section>
+
+        {LICENSE_NETWORK.testnet && (
+            <section>
+                <h2>Testnet notice</h2>
+                <p>
+                    Settlement currently runs on {LICENSE_NETWORK.name}, a test
+                    network. Licences issued now are real and verifiable, but
+                    the payment carries no real-world value. If you need a
+                    licence backed by mainnet settlement, email first.
+                </p>
+            </section>
+        )}
+    </section>
+</BaseLayout>

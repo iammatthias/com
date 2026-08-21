@@ -11,6 +11,7 @@ import {
     SITE_ORIGIN,
 } from "./agent-surface";
 import { listContent, listSections } from "./agent-data";
+import { LICENSE_NETWORK, LICENSE_PRICE_USDC } from "./licensing";
 
 /** The homepage as markdown — what the site is, and how to use it. */
 export async function homepageMarkdown(): Promise<string> {
@@ -96,30 +97,95 @@ Identify yourself with a descriptive \`User-Agent\`. Prefer \`/llms-full.txt\` (
 `;
 }
 
-/** /pricing.md — "free" stated in the machine-readable place agents look. */
+/** /pricing.md — free to read; licences are the one paid thing. */
 export function pricingMarkdown(): string {
     return `# Pricing
 
-Free. There is nothing to buy on ${SITE_IDENTITY.name}, and no paid tier exists.
+Reading this site is free. There is no account, no API key, and no paid tier for content.
 
-| Tier | Price | Limits | Auth |
+| What | Price | Limits | Auth |
 | --- | --- | --- | --- |
-| Public | $0 | Cloudflare's default edge rate limits | None |
+| All content, feeds, APIs, MCP | $0 | Cloudflare's default edge rate limits | None |
+| Image usage licence | $${LICENSE_PRICE_USDC} USDC | One licence per image | Payment only (MPP / x402) |
 
-## What that covers
+## Free
 
 - Every page, in HTML and markdown
 - The full corpus at ${SITE_ORIGIN}/llms-full.txt
-- All JSON endpoints listed in ${SITE_ORIGIN}/openapi.json
+- All JSON endpoints in ${SITE_ORIGIN}/openapi.json, plus GraphQL
 - The MCP server at ${SITE_ORIGIN}/mcp
+
+## Paid: image usage licences
+
+Photographs and generative work in the art section can be licensed for
+$${LICENSE_PRICE_USDC} USDC on ${LICENSE_NETWORK.name}, paid over MPP (x402 clients work too).
+
+**What you are buying is the right to use the image, not access to it.** The
+files are publicly reachable without paying, and always will be. A licence
+grants you permission to use one commercially, plus a signed record proving
+it — which is what matters if you or your client need to be legally clean.
+
+- Catalogue and prices: ${SITE_ORIGIN}/api/license.json
+- Terms: ${SITE_ORIGIN}/license
+- Buy: \`GET ${SITE_ORIGIN}/api/license/<id>\` — returns HTTP 402 with payment details
+- Verify a licence: \`POST ${SITE_ORIGIN}/api/license/verify\`
+
+Editorial and personal use, perpetual, non-exclusive, attribution required. No
+resale, no sublicensing, no AI training. Full terms at ${SITE_ORIGIN}/license.
 
 ## Terms
 
-This is a personal site, not a commercial service. There is no SLA, no support contract, and no uptime guarantee — it is one Worker in front of a homelab.
+This is a personal site, not a commercial service. There is no SLA, no support
+contract, and no uptime guarantee — it is one Worker in front of a homelab.
 
-Content (writing, photographs, generative art) is © ${SITE_IDENTITY.owner}, all rights reserved. Quoting with attribution and a link to the canonical URL is welcome; republishing whole works or training on the photography archive is not.
+Content is © ${SITE_IDENTITY.owner}, all rights reserved except as licensed above.
+Quoting with attribution and a link to the canonical URL is welcome.
 
 Questions: ${SITE_IDENTITY.email}
+`;
+}
+
+/** /license.md — the licensing terms, machine-readable. */
+export function licenseMarkdown(): string {
+    return `# Image licensing
+
+Photographs and generative work in the art section of ${SITE_IDENTITY.name} can be
+licensed for $${LICENSE_PRICE_USDC} USDC on ${LICENSE_NETWORK.name}, paid over MPP (x402 clients also work).
+
+## What you are buying
+
+Rights, not access. The image files are publicly reachable without payment and
+always will be. This licence grants permission to *use* a specific image, plus a
+signed record proving you hold that permission. Downloading a file is not a
+licence; using it commercially without one is infringement regardless of how
+easy the bytes were to obtain.
+
+## Terms
+
+- Scope: editorial and personal use
+- Duration: perpetual
+- Exclusivity: non-exclusive
+- Attribution: required — credit ${SITE_IDENTITY.owner} with a link to the work's page
+- Resale and sublicensing: not permitted
+- AI training: not permitted (matches this site's \`Content-Signal: ai-train=no\`)
+
+One licence covers one image. For exclusivity, print runs, whole series, or
+training rights, email ${SITE_IDENTITY.email}.
+
+## How to buy
+
+\`\`\`bash
+curl ${SITE_ORIGIN}/api/license.json          # catalogue
+curl ${SITE_ORIGIN}/api/license/<id>          # 402 with payment details
+npx mppx ${SITE_ORIGIN}/api/license/<id>      # pay it
+\`\`\`
+
+## Verifying
+
+POST the grant exactly as issued to ${SITE_ORIGIN}/api/license/verify. Any
+alteration to the licence body invalidates the signature.
+
+${LICENSE_NETWORK.testnet ? `## Testnet notice\n\nSettlement runs on ${LICENSE_NETWORK.name}, a test network. Licences issued now are real and verifiable, but the payment carries no real-world value.` : ""}
 `;
 }
 
