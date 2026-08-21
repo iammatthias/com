@@ -180,7 +180,7 @@ await expectJSON("/.well-known/ai-catalog.json", (d) => {
     if (!d.host?.identifier) return "missing host.identifier";
     if (!Array.isArray(d.entries) || !d.entries.length) return "entries is not a non-empty array";
     for (const e of d.entries) {
-        if (!/^urn:ai:/.test(e.identifier ?? "")) return `entry ${e.displayName ?? "?"} has no urn:ai identifier`;
+        if (!/^urn:air:iammatthias\.com:/.test(e.identifier ?? "")) return `entry ${e.displayName ?? "?"} needs a domain-anchored urn:air identifier`;
         if (!e.type) return `entry ${e.identifier} has no media type`;
         if (!e.url === !e.data) return `entry ${e.identifier} needs exactly one of url or data`;
     }

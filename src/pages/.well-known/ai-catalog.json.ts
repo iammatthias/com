@@ -4,9 +4,10 @@
 //
 // Shape follows the AI Catalog spec: `specVersion`, a `host` block,
 // and an `entries` array where each entry carries a URN identifier, a
-// media type, and exactly one of url/data. (The first version of this
-// file used a bare `resources` array and was rejected as invalid —
-// the gate now asserts the real shape.)
+// media type, and exactly one of url/data. Identifiers are
+// domain-anchored `urn:air:` URNs — `urn:ai:` is rejected as invalid,
+// which scores the same as having no catalog at all. The gate asserts
+// both the shape and the prefix.
 
 export const prerender = true;
 
@@ -48,7 +49,7 @@ export const GET: APIRoute = () =>
                     documentation: `${SITE_ORIGIN}/auth.md`,
                 },
                 entries: AGENT_RESOURCES.map((r) => ({
-                    identifier: `urn:ai:iammatthias.com:resource:${r.id}`,
+                    identifier: `urn:air:iammatthias.com:resource:${r.id}`,
                     displayName: r.name,
                     description: r.description,
                     type: TYPE_MAP[r.type] ?? r.mediaType,

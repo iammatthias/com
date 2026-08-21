@@ -11,6 +11,15 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { AGENT_SKILLS, SITE_IDENTITY, SITE_ORIGIN } from "@lib/agent-surface";
+import { POST as mcpPost, OPTIONS as mcpOptions } from "../mcp";
+
+// The same JSON-RPC handler as /mcp, mounted here too. Two reasons:
+// a client that discovers this path can complete a handshake without
+// a second hop, and requests under /.well-known are exempt from the
+// bot challenges that can intercept root paths — so discovery and
+// transport share a code path that is reachable either way.
+export const POST = mcpPost;
+export const OPTIONS = mcpOptions;
 
 export const GET: APIRoute = () =>
     new Response(
@@ -19,8 +28,9 @@ export const GET: APIRoute = () =>
                 name: SITE_IDENTITY.name,
                 description: SITE_IDENTITY.summary,
                 version: "1.0.0",
-                serverUrl: `${SITE_ORIGIN}/mcp`,
-                url: `${SITE_ORIGIN}/mcp`,
+                serverUrl: `${SITE_ORIGIN}/.well-known/mcp`,
+                url: `${SITE_ORIGIN}/.well-known/mcp`,
+                alternativeUrls: [`${SITE_ORIGIN}/mcp`],
                 transport: "streamable-http",
                 protocolVersion: "2025-06-18",
                 authentication: { type: "none" },
