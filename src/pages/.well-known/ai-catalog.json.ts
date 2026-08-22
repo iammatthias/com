@@ -28,7 +28,6 @@ const TYPE_MAP: Record<string, string> = {
     documentation: "text/markdown",
     sitemap: "application/xml",
     feed: "application/rss+xml",
-    cli: "application/vnd.npm+json",
 };
 
 export const GET: APIRoute = () =>

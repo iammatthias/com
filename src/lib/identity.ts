@@ -1,14 +1,12 @@
 // Single source of truth for who runs this site — consumed by the
 // /now "Find me" list and by the JSON-LD Person entity (Schema.astro).
 //
-// The Person entity is the on-site half of Knowledge-Panel groundwork
-// (see https://benobi.one/panel): a stable @id on the homepage, a
-// consistent `sameAs` set pointing at every profile, and durable
-// biographical facts. The off-site half (a Wikidata Q-item with
-// referenced claims, a CC-licensed Commons portrait linked as P18) is
-// deliberately not committed to yet — when/if it happens, add the
-// Wikidata entity URL to SOCIAL_LINKS with `schemaOnly: true` so
-// crawlers can connect the two without the /now page listing it.
+// The Person entity gives the site a stable @id, a consistent `sameAs`
+// set pointing at every profile, and durable biographical facts, so
+// crawlers can resolve "iammatthias" to one entity. Deliberately no
+// Wikidata or Wikipedia component: that route needs third-party press
+// for notability, which is not something a personal site can or should
+// manufacture.
 
 export interface SocialLink {
     name: string;
