@@ -11,7 +11,13 @@
 import { marked } from "marked";
 import { blobURL, getBlobMeta, getSeries } from "./farfield-loader";
 import type { DocumentData } from "./farfield-loader";
-import { wsrvUrl, wsrvSrcSet, type BlobMeta } from "./farfield";
+import {
+    BLOB_ID_SOURCE,
+    fullEmbedRe,
+    wsrvUrl,
+    wsrvSrcSet,
+    type BlobMeta,
+} from "./farfield";
 import { mapWithConcurrency } from "./http";
 import { plainText, transformAlerts } from "./markdown-text";
 import { extractRecipes, recipeHtml, recipeSimpleHtml } from "./recipe";
@@ -43,7 +49,7 @@ function attr(value: string): string {
  */
 function rewriteBlobLinks(markdown: string): string {
     return markdown.replace(
-        /\]\(blob:\/\/([a-z0-9]+)\)/g,
+        new RegExp(`\\]\\(${BLOB_ID_SOURCE}\\)`, "g"),
         (_m, cid: string) => `](${blobURL(cid)})`,
     );
 }
@@ -188,7 +194,7 @@ interface SeriesBlock {
 }
 
 function tokenizeSeries(body: string): SeriesBlock[] {
-    const EMBED = /^!\[([^\]]*)\]\(blob:\/\/([a-z0-9]+)\)$/;
+    const EMBED = new RegExp(`^!\\[([^\\]]*)\\]\\(${BLOB_ID_SOURCE}\\)$`);
     return body
         .split(/\n\s*\n/)
         .map((b) => b.trim())
@@ -377,7 +383,7 @@ export async function renderMarkdownBody(body: string): Promise<string> {
     interface Embed { alt: string; scheme: "blob" | "series"; id: string }
     const embeds: Embed[] = [];
     const preprocessed = lifted.replace(
-        /!\[([^\]]*)\]\((blob|series):\/\/([a-z0-9-]+)\)/g,
+        fullEmbedRe(),
         (_match, alt: string, scheme: string, id: string) => {
             const idx = embeds.length;
             embeds.push({ alt, scheme: scheme as "blob" | "series", id });
@@ -489,7 +495,7 @@ export async function renderFeedBody(
     interface Embed { alt: string; scheme: "blob" | "series"; id: string }
     const embeds: Embed[] = [];
     const preprocessed = lifted.replace(
-        /!\[([^\]]*)\]\((blob|series):\/\/([a-z0-9-]+)\)/g,
+        fullEmbedRe(),
         (_match, alt: string, scheme: string, id: string) => {
             const idx = embeds.length;
             embeds.push({ alt, scheme: scheme as "blob" | "series", id });
@@ -518,7 +524,7 @@ export async function renderFeedBody(
             const series = await getSeries(e.id);
             if (!series?.body) return [];
             return [...series.body.matchAll(
-                /!\[([^\]]*)\]\(blob:\/\/([a-z0-9]+)\)/g,
+                new RegExp(`!\\[([^\\]]*)\\]\\(${BLOB_ID_SOURCE}\\)`, "g"),
             )].map((m) => ({ cid: m[2], alt: m[1] }));
         }),
     );

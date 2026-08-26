@@ -1,0 +1,86 @@
+---
+// The resolved media gallery a feed entry renders — one component so
+// the /feed card and the /feed/<rkey> detail page can't drift (they
+// used to carry verbatim copies of this dispatch). Video and audio
+// play straight from the blob service (wsrv is image-only; blobs
+// serves ranged 206s); the --video / --audio modifiers also lift the
+// tile above a card's stretched permalink so the controls stay
+// clickable. Images go through wsrv with a srcset.
+
+import { tilePreset } from "@lib/images";
+import { blobURL, type ResolvedMedia } from "@lib/farfield-loader";
+import { wsrvUrl, wsrvSrcSet } from "@lib/farfield";
+
+interface Props {
+    media: ResolvedMedia[];
+    /** "lazy" on list cards, "eager" on the detail page. */
+    loading?: "lazy" | "eager";
+}
+
+const { media, loading = "lazy" } = Astro.props;
+
+const preset = tilePreset(media.length > 1);
+// Pick a sensible `src` fallback near the middle of the chosen widths
+// so non-srcset clients don't pull the biggest variant.
+const fallbackW = preset.widths[Math.floor(preset.widths.length / 2)] ?? 720;
+---
+
+{media.length > 0 && (
+    <div
+        class:list={[
+            "feed-media",
+            { "feed-media--gallery": media.length > 1 },
+        ]}
+    >
+        {media.map((m) => {
+            const src = blobURL(m.cid);
+            const mime = m.meta?.mime ?? "";
+            if (mime.startsWith("video/")) {
+                return (
+                    <figure class="feed-tile feed-tile--video">
+                        <video
+                            controls
+                            preload="metadata"
+                            playsinline
+                            src={src}
+                            aria-label={m.alt || undefined}
+                        />
+                    </figure>
+                );
+            }
+            if (mime.startsWith("audio/")) {
+                return (
+                    <figure class="feed-tile feed-tile--audio">
+                        <audio
+                            controls
+                            preload="metadata"
+                            src={src}
+                            aria-label={m.alt || undefined}
+                        />
+                    </figure>
+                );
+            }
+            return (
+                <figure
+                    class="feed-tile"
+                    style={
+                        m.meta?.dominantColor
+                            ? `background:${m.meta.dominantColor}`
+                            : undefined
+                    }
+                >
+                    <img
+                        src={wsrvUrl(src, fallbackW)}
+                        srcset={wsrvSrcSet(src, preset.widths)}
+                        sizes={preset.sizes}
+                        width={m.meta?.width ?? 960}
+                        height={m.meta?.height ?? 720}
+                        alt={m.alt ?? ""}
+                        loading={loading}
+                        decoding="async"
+                    />
+                </figure>
+            );
+        })}
+    </div>
+)}

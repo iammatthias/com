@@ -5,12 +5,7 @@ export const prerender = true;
 
 import type { APIRoute } from "astro";
 import { homepageMarkdown } from "@lib/agent-markdown";
+import { markdownResponse } from "@lib/agent-http";
 
 export const GET: APIRoute = async () =>
-    new Response(await homepageMarkdown(), {
-        headers: {
-            "Content-Type": "text/markdown; charset=utf-8",
-            "Cache-Control": "public, max-age=300",
-            Vary: "Accept",
-        },
-    });
+    markdownResponse(await homepageMarkdown(), 300);

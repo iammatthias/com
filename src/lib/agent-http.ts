@@ -26,6 +26,21 @@ export function apiHeaders(
     };
 }
 
+/**
+ * A markdown document response. The headers matter on the on-demand
+ * routes and in dev; prerendered routes ship as static files and get
+ * the equivalent from public/_headers.
+ */
+export function markdownResponse(body: string, maxAge = 3600): Response {
+    return new Response(body, {
+        headers: {
+            "Content-Type": "text/markdown; charset=utf-8",
+            "Cache-Control": `public, max-age=${maxAge}`,
+            Vary: "Accept",
+        },
+    });
+}
+
 export function jsonError(
     status: number,
     code: string,

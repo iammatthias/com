@@ -13,6 +13,7 @@ import {
     resolveEmbedsForMarkdown,
 } from "@lib/markdown-view";
 import type { FeedEntryData } from "@lib/farfield-loader";
+import { markdownResponse } from "@lib/agent-http";
 
 export const GET: APIRoute = async (context) => {
     const rkey = context.params.rkey;
@@ -38,9 +39,8 @@ export const GET: APIRoute = async (context) => {
         resolveEmbedsForMarkdown(item.body),
     );
 
-    const response = new Response(
+    const response = markdownResponse(
         composeFeedEntryMarkdown(item, bodyMd, origin),
-        { headers: { "Content-Type": "text/markdown; charset=utf-8" } },
     );
     setResponseCacheHeaders(response, cacheHint);
     return response;

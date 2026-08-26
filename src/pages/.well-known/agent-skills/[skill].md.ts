@@ -6,13 +6,14 @@ export const prerender = true;
 
 import type { APIRoute, GetStaticPaths } from "astro";
 import { AGENT_SKILLS, SITE_ORIGIN } from "@lib/agent-surface";
+import { markdownResponse } from "@lib/agent-http";
 
 export const getStaticPaths: GetStaticPaths = () =>
     AGENT_SKILLS.map((s) => ({ params: { skill: s.name }, props: { skill: s } }));
 
 export const GET: APIRoute = ({ props }) => {
     const s = props.skill as (typeof AGENT_SKILLS)[number];
-    return new Response(
+    return markdownResponse(
         `---
 name: ${s.name}
 title: ${s.title}
@@ -40,11 +41,5 @@ This skill is a tool on the site's MCP server. Connect to
 Everything this skill reads is public. See ${SITE_ORIGIN}/developers.md
 for the equivalent HTTP and GraphQL surfaces.
 `,
-        {
-            headers: {
-                "Content-Type": "text/markdown; charset=utf-8",
-                "Cache-Control": "public, max-age=3600",
-            },
-        },
     );
 };

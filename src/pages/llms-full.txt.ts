@@ -14,6 +14,7 @@ import {
 } from "@lib/markdown-view";
 import { publishedDocs } from "@lib/content-query";
 import { SITE_IDENTITY } from "@lib/agent-surface";
+import { markdownResponse } from "@lib/agent-http";
 
 export const GET: APIRoute = async ({ site }) => {
     const origin = siteOrigin(site);
@@ -32,7 +33,5 @@ export const GET: APIRoute = async ({ site }) => {
 Every published entry, newest first. Each entry's front matter carries its canonical \`html:\` URL; the per-entry markdown twin lives at that URL plus \`.md\`. The site map is at /llms.txt; short posts live separately at /feed.md.
 `;
 
-    return new Response([header, ...rendered].join("\n"), {
-        headers: { "Content-Type": "text/markdown; charset=utf-8" },
-    });
+    return markdownResponse([header, ...rendered].join("\n"));
 };

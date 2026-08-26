@@ -6,14 +6,9 @@
 // parent so each context can tune density (compact on /now, roomier
 // on /feed/index).
 
+import FeedMedia from "@components/FeedMedia.astro";
 import { fmtDate } from "@lib/format";
-import { tilePreset } from "@lib/images";
-import {
-    blobURL,
-    type FeedEntryData,
-    type ResolvedMedia,
-} from "@lib/farfield-loader";
-import { wsrvUrl, wsrvSrcSet } from "@lib/farfield";
+import type { FeedEntryData, ResolvedMedia } from "@lib/farfield-loader";
 import { proseHtml } from "@lib/markdown-text";
 
 interface Props {
@@ -29,9 +24,6 @@ const { item, media } = Astro.props;
 // gallery already shows the media. Same treatment on every surface so
 // the card and the /feed/<rkey> detail view read identically.
 const noteHtml = proseHtml(item.body);
-const preset = tilePreset(media.length > 1);
-const fallbackW =
-    preset.widths[Math.floor(preset.widths.length / 2)] ?? 720;
 ---
 
 <li class="feed-item">
@@ -48,67 +40,5 @@ const fallbackW =
         <span aria-hidden="true">→</span>
     </a>
     {noteHtml && <div class="feed-note" set:html={noteHtml} />}
-    {media.length > 0 && (
-        <div
-            class:list={[
-                "feed-media",
-                { "feed-media--gallery": media.length > 1 },
-            ]}
-        >
-            {media.map((m) => {
-                const src = blobURL(m.cid);
-                const mime = m.meta?.mime ?? "";
-                // Video/audio play straight from the blob service (wsrv
-                // is image-only; blobs serves ranged 206s). The --video /
-                // --audio modifiers also lift the tile above the card's
-                // stretched permalink so the controls stay clickable.
-                if (mime.startsWith("video/")) {
-                    return (
-                        <figure class="feed-tile feed-tile--video">
-                            <video
-                                controls
-                                preload="metadata"
-                                playsinline
-                                src={src}
-                                aria-label={m.alt || undefined}
-                            />
-                        </figure>
-                    );
-                }
-                if (mime.startsWith("audio/")) {
-                    return (
-                        <figure class="feed-tile feed-tile--audio">
-                            <audio
-                                controls
-                                preload="metadata"
-                                src={src}
-                                aria-label={m.alt || undefined}
-                            />
-                        </figure>
-                    );
-                }
-                return (
-                    <figure
-                        class="feed-tile"
-                        style={
-                            m.meta?.dominantColor
-                                ? `background:${m.meta.dominantColor}`
-                                : undefined
-                        }
-                    >
-                        <img
-                            src={wsrvUrl(src, fallbackW)}
-                            srcset={wsrvSrcSet(src, preset.widths)}
-                            sizes={preset.sizes}
-                            width={m.meta?.width ?? 960}
-                            height={m.meta?.height ?? 720}
-                            alt={m.alt ?? ""}
-                            loading="lazy"
-                            decoding="async"
-                        />
-                    </figure>
-                );
-            })}
-        </div>
-    )}
+    <FeedMedia media={media} loading="lazy" />
 </li>

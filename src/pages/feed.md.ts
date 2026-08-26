@@ -9,6 +9,7 @@ import { setResponseCacheHeaders } from "@lib/cache";
 import { siteOrigin, headFromGet } from "@lib/http";
 import { feedIndexMarkdown } from "@lib/markdown-view";
 import { entriesOf, type FeedEntryData } from "@lib/farfield-loader";
+import { markdownResponse } from "@lib/agent-http";
 
 export const GET: APIRoute = async (context) => {
     const { entries, error, cacheHint } =
@@ -21,9 +22,9 @@ export const GET: APIRoute = async (context) => {
 
     const origin = siteOrigin(context.site);
 
-    const response = new Response(feedIndexMarkdown(items, origin), {
-        headers: { "Content-Type": "text/markdown; charset=utf-8" },
-    });
+    // setResponseCacheHeaders overrides the default Cache-Control with
+    // the collection's cacheHint.
+    const response = markdownResponse(feedIndexMarkdown(items, origin));
     setResponseCacheHeaders(response, cacheHint);
     return response;
 };

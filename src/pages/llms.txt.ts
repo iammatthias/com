@@ -14,6 +14,7 @@ import type { PublicationData } from "@lib/farfield-loader";
 import { publishedDocs } from "@lib/content-query";
 import { SITE_IDENTITY } from "@lib/agent-surface";
 import { siteOrigin } from "@lib/http";
+import { markdownResponse } from "@lib/agent-http";
 
 export const GET: APIRoute = async ({ site }) => {
     const origin = siteOrigin(site);
@@ -63,7 +64,5 @@ ${sections.join("\n\n")}
 - [Sitemap](${origin}/sitemap.xml)
 `;
 
-    return new Response(body, {
-        headers: { "Content-Type": "text/markdown; charset=utf-8" },
-    });
+    return markdownResponse(body);
 };

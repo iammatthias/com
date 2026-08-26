@@ -5,12 +5,7 @@ export const prerender = true;
 
 import type { APIRoute } from "astro";
 import { pricingMarkdown } from "@lib/agent-markdown";
+import { markdownResponse } from "@lib/agent-http";
 
 export const GET: APIRoute = () =>
-    new Response(pricingMarkdown(), {
-        headers: {
-            "Content-Type": "text/markdown; charset=utf-8",
-            "Cache-Control": "public, max-age=3600",
-            Vary: "Accept",
-        },
-    });
+    markdownResponse(pricingMarkdown());

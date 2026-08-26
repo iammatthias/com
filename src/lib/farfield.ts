@@ -620,11 +620,15 @@ export interface BodyEmbed {
  * character class. Consumed by lib/markdown-text.ts, the one source of
  * truth for strip/plain-text passes.
  */
-export const EMBED_PATTERN_SOURCE =
-    "!\\[[^\\]]*\\]\\((?:blob|series)://[a-z0-9-]+\\)";
-
 const FULL_EMBED_RE =
     /!\[([^\]]*)\]\((blob|series):\/\/([a-z0-9-]+)\)/g;
+
+// Derived, not hand-mirrored: the strip pass replaces with "" so the
+// capture groups are harmless there.
+export const EMBED_PATTERN_SOURCE = FULL_EMBED_RE.source;
+
+/** The scheme+cid core, for composing blob-only regexes (doc-render). */
+export const BLOB_ID_SOURCE = "blob:\\/\\/([a-z0-9-]+)";
 
 /**
  * Fresh capturing embed regex (alt, scheme, id) for consumers that

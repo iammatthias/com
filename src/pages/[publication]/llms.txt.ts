@@ -9,6 +9,7 @@ import { getCollection } from "astro:content";
 import type { DocumentData, PublicationData } from "@lib/farfield-loader";
 import { SITE_ORIGIN } from "@lib/agent-surface";
 import { publishedDocs } from "@lib/content-query";
+import { markdownResponse } from "@lib/agent-http";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const pubs = (await getCollection("pubs")).map(
@@ -49,11 +50,5 @@ ${items
 - Whole corpus in one file: ${SITE_ORIGIN}/llms-full.txt
 - Search and MCP: ${SITE_ORIGIN}/developers.md
 `;
-    return new Response(body, {
-        headers: {
-            "Content-Type": "text/markdown; charset=utf-8",
-            "Cache-Control": "public, max-age=300",
-            Vary: "Accept",
-        },
-    });
+    return markdownResponse(body, 300);
 };

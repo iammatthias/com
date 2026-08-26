@@ -15,6 +15,7 @@ import {
 import type { DocumentData } from "@lib/farfield-loader";
 import { relatedDocs } from "@lib/content-query";
 import { SITE_ORIGIN } from "@lib/agent-surface";
+import { markdownResponse } from "@lib/agent-http";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const docs = (await getCollection("docs")).map(
@@ -48,7 +49,5 @@ export const GET: APIRoute = async ({ props }) => {
     }>;
     const origin = SITE_ORIGIN;
     const bodyMd = await resolveEmbedsForMarkdown(doc.body);
-    return new Response(composeDocumentMarkdown(doc, bodyMd, origin, related), {
-        headers: { "Content-Type": "text/markdown; charset=utf-8" },
-    });
+    return markdownResponse(composeDocumentMarkdown(doc, bodyMd, origin, related));
 };
