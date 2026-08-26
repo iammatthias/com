@@ -6,6 +6,12 @@ import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
+    // Dev/preview host allowlist — anything else 403s. The tailnet
+    // name is how a preview gets eyeballed from another machine:
+    //   tailscale serve --bg localhost:4399
+    server: {
+        allowedHosts: ["mattbook.tailcf0ef1.ts.net", ".tailcf0ef1.ts.net"],
+    },
     site: "https://iammatthias.com",
     // Prerendered pages emit `resume.html` instead of `resume/index.html`,
     // so Cloudflare's asset layer serves `/resume` directly instead of
