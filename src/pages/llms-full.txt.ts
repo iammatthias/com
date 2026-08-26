@@ -13,6 +13,7 @@ import {
     resolveEmbedsForMarkdown,
 } from "@lib/markdown-view";
 import { publishedDocs } from "@lib/content-query";
+import { SITE_IDENTITY } from "@lib/agent-surface";
 
 export const GET: APIRoute = async ({ site }) => {
     const origin = (site?.toString() ?? "https://iammatthias.com").replace(
@@ -29,7 +30,7 @@ export const GET: APIRoute = async ({ site }) => {
 
     const header = `# iammatthias — full content
 
-> Matthias Jordan's cozy corner of the web. Photographs, projects, recipes, and notes, open and personal.
+> ${SITE_IDENTITY.tagline}
 
 Every published entry, newest first. Each entry's front matter carries its canonical \`html:\` URL; the per-entry markdown twin lives at that URL plus \`.md\`. The site map is at /llms.txt; short posts live separately at /feed.md.
 `;

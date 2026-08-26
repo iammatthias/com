@@ -11,24 +11,14 @@ export const prerender = true;
 
 import type { APIRoute } from "astro";
 import { headFromGet } from "@lib/http";
+import {
+    AGENT_CRAWLERS,
+    CONTENT_SIGNAL,
+    SEARCH_ONLY_CRAWLERS,
+} from "@lib/agent-surface";
 
 /** Answer-engine and agent crawlers — explicitly welcome. */
-const ALLOWED = [
-    "GPTBot",
-    "OAI-SearchBot",
-    "ChatGPT-User",
-    "ClaudeBot",
-    "Claude-User",
-    "Claude-SearchBot",
-    "PerplexityBot",
-    "Perplexity-User",
-    "Google-Extended",
-    "Applebot-Extended",
-    "DeepSeekBot",
-    "ora-agent",
-    "Bingbot",
-    "DuckAssistBot",
-];
+const ALLOWED = [...AGENT_CRAWLERS, ...SEARCH_ONLY_CRAWLERS];
 
 /** Bulk training-corpus scrapers — declined. */
 const DISALLOWED = ["CCBot", "ByteSpider", "Bytespider", "Omgilibot", "Diffbot"];
@@ -48,7 +38,7 @@ export const GET: APIRoute = ({ site }) => {
         "",
         "# Content-Signal: search and AI answers welcome (they cite and send readers);",
         "# bulk training on the photography archive is not.",
-        "Content-Signal: search=yes, ai-input=yes, ai-train=no",
+        `Content-Signal: ${CONTENT_SIGNAL}`,
         "",
         ...ALLOWED.flatMap((ua) => [`User-agent: ${ua}`, "Allow: /", ""]),
         "# Training-only crawlers.",

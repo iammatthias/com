@@ -18,6 +18,7 @@ import { defineMiddleware } from "astro:middleware";
 import { publicationSlugSet } from "@lib/farfield-loader";
 import { homepageMarkdown } from "@lib/agent-markdown";
 import { notFoundMarkdown } from "@lib/agent-markdown";
+import { AGENT_CRAWLERS } from "@lib/agent-surface";
 
 /**
  * Content-Security-Policy — keep in sync with the copy in
@@ -137,8 +138,7 @@ async function markdownTwin(pathname: string): Promise<string | null> {
 
 /** AI crawlers and agent runtimes, by user agent. Used to decide who
  *  gets a markdown representation when they did not ask for one. */
-const AGENT_UA =
-    /(GPTBot|OAI-SearchBot|ChatGPT-User|ClaudeBot|Claude-User|Claude-SearchBot|PerplexityBot|Perplexity-User|Google-Extended|Applebot-Extended|DeepSeekBot|ora-agent|DuckAssistBot)/i;
+const AGENT_UA = new RegExp(`(${AGENT_CRAWLERS.join("|")})`, "i");
 
 function wantsMarkdown(request: Request): boolean {
     return (

@@ -4,6 +4,7 @@
 // agent-surface.ts so URLs can't go stale.
 
 import {
+    EXAMPLE_DOC_PATH,
     AGENT_RESOURCES,
     AGENT_SKILLS,
     API_OPERATIONS,
@@ -99,7 +100,7 @@ path does not exist and never did.
 
 - Content lives under a section: \`/posts/<slug>\`, \`/art/<slug>\`, \`/recipes/<slug>\`
 - Append \`.md\` to any content URL for its markdown twin
-- Slugs are timestamped, e.g. \`/posts/1779066375000-farfield\` — get exact paths from the site index above
+- Slugs are timestamped, e.g. \`/${EXAMPLE_DOC_PATH}\` — get exact paths from the site index above
 `;
 }
 
@@ -202,7 +203,7 @@ curl "${SITE_ORIGIN}/api/search.json?q=cloudflare+workers"
 curl "${SITE_ORIGIN}/api/content.json?section=recipes"
 
 # Read one document as markdown
-curl "${SITE_ORIGIN}/posts/1779066375000-farfield.md"
+curl "${SITE_ORIGIN}/${EXAMPLE_DOC_PATH}.md"
 
 # The whole corpus in a single request
 curl "${SITE_ORIGIN}/llms-full.txt"

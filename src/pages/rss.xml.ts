@@ -10,6 +10,7 @@ import type { APIRoute } from "astro";
 import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
 import { mapWithConcurrency } from "@lib/http";
 import { publishedDocs } from "@lib/content-query";
+import { SITE_IDENTITY } from "@lib/agent-surface";
 
 export const GET: APIRoute = async ({ site }) => {
     const items = (await publishedDocs()).slice(0, RSS_ITEM_CAP);
@@ -22,7 +23,7 @@ export const GET: APIRoute = async ({ site }) => {
     return rss({
         title: "iammatthias",
         description:
-            "Matthias Jordan's cozy corner of the web. Photographs, projects, recipes, and notes, open and personal.",
+            SITE_IDENTITY.tagline,
         site: site?.toString() ?? "https://iammatthias.com",
         // Full body with embeds resolved to absolute image URLs — posts
         // read complete (text AND images) inside feed readers instead of

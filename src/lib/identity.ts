@@ -8,6 +8,8 @@
 // for notability, which is not something a personal site can or should
 // manufacture.
 
+import { SITE_IDENTITY } from "./agent-surface";
+
 export interface SocialLink {
     name: string;
     url: string;
@@ -17,7 +19,7 @@ export interface SocialLink {
 }
 
 export const AUTHOR = {
-    name: "Matthias Jordan",
+    name: SITE_IDENTITY.owner,
     /** The handle everything else hangs off. */
     alternateName: "iammatthias",
     description:

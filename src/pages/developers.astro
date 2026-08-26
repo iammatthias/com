@@ -5,7 +5,7 @@
 export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
-import { API_OPERATIONS, AGENT_SKILLS, AGENT_RESOURCES, SITE_ORIGIN } from "@lib/agent-surface";
+import { CONTENT_SIGNAL, EXAMPLE_DOC_PATH, API_OPERATIONS, AGENT_SKILLS, AGENT_RESOURCES, SITE_ORIGIN } from "@lib/agent-surface";
 import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = { group: "other", label: "developers", order: 3 };
@@ -31,7 +31,7 @@ const faq = [
     },
     {
         question: "Can I use content from iammatthias.com for AI training?",
-        answer: "No. The site's Content-Signal policy is search=yes, ai-input=yes, ai-train=no. Quoting with attribution and a link to the canonical URL is welcome.",
+        answer: `No. The site's Content-Signal policy is ${CONTENT_SIGNAL}. Quoting with attribution and a link to the canonical URL is welcome.`,
     },
 ];
 ---
@@ -61,7 +61,7 @@ curl "${SITE_ORIGIN}/api/search.json?q=cloudflare+workers"
 curl "${SITE_ORIGIN}/api/content.json?section=recipes"
 
 # Read a document as markdown
-curl "${SITE_ORIGIN}/posts/1779066375000-farfield.md"
+curl "${SITE_ORIGIN}/${EXAMPLE_DOC_PATH}.md"
 
 # The whole corpus in one request
 curl "${SITE_ORIGIN}/llms-full.txt"`}</code></pre>

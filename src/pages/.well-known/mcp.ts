@@ -10,7 +10,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { AGENT_SKILLS, SITE_IDENTITY, SITE_ORIGIN } from "@lib/agent-surface";
+import { mcpServerCard, SITE_ORIGIN } from "@lib/agent-surface";
 import { POST as mcpPost, OPTIONS as mcpOptions } from "../mcp";
 
 // The same JSON-RPC handler as /mcp, mounted here too. Two reasons:
@@ -38,21 +38,10 @@ export const GET: APIRoute = ({ request }) => {
     return new Response(
         JSON.stringify(
             {
-                name: SITE_IDENTITY.name,
-                description: SITE_IDENTITY.summary,
-                version: "1.0.0",
-                serverUrl: `${SITE_ORIGIN}/.well-known/mcp`,
+                ...mcpServerCard(`${SITE_ORIGIN}/.well-known/mcp`),
                 url: `${SITE_ORIGIN}/.well-known/mcp`,
                 alternativeUrls: [`${SITE_ORIGIN}/mcp`],
-                transport: "streamable-http",
-                protocolVersion: "2025-06-18",
-                authentication: { type: "none" },
                 serverCard: `${SITE_ORIGIN}/.well-known/mcp/server-card.json`,
-                tools: AGENT_SKILLS.map((s) => ({
-                    name: s.name,
-                    title: s.title,
-                    description: s.description,
-                })),
             },
             null,
             2,

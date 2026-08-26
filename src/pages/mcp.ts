@@ -21,15 +21,20 @@ import {
 } from "@lib/agent-data";
 import { resolveEmbedsForMarkdown } from "@lib/markdown-view";
 import { composeDocumentMarkdown } from "@lib/markdown-view";
-import { AGENT_SKILLS, SECTION_SLUGS, SITE_IDENTITY, SITE_ORIGIN } from "@lib/agent-surface";
+import {
+    AGENT_SKILLS,
+    EXAMPLE_DOC_PATH,
+    MCP_PROTOCOL_VERSION,
+    SECTION_SLUGS,
+    SITE_IDENTITY,
+    SITE_ORIGIN,
+} from "@lib/agent-surface";
 import {
     homepageMarkdown,
     developersMarkdown,
     authMarkdown,
     pricingMarkdown,
 } from "@lib/agent-markdown";
-
-const PROTOCOL_VERSION = "2025-06-18";
 
 /**
  * Resources an agent can read without calling a tool — the same
@@ -124,8 +129,7 @@ const TOOLS = [
             properties: {
                 path: {
                     type: "string",
-                    description:
-                        "Document path or slug, e.g. 'posts/1779066375000-farfield' or a full URL.",
+                    description: `Document path or slug, e.g. '${EXAMPLE_DOC_PATH}' or a full URL.`,
                 },
             },
             required: ["path"],
@@ -264,7 +268,7 @@ async function callTool(name: string, args: Record<string, unknown>) {
  *  a session header without duplicating the payload. */
 function initializeResult() {
     return {
-        protocolVersion: PROTOCOL_VERSION,
+        protocolVersion: MCP_PROTOCOL_VERSION,
         capabilities: {
             tools: { listChanged: false },
             resources: { listChanged: false, subscribe: false },
@@ -302,7 +306,7 @@ export const GET: APIRoute = ({ request }) => {
     return json({
         name: SITE_IDENTITY.name,
         description: SITE_IDENTITY.summary,
-        protocolVersion: PROTOCOL_VERSION,
+        protocolVersion: MCP_PROTOCOL_VERSION,
         transport: "streamable-http",
         serverUrl: `${SITE_ORIGIN}/mcp`,
         authentication: "none",

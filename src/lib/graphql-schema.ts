@@ -34,7 +34,7 @@ import {
     type ContentItem,
 } from "./agent-data";
 import { resolveEmbedsForMarkdown } from "./markdown-view";
-import { SITE_ORIGIN } from "./agent-surface";
+import { SITE_ORIGIN, SECTION_SLUGS, EXAMPLE_DOC_PATH } from "./agent-surface";
 
 /** Cursors are opaque by contract; base64 of the offset in practice. */
 const encodeCursor = (i: number) => btoa(`offset:${i}`);
@@ -50,13 +50,10 @@ const decodeCursor = (c: string): number => {
 const SectionSlug = new GraphQLEnumType({
     name: "SectionSlug",
     description: "A publication on the site.",
-    values: {
-        art: { value: "art" },
-        posts: { value: "posts" },
-        recipes: { value: "recipes" },
-        melange: { value: "melange" },
-        open_source: { value: "open-source" },
-    },
+    // GraphQL names cannot carry dashes, so open-source -> open_source.
+    values: Object.fromEntries(
+        SECTION_SLUGS.map((s) => [s.replace(/-/g, "_"), { value: s }]),
+    ),
 });
 
 const Section = new GraphQLObjectType({
@@ -279,8 +276,7 @@ export const schema = new GraphQLSchema({
                 args: {
                     path: {
                         type: new GraphQLNonNull(GraphQLString),
-                        description:
-                            "Path or slug, e.g. 'posts/1779066375000-farfield'.",
+                        description: `Path or slug, e.g. '${EXAMPLE_DOC_PATH}'.`,
                     },
                 },
                 resolve: async (_r, { path }) => {

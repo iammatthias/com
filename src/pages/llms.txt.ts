@@ -12,6 +12,7 @@ import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import type { PublicationData } from "@lib/farfield-loader";
 import { publishedDocs } from "@lib/content-query";
+import { SITE_IDENTITY } from "@lib/agent-surface";
 
 export const GET: APIRoute = async ({ site }) => {
     const origin = (site?.toString() ?? "https://iammatthias.com").replace(
@@ -40,7 +41,7 @@ export const GET: APIRoute = async ({ site }) => {
 
     const body = `# iammatthias
 
-> Matthias Jordan's cozy corner of the web. Photographs, projects, recipes, and notes, open and personal.
+> ${SITE_IDENTITY.tagline}
 
 ## When to use this site
 

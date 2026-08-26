@@ -8,6 +8,7 @@ import Breadcrumbs, {
 } from "@components/Breadcrumbs.astro";
 import { isPreview } from "@lib/preview";
 import { Font } from "astro:assets";
+import { SITE_IDENTITY } from "@lib/agent-surface";
 
 interface Props {
     /** Page-specific title. Site name is appended automatically. */
@@ -65,8 +66,7 @@ interface Props {
 
 const SITE_NAME = "iammatthias";
 const SITE_URL = "https://iammatthias.com";
-const DEFAULT_DESCRIPTION =
-    "Matthias Jordan's cozy corner of the web. Photographs, projects, recipes, and notes, open and personal.";
+const DEFAULT_DESCRIPTION = SITE_IDENTITY.tagline;
 
 const {
     title,

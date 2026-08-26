@@ -17,10 +17,59 @@ export const SITE_IDENTITY = {
     title: "iammatthias",
     owner: "Matthias Jordan",
     email: "hey@iammatthias.com",
+    /** The human-facing one-liner (site chrome, RSS, llms.txt). */
+    tagline:
+        "Matthias Jordan's cozy corner of the web. Photographs, projects, recipes, and notes, open and personal.",
     summary:
         "A personal site: photography, generative art, essays on building software, and tested recipes. Content is public, free, and served as both HTML and markdown.",
     repo: "https://github.com/iammatthias/com",
 } as const;
+
+/** Publication slugs — scoped llms.txt files, filters, descriptions. */
+export const SECTION_SLUGS = [
+    "art",
+    "posts",
+    "recipes",
+    "melange",
+    "open-source",
+] as const;
+
+/** A real, published document used as the example in every surface
+ *  that needs one (quickstarts, tool descriptions, GraphQL docs).
+ *  One constant so an unpublish/re-slug breaks one place, not six. */
+export const EXAMPLE_DOC_PATH = "posts/1779066375000-farfield";
+
+/** The robots.txt Content-Signal policy, also quoted on /developers. */
+export const CONTENT_SIGNAL = "search=yes, ai-input=yes, ai-train=no";
+
+/**
+ * Answer-engine and agent crawlers, by User-Agent token. Two
+ * consumers: robots.txt welcomes them explicitly, and the middleware
+ * serves them markdown when they did not ask for a representation.
+ */
+export const AGENT_CRAWLERS = [
+    "GPTBot",
+    "OAI-SearchBot",
+    "ChatGPT-User",
+    "ClaudeBot",
+    "Claude-User",
+    "Claude-SearchBot",
+    "PerplexityBot",
+    "Perplexity-User",
+    "Google-Extended",
+    "Applebot-Extended",
+    "DeepSeekBot",
+    "ora-agent",
+    "DuckAssistBot",
+] as const;
+
+/** Welcome in robots.txt but deliberately NOT served markdown — a
+ *  classic search indexer whose results page links humans to HTML. */
+export const SEARCH_ONLY_CRAWLERS = ["Bingbot"] as const;
+
+/** MCP protocol revision the transport negotiates and the discovery
+ *  documents advertise. */
+export const MCP_PROTOCOL_VERSION = "2025-06-18";
 
 /** Public HTTP endpoints, mirrored into /openapi.json. */
 export interface ApiOperation {
@@ -69,8 +118,7 @@ export const API_OPERATIONS: ApiOperation[] = [
                 in: "query",
                 required: false,
                 schema: { type: "string" },
-                description:
-                    "Restrict to one publication slug (art, posts, recipes, melange, open-source).",
+                description: `Restrict to one publication slug (${SECTION_SLUGS.join(", ")}).`,
             },
             {
                 name: "tag",
@@ -137,8 +185,7 @@ export const AGENT_SKILLS: AgentSkill[] = [
     {
         name: "list_sections",
         title: "List sections",
-        description:
-            "List the site's publications (art, posts, recipes, melange, open-source) with descriptions and entry counts.",
+        description: `List the site's publications (${SECTION_SLUGS.join(", ")}) with descriptions and entry counts.`,
     },
     {
         name: "list_recent",
@@ -147,6 +194,31 @@ export const AGENT_SKILLS: AgentSkill[] = [
             "List the most recently published documents, newest first, optionally filtered to one section.",
     },
 ];
+
+/**
+ * The MCP server card. One builder for every document that describes
+ * the server (/.well-known/mcp, its server-card.json) — hand-kept
+ * copies had already drifted apart.
+ */
+export function mcpServerCard(serverUrl: string) {
+    return {
+        name: SITE_IDENTITY.name,
+        title: `${SITE_IDENTITY.title} content`,
+        description: SITE_IDENTITY.summary,
+        version: "1.0.0",
+        serverUrl,
+        transport: "streamable-http",
+        protocolVersion: MCP_PROTOCOL_VERSION,
+        authentication: { type: "none" },
+        provider: { name: SITE_IDENTITY.owner, url: SITE_ORIGIN },
+        documentationUrl: `${SITE_ORIGIN}/developers`,
+        tools: AGENT_SKILLS.map((skill) => ({
+            name: skill.name,
+            title: skill.title,
+            description: skill.description,
+        })),
+    };
+}
 
 // Only list resources that exist and answer. An entry pointing at a
 // 404 teaches an agent the whole catalog is unreliable — scripts/
@@ -226,13 +298,4 @@ export const AGENT_RESOURCES = [
         url: `${SITE_ORIGIN}/rss.xml`,
         mediaType: "application/rss+xml",
     },
-] as const;
-
-/** Publication slugs that get their own scoped llms.txt. */
-export const SECTION_SLUGS = [
-    "art",
-    "posts",
-    "recipes",
-    "melange",
-    "open-source",
 ] as const;
