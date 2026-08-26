@@ -9,7 +9,6 @@
  * `command === 'dev'`, so it never ships in the production build.
  * Visit /internal/azulejo/<seed> (any 32-bit integer) during dev.
  */
-import AzulejoTile from "@components/AzulejoTile";
 
 export const prerender = false; // SSR — we generate any seed on demand
 
@@ -62,8 +61,14 @@ const safeSeed = Number.isFinite(seed) ? seed : Date.now();
         </style>
     </head>
     <body>
-        <div id="tile">
-            <AzulejoTile client:only="react" seed={safeSeed} size={256} />
-        </div>
+        <div id="tile" data-seed={safeSeed}></div>
+        <script>
+            import { mountAzulejoTile } from "@src/scripts/azulejo-tile";
+            const el = document.getElementById("tile")!;
+            mountAzulejoTile(el, {
+                seed: Number(el.dataset.seed),
+                size: 256,
+            });
+        </script>
     </body>
 </html>

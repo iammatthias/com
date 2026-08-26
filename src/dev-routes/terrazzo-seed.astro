@@ -9,7 +9,6 @@
  * DEV ONLY — injected at /internal/terrazzo/[seed] by astro.config
  * only when `command === 'dev'`, same as the azulejo route.
  */
-import TerrazzoBanner from "@components/TerrazzoBanner";
 
 export const prerender = false;
 
@@ -48,8 +47,10 @@ const safeSeed = Number.isFinite(seed) ? seed : 1;
         </style>
     </head>
     <body>
-        <div id="banner">
-            <TerrazzoBanner client:only="react" seed={safeSeed} />
-        </div>
+        <div id="banner" data-terrazzo data-seed={safeSeed}></div>
+        <script>
+            import { mountTerrazzoBanners } from "@src/scripts/terrazzo";
+            mountTerrazzoBanners();
+        </script>
     </body>
 </html>

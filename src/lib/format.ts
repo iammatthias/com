@@ -34,8 +34,9 @@ export function fmtDateLong(iso: string): string {
 /**
  * FNV-1a 32-bit hash — deterministic, fast, dependency-free. Converts
  * any string (typically an at:// URI) into an unsigned integer seed
- * suitable for the mulberry32 PRNG used by the generative tile
- * components (AzulejoTile, TerrazzoBanner). Same input → same output,
+ * suitable for the mulberry32 PRNG used by the generative renderers
+ * (scripts/azulejo-tile.ts, scripts/terrazzo.ts). Same input → same
+ * output,
  * forever — so each record carries a stable, unique-looking decoration.
  */
 export function hashSeed(s: string): number {

@@ -4,8 +4,10 @@
 // block. Used by /[publication]/[slug] (entries) and /feed/[rkey]
 // (posts). The fields list is supplied by the caller so each surface
 // can label the row appropriately (rkey vs id, etc).
-
-import TerrazzoBanner from "./TerrazzoBanner";
+//
+// The banner is live generative art painted by the dependency-free
+// Canvas2D renderer in src/scripts/terrazzo.ts — same deterministic
+// generation the React + three island ran, none of the scaffolding.
 
 export interface ColophonField {
     label: string;
@@ -28,9 +30,7 @@ const { seed, fields } = Astro.props;
 ---
 
 <footer class="colophon">
-    <div class="colophon-banner">
-        <TerrazzoBanner client:visible seed={seed} />
-    </div>
+    <div class="colophon-banner" data-terrazzo data-seed={seed}></div>
     <dl class="colophon-meta">
         {fields.map((f) => (
             <div>
@@ -48,6 +48,11 @@ const { seed, fields } = Astro.props;
         ))}
     </dl>
 </footer>
+
+<script>
+    import { mountTerrazzoBanners } from "@src/scripts/terrazzo";
+    mountTerrazzoBanners();
+</script>
 
 <style>
     .colophon {

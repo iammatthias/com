@@ -162,14 +162,9 @@ export default defineConfig({
             // Without this, Vite's dev server can hand different modules
             // each their own copy of react, which trips "Invalid hook
             // call" and "Cannot read properties of null (reading
-            // 'useRef')" inside React-island components.
-            //
-            // `three` is here for the same reason: it holds internal
-            // singletons (WebGLState, the global Object3D registry).
-            // If HMR ever surfaces two copies, AzulejoTile and
-            // TerrazzoBanner stop sharing those caches and components
-            // lose state in confusing ways across edits.
-            dedupe: ["react", "react-dom", "three"],
+            // 'useRef')" inside React-island components
+            // (OnchainAnalytics is the one island left).
+            dedupe: ["react", "react-dom"],
         },
         // The search worker (src/scripts/search-worker.ts) imports the
         // ternlight WASM module, whose bundler glue uses top-level await.
@@ -260,8 +255,8 @@ export default defineConfig({
                     "./src/pages/index.astro",
                 ],
                 clientFiles: [
-                    "./src/components/TerrazzoBanner/index.tsx",
-                    "./src/components/AzulejoTile/index.tsx",
+                    "./src/scripts/terrazzo.ts",
+                    "./src/scripts/azulejo-tile.ts",
                 ],
             },
         },
