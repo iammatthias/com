@@ -6,6 +6,7 @@
 
 import { getCollection } from "astro:content";
 import type { DocumentData, PublicationData } from "./farfield-loader";
+import { publishedDocs } from "./content-query";
 
 export interface ContentIndexData {
     items: DocumentData[];
@@ -13,10 +14,7 @@ export interface ContentIndexData {
 }
 
 export async function loadContentIndex(): Promise<ContentIndexData> {
-    const items = (await getCollection("docs"))
-        .map((e) => e.data as DocumentData)
-        .filter((d) => d.published !== false)
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    const items = await publishedDocs();
     const pubs = (await getCollection("pubs")).map(
         (e) => e.data as PublicationData,
     );

@@ -15,19 +15,16 @@ import Pagination from "@components/Pagination.astro";
 import { getCollection } from "astro:content";
 import { getPage, PAGE_SIZE } from "@lib/pagination";
 import type { DocumentData, PublicationData } from "@lib/farfield-loader";
+import { publishedDocs } from "@lib/content-query";
 
 export async function getStaticPaths() {
     const pubs = (await getCollection("pubs")).map(
         (e) => e.data as PublicationData,
     );
-    const docs = (await getCollection("docs")).map(
-        (e) => e.data as DocumentData,
-    );
+    const docs = await publishedDocs();
     const paths = [];
     for (const pub of pubs) {
-        const items = docs
-            .filter((d) => d.collection === pub.slug && d.published !== false)
-            .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+        const items = docs.filter((d) => d.collection === pub.slug);
         const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
         for (let page = 1; page <= totalPages; page++) {
             const slice = items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);

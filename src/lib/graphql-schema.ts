@@ -27,6 +27,7 @@ import {
 } from "graphql";
 import {
     getDocument,
+    getContentItem,
     listContent,
     listSections,
     searchContent,
@@ -283,13 +284,7 @@ export const schema = new GraphQLSchema({
                     },
                 },
                 resolve: async (_r, { path }) => {
-                    const items = await listContent({ limit: 1000 });
-                    const clean = String(path)
-                        .replace(/^https?:\/\/[^/]+/, "")
-                        .replace(/^\/|\.md$/g, "");
-                    const hit =
-                        items.find((i) => `${i.section}/${i.slug}` === clean) ??
-                        items.find((i) => i.slug === clean.split("/").pop());
+                    const hit = await getContentItem(String(path));
                     return (
                         hit ?? {
                             code: "NOT_FOUND",

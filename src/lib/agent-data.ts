@@ -135,3 +135,11 @@ export async function getDocument(
         docs.find((d) => d.rkey === slug)
     );
 }
+
+/** `getDocument` shaped as the public ContentItem (GraphQL, MCP). */
+export async function getContentItem(
+    ref: string,
+): Promise<ContentItem | undefined> {
+    const doc = await getDocument(ref);
+    return doc && toItem(doc);
+}

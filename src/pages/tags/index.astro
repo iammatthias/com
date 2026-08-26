@@ -3,22 +3,14 @@
 export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
-import type { DocumentData } from "@lib/farfield-loader";
 import type { MenuMeta } from "@lib/menu";
+import { documentsByTag } from "@lib/content-query";
 
 export const menu: MenuMeta = { group: "archive", order: 2 };
 
-const docs = (await getCollection("docs")).map(
-    (e) => e.data as DocumentData,
-);
-const counts = new Map<string, number>();
-for (const d of docs) {
-    if (d.published === false) continue;
-    for (const t of d.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
-}
-const tags = [...counts.entries()]
-    .map(([tag, count]) => ({ tag, count }))
+const byTag = await documentsByTag();
+const tags = [...byTag.entries()]
+    .map(([tag, list]) => ({ tag, count: list.length }))
     .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
 ---
 

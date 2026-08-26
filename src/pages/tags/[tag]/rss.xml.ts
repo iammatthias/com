@@ -5,22 +5,13 @@ export const prerender = true;
 
 import rss from "@astrojs/rss";
 import type { APIRoute, GetStaticPaths } from "astro";
-import { getCollection } from "astro:content";
 import type { DocumentData } from "@lib/farfield-loader";
 import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
 import { mapWithConcurrency } from "@lib/http";
+import { documentsByTag } from "@lib/content-query";
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const docs = (await getCollection("docs"))
-        .map((e) => e.data as DocumentData)
-        .filter((d) => d.published !== false)
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
-    const byTag = new Map<string, DocumentData[]>();
-    for (const d of docs) {
-        for (const t of d.tags) {
-            (byTag.get(t) ?? byTag.set(t, []).get(t)!).push(d);
-        }
-    }
+    const byTag = await documentsByTag();
     return [...byTag.entries()].map(([tag, items]) => {
         const capped = items.slice(0, RSS_ITEM_CAP);
         return {

@@ -7,17 +7,12 @@ export const prerender = true;
 
 import rss from "@astrojs/rss";
 import type { APIRoute } from "astro";
-import { getCollection } from "astro:content";
-import type { DocumentData } from "@lib/farfield-loader";
 import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
 import { mapWithConcurrency } from "@lib/http";
+import { publishedDocs } from "@lib/content-query";
 
 export const GET: APIRoute = async ({ site }) => {
-    const items = (await getCollection("docs"))
-        .map((e) => e.data as DocumentData)
-        .filter((d) => d.published !== false)
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-        .slice(0, RSS_ITEM_CAP);
+    const items = (await publishedDocs()).slice(0, RSS_ITEM_CAP);
 
     const origin = (site?.toString() ?? "https://iammatthias.com").replace(
         /\/$/,

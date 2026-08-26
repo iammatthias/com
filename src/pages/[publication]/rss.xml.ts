@@ -11,18 +11,16 @@ import { getCollection } from "astro:content";
 import type { DocumentData, PublicationData } from "@lib/farfield-loader";
 import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
 import { mapWithConcurrency } from "@lib/http";
+import { publishedDocs } from "@lib/content-query";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const pubs = (await getCollection("pubs")).map(
         (e) => e.data as PublicationData,
     );
-    const docs = (await getCollection("docs")).map(
-        (e) => e.data as DocumentData,
-    );
+    const docs = await publishedDocs();
     return pubs.map((pub) => {
         const items = docs
-            .filter((d) => d.collection === pub.slug && d.published !== false)
-            .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+            .filter((d) => d.collection === pub.slug)
             .slice(0, RSS_ITEM_CAP);
         return {
             params: { publication: pub.slug },

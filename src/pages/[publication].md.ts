@@ -8,18 +8,15 @@ import type { APIRoute, GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
 import { publicationIndexMarkdown } from "@lib/markdown-view";
 import type { DocumentData, PublicationData } from "@lib/farfield-loader";
+import { publishedDocs } from "@lib/content-query";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const pubs = (await getCollection("pubs")).map(
         (e) => e.data as PublicationData,
     );
-    const docs = (await getCollection("docs")).map(
-        (e) => e.data as DocumentData,
-    );
+    const docs = await publishedDocs();
     return pubs.map((pub) => {
-        const items = docs
-            .filter((d) => d.collection === pub.slug && d.published !== false)
-            .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+        const items = docs.filter((d) => d.collection === pub.slug);
         return {
             params: { publication: pub.slug },
             props: { pub, items },

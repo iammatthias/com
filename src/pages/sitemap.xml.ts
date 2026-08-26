@@ -18,6 +18,7 @@ import type {
     FeedEntryData,
     PublicationData,
 } from "@lib/farfield-loader";
+import { publishedDocs } from "@lib/content-query";
 
 interface SitemapEntry {
     /** Absolute URL. */
@@ -41,9 +42,7 @@ export const GET: APIRoute = async ({ site }) => {
         "",
     );
 
-    const docs = (await getCollection("docs"))
-        .map((e) => e.data as DocumentData)
-        .filter((d) => d.published !== false);
+    const docs = await publishedDocs();
     const pubs = (await getCollection("pubs")).map(
         (e) => e.data as PublicationData,
     );

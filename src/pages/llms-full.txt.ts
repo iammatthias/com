@@ -7,13 +7,12 @@
 export const prerender = true;
 
 import type { APIRoute } from "astro";
-import { getCollection } from "astro:content";
 import { mapWithConcurrency } from "@lib/http";
 import {
     composeDocumentMarkdown,
     resolveEmbedsForMarkdown,
 } from "@lib/markdown-view";
-import type { DocumentData } from "@lib/farfield-loader";
+import { publishedDocs } from "@lib/content-query";
 
 export const GET: APIRoute = async ({ site }) => {
     const origin = (site?.toString() ?? "https://iammatthias.com").replace(
@@ -21,10 +20,7 @@ export const GET: APIRoute = async ({ site }) => {
         "",
     );
 
-    const docs = (await getCollection("docs"))
-        .map((e) => e.data as DocumentData)
-        .filter((d) => d.published !== false)
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    const docs = await publishedDocs();
 
     const rendered = await mapWithConcurrency(docs, 8, async (doc) => {
         const bodyMd = await resolveEmbedsForMarkdown(doc.body);
