@@ -4,9 +4,9 @@
 // cache — lives in src/scripts/search-worker.ts and runs off-thread,
 // so warming the index never blocks the page.
 //
-// SiteMenu dynamic-imports this module (during page idle, or on first
-// focus of the search field, whichever comes first) and talks through
-// ensureIndex()/search(). The worker protocol is defined in the worker
+// SiteMenu dynamic-imports this module on first focus of the search
+// field (no idle prefetch — the engine is too heavy to hand every
+// visitor) and talks through ensureIndex()/search(). The worker protocol is defined in the worker
 // module; only its types are imported here, so nothing of the worker
 // leaks into the main bundle.
 

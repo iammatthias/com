@@ -109,26 +109,10 @@ import MenuLinks from "./MenuLinks.astro";
                 }
             };
 
-            // Prefetch during page idle: the worker compiles the model
-            // and embeds the corpus off the main thread, so search is
-            // already hot when the menu opens. The model chunk is a
-            // one-time immutable-cached download; skip the eager path
-            // for users who asked to save data.
-            const saveData =
-                "connection" in navigator &&
-                (navigator.connection as { saveData?: boolean }).saveData;
-            if (!saveData) {
-                const idle =
-                    window.requestIdleCallback ??
-                    ((fn: () => void) => window.setTimeout(fn, 2000));
-                idle(() => {
-                    load()
-                        .then((mod) => mod.ensureIndex())
-                        .catch(() => {
-                            /* focus-time warm will surface the error */
-                        });
-                });
-            }
+            // No idle prefetch: the engine is ~7 MB gz, and most visits
+            // never open search. First focus of the field warms it (the
+            // handler below), which costs one visible "warming up" beat
+            // for the people who actually search.
 
             const render = (hits: SearchResult[], query: string) => {
                 results.replaceChildren(
