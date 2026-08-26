@@ -1,6 +1,16 @@
 // Endpoint method helpers.
 
 import type { APIRoute } from "astro";
+import { SITE_ORIGIN } from "./agent-surface";
+
+/**
+ * Canonical origin, no trailing slash: the Astro `site` when the
+ * context provides one, else the production origin. One definition
+ * instead of a per-route regex (there were fourteen).
+ */
+export function siteOrigin(site: URL | string | undefined): string {
+    return (site?.toString() ?? SITE_ORIGIN).replace(/\/$/, "");
+}
 
 /**
  * Derive a HEAD handler from a GET handler. Astro 7 endpoints no

@@ -5,10 +5,9 @@
 // cids so unchanged pages skip on incremental builds.
 export const prerender = true;
 
-import { createHash } from "node:crypto";
 import ContentIndex from "@components/ContentIndex.astro";
 import { loadContentIndex } from "@lib/content-index";
-import { getPage, PAGE_SIZE } from "@lib/pagination";
+import { paginationCacheKey, getPage, PAGE_SIZE } from "@lib/pagination";
 import type { ContentIndexData } from "@lib/content-index";
 
 export async function getStaticPaths() {
@@ -26,11 +25,7 @@ export async function getStaticPaths() {
         paths.push({
             params: { page: String(page) },
             props: { data, page },
-            cacheKey: createHash("sha1")
-                .update(
-                    `${page}/${totalPages}:${slice.map((d) => d.cid).join(",")}`,
-                )
-                .digest("hex"),
+            cacheKey: paginationCacheKey(page, totalPages, slice.map((d) => d.cid)),
         });
     }
     return paths;

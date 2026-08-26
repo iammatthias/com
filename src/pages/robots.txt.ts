@@ -10,7 +10,7 @@
 export const prerender = true;
 
 import type { APIRoute } from "astro";
-import { headFromGet } from "@lib/http";
+import { siteOrigin, headFromGet } from "@lib/http";
 import {
     AGENT_CRAWLERS,
     CONTENT_SIGNAL,
@@ -24,10 +24,7 @@ const ALLOWED = [...AGENT_CRAWLERS, ...SEARCH_ONLY_CRAWLERS];
 const DISALLOWED = ["CCBot", "ByteSpider", "Bytespider", "Omgilibot", "Diffbot"];
 
 export const GET: APIRoute = ({ site }) => {
-    const origin = (site?.toString() ?? "https://iammatthias.com").replace(
-        /\/$/,
-        "",
-    );
+    const origin = siteOrigin(site);
 
     const body = [
         "# Everything published here is meant to be read, by people and agents alike.",

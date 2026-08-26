@@ -4,8 +4,8 @@ import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
 import { entriesOf, type FeedEntryData } from "@lib/farfield-loader";
 import { plainText } from "@lib/markdown-text";
-import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
-import { headFromGet, mapWithConcurrency } from "@lib/http";
+import { FEED_ENVELOPE, renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
+import { siteOrigin, headFromGet, mapWithConcurrency } from "@lib/http";
 
 export const prerender = false;
 
@@ -23,9 +23,7 @@ export const GET: APIRoute = async (context) => {
         RSS_ITEM_CAP,
     );
 
-    const origin = (
-        context.site?.toString() ?? "https://iammatthias.com"
-    ).replace(/\/$/, "");
+    const origin = siteOrigin(context.site);
 
     const response = await rss({
         title: "iammatthias — feed",
@@ -61,9 +59,7 @@ export const GET: APIRoute = async (context) => {
                 };
             },
         ),
-        xmlns: { media: "http://search.yahoo.com/mrss/" },
-        customData: "<language>en-us</language>",
-        stylesheet: "/rss.xml.xsl",
+        ...FEED_ENVELOPE,
     });
 
     setResponseCacheHeaders(response, collection.cacheHint);

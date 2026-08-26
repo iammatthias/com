@@ -4,11 +4,10 @@
 // for `/tags/<tag>/rss.xml`. cacheKey folds the member cids per page.
 export const prerender = true;
 
-import { createHash } from "node:crypto";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import FeedCard from "@components/FeedCard.astro";
 import Pagination from "@components/Pagination.astro";
-import { getPage, PAGE_SIZE } from "@lib/pagination";
+import { paginationCacheKey, getPage, PAGE_SIZE } from "@lib/pagination";
 import type { DocumentData } from "@lib/farfield-loader";
 import { documentsByTag } from "@lib/content-query";
 
@@ -25,11 +24,7 @@ export async function getStaticPaths() {
                     page: page === 1 ? undefined : `page/${page}`,
                 },
                 props: { tag, items, page },
-                cacheKey: createHash("sha1")
-                    .update(
-                        `${page}/${totalPages}:${slice.map((d) => d.cid).join(",")}`,
-                    )
-                    .digest("hex"),
+                cacheKey: paginationCacheKey(page, totalPages, slice.map((d) => d.cid)),
             });
         }
     }

@@ -14,6 +14,7 @@ import {
 } from "@lib/markdown-view";
 import type { DocumentData } from "@lib/farfield-loader";
 import { relatedDocs } from "@lib/content-query";
+import { SITE_ORIGIN } from "@lib/agent-surface";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const docs = (await getCollection("docs")).map(
@@ -45,7 +46,7 @@ export const GET: APIRoute = async ({ props }) => {
         href: string;
         description: string;
     }>;
-    const origin = "https://iammatthias.com";
+    const origin = SITE_ORIGIN;
     const bodyMd = await resolveEmbedsForMarkdown(doc.body);
     return new Response(composeDocumentMarkdown(doc, bodyMd, origin, related), {
         headers: { "Content-Type": "text/markdown; charset=utf-8" },

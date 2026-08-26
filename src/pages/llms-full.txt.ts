@@ -7,7 +7,7 @@
 export const prerender = true;
 
 import type { APIRoute } from "astro";
-import { mapWithConcurrency } from "@lib/http";
+import { siteOrigin, mapWithConcurrency } from "@lib/http";
 import {
     composeDocumentMarkdown,
     resolveEmbedsForMarkdown,
@@ -16,10 +16,7 @@ import { publishedDocs } from "@lib/content-query";
 import { SITE_IDENTITY } from "@lib/agent-surface";
 
 export const GET: APIRoute = async ({ site }) => {
-    const origin = (site?.toString() ?? "https://iammatthias.com").replace(
-        /\/$/,
-        "",
-    );
+    const origin = siteOrigin(site);
 
     const docs = await publishedDocs();
 

@@ -6,7 +6,7 @@ import type { APIRoute } from "astro";
 import { getLiveEntry } from "astro:content";
 import { LiveEntryNotFoundError } from "astro/content/runtime";
 import { setResponseCacheHeaders } from "@lib/cache";
-import { headFromGet } from "@lib/http";
+import { siteOrigin, headFromGet } from "@lib/http";
 import { cachedRender } from "@lib/render-cache";
 import {
     composeFeedEntryMarkdown,
@@ -32,9 +32,7 @@ export const GET: APIRoute = async (context) => {
     if (!entry) return new Response(null, { status: 404 });
     const item: FeedEntryData = entry.data;
 
-    const origin = (
-        context.site?.toString() ?? "https://iammatthias.com"
-    ).replace(/\/$/, "");
+    const origin = siteOrigin(context.site);
 
     const bodyMd = await cachedRender("feedmdbody", item.cid, () =>
         resolveEmbedsForMarkdown(item.body),

@@ -6,7 +6,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
-import { headFromGet } from "@lib/http";
+import { siteOrigin, headFromGet } from "@lib/http";
 import { feedIndexMarkdown } from "@lib/markdown-view";
 import { entriesOf, type FeedEntryData } from "@lib/farfield-loader";
 
@@ -19,9 +19,7 @@ export const GET: APIRoute = async (context) => {
     }
     const items = entriesOf<FeedEntryData>(entries);
 
-    const origin = (
-        context.site?.toString() ?? "https://iammatthias.com"
-    ).replace(/\/$/, "");
+    const origin = siteOrigin(context.site);
 
     const response = new Response(feedIndexMarkdown(items, origin), {
         headers: { "Content-Type": "text/markdown; charset=utf-8" },

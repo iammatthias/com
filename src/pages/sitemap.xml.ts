@@ -19,6 +19,7 @@ import type {
     PublicationData,
 } from "@lib/farfield-loader";
 import { publishedDocs } from "@lib/content-query";
+import { siteOrigin } from "@lib/http";
 
 interface SitemapEntry {
     /** Absolute URL. */
@@ -37,10 +38,7 @@ function xmlEscape(s: string): string {
 }
 
 export const GET: APIRoute = async ({ site }) => {
-    const origin = (site?.toString() ?? "https://iammatthias.com").replace(
-        /\/$/,
-        "",
-    );
+    const origin = siteOrigin(site);
 
     const docs = await publishedDocs();
     const pubs = (await getCollection("pubs")).map(

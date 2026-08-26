@@ -8,6 +8,8 @@
 // single `[...page].astro` catch-all that parses its rest param through
 // `parsePageParam` and slices via `getPage`.
 
+import { createHash } from "node:crypto";
+
 export const PAGE_SIZE = 12;
 
 export interface PageData<T> {
@@ -81,3 +83,17 @@ export function pageHref(basePath: string, page: number): string {
     return page <= 1 ? basePath : `${basePath}/page/${page}`;
 }
 
+/**
+ * Fingerprint one page of a paginated list: page position plus the
+ * cids it renders — content changes re-render exactly the affected
+ * pages during incremental builds.
+ */
+export function paginationCacheKey(
+    page: number,
+    totalPages: number,
+    cids: string[],
+): string {
+    return createHash("sha1")
+        .update(`${page}/${totalPages}:${cids.join(",")}`)
+        .digest("hex");
+}

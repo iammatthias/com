@@ -9,6 +9,7 @@ import { getCollection } from "astro:content";
 import { publicationIndexMarkdown } from "@lib/markdown-view";
 import type { DocumentData, PublicationData } from "@lib/farfield-loader";
 import { publishedDocs } from "@lib/content-query";
+import { SITE_ORIGIN } from "@lib/agent-surface";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const pubs = (await getCollection("pubs")).map(
@@ -29,7 +30,7 @@ export const GET: APIRoute = ({ props }) => {
     const pub = props.pub as PublicationData;
     const items = props.items as DocumentData[];
     return new Response(
-        publicationIndexMarkdown(pub, items, "https://iammatthias.com"),
+        publicationIndexMarkdown(pub, items, SITE_ORIGIN),
         { headers: { "Content-Type": "text/markdown; charset=utf-8" } },
     );
 };

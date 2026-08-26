@@ -7,51 +7,22 @@ export const prerender = true;
 
 import rss from "@astrojs/rss";
 import type { APIRoute } from "astro";
-import { renderFeedBody, RSS_ITEM_CAP } from "@lib/doc-render";
-import { mapWithConcurrency } from "@lib/http";
+import { docFeedItems, FEED_ENVELOPE, RSS_ITEM_CAP } from "@lib/doc-render";
+import { siteOrigin } from "@lib/http";
 import { publishedDocs } from "@lib/content-query";
 import { SITE_IDENTITY } from "@lib/agent-surface";
 
 export const GET: APIRoute = async ({ site }) => {
     const items = (await publishedDocs()).slice(0, RSS_ITEM_CAP);
 
-    const origin = (site?.toString() ?? "https://iammatthias.com").replace(
-        /\/$/,
-        "",
-    );
+    const origin = siteOrigin(site);
 
     return rss({
         title: "iammatthias",
         description:
             SITE_IDENTITY.tagline,
         site: site?.toString() ?? "https://iammatthias.com",
-        // Full body with embeds resolved to absolute image URLs — posts
-        // read complete (text AND images) inside feed readers instead of
-        // forcing a click-through on an excerpt. Gallery-heavy items are
-        // capped with a canonical "view the full gallery" link.
-        items: await mapWithConcurrency(items, 8, async (item) => {
-            const canonical = `${origin}${item.href}`;
-            const content = await renderFeedBody(item.body, {
-                maxImages: 6,
-                moreUrl: canonical,
-            });
-            const thumb = content.match(/<img src="([^"]+)"/)?.[1];
-            return {
-                title: item.title,
-                description: item.description,
-                content,
-                link: item.href,
-                pubDate: new Date(item.publishedAt),
-                categories: [item.publication.name, ...item.tags],
-                ...(thumb && {
-                    customData: `<media:content url="${thumb}" medium="image" />`,
-                }),
-            };
-        }),
-        xmlns: { media: "http://search.yahoo.com/mrss/" },
-        customData: "<language>en-us</language>",
-        // Reference the XSL stylesheet so the feed renders as a styled
-        // page when opened directly in a browser (raw XML otherwise).
-        stylesheet: "/rss.xml.xsl",
+        items: await docFeedItems(items, origin),
+        ...FEED_ENVELOPE,
     });
 };

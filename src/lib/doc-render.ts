@@ -10,7 +10,9 @@
 
 import { marked } from "marked";
 import { blobURL, getBlobMeta, getSeries } from "./farfield-loader";
+import type { DocumentData } from "./farfield-loader";
 import { wsrvUrl, wsrvSrcSet, type BlobMeta } from "./farfield";
+import { mapWithConcurrency } from "./http";
 import { plainText, transformAlerts } from "./markdown-text";
 import { extractRecipes, recipeHtml, recipeSimpleHtml } from "./recipe";
 import {
@@ -417,6 +419,46 @@ export async function renderMarkdownBody(body: string): Promise<string> {
  * budget and 404 the root and art feeds.
  */
 export const RSS_ITEM_CAP = 25;
+
+/**
+ * Envelope shared by every RSS route: the media-RSS namespace for
+ * per-item thumbnails, the language element, and the XSL stylesheet
+ * that renders the feed as a styled page in a browser.
+ */
+export const FEED_ENVELOPE = {
+    xmlns: { media: "http://search.yahoo.com/mrss/" },
+    customData: "<language>en-us</language>",
+    stylesheet: "/rss.xml.xsl",
+} as const;
+
+/**
+ * The item mapper shared by the document feeds (site, per-publication,
+ * per-tag) — three hand-copied versions of this block had already
+ * diverged on `categories`. Full body with embeds resolved to absolute
+ * image URLs, capped galleries with a canonical "view the full
+ * gallery" link, and a media:content thumbnail per item.
+ */
+export async function docFeedItems(items: DocumentData[], origin: string) {
+    return mapWithConcurrency(items, 8, async (item) => {
+        const canonical = `${origin}${item.href}`;
+        const content = await renderFeedBody(item.body, {
+            maxImages: 6,
+            moreUrl: canonical,
+        });
+        const thumb = content.match(/<img src="([^"]+)"/)?.[1];
+        return {
+            title: item.title,
+            description: item.description,
+            content,
+            link: item.href,
+            pubDate: new Date(item.publishedAt),
+            categories: [item.publication.name, ...item.tags],
+            ...(thumb && {
+                customData: `<media:content url="${thumb}" medium="image" />`,
+            }),
+        };
+    });
+}
 
 /**
  * RSS/feed-reader variant of `renderMarkdownBody`. Embeds resolve to
