@@ -81,17 +81,3 @@ export function pageHref(basePath: string, page: number): string {
     return page <= 1 ? basePath : `${basePath}/page/${page}`;
 }
 
-/**
- * Parse the explicit `[page]` segment of `/<base>/page/N` into a page
- * number ≥ 2. Returns null for non-numerics, leading zeros, or N < 2
- * (page 1 lives at the bare index). The `page/N` half of `parsePageParam`
- * for surfaces that use an explicit `page/[page].astro` route instead of
- * a `[...page]` catch-all — used by /content, whose `/content` index must
- * be a concrete route so the legacy redirects in astro.config can target
- * it.
- */
-export function parsePageSegment(raw: string | undefined): number | null {
-    if (!raw || !/^[1-9][0-9]*$/.test(raw)) return null;
-    const n = Number(raw);
-    return n >= 2 ? n : null;
-}

@@ -11,7 +11,7 @@
 //
 // Requires Playwright's chromium (bunx playwright install chromium).
 
-import { spawn } from "node:child_process";
+import { execSync, spawn } from "node:child_process";
 import { chromium } from "playwright";
 
 const OWNS_SERVER = !process.env.BASE_URL;
@@ -22,6 +22,19 @@ const BASE = process.env.BASE_URL ?? "http://localhost:4399";
 
 let server = null;
 if (OWNS_SERVER) {
+    // Recycle any leftover daemon/workerd on the shared check port —
+    // a survivor keeps serving the dist it started with (see smoke.mjs).
+    await new Promise((resolve) => {
+        spawn("bunx", ["astro", "preview", "stop"], { stdio: "ignore" }).on(
+            "exit",
+            resolve,
+        );
+    });
+    try {
+        execSync("lsof -ti tcp:4399 | xargs kill", { stdio: "ignore" });
+    } catch {
+        /* nothing was squatting */
+    }
     server = spawn("bunx", ["astro", "preview", "--port", "4399"], {
         stdio: "ignore",
     });

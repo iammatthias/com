@@ -534,16 +534,6 @@ export async function getEntries(
     return data.entries;
 }
 
-export function getEntry(
-    slug: string,
-    opts: { drafts?: boolean } = {},
-): Promise<Entry | null> {
-    return getJSONOrNull<Entry>(
-        `${CONTENT}/api/entries/${encodeURIComponent(slug)}`,
-        opts.drafts,
-    );
-}
-
 export function getSeries(slug: string): Promise<Series | null> {
     return getJSONOrNull<Series>(
         `${CONTENT}/api/series/${encodeURIComponent(slug)}`,

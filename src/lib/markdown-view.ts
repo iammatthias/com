@@ -10,9 +10,10 @@
 // Front matter carries the metadata the HTML page renders as chrome
 // (title, dates, tags, cid, canonical URL).
 //
-// Body resolution is cached by cid via lib/render-cache (kinds
-// "mdbody" / "feedmdbody"), so the RENDER_VERSION bump ritual there
-// covers changes to the markdown shape here too.
+// The feed-entry twin (the one surface still rendered per request)
+// caches body resolution by cid via lib/render-cache (kind
+// "feedmdbody"), so the RENDER_VERSION bump ritual there covers
+// changes to the markdown shape here too.
 
 import { blobURL, fullEmbedRe, getSeries } from "./farfield";
 import type {

@@ -157,7 +157,6 @@ export default defineConfig({
                 "@components": path.resolve("./src/components"),
                 "@lib": path.resolve("./src/lib"),
                 "@styles": path.resolve("./src/styles"),
-                "@pages": path.resolve("./src/pages"),
             },
             // Force a single resolution for React across the dep graph.
             // Without this, Vite's dev server can hand different modules

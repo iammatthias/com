@@ -13,11 +13,6 @@ export const SERIES_WIDTHS = [320, 480, 640, 800];
 export const SERIES_SIZES =
     "(max-width: 480px) calc(100vw - 32px), (max-width: 768px) calc((100vw - 48px) / 2), 320px";
 
-/** Now-feed thumbnails — narrower column than doc body. */
-export const FEED_WIDTHS = [320, 480, 720, 960];
-export const FEED_SIZES =
-    "(max-width: 768px) calc(100vw - 32px), 60ch";
-
 /**
  * Feed gallery carousel tiles. Tiles render at a shared height
  * (~340px desktop / ~260px mobile) with natural aspect ratios, so the

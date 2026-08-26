@@ -1,12 +1,15 @@
-// Rendered-HTML cache keyed by record cid.
+// Rendered-output cache keyed by record cid.
 //
 // A Farfield cid is a hash of the record's content, so for a fixed
-// renderer the rendered HTML is a pure function of the cid — cacheable
-// with no revalidation. This collapses the expensive half of a detail
-// render (markdown parse, recipe grids, series expansion, N blob-meta
-// lookups) into a single KV read. The mutable question — "which cid
-// does this slug point at right now?" — stays with the entry fetch,
-// which revalidates cheaply via its ETag.
+// renderer the output is a pure function of the cid — cacheable with
+// no revalidation. The mutable question — "which cid does this slug
+// point at right now?" — stays with the entry fetch, which revalidates
+// cheaply via its ETag.
+//
+// One consumer today: the feed-entry markdown twin (/feed/[rkey].md,
+// kind "feedmdbody"), the only doc surface still rendered per request.
+// The HTML detail pages that this cache once covered are prerendered
+// now and never touch it.
 //
 // Entries expire after 90 days (refreshed on every miss-write) purely
 // to garbage-collect renders of edited/deleted content and abandoned
@@ -15,13 +18,10 @@
 import { getContentCache } from "./runtime-env";
 
 /**
- * Bump this whenever a render pipeline's *output* changes —
- * doc-render.ts (figures, series, callouts), recipe.ts (grid markup),
- * images.ts (widths/sizes) for the HTML kinds, markdown-view.ts
- * (embed resolution, the "mdbody"/"feedmdbody" kinds) for the
- * markdown twins — or stale output will serve for up to the TTL.
- * Data-only changes (new content) never need a bump: new content
- * means new cids.
+ * Bump this whenever the markdown-twin pipeline's *output* changes —
+ * markdown-view.ts embed resolution feeding the "feedmdbody" kind —
+ * or stale output will serve for up to the TTL. Data-only changes
+ * (new content) never need a bump: new content means new cids.
  */
 const RENDER_VERSION = 1;
 

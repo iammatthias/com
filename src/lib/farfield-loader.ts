@@ -14,7 +14,6 @@ import {
     extractBodyEmbeds,
     getCollections,
     getEntries,
-    getEntry,
     getPosts,
     getSeries,
     getBlobMeta,
@@ -69,10 +68,9 @@ const cachedCollections = () =>
 // `drafts` is part of the cache key so the preview (published + drafts)
 // and normal (published-only) variants never share an entry. Drafts are
 // only ever fetched in dev preview mode.
-const cachedEntries = (collection?: string, drafts = false) =>
-    memo<Entry[]>(
-        `entries:${collection ?? "_all"}:${drafts ? "all" : "pub"}`,
-        () => getEntries(collection, { drafts }),
+const cachedEntries = (drafts = false) =>
+    memo<Entry[]>(`entries:_all:${drafts ? "all" : "pub"}`, () =>
+        getEntries(undefined, { drafts }),
     );
 const cachedPosts = () => memo<Post[]>("posts", getPosts);
 
@@ -262,7 +260,7 @@ export async function loadAllDocuments(
     drafts = false,
 ): Promise<DocumentData[]> {
     const [entries, pubs] = await Promise.all([
-        cachedEntries(undefined, drafts),
+        cachedEntries(drafts),
         publicationsBySlug(),
     ]);
     const docs = entries
@@ -311,28 +309,11 @@ export function publicationsLoader(): LiveLoader<
                 };
             }
         },
-        async loadEntry({ filter }) {
-            try {
-                const slug =
-                    typeof filter?.id === "string" ? filter.id : undefined;
-                if (!slug) return undefined;
-                const map = await publicationsBySlug();
-                const match = map.get(slug);
-                if (!match) return undefined;
-                return {
-                    id: match.slug,
-                    data: match,
-                    cacheHint: {
-                        tags: ["publications", `pub-${match.slug}`],
-                    },
-                };
-            } catch (error) {
-                return {
-                    error: new Error("Failed to load publication", {
-                        cause: error,
-                    }),
-                };
-            }
+        async loadEntry() {
+            // No surface loads a single publication live — the
+            // [publication] routes are prerendered from the build-time
+            // collections. Stub because LiveLoader requires the method.
+            return undefined;
         },
     };
 }
@@ -346,46 +327,22 @@ export function documentsLoader(): LiveLoader<
         name: "farfield-documents",
         async loadCollection({ filter }) {
             try {
-                const fPub =
-                    typeof filter?.publication === "string"
-                        ? filter.publication
-                        : undefined;
-                const fTag =
-                    typeof filter?.tag === "string" ? filter.tag : undefined;
                 // Preview mode (dev only — see lib/preview.ts) keeps
                 // unpublished drafts in the list. Every other surface
                 // filters them out, since the authenticated content API
-                // now returns drafts alongside published entries.
+                // now returns drafts alongside published entries. The
+                // publication/tag filters this once supported went away
+                // when those routes moved to build-time collections.
                 const preview = filter?.preview === true;
 
-                let docs: DocumentData[];
-                if (fPub) {
-                    // Single-publication lists hit Farfield's
-                    // ?collection= query path — saves stitching the
-                    // whole set when we only need one.
-                    const [entries, pubs] = await Promise.all([
-                        cachedEntries(fPub, preview),
-                        publicationsBySlug(),
-                    ]);
-                    const pub = pubs.get(fPub);
-                    if (!pub) return { entries: [] };
-                    docs = entries.map((e) => entryToDocument(e, pub));
-                    docs.sort((a, b) =>
-                        b.publishedAt.localeCompare(a.publishedAt),
-                    );
-                } else {
-                    docs = await loadAllDocuments(preview);
-                }
+                let docs = await loadAllDocuments(preview);
                 // Belt-and-suspenders: preview fetches `?status=all`
                 // (published + drafts) and keeps everything; every other
                 // path fetches published-only, so this filter is a no-op
                 // there but guarantees a draft can never slip through.
                 if (!preview) docs = docs.filter((d) => d.published);
-                if (fTag) docs = docs.filter((d) => d.tags.includes(fTag));
 
                 const cacheTags = ["documents"];
-                if (fPub) cacheTags.push(`pub-${fPub}`);
-                if (fTag) cacheTags.push(`tag-${fTag}`);
                 const lastModified =
                     docs.length > 0
                         ? new Date(docs[0].publishedAt)
@@ -415,68 +372,11 @@ export function documentsLoader(): LiveLoader<
                 };
             }
         },
-        async loadEntry({ filter }) {
-            try {
-                const fPub =
-                    typeof filter?.publication === "string"
-                        ? filter.publication
-                        : undefined;
-                const fSlug =
-                    typeof filter?.slug === "string" ? filter.slug : undefined;
-                const fId =
-                    typeof filter?.id === "string" ? filter.id : undefined;
-                const preview = filter?.preview === true;
-
-                // Direct slug → Farfield path is cheapest. Use it when
-                // we have the slug; otherwise parse from the composite
-                // id `${pub}/${slug}`.
-                let slug: string | undefined;
-                if (fSlug) {
-                    slug = fSlug;
-                } else if (fId) {
-                    const idx = fId.indexOf("/");
-                    slug = idx >= 0 ? fId.slice(idx + 1) : fId;
-                }
-                if (!slug) return undefined;
-
-                const [entry, pubs] = await Promise.all([
-                    getEntry(slug, { drafts: preview }),
-                    publicationsBySlug(),
-                ]);
-                if (!entry) return undefined;
-                // Drafts 404 like any missing record unless the request
-                // is in preview mode (dev only). The authenticated API
-                // returns drafts, so this guard is what keeps them off
-                // the live site.
-                if (!preview && entry.published === false) return undefined;
-                // Optional safety check: when a `publication` filter is
-                // provided, refuse to serve mismatched collections so
-                // `/recipes/foo` can't surface a `posts/foo` entry.
-                if (fPub && entry.collection !== fPub) return undefined;
-
-                const pub = pubs.get(entry.collection);
-                if (!pub) return undefined;
-                const data = entryToDocument(entry, pub);
-                return {
-                    id: documentKey(data),
-                    data,
-                    cacheHint: {
-                        lastModified: new Date(data.publishedAt),
-                        tags: [
-                            "documents",
-                            `pub-${data.collection}`,
-                            `doc-${documentKey(data)}`,
-                            `cid-${data.cid}`,
-                        ],
-                    },
-                };
-            } catch (error) {
-                return {
-                    error: new Error("Failed to load Farfield document", {
-                        cause: error,
-                    }),
-                };
-            }
+        async loadEntry() {
+            // No surface loads a single document live — the doc detail
+            // page and its markdown twin are prerendered. Stub because
+            // LiveLoader requires the method.
+            return undefined;
         },
     };
 }

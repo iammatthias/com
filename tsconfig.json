@@ -9,8 +9,7 @@
       "@layouts/*": ["src/layouts/*"],
       "@components/*": ["src/components/*"],
       "@lib/*": ["src/lib/*"],
-      "@styles/*": ["src/styles/*"],
-      "@pages/*": ["src/pages/*"]
+      "@styles/*": ["src/styles/*"]
     }
   }
 }

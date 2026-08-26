@@ -6,14 +6,12 @@
 // pages translate the returned `cacheHint` into HTTP cache headers so
 // the rendered HTML caches at the edge.
 //
-// Consumers:
-//   - getLiveCollection('publications')                — for menus + lists
-//   - getLiveEntry('publications', slug)               — for /[publication]
-//   - getLiveCollection('documents', { publication })  — for pub indexes
-//   - getLiveCollection('documents', { tag })          — for tag indexes
-//   - getLiveEntry('documents', { publication, slug }) — for doc detail
-//   - getLiveCollection('feedEntries')                 — for /feed + /now
-//   - getLiveEntry('feedEntries', rkey)                — for /feed/[rkey]
+// Consumers (the [publication], tag, and doc-detail routes moved to
+// the build-time collections in content.config.ts):
+//   - getLiveCollection('publications')  — for menus
+//   - getLiveCollection('documents')     — for /, menus, search corpus
+//   - getLiveCollection('feedEntries')   — for /feed + /now
+//   - getLiveEntry('feedEntries', rkey)  — for /feed/[rkey]
 
 import { defineLiveCollection } from "astro:content";
 import {

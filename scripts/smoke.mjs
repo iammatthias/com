@@ -10,7 +10,7 @@
 // Requires the Farfield read keys in .env (same as preview) — live
 // routes render empty without them, and the content probes will fail.
 
-import { spawn } from "node:child_process";
+import { execSync, spawn } from "node:child_process";
 
 const OWNS_SERVER = !process.env.BASE_URL;
 let BASE = process.env.BASE_URL ?? "http://localhost:4321";
@@ -23,6 +23,24 @@ if (OWNS_SERVER) {
     // which had this suite probing a stranger's site.
     const port = 4399;
     BASE = `http://localhost:${port}`;
+    // The preview server is a background daemon that outlives this
+    // process — a leftover one keeps serving the dist that existed when
+    // it started, which after a rebuild means 500s on every asset.
+    // Recycle it so the run always sees the current build.
+    await new Promise((resolve) => {
+        spawn("bunx", ["astro", "preview", "stop"], { stdio: "ignore" }).on(
+            "exit",
+            resolve,
+        );
+    });
+    // The daemon's workerd child can survive the stop, squatting on the
+    // port and answering 500 for a dist that no longer exists. The port
+    // is dedicated to these checks, so anything still on it is ours.
+    try {
+        execSync(`lsof -ti tcp:${port} | xargs kill`, { stdio: "ignore" });
+    } catch {
+        /* nothing was squatting */
+    }
     server = spawn("bunx", ["astro", "preview", "--port", String(port)], {
         stdio: "ignore",
         detached: false,
