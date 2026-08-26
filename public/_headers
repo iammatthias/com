@@ -58,6 +58,15 @@
   Content-Type: application/json; charset=utf-8
   Cache-Control: public, max-age=3600
 
+# Pre-rendered decorative snapshots (header azulejos, colophon
+# terrazzo banners). Re-fired rarely; a week of cache with a day of
+# grace keeps them out of the request path without pinning a stale set
+# forever.
+/azulejo/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/terrazzo/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
 # Prebuilt search vectors: immutable per deploy, ~230 KB. A short
 # browser cache skips the 304 revalidation on every visit; a stale
 # copy after a deploy is harmless — the model/dims guard plus the

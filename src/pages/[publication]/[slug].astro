@@ -73,9 +73,10 @@ const showToc =
     tocEntries.length >= 2 &&
     !TOC_DISABLED_PUBLICATIONS.has(item.publication.slug);
 
-// Stable seed for the colophon's terrazzo banner — same record key →
-// same pattern, forever.
-const bannerSeed = hashSeed(`${item.collection}/${item.rkey}`);
+// Colophon banner seed. cid, not path: a content edit changes the
+// cid and re-deals the banner (the colophon picks a pre-rendered
+// snapshot by this seed).
+const bannerSeed = hashSeed(item.cid);
 
 // The page's markdown twin — same URL plus `.md`, served by
 // [slug].md.ts. Linked from the colophon and as <link rel="alternate">.
@@ -168,8 +169,8 @@ const markdownPath = `${item.href}.md`;
 
         <!--
           Colophon: a thin terrazzo banner alongside the metadata block.
-          Banner seed is FNV-hashed from the record key so the tile
-          pattern is permanent for that document. The metadata block
+          Banner seed is FNV-hashed from the record cid, so the banner
+          holds until the content changes. The metadata block
           surfaces collection / rkey / cid / timestamps, with the source
           row linking to this page's markdown twin.
         -->

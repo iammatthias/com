@@ -51,7 +51,7 @@ const media = await resolveBodyMedia(item.body);
 // The page's markdown twin — linked from the colophon (in place of
 // the old raw Farfield API link) and as <link rel="alternate">.
 const markdownPath = `/feed/${rkey}.md`;
-const bannerSeed = hashSeed(`feed/${rkey}`);
+const bannerSeed = hashSeed(item.cid);
 ---
 
 <BaseLayout
