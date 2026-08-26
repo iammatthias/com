@@ -23,7 +23,7 @@
 
 ### hi
 
-This is the latest version of my site — a 2026 typographic refresh built on [Astro](https://astro.build/) and deployed to [Cloudflare](https://www.cloudflare.com/) Workers. Content is authored on [Farfield](https://farfield.systems/) and pulled live at request time, so new posts surface without a rebuild.
+This is the latest version of my site — a 2026 typographic refresh built on [Astro](https://astro.build/) and deployed to [Cloudflare](https://www.cloudflare.com/) Workers. Content is authored on [Farfield](https://farfield.systems/); most pages prerender incrementally on a publish hook, while the homepage and feed render per request.
 
 > The code is provided as-is, and I'm not planning to provide support for this setup. Feel free to use it as inspiration for your own projects.
 

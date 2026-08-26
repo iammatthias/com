@@ -40,4 +40,5 @@ pnpm-debug.log*
 !/scripts/agent-check.mjs
 !/scripts/smoke.mjs
 !/scripts/overflow-check.mjs
+!/scripts/snapshot-azulejos.mjs
 .gstack/
