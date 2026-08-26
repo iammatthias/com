@@ -23,7 +23,7 @@ const faq = [
     },
     {
         question: "Does iammatthias.com have an MCP server?",
-        answer: "Yes, at https://iammatthias.com/mcp over Streamable HTTP with no authentication. It exposes search_site, get_document, list_sections, and list_recent.",
+        answer: `Yes, at https://iammatthias.com/mcp over Streamable HTTP with no authentication. It exposes ${AGENT_SKILLS.map((s) => s.name).join(", ")}.`,
     },
     {
         question: "How do I get a page from iammatthias.com as markdown?",

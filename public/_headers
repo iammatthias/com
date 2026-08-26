@@ -46,6 +46,18 @@
   Vary: Accept
   Content-Type: text/markdown; charset=utf-8
 
+# Extensionless .well-known documents. These endpoints are prerendered,
+# and headers set inside a prerendered handler are discarded at build —
+# the asset layer serves the bare file, and it cannot infer a media
+# type without an extension. Without these rules both shipped with no
+# Content-Type at all (RFC 9727 requires the linkset profile type).
+/.well-known/api-catalog
+  Content-Type: application/linkset+json;profile="https://www.rfc-editor.org/info/rfc9727"
+  Cache-Control: public, max-age=3600
+/.well-known/oauth-protected-resource
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=3600
+
 # Prebuilt search vectors: immutable per deploy, ~230 KB. A short
 # browser cache skips the 304 revalidation on every visit; a stale
 # copy after a deploy is harmless — the model/dims guard plus the

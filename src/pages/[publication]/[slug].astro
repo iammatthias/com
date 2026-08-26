@@ -15,34 +15,17 @@ import type { DocumentData } from "@lib/farfield-loader";
 import { fmtDateLong as fmtDate, hashSeed } from "@lib/format";
 import { renderMarkdownBody, readingTime, buildToc } from "@lib/doc-render";
 import { plainText } from "@lib/markdown-text";
+import { relatedDocs } from "@lib/content-query";
 import { withLettrine } from "@lib/azulejo-cap";
 
 export async function getStaticPaths() {
     const all = (await getCollection("docs")).map(
         (e) => e.data as DocumentData,
     );
-    const RELATED_COUNT = 6;
     return all.map((item) => {
-        // Related reading: shared-tag count, then recency. Computed at
-        // build so the page ships with its cards; drafts (dev-only in
-        // the store) never appear as related.
-        const sharedTags = (tags: string[]) =>
-            tags.filter((t) => item.tags.includes(t)).length;
-        const related = all
-            .filter(
-                (d) =>
-                    d.published !== false &&
-                    !(
-                        d.collection === item.collection &&
-                        d.rkey === item.rkey
-                    ),
-            )
-            .sort(
-                (a, b) =>
-                    sharedTags(b.tags) - sharedTags(a.tags) ||
-                    b.publishedAt.localeCompare(a.publishedAt),
-            )
-            .slice(0, RELATED_COUNT);
+        // Related reading computed at build so the page ships with its
+        // cards; drafts (dev-only in the store) never appear as related.
+        const related = relatedDocs(item, all);
         return {
             params: { publication: item.collection, slug: item.rkey },
             props: { item, related },

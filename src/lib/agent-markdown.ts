@@ -253,10 +253,12 @@ Errors are RFC 9457 problem documents. Each one has \`code\`, \`detail\`, and a 
 \`\`\`json
 {
   "type": "${SITE_ORIGIN}/developers#missing_query",
+  "title": "missing query",
   "status": 400,
   "code": "missing_query",
   "detail": "The 'q' parameter is required and must not be empty.",
-  "resolution": "Retry with a query, e.g. /api/search.json?q=cloudflare+workers."
+  "resolution": "Retry with a query, e.g. /api/search.json?q=cloudflare+workers.",
+  "documentation_url": "${SITE_ORIGIN}/developers"
 }
 \`\`\`
 

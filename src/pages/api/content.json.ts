@@ -12,6 +12,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { listContent } from "@lib/agent-data";
 import { apiHeaders, jsonError } from "@lib/agent-http";
+import { headFromGet } from "@lib/http";
 
 export const GET: APIRoute = async ({ url }) => {
     const section = url.searchParams.get("section") ?? undefined;
@@ -65,3 +66,5 @@ export const GET: APIRoute = async ({ url }) => {
         },
     );
 };
+
+export const HEAD = headFromGet(GET);

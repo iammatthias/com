@@ -33,6 +33,8 @@ interface Props {
     /** The page is about the site's author (/now) — typed as a
      *  ProfilePage with the Person as its mainEntity. */
     profilePage?: boolean;
+    /** Q&A pairs emitted as a FAQPage entity (/developers). */
+    faq?: Array<{ question: string; answer: string }>;
 }
 
 const {

@@ -18,6 +18,7 @@ const problem = (path: string) =>
     );
 
 export const GET: APIRoute = ({ params }) => problem(params.missing ?? "");
+export const HEAD: APIRoute = ({ params }) => problem(params.missing ?? "");
 export const POST: APIRoute = ({ params }) => problem(params.missing ?? "");
 export const PUT: APIRoute = ({ params }) => problem(params.missing ?? "");
 export const PATCH: APIRoute = ({ params }) => problem(params.missing ?? "");

@@ -33,8 +33,11 @@ pnpm-debug.log*
 .claude/
 
 # etc
-# Local scratch tooling stays untracked — except the agent-surface gate,
-# which `bun run build` invokes and therefore has to exist in CI.
+# Local scratch tooling stays untracked — except the gates package.json
+# advertises: the agent-surface check (`bun run build` invokes it, so it
+# has to exist in CI), the smoke suite, and the overflow check.
 /scripts/*
 !/scripts/agent-check.mjs
+!/scripts/smoke.mjs
+!/scripts/overflow-check.mjs
 .gstack/

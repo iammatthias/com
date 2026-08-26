@@ -21,7 +21,7 @@ import {
 } from "@lib/agent-data";
 import { resolveEmbedsForMarkdown } from "@lib/markdown-view";
 import { composeDocumentMarkdown } from "@lib/markdown-view";
-import { AGENT_SKILLS, SITE_IDENTITY, SITE_ORIGIN } from "@lib/agent-surface";
+import { AGENT_SKILLS, SECTION_SLUGS, SITE_IDENTITY, SITE_ORIGIN } from "@lib/agent-surface";
 import {
     homepageMarkdown,
     developersMarkdown,
@@ -75,11 +75,19 @@ const RESOURCES = [
     },
 ];
 
+// Descriptions come from AGENT_SKILLS by name — positional indexing
+// silently attached the wrong description when the array was reordered.
+const skillDescription = (name: string): string => {
+    const skill = AGENT_SKILLS.find((s) => s.name === name);
+    if (!skill) throw new Error(`AGENT_SKILLS has no entry named ${name}`);
+    return skill.description;
+};
+
 const TOOLS = [
     {
         name: "search_site",
         title: "Search the site",
-        description: AGENT_SKILLS[0].description,
+        description: skillDescription("search_site"),
         annotations: {
             readOnlyHint: true,
             destructiveHint: false,
@@ -110,7 +118,7 @@ const TOOLS = [
             openWorldHint: false,
         },
         title: "Read one document",
-        description: AGENT_SKILLS[1].description,
+        description: skillDescription("get_document"),
         inputSchema: {
             type: "object",
             properties: {
@@ -132,7 +140,7 @@ const TOOLS = [
             openWorldHint: false,
         },
         title: "List sections",
-        description: AGENT_SKILLS[2].description,
+        description: skillDescription("list_sections"),
         inputSchema: { type: "object", properties: {} },
     },
     {
@@ -144,14 +152,14 @@ const TOOLS = [
             openWorldHint: false,
         },
         title: "List recent content",
-        description: AGENT_SKILLS[3].description,
+        description: skillDescription("list_recent"),
         inputSchema: {
             type: "object",
             properties: {
                 section: {
                     type: "string",
                     description:
-                        "Optional section slug: art, posts, recipes, melange, open-source.",
+                        `Optional section slug: ${SECTION_SLUGS.join(", ")}.`,
                 },
                 limit: {
                     type: "integer",

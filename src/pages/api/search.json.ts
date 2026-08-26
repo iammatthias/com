@@ -7,6 +7,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { searchContent } from "@lib/agent-data";
 import { apiHeaders, jsonError } from "@lib/agent-http";
+import { headFromGet } from "@lib/http";
 
 export const GET: APIRoute = async ({ url }) => {
     const q = url.searchParams.get("q");
@@ -41,3 +42,5 @@ export const GET: APIRoute = async ({ url }) => {
         },
     );
 };
+
+export const HEAD = headFromGet(GET);

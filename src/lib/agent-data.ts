@@ -5,6 +5,7 @@
 import { getCollection } from "astro:content";
 import type { DocumentData, PublicationData } from "./farfield-loader";
 import { plainText } from "./markdown-text";
+import { publishedDocs } from "./content-query";
 import { SITE_ORIGIN } from "./agent-surface";
 
 export interface ContentItem {
@@ -21,12 +22,25 @@ export interface ContentItem {
     markdownUrl: string;
 }
 
+// plainText is not cheap (recipe blocks go through the YAML parser),
+// and search runs it over the whole corpus per request. The cid is the
+// content hash, so it is a safe, self-invalidating memo key.
+const textCache = new Map<string, string>();
+function bodyText(d: DocumentData): string {
+    let t = textCache.get(d.cid);
+    if (t === undefined) {
+        t = plainText(d.body);
+        textCache.set(d.cid, t);
+    }
+    return t;
+}
+
 function toItem(d: DocumentData): ContentItem {
     return {
         title: d.title,
         section: d.collection,
         slug: d.rkey,
-        excerpt: d.description || plainText(d.body).slice(0, 200).trim(),
+        excerpt: d.description || bodyText(d).slice(0, 200).trim(),
         tags: d.tags,
         published: d.publishedAt,
         updated: d.updatedAt,
@@ -36,12 +50,8 @@ function toItem(d: DocumentData): ContentItem {
     };
 }
 
-export async function allDocuments(): Promise<DocumentData[]> {
-    return (await getCollection("docs"))
-        .map((e) => e.data as DocumentData)
-        .filter((d) => d.published !== false)
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
-}
+/** Published documents, newest first — see lib/content-query. */
+export const allDocuments = publishedDocs;
 
 export async function listContent(opts: {
     section?: string;
@@ -78,6 +88,8 @@ export interface SearchHit extends ContentItem {
  * scoring rather than embeddings: this runs at build time and inside
  * the MCP handler, where the wasm model isn't available (the browser
  * search uses the vector path instead — see scripts/menu-search.ts).
+ * Terms match whole words only — substring scoring made "art" hit
+ * every doc containing "start", which read as random results.
  */
 export async function searchContent(
     query: string,
@@ -94,12 +106,15 @@ export async function searchContent(
     for (const d of docs) {
         const title = d.title.toLowerCase();
         const tags = d.tags.join(" ").toLowerCase();
-        const body = plainText(d.body).toLowerCase();
+        const body = bodyText(d).toLowerCase();
         let score = 0;
         for (const t of terms) {
-            if (title.includes(t)) score += 10;
-            if (tags.includes(t)) score += 5;
-            const n = body.split(t).length - 1;
+            // Terms are [a-z0-9]+ by construction, so they are safe to
+            // embed in a regex without escaping.
+            const word = new RegExp(`\\b${t}\\b`);
+            if (word.test(title)) score += 10;
+            if (word.test(tags)) score += 5;
+            const n = body.match(new RegExp(`\\b${t}\\b`, "g"))?.length ?? 0;
             score += Math.min(n, 5);
         }
         if (score > 0) hits.push({ ...toItem(d), score });
