@@ -180,17 +180,17 @@ Questions: ${SITE_IDENTITY.email}
 `;
 }
 
-/** /developers.md — the human-and-agent readable API notes. */
+/** /developers.md contains the human-and-agent readable API notes. */
 export async function developersMarkdown(): Promise<string> {
     const sections = await listSections();
     return `${frontMatter({
-        title: "iammatthias.com developer documentation — API, GraphQL, MCP",
+        title: "iammatthias.com developer documentation: API, GraphQL & MCP",
         description:
-            "HTTP endpoints, GraphQL, the MCP server, markdown twins, error shapes, and caching for iammatthias.com. Public, free, no key required.",
+            "HTTP endpoints, GraphQL, the MCP server, markdown twins, error shapes, and caching for iammatthias.com. Public, free, and no key required.",
         canonical: `${SITE_ORIGIN}/developers.md`,
     })}# Developer notes
 
-${SITE_IDENTITY.name} publishes its content in machine-readable form. Everything here is public, unauthenticated, and free — see ${SITE_ORIGIN}/auth.md and ${SITE_ORIGIN}/pricing.md.
+${SITE_IDENTITY.name} makes its content available in machine-readable form. It is public and free. There is no account, API key, or paid tier. See ${SITE_ORIGIN}/auth.md and ${SITE_ORIGIN}/pricing.md.
 
 ## Quickstart
 
@@ -198,7 +198,7 @@ ${SITE_IDENTITY.name} publishes its content in machine-readable form. Everything
 # Search the site
 curl "${SITE_ORIGIN}/api/search.json?q=cloudflare+workers"
 
-# List everything in one section
+# List one section
 curl "${SITE_ORIGIN}/api/content.json?section=recipes"
 
 # Read one document as markdown
@@ -217,20 +217,20 @@ ${API_OPERATIONS.map(
                 ? o.params
                       .map(
                           (p) =>
-                              `- \`${p.name}\`${p.required ? " (required)" : ""} — ${p.description}`,
+                              `- \`${p.name}\`${p.required ? " (required)" : ""}: ${p.description}`,
                       )
                       .join("\n")
                 : "No parameters."
         }`,
 ).join("\n\n")}
 
-Full OpenAPI 3.1 specification: ${SITE_ORIGIN}/openapi.json
+The full OpenAPI 3.1 specification is at ${SITE_ORIGIN}/openapi.json.
 
 ## MCP server
 
-Streamable HTTP at \`${SITE_ORIGIN}/mcp\`. No authentication. Tools:
+The MCP server uses Streamable HTTP at \`${SITE_ORIGIN}/mcp\`. It does not require authentication. Tools:
 
-${AGENT_SKILLS.map((s) => `- \`${s.name}\` — ${s.description}`).join("\n")}
+${AGENT_SKILLS.map((s) => `- \`${s.name}\`: ${s.description}`).join("\n")}
 
 Add it to a client that speaks MCP:
 
@@ -238,17 +238,17 @@ Add it to a client that speaks MCP:
 { "mcpServers": { "iammatthias": { "url": "${SITE_ORIGIN}/mcp" } } }
 \`\`\`
 
-Preview it without connecting: ${SITE_ORIGIN}/.well-known/mcp/server-card.json
+Preview the tools without connecting: ${SITE_ORIGIN}/.well-known/mcp/server-card.json
 
 ## Markdown twins
 
-Every content URL has a markdown twin at the same path plus \`.md\`, carrying front matter (title, section, dates, tags, \`cid\`, canonical \`html:\` URL) with \`blob://\` and \`series://\` embeds resolved to public image URLs.
+Every content URL has a markdown twin at the same path plus \`.md\`. It includes front matter with the title, section, dates, tags, \`cid\`, and canonical \`html:\` URL. The \`blob://\` and \`series://\` embeds resolve to public image URLs.
 
-Section indexes: ${sections.map((s) => `\`/${s.slug}.md\``).join(", ")}. Scoped context per section: \`/<section>/llms.txt\`.
+Section indexes are at ${sections.map((s) => `\`/${s.slug}.md\``).join(", ")}. Each section has scoped context at \`/<section>/llms.txt\`.
 
 ## Errors
 
-Errors are RFC 9457 problem documents with \`code\`, \`detail\`, and a \`resolution\` telling you how to retry:
+Errors are RFC 9457 problem documents. Each one has \`code\`, \`detail\`, and a \`resolution\` that says how to retry:
 
 \`\`\`json
 {
@@ -262,21 +262,21 @@ Errors are RFC 9457 problem documents with \`code\`, \`detail\`, and a \`resolut
 
 ## Test environment
 
-There is no separate sandbox, because there is nothing to sandbox: every
-endpoint is read-only. No request you can make will create, modify, or
-delete anything, so production is safe to exercise directly — hammer it,
-retry it, run it in CI. There is no key to obtain and no quota to burn.
+There is no separate sandbox. Every endpoint is read-only. Requests cannot
+create, modify, or delete anything, so production is safe to use directly.
+You can retry requests and run them in CI. There is no key to obtain and no
+quota to use.
 
-If you want a fixed dataset to test against rather than live content,
-${SITE_ORIGIN}/llms-full.txt is a single immutable-per-build snapshot of
-the whole corpus.
+For a fixed test dataset instead of live content, use
+${SITE_ORIGIN}/llms-full.txt. It is one immutable-per-build snapshot of the
+whole corpus.
 
 ## Caching
 
-Every record carries a \`cid\` — a CIDv1 content hash. Same \`cid\`, same bytes, forever. Cache against it and skip refetching unchanged documents.
+Every record has a \`cid\`, which is a CIDv1 content hash. The same \`cid\` means the same bytes, forever. Cache against it and skip unchanged documents.
 
 ## Source
 
-The site is open source: ${SITE_IDENTITY.repo}
+The source is at ${SITE_IDENTITY.repo}.
 `;
 }

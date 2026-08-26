@@ -1,5 +1,5 @@
 ---
-// About — a trust anchor page. /about used to 301 to /now; now it
+// About is a trust anchor page. /about used to 301 to /now; now it
 // answers directly with durable biography, while /now stays the
 // changing "what I'm doing lately" page.
 export const prerender = true;
@@ -13,7 +13,7 @@ export const menu: MenuMeta = { group: "personal", label: "about", order: 1 };
 
 <BaseLayout
     title="About"
-    description="Matthias Jordan — photographer and solutions engineer in Southern California, making things for an open and personal web."
+    description="Matthias Jordan is a photographer and solutions engineer in Southern California. This is his personal archive."
     profilePage={true}
 >
     <header class="page-header">
@@ -23,36 +23,35 @@ export const menu: MenuMeta = { group: "personal", label: "about", order: 1 };
     <section class="prose">
         <section>
             <p>
-                I'm Matthias Jordan. I photograph, I build things for the web,
-                and I cook. This site is where all three end up — a personal
-                archive rather than a portfolio, kept deliberately open.
+                I'm Matthias Jordan. I'm a photographer and solutions engineer
+                in Southern California. This site is my cozy corner of the web.
+                It is an archive, not a portfolio. Nothing here is for sale.
             </p>
             <p>
-                The photography comes first: long-exposure coastal work, drone
-                frames from California, Hawaii and Baja, film and iPhone
-                snapshots, and generative pieces trained on my own images. Some
-                of it is published as series with process notes; some of it is
-                just a photograph and a date.
+                Photography comes first. I make long exposures of the ocean,
+                aerial and drone work in California, Hawaii, and Baja, and
+                snapshots with film cameras and my iPhone. I also make
+                generative experiments trained on my own images. Some work is
+                collected into series with process notes. Some is just a
+                photograph and a date.
             </p>
             <p>
-                The software half is mostly infrastructure for the open web.
-                I've built AT Protocol tooling, Cloudflare Workers, small AI
-                hardware projects, and — most recently — Farfield, the
-                self-hosted, content-addressed backend that serves everything
-                you're reading here. I write those up as I go, including the
-                parts that didn't work.
+                For work, I'm a solutions engineer. I also build things for the
+                web. That includes AT Protocol tools, Cloudflare Workers, small
+                AI hardware projects, and Farfield. Farfield is the self-hosted,
+                content-addressed backend serving this site. I write about what
+                I build, including the parts that do not work.
             </p>
             <p>
-                The recipes are the ones I actually cook, written in a tabular
-                format borrowed from <em>Cooking for Engineers</em>: ingredients
-                down the left, operations bracketing rightward, so a row reads
-                as one ingredient's whole story.
+                I cook, too. The recipes here are things I actually make. They
+                use the tabular format from <em>Cooking for Engineers</em>, with
+                ingredients on the left and each step running across the page.
             </p>
             <p>
-                Professionally I work as a solutions engineer in Southern
-                California. This site isn't a product and isn't for sale —
-                there's nothing to buy, no account to make, and no newsletter.
-                It's a place to put work where it belongs to me.
+                I want a web that's open and personal. I own my data, make
+                handmade sites, and build in the open. There is no account to
+                make and no newsletter to join. This is simply where I keep my
+                work.
             </p>
         </section>
 
@@ -61,8 +60,7 @@ export const menu: MenuMeta = { group: "personal", label: "about", order: 1 };
             <ul>
                 {SOCIAL_LINKS.filter((l) => !l.schemaOnly).map((l) => (
                     <li>
-                        <a href={l.url} rel="me noopener">{l.name}</a>
-                        <span> — {l.username}</span>
+                        <a href={l.url} rel="me noopener">{l.name}</a><span>: {l.username}</span>
                     </li>
                 ))}
             </ul>
@@ -73,8 +71,8 @@ export const menu: MenuMeta = { group: "personal", label: "about", order: 1 };
             <p>
                 Built with Astro on Cloudflare Workers, reading a self-hosted
                 Farfield backend. Content is content-addressed, every page has a
-                markdown twin, and the whole thing is open source. See
-                <a href="/developers">developers</a> for the machine-readable
+                markdown twin, and the whole thing is open source.
+                See <a href="/developers">developers</a> for the machine-readable
                 surfaces, or <a href="/now">now</a> for what I'm up to lately.
             </p>
         </section>
