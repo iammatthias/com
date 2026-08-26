@@ -4,19 +4,8 @@
 // block. Used by /[publication]/[slug] (entries) and /feed/[rkey]
 // (posts). The fields list is supplied by the caller so each surface
 // can label the row appropriately (rkey vs id, etc).
-//
-// The banner is one of the pre-rendered snapshots in public/terrazzo
-// (scripts/snapshot-terrazzo.mjs), picked by seed. The live WebGL
-// TerrazzoBanner island used to render here and pulled React +
-// three.js (~195 KB gz) onto every document page; a JPEG of the same
-// deterministic render reads identically. Callers seed with
-// hashSeed(cid), so an edited record deals a new banner.
 
-// Derived from what the snapshot run actually produced, so the modulo
-// can never point at a missing file.
-const TERRAZZO_COUNT = Object.keys(
-    import.meta.glob("/public/terrazzo/*.jpg"),
-).length;
+import TerrazzoBanner from "./TerrazzoBanner";
 
 export interface ColophonField {
     label: string;
@@ -29,27 +18,18 @@ export interface ColophonField {
 }
 
 interface Props {
-    /** Seed for the banner pick — hashSeed(cid), so the banner is
-     *  stable until the record's content changes. */
+    /** Banner seed — hashSeed(`rkey:cid`), so every record is a
+     *  distinct piece and a content edit deals a new one. */
     seed: number;
     fields: ColophonField[];
 }
 
 const { seed, fields } = Astro.props;
-
-const tile = String((seed % TERRAZZO_COUNT) + 1).padStart(3, "0");
 ---
 
 <footer class="colophon">
     <div class="colophon-banner">
-        <img
-            src={`/terrazzo/${tile}.jpg`}
-            alt=""
-            width="1600"
-            height="320"
-            loading="lazy"
-            decoding="async"
-        />
+        <TerrazzoBanner client:visible seed={seed} />
     </div>
     <dl class="colophon-meta">
         {fields.map((f) => (
@@ -95,16 +75,6 @@ const tile = String((seed % TERRAZZO_COUNT) + 1).padStart(3, "0");
         border-radius: var(--radius);
         min-height: 140px;
         background: var(--color-border);
-    }
-
-    /* Cover-fit: the snapshot is 5:1, the cell is squarer, so the
-       image crops to fill — terrazzo is texture, the crop is free. */
-    .colophon-banner img {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
     }
 
     @media (max-width: 640px) {

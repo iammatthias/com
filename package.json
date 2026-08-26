@@ -14,7 +14,6 @@
     "overflow": "node scripts/overflow-check.mjs",
     "astro": "astro",
     "snapshot:azulejos": "node scripts/snapshot-azulejos.mjs",
-    "snapshot:terrazzo": "node scripts/snapshot-terrazzo.mjs",
     "agent:check": "node scripts/agent-check.mjs",
     "agent:check:live": "node scripts/agent-check.mjs --url https://iammatthias.com"
   },

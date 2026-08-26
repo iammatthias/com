@@ -41,5 +41,4 @@ pnpm-debug.log*
 !/scripts/smoke.mjs
 !/scripts/overflow-check.mjs
 !/scripts/snapshot-azulejos.mjs
-!/scripts/snapshot-terrazzo.mjs
 .gstack/
