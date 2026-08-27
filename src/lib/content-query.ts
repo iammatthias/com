@@ -55,3 +55,37 @@ export function relatedDocs(
         )
         .slice(0, n);
 }
+
+// Set of `collection/rkey` keys the current deploy actually built —
+// memoized per isolate; the build-time store is immutable per deploy.
+let builtDocKeys: Set<string> | null = null;
+
+/**
+ * Filter for SSR surfaces that render the LIVE document list (the
+ * homepage feed, the menu, the search corpus). Those lists lead the
+ * prerendered pages by one rebuild: a just-published entry reaches
+ * the content API minutes before its page exists, and linking it in
+ * that window is a dead route. The build-time store ships inside the
+ * deploy, so it IS the set of built pages — intersect against it and
+ * a new entry appears everywhere at once, when its rebuild lands.
+ *
+ * Edits keep their rkey, so an edited doc stays listed (its built
+ * page serves the previous cid until the rebuild). In dev every
+ * route renders on demand, so nothing is filtered — which also keeps
+ * preview drafts visible.
+ */
+export async function builtDocFilter(): Promise<
+    (d: Pick<DocumentData, "collection" | "rkey">) => boolean
+> {
+    if (import.meta.env.DEV) return () => true;
+    if (!builtDocKeys) {
+        builtDocKeys = new Set(
+            (await getCollection("docs")).map((e) => {
+                const d = e.data as DocumentData;
+                return `${d.collection}/${d.rkey}`;
+            }),
+        );
+    }
+    const keys = builtDocKeys;
+    return (d) => keys.has(`${d.collection}/${d.rkey}`);
+}

@@ -15,6 +15,7 @@ import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
 import { headFromGet } from "@lib/http";
 import { buildSearchCorpus } from "@lib/search-corpus";
+import { builtDocFilter } from "@lib/content-query";
 import {
     entriesOf,
     type DocumentData,
@@ -40,8 +41,13 @@ export const GET: APIRoute = async () => {
         }
     }
 
+    // Docs intersect against the routes this deploy built, so search
+    // never returns a link whose page is still mid-rebuild. Feed
+    // entries render on demand and are always live-consistent.
     const items = buildSearchCorpus(
-        entriesOf<DocumentData>(docsResult.entries),
+        entriesOf<DocumentData>(docsResult.entries).filter(
+            await builtDocFilter(),
+        ),
         entriesOf<FeedEntryData>(feedResult.entries),
     );
 

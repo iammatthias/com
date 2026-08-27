@@ -1,7 +1,9 @@
 ---
-// SSR — homepage feed pulls from the Farfield live collection so new
-// posts appear without a rebuild. Underlying Farfield fetches are TTL-
-// cached per-isolate; the response carries Cache-Control so Cloudflare
+// SSR — homepage feed pulls from the Farfield live collection,
+// filtered to the routes this deploy built (builtDocFilter): a new
+// post appears the moment its publish-hook rebuild lands, never as a
+// dead link before it. Underlying Farfield fetches are TTL-cached
+// per-isolate; the response carries Cache-Control so Cloudflare
 // edge-caches the rendered HTML for 60s with stale-while-revalidate.
 export const prerender = false;
 
@@ -11,6 +13,7 @@ import GlassArch from "@components/GlassArch.astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
 import { entriesOf, type DocumentData } from "@lib/farfield-loader";
+import { builtDocFilter } from "@lib/content-query";
 import { isPreview } from "@lib/preview";
 
 const preview = isPreview(Astro);
@@ -28,7 +31,12 @@ let feed: DocumentData[] = [];
 if (feedError) {
     console.error("[index] Farfield feed fetch failed:", feedError);
 } else {
-    feed = entriesOf<DocumentData>(feedEntries);
+    // Live minus not-yet-built: a just-published entry stays off the
+    // homepage until the rebuild that creates its page deploys, so
+    // the list never links a dead route. See builtDocFilter.
+    feed = entriesOf<DocumentData>(feedEntries).filter(
+        await builtDocFilter(),
+    );
 }
 
 // The homepage feed is a teaser for the latest work — cap it and point

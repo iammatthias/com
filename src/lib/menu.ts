@@ -13,7 +13,7 @@
  * are excluded by default.
  */
 
-import { getLiveCollection } from "astro:content";
+import { getCollection, getLiveCollection } from "astro:content";
 
 export interface MenuMeta {
     /** Group label this page falls under, e.g. "archive" or "personal". */
@@ -73,6 +73,17 @@ async function loadPublicationLinks(): Promise<PublicationLink[]> {
         getLiveCollection("documents"),
     ]);
     if (pubResult.error) throw pubResult.error;
+    // Only advertise publications whose index route exists in THIS
+    // deploy — a brand-new collection reaches the live API before the
+    // rebuild builds its /[publication] page, and linking it in that
+    // window is a dead route. Dev renders routes on demand.
+    const builtPubs = import.meta.env.DEV
+        ? null
+        : new Set(
+              (await getCollection("pubs")).map(
+                  (e) => (e.data as { slug: string }).slug,
+              ),
+          );
     const publishedSlugs = new Set(
         (docResult.entries ?? []).map(
             (e: { data: { collection: string } }) => e.data.collection,
@@ -88,7 +99,11 @@ async function loadPublicationLinks(): Promise<PublicationLink[]> {
         return publishedSlugs.has(slug);
     };
     return pubResult.entries
-        .filter((p) => hasContent(p.data.slug, p.data.entryCount))
+        .filter(
+            (p) =>
+                hasContent(p.data.slug, p.data.entryCount) &&
+                (!builtPubs || builtPubs.has(p.data.slug)),
+        )
         .map((p, i) => ({
             href: `/${p.data.slug}`,
             label: p.data.name.toLowerCase(),
