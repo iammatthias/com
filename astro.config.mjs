@@ -68,6 +68,10 @@ export default defineConfig({
                         pattern: "/internal/terrazzo/[seed]",
                         entrypoint: "./src/dev-routes/terrazzo-seed.astro",
                     });
+                    injectRoute({
+                        pattern: "/internal/components",
+                        entrypoint: "./src/dev-routes/component-probe.astro",
+                    });
                 },
             },
         },

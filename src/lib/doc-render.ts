@@ -20,6 +20,11 @@ import {
 } from "./farfield";
 import { mapWithConcurrency } from "./http";
 import { plainText, transformAlerts } from "./markdown-text";
+import { escapeAttr as attr } from "./format";
+import {
+    extractDocComponents,
+    substituteDocComponents,
+} from "./doc-components/transform";
 import { extractRecipes, recipeHtml, recipeSimpleHtml } from "./recipe";
 import {
     FIG_WIDTHS,
@@ -33,12 +38,6 @@ import {
 } from "./images";
 
 /** Escape a string for safe inclusion inside an HTML attribute value. */
-function attr(value: string): string {
-    return value
-        .replace(/&/g, "&amp;")
-        .replace(/"/g, "&quot;")
-        .replace(/</g, "&lt;");
-}
 
 /**
  * Rewrite link-syntax blob refs — `[name](blob://cid)`, the editor's
@@ -366,7 +365,8 @@ function substituteRecipes(
 
 /**
  * Render a markdown body, resolving Farfield's `blob://<cid>` and
- * `series://<slug>` embeds to figure / gallery HTML, expanding fenced
+ * `series://<slug>` embeds to figure / gallery HTML, rendering
+ * `<ff-*>` document components (lib/doc-components), expanding fenced
  * ```recipe blocks into the grid + method view, and rewriting GFM
  * alert blockquotes to semantic callouts.
  *
@@ -380,9 +380,10 @@ function substituteRecipes(
  */
 export async function renderMarkdownBody(body: string): Promise<string> {
     const { body: lifted, blocks: recipes } = extractRecipes(body);
+    const components = await extractDocComponents(lifted);
     interface Embed { alt: string; scheme: "blob" | "series"; id: string }
     const embeds: Embed[] = [];
-    const preprocessed = lifted.replace(
+    const preprocessed = components.source.replace(
         fullEmbedRe(),
         (_match, alt: string, scheme: string, id: string) => {
             const idx = embeds.length;
@@ -412,6 +413,7 @@ export async function renderMarkdownBody(body: string): Promise<string> {
         /<!--FARFIELD_EMBED:(\d+)-->/g,
         (_, idx: string) => rendered[Number(idx)] ?? "",
     );
+    html = substituteDocComponents(html, components.rendered);
     html = substituteRecipes(html, recipes, recipeHtml);
     html = transformAlerts(html);
     return html;

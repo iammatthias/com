@@ -47,3 +47,10 @@ export function hashSeed(s: string): number {
     }
     return h >>> 0;
 }
+
+export function escapeAttr(value: string): string {
+    return value
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;");
+}

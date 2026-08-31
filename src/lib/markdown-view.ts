@@ -50,7 +50,11 @@ async function replaceAsync(
 export async function resolveEmbedsForMarkdown(
     body: string,
 ): Promise<string> {
-    return replaceAsync(body, fullEmbedRe(), async (m) => {
+    const withPublicRefs = body.replace(
+        /blob:\/\/([a-z0-9-]+)/g,
+        (_m, cid: string) => blobURL(cid),
+    );
+    return replaceAsync(withPublicRefs, fullEmbedRe(), async (m) => {
         const [, alt, scheme, id] = m;
         if (scheme === "blob") return `![${alt}](${blobURL(id)})`;
         const series = await getSeries(id);

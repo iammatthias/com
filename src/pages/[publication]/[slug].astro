@@ -215,6 +215,11 @@ const markdownPath = `${item.href}.md`;
             initRecipes();
         }
     </script>
+
+    <script>
+        import { mountDocComponents } from "@src/scripts/doc-components";
+        mountDocComponents();
+    </script>
 </BaseLayout>
 
 <style>
@@ -539,6 +544,106 @@ const markdownPath = `${item.href}.md`;
 
     .doc-body :global(.mermaid-figure svg) {
         height: auto;
+    }
+
+    .doc-body :global(ff-compare) {
+        display: block;
+        margin: var(--space-5) 0;
+    }
+
+    .doc-body :global(.ff-compare-frame) {
+        position: relative;
+        margin: 0;
+        overflow: hidden;
+        border-radius: var(--radius);
+        line-height: 0;
+        touch-action: pan-y;
+    }
+
+    .doc-body :global(.ff-compare-layer) {
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .doc-body :global(.ff-compare-after) {
+        position: relative;
+    }
+
+    .doc-body :global(.ff-compare-before) {
+        position: absolute;
+        height: 100%;
+        clip-path: inset(0 calc(100% - var(--ff-compare-pos, 50%)) 0 0);
+    }
+
+    .doc-body :global(.ff-compare-img) {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .doc-body :global(.ff-compare-label) {
+        position: absolute;
+        bottom: var(--space-2);
+        padding: 0.15em 0.5em;
+        border-radius: calc(var(--radius) / 2);
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        line-height: var(--lh-normal);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        background: rgb(0 0 0 / 0.55);
+        color: rgb(255 255 255 / 0.92);
+    }
+
+    .doc-body :global(.ff-compare-label-before) {
+        left: var(--space-2);
+    }
+
+    .doc-body :global(.ff-compare-label-after) {
+        right: var(--space-2);
+    }
+
+    .doc-body :global(.ff-compare-handle) {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: var(--ff-compare-pos, 50%);
+        width: 2px;
+        margin-left: -1px;
+        background: rgb(255 255 255 / 0.85);
+        box-shadow: 0 0 0 1px rgb(0 0 0 / 0.25);
+        pointer-events: none;
+    }
+
+    .doc-body :global(.ff-compare-control) {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        margin-top: var(--space-2);
+    }
+
+    .doc-body :global(.ff-compare-control-label) {
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        color: var(--color-muted);
+    }
+
+    .doc-body :global(.ff-compare-range) {
+        width: 100%;
+        accent-color: var(--color-fg);
+    }
+
+    .doc-body :global(ff-compare.is-interactive) .ff-compare-frame {
+        cursor: ew-resize;
+    }
+
+    .doc-body :global(.ff-component-missing) {
+        padding: var(--space-2) var(--space-3);
+        border-left: 2px solid var(--color-border);
+        font-family: var(--font-mono);
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
     }
 
     /* Series gallery — CSS multi-column gives a true waterfall masonry

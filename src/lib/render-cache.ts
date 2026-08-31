@@ -23,7 +23,7 @@ import { getContentCache } from "./runtime-env";
  * or stale output will serve for up to the TTL. Data-only changes
  * (new content) never need a bump: new content means new cids.
  */
-const RENDER_VERSION = 1;
+const RENDER_VERSION = 2;
 
 const RENDER_TTL_SECONDS = 90 * 24 * 60 * 60;
 
