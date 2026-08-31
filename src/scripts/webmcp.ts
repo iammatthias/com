@@ -1,15 +1,3 @@
-// WebMCP — in-page tools for browser-resident agents (W3C draft).
-//
-// An agent driving this site in a browser gets the same capabilities
-// the remote MCP server exposes at /mcp, without leaving the page or
-// opening a second transport. Everything here is read-only and hits
-// endpoints that are already public, so a tool call can't do anything
-// the user couldn't do by clicking.
-//
-// `document.modelContext` is the current API; `navigator.modelContext`
-// was the pre-Chrome-150 alias and is checked as a fallback. Where
-// neither exists this module does nothing at all — no polyfill, no
-// globals, no cost beyond the import.
 
 interface ToolResponse {
     content: Array<{ type: "text"; text: string }>;
@@ -35,7 +23,6 @@ function modelContext(): ModelContext | null {
 const text = (t: string): ToolResponse => ({ content: [{ type: "text", text: t }] });
 const failure = (t: string): ToolResponse => ({ ...text(t), isError: true });
 
-/** Every tool here is a read; say so where clients look. */
 const READ_ONLY = {
     readOnlyHint: true,
     destructiveHint: false,
@@ -150,8 +137,6 @@ export function registerWebMcpTools(): void {
             "Navigate the browser to a specific entry on this site by its path or slug, e.g. 'posts/1779066375000-farfield'.",
         annotations: {
             ...READ_ONLY,
-            // Navigation changes what the user sees, so it isn't a
-            // pure read from their point of view.
             readOnlyHint: false,
         },
         inputSchema: {

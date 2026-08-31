@@ -8,15 +8,6 @@ function hashToNumbers(hash: string): number[] {
   return Array.from({ length: cleanHash.length / 2 }, (_, i) => parseInt(cleanHash.slice(i * 2, (i + 1) * 2), 16));
 }
 
-/**
- * Format a coordinate for SVG path output: max 3 decimals, no trailing
- * zeros. The viewBox is 140 units tall, so 0.001 unit is ~0.004px at
- * the largest render size — far below perception — while full float
- * precision (up to 17 digits per number, thousands of numbers per
- * portrait) was inflating these pages past 1.5MB of markup. Rounding
- * happens only at string-formatting time; the underlying numbers that
- * feed later geometry are untouched, so the artwork is unchanged.
- */
 function fmt(n: number): string {
   const r = Math.round(n * 1000) / 1000;
   return Object.is(r, -0) ? "0" : String(r);
@@ -25,12 +16,11 @@ function fmt(n: number): string {
 function generatePatternData(hash: string) {
   const numbers = hashToNumbers(hash);
 
-  // Generate background fill pattern
   function generateBackgroundPattern(): string[] {
     const patterns: string[] = [];
 
     const gridSizeX = 24;
-    const gridSizeY = 28; // Adjusted for 6:7 ratio
+    const gridSizeY = 28;
     for (let x = 0; x < gridSizeX; x++) {
       for (let y = 0; y < gridSizeY; y++) {
         const baseX = (x / gridSizeX) * 120;
@@ -49,9 +39,8 @@ function generatePatternData(hash: string) {
 
   function generatePrimaryRegions(): { centers: [number, number][]; paths: string[] } {
     const centers: [number, number][] = [];
-    const numRegions = 12 + (numbers[0] % 4); // Increased for larger canvas
+    const numRegions = 12 + (numbers[0] % 4);
 
-    // Create a grid of centers adjusted for 6:7 ratio
     const gridSizeX = 5;
     const gridSizeY = 6;
     for (let x = 0; x < gridSizeX; x++) {
@@ -64,7 +53,6 @@ function generatePatternData(hash: string) {
       }
     }
 
-    // Add random centers for organic feel
     for (let i = 0; i < numRegions - gridSizeX * gridSizeY; i++) {
       const angle = (numbers[i] / 255) * Math.PI * 2;
       const distance = 20 + (numbers[i + 1] / 255) * 45;
@@ -101,7 +89,6 @@ function generatePatternData(hash: string) {
     const cells: string[] = [];
     const regionRadius = 55;
 
-    // Create dense spiral patterns
     const numSpirals = 4 + (numbers[regionIndex] % 3);
     for (let s = 0; s < numSpirals; s++) {
       const startAngle =
@@ -132,7 +119,6 @@ function generatePatternData(hash: string) {
       }
     }
 
-    // Add dense scattered fill
     const numScatterDots = 40 + (numbers[regionIndex] % 20);
     for (let i = 0; i < numScatterDots; i++) {
       const angle = (numbers[(regionIndex * i) % numbers.length] / 255) * Math.PI * 2;
@@ -155,7 +141,6 @@ function generatePatternData(hash: string) {
     const lines: string[] = [];
     const regionRadius = 55;
 
-    // Generate dense line coverage
     const numLines = 15 + (numbers[regionIndex] % 10);
     for (let i = 0; i < numLines; i++) {
       const points: [number, number][] = [];
@@ -194,8 +179,7 @@ function generatePatternData(hash: string) {
   const primaryRegions = generatePrimaryRegions();
   const backgroundPattern = generateBackgroundPattern();
   const patterns = primaryRegions.centers.map((center, i) => {
-    // Adjust pattern type distribution for more balanced coverage
-    const patternType = numbers[i] > 100; // Changed from 128 to 100 for more cell patterns
+    const patternType = numbers[i] > 100;
     return {
       type: patternType ? "cells" : "turing",
       elements: patternType ? generateCellPacking(center, i) : generateTuringPattern(center, i),
@@ -213,20 +197,14 @@ function generateColors(hash: string) {
   const numbers = hashToNumbers(hash);
   const palette: { hue: number; saturation: number; lightness: number }[] = [];
 
-  // Generate fully hash-derived colors
   for (let i = 0; i < 4; i++) {
     palette.push({
       hue: (numbers[i * 3] / 255) * 360,
-      saturation: 60 + (numbers[i * 3 + 1] / 255) * 40, // Range: 60-100%
-      lightness: 20 + (numbers[i * 3 + 2] / 255) * 65, // Range: 20-85%
+      saturation: 60 + (numbers[i * 3 + 1] / 255) * 40,
+      lightness: 20 + (numbers[i * 3 + 2] / 255) * 65,
     });
   }
 
-  // Sort by lightness so the background really is the darkest color.
-  // (An earlier version sorted the serialized hsl() strings with a
-  // regex that matched the lightness's *fractional* digits, making the
-  // order pseudo-random — palettes were re-dealt once, deliberately,
-  // when this was fixed to sort numerically.)
   palette.sort((a, b) => a.lightness - b.lightness);
 
   return palette.map(
@@ -235,8 +213,6 @@ function generateColors(hash: string) {
 }
 
 const { hash } = Astro.params;
-// Session ids are keccak256 hashes — 32 bytes, 0x-prefixed. Anything
-// else 404s instead of rendering a portrait for arbitrary input.
 if (!hash || !/^0x[0-9a-fA-F]{64}$/.test(hash)) {
     return new Response(null, { status: 404 });
 }
@@ -247,7 +223,6 @@ const colors = generateColors(hash);
 const title = `Session ${hash.slice(0, 8)}…`;
 const description = `Unique generative art pattern for session ${hash}.`;
 
-// Pure function of the hash — cache aggressively at the edge.
 setResponseCacheHeaders(Astro.response, undefined, {
     maxAge: 86400,
     swr: 604800,
@@ -275,13 +250,10 @@ setResponseCacheHeaders(Astro.response, undefined, {
             <rect x='-10' y='-10' width='140' height='160'></rect>
           </clipPath>
         </defs>
-        <!-- Background -->
         <rect x='-10' y='-10' width='140' height='160' fill={colors[0]} opacity='0.15'></rect>
         <g clip-path='url(#clip-bg)'>
-          <!-- Background Pattern -->
           {patterns.background.map((path) => <path d={path} fill={colors[1]} opacity='0.15' />)}
 
-          <!-- Primary Regions with Patterns -->
           {
             patterns.patterns.map((pattern, i) => (
               <>

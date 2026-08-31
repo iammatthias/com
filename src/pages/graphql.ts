@@ -1,14 +1,3 @@
-// GraphQL endpoint over the site's content.
-//
-// Introspection is deliberately public: this is public content, and a
-// schema an agent can't introspect is a schema it can't use. GET with
-// ?query= works for cheap exploration; POST is the normal path.
-//
-// Cost control is by shape rather than a token budget — `first` caps
-// at 100 per connection, nesting is shallow (there are no recursive
-// relationships to explode), and `body` resolution is opt-in per
-// document. Documented in /developers.md so an agent knows the limits
-// before it hits them.
 
 export const prerender = false;
 
@@ -44,9 +33,6 @@ async function run(
         variableValues: variables,
         operationName,
     });
-    // GraphQL reports request-level failures in `errors`; our schema
-    // also models expected failures as types (see DocumentResult), so
-    // a well-formed "not found" arrives as data, not an error.
     return json(result, result.errors && !result.data ? 400 : 200);
 }
 
@@ -56,8 +42,6 @@ export const OPTIONS: APIRoute = () =>
 export const GET: APIRoute = async ({ url }) => {
     const query = url.searchParams.get("query");
     if (!query) {
-        // No query: describe the endpoint rather than erroring, so a
-        // browser or a probing agent learns what this is.
         const problems = validateSchema(schema);
         return json({
             endpoint: "https://iammatthias.com/graphql",
@@ -149,5 +133,4 @@ export const POST: APIRoute = async ({ request }) => {
     return run(body.query, body.variables, body.operationName);
 };
 
-/** Exported for the build-time SDL dump (see src/pages/schema.graphql.ts). */
 export { getIntrospectionQuery };

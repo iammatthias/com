@@ -1,13 +1,3 @@
-// Agentic Resource Discovery catalog (agenticresourcediscovery.org):
-// one document listing every machine-readable resource this site
-// publishes, so an agent can enumerate them without probing paths.
-//
-// Shape follows the AI Catalog spec: `specVersion`, a `host` block,
-// and an `entries` array where each entry carries a URN identifier, a
-// media type, and exactly one of url/data. Identifiers are
-// domain-anchored `urn:air:` URNs — `urn:ai:` is rejected as invalid,
-// which scores the same as having no catalog at all. The gate asserts
-// both the shape and the prefix.
 
 export const prerender = true;
 
@@ -18,8 +8,6 @@ import {
     SITE_ORIGIN,
 } from "@lib/agent-surface";
 
-/** ARD media types per resource kind — how a client decides what a
- *  URL will hand back before fetching it. */
 const TYPE_MAP: Record<string, string> = {
     "mcp-server": "application/mcp-server+json",
     openapi: "application/openapi+json",

@@ -1,28 +1,4 @@
 #!/usr/bin/env node
-/**
- * Snapshot N variations of the AzulejoTile to PNG and regenerate the
- * worker-og manifest. Required because the OG worker can't run WebGL
- * directly — pre-rendered tiles give it dynamic variance per page
- * without needing a headless browser at request time.
- *
- * Usage:
- *   1) Install Playwright + Chromium once:
- *        bun add -d playwright
- *        bunx playwright install chromium
- *   2) Start the Astro dev server in another terminal:
- *        bun dev
- *   3) Run this script:
- *        bun run snapshot:azulejos
- *
- * Output:
- *   worker-og/azulejo/01.png … NN.png    — captured tiles
- *   worker-og/src/azulejos.ts            — manifest with imports + exported list
- *   public/azulejo/                      — mirror served by HeaderTile.astro
- *
- * The manifest is what worker-og/src/index.ts consumes; rebuilding it
- * is part of this script so the worker stays in sync with whatever
- * PNGs are on disk.
- */
 
 import { chromium } from "playwright";
 import { mkdir, writeFile, readdir, rm, copyFile } from "node:fs/promises";
@@ -37,18 +13,10 @@ const PUBLIC_DIR = join(ROOT, "public", "azulejo");
 const MANIFEST = join(ROOT, "worker-og", "src", "azulejos.ts");
 
 const DEV_BASE_URL = process.env.SNAPSHOT_BASE_URL ?? "http://localhost:4321";
-// Captured tile resolution (square). The OG worker renders the tile
-// at 200px CSS width, so 192 is enough for 1.5× retina sharpness
-// while keeping the bundle within Workers' 10 MB cap. 100 tiles at
-// this resolution + JPEG q=78 land around 3 MB total.
 const TILE_PIXELS = 192;
-const COUNT = 100; // number of variations to render
+const COUNT = 100;
 const JPEG_QUALITY = 0.78;
 
-// Seeds derived via the 32-bit golden-ratio integer hash
-// (Knuth/Fibonacci). Spreads consecutive indices across the entire
-// mulberry32 space so neighboring tiles never look like incremental
-// variations — each one is meaningfully different from the next.
 const SEEDS = Array.from({ length: COUNT }, (_, i) =>
     Math.imul(i + 1, 0x9e3779b1) >>> 0,
 );
@@ -69,8 +37,6 @@ async function snapshot() {
 
     let saved = 0;
     for (const [index, seed] of SEEDS.entries()) {
-        // 3-digit padding (001…100) keeps alphabetical sort identical
-        // to numeric sort once the count crosses 99.
         const idx = String(index + 1).padStart(3, "0");
         const url = `${DEV_BASE_URL}/internal/azulejo/${seed}`;
         process.stdout.write(`  ${idx}/${COUNT}  seed=${seed}  `);
@@ -78,16 +44,8 @@ async function snapshot() {
         try {
             await page.goto(url, { waitUntil: "networkidle", timeout: 30_000 });
             await page.waitForSelector("canvas", { timeout: 10_000 });
-            // Give the WebGL context one extra frame to render — networkidle
-            // alone doesn't guarantee the shader's first paint has landed.
             await page.waitForTimeout(200);
 
-            // Capture via canvas.toDataURL() instead of element.screenshot().
-            // Playwright's element screenshot captures the locator's visible
-            // *region*, which includes overlapping HTML in front of the
-            // canvas (e.g. Astro's dev toolbar). toDataURL pulls the raw
-            // pixel buffer straight off the canvas, so no other DOM ever
-            // bleeds into the capture. JPEG q=85 keeps ~50 KB tiles.
             const dataUrl = await page.evaluate((quality) => {
                 const c = document.querySelector("canvas");
                 if (!c) return null;
@@ -141,9 +99,6 @@ export const AZULEJOS: (ArrayBuffer | Uint8Array)[] = [${arrayBody}];
     await writeFile(MANIFEST, body);
     console.log(`wrote ${MANIFEST} (${files.length} entries)`);
 
-    // HeaderTile serves the same tiles from public/azulejo — mirror
-    // them here so a re-fire can't desync the site header from the OG
-    // worker (the mirror used to be a manual copy).
     await rm(PUBLIC_DIR, { recursive: true, force: true });
     await mkdir(PUBLIC_DIR, { recursive: true });
     for (const file of files) {

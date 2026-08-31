@@ -1,10 +1,4 @@
 ---
-// SSR — homepage feed pulls from the Farfield live collection,
-// filtered to the routes this deploy built (builtDocFilter): a new
-// post appears the moment its publish-hook rebuild lands, never as a
-// dead link before it. Underlying Farfield fetches are TTL-cached
-// per-isolate; the response carries Cache-Control so Cloudflare
-// edge-caches the rendered HTML for 60s with stale-while-revalidate.
 export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -18,9 +12,6 @@ import { isPreview } from "@lib/preview";
 
 const preview = isPreview(Astro);
 
-// Glass is fetched on the client — GlassArch's script hits
-// /api/glass-pick.json after first paint and injects the photo +
-// caption. Keeps Glass's latency out of the server TTFB entirely.
 const {
     entries: feedEntries,
     error: feedError,
@@ -31,33 +22,18 @@ let feed: DocumentData[] = [];
 if (feedError) {
     console.error("[index] Farfield feed fetch failed:", feedError);
 } else {
-    // Live minus not-yet-built: a just-published entry stays off the
-    // homepage until the rebuild that creates its page deploys, so
-    // the list never links a dead route. See builtDocFilter.
     feed = entriesOf<DocumentData>(feedEntries).filter(
         await builtDocFilter(),
     );
 }
 
-// The homepage feed is a teaser for the latest work — cap it and point
-// at the paginated /content index for the full archive.
 const RECENT_LIMIT = 12;
 const recent = feed.slice(0, RECENT_LIMIT);
 
-// Translate the loader's cacheHint into HTTP cache headers. See
-// lib/cache.ts for the actual policy (s-maxage=60, swr=300) — one
-// helper so we don't drift across pages.
 setResponseCacheHeaders(Astro.response, cacheHint);
 ---
 
 <BaseLayout>
-    <!--
-      `cover` is the above-fold opener: arch + figcaption + intro copy
-      share one viewport-height container. The arch takes whatever
-      vertical space the intro doesn't need; the intro takes its
-      content height. Both fit before the reader has to scroll. The
-      feed lives below as a separate section.
-    -->
     <section class="cover">
         <GlassArch />
 
@@ -97,14 +73,6 @@ setResponseCacheHeaders(Astro.response, cacheHint);
 </BaseLayout>
 
 <style>
-    /*
-     * `.cover` groups the hero and the intro. Sizing is no longer
-     * locked to a viewport-fitting height — the arch frame is pinned
-     * to a vh-derived height so the arch reads at a consistent size
-     * across photos, and the caption is allowed to flow underneath at
-     * its natural length (it may extend past the fold on shorter
-     * viewports, which is fine).
-     */
     .cover {
         display: flex;
         flex-direction: column;
@@ -113,11 +81,6 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         width: 100%;
     }
 
-    /* Personal intro that sits between the arch and the feed. The
-       greeting reads as a serif-italic lead; the bio paragraph follows
-       at body size, comfortably wide. Both are centered as a column
-       within the content max-width but left-aligned internally for
-       readable line lengths. */
     .intro {
         flex: 0 0 auto;
         display: flex;
@@ -127,10 +90,6 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         max-width: 60ch;
     }
 
-    /* The greeting IS the homepage's h1 — it's the one line that names
-       what this page is. Kept at --fs-2xl and normal weight rather than
-       the global h1's size/medium weight: the arch above it is the
-       visual hero, and a heavier line here would fight it. */
     .intro .greeting {
         font-family: var(--font-serif);
         font-style: italic;
@@ -145,13 +104,7 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         text-wrap: pretty;
     }
 
-    /* ---------- recent feed (below the fold) ---------- */
-    /* Named `.recent` (not `.feed`) so it can't collide with the global
-       `.feed` list primitive in globals.css. */
-
     .recent {
-        /* The gap from the hero above is owned by `main` (default
-           `main > * + *`) — this section emits no outer margin. */
         display: flex;
         flex-direction: column;
         gap: var(--space-6);
@@ -164,7 +117,4 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         font-weight: var(--fw-normal);
     }
 
-    /* `.feed-grid` / `.card*` / `.feed-empty` / `.see-all` live in
-       globals.css because every list surface (homepage, content,
-       publication indexes, tag pages) needs the same primitive. */
 </style>

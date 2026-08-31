@@ -1,11 +1,3 @@
-// robots.txt — open to answer engines, closed to bulk training
-// scrapers, with the machine-readable indexes advertised up front.
-//
-// The tiering is deliberate: crawlers that feed answer engines (and
-// therefore send readers back, and cite) get everything; crawlers that
-// exist to build training corpora out of a photography archive do not.
-// Content-Signal states the same policy in the newer declarative form
-// for crawlers that read it.
 
 export const prerender = true;
 
@@ -17,10 +9,8 @@ import {
     SEARCH_ONLY_CRAWLERS,
 } from "@lib/agent-surface";
 
-/** Answer-engine and agent crawlers — explicitly welcome. */
 const ALLOWED = [...AGENT_CRAWLERS, ...SEARCH_ONLY_CRAWLERS];
 
-/** Bulk training-corpus scrapers — declined. */
 const DISALLOWED = ["CCBot", "ByteSpider", "Bytespider", "Omgilibot", "Diffbot"];
 
 export const GET: APIRoute = ({ site }) => {

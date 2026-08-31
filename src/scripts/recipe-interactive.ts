@@ -1,24 +1,9 @@
-// Progressive enhancement for farfield recipe blocks (lib/recipe.ts
-// renders the static markup; this layers interaction on top of it).
-// Loaded by pages only when a `.ff-recipe` is present; without JS the
-// grid stays exactly as served.
-//
-//   - Strike-off: click/keyboard an ingredient row to cross it out —
-//     a mise-en-place checklist living in the grid's left column.
-//   - Step focus: click an operation bracket (or walk with the stage
-//     bar) — the grid dims except that operation and the rows it
-//     absorbs, and a panel shows the step's method prose plus a
-//     countdown timer when the step carries a `for:` duration.
-//   - Scaling: serves buttons (from the recipe's yield) rescale every
-//     parseable amount in place; free-text amounts pass through.
 
 export function initRecipes(): void {
     for (const root of document.querySelectorAll<HTMLElement>(".ff-recipe")) {
         enhance(root);
     }
 }
-
-// ---------- amounts: parse / scale / format ---------------------------------
 
 const VULGAR: Record<string, number> = {
     "¼": 1 / 4, "½": 1 / 2, "¾": 3 / 4, "⅓": 1 / 3, "⅔": 2 / 3,
@@ -28,7 +13,6 @@ const GLYPH: [number, string][] = Object.entries(VULGAR)
     .map(([g, v]) => [v, g] as [number, string])
     .sort((a, b) => a[0] - b[0]);
 
-// One quantity token: "1½" | "½" | "1 1/2" | "1/2" | "1.5" | "2"
 const QTY_SRC =
     "(?:\\d+\\s+\\d+/\\d+|\\d+/\\d+|\\d*[¼½¾⅓⅔⅛⅜⅝⅞]|\\d+(?:\\.\\d+)?)";
 const AMOUNT_RE = new RegExp(
@@ -43,8 +27,6 @@ function qtyValue(tok: string): number {
     return Number(tok);
 }
 
-/** Format a quantity as whole + nearest kitchen fraction (halves,
- *  thirds, quarters, eighths). Values ≥ 10 round to integers. */
 function fmtQty(v: number): string {
     if (v >= 10) return String(Math.round(v));
     let best = { err: Infinity, n: Math.round(v), d: 1 };
@@ -61,8 +43,6 @@ function fmtQty(v: number): string {
     return (whole ? String(whole) : "") + glyph;
 }
 
-/** Pluralize/singularize the handful of unit words the recipes use,
- *  so "1 tablespoon" scaled ×2 reads "2 tablespoons". */
 function fixUnits(rest: string, qty: number): string {
     const plural = qty > 1;
     return rest.replace(
@@ -71,9 +51,6 @@ function fixUnits(rest: string, qty: number): string {
     );
 }
 
-/** Scale a raw amount string ("1½ tablespoons", "1–2 teaspoons") by a
- *  factor. Returns null when the string carries no leading quantity
- *  ("To taste"). */
 export function scaleAmount(base: string, f: number): string | null {
     const m = base.match(AMOUNT_RE);
     if (!m) return null;
@@ -83,15 +60,12 @@ export function scaleAmount(base: string, f: number): string | null {
     return qty + fixUnits(m[4], b ?? a);
 }
 
-// ---------- per-recipe enhancement ------------------------------------------
-
 const fmtClock = (n: number) =>
     `${Math.floor(n / 60)}:${String(n % 60).padStart(2, "0")}`;
 
 function enhance(root: HTMLElement): void {
     root.classList.add("ff-live");
 
-    // ---- strike-off ---------------------------------------------------
     for (const th of root.querySelectorAll<HTMLElement>(".ff-r-ing")) {
         th.tabIndex = 0;
         th.setAttribute("role", "button");
@@ -109,7 +83,6 @@ function enhance(root: HTMLElement): void {
         });
     }
 
-    // ---- scaling ------------------------------------------------------
     const controls = root.querySelector<HTMLElement>(".ff-recipe-controls");
     const serves = Number(root.dataset.serves) || 0;
     if (controls && serves > 0) {
@@ -149,7 +122,6 @@ function enhance(root: HTMLElement): void {
         }
     }
 
-    // ---- step focus + stage bar ----------------------------------------
     const lis = [...root.querySelectorAll<HTMLElement>(".ff-recipe-steps li[data-step]")];
     const firstGrid = root.querySelector<HTMLElement>(".ff-recipe-grid-wrap");
     if (!firstGrid || lis.length === 0) return;
@@ -174,8 +146,6 @@ function enhance(root: HTMLElement): void {
     const textEl = panel.querySelector<HTMLElement>(".ff-rs-text")!;
     const clock = panel.querySelector<HTMLButtonElement>(".ff-rs-clock")!;
 
-    // Grid labels by step id — the panel title, and absent for prep
-    // steps (which have no bracket).
     const labelFor = new Map<string, string>();
     for (const cell of root.querySelectorAll<HTMLElement>("td.ff-r-op[data-step]")) {
         labelFor.set(
@@ -283,9 +253,6 @@ function enhance(root: HTMLElement): void {
             }
         });
 
-        // Hover-peek: tint every bracket for this step (a shared
-        // prefix appears in two grids), the rows it absorbs, and its
-        // method item — the preview of what a click would focus.
         const peek = (on: boolean) => {
             for (const c of cellsFor(cell.dataset.step as string)) {
                 c.classList.toggle("peek", on);

@@ -1,18 +1,3 @@
-// GraphQL schema for the site's content.
-//
-// Why GraphQL alongside the REST endpoints: an agent asking "what has
-// he written about X, and give me the bodies" needs two REST round
-// trips (search, then fetch each hit). One GraphQL query does it, and
-// the typed schema tells the agent what's available without reading
-// prose docs.
-//
-// Conventions, all of them the ones agents already recognize:
-//   - Relay connections (edges/node/pageInfo, cursor pagination)
-//   - errors modeled IN the schema via result unions, not only the
-//     transport-level `errors` array
-//   - @deprecated with a reason on anything retiring
-//   - introspection deliberately public — this is public content, and
-//     an auth-gated schema is unusable for discovery
 
 import {
     GraphQLBoolean,
@@ -36,7 +21,6 @@ import {
 import { resolveEmbedsForMarkdown } from "./markdown-view";
 import { SITE_ORIGIN, SECTION_SLUGS, EXAMPLE_DOC_PATH } from "./agent-surface";
 
-/** Cursors are opaque by contract; base64 of the offset in practice. */
 const encodeCursor = (i: number) => btoa(`offset:${i}`);
 const decodeCursor = (c: string): number => {
     try {
@@ -50,7 +34,6 @@ const decodeCursor = (c: string): number => {
 const SectionSlug = new GraphQLEnumType({
     name: "SectionSlug",
     description: "A publication on the site.",
-    // GraphQL names cannot carry dashes, so open-source -> open_source.
     values: Object.fromEntries(
         SECTION_SLUGS.map((s) => [s.replace(/-/g, "_"), { value: s }]),
     ),
@@ -66,8 +49,6 @@ const Section = new GraphQLObjectType({
         entryCount: {
             type: new GraphQLNonNull(GraphQLInt),
             description: "Number of published documents in this section.",
-            // The data layer calls this `entries`; the schema uses the
-            // clearer name and maps it here.
             resolve: (s: { entries: number }) => s.entries,
         },
         url: {
@@ -166,7 +147,6 @@ const DocumentConnection = new GraphQLObjectType({
     },
 });
 
-/** Errors modeled in the schema so a client handles them by type. */
 const QueryError = new GraphQLObjectType({
     name: "QueryError",
     description: "A request that failed on its own terms, not in transport.",
@@ -222,12 +202,6 @@ const connectionArgs = {
     },
 };
 
-/**
- * Cost model, declared in the schema so an agent can budget before it
- * queries. Ours is shape-based rather than metered: connections cap at
- * 100 per call, nesting cannot recurse, and `body` is the only field
- * that costs an extra resolution per document.
- */
 const COST_NOTE =
     "Cost model: each connection returns at most 100 items (`first` is clamped). Field resolution is O(1) except `Document.body`, which resolves image embeds per document — request it only for documents you intend to read. Rate limits are Cloudflare's edge defaults, advertised on REST responses via the RateLimit header; there is no per-client quota or API key.";
 

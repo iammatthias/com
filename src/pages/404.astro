@@ -1,8 +1,4 @@
 ---
-// On-demand, not prerendered: a static 404 is served by the asset
-// layer without invoking the Worker, so middleware never sees it and
-// cannot negotiate a markdown representation for agents. 404s are
-// rare enough that rendering them costs nothing.
 export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -13,9 +9,6 @@ import BaseLayout from "@layouts/BaseLayout.astro";
         <p class="kind">404</p>
         <h1>Not found</h1>
         <p>That page doesn't exist — or it moved during the redesign.</p>
-        <!-- Only evergreen routes here — publication slugs are dynamic
-             (they come from Farfield), so linking them from a static
-             404 would silently rot if collections change. -->
         <p>
             Try the <a href="/">homepage</a>, browse
             <a href="/content">all content</a> or the <a href="/feed">feed</a>,

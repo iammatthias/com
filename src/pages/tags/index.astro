@@ -1,5 +1,4 @@
 ---
-// Tag cloud, prerendered from the build-time docs collection.
 export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -37,9 +36,6 @@ const tags = [...byTag.entries()]
 </BaseLayout>
 
 <style>
-    /* `.page-header` + `.feed-empty` live in globals.css. The
-       per-page header italics override below tightens the muted
-       `<p>` for this surface — it's a stat line, not prose. */
     .page-header p {
         font-family: var(--font-serif);
         font-style: italic;
@@ -66,8 +62,6 @@ const tags = [...byTag.entries()]
         text-decoration: none;
     }
 
-    /* The underline lands on the span (only the name, not the count),
-       so the base anchor's offset doesn't reach it — restate it. */
     .tag-cloud a:hover .tag-name {
         text-decoration: underline;
         text-underline-offset: 0.15em;

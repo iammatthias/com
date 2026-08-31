@@ -1,14 +1,3 @@
-// Single source of truth for the site's agent-facing surface.
-//
-// Every machine-readable artifact the site publishes — the MCP tools,
-// the OpenAPI operations, the well-known discovery documents, the
-// developer page — is generated from the declarations here, so the
-// catalog can never drift from what actually answers. scripts/
-// agent-check.mjs validates the built site against this same list.
-//
-// Honesty rule for anything added here: describe only capabilities
-// that exist. An agent that trusts a fabricated catalog entry wastes
-// a request and learns not to trust the rest of it.
 
 export const SITE_ORIGIN = "https://iammatthias.com";
 
@@ -17,7 +6,6 @@ export const SITE_IDENTITY = {
     title: "iammatthias",
     owner: "Matthias Jordan",
     email: "hey@iammatthias.com",
-    /** The human-facing one-liner (site chrome, RSS, llms.txt). */
     tagline:
         "Matthias Jordan's cozy corner of the web. Photographs, projects, recipes, and notes, open and personal.",
     summary:
@@ -25,7 +13,6 @@ export const SITE_IDENTITY = {
     repo: "https://github.com/iammatthias/com",
 } as const;
 
-/** Publication slugs — scoped llms.txt files, filters, descriptions. */
 export const SECTION_SLUGS = [
     "art",
     "posts",
@@ -34,19 +21,10 @@ export const SECTION_SLUGS = [
     "open-source",
 ] as const;
 
-/** A real, published document used as the example in every surface
- *  that needs one (quickstarts, tool descriptions, GraphQL docs).
- *  One constant so an unpublish/re-slug breaks one place, not six. */
 export const EXAMPLE_DOC_PATH = "posts/1779066375000-farfield";
 
-/** The robots.txt Content-Signal policy, also quoted on /developers. */
 export const CONTENT_SIGNAL = "search=yes, ai-input=yes, ai-train=no";
 
-/**
- * Answer-engine and agent crawlers, by User-Agent token. Two
- * consumers: robots.txt welcomes them explicitly, and the middleware
- * serves them markdown when they did not ask for a representation.
- */
 export const AGENT_CRAWLERS = [
     "GPTBot",
     "OAI-SearchBot",
@@ -63,21 +41,15 @@ export const AGENT_CRAWLERS = [
     "DuckAssistBot",
 ] as const;
 
-/** Welcome in robots.txt but deliberately NOT served markdown — a
- *  classic search indexer whose results page links humans to HTML. */
 export const SEARCH_ONLY_CRAWLERS = ["Bingbot"] as const;
 
-/** MCP protocol revision the transport negotiates and the discovery
- *  documents advertise. */
 export const MCP_PROTOCOL_VERSION = "2025-06-18";
 
-/** Public HTTP endpoints, mirrored into /openapi.json. */
 export interface ApiOperation {
     path: string;
     operationId: string;
     summary: string;
     description: string;
-    /** Response media type. */
     contentType: string;
     params?: Array<{
         name: string;
@@ -162,7 +134,6 @@ export const API_OPERATIONS: ApiOperation[] = [
     },
 ];
 
-/** MCP tools, mirrored into the server card and the skills index. */
 export interface AgentSkill {
     name: string;
     title: string;
@@ -195,11 +166,6 @@ export const AGENT_SKILLS: AgentSkill[] = [
     },
 ];
 
-/**
- * The MCP server card. One builder for every document that describes
- * the server (/.well-known/mcp, its server-card.json) — hand-kept
- * copies had already drifted apart.
- */
 export function mcpServerCard(serverUrl: string) {
     return {
         name: SITE_IDENTITY.name,
@@ -220,12 +186,6 @@ export function mcpServerCard(serverUrl: string) {
     };
 }
 
-// Only list resources that exist and answer. An entry pointing at a
-// 404 teaches an agent the whole catalog is unreliable — scripts/
-// agent-check.mjs walks every URL here on live runs for exactly that
-// reason.
-
-/** Machine-readable resources, mirrored into the ARD ai-catalog. */
 export const AGENT_RESOURCES = [
     {
         id: "llms-txt",

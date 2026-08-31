@@ -1,16 +1,4 @@
 ---
-// Standalone view of the Farfield feed. Single `[...page]` catch-all
-// serves `/feed` (page 1) and `/feed/page/N`. Sibling `[rkey].astro` (a
-// named param) outranks this rest route for `/feed/<rkey>`, and
-// `rss.xml.ts` (static) for `/feed/rss.xml`.
-//
-// Reading model is infinite scroll: page 1 renders server-side, then the
-// script below auto-fetches subsequent pages and lifts their entries
-// into the list as the reader nears the bottom. With JS off it degrades
-// to a plain "Older posts →" link that navigates to the next full page —
-// which is itself just this same route, so paging keeps working either
-// way.
-
 export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -50,9 +38,6 @@ setResponseCacheHeaders(Astro.response, cacheHint, deepPageCacheOptions(page));
 const title = "Feed";
 const description = "Short posts from iammatthias.";
 
-// Resolve media only for this page's slice. Older pages resolve their own
-// when the infinite-scroll script fetches them — a big win over resolving
-// the entire feed up-front on every request.
 const mediaByRkey = new Map<string, ResolvedMedia[]>(
     await Promise.all(
         paged.items.map(async (it) =>

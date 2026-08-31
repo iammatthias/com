@@ -1,14 +1,3 @@
-// Smoke test — exercises every surface of the built site against a
-// preview server and fails loudly on regressions. Catches the class of
-// breakage that unit-less framework/adapter upgrades introduce: dead
-// routes, broken redirects, missing SEO artifacts, unserved assets.
-//
-// Usage:
-//   bun run build && bun run smoke     # spawns `astro preview` itself
-//   BASE_URL=http://localhost:4321 bun run smoke   # against a running server
-//
-// Requires the Farfield read keys in .env (same as preview) — live
-// routes render empty without them, and the content probes will fail.
 
 import { execSync, spawn } from "node:child_process";
 
@@ -17,29 +6,17 @@ let BASE = process.env.BASE_URL ?? "http://localhost:4321";
 
 let server = null;
 if (OWNS_SERVER) {
-    // An explicit port, because the default 4321 may be held by another
-    // project's dev server — and the preview daemon silently binds a
-    // different port while still reporting the one it was asked for,
-    // which had this suite probing a stranger's site.
     const port = 4399;
     BASE = `http://localhost:${port}`;
-    // The preview server is a background daemon that outlives this
-    // process — a leftover one keeps serving the dist that existed when
-    // it started, which after a rebuild means 500s on every asset.
-    // Recycle it so the run always sees the current build.
     await new Promise((resolve) => {
         spawn("bunx", ["astro", "preview", "stop"], { stdio: "ignore" }).on(
             "exit",
             resolve,
         );
     });
-    // The daemon's workerd child can survive the stop, squatting on the
-    // port and answering 500 for a dist that no longer exists. The port
-    // is dedicated to these checks, so anything still on it is ours.
     try {
         execSync(`lsof -ti tcp:${port} | xargs kill`, { stdio: "ignore" });
     } catch {
-        /* nothing was squatting */
     }
     server = spawn("bunx", ["astro", "preview", "--port", String(port)], {
         stdio: "ignore",
@@ -54,7 +31,6 @@ async function waitForServer(timeoutMs = 60_000) {
             const res = await fetch(BASE + "/", { redirect: "manual" });
             if (res.status > 0) return;
         } catch {
-            /* not up yet */
         }
         await new Promise((r) => setTimeout(r, 1000));
     }
@@ -75,13 +51,6 @@ async function get(path, { redirect = "follow" } = {}) {
     return { res, body };
 }
 
-/**
- * @param {string} path
- * @param {object} opts
- * @param {number} [opts.status] expected status (default 200)
- * @param {(body: string, res: Response) => string | null} [opts.probe]
- *   returns null when satisfied, otherwise a failure description
- */
 async function check(path, { status = 200, probe } = {}) {
     try {
         const { res, body } = await get(path);
@@ -118,7 +87,6 @@ async function checkRedirect(path, target, statuses = [301]) {
 try {
     await waitForServer();
 
-    // ---- core pages -------------------------------------------------
     const home = await check("/", {
         probe: (b) =>
             b.includes('rel="canonical"') && b.includes("application/ld+json")
@@ -136,7 +104,6 @@ try {
     await check("/onchain-analytics");
     await check("/nonexistent-page-xyz", { status: 404 });
 
-    // ---- list surfaces + a live doc page ------------------------------
     const content = await check("/content", {
         probe: (b) => (b.includes("feed-grid") ? null : "no feed grid"),
     });
@@ -161,7 +128,6 @@ try {
     if (rkeyPath) await check(rkeyPath);
     else record("feed entry discovery", false, "no entry link on /feed");
 
-    // ---- SEO artifacts ------------------------------------------------
     await check("/sitemap.xml", {
         probe: (b) => {
             if (!b.includes("<urlset")) return "not a urlset";
@@ -196,7 +162,6 @@ try {
                 const cids = Object.keys(vectors);
                 if (cids.length === 0)
                     return "no prebuilt vectors — build ran without Farfield keys?";
-                // base64 Float32Array: dims * 4 bytes → ceil(n/3)*4 chars
                 if (vectors[cids[0]].length < dims * 4)
                     return "vector payload too short for dims";
                 return null;
@@ -205,8 +170,6 @@ try {
             }
         },
     });
-    // Feed readers probe with HEAD before subscribing; Astro 7 endpoints
-    // need explicit HEAD exports or these 404.
     try {
         const headRes = await fetch(BASE + "/rss.xml", { method: "HEAD" });
         record(
@@ -220,14 +183,10 @@ try {
     await check("/rss.xml", {
         probe: (b) => {
             if (!b.includes("content:encoded")) return "no full content";
-            // Embeds must resolve to absolute image URLs (entity-escaped
-            // inside content:encoded), not get stripped or leak raw
-            // blob:// URIs into <img> tags.
             if (!b.includes("&lt;img src=&quot;https://wsrv.nl"))
                 return "no resolved images in content";
             if (b.includes('img src=&quot;blob://')) return "unresolved blob:// image";
             if (!b.includes("<media:content")) return "no media:content thumbnails";
-            // Gallery-heavy items must truncate with a canonical link.
             if (!b.includes("View the full gallery"))
                 return "no gallery truncation link";
             return null;
@@ -238,8 +197,6 @@ try {
             b.includes("content:encoded") ? null : "no full content",
     });
 
-    // ---- redirects (legacy + trailing slash) --------------------------
-    // /about is a real page again (it used to 301 to /now).
     await check("/about", {
         probe: (b) => (b.includes("cozy corner") ? null : "about copy missing"),
     });
@@ -247,11 +204,8 @@ try {
     await checkRedirect("/content/old/thing", "/content");
     await checkRedirect("/now/", "/now");
     await checkRedirect("/sitemap-index.xml", "/sitemap.xml");
-    // Prerendered pages are served by the asset layer, which may use
-    // 307/308 for its slash normalization.
     await checkRedirect("/resume/", "/resume", [301, 307, 308]);
 
-    // ---- headers + assets ---------------------------------------------
     if (home) {
         const { res } = await get("/");
         record(

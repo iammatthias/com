@@ -17,7 +17,6 @@ export const GET: APIRoute = async (context) => {
             collection.error,
         );
     }
-    // Newest RSS_ITEM_CAP, bounded render concurrency — see rss.xml.ts.
     const items = entriesOf<FeedEntryData>(collection.entries).slice(
         0,
         RSS_ITEM_CAP,
@@ -29,8 +28,6 @@ export const GET: APIRoute = async (context) => {
         title: "iammatthias — feed",
         description: "Short posts from iammatthias.",
         site: context.site?.toString() ?? "https://iammatthias.com",
-        // Rendered HTML with embeds resolved to images, capped galleries,
-        // and a media:content thumb per item — see rss.xml.ts.
         items: await mapWithConcurrency(
             items,
             8,
@@ -41,12 +38,6 @@ export const GET: APIRoute = async (context) => {
                     moreUrl: canonical,
                 });
                 const thumb = content.match(/<img src="([^"]+)"/)?.[1];
-                // Titleless items, per microblog/notes convention —
-                // feed posts have no real title, and a derived one just
-                // duplicates the body everywhere it appears (readers'
-                // list views and the styled browser page alike). RSS
-                // only requires title OR description; the stylesheet
-                // links the date instead when there's no title.
                 return {
                     description: plainText(item.body).slice(0, 180),
                     content,

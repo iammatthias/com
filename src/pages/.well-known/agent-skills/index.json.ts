@@ -1,5 +1,3 @@
-// Agent Skills index — the capabilities this site offers, each
-// pointing back at the MCP tool that implements it.
 
 export const prerender = true;
 
@@ -10,8 +8,6 @@ import {
     SITE_ORIGIN,
 } from "@lib/agent-surface";
 
-/** sha256 of the bytes an entry points at — v0.2.0 wants a digest so
- *  a client can tell whether a skill changed without refetching. */
 async function digest(text: string): Promise<string> {
     const buf = await crypto.subtle.digest(
         "SHA-256",

@@ -1,7 +1,3 @@
-// Per-publication RSS, prerendered. Regenerates on every build — the
-// Farfield publish hook is what keeps it fresh. Newest RSS_ITEM_CAP
-// entries with full bodies; see rss.xml.ts at the root for the item
-// shape rationale.
 
 export const prerender = true;
 
@@ -25,8 +21,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
         return {
             params: { publication: pub.slug },
             props: { pub, items },
-            // Feed rendering re-fetches blob metas — skip it when the
-            // capped window is unchanged.
             cacheKey: items.map((d) => d.cid).join(","),
         };
     });

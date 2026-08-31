@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { baseSepoliaClient } from "@lib/viemProvider";
 import "./OnchainAnalytics.css";
 
-// ABI fragments for the analytics contract
 const analyticsABI = [
   {
     inputs: [],
@@ -94,7 +93,6 @@ export default function OnchainAnalytics({ contractAddress }: OnchainAnalyticsPr
 
         setSessionCount(count as bigint);
 
-        // Process page views
         if (Array.isArray(views) && views.length === 3) {
           const [pagePathsRaw, pageOccurrencesRaw] = views as readonly [readonly string[], readonly bigint[], unknown];
           const pagePaths = [...pagePathsRaw];
@@ -113,7 +111,6 @@ export default function OnchainAnalytics({ contractAddress }: OnchainAnalyticsPr
           }
         }
 
-        // Process events
         if (Array.isArray(eventsData) && eventsData.length === 3) {
           const [eventNamesRaw, eventOccurrencesRaw] = eventsData as readonly [
             readonly string[],

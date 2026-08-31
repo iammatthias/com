@@ -1,25 +1,4 @@
 /// <reference lib="webworker" />
-// Search worker — owns the ternlight model, the corpus, and the vector
-// index, entirely off the main thread. Compiling the ~10 MB WASM module
-// and embedding text are synchronous; doing them here means the page
-// never stutters while search warms up in the background.
-//
-// Corpus vectors come prebuilt from /api/search-vectors.json (embedded
-// at build time — see that endpoint), so warming usually costs only
-// the engine download/compile plus two small fetches. Only content
-// published after the last build gets embedded here, and those vectors
-// are cached in IndexedDB keyed by Farfield cid.
-//
-// Spawned lazily by src/scripts/menu-search.ts, which holds the other
-// end of the message protocol below.
-//
-// The engine loads via dynamic import so this module has NO top-level
-// await (the wasm-bindgen glue instantiates its .wasm with one). With
-// TLA, a module worker starts draining its message queue at the first
-// await point — before the self.onmessage assignment at the bottom of
-// this file runs — and the parent's "warm" message is silently
-// dropped, hanging both sides forever. Keeping this module synchronous
-// guarantees the handler exists before any message is delivered.
 
 import { SEARCH_DIMS, SEARCH_MODEL } from "@lib/search-model";
 
@@ -36,7 +15,6 @@ interface CorpusItem {
 interface PrebuiltVectors {
     model: string;
     dims: number;
-    /** cid → base64-encoded Float32Array. */
     vectors: Record<string, string>;
 }
 
@@ -65,13 +43,8 @@ function b64ToVector(b64: string): Float32Array {
     return new Float32Array(bytes.buffer);
 }
 
-/* ── minimal IndexedDB k/v (cid → Float32Array buffer) ─────────────── */
-
 const DB_NAME = "menu-search";
 const STORE = "vectors";
-// Sentinel record: which model produced the cached vectors. A cid is
-// stable across model swaps, so without this a model upgrade would
-// silently mix incompatible vectors.
 const MODEL_KEY = "__model__";
 
 function openDb(): Promise<IDBDatabase> {
@@ -117,17 +90,12 @@ async function dbReplace(
     });
 }
 
-/* ── index ──────────────────────────────────────────────────────────── */
-
 let indexPromise: Promise<{
     items: CorpusItem[];
     vectors: Float32Array[];
 }> | null = null;
 
 async function buildIndex() {
-    // Engine chunk (wasm compile), live corpus, and prebuilt vectors in
-    // parallel. The prebuilt file is optional — any failure just means
-    // more client-side embedding below.
     const [{ embed }, corpus, prebuilt] = await Promise.all([
         engine,
         fetch("/api/search-corpus.json").then(
@@ -143,7 +111,6 @@ async function buildIndex() {
             ? prebuilt.vectors
             : {};
 
-    // IndexedDB covers what the build didn't: content published since.
     let cached = new Map<string, ArrayBuffer | string>();
     let staleModel = false;
     let db: IDBDatabase | null = null;
@@ -153,7 +120,6 @@ async function buildIndex() {
         staleModel =
             cached.size > 0 && cached.get(MODEL_KEY) !== SEARCH_MODEL;
     } catch {
-        /* private browsing / quota — embed the gaps, skip persistence */
     }
 
     const vectors: Float32Array[] = [];
@@ -174,9 +140,6 @@ async function buildIndex() {
         }
     }
     if (db && (fresh.length > 0 || staleModel)) {
-        // Drop what's no longer useful: everything on a model change,
-        // otherwise vectors for deleted content and for cids the
-        // prebuilt file now covers (no point storing those twice).
         const stale = [...cached.keys()].filter(
             (k) =>
                 k !== MODEL_KEY &&
@@ -194,8 +157,6 @@ function ensureIndex() {
     return indexPromise;
 }
 
-/* ── protocol ───────────────────────────────────────────────────────── */
-
 self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
     const msg = event.data;
     try {
@@ -208,14 +169,6 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
                 ensureIndex(),
             ]);
             const qv = embed(msg.query);
-            // Lexical title boost on top of the embedding similarity.
-            // Pure cosine can rank a thematically-adjacent post above
-            // the one whose title literally contains the query
-            // ("machine vision" ranking under a feed note). Top hits
-            // spread by a few hundredths, so +0.15 for a title
-            // containing the whole query is decisive without letting
-            // keyword matches swamp semantics; an exact title doubles
-            // it.
             const q = msg.query.trim().toLowerCase();
             const scored: WorkerHit[] = items.map((item, i) => {
                 const v = vectors[i];

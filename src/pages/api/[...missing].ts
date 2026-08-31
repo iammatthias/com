@@ -1,7 +1,3 @@
-// Catch-all for unknown /api/* paths. Without this an agent hitting a
-// mistyped endpoint gets the site's HTML 404 page, which it cannot
-// parse — the whole point of publishing an API is that failures are
-// machine-readable too.
 
 export const prerender = false;
 

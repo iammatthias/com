@@ -1,12 +1,4 @@
 ---
-// Image lightbox. A single `<dialog>` reused for every zoomable figure
-// on the page — populated on click with the originating image's
-// high-res wsrv URL (carried on `data-zoom-*` attributes; see
-// lib/doc-render.ts). Native <dialog> handles ESC, focus trap, and
-// scroll lock for free. Backdrop click closes; an explicit close
-// button is always present for touch users. Keyboard arrows, touch
-// swipe, and edge buttons cycle through every zoomable image on the
-// page, with prev/next preloading to hide wsrv's cold TTFB.
 ---
 
 <dialog id="image-lightbox" class="lightbox" aria-label="Image viewer">
@@ -27,9 +19,6 @@
         const prevBtn = dialog.querySelector("[data-lightbox-prev]");
         const nextBtn = dialog.querySelector("[data-lightbox-next]");
 
-        // Collection of zoomable buttons + current index. Rebuilt
-        // each time the lightbox opens so dynamically-rendered
-        // content (HMR, future client-side mutations) stays in sync.
         let triggers: HTMLElement[] = [];
         let index = 0;
 
@@ -38,12 +27,6 @@
                 document.querySelectorAll<HTMLElement>("[data-zoom-src]"),
             );
 
-        /**
-         * Fire-and-forget preload for a sibling image at the same
-         * viewport bucket the lightbox img is using. The browser
-         * caches the result; the actual <img> load later is a
-         * memory hit instead of a network round-trip to wsrv.
-         */
         const preloadFor = (btn: HTMLElement | undefined) => {
             if (!btn) return;
             const preload = new Image();
@@ -55,13 +38,9 @@
         const showAt = (i: number) => {
             if (!(img instanceof HTMLImageElement)) return;
             if (triggers.length === 0) return;
-            // Wrap-around: -1 → last, length → 0.
             index = (i + triggers.length) % triggers.length;
             const btn = triggers[index];
 
-            // Steal the already-loaded thumbnail from the
-            // originating figure as an instant placeholder. Cleared
-            // (via the .is-loaded class) once the high-res arrives.
             const triggerImg = btn.querySelector("img");
             if (
                 thumb instanceof HTMLImageElement &&
@@ -72,10 +51,6 @@
             }
             dialog.classList.remove("is-loaded");
 
-            // Order matters: set srcset + sizes BEFORE src, so the
-            // browser's responsive selection runs against the full
-            // candidate list and doesn't briefly download the
-            // fallback src as a wasted request.
             img.srcset = btn.dataset.zoomSrcset ?? "";
             img.sizes = btn.dataset.zoomSizes ?? "100vw";
             img.src = btn.dataset.zoomSrc ?? "";
@@ -90,7 +65,6 @@
                         ? `${index + 1} / ${triggers.length}`
                         : "";
             }
-            // Hide prev/next when there's only one image to view.
             const showNav = triggers.length > 1;
             if (prevBtn instanceof HTMLElement) {
                 prevBtn.hidden = !showNav;
@@ -99,10 +73,6 @@
                 nextBtn.hidden = !showNav;
             }
 
-            // Warm prev / next so swiping is instant. wsrv TTFB is
-            // 1–2s cold, so paying it now (while the user is
-            // looking at the current image) hides the latency on
-            // the very next click.
             if (triggers.length > 1) {
                 preloadFor(triggers[(index + 1) % triggers.length]);
                 preloadFor(
@@ -111,17 +81,12 @@
             }
         };
 
-        // Reveal the full-res image (and drop the thumbnail behind
-        // it) once it's decoded — until then, the user sees the
-        // thumb. `is-loaded` swaps the visual stack.
         if (img instanceof HTMLImageElement) {
             img.addEventListener("load", () => {
                 dialog.classList.add("is-loaded");
             });
         }
 
-        // Open on click anywhere in a `.zoom-btn` (figures wrap their
-        // image in one). Delegated so it covers `set:html` content.
         document.addEventListener("click", (event) => {
             const target = event.target;
             if (!(target instanceof Element)) return;
@@ -134,13 +99,9 @@
             dialog.showModal();
         });
 
-        // Close handlers — explicit button, backdrop click. ESC is
-        // already handled natively by <dialog>.
         dialog.addEventListener("click", (event) => {
             const t = event.target;
             if (!(t instanceof Element)) return;
-            // The backdrop is `<dialog>` itself; clicks on inner
-            // controls (img, nav buttons) shouldn't dismiss.
             if (t === dialog) {
                 dialog.close();
             } else if (t.closest("[data-lightbox-close]")) {
@@ -152,7 +113,6 @@
             }
         });
 
-        // Arrow-key nav while the modal is open.
         dialog.addEventListener("keydown", (event) => {
             if (event.key === "ArrowLeft") {
                 event.preventDefault();
@@ -163,9 +123,6 @@
             }
         });
 
-        // Touch swipe — horizontal-dominant gestures cycle images.
-        // 50px threshold separates swipes from incidental drags
-        // while pinch-zooming or scrolling.
         let touchStartX = 0;
         let touchStartY = 0;
         dialog.addEventListener(
@@ -194,8 +151,6 @@
             { passive: true },
         );
 
-        // Clear the src on close so the bandwidth isn't held by an
-        // off-screen high-res image until the next open.
         dialog.addEventListener("close", () => {
             if (img instanceof HTMLImageElement) {
                 img.src = "";
@@ -211,11 +166,6 @@
 
 <style>
     .lightbox {
-        /* Native <dialog>'s default is a small auto-sized box centered
-           on viewport. Stretch it to fill the screen so the image can
-           freely scale to either dimension. Background is set on the
-           dialog itself (rather than backdrop) so the close button
-           reads against a stable surface. */
         padding: 0;
         border: 0;
         margin: 0;
@@ -240,8 +190,6 @@
         width: auto;
         height: auto;
         margin: 0 auto;
-        /* Center via absolute positioning — flex inside <dialog> is
-           fiddly with top-layer rendering. */
         position: absolute;
         top: 50%;
         left: 50%;
@@ -249,11 +197,6 @@
         object-fit: contain;
     }
 
-    /* The thumbnail is the already-loaded low-res image stolen from
-       the originating figure. It paints instantly so the modal never
-       feels empty while wsrv serves the high-res. A slight blur masks
-       the upscale; opacity ramp gives a clean handoff once the
-       high-res arrives. */
     .lightbox-thumb {
         filter: blur(8px);
         transform: translate(-50%, -50%) scale(1.02);
@@ -276,8 +219,6 @@
         opacity: 0;
     }
 
-    /* Shared black-glass button chrome; close and prev/next differ
-       only in size and placement. */
     .lightbox-close,
     .lightbox-nav {
         position: absolute;
@@ -296,9 +237,6 @@
         background: rgba(0, 0, 0, 0.8);
     }
 
-    /* The global focus ring uses the theme accent, which can vanish
-       against the photo — a white ring on the darkened glass reads
-       everywhere. */
     .lightbox-close:focus-visible,
     .lightbox-nav:focus-visible {
         background: rgba(0, 0, 0, 0.8);
@@ -314,7 +252,6 @@
         font-size: 1.5rem;
     }
 
-    /* Prev / next controls — centered vertically on each edge. */
     .lightbox-nav {
         top: 50%;
         transform: translateY(-50%);
@@ -332,16 +269,11 @@
     }
 
     @media (hover: none) and (pointer: coarse) {
-        /* Touch-only viewports drop the nav buttons entirely — swipe
-           is the navigation there, and `display: none` does remove
-           them from focus order and the accessibility tree, which is
-           the intent: no invisible tab stops. */
         .lightbox-nav {
             display: none;
         }
     }
 
-    /* "3 / 81" counter, bottom center. Small, subtle. */
     .lightbox-counter {
         position: absolute;
         bottom: var(--space-4);

@@ -1,6 +1,4 @@
 ---
-// SSR — feed entries pulled live from Farfield so new updates appear
-// without a rebuild. Cache-Control is set below from the loader's hint.
 export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -26,8 +24,6 @@ const {
 if (feedError) {
     console.error("[/now] Farfield feed entries fetch failed:", feedError);
 }
-// "Recent updates" is a teaser — cap it to the latest few; the full,
-// infinitely-scrolling list lives at /feed ("see all →" below).
 const RECENT_LIMIT = 5;
 const feedItems: FeedEntryData[] = entriesOf<FeedEntryData>(rawEntries).slice(
     0,
@@ -36,7 +32,6 @@ const feedItems: FeedEntryData[] = entriesOf<FeedEntryData>(rawEntries).slice(
 
 setResponseCacheHeaders(Astro.response, cacheHint);
 
-// Resolve each (capped) entry's body to a flat media list at render time.
 const mediaByRkey = new Map<string, ResolvedMedia[]>(
     await Promise.all(
         feedItems.map(
@@ -45,8 +40,6 @@ const mediaByRkey = new Map<string, ResolvedMedia[]>(
     ),
 );
 
-// Shared with the JSON-LD Person entity's sameAs (lib/identity.ts) —
-// one list drives both the visible "Find me" section and the schema.
 const socialLinks = SOCIAL_LINKS.filter((l) => !l.schemaOnly);
 ---
 
@@ -129,8 +122,6 @@ const socialLinks = SOCIAL_LINKS.filter((l) => !l.schemaOnly);
 </BaseLayout>
 
 <style>
-    /* `.prose` (column, rhythm, headings) + `.see-all` come from
-       globals.css — only page-specific styling lives below. */
 
     .prose ul {
         list-style: none;
@@ -140,8 +131,6 @@ const socialLinks = SOCIAL_LINKS.filter((l) => !l.schemaOnly);
         gap: var(--space-2);
     }
 
-    /* List rows and bio paragraphs share the body voice; the bio
-       (merged in from the old /about page) additionally wraps pretty. */
     .prose li,
     .bio p {
         font-size: var(--fs-base);
@@ -165,10 +154,6 @@ const socialLinks = SOCIAL_LINKS.filter((l) => !l.schemaOnly);
         font-size: var(--fs-sm);
     }
 
-    /* Compact override for the feed embed: the standalone /feed list
-       has roomier spacing; inside this page's section the feed reads
-       better with tighter gaps. Targets the global `.feed` / `.feed-item`
-       classes from globals.css via `:global(...)`. */
     .updates :global(.feed--compact) {
         gap: var(--space-5);
     }

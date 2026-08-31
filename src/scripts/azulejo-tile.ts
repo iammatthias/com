@@ -1,12 +1,3 @@
-// Dependency-free WebGL harness for the azulejo tile — the same GLSL
-// the React + three island ran, minus the scaffolding. three.js only
-// ever supplied a fullscreen quad, uniform plumbing, and a context;
-// ~100 lines of raw WebGL do the same, which is what lets the tile
-// render live on every page without shipping React or three.
-//
-// Deterministic: the same seed always kilns the same tile. With no
-// seed given, each mount deals a fresh one from the millisecond
-// timestamp plus the route — every load is a new piece.
 
 import { vertSrc, fragSrc } from "@components/AzulejoTile/shader";
 import {
@@ -28,27 +19,15 @@ import {
 import { hashSeed } from "@lib/format";
 
 export interface AzulejoOptions {
-    /** Integer seed driving every random decision. Two tiles with the
-     *  same seed render identically. Omitted = timestamp + route. */
     seed?: number;
-    /** Rendered side length in CSS pixels. Defaults to 32 (header). */
     size?: number;
-    /** 0 = no mutations, 1 = default rate, 2 = double. */
     wildness?: number;
-    /** Accessible label. Defaults to "" (decorative). */
     alt?: string;
-    /** Fire the kiln again on click — a fresh timestamp seed. */
     refireOnClick?: boolean;
 }
 
 const freshSeed = () => Date.now() + hashSeed(window.location.pathname);
 
-// The shader is GLSL ES 1.00, so the context is WebGL1: under WebGL2
-// an ES 1.00 shader cannot use fwidth() at all (the derivatives
-// extension is WebGL1-only; three used to work around this by
-// auto-upgrading the source to ES 3.00). WebGL1 plus the extension is
-// universally supported and all a single quad needs. three also used
-// to inject the attribute declarations.
 const VERT_PRELUDE = "attribute vec3 position;\nattribute vec2 uv;\n";
 const FRAG_PRELUDE =
     "#extension GL_OES_standard_derivatives : enable\n";
@@ -70,12 +49,6 @@ function compileShader(
     return shader;
 }
 
-/**
- * Mount a live azulejo tile into `container`. Returns the redeal
- * function (also wired to click when `refireOnClick` is set), or null
- * when WebGL is unavailable — the container's placeholder background
- * stands in.
- */
 export function mountAzulejoTile(
     container: HTMLElement,
     opts: AzulejoOptions = {},
@@ -96,7 +69,6 @@ export function mountAzulejoTile(
         antialias: true,
         alpha: true,
         premultipliedAlpha: false,
-        // The snapshot tooling reads the tile back via toDataURL.
         preserveDrawingBuffer: true,
     };
     const gl = canvas.getContext(
@@ -120,8 +92,6 @@ export function mountAzulejoTile(
     }
     gl.useProgram(program);
 
-    // Fullscreen quad as a triangle strip; uv = (position + 1) / 2,
-    // matching three's PlaneGeometry(2, 2).
     const attribute = (name: string, comps: number, data: number[]) => {
         const buf = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buf);
@@ -135,7 +105,6 @@ export function mountAzulejoTile(
 
     const u = (name: string) => gl.getUniformLocation(program, name);
 
-    // Backing-store size: fixed CSS size × capped device pixel ratio.
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
     const px = Math.max(1, Math.round(size * ratio));
     canvas.width = px;
@@ -146,22 +115,16 @@ export function mountAzulejoTile(
     gl.clearColor(0, 0, 0, 0);
     gl.uniform2f(u("uRes"), px, px);
 
-    // Compute the recipe deterministically from the seed and draw.
-    // Draw-for-draw the same RNG order as the three island, so a seed
-    // kilns the identical tile it always has.
     const deal = (seed: number = freshSeed()) => {
         const rng = mulberry32(seed);
-        rng(); rng(); // burn — mulberry32's first samples correlate with seed
+        rng(); rng();
         const paletteIdx = Math.floor(rng() * palettes.length);
         const colorMode = pickColorMode(rng);
         const recipe = generateRecipe(rng, wildness);
-        rng(); // burn — was brushAngle; the draw stays so iperf/grout
-        // keep their values.
+        rng();
         const iperf: [number, number] = [rng() * 1000, rng() * 1000];
         const impJitter = 0.75 + rng() * 0.5;
         const groutCol = pickGroutColor(palettes[paletteIdx], rng);
-        // The painter grabs the wrong pot now and then — a rare seeded
-        // swap of the primary fill and accent colors.
         const potSwap = rng() < 0.05;
 
         const pal = palettes[paletteIdx];
@@ -222,9 +185,6 @@ export function mountAzulejoTile(
     container.appendChild(canvas);
 
     if (opts.refireOnClick) {
-        // Deliberately unadvertised (no cursor, no title) — the kiln
-        // fires again for whoever tries. Timestamp seeds mean a click
-        // one millisecond apart is already a different tile.
         container.addEventListener("click", () => deal());
     }
     return deal;

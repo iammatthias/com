@@ -1,7 +1,3 @@
-// OpenAPI 3.1 description of the site's public read-only endpoints.
-// Generated from lib/agent-surface.ts so the spec can't drift from
-// the operations that actually answer (scripts/agent-check.mjs probes
-// every declared path).
 
 export const prerender = true;
 

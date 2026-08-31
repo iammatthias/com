@@ -1,57 +1,30 @@
-// Markdown text utilities shared by every surface that needs a
-// plain-text or prose-only view of a Farfield body — feed cards, feed
-// detail, RSS titles and bodies, reading-time counts. One home for the
-// embed-strip regex so the pattern can't drift between hand-rolled
-// copies.
-
 import { marked } from "marked";
 import { EMBED_PATTERN_SOURCE } from "./farfield";
 import { extractRecipes, recipeText } from "./recipe";
 import { componentsToText } from "./doc-components/transform";
 
-/** Fresh embed regex per call — the `g` flag makes RegExp stateful. */
-function embedRe(): RegExp {
+function freshEmbedRe(): RegExp {
     return new RegExp(`${EMBED_PATTERN_SOURCE}\\s*`, "g");
 }
 
-/**
- * Remove `![](blob://…)` / `![](series://…)` embeds from a markdown
- * body, leaving the prose. Surfaces that render media separately (feed
- * cards, feed detail) parse the result so images never double up.
- */
 export function stripEmbeds(markdown: string): string {
-    return markdown.replace(embedRe(), "");
+    return markdown.replace(freshEmbedRe(), "");
 }
 
-/**
- * Reduce a markdown body to a single line of plain text: embeds
- * dropped, `<ff-*>` components reduced to their text stand-in, fenced
- * ```recipe blocks collapsed to their human words
- * (ingredients, steps, notes — not the YAML that carries them), links
- * collapsed to their label, emphasis/heading/quote markers stripped,
- * whitespace normalized. Used for OG descriptions, derived titles,
- * search vectors, and word counts.
- */
 export function plainText(markdown: string): string {
     const { body, blocks } = extractRecipes(markdown);
-    const withRecipes = blocks.length
+    const withRecipeWords = blocks.length
         ? body.replace(/<!--ffrecipe(\d+)-->/g, (_, i: string) =>
               recipeText(blocks[Number(i)] ?? ""),
           )
         : body;
-    return stripEmbeds(componentsToText(withRecipes))
+    return stripEmbeds(componentsToText(withRecipeWords))
         .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
         .replace(/[*_`>#]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
 }
 
-/**
- * Prose-only HTML for a Farfield body: embeds stripped (surfaces that
- * use this render media separately, or — like RSS — skip it), markdown
- * parsed, GFM alerts rewritten to callouts. The shared path behind
- * feed cards, feed detail, and full-content RSS items.
- */
 export function proseHtml(markdown: string): string {
     const prose = stripEmbeds(markdown);
     return prose.trim()
@@ -59,28 +32,21 @@ export function proseHtml(markdown: string): string {
         : "";
 }
 
-/**
- * GFM-style alert blockquotes:
- *   > [!NOTE]
- *   > Body text
- * Marked emits these as plain `<blockquote><p>[!NOTE]\nBody…</p></blockquote>`.
- * Rewrite to a semantic `<aside class="callout callout-note">` with the
- * label split out as its own paragraph for styling (see `.callout` in
- * globals.css). Handles the five canonical types and tolerates either
- * single-line or multi-paragraph bodies inside the quote.
- */
+const ALERT_BLOCKQUOTE_RE =
+    /<blockquote>\s*<p>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*?)<\/p>([\s\S]*?)<\/blockquote>/gi;
+
 export function transformAlerts(html: string): string {
     return html.replace(
-        /<blockquote>\s*<p>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*?)<\/p>([\s\S]*?)<\/blockquote>/gi,
-        (_match, rawType, firstBody, rest) => {
+        ALERT_BLOCKQUOTE_RE,
+        (_match, rawType, firstParagraph, remainingParagraphs) => {
             const type = rawType.toLowerCase();
             const label = rawType[0] + rawType.slice(1).toLowerCase();
-            const first = firstBody.trim()
-                ? `<p>${firstBody.trim()}</p>`
+            const first = firstParagraph.trim()
+                ? `<p>${firstParagraph.trim()}</p>`
                 : "";
             return (
                 `<aside class="callout callout-${type}" data-callout="${type}">` +
-                `<p class="callout-label">${label}</p>${first}${rest}` +
+                `<p class="callout-label">${label}</p>${first}${remainingParagraphs}` +
                 `</aside>`
             );
         },

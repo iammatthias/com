@@ -1,11 +1,4 @@
 ---
-// Shared markup for the all-content index. Both `/content` (page 1, via
-// content/index.astro) and `/content/page/N` (via content/page/[page].astro)
-// render through this so the header + grid + pagination stay in one place.
-// Content uses an explicit index + page route (not a `[...page]` catch-all
-// like the other list surfaces) because the legacy `/content/...` redirects
-// in astro.config need a concrete `/content` route to target.
-
 import BaseLayout from "@layouts/BaseLayout.astro";
 import FeedCard from "./FeedCard.astro";
 import Pagination from "./Pagination.astro";

@@ -1,6 +1,3 @@
-// Keyword search over the site's published content. On-demand (needs
-// the query string), but reads the build-time content store — no
-// upstream calls, so it answers from the worker in single-digit ms.
 
 export const prerender = false;
 

@@ -1,8 +1,3 @@
-// Markdown twin of the document detail page — `/<pub>/<slug>.md`.
-// Prerendered: one static file per entry, cacheKey'd by cid so the
-// incremental build regenerates a twin only when its record changes.
-// Serves the source markdown with embeds resolved to public URLs and
-// record metadata as front matter.
 
 export const prerender = true;
 
@@ -22,8 +17,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
         (e) => e.data as DocumentData,
     );
     return docs.map((doc) => {
-        // Same tag-scored neighbours the HTML page shows, so the two
-        // representations agree about what's related.
         const neighbours = relatedDocs(doc, docs);
         const related = neighbours.map((d) => ({
             title: d.title,
@@ -33,8 +26,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
         return {
             params: { publication: doc.collection, slug: doc.rkey },
             props: { doc, related },
-            // cid, not href: the twin prints related titles and
-            // descriptions, and only the cid changes when those do.
             cacheKey: [doc.cid, ...neighbours.map((d) => d.cid)].join(":"),
         };
     });

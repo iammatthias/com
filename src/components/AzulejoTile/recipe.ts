@@ -1,6 +1,3 @@
-// Recipe / palette / RNG logic extracted from the standalone azulejo prototype.
-// Pure TypeScript — no Three.js dependency at this layer, so the recipe shape
-// can be generated and inspected without touching WebGL.
 
 export interface Palette {
   name: string;
@@ -43,7 +40,6 @@ export const palettes: Palette[] = [
   { name:'ESTREMOZ',       bg:[0.965,0.952,0.910], ol:[0.060,0.090,0.180], c1:[0.290,0.440,0.640], c2:[0.870,0.820,0.700], c3:[0.700,0.420,0.260] },
   { name:'AÇORES MOSS',    bg:[0.945,0.935,0.870], ol:[0.060,0.140,0.090], c1:[0.310,0.500,0.260], c2:[0.730,0.770,0.420], c3:[0.560,0.330,0.180] },
   { name:'PORTO ROUGE',    bg:[0.960,0.928,0.840], ol:[0.190,0.060,0.060], c1:[0.690,0.180,0.180], c2:[0.280,0.300,0.520], c3:[0.860,0.700,0.300] },
-  /* New palettes — broader regional / stylistic range */
   { name:'PERSIAN BLUE',   bg:[0.985,0.978,0.950], ol:[0.030,0.060,0.180], c1:[0.090,0.250,0.580], c2:[0.180,0.580,0.700], c3:[0.940,0.860,0.500] },
   { name:'ROSA LISBOA',    bg:[0.970,0.940,0.890], ol:[0.330,0.130,0.180], c1:[0.870,0.520,0.520], c2:[0.620,0.380,0.290], c3:[0.490,0.580,0.430] },
   { name:'GRANADA',        bg:[0.962,0.918,0.820], ol:[0.140,0.040,0.040], c1:[0.760,0.180,0.150], c2:[0.180,0.490,0.310], c3:[0.880,0.700,0.220] },
@@ -51,31 +47,26 @@ export const palettes: Palette[] = [
   { name:'HISPANO LUSTRE', bg:[0.945,0.910,0.800], ol:[0.180,0.090,0.030], c1:[0.700,0.470,0.140], c2:[0.420,0.260,0.140], c3:[0.860,0.760,0.460] },
   { name:'TALAVERA',       bg:[0.970,0.940,0.835], ol:[0.110,0.080,0.150], c1:[0.940,0.730,0.180], c2:[0.180,0.380,0.660], c3:[0.310,0.540,0.290] },
 
-  /* Iberian / Mediterranean */
   { name:'AMALFI',         bg:[0.978,0.962,0.910], ol:[0.080,0.150,0.260], c1:[0.230,0.560,0.760], c2:[0.940,0.760,0.260], c3:[0.700,0.290,0.220] },
   { name:'CATALONIA',      bg:[0.965,0.918,0.820], ol:[0.180,0.070,0.060], c1:[0.760,0.180,0.150], c2:[0.940,0.760,0.220], c3:[0.140,0.290,0.150] },
   { name:'MAJORCA',        bg:[0.952,0.940,0.890], ol:[0.060,0.140,0.230], c1:[0.250,0.500,0.690], c2:[0.860,0.620,0.180], c3:[0.580,0.300,0.340] },
   { name:'PUEBLA SKY',     bg:[0.978,0.962,0.920], ol:[0.045,0.090,0.220], c1:[0.180,0.380,0.700], c2:[0.760,0.700,0.300], c3:[0.860,0.500,0.200] },
 
-  /* North African / Moroccan zellige */
   { name:'FEZ MEDINA',     bg:[0.965,0.935,0.840], ol:[0.110,0.060,0.060], c1:[0.680,0.190,0.160], c2:[0.180,0.400,0.310], c3:[0.860,0.700,0.220] },
   { name:'MARRAKESH',      bg:[0.940,0.880,0.730], ol:[0.230,0.110,0.070], c1:[0.860,0.340,0.130], c2:[0.220,0.420,0.480], c3:[0.580,0.380,0.150] },
   { name:'CHEFCHAOUEN',    bg:[0.935,0.955,0.965], ol:[0.080,0.180,0.300], c1:[0.300,0.560,0.760], c2:[0.500,0.720,0.860], c3:[0.890,0.860,0.700] },
   { name:'SAHARA DUSK',    bg:[0.940,0.870,0.700], ol:[0.230,0.140,0.080], c1:[0.760,0.420,0.160], c2:[0.480,0.200,0.150], c3:[0.880,0.700,0.380] },
   { name:'ATLAS GREEN',    bg:[0.960,0.940,0.860], ol:[0.080,0.140,0.060], c1:[0.260,0.500,0.220], c2:[0.580,0.380,0.180], c3:[0.880,0.760,0.380] },
 
-  /* Middle Eastern / Persian / Turkish */
   { name:'ISFAHAN',        bg:[0.972,0.952,0.880], ol:[0.060,0.180,0.380], c1:[0.140,0.280,0.620], c2:[0.230,0.580,0.660], c3:[0.860,0.620,0.220] },
   { name:'KASHAN',         bg:[0.955,0.918,0.820], ol:[0.110,0.060,0.180], c1:[0.180,0.300,0.620], c2:[0.700,0.400,0.180], c3:[0.580,0.560,0.220] },
   { name:'BOSPHORUS',      bg:[0.972,0.948,0.860], ol:[0.060,0.180,0.300], c1:[0.220,0.450,0.620], c2:[0.700,0.180,0.200], c3:[0.180,0.420,0.300] },
   { name:'DAMASCUS',       bg:[0.940,0.918,0.840], ol:[0.180,0.110,0.060], c1:[0.560,0.180,0.150], c2:[0.180,0.380,0.500], c3:[0.860,0.700,0.200] },
 
-  /* Asian inspired */
   { name:'CELADON',        bg:[0.940,0.948,0.910], ol:[0.080,0.140,0.110], c1:[0.560,0.700,0.580], c2:[0.760,0.700,0.480], c3:[0.480,0.260,0.180] },
   { name:'KYOTO INDIGO',   bg:[0.972,0.962,0.940], ol:[0.040,0.080,0.180], c1:[0.110,0.250,0.480], c2:[0.620,0.260,0.230], c3:[0.760,0.700,0.480] },
   { name:'IMARI',          bg:[0.985,0.972,0.940], ol:[0.060,0.110,0.230], c1:[0.180,0.350,0.620], c2:[0.760,0.200,0.180], c3:[0.880,0.760,0.220] },
 
-  /* Modern / contemporary palettes */
   { name:'CORAL REEF',     bg:[0.985,0.955,0.910], ol:[0.180,0.060,0.110], c1:[0.940,0.420,0.380], c2:[0.220,0.580,0.620], c3:[0.860,0.760,0.380] },
   { name:'DESERT BLOOM',   bg:[0.985,0.955,0.880], ol:[0.180,0.080,0.110], c1:[0.860,0.380,0.420], c2:[0.700,0.580,0.220], c3:[0.220,0.480,0.560] },
   { name:'CHARCOAL & ROSE',bg:[0.220,0.200,0.220], ol:[0.880,0.860,0.800], c1:[0.880,0.480,0.520], c2:[0.620,0.560,0.620], c3:[0.880,0.760,0.420] },
@@ -100,7 +91,6 @@ export const GROUNDS  = ['none','none','gDots','gFlecks','gFlorets','gWhisks','g
 export const FRAMES   = ['none','thin','double','thick','beaded','cornerSq','chevron','rope',
                   'pearls','dentils','triple','chain','diamonds'] as const;
 
-/* visual weight for balance budget */
 const W: Record<string, Record<string, number>> = {
   centers: { empty:0, dot:1, circle:2, star:3, rosette:3, flower:3, petal4:3, interlace:3,
              cross:3, quatre:3, lozenge:2, pinwheel:3, sun:2, tulip:3,
@@ -118,7 +108,6 @@ const W: Record<string, Record<string, number>> = {
              pearls:3, dentils:3, triple:2, chain:2, diamonds:2 },
 };
 
-/** mulberry32 — small fast 32-bit seeded PRNG */
 export function mulberry32(seed: number): () => number {
   let a = seed | 0;
   return function () {
@@ -189,7 +178,6 @@ export function generateRecipe(rng: () => number, wildness = 1.0): Recipe {
       return candidate;
     }
   }
-  // Fallback if 200 attempts find nothing valid — extremely unlikely.
   return {
     center: "star", wrapper: "none", corners: "qMedal",
     edges: "none", field: "none", straps: "none", ground: "gDots",
@@ -265,7 +253,6 @@ export function pickGroutColor(pal: Palette, rng: () => number): Triplet {
   return candidates[Math.floor(rng() * candidates.length)];
 }
 
-/** Canonical index lists matching the shader's dispatch tables. */
 export const SHADER_EDGES = ["none","eDot","eDots3","eDiamond","eHalfRose","eAcorn",
                              "eStar","eChev","eCrown"] as const;
 export const SHADER_STRAPS = ["none","diagArm","diagPair","cardArm","rays8",

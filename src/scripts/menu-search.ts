@@ -1,14 +1,3 @@
-// Main-thread client for the semantic menu search. All the heavy
-// lifting — the ternlight WASM model (~7 MB gz, one-time download,
-// immutable-cached), corpus embedding, and the IndexedDB vector
-// cache — lives in src/scripts/search-worker.ts and runs off-thread,
-// so warming the index never blocks the page.
-//
-// SiteMenu dynamic-imports this module on first focus of the search
-// field (no idle prefetch — the engine is too heavy to hand every
-// visitor) and talks through ensureIndex()/search(). The worker protocol is defined in the worker
-// module; only its types are imported here, so nothing of the worker
-// leaks into the main bundle.
 
 import type {
     WorkerHit,
@@ -53,20 +42,16 @@ function getWorker(): Worker {
             }
         }
     });
-    // Uncaught worker failure (e.g. the wasm chunk failed to load) —
-    // surface it to whoever is awaiting warm-up or a query.
     worker.addEventListener("error", (event) => {
         failAll(event.message || "search worker crashed");
     });
     return worker;
 }
 
-/** True once the model + index are warm — callers can skip loading UI. */
 export function isReady(): boolean {
     return ready;
 }
 
-/** Warm the model + index off-thread. Safe to call repeatedly. */
 export function ensureIndex(): Promise<void> {
     readyPromise ??= new Promise<void>((resolve, reject) => {
         const w = getWorker();
@@ -90,7 +75,6 @@ export function ensureIndex(): Promise<void> {
     return readyPromise;
 }
 
-/** Semantic top-K over the corpus. Resolves after ensureIndex(). */
 export async function search(query: string, topK = 8): Promise<SearchResult[]> {
     const q = query.trim();
     if (!q) return [];

@@ -1,17 +1,4 @@
 ---
-// Header azulejo — a live generative tile. Every load kilns a fresh
-// one (seed = millisecond timestamp + route), so no two visits share
-// a tile. Rendered by the dependency-free WebGL harness in
-// src/scripts/azulejo-tile.ts — the same shader the old React + three
-// island ran, minus the scaffolding. The 45° rotation turns the
-// square into a diamond.
-//
-// The pre-rendered set in public/azulejo stays for the OG worker
-// (workerd can't run WebGL) and the <noscript> fallback below.
-//
-// Easter egg: clicking the tile fires the kiln again. Deliberately
-// unadvertised (no pointer cursor, no title); it's there for whoever
-// tries.
 ---
 
 <span class="header-tile" id="header-azulejo">
@@ -38,13 +25,6 @@
 </script>
 
 <style>
-    /* Fixed footprint + placeholder: the slot is 32×32 in layout flow
-       regardless of render state, so the header doesn't reflow while
-       the tile kilns. The rotation makes the tile read as a diamond.
-
-       Background uses the warm beige border token rather than
-       --color-fg, so the placeholder reads as a gentle diamond hint
-       instead of flashing solid near-black before the tile paints. */
     .header-tile {
         display: inline-block;
         width: 32px;
@@ -61,7 +41,6 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        /* Rapid re-kilning shouldn't start a text selection. */
         user-select: none;
     }
 </style>

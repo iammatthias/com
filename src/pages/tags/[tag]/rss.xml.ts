@@ -1,5 +1,3 @@
-// Per-tag RSS, prerendered. Only tags with at least one published
-// entry get a feed (a tag with none has no page either).
 
 export const prerender = true;
 
@@ -17,8 +15,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
         return {
             params: { tag },
             props: { tag, items: capped },
-            // Feed rendering re-fetches blob metas — skip it when the
-            // capped window is unchanged.
             cacheKey: capped.map((d) => d.cid).join(","),
         };
     });

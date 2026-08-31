@@ -1,5 +1,3 @@
-// Markdown twin of the feed index — `/feed.md`. The whole feed as a
-// dated list of snippet links to each post's markdown twin.
 
 export const prerender = false;
 
@@ -22,8 +20,6 @@ export const GET: APIRoute = async (context) => {
 
     const origin = siteOrigin(context.site);
 
-    // setResponseCacheHeaders overrides the default Cache-Control with
-    // the collection's cacheHint.
     const response = markdownResponse(feedIndexMarkdown(items, origin));
     setResponseCacheHeaders(response, cacheHint);
     return response;

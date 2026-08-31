@@ -1,6 +1,3 @@
-/* Styled with the design tokens from src/styles/globals.css so the
-   component follows the site palette in both color schemes. Spacing is
-   owned by the container (flex gap) — no child emits its own margin. */
 
 .onchain-analytics-container {
   display: flex;

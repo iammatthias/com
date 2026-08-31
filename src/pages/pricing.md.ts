@@ -1,5 +1,3 @@
-// /pricing.md — machine-readable "it's free", so an agent comparing
-// options doesn't have to infer it from the absence of a pricing page.
 
 export const prerender = true;
 

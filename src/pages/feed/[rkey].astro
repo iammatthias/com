@@ -1,8 +1,4 @@
 ---
-// Detail view for a single feed entry. Renders the resolved media
-// gallery, the markdown body (rendered inline), and a colophon
-// pointing at the underlying Farfield record.
-
 export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -34,22 +30,15 @@ const item: FeedEntryData = entry.data;
 
 setResponseCacheHeaders(Astro.response, cacheHint);
 
-// Derive a short text preview from the markdown body for title / OG
-// description — strip embed URIs, headings, basic chrome.
 const bodyText = plainText(item.body);
 const bodySnippet = bodyText.slice(0, 60).trim();
 const title = bodySnippet || `Entry ${rkey}`;
 const description = bodyText.slice(0, 180).trim() || "Feed entry.";
 
-// Render the body's prose only — media is shown separately below as a
-// gallery, so embeds are stripped before parsing to avoid duplicating
-// each image. GFM alerts become semantic callouts, same as doc bodies.
 const bodyHtml = proseHtml(item.body);
 
 const media = await resolveBodyMedia(item.body);
 
-// The page's markdown twin — linked from the colophon (in place of
-// the old raw Farfield API link) and as <link rel="alternate">.
 const markdownPath = `/feed/${rkey}.md`;
 const bannerSeed = hashSeed(`${item.rkey}:${item.cid}`);
 ---
@@ -117,7 +106,4 @@ const bannerSeed = hashSeed(`${item.rkey}:${item.cid}`);
         color: var(--color-muted);
     }
 
-    /* The body and media reuse the global `.feed-note` / `.feed-media`
-       primitives (same typography, rhythm, and gallery carousel as the
-       feed cards), so no local prose or media styles are needed here. */
 </style>

@@ -1,10 +1,3 @@
-// /llms.txt — the machine-readable map of the site (llmstxt.org).
-// Prerendered from the build-time collections; the publish hook keeps
-// it in step with content. Every content link points at the markdown
-// twin (`<path>.md`); the twin's front matter carries the canonical
-// HTML URL. Discovery: HTML/markdown responses carry a
-// `Link: </llms.txt>; rel="describedby"` header (middleware + the
-// static _headers file).
 
 export const prerender = true;
 

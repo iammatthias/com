@@ -1,13 +1,3 @@
-// Sitemap, prerendered from the build-time collections. Regenerated
-// on every build — the Farfield publish hook (content and feed alike)
-// is what keeps it in step with published content, and documents
-// carry a real <lastmod> from Farfield's updatedAt.
-//
-// Deep pagination pages (`/…/page/N`) are intentionally excluded:
-// they're crawlable via the visible pagination links and shift with
-// every publish, so listing them adds churn without indexing value.
-// `/menu` is noindex, and `/onchain-analytics/<hash>` portraits are
-// unbounded generative output — both excluded.
 
 export const prerender = true;
 
@@ -22,9 +12,7 @@ import { publishedDocs } from "@lib/content-query";
 import { siteOrigin } from "@lib/http";
 
 interface SitemapEntry {
-    /** Absolute URL. */
     loc: string;
-    /** ISO timestamp; emitted as <lastmod> when present. */
     lastmod?: string;
 }
 
@@ -50,10 +38,6 @@ export const GET: APIRoute = async ({ site }) => {
 
     const tags = [...new Set(docs.flatMap((d) => d.tags))];
 
-    // Derived lastmod for aggregate pages: a section or tag index is
-    // as fresh as the newest thing in it. Evergreen pages take the
-    // newest publish date on the site, which is when their "recent"
-    // blocks last changed.
     const newest = (subset: DocumentData[]): string | undefined =>
         subset.length
             ? subset
@@ -66,7 +50,6 @@ export const GET: APIRoute = async ({ site }) => {
         newest(docs.filter((d) => d.tags.includes(t)));
 
     const entries: SitemapEntry[] = [
-        // Evergreen pages. /menu is noindex; deep pagination excluded.
         { loc: `${origin}/`, lastmod: siteNewest },
         { loc: `${origin}/now`, lastmod: siteNewest },
         { loc: `${origin}/resume` },

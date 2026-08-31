@@ -11,56 +11,20 @@ import { Font } from "astro:assets";
 import { SITE_IDENTITY } from "@lib/agent-surface";
 
 interface Props {
-    /** Page-specific title. Site name is appended automatically. */
     title?: string;
-    /** Page-specific meta description. */
     description?: string;
-    /**
-     * Path on the og worker (https://og.iammatthias.com). Defaults to "/"
-     * which renders the homepage card. Pass an absolute URL to override
-     * with an arbitrary image.
-     */
     ogImage?: string;
-    /** og:type. Default "website"; use "article" for posts. */
     ogType?: "website" | "article";
-    /** Override canonical URL. Defaults to current pathname under Astro.site. */
     canonical?: string | URL;
-    /** Emit robots: noindex,nofollow (and drop the canonical). */
     noindex?: boolean;
-    /**
-     * Breadcrumb trail rendered above the main content. Last item should
-     * have no `href` (current page). The brand link in the header is the
-     * implicit home, so this trail starts at the first sub-section.
-     * Also emitted as BreadcrumbList JSON-LD.
-     */
     breadcrumbs?: BreadcrumbItem[];
-    /**
-     * Article timestamps for article-shaped pages (doc detail, feed
-     * detail). Emits article:published_time / article:modified_time OG
-     * meta and a BlogPosting entity in the JSON-LD graph.
-     */
     article?: {
         publishedTime: string;
         modifiedTime?: string;
     };
-    /** The page is about the site's author (/now) — its JSON-LD
-     *  WebPage becomes a ProfilePage with the Person as mainEntity. */
     profilePage?: boolean;
-    /**
-     * Path of this page's markdown twin (e.g. `/posts/foo.md`). Emits
-     * a `<link rel="alternate" type="text/markdown">` so agents and
-     * tools can find the plain-markdown version. Content pages set
-     * this; chrome-only pages leave it unset.
-     */
     markdownHref?: string;
-    /**
-     * Paginated surfaces pass their neighbours so `<link rel="prev">`
-     * / `rel="next"` land in `<head>` (where the spec requires them),
-     * letting crawlers traverse past page 1 without parsing the
-     * visible pagination control.
-     */
     pagination?: { prev?: string | null; next?: string | null };
-    /** Q&A pairs emitted as FAQPage JSON-LD. */
     faq?: Array<{ question: string; answer: string }>;
 }
 
@@ -83,15 +47,6 @@ const {
     faq,
 } = Astro.props;
 
-// `siteOrigin` is intentionally derived from `Astro.site` (set in
-// astro.config.mjs to https://iammatthias.com), NOT from the request
-// host. The site is served on multiple hostnames (iammatthias.com +
-// iam.casa) but every emitted URL — rel="canonical", og:url,
-// twitter:url, sitemap entries, RSS <link> items — collapses to a
-// single canonical origin so search engines and social platforms
-// consolidate all authority on iammatthias.com. Don't replace this
-// with `Astro.url.origin` or anything host-aware: that would split
-// SEO juice across both hostnames.
 const siteOrigin = Astro.site?.toString() ?? SITE_URL;
 const canonicalURL = canonical
     ? new URL(canonical, siteOrigin)
@@ -106,15 +61,6 @@ const ogImageURL = isAbsolute ? new URL(ogImage) : new URL(ogImage, ogOrigin);
 const fullTitle = title ? `${title} — ${SITE_NAME}` : SITE_NAME;
 const ogTitle = title ?? SITE_NAME;
 
-// Draft-preview mode (dev only). When on, the whole site shows
-// unpublished Farfield drafts; the banner below makes that obvious and
-// offers a one-click exit. `isPreview` is always false in production.
-//
-// Skip it on prerendered routes (resume, menu, 404, …): preview is a
-// per-request cookie/query decision that can't apply to a static page,
-// and reading `Astro.cookies` there reaches for `Astro.request.headers`,
-// which a prerendered page has no access to — Astro logs a warning on
-// every render. Static pages never show drafts, so `false` is correct.
 const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
 ---
 
@@ -128,9 +74,6 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
         />
         <meta name="generator" content={Astro.generator} />
         <meta name="color-scheme" content="light dark" />
-        <!-- Theme color matches the warm cream / warm near-black bg
-             tokens in globals.css so the browser chrome blends with
-             the page rather than flashing pure white/black at load. -->
         <meta
             name="theme-color"
             content="#f5f2e9"
@@ -144,9 +87,6 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
 
         <title>{fullTitle}</title>
         <meta name="description" content={description} />
-        <!-- Indexable pages get explicit snippet directives (let search
-             engines show full-size snippets/previews); noindex pages get
-             no canonical — the two are contradictory signals. -->
         {noindex ? (
             <meta name="robots" content="noindex,nofollow" />
         ) : (
@@ -161,21 +101,11 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
 
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-        <!-- Metamorphous is the serif used for all headings. The Font
-             component emits the @font-face, defines --font-metamorphous
-             (with a metric-adjusted fallback so headings don't shift on
-             swap), and preloading the latin subset keeps the first-visit
-             swap window short (latin-ext stays lazy via unicode-range,
-             same as the old hand-written preload). globals.css maps
-             --font-serif onto it. -->
         <Font
             cssVariable="--font-metamorphous"
             preload={[{ subset: "latin" }]}
         />
 
-        <!-- Open Graph. Twitter falls back to og:* for everything except
-             the card type, so the old twitter:url/title/description/image
-             duplicates are intentionally gone. -->
         <meta property="og:site_name" content={SITE_NAME} />
         <meta property="og:type" content={ogType} />
         <meta property="og:url" content={canonicalURL} />
@@ -214,7 +144,6 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
             faq={faq}
         />
 
-        <!-- Feeds -->
         <link
             rel="alternate"
             type="application/rss+xml"
@@ -280,9 +209,6 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
         gap: var(--gap);
     }
 
-    /* Dev-only draft-preview banner. Sticky at the top so it stays
-       visible while scrolling — a constant reminder the site is
-       showing unpublished content. Never rendered in production. */
     .preview-banner {
         position: sticky;
         top: 0;
@@ -315,12 +241,6 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
         max-width: var(--content-max);
     }
 
-    /*
-   * Header lays out as three equal-flex columns so the middle child is
-   * centered relative to the viewport regardless of the side children's
-   * widths. (`justify-content: space-between` would only center the
-   * middle child when the side children are equal width.)
-   */
     header {
         display: grid;
         grid-template-columns: 1fr auto 1fr;
@@ -328,8 +248,6 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
         gap: var(--space-4);
     }
 
-    /* :global() — slot children come from the page and don't carry the
-     layout's scope hash, so unscoped selectors are needed to target them. */
     header > :global(:first-child) {
         justify-self: start;
     }
@@ -339,7 +257,6 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
     }
 
     main {
-        /* fills space between header and footer; content sits near the top */
         flex: 1 0 auto;
         width: 100%;
         max-width: var(--content-max);
@@ -347,13 +264,6 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
         flex-direction: column;
     }
 
-    /* `main` owns the vertical rhythm between page sections via the
-       adjacent-sibling combinator (inconsistent gaps keyed on section
-       type), so no section emits its own outer margin. Default is the
-       generous section gap; the page header sits a touch closer to its
-       content, and breadcrumbs hug the heading they precede.
-       `:global()` because slot content carries the page's scope hash,
-       not the layout's. */
     main > :global(* + *) {
         margin-top: var(--space-8);
     }

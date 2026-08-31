@@ -1,26 +1,12 @@
-/* ---------- design tokens ---------- */
 :root {
-    /* type */
     --font-sans:
         ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         Roboto, "Helvetica Neue", Arial, sans-serif;
-    /* --font-metamorphous is defined by the <Font> component in
-       BaseLayout (Astro Fonts API): the webfont plus a metric-adjusted
-       serif fallback, so headings keep their box while the font loads. */
     --font-serif: var(--font-metamorphous, ui-serif, Georgia, serif);
     --font-mono:
         ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
         "Liberation Mono", monospace;
 
-    /* Fluid type scale — every step interpolates linearly between a
-       390px floor and a 1280px ceiling (clamp keeps it pinned outside
-       that range). Body text runs 16→17px; display sizes spread wider
-       (the scale's ratio grows with the viewport: cramped phone lines
-       want smaller headings, a 720px column can carry bigger ones).
-       The rem term is what keeps user font-size preferences and zoom
-       working — never replace these with pure-vw values. Regenerate
-       with: px@390 + px@1280 → slope=(max-min)/890, vw=slope*100,
-       intercept=min-slope*390, all /16 into rem. */
     --fs-xs: clamp(0.75rem, 0.7226rem + 0.112vw, 0.8125rem);
     --fs-sm: clamp(0.875rem, 0.8476rem + 0.112vw, 0.9375rem);
     --fs-base: clamp(1rem, 0.9726rem + 0.112vw, 1.0625rem);
@@ -29,30 +15,20 @@
     --fs-2xl: clamp(1.406rem, 1.256rem + 0.618vw, 1.75rem);
     --fs-3xl: clamp(1.625rem, 1.406rem + 0.899vw, 2.125rem);
     --fs-4xl: clamp(1.875rem, 1.546rem + 1.35vw, 2.625rem);
-    /* Hero/article titles — a 4xl with a higher floor so phone heroes
-       keep their presence. Pairs with --lh-display / --ls-display;
-       replaces the ad-hoc `clamp(var(--fs-3xl), 6vw, var(--fs-4xl))`
-       that used to live in the doc page. */
     --fs-display: clamp(2rem, 1.726rem + 1.12vw, 2.625rem);
 
     --lh-tight: 1.2;
     --lh-normal: 1.5;
     --lh-relaxed: 1.7;
-    /* Display sizes need tighter leading than --lh-tight — at 40px+
-       the serif's built-in leading reads as gaps. */
     --lh-display: 1.05;
 
     --fw-normal: 400;
     --fw-medium: 500;
     --fw-bold: 700;
 
-    /* Tracking. Display sizes tighten (big Metamorphous sets loose);
-       the uppercase micro-labels (recipe meta, section kickers) share
-       one caps tracking instead of the 0.07–0.09em drift they had. */
     --ls-display: -0.015em;
     --ls-caps: 0.08em;
 
-    /* spacing scale (4px base) */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;
@@ -62,38 +38,14 @@
     --space-7: 3rem;
     --space-8: 4rem;
 
-    /* layout */
     --content-max: 720px;
     --pad: 32px;
     --gap: 32px;
 
-    /* radii / motion */
     --radius: 4px;
     --duration: 150ms;
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
 
-    /*
-   * Color tokens.
-   *
-   * Cobalt ink on ivory paper — 18th-century French copperplate and
-   * toile de Jouy, blended with the Santorini/riviera blue the site
-   * already spoke through its azulejos. The text itself is the ink: a
-   * deep blue-black rather than a warm near-black, on paper that is
-   * cooler and brighter than the old cream but still ivory, never
-   * clinical white. Hairlines are the ink at low strength, the way an
-   * engraving's hatching is. The accent is true cobalt. Dark mode is
-   * the inverted plate: ivory ink on deep navy-black.
-   *
-   * `light-dark()` resolves automatically via the `color-scheme`
-   * declaration, so we don't need a `prefers-color-scheme` media
-   * query. Supported in all current evergreens (Chrome 123+,
-   * Firefox 120+, Safari 17.5+). Flat fallback values are listed
-   * first for older browsers — `light-dark()` overrides on parse.
-   *
-   * Every value is contrast-validated against its surface: fg 13:1,
-   * accent 7.2:1, muted and callout labels ≥4.8:1 in light; ≥5.6:1
-   * across the board in dark.
-   */
     color-scheme: light dark;
 
     --color-bg: #f5f2e9;
@@ -110,28 +62,12 @@
     --color-accent: light-dark(#1e4d9b, #8fb4ee);
     --color-accent-hover: light-dark(#173d80, #a9c6f4);
 
-    /* GFM alert callouts (NOTE/TIP/IMPORTANT/WARNING/CAUTION). Note
-       takes the cobalt itself; tip/important cool toward laurel and
-       plum; warning and caution keep the riviera's sun — ochre and
-       terracotta — so the page isn't monochrome toile all the way
-       down. Lighter variants for dark-mode contrast. */
     --callout-note: light-dark(#1e4d9b, #8fb4ee);
     --callout-tip: light-dark(#3f7259, #93c4ab);
     --callout-important: light-dark(#6f4e8c, #bda3d6);
     --callout-warning: light-dark(#876322, #d9bc7d);
     --callout-caution: light-dark(#a04a2e, #dc9678);
 
-    /* Selection-ramp stops — the palette the position-keyed text
-       selection walks top-to-bottom (scripts/selection-gradient.ts
-       mixes between adjacent stops per block): cobalt up top, down
-       through laurel and bronze into terracotta, plum at the foot of
-       the page. Dedicated values, not the callout tokens — those are
-       tuned as text ON ivory, and as backgrounds UNDER ivory they'd
-       run too dark or too weak. Generated at uniform OKLCH chroma
-       with per-hue lightness pushed until every stop clears 5:1
-       against ivory selection text (light) and 8:1 against the navy
-       ink (dark), so every band carries the same weight and the same
-       legibility. */
     --sel-stop-0: light-dark(#4c6798, #95b2e5);
     --sel-stop-1: light-dark(#327354, #80be9d);
     --sel-stop-2: light-dark(#7e6327, #c8ae75);
@@ -139,9 +75,6 @@
     --sel-stop-4: light-dark(#7f5887, #caa3d3);
 }
 
-/* Fallback: browsers without light-dark() support still get a
-   serviceable dark mode through the media query. Modern browsers
-   ignore this branch via @supports. */
 @supports not (color: light-dark(red, blue)) {
     @media (prefers-color-scheme: dark) {
         :root {
@@ -162,35 +95,23 @@
     }
 }
 
-/* ---------- minimal reset / base ---------- */
 *,
 *::before,
 *::after {
     box-sizing: border-box;
 }
 
-/* Text selection walks the palette down the page: each block carries
-   its own `--sel` (a color-mix between the --sel-stop-* tokens set by
-   scripts/selection-gradient.ts from the block's page position).
-   Custom properties inherit, so inline children — links, code, the
-   recipe amount spans — pick up their block's color. Anything the
-   script hasn't touched falls back to the first stop. */
 ::selection {
     background: var(--sel, var(--sel-stop-0));
     color: var(--color-bg);
 }
 
-/* Selected media gets a wash, not a slab — an opaque selection
-   background over an image reads as a rendering glitch. */
 :is(img, video, svg)::selection {
     background: color-mix(in srgb, var(--sel, var(--sel-stop-0)) 35%, transparent);
 }
 
 html {
     -webkit-text-size-adjust: 100%;
-    /* (text-rendering: optimizeLegibility used to live here — modern
-       engines apply kerning and common ligatures by default, so it
-       was a no-op with a history of layout-perf footguns. Removed.) */
 }
 
 body {
@@ -202,27 +123,10 @@ body {
     background: var(--color-bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Graceful overflow default, inherited by all text: a word only
-       breaks when it alone can't fit its line (long pasted URLs,
-       unbroken tokens in feed posts). Normal prose is unaffected.
-       Token-like contexts opt into harder breaking below; hashes/CIDs
-       keep their explicit `word-break: break-all`. */
     overflow-wrap: break-word;
-    /* Site-wide wrapping default: `pretty` inherits into every
-       paragraph, list item, caption, and card blurb (the engine
-       optimizes rag and last-line orphans across the paragraph).
-       Headings override with `balance` below; `pre` is exempt via
-       white-space. The scattered per-element `text-wrap: pretty`
-       declarations this replaces have been removed. */
     text-wrap: pretty;
 }
 
-/* Prose on narrow columns earns hyphenation — ragged-right at ~40ch
-   gets gappy without it, and `text-wrap: pretty` folds hyphenation
-   opportunities into its line-breaking decisions. The limits keep it
-   book-like (6-letter minimum word, 3 chars either side of the
-   break) rather than newspaper-aggressive. Wide viewports don't need
-   it; headings never hyphenate (balance + no `hyphens` set). */
 @media (max-width: 480px) {
     .doc-body,
     .feed-note,
@@ -254,10 +158,6 @@ h6 {
     font-weight: var(--fw-medium);
     text-wrap: balance;
     font-family: var(--font-serif);
-    /* Optical spacing: trim the half-leading above the cap height and
-       below the alphabetic baseline, so the gap you see next to a
-       heading is the gap the rhythm actually specified. Progressive —
-       engines without text-box simply keep the old half-leading. */
     text-box: trim-both cap alphabetic;
 }
 
@@ -282,9 +182,6 @@ h6 {
     font-size: var(--fs-base);
 }
 
-/* Block elements: zero vertical margins by default. Components/pages own
-   the rhythm via flex/grid `gap`. Prose containers (e.g. `.doc-body`) add
-   the breathing room between adjacent block elements. */
 p,
 figure,
 blockquote,
@@ -300,8 +197,6 @@ small {
     color: var(--color-muted);
 }
 
-/* Lists: real markers restored. Containers that need list-less navigation
-   (menus, card grids, tag clouds) opt out with their own `list-style:none`. */
 ul,
 ol {
     margin: 0;
@@ -321,9 +216,6 @@ ul ul ul {
     list-style: square;
 }
 
-/* Markers take the ink at reduced strength — the way an engraver
-   weights a bullet lighter than the text it introduces. Ordered lists
-   count in tabular figures so multi-digit lists keep a straight edge. */
 ul li::marker {
     color: var(--color-muted);
 }
@@ -346,9 +238,6 @@ a {
     color: inherit;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.15em;
-    /* Resting underlines are hairlines at partial ink — present but
-       quiet, the engraving's underscore rather than a bar. Hover
-       brings them to full strength and weight. */
     text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
     transition:
         text-decoration-thickness var(--duration) var(--ease),
@@ -368,8 +257,6 @@ textarea {
     color: inherit;
 }
 
-/* Inline code, sample output. Slightly smaller than surrounding text so
-   the mono pill doesn't dominate the line. */
 code,
 kbd,
 samp {
@@ -378,10 +265,6 @@ samp {
     padding: 0.1em 0.35em;
     background: var(--color-border);
     border-radius: 3px;
-    /* Inline code is token-like (paths, env vars, URLs) with no natural
-       break points — allow breaks anywhere rather than letting a long
-       token push the column wide. `anywhere` also shrinks min-content,
-       so a token inside a flex/grid child can't blow the track out. */
     overflow-wrap: anywhere;
 }
 
@@ -392,7 +275,6 @@ kbd {
     font-weight: var(--fw-medium);
 }
 
-/* Block code. Children `code` are unstyled to avoid double-pill background. */
 pre {
     font-family: var(--font-mono);
     font-size: var(--fs-sm);
@@ -411,18 +293,12 @@ pre code {
     font-size: inherit;
 }
 
-/* Tables — full width by default, header row visually distinct.
-   `display: block` + overflow lets a table that's intrinsically wider
-   than the reading column scroll horizontally (same treatment as wide
-   code blocks) instead of stretching the page on narrow viewports. */
 table {
     display: block;
     width: 100%;
     overflow-x: auto;
     border-collapse: collapse;
     font-size: var(--fs-sm);
-    /* Tables are data: lining tabular figures so digit columns align
-       row over row regardless of the face's default numerals. */
     font-variant-numeric: tabular-nums lining-nums;
 }
 
@@ -449,9 +325,6 @@ caption {
     text-align: left;
 }
 
-/* Blockquote: serif italic for the homey reading feel. An opening
-   quotation mark hangs into the margin where the engine supports
-   hanging-punctuation (WebKit today; harmless elsewhere). */
 blockquote {
     padding: var(--space-2) var(--space-5);
     border-left: 3px solid var(--color-border);
@@ -463,8 +336,6 @@ blockquote {
     hanging-punctuation: first;
 }
 
-/* Spacing between a quote's own blocks, owned by the blockquote via the
-   adjacent-sibling combinator (the `cite` rule below tightens its gap). */
 blockquote > * + * {
     margin-top: var(--space-3);
 }
@@ -481,12 +352,7 @@ blockquote cite::before {
     content: "— ";
 }
 
-/* GitHub-flavored alert blockquotes — emitted by transformAlerts() in
-   the doc renderer. Each variant carries a muted color via the
-   per-class --callout-color override, used for the left rule, the
-   italic-serif label, and a subtle tinted background. */
 .callout {
-    /* No own margin — the prose container owns the gap around it. */
     padding: var(--space-3) var(--space-4);
     border-left: 3px solid var(--callout-color, var(--color-border));
     background: color-mix(
@@ -514,13 +380,10 @@ blockquote cite::before {
     line-height: 1;
 }
 
-/* Inside a callout, paragraphs lose their browser default block
-   margin (already true in our reset) but should still wrap normally. */
 .callout p {
     line-height: var(--lh-relaxed);
 }
 
-/* Figure / figcaption — image first, italic caption underneath. */
 figure {
     display: flex;
     flex-direction: column;
@@ -535,7 +398,6 @@ figcaption {
     line-height: var(--lh-normal);
 }
 
-/* Definition list — two-column grid by default. */
 dl {
     display: grid;
     grid-template-columns: minmax(120px, max-content) minmax(0, 1fr);
@@ -552,11 +414,6 @@ dd {
     margin: 0;
 }
 
-/* Details / summary — collapsible section with a typographic +/− toggle.
-   `interpolate-size` lets the content's `height: auto` participate in
-   transitions, so the panel glides open instead of snapping — the
-   modern replacement for the 0fr→1fr grid trick. Scoped to details
-   (not :root) so nothing else starts animating intrinsic sizes. */
 details {
     border-top: 1px solid var(--color-border);
     padding: var(--space-3) 0;
@@ -602,7 +459,6 @@ details[open] summary::before {
     content: "−";
 }
 
-/* Inline emphasis */
 mark {
     background: color-mix(in srgb, var(--color-accent) 18%, transparent);
     color: inherit;
@@ -630,18 +486,12 @@ sup {
     top: -0.5em;
 }
 
-/* Section rule as a copperplate double line — the classic engraved
-   divider: a fine pair rather than a single hairline. */
 hr {
     border: 0;
     border-top: 3px double var(--color-border);
-    /* No own margin — the prose container owns the space around it
-       (consistent with the block reset above). */
     margin: 0;
 }
 
-/* In-flow images: keep the responsive max-width default but constrain
-   to the parent so a runaway markdown image doesn't overflow. */
 img,
 video {
     max-width: 100%;
@@ -653,13 +503,6 @@ video {
     border-radius: var(--radius);
 }
 
-/* ---------- cross-document view transitions ---------- */
-/* MPA navigation gets the default crossfade — paired with
-   prefetchAll, the next page is usually already in cache, so the
-   fade is what the eye sees instead of a paint flash. Header and
-   footer carry stable transition names: identical on both pages,
-   they hold still while the content fades through between them.
-   Engines without @view-transition navigate exactly as before. */
 @media (prefers-reduced-motion: no-preference) {
     @view-transition {
         navigation: auto;
@@ -685,15 +528,6 @@ video {
     }
 }
 
-/* ---------- shared list/card primitives ---------- */
-/*
- * Used by every list-of-docs surface — homepage feed, publication
- * indexes, content index, per-tag pages. Pulled here so the markup
- * (see src/components/FeedCard.astro) and the styling stay in lock-
- * step across consumers. Native CSS `grid-template-rows: masonry`
- * gets enabled where supported (Safari TP); falls back to clean
- * column tiling everywhere else.
- */
 .feed-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
@@ -723,10 +557,6 @@ video {
     color: inherit;
 }
 
-/* Vertical rhythm via the adjacent-sibling combinator: each gap can
-   differ without any child emitting its own outer margin, so the card
-   stays self-contained. A default gap, with two exceptions — the kicker
-   hugs the title it labels, and the date sits a little lower. */
 .card-link > * + * {
     margin-top: var(--space-2);
 }
@@ -754,9 +584,6 @@ video {
 .card-link p {
     font-size: var(--fs-base);
     line-height: var(--lh-relaxed);
-    /* Long excerpts stop at four lines on cards — the full text lives
-       one click away. Standard line-clamp with the -webkit- spelling
-       for engines that still require the legacy trio. */
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
@@ -772,8 +599,6 @@ video {
     color: var(--color-muted);
 }
 
-/* The dateline's em-dash is decoration, not content — a pseudo-element
-   keeps it out of the markup (and out of the <time>'s text). */
 .card-date::before {
     content: "— ";
 }
@@ -784,15 +609,6 @@ video {
     color: var(--color-muted);
 }
 
-/* ---------- shared farfield-feed card ---------- */
-/*
- * The `.feed-*` family backs `FeedEntryCard.astro`. Two surfaces use
- * it today — `/feed` (standalone list) and `/now` (Recent updates
- * section). The parent owns the `<ul class="feed">` and its outer
- * gap, the card owns everything else. /now overrides `gap` and
- * `padding-top` on `.feed-item` for a more compact rhythm inside its
- * section.
- */
 .feed {
     list-style: none;
     padding: 0;
@@ -809,7 +625,6 @@ video {
     gap: var(--space-3);
     padding-top: var(--space-5);
     border-top: 1px solid var(--color-border);
-    /* Anchor for the stretched permalink overlay below. */
     position: relative;
 }
 
@@ -818,33 +633,19 @@ video {
     border-top: 0;
 }
 
-/* Lay-out for one or many media items inside a single entry. One
-   image fills the column; multiple images become a carousel. */
 .feed-media {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
 }
 
-/* Threads-style carousel for multi-image entries: one row at a shared
-   height, each tile at its natural aspect ratio, horizontal scroll
-   with snap. The next tile peeking past the edge is the scroll
-   affordance — no JS, no controls. Tiles keep their width/height
-   attributes, so the browser reserves each tile's width from the
-   aspect ratio before the image loads. */
 .feed-media--gallery {
     flex-direction: row;
     align-items: stretch;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    /* The card's stretched permalink overlay sits above the card body;
-       lift the carousel over it so swipe/scroll gestures reach the
-       scroll container instead of the page. (Single images stay under
-       the overlay and keep click-through to the entry.) */
     position: relative;
     z-index: 1;
-    /* Scroll affordance is the peeking tile, as on every phone UI —
-       a scrollbar under the photos reads as clutter. */
     scrollbar-width: none;
 }
 
@@ -864,11 +665,6 @@ video {
     height: auto;
 }
 
-/* Video tiles stream straight from the blob service (wsrv is
-   image-only). Farfield keeps no dimensions for video blobs, so
-   `aspect-ratio: auto 16/9` holds a placeholder box until the
-   metadata loads — the intrinsic ratio takes over from there. The
-   dark fill reads as letterboxing rather than a broken tile. */
 .feed-tile video {
     display: block;
     width: 100%;
@@ -882,10 +678,6 @@ video {
     width: 100%;
 }
 
-/* The card's stretched permalink overlay covers single-media tiles
-   (galleries already lift themselves — see .feed-media--gallery).
-   Players need their controls clickable, so av tiles get the same
-   lift. */
 .feed-tile--video,
 .feed-tile--audio {
     position: relative;
@@ -895,8 +687,6 @@ video {
 .feed-media--gallery .feed-tile {
     flex: none;
     height: 340px;
-    /* Never let one wide tile fill the row completely — the sliver of
-       the next tile is what says "scroll me". */
     max-width: calc(100% - var(--space-7));
     scroll-snap-align: start;
 }
@@ -914,38 +704,21 @@ video {
     }
 }
 
-/* Full markdown body, same body size as the rest of the prose on
-   the site. Marked emits <p> tags; give them proper spacing since
-   the global reset zeroes block margins. */
 .feed-note {
     margin: 0;
     font-size: var(--fs-base);
     line-height: var(--lh-relaxed);
 }
 
-/* Stacked prose blocks: spacing owned by the container via the
-   adjacent-sibling combinator, so no paragraph carries its own margin. */
 .feed-note > * + * {
     margin-top: var(--space-3);
 }
 
 .feed-note a {
-    /* Underline metrics come from the base `a` rule. Lift body links
-       above the stretched-link overlay below so clicks on inline
-       links navigate to the link's own href rather than the card
-       permalink. */
     position: relative;
     z-index: 1;
 }
 
-/*
- * Permalink — links the whole card to /feed/<rkey> without nesting
- * the body's inline anchors inside an outer <a> (invalid HTML).
- * The visible anchor is the dateline at the bottom of the card;
- * `::after` extends its hit area across the whole list item so
- * clicks on whitespace, media, or non-link text follow the
- * permalink.
- */
 .feed-permalink {
     display: inline-flex;
     align-items: baseline;
@@ -969,13 +742,10 @@ video {
     color: var(--color-fg);
 }
 
-/* ---------- shared page-header primitive ---------- */
 .page-header {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    /* No own margin — `main` owns the gap to the content below it
-       (see BaseLayout: `main > .page-header + *`). */
 }
 
 .page-header h1 {
@@ -992,13 +762,6 @@ video {
     font-style: italic;
 }
 
-/* ---------- shared prose-page primitive ---------- */
-/*
- * Narrow reading pages (/now, /resume, /onchain-analytics). The page
- * owns any extra section chrome (borders, list styling) via its own
- * scoped styles; this primitive owns the column, the rhythm, and the
- * heading voice so those pages can't drift apart.
- */
 .prose {
     display: flex;
     flex-direction: column;
@@ -1022,9 +785,6 @@ video {
     font-weight: var(--fw-normal);
 }
 
-/* "see all →" footnote sitting next to a section heading (homepage
-   Recent, /now Recent updates). Small, muted, doesn't compete with the
-   heading itself. */
 .see-all {
     font-family: var(--font-serif);
     font-style: italic;
@@ -1039,32 +799,6 @@ video {
     color: var(--color-fg);
     text-decoration: underline;
 }
-
-/* Pagination and the feed's infinite-scroll sentinel used to live
-   here; each is consumed by exactly one component, so their styles
-   moved into the components' own scoped blocks (Pagination.astro,
-   FeedInfiniteScroll.astro). Globals is for primitives that either
-   span surfaces or style `set:html` output, which never carries a
-   scope hash. */
-
-/* ── farfield recipes ─────────────────────────────────────────────────
-   The tabular format from Cooking for Engineers: ingredients down the
-   left, operations bracketing them rightward, each spanning the rows
-   it absorbs. Read a row left to right and you see everything that
-   happens to that ingredient; read a column top to bottom and you see
-   one operation's whole input.
-
-   The left column IS the ingredient list — amount, item and note — so
-   nothing repeats it underneath. It pins to the left edge while the
-   operations scroll, because the grid is wider than a phone and a row
-   must never lose its label.
-
-   Markup comes from lib/recipe.ts (farfield's markup contract); the
-   rules are lifted from farfield's lib/theme/theme.css with its
-   custom properties mapped onto the site tokens here. `light-dark()`
-   in the tokens makes the color-mix results track dark mode with no
-   extra media query. No vertical margin on .ff-recipe — the doc
-   body's prose rhythm owns block gaps. */
 
 .ff-recipe {
     --panel: var(--color-bg);
@@ -1105,10 +839,6 @@ video {
     margin-bottom: 0.45rem;
 }
 
-/* The exterior frame lives HERE, not on the table: border-collapse
-   ignores border-radius, so a bordered table under a rounded clip
-   loses its corner pixels. Border + radius on the scroll box gives a
-   continuous rounded frame, and interior rules stay on the cells. */
 .ff-recipe-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -1120,15 +850,6 @@ video {
 }
 .ff-recipe-scroll:focus-visible { outline: none; box-shadow: var(--ring); }
 
-/* display:table fights the global `table { display: block }` rule
-   above, which would strip the layout the rowspans depend on — hence
-   the .ff-recipe prefix to out-specify it. width:100% stretches the
-   grid to the reading column — the ingredient column absorbs the
-   slack, so names stop wrapping the moment there is room (farfield's
-   reference shrink-wraps with width:auto instead; stretched reads
-   better in this site's wide column). Below the table's min-content
-   width the scroll wrapper takes over, so phones swipe rather than
-   squeeze. Never overflow:hidden here: it clips the rotated labels. */
 .ff-recipe .ff-recipe-grid {
     display: table;
     width: 100%;
@@ -1137,10 +858,6 @@ video {
     line-height: 1.3;
     background: var(--panel);
 }
-/* One weight system: the frame (line-strong) on the scroll box, a
-   single line-strong rule after the ingredient column, hairlines for
-   everything interior. Last column and last row drop their trailing
-   borders so nothing doubles against the frame. */
 .ff-recipe-grid th,
 .ff-recipe-grid td {
     border: 0;
@@ -1160,29 +877,16 @@ video {
     border-bottom: 0;
 }
 
-/* The ingredient column. A sticky cell in a collapsed table loses its
-   border — the border belongs to the table, not the cell — so the
-   right edge and the depth cue under the scrolling operations are
-   drawn with shadows instead. */
 .ff-recipe-grid .ff-r-ing {
     position: sticky;
     left: 0;
     z-index: 2;
     background: var(--panel);
-    /* min keeps the column legible when the table bottoms out at
-       min-content on a phone; no max — with the stretched table the
-       ingredient column is what soaks up spare width. */
     min-width: 9rem;
     padding: 0.5rem 0.75rem;
-    /* The column's right edge is this single line-strong rule — the
-       cell's own hairline border-right is dropped so the two never
-       stack into a doubled line. (Drawn as a shadow because a sticky
-       cell in a collapsed table loses its border to the table.) */
     border-right: 0;
     box-shadow: inset -1px 0 0 var(--line-strong);
 }
-/* Ingredient typography: the item name carries the weight, the amount
-   reads as mono data beside it, the note as a quiet second line. */
 .ff-recipe-grid .ff-r-line { display: block; }
 .ff-recipe-grid .ff-r-item { font-weight: 500; }
 .ff-recipe-grid .ff-r-amt {
@@ -1209,17 +913,12 @@ video {
     margin-bottom: 0.25rem;
 }
 
-/* Operations sit on a faint accent wash — the bracket layer reads as
-   its own surface against the ingredient column and the gap fills,
-   the way CfE's originals tint the operation cells. */
 .ff-recipe-grid .ff-r-op {
     text-align: center;
     background: color-mix(in srgb, var(--accent) 6%, var(--panel));
 }
 .ff-recipe-grid .ff-r-lbl { display: block; }
 
-/* The duration is data, so it takes the mono face and recedes behind
-   the label it belongs to. */
 .ff-recipe-grid .ff-r-for {
     display: block;
     font-family: var(--font-mono);
@@ -1229,17 +928,6 @@ video {
     margin-top: 0.1rem;
 }
 
-/* Rotation is what lets six or eight operations fit across a page, and
-   what keeps the grid narrow enough to swipe rather than zoom.
-   vertical-rl plus a half-turn reads bottom-to-top, the way a spanning
-   bracket should.
-
-   The explicit `width` is load-bearing for Safari: WebKit mis-measures
-   the intrinsic inline size of vertical-rl content inside table cells,
-   so without it the rotated columns collapse to ~0 and the labels
-   overlap (Chromium sizes them fine either way). One rotated line
-   needs its line-height (~1rem at the grid's font size) plus padding;
-   an explicit width sidesteps the intrinsic measurement entirely. */
 .ff-recipe-grid .ff-r-vert {
     padding: 0.55rem 0.35rem;
     width: 1.9rem;
@@ -1252,8 +940,6 @@ video {
     transform: rotate(180deg);
     letter-spacing: 0.01em;
 }
-/* Rotated, the label and its duration become two columns of the cell —
-   which needs the explicit width doubled up (same Safari sizing bug). */
 .ff-recipe-grid .ff-r-vert .ff-r-for {
     margin-right: 0.3em;
     margin-top: 0;
@@ -1263,12 +949,8 @@ video {
     min-width: 3rem;
 }
 
-/* A filler cell drops its right border so the row runs into the
-   bracket that claims it. That join is the whole visual argument of
-   the format. */
 .ff-recipe-grid .ff-r-gap { border-right: 0; }
 
-/* Fallback list for a recipe whose shape no table can draw. */
 .ff-recipe-ingredients { list-style: none; padding: 0; margin: 0 0 1.5rem; }
 .ff-recipe-ingredients li {
     padding: 0.35rem 0;
@@ -1291,11 +973,6 @@ video {
     border-bottom: 0;
 }
 
-/* The .ff-recipe prefix out-specifies the doc page's heading styles
-   (`.doc-body h3` serif at --fs-2xl) — without it "Method" renders as
-   a giant document heading instead of the small label the markup
-   contract calls for. font-family is explicit for the same reason:
-   the global h3/h4 rules set the serif display face. */
 .ff-recipe .ff-recipe-h {
     font-family: var(--font-sans);
     font-size: 0.7rem;
@@ -1318,8 +995,6 @@ video {
     font-variant-numeric: tabular-nums;
     opacity: 0.45;
 }
-/* The step's duration floats right of its prose — a quiet timeline
-   running down the method's margin. */
 .ff-recipe-steps .ff-r-for {
     float: right;
     margin-left: 0.75rem;
@@ -1329,8 +1004,6 @@ video {
     white-space: nowrap;
 }
 
-/* The grid label repeated as the step's lead-in, so the two halves are
-   legible as the same recipe. */
 .ff-recipe-steps .ff-r-do { font-weight: 600; }
 .ff-recipe-steps .ff-r-do::after {
     content: " —";
@@ -1341,12 +1014,6 @@ video {
 .ff-recipe-notes { margin-top: 1.2rem; font-size: 0.92rem; opacity: 0.8; }
 .ff-recipe-source { margin-top: 1.2rem; font-size: 0.82rem; opacity: 0.65; }
 
-/* ── recipe interactivity (recipe-interactive.ts) ─────────────────────
-   Everything below only ever applies once the script adds .ff-live /
-   .dim / .hot / .off — the static, no-JS page never shows it. */
-
-/* Serves control — ships `hidden`; the script reveals it when the
-   yield carries a number and at least one amount parses. */
 .ff-recipe-controls {
     display: flex;
     align-items: center;
@@ -1380,10 +1047,6 @@ video {
     border-color: var(--ink);
 }
 
-/* Interactive affordances on the grid itself. Hover states only exist
-   once the script is live — a static grid never suggests clicks. The
-   `peek` classes are the hover-preview: pointing at a bracket tints
-   the rows it absorbs and its method step before you commit. */
 .ff-live .ff-r-ing,
 .ff-live .ff-r-op[data-step] {
     cursor: pointer;
@@ -1406,7 +1069,6 @@ video {
 .ff-recipe-steps li.peek {
     background: color-mix(in srgb, var(--accent) 5%, transparent);
 }
-/* Peeking stays legible even while another step holds focus. */
 .ff-recipe-grid.dim td.ff-r-op.peek,
 .ff-recipe-grid.dim tr.peek th {
     opacity: 0.75;
@@ -1420,14 +1082,11 @@ video {
     }
 }
 
-/* Strike-off: crossed out but still legible. */
 .ff-recipe-grid .ff-r-ing.off {
     opacity: 0.4;
     text-decoration: line-through;
 }
 
-/* Step focus: dim the grid, light the active bracket and the rows it
-   absorbs. Opacity (not color) so the wash works in both themes. */
 .ff-recipe-grid.dim :is(td, th) {
     opacity: 0.35;
 }
@@ -1449,8 +1108,6 @@ video {
     background: var(--accent-soft);
 }
 
-/* The stage panel — step counter, timer, prev/next, and the step's
-   method prose, sitting just above the grid it narrates. */
 .ff-recipe-stage {
     border: 1px solid var(--line-strong);
     border-radius: var(--r-s);
@@ -1521,11 +1178,6 @@ video {
 .ff-recipe-error pre { margin: 0; font-size: 0.78rem; overflow-x: auto; }
 
 @media (max-width: 40rem) {
-    /* Tighten the grid rather than reflowing it: the rotated
-       operations are already narrow, so what buys the most room is a
-       smaller ingredient column and less padding. The column stays
-       pinned, so the operations scroll past a label that is always on
-       screen. */
     .ff-recipe .ff-recipe-grid { font-size: 0.78rem; }
     .ff-recipe-grid .ff-r-ing {
         min-width: 7rem;

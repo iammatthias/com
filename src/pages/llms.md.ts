@@ -1,5 +1,3 @@
-// /llms.md — the well-known root markdown path agents probe when they
-// arrive cold. Same body as /index.md.
 
 export const prerender = true;
 

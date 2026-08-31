@@ -1,10 +1,4 @@
 ---
-// All-content index, page 1, prerendered. Pages 2+ live at
-// /content/page/N (content/page/[page].astro). Both render through
-// ContentIndex.astro with data from @lib/content-index. This is an
-// explicit route (not a `[...page]` catch-all) so the legacy
-// `/content/...` redirects in astro.config have a concrete `/content`
-// destination to resolve against.
 export const prerender = true;
 
 import ContentIndex from "@components/ContentIndex.astro";
@@ -20,7 +14,6 @@ export const menu: MenuMeta = {
 
 const { items, pubs } = await loadContentIndex();
 
-// Page 1 always exists (empty set still renders an empty page 1).
 const paged = getPage(items, 1, "/content")!;
 ---
 

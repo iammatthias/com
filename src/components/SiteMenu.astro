@@ -1,10 +1,4 @@
 ---
-// Progressive-enhancement site menu. The header's `<a href="/menu">`
-// link navigates to /menu when JS is off; the script below intercepts
-// the click on any element with `[data-menu-trigger]` and opens this
-// <dialog> instead. Native <dialog> handles ESC, focus trap, and
-// backdrop scroll lock for free. Rendered once per page by BaseLayout.
-
 import MenuLinks from "./MenuLinks.astro";
 ---
 
@@ -16,16 +10,6 @@ import MenuLinks from "./MenuLinks.astro";
             aria-label="Close menu"
             data-menu-close>close</button
         >
-        <!-- Semantic search over docs + feed. The embedding model
-             (ternlight, WASM) and the corpus only load on first focus —
-             see src/scripts/menu-search.ts. Until then this is an inert
-             input, and with JS off the dialog never opens anyway. -->
-        <!-- A real form, not a bare input: `toolname` /
-             `tooldescription` are WebMCP annotations that survive into
-             the server-rendered HTML, so an agent (or a scanner) can
-             see the capability without executing our JS. The GET action
-             is the same endpoint the client-side search calls, so
-             submitting without JS still lands somewhere useful. -->
         <form
             class="site-menu__search"
             role="search"
@@ -55,17 +39,13 @@ import MenuLinks from "./MenuLinks.astro";
 
     const dialog = document.getElementById("site-menu");
 
-    /* ── WebMCP: in-page tools for browser-resident agents ───────── */
     import { registerWebMcpTools } from "@src/scripts/webmcp";
     registerWebMcpTools();
 
-    /* The form's GET action is the no-JS fallback; with JS the search
-       runs in-page, so stop the navigation. */
     document
         .querySelector("[data-menu-search-form]")
         ?.addEventListener("submit", (e) => e.preventDefault());
 
-    /* ── semantic search (progressive, lazy) ─────────────────────── */
     {
         const input = document.querySelector("[data-menu-search]");
         const status = document.querySelector("[data-search-status]");
@@ -85,11 +65,6 @@ import MenuLinks from "./MenuLinks.astro";
                 return modPromise;
             };
 
-            // Warm on focus as the fallback path. All heavy work (WASM
-            // compile, corpus embedding) happens in a Web Worker, so the
-            // status line is purely informational — the page stays
-            // responsive throughout. If the idle prefetch below already
-            // finished, this resolves instantly with no status flash.
             const warm = async () => {
                 if (warmed) return;
                 warmed = true;
@@ -108,11 +83,6 @@ import MenuLinks from "./MenuLinks.astro";
                     status.textContent = "search is unavailable right now";
                 }
             };
-
-            // No idle prefetch: the engine is ~7 MB gz, and most visits
-            // never open search. First focus of the field warms it (the
-            // handler below), which costs one visible "warming up" beat
-            // for the people who actually search.
 
             const render = (hits: SearchResult[], query: string) => {
                 results.replaceChildren(
@@ -142,7 +112,7 @@ import MenuLinks from "./MenuLinks.astro";
                 const ticket = ++seq;
                 const mod = await load();
                 const hits = await mod.search(query, 6);
-                if (ticket !== seq) return; // superseded by newer input
+                if (ticket !== seq) return;
                 render(hits, query);
             };
 
@@ -171,9 +141,6 @@ import MenuLinks from "./MenuLinks.astro";
         for (const closer of dialog.querySelectorAll("[data-menu-close]")) {
             closer.addEventListener("click", () => dialog.close());
         }
-        // Click on the backdrop (i.e. on the <dialog> element itself,
-        // outside its inner content) closes the menu; so does a click
-        // on any link, so the menu doesn't linger on back-navigation.
         dialog.addEventListener("click", (event) => {
             const target = event.target;
             if (target === dialog || target instanceof HTMLAnchorElement) {
@@ -185,8 +152,6 @@ import MenuLinks from "./MenuLinks.astro";
 
 <style>
     .site-menu {
-        /* Native <dialog> centers itself on the viewport by default; we
-           style only the chrome. Backdrop scroll-lock is automatic. */
         border: none;
         padding: 0;
         background: var(--color-bg);
@@ -194,7 +159,6 @@ import MenuLinks from "./MenuLinks.astro";
         width: min(420px, calc(100% - var(--pad) * 2));
         max-height: calc(100dvh - var(--pad) * 2);
         border-radius: var(--radius);
-        /* Subtle warmth — doesn't read as a heavy modal */
         box-shadow:
             0 1px 0 var(--color-border),
             0 24px 64px -12px rgba(0, 0, 0, 0.25);
@@ -229,8 +193,6 @@ import MenuLinks from "./MenuLinks.astro";
         text-decoration: underline;
     }
 
-    /* ---------- search ---------- */
-
     .site-menu__search {
         display: flex;
         flex-direction: column;
@@ -261,9 +223,6 @@ import MenuLinks from "./MenuLinks.astro";
         color: var(--color-muted);
     }
 
-    /* Result rows are created by the search script at runtime, so they
-       never carry this component's scope hash — style them via
-       :global() under the scoped list container. */
     .site-menu__results {
         list-style: none;
         margin: 0;
@@ -288,9 +247,6 @@ import MenuLinks from "./MenuLinks.astro";
         font-size: var(--fs-lg);
     }
 
-    /* Thin 1px hover underline — the deliberate serif-title treatment
-       (base a:hover is 2px, tuned for body links). Offset comes from
-       the base rule. */
     .site-menu__results :global(a:hover) {
         text-decoration: underline;
         text-decoration-thickness: 1px;

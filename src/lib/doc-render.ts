@@ -1,12 +1,3 @@
-// Markdown → HTML pipeline for Farfield document bodies. Extracted
-// from pages/[publication]/[slug].astro so the page keeps only its
-// routing/data concerns and other surfaces can share the pieces.
-//
-// The pipeline resolves Farfield's two custom URI schemes into rich
-// markup — `blob://<cid>` becomes a zoomable `<figure>`, and
-// `series://<slug>` becomes a masonry gallery, a text+image flow, or
-// the bespoke triptych layout depending on the series' shape — then
-// rewrites GFM alert blockquotes into semantic callouts.
 
 import { marked } from "marked";
 import { blobURL, getBlobMeta, getSeries } from "./farfield-loader";
@@ -37,15 +28,6 @@ import {
     ZOOM_FALLBACK_WIDTH,
 } from "./images";
 
-/** Escape a string for safe inclusion inside an HTML attribute value. */
-
-/**
- * Rewrite link-syntax blob refs — `[name](blob://cid)`, the editor's
- * file-attachment form — to absolute blob URLs so marked emits a
- * working download link instead of a dead `blob://` href. Runs after
- * embed extraction, which consumes the image-syntax (`![]`) refs, so
- * only true file links remain by this point.
- */
 function rewriteBlobLinks(markdown: string): string {
     return markdown.replace(
         new RegExp(`\\]\\(${BLOB_ID_SOURCE}\\)`, "g"),
@@ -63,14 +45,6 @@ function zoomAttrs(src: string, alt: string, w: number, h: number): string {
     );
 }
 
-/**
- * What a blob renders as, from its sniffed mime. Farfield stores
- * video/audio blobs with just {cid, size, mime, createdAt} — no
- * dimensions, blurhash, or dominant color — so rendering branches on
- * kind rather than metadata presence. Unknown or missing mimes fall
- * back to the image path: wsrv resolves most legacy blobs, and a
- * broken <img> beats silently dropping the embed.
- */
 type MediaKind = "image" | "video" | "audio";
 
 function mediaKind(meta: BlobMeta | null): MediaKind {
@@ -80,13 +54,6 @@ function mediaKind(meta: BlobMeta | null): MediaKind {
     return "image";
 }
 
-/**
- * Players stream straight from the blob service — wsrv is image-only,
- * and blobs answers Range requests (Safari refuses to play without
- * 206s). `preload="metadata"` paints the first frame without pulling
- * the file; `playsinline` keeps iOS from hijacking into fullscreen.
- * The nested link is the no-video-support fallback.
- */
 function videoTag(cid: string, alt: string): string {
     const src = attr(blobURL(cid));
     const label = alt ? ` aria-label="${attr(alt)}"` : "";
@@ -107,9 +74,6 @@ function audioTag(cid: string, alt: string): string {
     );
 }
 
-/** Video/audio variant of the doc figure and series tile — a player
- *  instead of the zoomable wsrv image (no zoom button; the controls
- *  are the interaction). */
 function renderMediaFigure(
     figureClass: string,
     kind: "video" | "audio",
@@ -120,13 +84,6 @@ function renderMediaFigure(
     return `<figure class="${figureClass} ${figureClass}--${kind}">${inner}</figure>`;
 }
 
-/**
- * `<figure>` for a single inline blob. Width/height/dominantColor come
- * from the blob's `/meta` endpoint when available — gives the browser
- * a stable aspect-ratio box and a placeholder fill before the wsrv
- * variant lands. `meta === null` means the blob exists (URL still
- * works) but has no recorded metadata; we render with safe defaults.
- */
 function renderEmbedFigure(
     cid: string,
     alt: string,
@@ -151,7 +108,6 @@ function renderEmbedFigure(
     );
 }
 
-/** A `<figure>` tile inside a series gallery — narrower srcset. */
 function renderSeriesTile(
     cid: string,
     alt: string,
@@ -176,19 +132,10 @@ function renderSeriesTile(
     );
 }
 
-/**
- * A series body is markdown made of blank-line-separated blocks. We
- * tokenize it in document order — blob embeds (image or video, the
- * tile renderer branches on mime) vs everything else — so prose
- * between media is preserved instead of dropped.
- */
 interface SeriesBlock {
     type: "media" | "text";
-    /** blob cid (media blocks). */
     cid?: string;
-    /** alt text (media blocks). */
     alt?: string;
-    /** raw markdown (text blocks). */
     raw: string;
 }
 
@@ -206,37 +153,20 @@ function tokenizeSeries(body: string): SeriesBlock[] {
         });
 }
 
-// Series that get the bespoke triptych layout (image · text · image).
-// Everything else renders generically — see `renderSeries`.
 const TRIPTYCH_SERIES = new Set(["phosphene"]);
 
-/** Render a text block from a series body as markdown. Strips any
- *  blockquote `> ` markers first so a poem/quote renders as centered
- *  prose — emphasis, hard line breaks, and paragraph splits intact —
- *  rather than a bordered blockquote. */
 function renderStanza(raw: string): string {
     const inner = raw
         .split("\n")
         .map((l) => l.replace(/^\s*>\s?/, ""))
         .join("\n");
     const html = transformAlerts(marked.parse(inner, { async: false }) as string);
-    // A trailing paragraph that is wholly emphasised (authored as `*…*`
-    // on its own line) is the capture note, not verse — tag it so the
-    // triptych styles it as metadata. The verse keeps its serif voice;
-    // the note reads as mono data beneath a hairline.
     return html.replace(
         /<p><em>([\s\S]*?)<\/em><\/p>(\s*)$/,
         '<p class="stanza-note">$1</p>$2',
     );
 }
 
-/**
- * Bespoke triptych renderer (phosphene): image · text · image, with an
- * optional caption beneath. Blocks are grouped greedily — a leading
- * image, the text up to the next image, the closing image, then any
- * text before the following image becomes that triptych's caption. A
- * triptych missing its second image degrades to image + text.
- */
 async function renderSeriesTriptychs(blocks: SeriesBlock[]): Promise<string> {
     const metas = new Map<string, BlobMeta | null>();
     await Promise.all(
@@ -257,7 +187,6 @@ async function renderSeriesTriptychs(blocks: SeriesBlock[]): Promise<string> {
     let i = 0;
     while (i < blocks.length) {
         if (blocks[i].type !== "media") {
-            // Stray prose with no image to anchor it — centered stanza.
             out.push(
                 `<p class="triptych-loose">${renderStanza(blocks[i].raw)}</p>`,
             );
@@ -297,11 +226,6 @@ async function renderSeriesTriptychs(blocks: SeriesBlock[]): Promise<string> {
     return out.join("");
 }
 
-/**
- * General series renderer: render every block in document order — text
- * as markdown prose (callouts included), images as full-width figures.
- * This is what makes an arbitrary image+text series "all render".
- */
 async function renderSeriesFlow(blocks: SeriesBlock[]): Promise<string> {
     const parts = await Promise.all(
         blocks.map(async (b) => {
@@ -316,13 +240,6 @@ async function renderSeriesFlow(blocks: SeriesBlock[]): Promise<string> {
     return parts.join("\n");
 }
 
-/**
- * Resolve a `series://<slug>` reference. Dispatch by shape:
- *   - triptych series (phosphene) → bespoke image · text · image layout
- *   - any series with prose       → text + images in document order
- *   - pure-image series           → classic masonry gallery
- * Returns "" if the series is missing or empty.
- */
 async function renderSeries(slug: string): Promise<string> {
     const series = await getSeries(slug);
     if (!series?.body) return "";
@@ -343,12 +260,6 @@ async function renderSeries(slug: string): Promise<string> {
     return `<div class="series-grid">${tiles}</div>`;
 }
 
-/**
- * Swap each recipe placeholder for its rendered HTML. The placeholder
- * is an HTML comment, which marked passes through as its own block —
- * but a fence butted directly against prose can leave it inside a
- * paragraph, so the `<p>`-wrapped form is unwrapped first.
- */
 function substituteRecipes(
     html: string,
     blocks: string[],
@@ -363,21 +274,6 @@ function substituteRecipes(
     return html;
 }
 
-/**
- * Render a markdown body, resolving Farfield's `blob://<cid>` and
- * `series://<slug>` embeds to figure / gallery HTML, rendering
- * `<ff-*>` document components (lib/doc-components), expanding fenced
- * ```recipe blocks into the grid + method view, and rewriting GFM
- * alert blockquotes to semantic callouts.
- *
- * Recipe blocks lift out first — before the embed pass and before
- * marked sees the source — otherwise their YAML renders as a wall of
- * code. Embeds are pre-replaced with HTML comment placeholders before
- * marked sees the source so its inline parser can't mangle them.
- * After marked emits HTML the placeholders are swapped for the
- * resolved figures (or dropped silently if the underlying record
- * can't be found).
- */
 export async function renderMarkdownBody(body: string): Promise<string> {
     const { body: lifted, blocks: recipes } = extractRecipes(body);
     const components = await extractDocComponents(lifted);
@@ -392,9 +288,6 @@ export async function renderMarkdownBody(body: string): Promise<string> {
         },
     );
 
-    // Resolve each embed to its rendered HTML in parallel:
-    //   - blob://<cid>    → single <figure> (sized via /blobs/<cid>/meta)
-    //   - series://<slug> → masonry gallery (series body → tile grid)
     const rendered = await Promise.all(
         embeds.map(async (e) => {
             if (e.scheme === "series") {
@@ -419,33 +312,14 @@ export async function renderMarkdownBody(body: string): Promise<string> {
     return html;
 }
 
-/**
- * How many items an RSS feed carries — the standard "newest N" cap.
- * Readers only need the recent window (archives live on the site and
- * in llms-full.txt), and rendering every document's full body in one
- * request is what used to overwhelm workerd's per-host connection
- * budget and 404 the root and art feeds.
- */
 export const RSS_ITEM_CAP = 25;
 
-/**
- * Envelope shared by every RSS route: the media-RSS namespace for
- * per-item thumbnails, the language element, and the XSL stylesheet
- * that renders the feed as a styled page in a browser.
- */
 export const FEED_ENVELOPE = {
     xmlns: { media: "http://search.yahoo.com/mrss/" },
     customData: "<language>en-us</language>",
     stylesheet: "/rss.xml.xsl",
 } as const;
 
-/**
- * The item mapper shared by the document feeds (site, per-publication,
- * per-tag) — three hand-copied versions of this block had already
- * diverged on `categories`. Full body with embeds resolved to absolute
- * image URLs, capped galleries with a canonical "view the full
- * gallery" link, and a media:content thumbnail per item.
- */
 export async function docFeedItems(items: DocumentData[], origin: string) {
     return mapWithConcurrency(items, 8, async (item) => {
         const canonical = `${origin}${item.href}`;
@@ -468,31 +342,12 @@ export async function docFeedItems(items: DocumentData[], origin: string) {
     });
 }
 
-/**
- * RSS/feed-reader variant of `renderMarkdownBody`. Embeds resolve to
- * plain media tags with absolute URLs (readers can't run the site's
- * zoom buttons or masonry, and relative/`blob://` URLs render as
- * broken images) — a `blob://<cid>` becomes one tag, a
- * `series://<slug>` becomes that series' media in order. Images go
- * through wsrv at 960px to keep reader downloads sane; video/audio
- * stream straight from the blob service. Blob meta is fetched only
- * for the embeds that survive the cap (needed to pick the tag), so a
- * full-collection feed stays bounded at `maxImages` lookups per item
- * — no width/height attributes, which would need meta for every image.
- *
- * `maxImages` caps gallery-heavy items (an art post can carry hundreds
- * of images, which balloons the feed to megabytes); when the cap trims
- * anything and `moreUrl` is set, a "view the full gallery" link to the
- * canonical page closes the item.
- */
 export async function renderFeedBody(
     body: string,
     opts: { maxImages?: number; moreUrl?: string } = {},
 ): Promise<string> {
     const maxImages = opts.maxImages ?? Number.POSITIVE_INFINITY;
 
-    // Recipe blocks render as a reader-safe list + numbered method —
-    // the grid depends on site CSS that feed readers strip.
     const { body: lifted, blocks: recipes } = extractRecipes(body);
     interface Embed { alt: string; scheme: "blob" | "series"; id: string }
     const embeds: Embed[] = [];
@@ -516,13 +371,9 @@ export async function renderFeedBody(
         }
     };
 
-    // Resolve every embed to its ordered media list first, then walk
-    // the document order with the media budget so truncation always
-    // keeps the item's leading media.
     const resolved = await Promise.all(
         embeds.map(async (e): Promise<{ cid: string; alt: string }[]> => {
             if (e.scheme === "blob") return [{ cid: e.id, alt: e.alt }];
-            // Series: expand to its media (memoized per-record fetch).
             const series = await getSeries(e.id);
             if (!series?.body) return [];
             return [...series.body.matchAll(
@@ -535,8 +386,6 @@ export async function renderFeedBody(
     let omitted = 0;
     const rendered = await Promise.all(
         resolved.map(async (media) => {
-            // Budget bookkeeping stays synchronous (before any await)
-            // so document order decides what the cap keeps.
             const take = media.slice(0, Math.max(0, maxImages - emitted));
             emitted += take.length;
             omitted += media.length - take.length;
@@ -562,12 +411,6 @@ export async function renderFeedBody(
     return html;
 }
 
-/**
- * Word count + reading time. Farfield bodies are raw markdown — strip
- * embed syntax and basic markup to get a clean prose word count. 220
- * wpm is the standard adult reading rate for comfortably-paced screen
- * text. Rounded up; floored at 1.
- */
 export function readingTime(body: string | undefined): {
     words: number;
     minutes: number;
@@ -584,21 +427,11 @@ export interface TocEntry {
     level: 2 | 3;
 }
 
-/**
- * Pull `<h2>` / `<h3>` headings out of the rendered body and inject an
- * `id` on each so the TOC can deep-link. Returns the modified HTML +
- * the TOC structure for the sidebar.
- */
 export function buildToc(html: string): {
     html: string;
     entries: TocEntry[];
 } {
     const entries: TocEntry[] = [];
-    // Decode the entities marked emits inside heading HTML so the TOC
-    // text reads as plain characters (`&amp;` → `&`, `&quot;` → `"`,
-    // etc.). Astro re-escapes the resulting string when interpolated
-    // with `{entry.text}`, so without this step we double-encode and
-    // the sidebar shows literal `&amp;`.
     const decodeEntities = (s: string) =>
         s
             .replace(/&amp;/g, "&")
@@ -632,11 +465,7 @@ export function buildToc(html: string): {
     const out = html.replace(
         /<h([23])([^>]*)>([\s\S]*?)<\/h\1>/g,
         (match, lvl, attrs: string, inner: string) => {
-            // Recipe-block headings ("Method", phase names) are labels
-            // inside a component, not document sections — leave them
-            // un-id'd and out of the TOC.
             if (/\bclass=["'][^"']*ff-recipe/.test(attrs)) return match;
-            // Respect any id already on the heading.
             const idMatch = attrs.match(/\bid=["']([^"']+)["']/);
             const id = idMatch ? idMatch[1] : dedupe(slug(inner));
             const level = Number(lvl) as 2 | 3;

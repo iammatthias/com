@@ -1,7 +1,4 @@
 ---
-// Per-tag index, prerendered. `[...page]` serves `/tags/<tag>` and
-// `/tags/<tag>/page/N`; the sibling `rss.xml.ts` (static) outranks it
-// for `/tags/<tag>/rss.xml`. cacheKey folds the member cids per page.
 export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";

@@ -1,58 +1,35 @@
-// Response-level cache header helpers.
-//
-// SSR pages and API routes all share the same cache policy:
-// `Cache-Control: public, s-maxage=60, stale-while-revalidate=300` so
-// Cloudflare's edge holds rendered HTML for 60s and serves stale for
-// up to 5 more minutes while refreshing in the background. The
-// loaders' `cacheHint` (lastModified + tags) becomes the Last-Modified
-// and Cache-Tag headers so the same lever can drive both client-side
-// freshness checks and Cloudflare cache invalidation.
-
-/**
- * Subset of Astro's `cacheHint` shape that we actually consume. Loosely
- * typed so consumers don't have to import Astro's internal types.
- */
 export interface CacheHintLike {
     lastModified?: Date;
     tags?: string[];
 }
 
 export interface CacheHeaderOptions {
-    /** Cache lifetime at the edge before SWR kicks in. Default 60s. */
     maxAge?: number;
-    /** SWR window — edge serves stale this long while refreshing. Default 300s. */
     swr?: number;
-    /**
-     * Extra cache tags to merge with whatever the loader emitted. Used
-     * when a page draws from multiple collections and wants both
-     * source tags on the response (e.g. /content reads docs + pubs).
-     */
     extraTags?: string[];
 }
 
-/**
- * Apply our standard cache policy to an SSR response, plus the
- * loader's freshness hint (Last-Modified + Cache-Tag). Mutates the
- * passed response in place. Tag list is deduped — convenient when
- * merging hints from multiple loaders.
- */
-/**
- * Cache options for paginated list surfaces. Page 1 is the live front
- * of each surface and keeps the 60s default; deeper pages only change
- * when new content lands (every item shifts one slot), so the edge can
- * hold them 5× longer without anyone noticing staleness.
- */
+const DEFAULT_MAX_AGE_SECONDS = 60;
+const DEFAULT_SWR_SECONDS = 300;
+const DEEP_PAGE_MAX_AGE_SECONDS = 300;
+const DEEP_PAGE_SWR_SECONDS = 600;
+
 export function deepPageCacheOptions(page: number): CacheHeaderOptions {
-    return page > 1 ? { maxAge: 300, swr: 600 } : {};
+    const isDeepPage = page > 1;
+    return isDeepPage
+        ? { maxAge: DEEP_PAGE_MAX_AGE_SECONDS, swr: DEEP_PAGE_SWR_SECONDS }
+        : {};
 }
+
+const PER_ENTRY_TAG = /^(doc-|cid-|feed-entry-)/;
 
 export function setResponseCacheHeaders(
     response: { headers: Headers },
     cacheHint?: CacheHintLike,
     opts: CacheHeaderOptions = {},
 ): void {
-    const maxAge = opts.maxAge ?? 60;
-    const swr = opts.swr ?? 300;
+    const maxAge = opts.maxAge ?? DEFAULT_MAX_AGE_SECONDS;
+    const swr = opts.swr ?? DEFAULT_SWR_SECONDS;
     response.headers.set(
         "Cache-Control",
         `public, s-maxage=${maxAge}, stale-while-revalidate=${swr}`,
@@ -63,20 +40,11 @@ export function setResponseCacheHeaders(
             cacheHint.lastModified.toUTCString(),
         );
     }
-    // Coarse tags only. The loaders emit one `doc-*`/`cid-*` pair per
-    // entry, which on list pages ballooned this header to ~11 KB of
-    // bytes shipped to every browser — and nothing consumes them:
-    // purge-by-tag is a Cloudflare Enterprise feature and no purge
-    // call exists. Surface-level tags (`documents`, `pub-*`, `tag-*`,
-    // `feed-entries`, …) keep the header a few dozen bytes and are
-    // the granularity any future purge would realistically use.
-    const FINE_TAG = /^(doc-|cid-|feed-entry-)/;
-    const tags = [
+    const surfaceLevelTags = [
         ...(cacheHint?.tags ?? []),
         ...(opts.extraTags ?? []),
-    ].filter((t) => !FINE_TAG.test(t));
-    if (tags.length > 0) {
-        const deduped = [...new Set(tags)];
-        response.headers.set("Cache-Tag", deduped.join(","));
+    ].filter((t) => !PER_ENTRY_TAG.test(t));
+    if (surfaceLevelTags.length > 0) {
+        response.headers.set("Cache-Tag", [...new Set(surfaceLevelTags)].join(","));
     }
 }

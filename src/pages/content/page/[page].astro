@@ -1,8 +1,4 @@
 ---
-// All-content index, pages 2+, prerendered. Page 1 is /content
-// (content/index.astro). Both render through ContentIndex.astro with
-// data from @lib/content-index. cacheKey folds each page's member
-// cids so unchanged pages skip on incremental builds.
 export const prerender = true;
 
 import ContentIndex from "@components/ContentIndex.astro";

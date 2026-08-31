@@ -1,7 +1,3 @@
-// Sitewide RSS, prerendered — regenerated on every build; the
-// Farfield publish hook keeps it fresh. Newest RSS_ITEM_CAP documents
-// with full bodies (embeds resolved to absolute URLs), capped
-// galleries, and a media:content thumbnail per item.
 
 export const prerender = true;
 

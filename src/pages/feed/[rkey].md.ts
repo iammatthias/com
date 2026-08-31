@@ -1,4 +1,3 @@
-// Markdown twin of a feed entry — `/feed/<rkey>.md`.
 
 export const prerender = false;
 

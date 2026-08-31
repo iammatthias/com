@@ -1,6 +1,3 @@
-// Markdown twin of a publication index — `/<pub>.md`, prerendered.
-// One file per publication: the whole section as a linked list of
-// markdown twins.
 
 export const prerender = true;
 

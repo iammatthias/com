@@ -1,6 +1,4 @@
-const LOADERS: Record<string, () => Promise<unknown>> = {
-    "ff-compare": () => import("./doc-components/compare"),
-};
+const LOADERS: Record<string, () => Promise<unknown>> = {};
 
 export function mountDocComponents(root: ParentNode = document): void {
     for (const [tag, load] of Object.entries(LOADERS)) {

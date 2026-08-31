@@ -1,20 +1,4 @@
 #!/usr/bin/env node
-// Agent-readiness gate. Runs against a built ./dist (default) or a
-// live origin (--url https://…), and fails the process on any broken
-// invariant so a regression can't reach production.
-//
-//   bun run agent:check              # checks ./dist after a build
-//   bun run agent:check --url https://iammatthias.com
-//
-// What it enforces, and why each one is here rather than trusted:
-//   - every well-known/discovery document exists and parses
-//   - llms.txt links actually resolve to markdown (a scan once
-//     reported ours as dead ends; they weren't, but nothing was
-//     checking)
-//   - markdown twins lead with front matter or a heading, never HTML
-//   - every HTML page has exactly one <h1> and parseable JSON-LD
-//   - the OpenAPI spec's declared paths answer
-//   - (live only) AI crawler user-agents aren't blocked at the edge
 
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
@@ -29,9 +13,6 @@ let passes = 0;
 let skipped = 0;
 const problems = [];
 
-// Routes rendered on demand: absent from ./dist by design, so they can
-// only be verified against a live origin. Keep this list tight — a
-// path added here stops being checked in CI.
 const SSR_ONLY = new Set([
     "/graphql",
     "/api/content.json",
@@ -61,7 +42,6 @@ function fail(label, detail) {
     problems.push(`${label}${detail ? ` — ${detail}` : ""}`);
 }
 
-/** Fetch a path from the live origin or read it from ./dist. */
 async function get(p) {
     if (ORIGIN) {
         const res = await fetch(ORIGIN + p, {
@@ -76,7 +56,6 @@ async function get(p) {
             headers: res.headers,
         };
     }
-    // Static build: try the path, then .html, then /index.html.
     const candidates = [p, `${p}.html`, path.join(p, "index.html")];
     for (const c of candidates) {
         const file = path.join(DIST, c);
@@ -90,7 +69,6 @@ async function get(p) {
                 };
             }
         } catch {
-            /* try next candidate */
         }
     }
     return { status: 404, type: "", body: "", headers: new Headers() };
@@ -150,7 +128,6 @@ console.log(
     `agent-check → ${ORIGIN ?? "dist/client"}\n`,
 );
 
-// ---- discovery documents ----------------------------------------------
 await expect200("/robots.txt");
 await expect200("/sitemap.xml");
 await expectMarkdown("/llms.txt");
@@ -176,8 +153,6 @@ await expectJSON(
 );
 
 await expectJSON("/.well-known/ai-catalog.json", (d) => {
-    // Shape per the AI Catalog spec — a scan once accepted the file as
-    // "present but invalid", which scores the same as absent.
     if (!d.specVersion) return "missing specVersion";
     if (!d.host?.identifier) return "missing host.identifier";
     if (!Array.isArray(d.entries) || !d.entries.length) return "entries is not a non-empty array";
@@ -223,7 +198,6 @@ await expectJSON(
     (d) => (d.resource ? null : "missing resource"),
 );
 
-// ---- GraphQL -----------------------------------------------------------
 await expect200("/schema.graphql");
 {
     const sdl = await get("/schema.graphql");
@@ -235,8 +209,6 @@ await expect200("/schema.graphql");
     }
 }
 if (ORIGIN) {
-    // Introspection must be public — an auth-gated schema is
-    // undiscoverable, which defeats the point of publishing one.
     const res = await fetch(`${ORIGIN}/graphql`, {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -256,7 +228,6 @@ if (ORIGIN) {
     else fail("graphql sections query", JSON.stringify(qb?.errors ?? qb).slice(0, 120));
 }
 
-// ---- trust anchors -----------------------------------------------------
 for (const p of ["/about", "/contact", "/privacy"]) {
     if (ssrSkipped(p)) continue;
     const r = await get(p);
@@ -273,7 +244,6 @@ for (const p of ["/about", "/contact", "/privacy"]) {
     else ok(`${p} (${text.length} chars)`);
 }
 
-// ---- HTML structure ----------------------------------------------------
 const HTML_PAGES = [
     "/",
     "/about",
@@ -320,7 +290,6 @@ for (const p of HTML_PAGES) {
     }
 }
 
-// ---- llms.txt links all resolve ---------------------------------------
 {
     const r = await get("/llms.txt");
     const links = [...r.body.matchAll(/\]\((https:\/\/[^)]+)\)/g)].map((m) => m[1]);
@@ -345,11 +314,7 @@ for (const p of HTML_PAGES) {
     if (!broken) ok(`llms.txt: all ${paths.length} links resolve`);
 }
 
-// ---- every catalog URL resolves ---------------------------------------
 if (ORIGIN) {
-    // An entry pointing at something that 404s teaches agents the
-    // whole catalog is unreliable — we shipped exactly that once with
-    // an unpublished npm package.
     const cat = await get("/.well-known/ai-catalog.json");
     if (cat.status === 200) {
         try {
@@ -371,7 +336,6 @@ if (ORIGIN) {
     }
 }
 
-// ---- per-section llms.txt + a sample markdown twin --------------------
 const { SECTION_SLUGS } = await import("../src/lib/agent-surface.ts").catch(
     () => ({ SECTION_SLUGS: ["art", "posts", "recipes", "melange", "open-source"] }),
 );
@@ -380,7 +344,6 @@ for (const s of SECTION_SLUGS) {
     await expectMarkdown(`/${s}.md`, `/${s}.md`);
 }
 
-// ---- OpenAPI declared paths answer ------------------------------------
 {
     const spec = await get("/openapi.json");
     if (spec.status === 200) {
@@ -388,9 +351,6 @@ for (const s of SECTION_SLUGS) {
             const d = JSON.parse(spec.body);
             for (const [p, ops] of Object.entries(d.paths ?? {})) {
                 if (ssrSkipped(p)) continue;
-                // Supply required params — an endpoint that demands one
-                // is *supposed* to 400 without it, so a bare probe
-                // would report correct behaviour as a failure.
                 const required = (ops.get?.parameters ?? []).filter((x) => x.required);
                 const qs = new URLSearchParams();
                 for (const param of required) {
@@ -402,15 +362,11 @@ for (const s of SECTION_SLUGS) {
                 else ok(`openapi path ${probe}`);
             }
         } catch {
-            /* already reported above */
         }
     }
 }
 
-// ---- negotiation, agent 404s, versioning (live only) -----------------
 if (ORIGIN) {
-    // acceptmarkdown.com: the homepage must answer Accept: text/markdown
-    // with markdown, and say so in Vary.
     const md = await fetch(ORIGIN + "/", {
         headers: { accept: "text/markdown" },
         signal: AbortSignal.timeout(20000),
@@ -422,7 +378,6 @@ if (ORIGIN) {
     if (!vary.includes("accept")) fail("homepage Vary", `got "${vary}"`);
     else ok("homepage Vary: Accept");
 
-    // A 404 an agent can recover from: real status, markdown body.
     const nf = await fetch(`${ORIGIN}/definitely-not-a-real-path-${Date.now()}`, {
         headers: { accept: "text/markdown" },
         signal: AbortSignal.timeout(20000),
@@ -435,7 +390,6 @@ if (ORIGIN) {
         fail("agent 404 body", "no recovery links (llms.txt / sitemap)");
     } else ok("agent 404 is markdown with recovery links");
 
-    // Bot user agents get markdown even when they ask for HTML.
     const bot = await fetch(`${ORIGIN}/?bot=${Date.now()}`, {
         headers: { "user-agent": "ClaudeBot/1.0", accept: "text/html" },
         signal: AbortSignal.timeout(20000),
@@ -444,8 +398,6 @@ if (ORIGIN) {
         ok("bot-UA gets markdown");
     } else fail("bot-UA markdown", bot.headers.get("content-type") ?? "none");
 
-    // MCP must handshake even without a Content-Type header — Astro's
-    // CSRF check used to 403 exactly that case.
     const bare = await fetch(`${ORIGIN}/.well-known/mcp`, {
         method: "POST",
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} }),
@@ -455,7 +407,6 @@ if (ORIGIN) {
     if (bareBody?.result?.protocolVersion) ok("MCP handshake without content-type");
     else fail("MCP handshake without content-type", `status ${bare.status}`);
 
-    // Versioned alias answers.
     const v1 = await fetch(`${ORIGIN}/api/v1/content.json?limit=1`, {
         signal: AbortSignal.timeout(20000),
     });
@@ -463,7 +414,6 @@ if (ORIGIN) {
     else fail("/api/v1 alias", `status ${v1.status}`);
 }
 
-// ---- live-only: crawler reachability + headers ------------------------
 if (ORIGIN) {
     const UAS = [
         "GPTBot/1.1",
@@ -500,7 +450,6 @@ if (ORIGIN) {
     } else ok("Vary: Accept on .md");
 }
 
-// ---- report ------------------------------------------------------------
 console.log(
     `\n${passes} passed, ${failures} failed` +
         (skipped ? `, ${skipped} on-demand routes skipped (run with --url to check them)` : ""),

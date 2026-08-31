@@ -1,18 +1,3 @@
-// farfield recipe blocks — parse, lay out, render.
-// Mirrors github.com/iammatthias/farfield/lib/recipe.
-//
-// Recipe entries carry their structure in a fenced ```recipe block of
-// YAML inside the body. That block derives two views of the same
-// recipe: the Cooking for Engineers grid (ingredients down the left,
-// operations bracketing them rightward) and the numbered method. The
-// grid's left column IS the ingredient list, so nothing repeats it in
-// a second table.
-//
-// `parseRecipe`, `layout`, and `extractRecipes` are ported from the Go
-// implementation and were diffed cell-for-cell against it across all
-// production recipes — treat their behavior as pinned. The HTML
-// renderers below them are site code emitting farfield's markup
-// contract (the ff-* classes styled in globals.css).
 
 import { parse as parseYAML } from "yaml";
 import { marked } from "marked";
@@ -22,9 +7,6 @@ export type Ingredient = {
 };
 export type Step = {
     id: string; in: string[]; do: string; detail?: string;
-    /** How long the operation takes — "20 min", "2–3 h", "overnight".
-     *  Rides in the grid cell beneath the label and repeats in the
-     *  numbered list (upstream `Step.For`). */
     for?: string;
     phase?: string; prep?: boolean; title?: string; vertical?: boolean;
 };
@@ -44,8 +26,6 @@ const AUTO_VERTICAL_MAX = 34;
 const slug = (s: string) =>
     s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-/** Parse a block's YAML, fill in defaults, and validate. Throws on a block
- *  that cannot be laid out. */
 export function parseRecipe(src: string): Recipe {
     const raw = parseYAML(src) ?? {};
     const rec: Recipe = {
@@ -73,7 +53,6 @@ export function parseRecipe(src: string): Recipe {
         st.id = id;
     });
 
-    // A step with no `in` continues from the previous grid-bearing step.
     let prev = "";
     for (const st of rec.steps) {
         if (st.prep) continue;
@@ -116,7 +95,6 @@ export function parseRecipe(src: string): Recipe {
     return rec;
 }
 
-/** One grid per finishing step. */
 export function layout(rec: Recipe): Grid[] {
     const stepAt = new Map(rec.steps.map((s, i) => [s.id, i]));
     const ingAt = new Map(rec.ingredients.map((g, i) => [g.id, i]));
@@ -171,9 +149,6 @@ export function layout(rec: Recipe): Grid[] {
                 const st = start[r][c];
                 if (st) {
                     const n = span.get(st.id)!;
-                    // The duration sits beside the label in a rotated
-                    // cell, so it counts toward how tall the cell has
-                    // to be (mirrors upstream verticalFor).
                     const len = Math.max(
                         st.do.trim().length,
                         (st.for ?? "").trim().length,
@@ -204,9 +179,6 @@ export function layout(rec: Recipe): Grid[] {
 
 const RECIPE_FENCE = /^([ \t]*)(`{3,}|~{3,})[ \t]*recipe[ \t]*$/;
 
-/** Lift recipe blocks out of a body before it reaches the markdown renderer.
- *  Returns the rewritten body and each block's YAML, in order. Substitute the
- *  rendered HTML back over each placeholder afterwards. */
 export function extractRecipes(
     body: string,
     placeholder = (i: number) => `<!--ffrecipe${i}-->`,
@@ -222,19 +194,16 @@ export function extractRecipes(
         let j = i + 1;
         for (; j < lines.length; j++) {
             const t = lines[j].trim();
-            // CommonMark: same character, at least as long, nothing else.
             if (t.length >= fence.length && t.split(fence[0]).join("") === "") break;
             inner.push(lines[j]);
         }
-        if (j >= lines.length) { out.push(lines[i]); continue; }  // unterminated
+        if (j >= lines.length) { out.push(lines[i]); continue; }
         out.push(placeholder(blocks.length));
         blocks.push(inner.join("\n"));
         i = j;
     }
     return { body: out.join("\n"), blocks };
 }
-
-// ---------- HTML renderers --------------------------------------------------
 
 function esc(s: string): string {
     return s
@@ -244,13 +213,6 @@ function esc(s: string): string {
         .replace(/"/g, "&quot;");
 }
 
-/**
- * A prose fragment (step detail, ingredient note, notes) rendered as
- * inline markdown, so it can carry emphasis, code, and links — the
- * production recipes use them. Mirrors farfield's `inlineHTML`: run
- * the block parser, then unwrap the single paragraph it puts around a
- * one-paragraph fragment; a multi-paragraph `notes` keeps its `<p>`s.
- */
 function inline(s: string): string {
     let out: string;
     try {
@@ -269,15 +231,8 @@ function inline(s: string): string {
     return out;
 }
 
-/** Fold to lowercase alphanumerics for the method's stutter check. */
 const fold = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "");
 
-/**
- * Parse a `for` duration string to countdown seconds for the step
- * timer — the upper bound of a range ("25–30 min" → 1800), hours and
- * minutes combined ("1 h 20 min" → 4800). Free text with no digits
- * ("overnight") gets no timer.
- */
 export function forSeconds(f: string | undefined): number | null {
     if (!f) return null;
     const pick = (m: RegExpMatchArray | null) => {
@@ -291,9 +246,6 @@ export function forSeconds(f: string | undefined): number | null {
     return secs > 0 ? secs : null;
 }
 
-/** Whether `detail` opens with the `do` label, ignoring case,
- *  punctuation and spacing — the test for whether repeating the label
- *  as a lead-in would only stutter. */
 function leadsWith(detail: string, label: string): boolean {
     const l = fold(label);
     return l !== "" && fold(detail).startsWith(l);
@@ -310,8 +262,6 @@ function metaHtml(rec: Recipe): string {
     return `<dl class="ff-recipe-meta">${items}</dl>`;
 }
 
-/** The amount + item + note spans shared by the grid's row header and
- *  the fallback list — the recipe's only ingredient listing. */
 function ingredientSpans(ing: Ingredient): string {
     const amt = ing.amount
         ? `<span class="ff-r-amt">${esc(ing.amount)}</span>`
@@ -345,18 +295,11 @@ function gridHtml(grid: Grid): string {
                     }
                     const span = cell.rowSpan > 1 ? ` rowspan="${cell.rowSpan}"` : "";
                     const cls = cell.vertical ? "ff-r-op ff-r-vert" : "ff-r-op";
-                    // data-step / data-row0 / data-nrows drive the
-                    // step-focus interaction (lib/…/recipe-interactive):
-                    // which rows this bracket absorbs, and which method
-                    // item it corresponds to. data-secs powers the timer.
                     const secs = forSeconds(cell.for);
                     const data =
                         ` data-step="${attrEsc(cell.step!.id)}"` +
                         ` data-row0="${r}" data-nrows="${cell.rowSpan}"` +
                         (secs ? ` data-secs="${secs}"` : "");
-                    // The label and the duration are separate spans in
-                    // both orientations; rotated, they become two
-                    // columns of the cell.
                     const forSpan = cell.for
                         ? `<span class="ff-r-for">${esc(cell.for)}</span>`
                         : "";
@@ -377,10 +320,8 @@ function gridHtml(grid: Grid): string {
     );
 }
 
-/** Escape for an attribute value (ids are slugs, but stay safe). */
 const attrEsc = esc;
 
-/** Fallback ingredient list for a recipe whose shape no table can draw. */
 function ingredientListHtml(rec: Recipe): string {
     let prevGroup = "";
     const items = rec.ingredients
@@ -396,12 +337,6 @@ function ingredientListHtml(rec: Recipe): string {
     return `<h3 class="ff-recipe-h">Ingredients</h3><ul class="ff-recipe-ingredients">${items}</ul>`;
 }
 
-/** One numbered <li>. No detail → the label alone; a detail that
- *  already opens with the label stands alone — printing "shake well —
- *  Shake well." is a stutter; otherwise the label leads in bold.
- *  The duration leads the item as a floated `ff-r-for` span on site
- *  surfaces; RSS gets it as a plain trailing " — 20 min" since
- *  readers strip the float. */
 function stepItemHtml(st: Step, surface: "site" | "feed" = "site"): string {
     const forHtml =
         st.for && surface === "site"
@@ -419,8 +354,6 @@ function stepItemHtml(st: Step, surface: "site" | "feed" = "site"): string {
     return `${open}<strong class="ff-r-do">${esc(st.do)}</strong> ${inline(st.detail)}${forSuffix}</li>`;
 }
 
-/** The numbered method: steps in authored order, grouped into one <ol>
- *  per phase so numbering restarts, with the phase as a subheading. */
 function methodHtml(rec: Recipe): string {
     const parts: string[] = [`<h3 class="ff-recipe-h">Method</h3>`];
     let openPhase: string | undefined;
@@ -459,13 +392,6 @@ function sourceHtml(rec: Recipe): string {
     return `<p class="ff-recipe-source">Source: ${inner}</p>`;
 }
 
-/**
- * Render one extracted block to the full grid + method view. Parse
- * errors become an `.ff-recipe-error` box (farfield does the same
- * rather than drawing a misleading grid); a recipe that parses but
- * cannot be laid out — a step feeding two branches that rejoin —
- * keeps the meta, ingredient list, and method.
- */
 export function recipeHtml(src: string): string {
     let rec: Recipe;
     try {
@@ -482,11 +408,6 @@ export function recipeHtml(src: string): string {
     } catch {
         body = ingredientListHtml(rec);
     }
-    // Serves baseline for the scaling control — the first integer in
-    // the yield ("6 servings", "About 4 servings", "Serves 4–6" → 4).
-    // The control ships hidden; the interactivity script reveals it
-    // (and re-derives amounts client-side), so no-JS pages and RSS
-    // never see dead buttons.
     const serves = Number(rec.yield?.match(/\d+/)?.[0]) || 0;
     const servesAttr = serves > 0 ? ` data-serves="${serves}"` : "";
     const controls =
@@ -511,11 +432,6 @@ export function recipeHtml(src: string): string {
     );
 }
 
-/**
- * Reader-safe variant for RSS bodies: meta line, plain ingredient
- * list, numbered method. No grid — rotated labels, rowspans, and the
- * sticky column live or die by the site CSS, which feed readers strip.
- */
 export function recipeSimpleHtml(src: string): string {
     let rec: Recipe;
     try {
@@ -545,11 +461,6 @@ export function recipeSimpleHtml(src: string): string {
     );
 }
 
-/**
- * Plain-text view of a block for search vectors, descriptions, and
- * word counts — the human words (ingredients, steps, notes), not the
- * YAML that carries them. An unparseable block contributes nothing.
- */
 export function recipeText(src: string): string {
     try {
         const rec = parseRecipe(src);

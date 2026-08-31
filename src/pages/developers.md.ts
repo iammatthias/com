@@ -1,4 +1,3 @@
-// /developers.md — the markdown twin of the developer page.
 
 export const prerender = true;
 

@@ -1,11 +1,4 @@
 ---
-// One entry in the Farfield feed — used by both /now (Recent updates)
-// and /feed (standalone list). Renders the resolved media gallery, the
-// full markdown body, and a stretched permalink to /feed/<rkey>. The
-// outer <ul class="feed"> and any list-level spacing are owned by the
-// parent so each context can tune density (compact on /now, roomier
-// on /feed/index).
-
 import FeedMedia from "@components/FeedMedia.astro";
 import { fmtDate } from "@lib/format";
 import type { FeedEntryData, ResolvedMedia } from "@lib/farfield-loader";
@@ -13,24 +6,15 @@ import { proseHtml } from "@lib/markdown-text";
 
 interface Props {
     item: FeedEntryData;
-    /** Pre-resolved by the parent so it can fan out the metadata
-     *  fetches in one Promise.all. */
     media: ResolvedMedia[];
 }
 
 const { item, media } = Astro.props;
 
-// Body rendered as full markdown — embed URIs stripped because the
-// gallery already shows the media. Same treatment on every surface so
-// the card and the /feed/<rkey> detail view read identically.
 const noteHtml = proseHtml(item.body);
 ---
 
 <li class="feed-item">
-    <!-- Dateline leads the card — it's the entry's only header, so it
-         reads as context up top rather than an orphaned line at the
-         bottom. Its ::after still stretches the permalink hit area
-         across the whole card. -->
     <a
         href={`/feed/${item.rkey}`}
         class="feed-permalink"

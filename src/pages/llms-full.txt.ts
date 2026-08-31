@@ -1,8 +1,3 @@
-// /llms-full.txt — the whole document corpus in one markdown file
-// (the llms.txt convention's companion). Prerendered: each entry is
-// the same output as its `<path>.md` twin, front matter included. The
-// feed (short posts) is deliberately left out — it's ephemera, and it
-// lives at /feed.md.
 
 export const prerender = true;
 

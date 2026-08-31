@@ -1,5 +1,3 @@
-// RFC 9727 API catalog — a linkset pointing at the service
-// descriptions this site publishes.
 
 export const prerender = true;
 
@@ -13,9 +11,6 @@ export const GET: APIRoute = () =>
                 linkset: [
                     {
                         anchor: SITE_ORIGIN,
-                        // `item` is what an RFC 9727 client walks to
-                        // enumerate the actual APIs; without it the
-                        // linkset describes a catalogue of nothing.
                         item: [
                             {
                                 href: `${SITE_ORIGIN}/openapi.json`,

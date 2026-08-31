@@ -1,6 +1,3 @@
-// A2A agent card. This site is a content source rather than a
-// conversational agent, so the card advertises exactly that: the MCP
-// endpoint, the skills behind it, and no authentication.
 
 export const prerender = true;
 

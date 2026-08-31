@@ -1,6 +1,3 @@
-// One SKILL.md per advertised capability — the artifact the v0.2.0
-// discovery index points at, so an agent can read what a skill does
-// before opening a transport.
 
 export const prerender = true;
 

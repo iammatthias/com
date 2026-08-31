@@ -1,14 +1,3 @@
-// MCP server (Streamable HTTP transport) for iammatthias.com.
-//
-// Exposes the site's content as tools so an agent can search and read
-// it over the same protocol it uses for everything else, instead of
-// scraping HTML. JSON-RPC 2.0 over POST; no authentication, since
-// everything it serves is already public.
-//
-// Implemented directly rather than via the MCP SDK: the transport is
-// a handful of JSON-RPC methods, and hand-rolling keeps the worker
-// bundle small and free of Node-only dependencies. GET returns the
-// server card so a browser (or a curious agent) sees something useful.
 
 export const prerender = false;
 
@@ -36,12 +25,6 @@ import {
     pricingMarkdown,
 } from "@lib/agent-markdown";
 
-/**
- * Resources an agent can read without calling a tool — the same
- * documents served at their HTTP URLs, generated from the same
- * functions so the two can't drift. The URI is the canonical URL, so
- * a client can cite what it read.
- */
 const RESOURCES = [
     {
         uri: `${SITE_ORIGIN}/index.md`,
@@ -80,8 +63,6 @@ const RESOURCES = [
     },
 ];
 
-// Descriptions come from AGENT_SKILLS by name — positional indexing
-// silently attached the wrong description when the array was reordered.
 const skillDescription = (name: string): string => {
     const skill = AGENT_SKILLS.find((s) => s.name === name);
     if (!skill) throw new Error(`AGENT_SKILLS has no entry named ${name}`);
@@ -198,7 +179,6 @@ function json(payload: unknown, status = 200, extra: Record<string, string> = {}
     });
 }
 
-/** Tool results are content blocks; text is what every client renders. */
 function textResult(text: string) {
     return { content: [{ type: "text", text }] };
 }
@@ -264,8 +244,6 @@ async function callTool(name: string, args: Record<string, unknown>) {
     }
 }
 
-/** The initialize result — its own function so the handler can attach
- *  a session header without duplicating the payload. */
 function initializeResult() {
     return {
         protocolVersion: MCP_PROTOCOL_VERSION,
@@ -285,13 +263,6 @@ function initializeResult() {
 
 export const OPTIONS: APIRoute = () => json({}, 204);
 
-/**
- * GET serves two audiences. A Streamable HTTP client opening the
- * optional server->client SSE stream gets 405: the spec requires
- * either `text/event-stream` or 405, and answering it with JSON is
- * what makes a strict client abort the handshake. Everyone else — a
- * browser, a discovery probe — gets the server card.
- */
 export const GET: APIRoute = ({ request }) => {
     if ((request.headers.get("accept") ?? "").includes("text/event-stream")) {
         return new Response(null, {
@@ -332,9 +303,6 @@ export const POST: APIRoute = async ({ request }) => {
 
     switch (method) {
         case "initialize":
-            // The server holds no per-connection state, but clients
-            // expect a session id to exist and echo it on later
-            // requests — so mint one and accept whatever comes back.
             return json(
                 {
                     jsonrpc: "2.0",

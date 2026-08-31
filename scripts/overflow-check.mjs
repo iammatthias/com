@@ -1,29 +1,12 @@
-// Horizontal-overflow detector — loads every major surface at phone
-// and tablet widths in headless Chromium and fails if anything makes
-// the page wider than the viewport. Also injects pathological content
-// (unbroken 400-char words, giant URLs as link text, long inline-code
-// tokens, a 12-column table) into real containers to prove the
-// wrap/break CSS holds up against worst-case authored input.
-//
-// Usage:
-//   bun run build && bun run overflow          # spawns astro preview
-//   BASE_URL=http://localhost:4321 bun run overflow
-//
-// Requires Playwright's chromium (bunx playwright install chromium).
 
 import { execSync, spawn } from "node:child_process";
 import { chromium } from "playwright";
 
 const OWNS_SERVER = !process.env.BASE_URL;
-// Explicit port: the default 4321 may belong to another project's dev
-// server, and the preview daemon binds elsewhere while reporting the
-// port it was asked for (see scripts/smoke.mjs).
 const BASE = process.env.BASE_URL ?? "http://localhost:4399";
 
 let server = null;
 if (OWNS_SERVER) {
-    // Recycle any leftover daemon/workerd on the shared check port —
-    // a survivor keeps serving the dist it started with (see smoke.mjs).
     await new Promise((resolve) => {
         spawn("bunx", ["astro", "preview", "stop"], { stdio: "ignore" }).on(
             "exit",
@@ -33,7 +16,6 @@ if (OWNS_SERVER) {
     try {
         execSync("lsof -ti tcp:4399 | xargs kill", { stdio: "ignore" });
     } catch {
-        /* nothing was squatting */
     }
     server = spawn("bunx", ["astro", "preview", "--port", "4399"], {
         stdio: "ignore",
@@ -65,7 +47,6 @@ async function measure(page, label) {
     const ok = sw <= cw + 1;
     if (!ok) {
         failures++;
-        // Identify the widest offending elements for the report.
         const culprits = await page.evaluate(() => {
             const cw = document.documentElement.clientWidth;
             return [...document.querySelectorAll("body *")]
@@ -79,7 +60,6 @@ async function measure(page, label) {
     }
 }
 
-// Discover a doc page + feed entry from live content.
 const disc = await browser.newPage();
 await disc.goto(`${BASE}/content`, { waitUntil: "domcontentloaded" });
 const docPath = await disc.evaluate(() =>
@@ -100,8 +80,6 @@ for (const width of [390, 768]) {
     await page.close();
 }
 
-// Pathological input: inject unbroken tokens into real containers and
-// re-measure — validates the CSS handles worst-case authored content.
 const LONG_WORD = "Supercalifragilistic".repeat(20);
 const LONG_URL = "https://example.com/" + "path-segment/".repeat(30) + "?q=" + "x".repeat(200);
 const page = await browser.newPage({ viewport: { width: 390, height: 900 } });

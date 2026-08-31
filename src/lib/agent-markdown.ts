@@ -1,7 +1,3 @@
-// Markdown bodies for the agent-facing root documents (/index.md,
-// /llms.md, /auth.md, /pricing.md, /developers.md). Kept together so
-// the story they tell stays consistent, and generated from
-// agent-surface.ts so URLs can't go stale.
 
 import {
     EXAMPLE_DOC_PATH,
@@ -13,10 +9,6 @@ import {
 } from "./agent-surface";
 import { listContent, listSections } from "./agent-data";
 
-/**
- * Frontmatter block for a served markdown document. Agents read this
- * as metadata instead of scraping the body for a title.
- */
 function frontMatter(fields: {
     title: string;
     description: string;
@@ -33,7 +25,6 @@ function frontMatter(fields: {
     ].join("\n");
 }
 
-/** The homepage as markdown — what the site is, and how to use it. */
 export async function homepageMarkdown(): Promise<string> {
     const sections = await listSections();
     const recent = await listContent({ limit: 10 });
@@ -76,10 +67,6 @@ Full specification: ${SITE_ORIGIN}/openapi.json · Notes: ${SITE_ORIGIN}/develop
 `;
 }
 
-/**
- * The body of a 404 for a client that reads markdown. A dead end is
- * only useless if it doesn't say where to go instead.
- */
 export function notFoundMarkdown(pathname: string): string {
     return `# 404 — no such page
 
@@ -104,7 +91,6 @@ path does not exist and never did.
 `;
 }
 
-/** /auth.md — the honest walkthrough for a site with no auth. */
 export function authMarkdown(): string {
     return `${frontMatter({
         title: "Authentication — iammatthias.com",
@@ -154,7 +140,6 @@ Identify yourself with a descriptive \`User-Agent\`. Prefer \`/llms-full.txt\` (
 `;
 }
 
-/** /pricing.md — "free" stated in the machine-readable place agents look. */
 export function pricingMarkdown(): string {
     return `# Pricing
 
@@ -181,7 +166,6 @@ Questions: ${SITE_IDENTITY.email}
 `;
 }
 
-/** /developers.md contains the human-and-agent readable API notes. */
 export async function developersMarkdown(): Promise<string> {
     const sections = await listSections();
     return `${frontMatter({

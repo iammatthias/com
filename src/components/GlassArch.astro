@@ -1,16 +1,4 @@
 ---
-// Homepage arch — the Glass-sourced featured photo in an arched frame,
-// with EXIF metadata as a figcaption.
-//
-// The photo is hydrated client-side: the server renders an empty
-// window (border + placeholder background read as "a frame waiting for
-// an image"), then the script below hits the cached
-// /api/glass-pick.json endpoint after first paint and injects the
-// photo + caption into the reserved slots. Why client-side: Glass adds
-// ~200ms of round-trip latency the page renderer has no other reason
-// to pay. Deferring it gets the Astro response out faster; the visible
-// photo lands ~100–200ms later but the rest of the page is interactive
-// immediately.
 ---
 
 <figure class="hero">
@@ -18,10 +6,6 @@
         <div class="arch-window" data-glass-window></div>
     </div>
 
-    <!--
-      Reserved figcaption slot — empty on server render, filled by the
-      hydration script. Stays hidden unless metadata actually arrives.
-    -->
     <figcaption data-glass-caption hidden></figcaption>
 </figure>
 
@@ -51,13 +35,10 @@
             const res = await fetch("/api/glass-pick.json");
             if (res.ok) pick = (await res.json()) as GlassPick;
         } catch {
-            return; // network blip — leave the placeholder visible
+            return;
         }
         if (!pick) return;
 
-        // Paint the prominent color first so the image fades in
-        // against the photo's own tone instead of the neutral
-        // border placeholder.
         if (pick.prominentColor) {
             win.style.background = pick.prominentColor;
             win.style.borderColor = pick.prominentColor;
@@ -121,12 +102,6 @@
     }
 
     .arch-frame {
-        /* Fixed vh-based height — the arch reads at a consistent size
-           regardless of the photo or its caption. Scales with viewport
-           so it looks proportional on phones, laptops, and large
-           screens alike. The 6:7 window inside derives its width from
-           this height (and is then capped at 100% width on narrow
-           mobile viewports). */
         height: 70dvh;
         display: flex;
         align-items: center;
@@ -135,37 +110,19 @@
     }
 
     .arch-window {
-        /* Maintain 6:7 (w:h). Height comes from the frame; width
-           derives from aspect-ratio, capped by the parent's content
-           width so it can never overflow on narrow viewports. */
         aspect-ratio: 6 / 7;
         height: 100%;
         width: auto;
         max-width: 100%;
 
-        /* Arch shape: a true circular semicircle on top, flat on bottom.
-           For a circular arc, top corners' Y-radius must equal half the
-           box width — which is (3/7) of the height when aspect is 6:7,
-           expressed precisely as calc(300% / 7). */
         border-top-left-radius: 50% calc(300% / 7);
         border-top-right-radius: 50% calc(300% / 7);
 
         overflow: hidden;
         background: var(--color-border);
-        /* Frame the photo in its own prominent color — the same
-           accent we show as the loading bg, applied inline above. The
-           fallback (--color-border) keeps a subtle frame when the
-           Glass post lacks a prominent_color hint. */
         border: 6px solid var(--color-border);
     }
 
-    /* `:global(img)` because the photo is injected client-side (see the
-       hydrateGlass script) — it never receives Astro's scoping attribute,
-       so a scoped `.arch-window img` rule would silently miss it and the
-       img would fall back to its intrinsic size + `object-fit: fill`,
-       only partially filling the arch. Scoping `.arch-window` still pins
-       this to the hero. cover + 100/100 makes the photo always fill the
-       window (cropping, never stretching) regardless of its aspect. */
     .arch-window :global(img) {
         width: 100%;
         height: 100%;
@@ -180,18 +137,11 @@
         gap: 0.15em;
         text-align: center;
         font-size: var(--fs-xs);
-        /* lh-tight stacked four lines feels cramped; relaxed +
-           a small inter-line gap gives the metadata room to breathe
-           without ballooning vertically. */
         line-height: var(--lh-relaxed);
         color: var(--color-muted);
         text-wrap: balance;
     }
 
-    /* `:global` for the same reason as the arch img — the caption's
-       `.title` span and its link are built in the hydrateGlass script,
-       so they carry no scoping attribute and a scoped selector would
-       miss them. */
     figcaption :global(.title) {
         color: var(--color-fg);
         font-weight: var(--fw-medium);

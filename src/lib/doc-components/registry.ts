@@ -1,7 +1,6 @@
 import type { DocComponent } from "./types";
-import { compare } from "./compare";
 
-const COMPONENTS: DocComponent[] = [compare];
+const COMPONENTS: DocComponent[] = [];
 
 const BY_NAME = new Map(COMPONENTS.map((c) => [c.name, c]));
 

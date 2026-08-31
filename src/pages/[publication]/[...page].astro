@@ -1,11 +1,4 @@
 ---
-// Per-publication index, prerendered. Single `[...page]` catch-all
-// serves both `/<pub>` (page 1, param undefined) and `/<pub>/page/N`.
-// Sibling routes win by Astro's route priority: `[slug].astro` (a
-// named param) outranks this rest route for `/<pub>/<slug>`, and
-// `rss.xml.ts` (static) for `/<pub>/rss.xml`. cacheKey folds the
-// member cids, so a list page re-renders only when its slice of the
-// publication actually changes.
 export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";

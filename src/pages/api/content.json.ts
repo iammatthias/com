@@ -1,11 +1,3 @@
-// Public content listing — every published document as structured
-// JSON, filterable and cursor-paginated.
-//
-// On-demand, not prerendered: a static build answers every query
-// string identically, which meant the section/tag/limit/cursor
-// parameters this endpoint advertises in openapi.json did nothing.
-// It reads the build-time content store, so there are still no
-// upstream calls.
 
 export const prerender = false;
 
@@ -28,9 +20,6 @@ export const GET: APIRoute = async ({ url }) => {
         );
     }
 
-    // Cursor pagination: agents page by opaque cursor rather than
-    // offset, so inserts at the head of the list can't shift a page
-    // under them mid-walk.
     const all = await listContent({ section, tag, limit: 1000 });
     const cursor = url.searchParams.get("cursor");
     const start = cursor

@@ -1,27 +1,12 @@
 ---
-// Colophon that surfaces the underlying Farfield record behind a
-// rendered page — thin terrazzo banner alongside a monospace metadata
-// block. Used by /[publication]/[slug] (entries) and /feed/[rkey]
-// (posts). The fields list is supplied by the caller so each surface
-// can label the row appropriately (rkey vs id, etc).
-//
-// The banner is live generative art painted by the dependency-free
-// Canvas2D renderer in src/scripts/terrazzo.ts — same deterministic
-// generation the React + three island ran, none of the scaffolding.
-
 export interface ColophonField {
     label: string;
-    /** Plain text content. */
     value: string;
-    /** Optional href — renders the value as an external link. */
     href?: string;
-    /** Optional ISO timestamp — adds a <time datetime="…"> wrapper. */
     datetime?: string;
 }
 
 interface Props {
-    /** Banner seed — hashSeed(`rkey:cid`), so every record is a
-     *  distinct piece and a content edit deals a new one. */
     seed: number;
     fields: ColophonField[];
 }
@@ -70,10 +55,6 @@ const { seed, fields } = Astro.props;
         }
     }
 
-    /* The banner stretches to fill its grid cell, so on desktop it
-       inherits the metadata block's height (typically ~140-180px),
-       making the strip naturally thin. On mobile, it stacks above the
-       metadata at a fixed thin height. */
     .colophon-banner {
         position: relative;
         overflow: hidden;
@@ -120,8 +101,6 @@ const { seed, fields } = Astro.props;
         color: var(--color-fg);
     }
 
-    /* Underline metrics (1px, 2px on hover) come from the base `a`
-       rules in globals. */
     .colophon-meta a {
         color: inherit;
     }

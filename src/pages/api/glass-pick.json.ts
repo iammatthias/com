@@ -1,14 +1,3 @@
-// Server-side helper for the homepage arch's client-side Glass island.
-//
-// Returns one random photo from the most recent N posts, pre-formatted
-// for direct injection into the DOM (wsrv URLs, sizes, dimensions, the
-// figcaption strings). Lives behind `caches.default` with a 5-min soft
-// TTL so cross-isolate hits on a POP collapse to one upstream call.
-//
-// The homepage initially renders without the photo — the arch shows
-// just its placeholder border. A small inline script in `index.astro`
-// hits this endpoint and fills the figure + caption in, so the
-// server's TTFB never pays Glass's latency.
 
 import type { APIRoute } from "astro";
 import { wsrvUrl, wsrvSrcSet } from "@lib/farfield";
@@ -81,7 +70,6 @@ async function fetchGlassPosts(): Promise<GlassPost[]> {
             try {
                 await cache.put(GLASS_URL, cacheable);
             } catch {
-                /* ignore */
             }
         }
         return JSON.parse(new TextDecoder().decode(body)) as GlassPost[];
@@ -101,10 +89,6 @@ function fmtCaptureDate(iso: string): string {
 
 export const GET: APIRoute = async () => {
     const posts = await fetchGlassPosts();
-    // A 204 must have a null body — the Fetch spec makes
-    // `new Response("…", { status: 204 })` throw, which would turn a
-    // Glass outage into a 500 here. The client treats any unparseable
-    // body as "no pick" and keeps the placeholder.
     const noPick = () =>
         new Response(null, {
             status: 204,
@@ -140,8 +124,6 @@ export const GET: APIRoute = async () => {
         width: post.width ?? 720,
         height: post.height ?? 840,
         alt,
-        // `#`-prefixed CSS hex when present, null otherwise — the
-        // client checks for null and skips the bg/border update.
         prominentColor: post.prominent_color
             ? `#${post.prominent_color}`
             : null,
@@ -155,10 +137,6 @@ export const GET: APIRoute = async () => {
     return new Response(JSON.stringify(payload), {
         headers: {
             "Content-Type": "application/json",
-            // Short edge cache: random pick varies per request, but
-            // within a few seconds visitors on the same POP can share
-            // the response. Different requests will get different
-            // photos as the cache expires.
             "Cache-Control":
                 "public, s-maxage=15, stale-while-revalidate=60",
         },

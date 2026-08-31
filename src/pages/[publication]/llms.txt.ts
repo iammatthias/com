@@ -1,6 +1,3 @@
-// Per-section llms.txt — scoped context for one publication, so an
-// agent interested in only recipes (or only art) can fetch that
-// section's index without pulling the whole manual.
 
 export const prerender = true;
 

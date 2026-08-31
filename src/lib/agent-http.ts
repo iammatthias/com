@@ -1,17 +1,3 @@
-// Structured error responses for the public JSON endpoints.
-//
-// Shape follows RFC 9457 (problem+json) with an added `resolution`
-// hint: an agent that gets one of these should be able to fix its own
-// request without a human reading an HTML error page.
-
-/**
- * Advisory RFC-style rate-limit headers, plus the API version.
- *
- * The real limit is Cloudflare's edge default rather than a counter we
- * maintain, so these are honest about being a policy statement: they
- * tell an agent what shape to expect and where the policy is written
- * down, without inventing a per-client quota we don't track.
- */
 export const API_VERSION = "1";
 
 export function apiHeaders(
@@ -26,11 +12,6 @@ export function apiHeaders(
     };
 }
 
-/**
- * A markdown document response. The headers matter on the on-demand
- * routes and in dev; prerendered routes ship as static files and get
- * the equivalent from public/_headers.
- */
 export function markdownResponse(body: string, maxAge = 3600): Response {
     return new Response(body, {
         headers: {

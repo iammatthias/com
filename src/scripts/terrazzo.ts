@@ -1,17 +1,3 @@
-// Dependency-free Canvas2D renderer for the terrazzo banner — the
-// same deterministic generation the React + three island ran, minus
-// the scaffolding. The banner is flat colored polygons on a flat
-// matrix, so a 2D canvas paints it without WebGL, React, or three:
-// the whole renderer is this file.
-//
-// Deterministic: the same seed always pours the same banner. The
-// colophon seeds with hashSeed(`rkey:cid`), so every record is a
-// distinct piece and a content edit pours a new one.
-//
-// Color math note: the three island parsed hex through THREE.Color
-// (sRGB → linear working space) and jittered HSL there; the renderer
-// converted back to sRGB on output. The helpers below reproduce that
-// round trip so chips keep the same character of variation.
 
 import { mulberry32 } from "@components/AzulejoTile/recipe";
 
@@ -43,8 +29,6 @@ const STYLES: Record<string, StylePreset> = {
     Shards:     { algo: "scatter",    density: 200, minSize: 5, maxSize: 90,  sides: 4, chaos: 78, sizeBias: 2.0 },
     Pebble:     { algo: "scatter",    density: 130, minSize: 8, maxSize: 60,  sides: 9, chaos: 22, sizeBias: 1.8 },
 };
-
-/* ── color helpers (three's sRGB↔linear round trip, no three) ─────── */
 
 type RGB = [number, number, number];
 
@@ -100,7 +84,6 @@ function cssColor([r, g, b]: RGB): string {
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
-/** Per-chip color jitter — same offsets the island applied. */
 function jitterColor(hex: string, rng: () => number): string {
     const linear = hexToRgb(hex).map(srgbToLinear) as RGB;
     const hsl = rgbToHsl(linear);
@@ -109,8 +92,6 @@ function jitterColor(hex: string, rng: () => number): string {
     const l = clamp01(hsl[2] + (rng() - 0.5) * 0.07);
     return cssColor(hslToRgb([h, s, l]));
 }
-
-/* ── chip geometry ─────────────────────────────────────────────────── */
 
 interface Pt {
     x: number;
@@ -150,15 +131,6 @@ interface Chip {
     sub: number;
 }
 
-/* ── the painter ───────────────────────────────────────────────────── */
-
-/**
- * Paint one banner. Same coordinate system as the island's
- * orthographic camera: x spans [-aspect/2, aspect/2], y spans
- * [-0.5, 0.5] with +y up; chip data is built draw-for-draw in the
- * same RNG order, so a given seed pours the same banner it always
- * has.
- */
 export function paintTerrazzo(
     canvas: HTMLCanvasElement,
     seed: number,
@@ -174,15 +146,12 @@ export function paintTerrazzo(
 
     const aspect = width / height;
 
-    // Palette + style picked deterministically from the seed.
     const seedRng = mulberry32(seed);
     const paletteNames = Object.keys(PALETTES);
     const styleNames = Object.keys(STYLES);
     const pal = PALETTES[paletteNames[Math.floor(seedRng() * paletteNames.length)]];
     const stylePreset = STYLES[styleNames[Math.floor(seedRng() * styleNames.length)]];
 
-    // World → canvas px. One unit of y is the full height; x shares
-    // the scale (the camera frustum spanned aspect × 1).
     const X = (x: number) => (x + aspect / 2) * height;
     const Y = (y: number) => (0.5 - y) * height;
 
@@ -197,7 +166,6 @@ export function paintTerrazzo(
     const xSpan = aspect;
     const chips: Chip[] = [];
 
-    // Density scales with width — otherwise wide banners look sparse.
     const scaledDensity = Math.round(
         stylePreset.density * Math.max(1, aspect * 0.6),
     );
@@ -242,8 +210,6 @@ export function paintTerrazzo(
         }
     }
 
-    // Big chips first; smaller chips paint over them, matching the
-    // island's depth ordering.
     chips.sort((a, b) => b.r - a.r);
 
     for (const c of chips) {
@@ -259,8 +225,6 @@ export function paintTerrazzo(
         ctx.fill();
     }
 
-    // Subtle grit on top — the matrix color darkened in linear space,
-    // as THREE.Color.multiplyScalar did.
     const gritCount = 200 + Math.floor(rng() * 400);
     ctx.fillStyle = cssColor(
         hexToRgb(pal[0]).map((c) => srgbToLinear(c) * 0.55) as RGB,
@@ -275,10 +239,6 @@ export function paintTerrazzo(
     }
 }
 
-/* ── mounting ──────────────────────────────────────────────────────── */
-
-/** Mount a banner into an element carrying data-seed; repaints on
- *  resize (coalesced to one paint per frame). */
 export function mountTerrazzo(el: HTMLElement): void {
     const seed = Number(el.dataset.seed ?? "1") || 1;
     const canvas = document.createElement("canvas");
@@ -307,7 +267,6 @@ export function mountTerrazzo(el: HTMLElement): void {
     repaint();
 }
 
-/** Mount every `[data-terrazzo]` element on the page. */
 export function mountTerrazzoBanners(): void {
     document
         .querySelectorAll<HTMLElement>("[data-terrazzo]")

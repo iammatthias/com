@@ -1,10 +1,4 @@
 ---
-// Typographic breadcrumb trail. Items with `href` render as links;
-// the last item (or any item without `href`) is the current page,
-// rendered as plain text. The "home" crumb is intentionally NOT
-// included here — the brand link in the header already does that
-// job, and repeating it would double up.
-
 export interface BreadcrumbItem {
     label: string;
     href?: string;
@@ -43,8 +37,6 @@ const { items } = Astro.props;
         font-size: var(--fs-sm);
         color: var(--color-muted);
         line-height: var(--lh-tight);
-        /* No own margin — `main` owns the gap to the content that
-           follows (see BaseLayout: `main > .breadcrumbs + *`). */
     }
 
     ol {

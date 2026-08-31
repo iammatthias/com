@@ -1,5 +1,3 @@
-// MCP server card — lets an agent preview the tools before opening a
-// transport connection.
 
 export const prerender = true;
 

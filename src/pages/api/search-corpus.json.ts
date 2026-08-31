@@ -1,14 +1,3 @@
-// Search corpus for the client-side semantic menu search.
-//
-// Serves every searchable item (documents + feed posts) as compact
-// text the browser embeds locally with ternlight (see
-// src/scripts/menu-search.ts). The model truncates input at 128 BERT
-// tokens (~95 words), so each item ships roughly that much text —
-// title-and-lead-weighted, which is where the signal lives anyway.
-//
-// Each item carries its Farfield `cid` (content hash): vectors are
-// cached by cid everywhere — the prebuilt /api/search-vectors.json
-// file, and the client's IndexedDB for anything newer than the build.
 
 import type { APIRoute } from "astro";
 import { getLiveCollection } from "astro:content";
@@ -41,9 +30,6 @@ export const GET: APIRoute = async () => {
         }
     }
 
-    // Docs intersect against the routes this deploy built, so search
-    // never returns a link whose page is still mid-rebuild. Feed
-    // entries render on demand and are always live-consistent.
     const items = buildSearchCorpus(
         entriesOf<DocumentData>(docsResult.entries).filter(
             await builtDocFilter(),

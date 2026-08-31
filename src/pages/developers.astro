@@ -1,7 +1,4 @@
 ---
-// Developer / agent notes. The HTML twin of /developers.md has the same
-// facts, rendered for a person. Both are generated from
-// lib/agent-surface.ts so neither can drift from what answers.
 export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
@@ -10,8 +7,6 @@ import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = { group: "other", label: "developers", order: 3 };
 
-// Emitted as FAQPage JSON-LD. These are the questions an agent asks
-// before integrating, with answers short enough to be quoted whole.
 const faq = [
     {
         question: "Does the iammatthias.com API require authentication?",

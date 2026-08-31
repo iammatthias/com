@@ -1,74 +1,26 @@
-// Farfield — read-only content backend for the site. Three services:
-//
-//   content  https://content.farfield.systems  collections + entries + series
-//   feed     https://feed.farfield.systems     short posts
-//   blobs    https://blobs.farfield.systems    media bytes + per-blob meta
-//            (images, plus video/audio served with Range support)
-//
-// Endpoints (final API):
-//   GET /api/collections                         → Collection[]
-//   GET /api/entries[?collection=<slug>]         → Entry[]
-//   GET /api/entries/<slug>                      → Entry | 404
-//   GET /api/series/<slug>                       → Series | 404
-//   GET /api/posts                               → Post[]   (feed service)
-//   GET /blobs/<cid>                             → bytes
-//   GET /blobs/<cid>/meta                        → BlobMeta | 404
-//
-// Notes:
-//   - `content.farfield.systems` and `feed.farfield.systems` gate reads
-//     behind bearer tokens (`CONTENT_READ_KEY` / `FEED_READ_KEY`);
-//     `blobs` stays public. The content admin key (`CONTENT_API_KEY`)
-//     also unlocks unpublished drafts, so that API can return
-//     `published: false` records — the loader filters those back out
-//     unless a request opts into preview mode.
-//   - Records are flat — `slug` is the rkey, no envelope.
-//   - Series bodies are markdown that get spliced into a parent body.
-//   - Feed posts no longer carry an explicit `link` field — links
-//     live inside the markdown body.
-
 import { getSecret } from "astro:env/server";
+import pLimit from "p-limit";
 import { getContentCache } from "./runtime-env";
 
 const CONTENT = "https://content.farfield.systems";
 const FEED = "https://feed.farfield.systems";
 const BLOBS = "https://blobs.farfield.systems";
 
-/**
- * Bearer auth per Farfield service. `content` and `feed` are gated;
- * `blobs` is public (no header). Secrets are read lazily per-request
- * rather than at module scope: on Cloudflare the binding is only
- * populated inside request scope, so a top-level read would see
- * `undefined`. In `astro dev` they resolve from `.env`.
- *
- * Keys:
- *   - `CONTENT_READ_KEY` — published content. All normal traffic.
- *   - `CONTENT_API_KEY`  — admin key; the only one the content API
- *     returns drafts to (`?status=all`). Used exclusively by dev
- *     preview mode (and only on GET reads — never to mutate), so it
- *     never ships to production. Falls back to the read key if unset.
- *   - `FEED_READ_KEY`    — read token for the feed service.
- *
- * A missing key yields no header → upstream 401, which the loaders
- * surface as an empty collection (the pre-token broken state).
- */
-/**
- * Read a secret robustly across environments. `astro:env`'s `getSecret`
- * resolves in `wrangler dev` but has been observed returning `undefined`
- * (or throwing) in the *deployed* Cloudflare Worker, where it reads the
- * `cloudflare:workers` env. So we fall back to `process.env`, which the
- * Worker populates from its bindings when the
- * `nodejs_compat_populate_process_env` flag is set (see wrangler.toml).
- */
 export function readSecret(key: string): string | undefined {
     try {
-        const v = getSecret(key);
-        if (typeof v === "string" && v) return v;
-    } catch {
-        // getSecret can throw if the runtime env context is unavailable.
-    }
-    const fromProcess = (globalThis as { process?: { env?: Record<string, string | undefined> } })
-        .process?.env?.[key];
-    return typeof fromProcess === "string" && fromProcess ? fromProcess : undefined;
+        const fromAstroEnv = getSecret(key);
+        if (typeof fromAstroEnv === "string" && fromAstroEnv) {
+            return fromAstroEnv;
+        }
+    } catch {}
+    const fromProcess = (
+        globalThis as {
+            process?: { env?: Record<string, string | undefined> };
+        }
+    ).process?.env?.[key];
+    return typeof fromProcess === "string" && fromProcess
+        ? fromProcess
+        : undefined;
 }
 
 function authHeaders(url: string, drafts = false): Record<string, string> {
@@ -80,12 +32,10 @@ function authHeaders(url: string, drafts = false): Record<string, string> {
     } else if (url.startsWith(FEED)) {
         key = readSecret("FEED_READ_KEY");
     } else {
-        return {}; // blobs — public
+        return {};
     }
     return key ? { Authorization: `Bearer ${key}` } : {};
 }
-
-// ---------- record shapes ---------------------------------------------------
 
 export interface Collection {
     slug: string;
@@ -95,50 +45,30 @@ export interface Collection {
     entryCount: number;
 }
 
-/**
- * Every Farfield record carries a `cid` — a CIDv1 hash over the
- * record's *content* (excluding key + timestamps). Same content → same
- * cid, forever. Two useful properties:
- *   1. **Versioning.** The cid changes iff the content changes — diff
- *      cids across builds to find what actually moved.
- *   2. **Cache validation.** Single-record GETs send `cid` as ETag,
- *      so `If-None-Match: "<cid>"` short-circuits to 304 when nothing
- *      has changed upstream.
- */
 export interface Entry {
     collection: string;
-    /** URL slug — also the rkey. */
     slug: string;
-    /** CIDv1 over {collection, title, excerpt, body, tags, published}. */
     cid: string;
     title: string;
     excerpt?: string;
-    /** Markdown body — `blob://` / `series://` embeds are resolved at
-     *  render time (see lib/doc-render.ts). */
     body: string;
     tags: string[];
-    /** Always `true` on the public API; kept for type compatibility. */
     published: boolean;
     createdAt: string;
     updatedAt: string;
 }
 
 export interface Series {
-    /** URL slug — the rkey for `/api/series/{slug}`. Can contain hyphens. */
     slug: string;
-    /** CIDv1 over {title, body}. */
     cid: string;
     title?: string;
-    /** Markdown body — spliced in where `![](series://<slug>)` appears. */
     body: string;
     createdAt: string;
     updatedAt: string;
 }
 
 export interface Post {
-    /** URL slug — also the rkey for `/api/posts/{slug}` lookups. */
     slug: string;
-    /** CIDv1 over {body, tags}. */
     cid: string;
     body: string;
     tags: string[];
@@ -149,79 +79,23 @@ export interface Post {
 export interface BlobMeta {
     cid: string;
     size: number;
-    /** Sniffed content type — the renderer branches on this: image/*
-     *  gets the wsrv <img> pipeline, video/* and audio/* get native
-     *  players streaming straight from the blob service. */
     mime: string;
-    /** The image-derived fields below are present for decodable images
-     *  only — video/audio blobs carry just {cid, size, mime, createdAt}. */
     width?: number;
     height?: number;
     blurhash?: string;
     dominantColor?: string;
-    /** CID of a pre-generated ≤320px JPEG thumbnail (images only). */
     thumbCid?: string;
     createdAt?: string;
 }
 
-// ---------- HTTP layer with edge cache + ETag revalidation -----------------
-//
-// Farfield's per-record endpoints send the record's CID as their ETag.
-// We exploit this with conditional GETs:
-//
-//   1. First hit  — fetch + store the response (incl. its ETag) in
-//                   `caches.default`.
-//   2. Subsequent — if a cached copy exists, send `If-None-Match: "<cid>"`.
-//                   - 304 → reuse cached body; refresh the soft-TTL marker
-//                   - 200 → upstream content changed; replace cache
-//
-// List endpoints carry ETags too (a fingerprint over the member set,
-// weakened to `W/"…"` by Cloudflare in transit — the server matcher
-// accepts it back verbatim), so the same code path covers records and
-// lists alike.
-//
-// Soft TTL is the "don't bother revalidating yet" window — within it
-// we short-circuit. Past it, we revalidate. The 304 path is cheap
-// (small header response) so a tight soft TTL stays affordable.
-
-/**
- * How long to serve cached responses without contacting Farfield.
- *
- * Kept tight (60s) so that publishing content surfaces on the site
- * within roughly a minute. Past the window everything revalidates
- * cheaply: records via `If-None-Match: "<cid>"` → 304, and lists
- * (`/api/entries`, `/api/posts`, `/api/collections`) via their
- * member-set fingerprint ETags → 304. A full body only re-downloads
- * when content actually changed. (A slim `/api/entries?bodies=0`
- * variant exists upstream — 46KB vs 318KB — but every consumer here
- * shares one memoized full-list fetch, and 304s make the full list
- * cheap; don't split the cache key without measuring first.)
- */
 const SOFT_TTL_MS = 60_000;
-/** Underlying max-age on stored Responses — sized to comfortably outlive
- *  SOFT_TTL_MS so we keep the bytes around for revalidation. */
-const HARD_TTL_SECONDS = 24 * 60 * 60; // 24 h
-const SWR_SECONDS = 60 * 60; // 1 h
-
-// ---------- immutable (cid-addressed) URLs ---------------------------------
-//
-// `/blobs/<cid>/meta` is derived from the exact bytes the cid hashes,
-// so for a given URL the 200 response can never change — no soft TTL,
-// no revalidation, cache forever. Two layers:
-//
-//   - `caches.default` (colo-local, evictable) with a year-long TTL
-//   - CONTENT_CACHE KV (global, durable) so a colo that has never seen
-//     the site still answers metas without touching the origin
-//
-// 404s (legacy blobs with no recorded meta) are negative-cached in KV
-// for a day: a backfill could mint the meta later, so "missing" must
-// be allowed to heal, but re-asking the origin on every render was
-// pure waste on gallery pages.
+const HARD_TTL_SECONDS = 24 * 60 * 60;
+const SWR_SECONDS = 60 * 60;
 
 const IMMUTABLE_URL_RE =
     /^https:\/\/blobs\.farfield\.systems\/blobs\/[a-z0-9]+\/meta$/;
-const IMMUTABLE_TTL_SECONDS = 365 * 24 * 60 * 60; // 1 y (colo cache)
-const NEGATIVE_TTL_SECONDS = 24 * 60 * 60; // 404s may heal — 1 d
+const IMMUTABLE_TTL_SECONDS = 365 * 24 * 60 * 60;
+const NEGATIVE_TTL_SECONDS = 24 * 60 * 60;
 const KV_PREFIX = "imm:v1:";
 
 async function kvGetImmutable(url: string): Promise<Response | undefined> {
@@ -258,13 +132,9 @@ async function kvPutImmutable(
     try {
         await kv.put(KV_PREFIX + url, body, {
             metadata: { s: status },
-            ...(status === 404
-                ? { expirationTtl: NEGATIVE_TTL_SECONDS }
-                : {}),
+            ...(status === 404 ? { expirationTtl: NEGATIVE_TTL_SECONDS } : {}),
         });
-    } catch {
-        /* cache write failure never blocks the response */
-    }
+    } catch {}
 }
 
 function getEdgeCache(): Cache | undefined {
@@ -272,33 +142,13 @@ function getEdgeCache(): Cache | undefined {
     return g.caches?.default;
 }
 
-/**
- * Cap concurrent upstream fetches. workerd already queues at ~6 per
- * host, but the node prerender pass has no such limit — a gallery
- * page render once fired ~500 meta GETs inside a single second, and
- * Cloudflare's edge answered a few with 409s that the origin never
- * saw (confirmed against the origin access log: all 200s). Eight
- * concurrent keeps builds brisk without tripping edge-side burst
- * protections.
- */
-import pLimit from "p-limit";
-const upstreamLimit = pLimit(8);
+const MAX_CONCURRENT_UPSTREAM_FETCHES = 8;
+const upstreamLimit = pLimit(MAX_CONCURRENT_UPSTREAM_FETCHES);
 
-/** Statuses worth one retry: transient edge/origin conditions. A 404
- *  is a real answer and is never retried. */
 const RETRYABLE_STATUS = new Set([409, 429, 500, 502, 503, 504]);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/**
- * Outbound fetch with a single retry — on thrown network errors AND
- * on retryable statuses (the edge occasionally mints 409/5xx under
- * burst; one short-backoff retry beats freezing a degraded render
- * into the incremental build cache). The `User-Agent` header is
- * required: workerd will otherwise short-circuit the request inside
- * Cloudflare's network (Farfield is Cloudflare-fronted) and the
- * unbound destination returns `internal error; reference = …`.
- */
 async function fetchWithRetry(
     input: string,
     init: RequestInit,
@@ -314,9 +164,7 @@ async function fetchWithRetry(
         if (!RETRYABLE_STATUS.has(res.status)) return res;
         try {
             await res.body?.cancel();
-        } catch {
-            /* ignore */
-        }
+        } catch {}
         await sleep(150 + Math.random() * 150);
         return await fetch(input, opts);
     } catch {
@@ -329,14 +177,12 @@ async function fetchWithRetry(
     }
 }
 
-/** Read the timestamp we stored on cache writes — 0 if missing/invalid. */
 function getCachedAt(res: Response): number {
     const v = res.headers.get("x-cached-at");
     return v ? Number.parseInt(v, 10) || 0 : 0;
 }
 
-/** Wrap a Response with our cache metadata + Cache-Control. */
-function stamp(
+function withCacheMetadata(
     res: Response,
     body: ArrayBuffer,
     now: number,
@@ -356,51 +202,34 @@ function stamp(
 }
 
 async function cachedFetch(url: string, drafts = false): Promise<Response> {
-    const immutable = IMMUTABLE_URL_RE.test(url);
+    const isImmutable = IMMUTABLE_URL_RE.test(url);
     const cache = getEdgeCache();
     const cached = cache
         ? await cache.match(url).catch(() => undefined)
         : undefined;
     const now = Date.now();
 
-    // Immutable (cid-addressed) URLs: any cached copy is good forever —
-    // no soft TTL, no revalidation.
-    if (cached && immutable) {
+    if (cached && isImmutable) {
         return cached;
     }
 
-    // Within the soft TTL — cached copy is fresh enough, skip the
-    // upstream round-trip entirely.
-    if (cached && now - getCachedAt(cached) < SOFT_TTL_MS) {
+    const withinSoftTtl = cached && now - getCachedAt(cached) < SOFT_TTL_MS;
+    if (withinSoftTtl) {
         return cached;
     }
 
-    // Immutable miss in this colo — try the global KV layer before the
-    // origin, and backfill the colo cache on a hit.
-    if (immutable) {
+    if (isImmutable) {
         const fromKV = await kvGetImmutable(url);
         if (fromKV) {
             if (cache && fromKV.status === 200) {
                 try {
                     await cache.put(url, fromKV.clone());
-                } catch {
-                    /* ignore */
-                }
+                } catch {}
             }
             return fromKV;
         }
     }
 
-    // Past the soft TTL (or no cache hit) — revalidate upstream.
-    //
-    // Buffer the stale body BEFORE the origin fetch: a cache.match()
-    // body held unread across an await is exactly what workerd's
-    // stall-reaper force-cancels under concurrency ("A stalled HTTP
-    // response was canceled to prevent deadlock"), and a reaped body
-    // then throws "Response closed due to connection limit" on the
-    // 304-refresh read. This is what 404'd the RSS feeds — many
-    // concurrent series revalidations each parked a cached body for a
-    // full upstream round-trip.
     const cachedETag = cached?.headers.get("etag");
     let cachedBody: ArrayBuffer | undefined;
     if (cached) {
@@ -411,25 +240,19 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
         }
     }
 
-    // The content service also needs its bearer token on every
-    // request. Only offer the ETag when we actually hold the bytes a
-    // 304 would tell us to reuse.
     const headers: Record<string, string> = authHeaders(url, drafts);
-    if (cachedETag && cachedBody !== undefined) {
+    const canReuseBodyOn304 = cachedETag && cachedBody !== undefined;
+    if (canReuseBodyOn304) {
         headers["If-None-Match"] = cachedETag;
     }
     const res = await upstreamLimit(() => fetchWithRetry(url, { headers }));
 
-    // 304 Not Modified — content unchanged; refresh the soft TTL on
-    // the buffered body and serve it.
     if (res.status === 304 && cached && cachedBody !== undefined) {
-        const refreshed = stamp(cached, cachedBody, now);
+        const refreshed = withCacheMetadata(cached, cachedBody, now);
         if (cache) {
             try {
                 await cache.put(url, refreshed.clone());
-            } catch {
-                /* ignore */
-            }
+            } catch {}
         }
         return refreshed;
     }
@@ -437,40 +260,31 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
     if (res.ok) {
         const body = await res.clone().arrayBuffer();
         if (cache) {
-            const cacheable = stamp(
+            const cacheable = withCacheMetadata(
                 res,
                 body,
                 now,
-                immutable ? IMMUTABLE_TTL_SECONDS : HARD_TTL_SECONDS,
+                isImmutable ? IMMUTABLE_TTL_SECONDS : HARD_TTL_SECONDS,
             );
             try {
                 await cache.put(url, cacheable);
-            } catch {
-                /* ignore — fetch result still flows through */
-            }
+            } catch {}
         }
-        if (immutable) {
+        if (isImmutable) {
             await kvPutImmutable(url, new TextDecoder().decode(body), 200);
         }
-    } else if (immutable && res.status === 404) {
+    } else if (isImmutable && res.status === 404) {
         await kvPutImmutable(url, "", 404);
     }
     return res;
 }
 
-/** Release a response body we won't read — an unread body pins a
- *  connection slot (see the 304 note in cachedFetch). */
 async function discardBody(res: Response): Promise<void> {
     try {
         await res.body?.cancel();
-    } catch {
-        /* ignore */
-    }
+    } catch {}
 }
 
-/** Error text for a failed upstream response. Carries the cf-ray so a
- *  mystery status can be correlated against the origin's access log
- *  (a ray with no matching origin line = minted at the edge). */
 function upstreamError(url: string, res: Response): Error {
     const ray = res.headers.get("cf-ray");
     return new Error(
@@ -489,7 +303,10 @@ async function getJSON<T>(url: string, drafts = false): Promise<T> {
     return (await res.json()) as T;
 }
 
-async function getJSONOrNull<T>(url: string, drafts = false): Promise<T | null> {
+async function getJSONOrNull<T>(
+    url: string,
+    drafts = false,
+): Promise<T | null> {
     const res = await cachedFetch(url, drafts);
     if (res.status === 404) {
         await discardBody(res);
@@ -503,8 +320,6 @@ async function getJSONOrNull<T>(url: string, drafts = false): Promise<T | null> 
     return (await res.json()) as T;
 }
 
-// ---------- content API ----------------------------------------------------
-
 export async function getCollections(): Promise<Collection[]> {
     const data = await getJSON<{ collections: Collection[] }>(
         `${CONTENT}/api/collections`,
@@ -512,21 +327,12 @@ export async function getCollections(): Promise<Collection[]> {
     return data.collections;
 }
 
-/**
- * List entries. `opts.drafts` opts into preview mode: it adds
- * `?status=all` (the API default is published-only) and authenticates
- * with the write key — the only key the API returns drafts to. Used
- * solely by dev preview; normal callers omit it and stay on the read
- * key + published-only.
- */
 export async function getEntries(
     collection?: string,
     opts: { drafts?: boolean } = {},
 ): Promise<Entry[]> {
     const params = new URLSearchParams();
     if (collection) params.set("collection", collection);
-    // `status=all` → published + drafts. Without it the endpoint
-    // returns published-only regardless of which key is sent.
     if (opts.drafts) params.set("status", "all");
     const qs = params.toString();
     const url = `${CONTENT}/api/entries${qs ? `?${qs}` : ""}`;
@@ -540,14 +346,10 @@ export function getSeries(slug: string): Promise<Series | null> {
     );
 }
 
-// ---------- feed API -------------------------------------------------------
-
 export async function getPosts(): Promise<Post[]> {
     const data = await getJSON<{ posts: Post[] }>(`${FEED}/api/posts`);
     return data.posts;
 }
-
-// ---------- blob helpers ---------------------------------------------------
 
 export function blobURL(cid: string): string {
     return `${BLOBS}/blobs/${cid}`;
@@ -557,22 +359,11 @@ export async function getBlobMeta(cid: string): Promise<BlobMeta | null> {
     try {
         return await getJSONOrNull<BlobMeta>(`${BLOBS}/blobs/${cid}/meta`);
     } catch (err) {
-        // Meta is decorative (dimensions, blurhash, mime hints) and
-        // every consumer already handles null. A transient upstream
-        // error must not kill a whole build or render over a missing
-        // width attribute — one flaky 409 here once failed the entire
-        // static build.
         console.warn(`[farfield] blob meta ${cid} unavailable:`, err);
         return null;
     }
 }
 
-// ---------- wsrv image helpers ---------------------------------------------
-
-/**
- * wsrv.nl proxied URL — fetches from `blobs.farfield.systems`,
- * resizes/converts, then edge-caches.
- */
 export function wsrvUrl(
     src: string,
     width: number,
@@ -587,7 +378,6 @@ export function wsrvUrl(
     return `https://wsrv.nl/?${params.toString()}`;
 }
 
-/** A `srcset` string of `{wsrvUrl} {w}w` pairs. */
 export function wsrvSrcSet(
     src: string,
     widths: readonly number[],
@@ -596,46 +386,18 @@ export function wsrvSrcSet(
     return widths.map((w) => `${wsrvUrl(src, w, opts)} ${w}w`).join(", ");
 }
 
-// ---------- body embed helpers ----------------------------------------------
-
-/**
- * Extract just the embed scheme + id pairs from a body — without
- * fetching or rewriting anything. Pages call this when they want to
- * render `blob://` and `series://` as `<figure>` / `<div class="series-grid">`
- * blocks (with proper srcset + width/height) instead of leaving them
- * as raw img tags emitted by marked.
- */
 export interface BodyEmbed {
     alt: string;
     scheme: "blob" | "series";
     id: string;
 }
 
-/**
- * Strip-style regex source (no captures around alt) that matches both
- * blob:// and series:// embeds. Series slugs may contain hyphens (e.g.
- * `vsco-california`); blob CIDs are base32 (a–z + digits) and never
- * carry one — the unified class covers both. Kept identical in shape
- * to FULL_EMBED_RE so consumers don't have to re-engineer the slug
- * character class. Consumed by lib/markdown-text.ts, the one source of
- * truth for strip/plain-text passes.
- */
-const FULL_EMBED_RE =
-    /!\[([^\]]*)\]\((blob|series):\/\/([a-z0-9-]+)\)/g;
+const FULL_EMBED_RE = /!\[([^\]]*)\]\((blob|series):\/\/([a-z0-9-]+)\)/g;
 
-// Derived, not hand-mirrored: the strip pass replaces with "" so the
-// capture groups are harmless there.
 export const EMBED_PATTERN_SOURCE = FULL_EMBED_RE.source;
 
-/** The scheme+cid core, for composing blob-only regexes (doc-render). */
 export const BLOB_ID_SOURCE = "blob:\\/\\/([a-z0-9-]+)";
 
-/**
- * Fresh capturing embed regex (alt, scheme, id) for consumers that
- * rewrite embeds in place (lib/markdown-view.ts). A factory rather
- * than the shared instance above because the `g` flag makes RegExp
- * stateful under `.replace()` / `.exec()`.
- */
 export function fullEmbedRe(): RegExp {
     return new RegExp(FULL_EMBED_RE.source, "g");
 }
