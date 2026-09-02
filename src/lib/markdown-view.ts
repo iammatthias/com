@@ -6,6 +6,7 @@ import type {
     PublicationData,
 } from "./farfield-loader";
 import { plainText } from "./markdown-text";
+import { componentsToMarkdown } from "./doc-components/transform";
 
 async function replaceAsync(
     input: string,
@@ -26,7 +27,7 @@ async function replaceAsync(
 export async function resolveEmbedsForMarkdown(
     body: string,
 ): Promise<string> {
-    const withPublicRefs = body.replace(
+    const withPublicRefs = componentsToMarkdown(body).replace(
         /blob:\/\/([a-z0-9-]+)/g,
         (_m, cid: string) => blobURL(cid),
     );

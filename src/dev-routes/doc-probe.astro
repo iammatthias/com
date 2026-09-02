@@ -1,0 +1,55 @@
+---
+import { parse as parseYAML } from "yaml";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import DocArticle from "@components/DocArticle.astro";
+import type { DocumentData } from "@lib/farfield-loader";
+import { plainText } from "@lib/markdown-text";
+
+export const prerender = false;
+
+const file = Astro.url.searchParams.get("file") ?? "";
+if (!file.endsWith(".md")) {
+    return new Response("Usage: /internal/doc?file=/absolute/path/to/post.md", {
+        status: 400,
+    });
+}
+
+const source = await fetch(
+    new URL(`/internal/doc-source?file=${encodeURIComponent(file)}`, Astro.url),
+);
+if (!source.ok) {
+    return new Response(await source.text(), { status: source.status });
+}
+const raw = await source.text();
+const parts = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+const meta = (parts ? parseYAML(parts[1]) : {}) as Record<string, unknown>;
+const title = String(meta.title ?? file.split("/").pop());
+const body = (parts ? parts[2] : raw).replace(/^\s*# .*\n/, "").trim();
+const section = String(meta.section ?? "posts");
+const now = new Date().toISOString();
+
+const item: DocumentData = {
+    collection: section,
+    rkey: "probe",
+    cid: file,
+    title,
+    description: String(meta.description ?? ""),
+    published: false,
+    href: `/${section}/probe`,
+    publishedAt: now,
+    updatedAt: now,
+    publication: { slug: section, name: section },
+    tags: Array.isArray(meta.tags) ? meta.tags.map(String) : [],
+    body,
+};
+---
+
+<BaseLayout
+    title={item.title}
+    description={item.description || plainText(item.body).slice(0, 180).trim()}
+    ogType="article"
+    noindex
+    markdownHref={`${item.href}.md`}
+>
+    <DocArticle item={item} related={[]} />
+</BaseLayout>

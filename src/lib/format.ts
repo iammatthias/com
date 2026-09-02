@@ -31,3 +31,7 @@ export function escapeAttr(value: string): string {
         .replace(/"/g, "&quot;")
         .replace(/</g, "&lt;");
 }
+
+export function escapeHtml(value: string): string {
+    return escapeAttr(value).replace(/>/g, "&gt;");
+}

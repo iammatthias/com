@@ -11,7 +11,7 @@ const CSP = [
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https://wsrv.nl https://blobs.farfield.systems",
     "media-src 'self' https://blobs.farfield.systems",
-    "connect-src 'self' https://sepolia.base.org",
+    "connect-src 'self' https://sepolia.base.org https://conet.fm",
     "font-src 'self'",
     "worker-src 'self'",
     "object-src 'none'",

@@ -1,4 +1,6 @@
-const LOADERS: Record<string, () => Promise<unknown>> = {};
+const LOADERS: Record<string, () => Promise<unknown>> = {
+    "ff-tuner": () => import("../vendor/conet-tuner/embed.js"),
+};
 
 export function mountDocComponents(root: ParentNode = document): void {
     for (const [tag, load] of Object.entries(LOADERS)) {

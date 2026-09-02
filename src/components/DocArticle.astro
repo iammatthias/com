@@ -1,0 +1,585 @@
+---
+import RecordColophon from "@components/RecordColophon.astro";
+import FeedCard from "@components/FeedCard.astro";
+import Lightbox from "@components/Lightbox.astro";
+import type { DocumentData } from "@lib/farfield-loader";
+import { fmtDateLong as fmtDate, hashSeed } from "@lib/format";
+import { renderMarkdownBody, readingTime, buildToc } from "@lib/doc-render";
+import { withLettrine } from "@lib/azulejo-cap";
+
+interface Props {
+    item: DocumentData;
+    related: DocumentData[];
+}
+
+const { item, related } = Astro.props;
+
+const bodyHtml = item.body ? await renderMarkdownBody(item.body) : "";
+
+const reading = readingTime(item.body);
+
+const { html: bodyWithIds, entries: tocEntries } = buildToc(bodyHtml);
+
+const bodyWithCap = withLettrine(bodyWithIds, hashSeed(item.cid));
+const TOC_DISABLED_PUBLICATIONS = new Set(["art"]);
+const showToc =
+    tocEntries.length >= 2 &&
+    !TOC_DISABLED_PUBLICATIONS.has(item.publication.slug);
+
+const bannerSeed = hashSeed(`${item.rkey}:${item.cid}`);
+
+const markdownPath = `${item.href}.md`;
+---
+
+<article class="doc">
+    <header class="doc-hero">
+        {item.published === false && (
+            <p class="doc-draft">Draft — unpublished</p>
+        )}
+        <h1>{item.title}</h1>
+        <p class="dateline">
+            <time datetime={item.publishedAt}>{fmtDate(item.publishedAt)}</time>
+            {reading.minutes > 0 && (
+                <>
+                    <span aria-hidden="true"> · </span>
+                    <span>{reading.minutes} min read</span>
+                </>
+            )}
+        </p>
+    </header>
+
+    {showToc && (
+        <details class="doc-toc">
+            <summary class="doc-toc__summary">
+                <span class="doc-toc__label">On this page</span>
+                <span class="doc-toc__count" aria-hidden="true">
+                    {tocEntries.length} sections
+                </span>
+            </summary>
+            <ul>
+                {tocEntries.map((entry) => (
+                    <li class:list={[`toc-level-${entry.level}`]}>
+                        <a href={`#${entry.id}`}>{entry.text}</a>
+                    </li>
+                ))}
+            </ul>
+        </details>
+    )}
+
+    <div class="doc-body" set:html={bodyWithCap} />
+
+    {item.tags.length > 0 && (
+        <footer class="doc-tags">
+            <span class="tags-label">tagged</span>
+            <ul>
+                {item.tags.map((t) => (
+                    <li>
+                        <a href={`/tags/${encodeURIComponent(t)}`}>{t}</a>
+                    </li>
+                ))}
+            </ul>
+        </footer>
+    )}
+
+    {related.length > 0 && (
+        <section class="doc-related" aria-label="Related posts">
+            <h2>Related</h2>
+            <ul class="feed-grid">
+                {related.map((r) => (
+                    <FeedCard
+                        href={r.href}
+                        title={r.title}
+                        description={r.description}
+                        publishedAt={r.publishedAt}
+                        kind={r.publication.name.toLowerCase()}
+                    />
+                ))}
+            </ul>
+        </section>
+    )}
+
+    <RecordColophon
+        seed={bannerSeed}
+        fields={[
+            { label: "collection", value: item.collection },
+            { label: "rkey", value: item.rkey },
+            { label: "record cid", value: item.cid },
+            { label: "source", value: markdownPath, href: markdownPath },
+            {
+                label: "created",
+                value: item.publishedAt,
+                datetime: item.publishedAt,
+            },
+            {
+                label: "updated",
+                value: item.updatedAt,
+                datetime: item.updatedAt,
+            },
+        ]}
+    />
+</article>
+
+<Lightbox />
+
+<script>
+    import { renderMermaid } from "@lib/mermaid-client";
+    void renderMermaid();
+</script>
+
+<script>
+    if (document.querySelector(".ff-recipe")) {
+        const { initRecipes } = await import(
+            "@src/scripts/recipe-interactive"
+        );
+        initRecipes();
+    }
+</script>
+
+<script>
+    import { mountDocComponents } from "@src/scripts/doc-components";
+    mountDocComponents();
+</script>
+
+<style>
+    article {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-7);
+    }
+
+    .doc-hero {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .doc-draft {
+        align-self: flex-start;
+        padding: 0.15em 0.6em;
+        border-radius: 999px;
+        background: var(--color-fg);
+        color: var(--color-bg);
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        letter-spacing: 0.03em;
+    }
+
+    .doc-hero h1 {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-weight: var(--fw-normal);
+        font-size: var(--fs-display);
+        line-height: var(--lh-display);
+        letter-spacing: var(--ls-display);
+        text-wrap: balance;
+    }
+
+    .dateline {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+    }
+
+    .doc-body {
+        display: flex;
+        flex-direction: column;
+        font-size: var(--fs-base);
+        line-height: var(--lh-relaxed);
+        container: doc-body / inline-size;
+    }
+
+    .doc-body :global(.azulejo-cap) {
+        --cap-ground: var(--color-bg);
+        --cap-ink: var(--color-accent);
+        --cap-line: color-mix(in srgb, var(--color-accent) 62%, transparent);
+        --cap-wash: color-mix(in srgb, var(--color-accent) 30%, transparent);
+        --cap-accent2: var(--cap-ink);
+        float: left;
+        position: relative;
+        width: 5.1em;
+        height: 5.1em;
+        width: 3lh;
+        height: 3lh;
+        margin: 0.15em 0.75em 0.05em 0;
+    }
+
+    .doc-body :global(.azulejo-cap--laurel) {
+        --cap-accent2: var(--callout-tip);
+    }
+    .doc-body :global(.azulejo-cap--ochre) {
+        --cap-accent2: var(--callout-warning);
+    }
+    .doc-body :global(.azulejo-cap--plum) {
+        --cap-accent2: var(--callout-important);
+    }
+    .doc-body :global(.azulejo-cap--terracotta) {
+        --cap-accent2: var(--callout-caution);
+    }
+
+    .doc-body :global(.azulejo-cap__tile) {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .doc-body :global(.azulejo-cap__letter) {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-family: var(--font-serif);
+        line-height: 1;
+        color: var(--cap-ink);
+        transform: translateY(0.05em);
+    }
+
+    .doc-body > :global(* + *) {
+        margin-top: var(--space-5);
+    }
+    .doc-body > :global(* + h2) {
+        margin-top: var(--space-7);
+    }
+    .doc-body > :global(* + h3) {
+        margin-top: var(--space-6);
+    }
+
+    .doc-body :global(h2) {
+        font-family: var(--font-serif);
+        font-size: var(--fs-2xl);
+    }
+
+    .doc-body :global(h3) {
+        font-family: var(--font-serif);
+        font-size: var(--fs-xl);
+    }
+
+    .doc-body :global(ul),
+    .doc-body :global(ol) {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .doc-body :global(img) {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: var(--radius);
+    }
+
+    .doc-body :global(video) {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: auto 16 / 9;
+        border-radius: var(--radius);
+        background: #000;
+    }
+
+    .doc-body :global(audio) {
+        display: block;
+        width: 100%;
+    }
+
+    .doc-toc {
+        font-size: var(--fs-sm);
+        line-height: var(--lh-relaxed);
+        padding: var(--space-3) 0;
+        border-top: 1px solid var(--color-border);
+        border-bottom: 1px solid var(--color-border);
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: var(--color-bg);
+    }
+
+    .doc-toc ul {
+        max-height: calc(100dvh - 6rem);
+        overflow-y: auto;
+    }
+
+    .doc-toc__summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-3);
+        cursor: pointer;
+        user-select: none;
+        list-style: none;
+    }
+
+    .doc-toc__summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .doc-toc__summary::after {
+        content: "";
+        width: 0.5em;
+        height: 0.5em;
+        border-right: 1px solid currentColor;
+        border-bottom: 1px solid currentColor;
+        transform: rotate(45deg) translate(-25%, -25%);
+        color: var(--color-muted);
+        transition: transform 150ms var(--ease);
+    }
+
+    .doc-toc[open] .doc-toc__summary::after {
+        transform: rotate(-135deg) translate(-25%, -25%);
+    }
+
+    .doc-toc__label {
+        font-family: var(--font-serif);
+        font-style: italic;
+        color: var(--color-muted);
+        font-size: var(--fs-sm);
+    }
+
+    .doc-toc__count {
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        color: var(--color-muted);
+        margin-right: auto;
+        margin-left: var(--space-3);
+    }
+
+    .doc-toc ul {
+        list-style: none;
+        margin: var(--space-3) 0 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35em;
+    }
+
+    .doc-toc li {
+        list-style: none;
+    }
+
+    .doc-toc .toc-level-3 {
+        padding-left: var(--space-3);
+        font-size: var(--fs-xs);
+    }
+
+    .doc-toc a {
+        color: var(--color-muted);
+        text-decoration: none;
+        text-wrap: balance;
+    }
+
+    .doc-toc a:hover {
+        color: var(--color-fg);
+        text-decoration: underline;
+    }
+
+    .doc-body :global(.doc-figure) {
+        overflow: hidden;
+        border-radius: var(--radius);
+    }
+
+    .doc-body :global(.doc-figure img) {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .doc-body :global(.mermaid-figure) {
+        margin: 0;
+        display: flex;
+        justify-content: safe center;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .doc-body :global(.mermaid-figure svg) {
+        height: auto;
+    }
+
+    .doc-body :global(.ff-component-missing) {
+        padding: var(--space-2) var(--space-3);
+        border-left: 2px solid var(--color-border);
+        font-family: var(--font-mono);
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+    }
+
+    .doc-body :global(.series-grid) {
+        column-count: 3;
+        column-gap: var(--space-3);
+    }
+
+    @container doc-body (width <= 700px) {
+        .doc-body :global(.series-grid) {
+            column-count: 2;
+        }
+    }
+
+    @container doc-body (width <= 440px) {
+        .doc-body :global(.series-grid) {
+            column-count: 1;
+        }
+    }
+
+    .doc-body :global(.series-tile) {
+        margin: 0 0 var(--space-3);
+        overflow: hidden;
+        border-radius: var(--radius);
+        break-inside: avoid;
+    }
+
+    .doc-body :global(.series-tile img) {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .doc-body :global(.triptych) {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-5);
+        max-width: 46rem;
+        margin-inline: auto;
+    }
+
+    .doc-body :global(.triptych__pair) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-4);
+    }
+
+    @container doc-body (width <= 440px) {
+        .doc-body :global(.triptych__pair) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .doc-body :global(.triptych__img .series-tile) {
+        margin: 0;
+    }
+
+    .doc-body :global(.triptych__text) {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-3);
+        text-align: center;
+    }
+
+    .doc-body :global(.triptych__text p) {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-lg);
+        line-height: var(--lh-relaxed);
+        text-wrap: balance;
+        color: var(--color-fg);
+    }
+
+    .doc-body :global(.triptych__text .stanza-note) {
+        margin: 0;
+        font-family: var(--font-mono);
+        font-style: normal;
+        font-size: var(--fs-xs);
+        letter-spacing: 0.02em;
+        line-height: var(--lh-normal);
+        color: var(--color-muted);
+        text-wrap: pretty;
+    }
+
+    .doc-body :global(.triptych__caption) {
+        text-align: center;
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        color: var(--color-muted);
+    }
+
+    .doc-body :global(.triptych-loose) {
+        text-align: center;
+        font-family: var(--font-serif);
+        font-style: italic;
+        color: var(--color-muted);
+    }
+
+    .doc-body :global(.zoom-btn) {
+        display: block;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        background: transparent;
+        cursor: zoom-in;
+        color: inherit;
+        font: inherit;
+    }
+
+    .doc-body :global(.zoom-btn:focus-visible) {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
+    }
+
+    .doc-tags {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: var(--space-3);
+        padding-top: var(--space-5);
+        border-top: 1px solid var(--color-border);
+        font-size: var(--fs-sm);
+    }
+
+    .tags-label {
+        font-family: var(--font-serif);
+        font-style: italic;
+        color: var(--color-muted);
+    }
+
+    .doc-tags ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .doc-tags li {
+        list-style: none;
+    }
+
+    .doc-tags a {
+        color: var(--color-muted);
+    }
+
+    .doc-tags a:hover {
+        color: var(--color-fg);
+    }
+
+    .doc-related {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-5);
+        padding-top: var(--space-6);
+        border-top: 1px solid var(--color-border);
+    }
+
+    .doc-related h2 {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-weight: var(--fw-normal);
+        font-size: var(--fs-xl);
+        color: var(--color-muted);
+    }
+
+    .doc-body :global(ff-tuner),
+    .doc-body :global(conet-tuner) {
+        display: block;
+    }
+
+    .doc-body :global(.ff-tuner-fallback) {
+        font-family: var(--font-mono);
+        font-size: var(--fs-sm);
+        color: var(--color-muted);
+    }
+</style>

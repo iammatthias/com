@@ -1,5 +1,6 @@
 import { getDocComponent } from "./registry";
-import type { ComponentProps } from "./types";
+import type { ComponentProps, DocComponent, Renderer } from "./types";
+import { escapeHtml } from "../format";
 
 const TAG = "ff-[a-z0-9-]+";
 const ATTRS = `(?:\\s+[a-zA-Z_:][\\w:.-]*(?:\\s*=\\s*(?:"[^"]*"|'[^']*'|[^\\s"'>]+))?)*`;
@@ -76,6 +77,18 @@ function unknownComponentMarkup(name: string): string {
     return `<p class="ff-component-missing" role="note">Unknown component <code>&lt;${name}&gt;</code>. It may not be deployed yet.</p>`;
 }
 
+async function feedMarkup(
+    component: DocComponent,
+    tag: FoundTag,
+    html: Renderer<Promise<string>>,
+): Promise<string> {
+    if (component.feed) return component.feed(tag.props, tag.children, html);
+    const text = component.text?.(tag.props, tag.children, componentsToText);
+    return text ? `<p>${escapeHtml(text)}</p>` : "";
+}
+
+export type ComponentSurface = "site" | "feed";
+
 export interface ComponentPass {
     source: string;
     rendered: string[];
@@ -84,6 +97,8 @@ export interface ComponentPass {
 
 export async function extractDocComponents(
     body: string,
+    surface: ComponentSurface,
+    html: Renderer<Promise<string>>,
 ): Promise<ComponentPass> {
     const tags = findTagsOutsideCode(body);
     if (tags.length === 0) {
@@ -99,6 +114,9 @@ export async function extractDocComponents(
     });
     source += body.slice(cursor);
 
+    const fallback = (name: string) =>
+        surface === "site" ? unknownComponentMarkup(name) : "";
+
     const rendered = await Promise.all(
         tags.map(async (tag) => {
             const component = getDocComponent(tag.name);
@@ -106,16 +124,18 @@ export async function extractDocComponents(
                 console.warn(
                     `[doc-components] unknown component <${tag.name}>`,
                 );
-                return unknownComponentMarkup(tag.name);
+                return fallback(tag.name);
             }
             try {
-                return await component.render(tag.props, tag.children);
+                return surface === "feed"
+                    ? await feedMarkup(component, tag, html)
+                    : await component.render(tag.props, tag.children, html);
             } catch (err) {
                 console.error(
                     `[doc-components] <${tag.name}> failed to render:`,
                     err,
                 );
-                return unknownComponentMarkup(tag.name);
+                return fallback(tag.name);
             }
         }),
     );
@@ -137,18 +157,40 @@ export function substituteDocComponents(
     );
 }
 
-export function componentsToText(body: string): string {
+function replaceTags(
+    body: string,
+    replacement: (tag: FoundTag) => string,
+): string {
     const tags = findTagsOutsideCode(body);
     if (tags.length === 0) return body;
     let out = "";
     let cursor = 0;
     for (const tag of tags) {
-        out += body.slice(cursor, tag.start);
-        const component = getDocComponent(tag.name);
-        out += component?.text
-            ? ` ${component.text(tag.props, tag.children)} `
-            : " ";
+        out += body.slice(cursor, tag.start) + replacement(tag);
         cursor = tag.end;
     }
     return out + body.slice(cursor);
+}
+
+export function componentsToText(body: string): string {
+    return replaceTags(body, (tag) => {
+        const text = getDocComponent(tag.name)?.text?.(
+            tag.props,
+            tag.children,
+            componentsToText,
+        );
+        return text ? ` ${text} ` : " ";
+    });
+}
+
+export function componentsToMarkdown(body: string): string {
+    return replaceTags(body, (tag) => {
+        const component = getDocComponent(tag.name);
+        if (!component) return body.slice(tag.start, tag.end);
+        return (
+            component.markdown?.(tag.props, tag.children, componentsToMarkdown) ??
+            component.text?.(tag.props, tag.children, componentsToText) ??
+            ""
+        );
+    });
 }

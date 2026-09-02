@@ -6,14 +6,15 @@
 # The Content-Security-Policy is a copy of the one in
 # src/middleware.ts — keep the two in sync (see the comment there for
 # what each allowance is for). The prerendered onchain-analytics page
-# is why connect-src carries the Base Sepolia RPC.
+# is why connect-src carries the Base Sepolia RPC; the <ff-tuner> doc
+# component (src/lib/doc-components/tuner.ts) is why it carries conet.fm.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://wsrv.nl https://blobs.farfield.systems; media-src 'self' https://blobs.farfield.systems; connect-src 'self' https://sepolia.base.org; font-src 'self'; worker-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://wsrv.nl https://blobs.farfield.systems; media-src 'self' https://blobs.farfield.systems; connect-src 'self' https://sepolia.base.org https://conet.fm; font-src 'self'; worker-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
 
 # llms.txt discovery pointer. Since the incremental-static move most
 # content pages are assets and never reach the middleware, so the

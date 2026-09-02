@@ -276,7 +276,11 @@ function substituteRecipes(
 
 export async function renderMarkdownBody(body: string): Promise<string> {
     const { body: lifted, blocks: recipes } = extractRecipes(body);
-    const components = await extractDocComponents(lifted);
+    const components = await extractDocComponents(
+        lifted,
+        "site",
+        renderMarkdownBody,
+    );
     interface Embed { alt: string; scheme: "blob" | "series"; id: string }
     const embeds: Embed[] = [];
     const preprocessed = components.source.replace(
@@ -349,9 +353,14 @@ export async function renderFeedBody(
     const maxImages = opts.maxImages ?? Number.POSITIVE_INFINITY;
 
     const { body: lifted, blocks: recipes } = extractRecipes(body);
+    const components = await extractDocComponents(
+        lifted,
+        "feed",
+        (source) => renderFeedBody(source),
+    );
     interface Embed { alt: string; scheme: "blob" | "series"; id: string }
     const embeds: Embed[] = [];
-    const preprocessed = lifted.replace(
+    const preprocessed = components.source.replace(
         fullEmbedRe(),
         (_match, alt: string, scheme: string, id: string) => {
             const idx = embeds.length;
@@ -403,6 +412,7 @@ export async function renderFeedBody(
         /<!--FARFIELD_EMBED:(\d+)-->/g,
         (_, idx: string) => rendered[Number(idx)] ?? "",
     );
+    html = substituteDocComponents(html, components.rendered);
     html = substituteRecipes(html, recipes, recipeSimpleHtml);
     html = transformAlerts(html);
     if (omitted > 0 && opts.moreUrl) {

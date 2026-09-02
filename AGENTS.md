@@ -70,6 +70,12 @@ src/pages/mcp.ts           MCP server (Streamable HTTP, JSON-RPC)
 src/lib/farfield.ts        HTTP layer: caching, ETags, retries
 src/lib/farfield-content-loader.ts   build-time content collections
 src/lib/doc-render.ts      markdown → HTML with blob/series embeds
+src/lib/doc-components/    <ff-*> tags in Farfield bodies (reveal, tuner); each
+                           declares its site, feed, markdown, and text forms
+src/components/DocArticle.astro   one document, shared by the page and the probe
+src/dev-routes/doc-probe.astro    dev only: /internal/doc?file=/path/to/draft.md
+src/vendor/conet-tuner/    conet.fm's <conet-tuner> element, copied verbatim
+                           from ~/Developer/number-station/web/dist/embed.js
 src/lib/azulejo-cap.ts     cid-seeded drop-cap tile generator
 scripts/agent-check.mjs    the pre-deploy gate
 ```

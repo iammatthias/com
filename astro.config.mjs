@@ -1,5 +1,6 @@
 // @ts-check
 import path from "node:path";
+import { readFile } from "node:fs/promises";
 import { defineConfig, envField, fontProviders } from "astro/config";
 import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
@@ -26,8 +27,41 @@ export default defineConfig({
         {
             name: "dev-only-internal-routes",
             hooks: {
-                "astro:config:setup": ({ command, injectRoute }) => {
+                "astro:config:setup": ({ command, injectRoute, updateConfig }) => {
                     if (command !== "dev") return;
+                    updateConfig({
+                        vite: {
+                            plugins: [
+                                {
+                                    name: "doc-probe-source",
+                                    enforce: "pre",
+                                    configureServer(server) {
+                                        server.middlewares.use(
+                                            "/internal/doc-source",
+                                            async (req, res) => {
+                                                const file =
+                                                    new URL(req.url ?? "", "http://localhost")
+                                                        .searchParams.get("file") ?? "";
+                                                if (!file.endsWith(".md")) {
+                                                    res.statusCode = 400;
+                                                    res.end("file must be a .md path");
+                                                    return;
+                                                }
+                                                try {
+                                                    const text = await readFile(file, "utf8");
+                                                    res.setHeader("content-type", "text/markdown; charset=utf-8");
+                                                    res.end(text);
+                                                } catch (err) {
+                                                    res.statusCode = 404;
+                                                    res.end(String(err));
+                                                }
+                                            },
+                                        );
+                                    },
+                                },
+                            ],
+                        },
+                    });
                     injectRoute({
                         pattern: "/internal/azulejo/[seed]",
                         entrypoint: "./src/dev-routes/azulejo-seed.astro",
@@ -35,6 +69,10 @@ export default defineConfig({
                     injectRoute({
                         pattern: "/internal/terrazzo/[seed]",
                         entrypoint: "./src/dev-routes/terrazzo-seed.astro",
+                    });
+                    injectRoute({
+                        pattern: "/internal/doc",
+                        entrypoint: "./src/dev-routes/doc-probe.astro",
                     });
                 },
             },

@@ -1,6 +1,8 @@
 import type { DocComponent } from "./types";
+import { reveal } from "./reveal";
+import { tuner } from "./tuner";
 
-const COMPONENTS: DocComponent[] = [];
+const COMPONENTS: DocComponent[] = [reveal, tuner];
 
 const BY_NAME = new Map(COMPONENTS.map((c) => [c.name, c]));
 
