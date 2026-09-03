@@ -3,7 +3,11 @@ export const prerender = true;
 
 import type { APIRoute, GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
-import type { DocumentData, PublicationData } from "@lib/farfield-loader";
+import {
+    renderKey,
+    type DocumentData,
+    type PublicationData,
+} from "@lib/farfield-loader";
 import { SITE_ORIGIN } from "@lib/agent-surface";
 import { publishedDocs } from "@lib/content-query";
 import { markdownResponse } from "@lib/agent-http";
@@ -18,7 +22,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
         return {
             params: { publication: pub.slug },
             props: { pub, items },
-            cacheKey: items.map((d) => d.cid).join(","),
+            cacheKey: items.map(renderKey).join(","),
         };
     });
 };

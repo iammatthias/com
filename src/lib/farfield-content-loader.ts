@@ -4,6 +4,7 @@ import {
     entryToDocument,
     publicationFrom,
     postToFeedEntry,
+    renderKey,
 } from "./farfield-loader";
 import type { Collection, Entry, Post } from "./farfield";
 
@@ -89,7 +90,7 @@ export function farfieldDocsLoader(): Loader {
                 store.set({
                     id: `${entry.collection}/${entry.slug}`,
                     data,
-                    digest: entry.cid,
+                    digest: renderKey(data),
                 });
                 n++;
             }

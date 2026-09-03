@@ -7,7 +7,7 @@ import {
     composeDocumentMarkdown,
     resolveEmbedsForMarkdown,
 } from "@lib/markdown-view";
-import type { DocumentData } from "@lib/farfield-loader";
+import { renderKey, type DocumentData } from "@lib/farfield-loader";
 import { relatedDocs } from "@lib/content-query";
 import { SITE_ORIGIN } from "@lib/agent-surface";
 import { markdownResponse } from "@lib/agent-http";
@@ -26,7 +26,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
         return {
             params: { publication: doc.collection, slug: doc.rkey },
             props: { doc, related },
-            cacheKey: [doc.cid, ...neighbours.map((d) => d.cid)].join(":"),
+            cacheKey: [doc, ...neighbours].map(renderKey).join(":"),
         };
     });
 };

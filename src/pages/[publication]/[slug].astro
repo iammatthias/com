@@ -4,7 +4,7 @@ export const prerender = true;
 import BaseLayout from "@layouts/BaseLayout.astro";
 import DocArticle from "@components/DocArticle.astro";
 import { getCollection } from "astro:content";
-import type { DocumentData } from "@lib/farfield-loader";
+import { renderKey, type DocumentData } from "@lib/farfield-loader";
 import { plainText } from "@lib/markdown-text";
 import { relatedDocs } from "@lib/content-query";
 
@@ -17,7 +17,7 @@ export async function getStaticPaths() {
         return {
             params: { publication: item.collection, slug: item.rkey },
             props: { item, related },
-            cacheKey: [item.cid, ...related.map((r) => r.cid)].join(":"),
+            cacheKey: [item, ...related].map(renderKey).join(":"),
         };
     });
 }

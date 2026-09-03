@@ -4,6 +4,7 @@ export const prerender = true;
 import ContentIndex from "@components/ContentIndex.astro";
 import { loadContentIndex } from "@lib/content-index";
 import { paginationCacheKey, getPage, PAGE_SIZE } from "@lib/pagination";
+import { renderKey } from "@lib/farfield-loader";
 import type { ContentIndexData } from "@lib/content-index";
 
 export async function getStaticPaths() {
@@ -21,7 +22,7 @@ export async function getStaticPaths() {
         paths.push({
             params: { page: String(page) },
             props: { data, page },
-            cacheKey: paginationCacheKey(page, totalPages, slice.map((d) => d.cid)),
+            cacheKey: paginationCacheKey(page, totalPages, slice.map(renderKey)),
         });
     }
     return paths;

@@ -3,7 +3,7 @@ export const prerender = true;
 
 import rss from "@astrojs/rss";
 import type { APIRoute, GetStaticPaths } from "astro";
-import type { DocumentData } from "@lib/farfield-loader";
+import { renderKey, type DocumentData } from "@lib/farfield-loader";
 import { docFeedItems, FEED_ENVELOPE, RSS_ITEM_CAP } from "@lib/doc-render";
 import { siteOrigin } from "@lib/http";
 import { documentsByTag } from "@lib/content-query";
@@ -15,7 +15,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
         return {
             params: { tag },
             props: { tag, items: capped },
-            cacheKey: capped.map((d) => d.cid).join(","),
+            cacheKey: capped.map(renderKey).join(","),
         };
     });
 };

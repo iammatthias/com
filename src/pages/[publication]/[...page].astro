@@ -6,7 +6,11 @@ import FeedCard from "@components/FeedCard.astro";
 import Pagination from "@components/Pagination.astro";
 import { getCollection } from "astro:content";
 import { paginationCacheKey, getPage, PAGE_SIZE } from "@lib/pagination";
-import type { DocumentData, PublicationData } from "@lib/farfield-loader";
+import {
+    renderKey,
+    type DocumentData,
+    type PublicationData,
+} from "@lib/farfield-loader";
 import { publishedDocs } from "@lib/content-query";
 
 export async function getStaticPaths() {
@@ -26,7 +30,7 @@ export async function getStaticPaths() {
                     page: page === 1 ? undefined : `page/${page}`,
                 },
                 props: { pub, items, page },
-                cacheKey: paginationCacheKey(page, totalPages, slice.map((d) => d.cid)),
+                cacheKey: paginationCacheKey(page, totalPages, slice.map(renderKey)),
             });
         }
     }

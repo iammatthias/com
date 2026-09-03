@@ -174,6 +174,12 @@ export function entryToDocument(
     };
 }
 
+export function renderKey(
+    doc: Pick<DocumentData, "cid" | "publishedAt" | "updatedAt">,
+): string {
+    return `${doc.cid}@${doc.publishedAt}@${doc.updatedAt}`;
+}
+
 export async function loadAllDocuments(
     drafts = false,
 ): Promise<DocumentData[]> {

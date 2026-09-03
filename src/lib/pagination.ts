@@ -54,9 +54,9 @@ export function pageHref(basePath: string, page: number): string {
 export function paginationCacheKey(
     page: number,
     totalPages: number,
-    cids: string[],
+    keys: string[],
 ): string {
     return createHash("sha1")
-        .update(`${page}/${totalPages}:${cids.join(",")}`)
+        .update(`${page}/${totalPages}:${keys.join(",")}`)
         .digest("hex");
 }
