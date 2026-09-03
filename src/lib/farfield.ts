@@ -54,6 +54,7 @@ export interface Entry {
     body: string;
     tags: string[];
     published: boolean;
+    publishedAt?: string;
     createdAt: string;
     updatedAt: string;
 }

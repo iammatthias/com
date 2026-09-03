@@ -64,7 +64,7 @@ export function composeDocumentMarkdown(
         ...(doc.tags.length
             ? [`tags: [${doc.tags.map(yamlString).join(", ")}]`]
             : []),
-        `created: ${doc.publishedAt}`,
+        `published: ${doc.publishedAt}`,
         `updated: ${doc.updatedAt}`,
         `cid: ${doc.cid}`,
         `html: ${origin}${doc.href}`,

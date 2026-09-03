@@ -166,7 +166,7 @@ export function entryToDocument(
         description: entry.excerpt?.trim() ?? "",
         published: entry.published,
         href: `/${entry.collection}/${entry.slug}`,
-        publishedAt: entry.createdAt,
+        publishedAt: entry.publishedAt || entry.createdAt,
         updatedAt: entry.updatedAt,
         publication: pub,
         tags: entry.tags ?? [],
