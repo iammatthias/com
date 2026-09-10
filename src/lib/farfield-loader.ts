@@ -174,6 +174,31 @@ export function entryToDocument(
     };
 }
 
+const STAMPED_SLUG = /^\d{13,}-/;
+
+export function unstampSlug(rkey: string): string {
+    return rkey.replace(STAMPED_SLUG, "");
+}
+
+export function isStampedSlug(slug: string): boolean {
+    return STAMPED_SLUG.test(slug);
+}
+
+export async function stampedHref(
+    collection: string,
+    slug: string,
+): Promise<string | null> {
+    if (isStampedSlug(slug)) return null;
+    const docs = await loadAllDocuments();
+    const match = docs.find(
+        (d) =>
+            d.collection === collection &&
+            isStampedSlug(d.rkey) &&
+            unstampSlug(d.rkey) === slug,
+    );
+    return match?.href ?? null;
+}
+
 export function renderKey(
     doc: Pick<DocumentData, "cid" | "publishedAt" | "updatedAt">,
 ): string {

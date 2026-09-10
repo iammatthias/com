@@ -1,6 +1,10 @@
 
 import { defineMiddleware } from "astro:middleware";
-import { publicationSlugSet } from "@lib/farfield-loader";
+import {
+    isStampedSlug,
+    publicationSlugSet,
+    stampedHref,
+} from "@lib/farfield-loader";
 import { homepageMarkdown } from "@lib/agent-markdown";
 import { notFoundMarkdown } from "@lib/agent-markdown";
 import { AGENT_CRAWLERS } from "@lib/agent-surface";
@@ -78,6 +82,20 @@ async function markdownTwin(pathname: string): Promise<string | null> {
     return second ? `/${first}/${second}.md` : `/${first}.md`;
 }
 
+async function stampedRedirect(pathname: string): Promise<string | null> {
+    const m = pathname.match(/^\/([a-z0-9-]+)\/([a-z0-9-]+)(\.md)?$/);
+    if (!m) return null;
+    const [, publication, slug, ext = ""] = m;
+    if (isStampedSlug(slug)) return null;
+    try {
+        if (!(await publicationSlugSet()).has(publication)) return null;
+        const href = await stampedHref(publication, slug);
+        return href ? `${href}${ext}` : null;
+    } catch {
+        return null;
+    }
+}
+
 const AGENT_UA = new RegExp(`(${AGENT_CRAWLERS.join("|")})`, "i");
 
 function wantsMarkdown(request: Request): boolean {
@@ -96,6 +114,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
             pathname.replace(/\/+$/, "") + search,
             301,
         );
+    }
+
+    if (method === "GET" || method === "HEAD") {
+        const canonical = await stampedRedirect(pathname);
+        if (canonical) return context.redirect(canonical + search, 301);
     }
 
     if (

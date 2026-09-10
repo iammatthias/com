@@ -1,5 +1,9 @@
 import { getCollection } from "astro:content";
-import type { DocumentData, PublicationData } from "./farfield-loader";
+import {
+    unstampSlug,
+    type DocumentData,
+    type PublicationData,
+} from "./farfield-loader";
 import { plainText } from "./markdown-text";
 import { publishedDocs } from "./content-query";
 import { SITE_ORIGIN } from "./agent-surface";
@@ -125,7 +129,11 @@ export async function getDocument(
     const docs = await allDocuments();
     return (
         docs.find((d) => `${d.collection}/${d.rkey}` === sectionAndSlug) ??
-        docs.find((d) => d.rkey === slug)
+        docs.find(
+            (d) => `${d.collection}/${unstampSlug(d.rkey)}` === sectionAndSlug,
+        ) ??
+        docs.find((d) => d.rkey === slug) ??
+        docs.find((d) => unstampSlug(d.rkey) === slug)
     );
 }
 
