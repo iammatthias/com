@@ -1,5 +1,6 @@
 ---
 import "@styles/globals.css";
+import "@styles/deck.css";
 import SiteMenu from "@components/SiteMenu.astro";
 import HeaderTile from "@components/HeaderTile.astro";
 import Schema from "@components/Schema.astro";
@@ -25,6 +26,7 @@ interface Props {
     profilePage?: boolean;
     markdownHref?: string;
     pagination?: { prev?: string | null; next?: string | null };
+    deck?: boolean;
     faq?: Array<{ question: string; answer: string }>;
 }
 
@@ -45,6 +47,7 @@ const {
     markdownHref,
     pagination,
     faq,
+    deck = false,
 } = Astro.props;
 
 const siteOrigin = Astro.site?.toString() ?? SITE_URL;
@@ -164,7 +167,7 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
 
         <slot name="head" />
     </head>
-    <body>
+    <body data-deck={deck ? "" : undefined}>
         {previewMode && (
             <div class="preview-banner" role="status">
                 <span>Preview — showing unpublished drafts</span>
@@ -175,7 +178,15 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
             <slot name="header">
                 <a href="/">home</a>
                 <HeaderTile />
-                <a href="/menu" data-menu-trigger>menu</a>
+                <span class="header-end">
+                    {deck && (
+                        <details class="deck-controls" data-deck-controls>
+                            <summary>columns</summary>
+                            <div class="deck-controls__panel" data-deck-controls-panel></div>
+                        </details>
+                    )}
+                    <a href="/menu" data-menu-trigger>menu</a>
+                </span>
             </slot>
         </header>
 
@@ -254,6 +265,12 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
 
     header > :global(:last-child) {
         justify-self: end;
+    }
+
+    .header-end {
+        display: inline-flex;
+        align-items: baseline;
+        gap: var(--space-4);
     }
 
     main {

@@ -450,6 +450,42 @@ if (ORIGIN) {
     } else ok("Vary: Accept on .md");
 }
 
+if (!ORIGIN) {
+    const { readdir } = await import("node:fs/promises");
+    const walk = async (dir) => {
+        const out = [];
+        for (const e of await readdir(dir, { withFileTypes: true })) {
+            const full = path.join(dir, e.name);
+            if (e.isDirectory()) out.push(...(await walk(full)));
+            else if (e.name.endsWith(".html")) out.push(full);
+        }
+        return out;
+    };
+    const pages = await walk(DIST);
+    const missing = new Map();
+    for (const file of pages) {
+        const html = await readFile(file, "utf8");
+        for (const m of html.matchAll(/(?:href|src)="(\/_astro\/[^"]+)"/g)) {
+            const asset = path.join(DIST, m[1]);
+            if (await stat(asset).then(() => false, () => true)) {
+                const list = missing.get(m[1]) ?? [];
+                list.push(path.relative(DIST, file));
+                missing.set(m[1], list);
+            }
+        }
+    }
+    if (missing.size === 0) {
+        ok(`bundled assets resolve (${pages.length} pages)`);
+    } else {
+        for (const [asset, pagesRef] of missing) {
+            fail(
+                `bundled asset ${asset}`,
+                `referenced by ${pagesRef.length} page(s) but absent from dist (e.g. ${pagesRef[0]}) — stale incremental cache, run \`bun run build:force\``,
+            );
+        }
+    }
+}
+
 console.log(
     `\n${passes} passed, ${failures} failed` +
         (skipped ? `, ${skipped} on-demand routes skipped (run with --url to check them)` : ""),

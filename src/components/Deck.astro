@@ -1,0 +1,67 @@
+---
+import DeckColumn from "@components/DeckColumn.astro";
+import DeckRail from "@components/DeckRail.astro";
+import type { DeckColumnModel } from "@lib/deck";
+
+interface Props {
+    columns: DeckColumnModel[];
+    current?: string;
+    label?: string;
+    href?: string;
+    count?: string;
+    variant?: "list" | "doc";
+    raw?: boolean;
+    home?: boolean;
+}
+
+const {
+    columns,
+    current,
+    label,
+    href,
+    count,
+    variant = "list",
+    raw = false,
+    home = false,
+} = Astro.props;
+
+const peeks = columns.filter((c) => c.id !== current);
+---
+
+<div class="deck" data-deck-root>
+    <DeckRail columns={columns} current={current} home={home}>
+        <slot name="rail" />
+    </DeckRail>
+
+    {raw ? <slot /> : (
+    <section
+        class:list={[
+            "deck-col",
+            "deck-col--main",
+            { "deck-col--doc": variant === "doc" },
+        ]}
+        data-deck-col={current ?? "main"}
+        data-current="true"
+        aria-labelledby={label ? "deck-head-main" : undefined}
+    >
+        {label && (
+            <header class="deck-col__head">
+                <h2 class="deck-col__title" id="deck-head-main">
+                    {href ? <a href={href}>{label}</a> : label}
+                </h2>
+                {count && <span class="deck-col__count">{count}</span>}
+            </header>
+        )}
+
+        <div class="deck-col__body" data-deck-scroll={current ?? "main"}>
+            <slot />
+        </div>
+    </section>
+    )}
+
+    {peeks.map((column) => <DeckColumn column={column} />)}
+</div>
+
+<script>
+    import "@src/scripts/deck";
+</script>

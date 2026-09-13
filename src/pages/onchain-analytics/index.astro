@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
+import Deck from "@components/Deck.astro";
+import { deckColumns } from "@lib/deck";
 import OnchainAnalytics from "@components/OnchainAnalytics";
 import type { MenuMeta } from "@lib/menu";
 
@@ -12,13 +14,17 @@ export const menu: MenuMeta = {
 const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT as
     | `0x${string}`
     | undefined;
+
+const deckCols = await deckColumns();
 ---
 
 <BaseLayout
+    deck
     title="Onchain Analytics"
     description="Homebrew analytics system built on anonymous session management with keccak256 hashes and the blockchain."
     ogImage="/onchain-analytics"
 >
+    <Deck columns={deckCols}>
     <article class="prose">
         <header class="doc-header">
             <h1>Onchain Analytics</h1>
@@ -60,6 +66,7 @@ const CONTRACT_ADDRESS = import.meta.env.PUBLIC_ANALYTICS_CONTRACT as
             </p>
         )}
     </article>
+    </Deck>
 </BaseLayout>
 
 <style>

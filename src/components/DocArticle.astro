@@ -10,9 +10,10 @@ import { withLettrine } from "@lib/azulejo-cap";
 interface Props {
     item: DocumentData;
     related: DocumentData[];
+    deck?: boolean;
 }
 
-const { item, related } = Astro.props;
+const { item, related, deck = false } = Astro.props;
 
 const bodyHtml = item.body ? await renderMarkdownBody(item.body) : "";
 
@@ -31,6 +32,128 @@ const bannerSeed = hashSeed(`${item.rkey}:${item.cid}`);
 const markdownPath = `${item.href}.md`;
 ---
 
+{deck ? (
+<>
+<section
+    class="deck-col deck-col--main deck-col--doc"
+    data-deck-col={item.collection}
+    data-current="true"
+>
+    <div class="deck-col__body" data-deck-scroll={item.collection}>
+        <div class="deck-doc">
+            <header class="deck-doc__hero doc-hero">
+                {item.published === false && (
+                    <p class="doc-draft">Draft — unpublished</p>
+                )}
+                <h1>{item.title}</h1>
+                <p class="dateline">
+                    <time datetime={item.publishedAt}>
+                        {fmtDate(item.publishedAt)}
+                    </time>
+                    {reading.minutes > 0 && (
+                        <>
+                            <span aria-hidden="true"> · </span>
+                            <span>{reading.minutes} min read</span>
+                        </>
+                    )}
+                </p>
+            </header>
+            <div class="deck-doc__flow">
+                <div class="doc-body" set:html={bodyWithCap} />
+            </div>
+        </div>
+    </div>
+</section>
+
+<section
+    class="deck-col deck-col--peek"
+    data-deck-col="details"
+    aria-label="Document details"
+>
+    <header class="deck-col__head">
+        <h2 class="deck-col__title">details</h2>
+    </header>
+    <div class="deck-col__body" data-deck-scroll="details">
+        <div class="deck-meta">
+            {showToc && (
+                <nav class="deck-meta__group" aria-label="On this page">
+                    <span class="deck-meta__label">on this page</span>
+                    <ul class="deck-toc">
+                        {tocEntries.map((entry) => (
+                            <li class:list={[`toc-level-${entry.level}`]}>
+                                <a href={`#${entry.id}`}>{entry.text}</a>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
+            )}
+
+            {item.tags.length > 0 && (
+                <div class="deck-meta__group">
+                    <span class="deck-meta__label">tagged</span>
+                    <ul class="deck-tags">
+                        {item.tags.map((t) => (
+                            <li>
+                                <a href={`/tags/${encodeURIComponent(t)}`}>
+                                    {t}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            {related.length > 0 && (
+                <div class="deck-meta__group">
+                    <span class="deck-meta__label">related</span>
+                    <ul class="deck-peek">
+                        {related.map((r) => (
+                            <li>
+                                <a href={r.href}>
+                                    <span class="deck-peek__title">
+                                        {r.title}
+                                    </span>
+                                    <time
+                                        class="deck-peek__date"
+                                        datetime={r.publishedAt}
+                                    >
+                                        {fmtDate(r.publishedAt)}
+                                    </time>
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            <RecordColophon
+                seed={bannerSeed}
+                fields={[
+                    { label: "collection", value: item.collection },
+                    { label: "rkey", value: item.rkey },
+                    { label: "record cid", value: item.cid },
+                    {
+                        label: "source",
+                        value: markdownPath,
+                        href: markdownPath,
+                    },
+                    {
+                        label: "published",
+                        value: item.publishedAt,
+                        datetime: item.publishedAt,
+                    },
+                    {
+                        label: "updated",
+                        value: item.updatedAt,
+                        datetime: item.updatedAt,
+                    },
+                ]}
+            />
+        </div>
+    </div>
+</section>
+</>
+) : (
 <article class="doc">
     <header class="doc-hero">
         {item.published === false && (
@@ -118,6 +241,7 @@ const markdownPath = `${item.href}.md`;
         ]}
     />
 </article>
+)}
 
 <Lightbox />
 

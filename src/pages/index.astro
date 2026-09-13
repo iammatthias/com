@@ -3,11 +3,12 @@ export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import FeedCard from "@components/FeedCard.astro";
-import GlassArch from "@components/GlassArch.astro";
+import Deck from "@components/Deck.astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
 import { entriesOf, type DocumentData } from "@lib/farfield-loader";
 import { builtDocFilter } from "@lib/content-query";
+import { deckColumns } from "@lib/deck";
 import { isPreview } from "@lib/preview";
 
 const preview = isPreview(Astro);
@@ -29,86 +30,46 @@ if (feedError) {
 
 const RECENT_LIMIT = 12;
 const recent = feed.slice(0, RECENT_LIMIT);
+const columns = await deckColumns();
 
 setResponseCacheHeaders(Astro.response, cacheHint);
 ---
 
-<BaseLayout>
-    <section class="cover">
-        <GlassArch />
-
-        <section class="intro" aria-label="Introduction">
-            <h1 class="greeting">Hi, I am Matthias.</h1>
-            <p>
-                This is my cozy corner on the web. A collection of
-                photographs, projects, recipes, and notes.
-            </p>
+<BaseLayout deck>
+    <Deck columns={columns} home raw>
+        <section slot="rail" class="recent" aria-labelledby="feed-heading">
+            <h2 id="feed-heading">
+                Recent <a href="/content" class="see-all">see all →</a>
+            </h2>
+            {
+                recent.length === 0 ? (
+                    <p class="feed-empty">No entries to show right now.</p>
+                ) : (
+                    <ul class="feed-grid">
+                        {recent.map((item) => (
+                            <FeedCard
+                                href={item.href}
+                                title={item.title}
+                                description={item.description}
+                                publishedAt={item.publishedAt}
+                                kind={item.publication.name.toLowerCase()}
+                                draft={item.published === false}
+                            />
+                        ))}
+                    </ul>
+                )
+            }
         </section>
-    </section>
-
-    <section class="recent" aria-labelledby="feed-heading">
-        <h2 id="feed-heading">
-            Recent <a href="/content" class="see-all">see all →</a>
-        </h2>
-        {
-            recent.length === 0 ? (
-                <p class="feed-empty">No entries to show right now.</p>
-            ) : (
-                <ul class="feed-grid">
-                    {recent.map((item) => (
-                        <FeedCard
-                            href={item.href}
-                            title={item.title}
-                            description={item.description}
-                            publishedAt={item.publishedAt}
-                            kind={item.publication.name.toLowerCase()}
-                            draft={item.published === false}
-                        />
-                    ))}
-                </ul>
-            )
-        }
-    </section>
-
+    </Deck>
 </BaseLayout>
 
 <style>
-    .cover {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--space-5);
-        width: 100%;
-    }
-
-    .intro {
-        flex: 0 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-3);
-        width: 100%;
-        max-width: 60ch;
-    }
-
-    .intro .greeting {
-        font-family: var(--font-serif);
-        font-style: italic;
-        font-size: var(--fs-2xl);
-        font-weight: var(--fw-normal);
-        line-height: var(--lh-tight);
-    }
-
-    .intro p {
-        font-size: var(--fs-base);
-        line-height: var(--lh-relaxed);
-        text-wrap: pretty;
-    }
-
     .recent {
         display: flex;
         flex-direction: column;
         gap: var(--space-6);
         width: 100%;
+        margin-top: var(--space-8);
     }
 
     .recent h2 {
@@ -117,4 +78,9 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         font-weight: var(--fw-normal);
     }
 
+    @media (min-width: 1200px) {
+        .recent {
+            display: none;
+        }
+    }
 </style>

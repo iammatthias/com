@@ -3,10 +3,13 @@ export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import DocArticle from "@components/DocArticle.astro";
+import Deck from "@components/Deck.astro";
 import { getCollection } from "astro:content";
 import { renderKey, type DocumentData } from "@lib/farfield-loader";
 import { plainText } from "@lib/markdown-text";
 import { relatedDocs } from "@lib/content-query";
+import { deckColumns } from "@lib/deck";
+import { pageCacheKey } from "@lib/layout-fingerprint";
 
 export async function getStaticPaths() {
     const all = (await getCollection("docs")).map(
@@ -17,7 +20,7 @@ export async function getStaticPaths() {
         return {
             params: { publication: item.collection, slug: item.rkey },
             props: { item, related },
-            cacheKey: [item, ...related].map(renderKey).join(":"),
+            cacheKey: pageCacheKey([item, ...related].map(renderKey).join(":")),
         };
     });
 }
@@ -31,9 +34,12 @@ const metaDescription =
     item.description || plainText(item.body).slice(0, 180).trim();
 
 const markdownPath = `${item.href}.md`;
+
+const columns = await deckColumns();
 ---
 
 <BaseLayout
+    deck
     title={item.title}
     description={metaDescription}
     ogImage={`/${item.publication.slug}/${encodeURIComponent(item.title)}`}
@@ -50,5 +56,7 @@ const markdownPath = `${item.href}.md`;
     ]}
     markdownHref={markdownPath}
 >
-    <DocArticle item={item} related={related} />
+    <Deck columns={columns} current={item.collection} raw>
+        <DocArticle item={item} related={related} deck />
+    </Deck>
 </BaseLayout>

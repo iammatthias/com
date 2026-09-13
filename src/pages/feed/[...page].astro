@@ -2,6 +2,8 @@
 export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
+import Deck from "@components/Deck.astro";
+import { deckColumns } from "@lib/deck";
 import FeedEntryCard from "@components/FeedEntryCard.astro";
 import FeedInfiniteScroll from "@components/FeedInfiniteScroll.astro";
 import { getLiveCollection } from "astro:content";
@@ -50,14 +52,18 @@ const nextHref =
     paged.page < paged.totalPages
         ? pageHref("/feed", paged.page + 1)
         : null;
+
+const deckCols = await deckColumns();
 ---
 
 <BaseLayout
+    deck
     title={page > 1 ? `${title} — page ${page}` : title}
     description={description}
     ogImage="/feed"
     markdownHref="/feed.md"
 >
+    <Deck columns={deckCols} current={"feed"}>
     <header class="page-header">
         <h1>{title}</h1>
         <p>{description}</p>
@@ -82,6 +88,7 @@ const nextHref =
     )}
 
     {nextHref && <FeedInfiniteScroll nextHref={nextHref} />}
+    </Deck>
 </BaseLayout>
 
 <style>

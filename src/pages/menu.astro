@@ -1,15 +1,22 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
+import Deck from "@components/Deck.astro";
+import { deckColumns } from "@lib/deck";
 import MenuLinks from "@components/MenuLinks.astro";
+
+const deckCols = await deckColumns();
 ---
 
-<BaseLayout title="Menu" description="Site navigation." ogImage="/menu" noindex>
+<BaseLayout
+    deck title="Menu" description="Site navigation." ogImage="/menu" noindex>
+    <Deck columns={deckCols}>
     <article class="menu-page">
         <header>
             <h1>Menu</h1>
         </header>
         <MenuLinks />
     </article>
+    </Deck>
 </BaseLayout>
 
 <style>

@@ -2,6 +2,8 @@
 export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
+import Deck from "@components/Deck.astro";
+import { deckColumns } from "@lib/deck";
 import { CONTENT_SIGNAL, EXAMPLE_DOC_PATH, API_OPERATIONS, AGENT_SKILLS, AGENT_RESOURCES, SITE_ORIGIN } from "@lib/agent-surface";
 import type { MenuMeta } from "@lib/menu";
 
@@ -29,14 +31,18 @@ const faq = [
         answer: `No. The site's Content-Signal policy is ${CONTENT_SIGNAL}. Quoting with attribution and a link to the canonical URL is welcome.`,
     },
 ];
+
+const deckCols = await deckColumns();
 ---
 
 <BaseLayout
+    deck
     title="iammatthias.com developer documentation: API, GraphQL & MCP"
     description="JSON endpoints, an MCP server, markdown twins, and the full iammatthias.com corpus in one file. Public, free, and no key required."
     markdownHref="/developers.md"
     faq={faq}
 >
+    <Deck columns={deckCols}>
     <header class="page-header">
         <h1>iammatthias.com developer documentation</h1>
         <p>
@@ -128,4 +134,5 @@ curl "${SITE_ORIGIN}/llms-full.txt"`}</code></pre>
             </p>
         </section>
     </section>
+    </Deck>
 </BaseLayout>

@@ -2,6 +2,8 @@
 export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
+import Deck from "@components/Deck.astro";
+import { deckColumns } from "@lib/deck";
 import type { MenuMeta } from "@lib/menu";
 import { documentsByTag } from "@lib/content-query";
 
@@ -11,9 +13,13 @@ const byTag = await documentsByTag();
 const tags = [...byTag.entries()]
     .map(([tag, list]) => ({ tag, count: list.length }))
     .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+
+const deckCols = await deckColumns();
 ---
 
-<BaseLayout title="Tags" description="All tags across the site, by frequency.">
+<BaseLayout
+    deck title="Tags" description="All tags across the site, by frequency.">
+    <Deck columns={deckCols}>
     <header class="page-header">
         <h1>Tags</h1>
         <p>{tags.length} unique tags across the archive.</p>
@@ -33,6 +39,7 @@ const tags = [...byTag.entries()]
             ))}
         </ul>
     )}
+    </Deck>
 </BaseLayout>
 
 <style>

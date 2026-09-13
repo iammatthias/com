@@ -69,8 +69,8 @@ const docPath = await disc.evaluate(() =>
 );
 await disc.close();
 
-const routes = ["/", "/now", "/feed", "/tags", "/content", "/resume", docPath].filter(Boolean);
-for (const width of [390, 768]) {
+const routes = ["/", "/about", "/now", "/feed", "/tags", "/content", "/posts", "/resume", "/developers", docPath].filter(Boolean);
+for (const width of [320, 390, 430, 768, 834, 1024, 1180, 1280, 1440, 1728, 2560, 3440, 5120]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     for (const r of routes) {
         await page.goto(BASE + r, { waitUntil: "domcontentloaded" });

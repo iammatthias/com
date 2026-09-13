@@ -2,6 +2,9 @@
 export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
+import Deck from "@components/Deck.astro";
+import { deckColumns } from "@lib/deck";
+import { pageCacheKey } from "@lib/layout-fingerprint";
 import FeedCard from "@components/FeedCard.astro";
 import Pagination from "@components/Pagination.astro";
 import { paginationCacheKey, getPage, PAGE_SIZE } from "@lib/pagination";
@@ -21,7 +24,7 @@ export async function getStaticPaths() {
                     page: page === 1 ? undefined : `page/${page}`,
                 },
                 props: { tag, items, page },
-                cacheKey: paginationCacheKey(page, totalPages, slice.map(renderKey)),
+                cacheKey: pageCacheKey(paginationCacheKey(page, totalPages, slice.map(renderKey))),
             });
         }
     }
@@ -36,9 +39,12 @@ const { tag, items, page } = Astro.props as {
 
 const base = `/tags/${encodeURIComponent(tag)}`;
 const paged = getPage(items, page, base)!;
+
+const deckCols = await deckColumns();
 ---
 
 <BaseLayout
+    deck
     title={page > 1 ? `#${tag} — page ${page}` : `#${tag}`}
     description={`Entries tagged ${tag} — iammatthias.`}
     breadcrumbs={[
@@ -47,6 +53,7 @@ const paged = getPage(items, page, base)!;
     ]}
     pagination={{ prev: paged.prevHref, next: paged.nextHref }}
 >
+    <Deck columns={deckCols}>
     <header class="page-header">
         <h1>{tag}</h1>
         <p class="meta">
@@ -74,4 +81,5 @@ const paged = getPage(items, page, base)!;
         totalPages={paged.totalPages}
         basePath={base}
     />
+    </Deck>
 </BaseLayout>

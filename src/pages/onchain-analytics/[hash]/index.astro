@@ -1,6 +1,8 @@
 ---
 export const prerender = false;
 import BaseLayout from "@layouts/BaseLayout.astro";
+import Deck from "@components/Deck.astro";
+import { deckColumns } from "@lib/deck";
 import { setResponseCacheHeaders } from "@lib/cache";
 
 function hashToNumbers(hash: string): number[] {
@@ -227,9 +229,12 @@ setResponseCacheHeaders(Astro.response, undefined, {
     maxAge: 86400,
     swr: 604800,
 });
+
+const deckCols = await deckColumns();
 ---
 
 <BaseLayout
+    deck
     title={title}
     description={description}
     ogImage="/onchain-analytics"
@@ -238,6 +243,7 @@ setResponseCacheHeaders(Astro.response, undefined, {
       { label: `session ${hash.slice(0, 8)}…` },
     ]}
 >
+    <Deck columns={deckCols}>
     <article>
       <svg
         viewBox='-10 -10 140 160'
@@ -277,6 +283,7 @@ setResponseCacheHeaders(Astro.response, undefined, {
       </svg>
       <p class="hash">{hash}</p>
     </article>
+    </Deck>
 </BaseLayout>
 
 <style>

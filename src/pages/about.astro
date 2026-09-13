@@ -2,17 +2,23 @@
 export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
+import Deck from "@components/Deck.astro";
+import { deckColumns } from "@lib/deck";
 import { AUTHOR, SOCIAL_LINKS } from "@lib/identity";
 import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = { group: "personal", label: "about", order: 1 };
+
+const deckCols = await deckColumns();
 ---
 
 <BaseLayout
+    deck
     title="About"
     description="Matthias Jordan is a photographer and solutions engineer in Southern California. This is his personal archive."
     profilePage={true}
 >
+    <Deck columns={deckCols}>
     <header class="page-header">
         <h1>About</h1>
     </header>
@@ -74,4 +80,5 @@ export const menu: MenuMeta = { group: "personal", label: "about", order: 1 };
             </p>
         </section>
     </section>
+    </Deck>
 </BaseLayout>

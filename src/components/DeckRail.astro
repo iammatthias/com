@@ -1,0 +1,101 @@
+---
+import GlassArch from "@components/GlassArch.astro";
+import { SITE_LINKS, type DeckColumnModel } from "@lib/deck";
+import { SITE_IDENTITY } from "@lib/agent-surface";
+
+interface Props {
+    columns: DeckColumnModel[];
+    current?: string;
+    home?: boolean;
+}
+
+const { columns, current, home = false } = Astro.props;
+---
+
+<aside
+    class:list={["deck-col", "deck-col--rail", { "deck-col--rail-home": home }]}
+    data-deck-col="rail"
+    aria-label="Site navigation"
+>
+    <div class="deck-col__body" data-deck-scroll="rail">
+        {home ? (
+            <section class="cover">
+                <GlassArch />
+                <section class="intro" aria-label="Introduction">
+                    <h1 class="greeting">Hi, I am Matthias.</h1>
+                    <p>
+                        This is my cozy corner on the web. A collection of
+                        photographs, projects, recipes, and notes.
+                    </p>
+                </section>
+            </section>
+        ) : (
+            <a href="/" class="rail-identity">{SITE_IDENTITY.title}</a>
+        )}
+
+        <nav class="rail-nav" aria-label="Sections">
+            <ul>
+                {columns.map((c) => (
+                    <li>
+                        <a
+                            href={c.href}
+                            aria-current={c.id === current ? "page" : undefined}
+                        >
+                            <span>{c.label}</span>
+                            <span class="rail-count">{c.total}</span>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </nav>
+
+        <nav class="rail-nav rail-nav--site" aria-label="Site">
+            <ul>
+                {SITE_LINKS.map((l) => (
+                    <li>
+                        <a
+                            href={l.href}
+                            aria-current={
+                                Astro.url.pathname === l.href ? "page" : undefined
+                            }
+                        >{l.title}</a>
+                    </li>
+                ))}
+            </ul>
+        </nav>
+
+        <slot />
+    </div>
+</aside>
+
+<style>
+    .cover {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-4);
+        width: 100%;
+    }
+
+    .intro {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        width: 100%;
+        max-width: 60ch;
+    }
+
+    .intro .greeting {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-2xl);
+        font-weight: var(--fw-normal);
+        line-height: var(--lh-tight);
+    }
+
+    .intro p {
+        font-size: var(--fs-base);
+        line-height: var(--lh-relaxed);
+        text-wrap: pretty;
+    }
+</style>
