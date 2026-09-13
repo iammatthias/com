@@ -82,6 +82,39 @@ for (const width of [320, 390, 430, 768, 834, 1024, 1180, 1280, 1440, 1728, 2560
 
 const LONG_WORD = "Supercalifragilistic".repeat(20);
 const LONG_URL = "https://example.com/" + "path-segment/".repeat(30) + "?q=" + "x".repeat(200);
+const deck = await browser.newPage({ viewport: { width: 2560, height: 1400 } });
+await deck.goto(`${BASE}/`, { waitUntil: "networkidle" });
+await deck.waitForTimeout(600);
+const circuit = await deck.evaluate(() => {
+    const root = document.querySelector("[data-deck-root]");
+    const rail = document.querySelector(".deck-col--rail");
+    const first = rail?.nextElementSibling;
+    const tiles = [...document.querySelectorAll(".column-tile")];
+    return {
+        headerHidden: getComputedStyle(document.querySelector("body > header")).display === "none",
+        railOverlap: rail && first ? Math.round(rail.getBoundingClientRect().right - first.getBoundingClientRect().left) : null,
+        tiles: tiles.length,
+        mounted: tiles.filter((t) => t.children.length > 0).length,
+        scrollLeft: root?.scrollLeft ?? null,
+    };
+});
+const deckOk = circuit.headerHidden && circuit.railOverlap === 0 && circuit.tiles > 0 && circuit.mounted === circuit.tiles && circuit.scrollLeft === 0;
+if (!deckOk) failures++;
+console.log(`${deckOk ? "  ok " : "FAIL "} deck shell @2560px — ${JSON.stringify(circuit)}`);
+const before = await deck.evaluate(() => [...document.querySelectorAll(".deck-col--peek")].filter((c) => !c.hidden).length);
+await deck.click("[data-deck-controls] > summary");
+const box = await deck.$("[data-deck-controls-panel] input[type=checkbox]");
+await box.uncheck();
+await deck.reload({ waitUntil: "networkidle" });
+await deck.waitForTimeout(600);
+const after = await deck.evaluate(() => [...document.querySelectorAll(".deck-col--peek")].filter((c) => !c.hidden).length);
+const stored = await deck.evaluate(() => localStorage.getItem("deck:hidden"));
+const toggleOk = before > 0 && after === before - 1 && !!stored;
+if (!toggleOk) failures++;
+console.log(`${toggleOk ? "  ok " : "FAIL "} column close persists across reload — ${before} → ${after}, stored=${stored}`);
+await deck.evaluate(() => localStorage.clear());
+await deck.close();
+
 const page = await browser.newPage({ viewport: { width: 390, height: 900 } });
 await page.goto(`${BASE}/feed`, { waitUntil: "domcontentloaded" });
 await page.evaluate(({ LONG_WORD, LONG_URL }) => {

@@ -87,9 +87,9 @@ async function feedMarkup(
     return text ? `<p>${escapeHtml(text)}</p>` : "";
 }
 
-export type ComponentSurface = "site" | "feed";
+type ComponentSurface = "site" | "feed";
 
-export interface ComponentPass {
+interface ComponentPass {
     source: string;
     rendered: string[];
     used: string[];

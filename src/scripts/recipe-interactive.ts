@@ -51,7 +51,7 @@ function fixUnits(rest: string, qty: number): string {
     );
 }
 
-export function scaleAmount(base: string, f: number): string | null {
+function scaleAmount(base: string, f: number): string | null {
     const m = base.match(AMOUNT_RE);
     if (!m) return null;
     const a = qtyValue(m[1]) * f;

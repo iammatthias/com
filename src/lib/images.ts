@@ -7,8 +7,8 @@ export const SERIES_WIDTHS = [320, 480, 640, 800];
 export const SERIES_SIZES =
     "(max-width: 480px) calc(100vw - 32px), (max-width: 768px) calc((100vw - 48px) / 2), 320px";
 
-export const CAROUSEL_WIDTHS = [320, 480, 640, 800];
-export const CAROUSEL_SIZES = "(max-width: 768px) 80vw, 520px";
+const CAROUSEL_WIDTHS = [320, 480, 640, 800];
+const CAROUSEL_SIZES = "(max-width: 768px) 80vw, 520px";
 
 export const ARCH_WIDTHS = [480, 720, 960, 1280, 1600];
 export const ARCH_SIZES =

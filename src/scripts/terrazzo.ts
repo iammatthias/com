@@ -131,7 +131,7 @@ interface Chip {
     sub: number;
 }
 
-export function paintTerrazzo(
+function paintTerrazzo(
     canvas: HTMLCanvasElement,
     seed: number,
     width: number,
@@ -239,7 +239,7 @@ export function paintTerrazzo(
     }
 }
 
-export function mountTerrazzo(el: HTMLElement): void {
+function mountTerrazzo(el: HTMLElement): void {
     const seed = Number(el.dataset.seed ?? "1") || 1;
     const canvas = document.createElement("canvas");
     canvas.style.display = "block";

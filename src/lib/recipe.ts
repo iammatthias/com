@@ -1,6 +1,7 @@
 
 import { parse as parseYAML } from "yaml";
 import { marked } from "marked";
+import { slugify } from "./slugs";
 
 export type Ingredient = {
     id: string; item: string; amount?: string; note?: string; group?: string;
@@ -14,17 +15,15 @@ export type Recipe = {
     yield?: string; time?: string; source?: string; sourceURL?: string;
     notes?: string; ingredients: Ingredient[]; steps: Step[];
 };
-export type Cell = {
+type Cell = {
     step?: Step; text: string; for?: string; rowSpan: number; colSpan: number;
     vertical: boolean; gap: boolean;
 };
-export type Row = { ingredient: Ingredient; cells: Cell[] };
-export type Grid = { title: string; rows: Row[]; width: number };
+type Row = { ingredient: Ingredient; cells: Cell[] };
+type Grid = { title: string; rows: Row[]; width: number };
 
 const AUTO_VERTICAL_MAX = 34;
 
-const slug = (s: string) =>
-    s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 export function parseRecipe(src: string): Recipe {
     const raw = parseYAML(src) ?? {};
@@ -39,7 +38,7 @@ export function parseRecipe(src: string): Recipe {
     const taken = new Set<string>();
     rec.ingredients.forEach((ing, i) => {
         if (!ing.item?.trim()) throw new Error(`recipe: ingredient ${i + 1} has no item`);
-        let id = ing.id || slug(ing.item) || `i${i + 1}`;
+        let id = ing.id || slugify(ing.item) || `i${i + 1}`;
         const base = id;
         for (let n = 2; taken.has(id); n++) id = `${base}-${n}`;
         taken.add(id);
@@ -233,7 +232,7 @@ function inline(s: string): string {
 
 const fold = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "");
 
-export function forSeconds(f: string | undefined): number | null {
+function forSeconds(f: string | undefined): number | null {
     if (!f) return null;
     const pick = (m: RegExpMatchArray | null) => {
         if (!m) return 0;

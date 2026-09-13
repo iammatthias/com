@@ -1,5 +1,6 @@
 
 import { getCollection, getLiveCollection } from "astro:content";
+import { memo } from "./memo";
 
 export interface MenuMeta {
     group: string;
@@ -21,11 +22,6 @@ export interface PublicationLink {
     label: string;
     order: number;
 }
-
-const PUB_LINKS_TTL_MS = 60_000;
-let pubLinksCache: { links: PublicationLink[]; expires: number } | null =
-    null;
-let pubLinksInFlight: Promise<PublicationLink[]> | null = null;
 
 async function loadPublicationLinks(): Promise<PublicationLink[]> {
     const [pubResult, docResult] = await Promise.all([
@@ -65,24 +61,10 @@ async function loadPublicationLinks(): Promise<PublicationLink[]> {
 }
 
 export function getPublicationLinks(): Promise<PublicationLink[]> {
-    const now = Date.now();
-    if (pubLinksCache && pubLinksCache.expires > now) {
-        return Promise.resolve(pubLinksCache.links);
-    }
-    if (pubLinksInFlight) return pubLinksInFlight;
-    pubLinksInFlight = loadPublicationLinks()
-        .then((links) => {
-            pubLinksCache = { links, expires: now + PUB_LINKS_TTL_MS };
-            pubLinksInFlight = null;
-            return links;
-        })
-        .catch((err) => {
-            pubLinksInFlight = null;
-            console.error(
-                "[menu] Farfield publications fetch failed:",
-                err,
-            );
-            return pubLinksCache?.links ?? [];
-        });
-    return pubLinksInFlight;
+    return memo("publication-links", loadPublicationLinks, {
+        onError: (err, stale) => {
+            console.error("[menu] Farfield publications fetch failed:", err);
+            return stale ?? [];
+        },
+    });
 }

@@ -1,29 +1,10 @@
 // @ts-check
 import path from "node:path";
 import { readFile } from "node:fs/promises";
-import { createHash } from "node:crypto";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { layoutFingerprint } from "./scripts/layout-fingerprint.mjs";
 import { defineConfig, envField, fontProviders } from "astro/config";
 import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
-
-const LAYOUT_SOURCES = ["src/styles", "src/layouts", "src/components", "src/scripts"];
-
-function layoutFingerprint() {
-    const hash = createHash("sha1");
-    const walk = (dir) => {
-        for (const name of readdirSync(dir).sort()) {
-            const full = path.join(dir, name);
-            if (statSync(full).isDirectory()) walk(full);
-            else {
-                hash.update(full);
-                hash.update(readFileSync(full));
-            }
-        }
-    };
-    for (const dir of LAYOUT_SOURCES) walk(dir);
-    return hash.digest("hex").slice(0, 12);
-}
 
 export default defineConfig({
     server: {

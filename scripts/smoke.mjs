@@ -201,6 +201,10 @@ try {
         probe: (b) => (b.includes("cozy corner") ? null : "about copy missing"),
     });
     await checkRedirect("/post/12345", "/content");
+    await checkRedirect("/posts/pure-internet", "/posts/1731955749292-pure-internet");
+    await checkRedirect("/posts/pure-internet.md", "/posts/1731955749292-pure-internet.md");
+    await checkRedirect("/recipes/brandy-peppercorn-sauce-two-ways", "/recipes/1766509866956-brandy-peppercorn-sauce-two-ways");
+    await checkRedirect("/posts/pure-internet?ref=x", "/posts/1731955749292-pure-internet?ref=x");
     await checkRedirect("/content/old/thing", "/content");
     await checkRedirect("/now/", "/now");
     await checkRedirect("/sitemap-index.xml", "/sitemap.xml");

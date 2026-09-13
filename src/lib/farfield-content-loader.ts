@@ -6,17 +6,10 @@ import {
     postToFeedEntry,
     renderKey,
 } from "./farfield-loader";
-import type { Collection, Entry, Post } from "./farfield";
+import { readSecret, type Collection, type Entry, type Post } from "./farfield";
 
 const CONTENT = "https://content.farfield.systems";
 const FEED = "https://feed.farfield.systems";
-
-function env(name: string): string | undefined {
-    return (
-        (import.meta.env?.[name] as string | undefined) ??
-        process.env[name]
-    );
-}
 
 async function fetchJSON<T>(
     url: string,
@@ -42,18 +35,18 @@ async function fetchJSON<T>(
 }
 
 function draftsQuery(): { qs: string; key: string | undefined } {
-    const admin = env("CONTENT_API_KEY");
+    const admin = readSecret("CONTENT_API_KEY");
     if (import.meta.env.DEV && admin) {
         return { qs: "?status=all", key: admin };
     }
-    return { qs: "", key: env("CONTENT_READ_KEY") };
+    return { qs: "", key: readSecret("CONTENT_READ_KEY") };
 }
 
 let collectionsOnce: Promise<Collection[]> | null = null;
 function getCollectionsOnce(): Promise<Collection[]> {
     collectionsOnce ??= fetchJSON<{ collections: Collection[] }>(
         `${CONTENT}/api/collections`,
-        env("CONTENT_READ_KEY"),
+        readSecret("CONTENT_READ_KEY"),
         undefined,
     ).then((r) => r.data!.collections);
     return collectionsOnce;
@@ -124,7 +117,7 @@ export function farfieldPostsLoader(): Loader {
         async load({ store, meta, logger }: LoaderContext) {
             const res = await fetchJSON<{ posts: Post[] }>(
                 `${FEED}/api/posts`,
-                env("FEED_READ_KEY"),
+                readSecret("FEED_READ_KEY"),
                 store.keys().length > 0
                     ? (meta.get("posts-etag") ?? undefined)
                     : undefined,

@@ -160,7 +160,7 @@ function ribbons(innerInset: number, r: number): string {
 
 const POLYCHROME = ["laurel", "ochre", "plum", "terracotta"] as const;
 
-export function azulejoCapHtml(letter: string, seed: number): string {
+function azulejoCapHtml(letter: string, seed: number): string {
     if (!/^[A-Za-z0-9]$/.test(letter)) return "";
     const rnd = mulberry32(seed);
     const { sizeEm, fieldR } = fitFor(letter);

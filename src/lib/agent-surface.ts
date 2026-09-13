@@ -45,7 +45,7 @@ export const SEARCH_ONLY_CRAWLERS = ["Bingbot"] as const;
 
 export const MCP_PROTOCOL_VERSION = "2025-06-18";
 
-export interface ApiOperation {
+interface ApiOperation {
     path: string;
     operationId: string;
     summary: string;
@@ -134,7 +134,7 @@ export const API_OPERATIONS: ApiOperation[] = [
     },
 ];
 
-export interface AgentSkill {
+interface AgentSkill {
     name: string;
     title: string;
     description: string;

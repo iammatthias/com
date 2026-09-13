@@ -20,7 +20,7 @@ export async function documentsByTag(): Promise<Map<string, DocumentData[]>> {
     return byTag;
 }
 
-export const RELATED_COUNT = 6;
+const RELATED_COUNT = 6;
 
 export function relatedDocs(
     doc: DocumentData,

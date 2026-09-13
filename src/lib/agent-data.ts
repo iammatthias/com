@@ -47,7 +47,7 @@ function toItem(d: DocumentData): ContentItem {
     };
 }
 
-export const allDocuments = publishedDocs;
+const allDocuments = publishedDocs;
 
 export async function listContent(opts: {
     section?: string;
@@ -75,7 +75,7 @@ export async function listSections(): Promise<
     }));
 }
 
-export interface SearchHit extends ContentItem {
+interface SearchHit extends ContentItem {
     score: number;
 }
 

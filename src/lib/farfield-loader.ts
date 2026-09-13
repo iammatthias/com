@@ -1,48 +1,9 @@
 
 import type { LiveLoader } from "astro/loaders";
-import {
-    blobURL,
-    extractBodyEmbeds,
-    getCollections,
-    getEntries,
-    getPosts,
-    getSeries,
-    getBlobMeta,
-    type BlobMeta,
-    type Collection,
-    type Entry,
-    type Post,
-} from "./farfield";
-
-const TTL_MS = 60_000;
-
-interface CacheEntry<T> {
-    data: T;
-    expires: number;
-}
-
-const ttlCache = new Map<string, CacheEntry<unknown>>();
-const inFlight = new Map<string, Promise<unknown>>();
-
-async function memo<T>(key: string, load: () => Promise<T>): Promise<T> {
-    const now = Date.now();
-    const hit = ttlCache.get(key);
-    if (hit && hit.expires > now) return hit.data as T;
-    const pending = inFlight.get(key);
-    if (pending) return pending as Promise<T>;
-    const promise = load()
-        .then((data) => {
-            ttlCache.set(key, { data, expires: now + TTL_MS });
-            inFlight.delete(key);
-            return data;
-        })
-        .catch((err) => {
-            inFlight.delete(key);
-            throw err;
-        });
-    inFlight.set(key, promise as Promise<unknown>);
-    return promise;
-}
+import { blobURL, getCollections, getEntries, getPosts, getSeries, getBlobMeta, type BlobMeta, type Collection, type Entry, type Post } from "./farfield";
+import { memo } from "./memo";
+import { isStampedSlug, unstampSlug, humanize } from "./slugs";
+import { extractBodyEmbeds } from "./embeds";
 
 const cachedCollections = () =>
     memo<Collection[]>("collections", getCollections);
@@ -127,13 +88,6 @@ export function entriesOf<T>(
     return (rows ?? []).map((e) => e.data as T);
 }
 
-function humanize(slug: string): string {
-    return slug
-        .split("-")
-        .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
-        .join(" ");
-}
-
 export function publicationFrom(collection: Collection): PublicationData {
     return {
         slug: collection.slug,
@@ -174,15 +128,7 @@ export function entryToDocument(
     };
 }
 
-const STAMPED_SLUG = /^\d{13,}-/;
-
-export function unstampSlug(rkey: string): string {
-    return rkey.replace(STAMPED_SLUG, "");
-}
-
-export function isStampedSlug(slug: string): boolean {
-    return STAMPED_SLUG.test(slug);
-}
+export { isStampedSlug, unstampSlug };
 
 export async function stampedHref(
     collection: string,

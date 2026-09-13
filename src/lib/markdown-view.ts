@@ -1,5 +1,6 @@
 
-import { blobURL, fullEmbedRe, getSeries } from "./farfield";
+import { blobURL, getSeries } from "./farfield";
+import { fullEmbedRe } from "./embeds";
 import type {
     DocumentData,
     FeedEntryData,

@@ -1,8 +1,9 @@
 import { getCollection } from "astro:content";
 import type { DocumentData, PublicationData } from "./farfield-loader";
 import { publishedDocs } from "./content-query";
+import { noteTitle } from "./markdown-text";
 
-export interface DeckItem {
+interface DeckItem {
     href: string;
     title: string;
     date: string;
@@ -16,20 +17,8 @@ export interface DeckColumnModel {
     peek: DeckItem[];
 }
 
-export const DECK_PEEK = 22;
+const DECK_PEEK = 22;
 
-export const SITE_LINKS: DeckItem[] = [
-    { href: "/about", title: "About", date: "" },
-    { href: "/now", title: "Now", date: "" },
-    { href: "/resume", title: "Resume", date: "" },
-    { href: "/contact", title: "Contact", date: "" },
-    { href: "/content", title: "All content", date: "" },
-    { href: "/tags", title: "Tags", date: "" },
-    { href: "/developers", title: "Developers", date: "" },
-    { href: "/rss.xml", title: "RSS", date: "" },
-    { href: "/llms.txt", title: "llms.txt", date: "" },
-    { href: "/mcp", title: "MCP server", date: "" },
-];
 
 function toDeckItem(d: DocumentData): DeckItem {
     return { href: d.href, title: d.title, date: d.publishedAt };
@@ -90,23 +79,8 @@ async function feedColumn(): Promise<DeckColumnModel | null> {
         total: posts.length,
         peek: posts.slice(0, DECK_PEEK).map((p) => ({
             href: `/feed/${p.rkey}`,
-            title: firstLine(p.body),
+            title: noteTitle(p.body),
             date: p.createdAt,
         })),
     };
-}
-
-const NOTE_TITLE_MAX = 90;
-
-function firstLine(body: string): string {
-    const text = body
-        .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
-        .replace(/<[^>]+>/g, "")
-        .replace(/[#*_`>]/g, "")
-        .trim();
-    const line = text.split("\n").find((l) => l.trim().length > 0) ?? "";
-    const trimmed = line.trim();
-    return trimmed.length > NOTE_TITLE_MAX
-        ? `${trimmed.slice(0, NOTE_TITLE_MAX).trimEnd()}…`
-        : trimmed || "Note";
 }

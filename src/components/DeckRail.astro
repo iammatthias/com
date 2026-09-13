@@ -1,7 +1,8 @@
 ---
 import GlassArch from "@components/GlassArch.astro";
 import ColumnTile from "@components/ColumnTile.astro";
-import { SITE_LINKS, type DeckColumnModel } from "@lib/deck";
+import type { DeckColumnModel } from "@lib/deck";
+import { getMenuGroups } from "@lib/site-menu";
 import { SITE_IDENTITY } from "@lib/agent-surface";
 
 interface Props {
@@ -11,6 +12,10 @@ interface Props {
 }
 
 const { columns, current, home = false } = Astro.props;
+
+const siteGroups = (await getMenuGroups()).filter(
+    (g) => g.label && g.label !== "publications",
+);
 ---
 
 <aside
@@ -53,20 +58,23 @@ const { columns, current, home = false } = Astro.props;
             </ul>
         </nav>
 
-        <nav class="rail-nav rail-nav--site" aria-label="Site">
-            <ul>
-                {SITE_LINKS.map((l) => (
-                    <li>
-                        <a
-                            href={l.href}
-                            aria-current={
-                                Astro.url.pathname === l.href ? "page" : undefined
-                            }
-                        >{l.title}</a>
-                    </li>
-                ))}
-            </ul>
-        </nav>
+        {siteGroups.map((group) => (
+            <nav class="rail-nav rail-nav--site" aria-label={group.label}>
+                <span class="rail-nav__label">{group.label}</span>
+                <ul>
+                    {group.links.map((l) => (
+                        <li>
+                            <a
+                                href={l.href}
+                                aria-current={
+                                    Astro.url.pathname === l.href ? "page" : undefined
+                                }
+                            >{l.label}</a>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+        ))}
 
         <div class="rail-tools">
             <details class="deck-controls" data-deck-controls>

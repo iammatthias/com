@@ -1,5 +1,5 @@
 import { marked } from "marked";
-import { EMBED_PATTERN_SOURCE } from "./farfield";
+import { EMBED_PATTERN_SOURCE } from "./embeds";
 import { extractRecipes, recipeText } from "./recipe";
 import { componentsToText } from "./doc-components/transform";
 
@@ -7,7 +7,7 @@ function freshEmbedRe(): RegExp {
     return new RegExp(`${EMBED_PATTERN_SOURCE}\\s*`, "g");
 }
 
-export function stripEmbeds(markdown: string): string {
+function stripEmbeds(markdown: string): string {
     return markdown.replace(freshEmbedRe(), "");
 }
 
@@ -20,7 +20,8 @@ export function plainText(markdown: string): string {
         : body;
     return stripEmbeds(componentsToText(withRecipeWords))
         .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-        .replace(/[*_`>#]+/g, " ")
+        .replace(/[*_`]+/g, "")
+        .replace(/[>#]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
 }
@@ -51,4 +52,17 @@ export function transformAlerts(html: string): string {
             );
         },
     );
+}
+
+const NOTE_TITLE_MAX = 90;
+
+export function noteTitle(markdown: string, max = NOTE_TITLE_MAX): string {
+    const line =
+        stripEmbeds(markdown)
+            .split("\n")
+            .map((l) => plainText(l))
+            .find((l) => l.length > 0) ?? "";
+    return line.length > max
+        ? `${line.slice(0, max).trimEnd()}…`
+        : line || "Note";
 }

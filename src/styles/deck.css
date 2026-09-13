@@ -224,6 +224,15 @@
         color: var(--color-muted);
     }
 
+    .rail-nav__label {
+        display: block;
+        margin-bottom: var(--space-1);
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: var(--fs-xs);
+        color: var(--color-muted);
+    }
+
     .rail-nav a:hover,
     .rail-nav a[aria-current="page"] {
         color: var(--color-accent);
@@ -245,12 +254,6 @@
         flex: 3 1 var(--deck-main);
         min-width: var(--deck-main);
         max-width: none;
-    }
-
-    .deck-col--identity {
-        flex: 1.4 1 360px;
-        min-width: 360px;
-        max-width: 460px;
     }
 
     .deck-col--main:has(.prose) {

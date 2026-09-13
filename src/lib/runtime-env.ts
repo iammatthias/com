@@ -1,4 +1,4 @@
-export interface KVLite {
+interface KVLite {
     get(key: string, type: "text"): Promise<string | null>;
     getWithMetadata(
         key: string,

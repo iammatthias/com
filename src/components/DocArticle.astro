@@ -5,7 +5,8 @@ import FeedCard from "@components/FeedCard.astro";
 import Lightbox from "@components/Lightbox.astro";
 import type { DocumentData } from "@lib/farfield-loader";
 import { fmtDateLong as fmtDate, hashSeed } from "@lib/format";
-import { renderMarkdownBody, readingTime, buildToc } from "@lib/doc-render";
+import { renderMarkdownBody } from "@lib/doc-render";
+import { readingTime, buildToc } from "@lib/toc";
 import { withLettrine } from "@lib/azulejo-cap";
 
 interface Props {

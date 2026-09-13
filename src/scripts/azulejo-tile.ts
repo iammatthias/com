@@ -18,7 +18,7 @@ import {
 } from "@components/AzulejoTile/recipe";
 import { hashSeed } from "@lib/format";
 
-export interface AzulejoOptions {
+interface AzulejoOptions {
     seed?: number;
     size?: number;
     wildness?: number;

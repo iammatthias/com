@@ -1,7 +1,7 @@
 
 import { SITE_IDENTITY } from "./agent-surface";
 
-export interface SocialLink {
+interface SocialLink {
     name: string;
     url: string;
     username: string;

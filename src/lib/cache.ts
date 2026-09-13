@@ -1,9 +1,9 @@
-export interface CacheHintLike {
+interface CacheHintLike {
     lastModified?: Date;
     tags?: string[];
 }
 
-export interface CacheHeaderOptions {
+interface CacheHeaderOptions {
     maxAge?: number;
     swr?: number;
     extraTags?: string[];

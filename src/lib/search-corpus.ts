@@ -4,7 +4,7 @@ import type { DocumentData, FeedEntryData } from "@lib/farfield-loader";
 
 export { SEARCH_DIMS, SEARCH_MODEL } from "@lib/search-model";
 
-export interface SearchCorpusItem {
+interface SearchCorpusItem {
     href: string;
     title: string;
     kind: string;
