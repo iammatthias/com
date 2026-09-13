@@ -1,6 +1,7 @@
 ---
 import DeckColumn from "@components/DeckColumn.astro";
 import DeckRail from "@components/DeckRail.astro";
+import ColumnTile from "@components/ColumnTile.astro";
 import type { DeckColumnModel } from "@lib/deck";
 
 interface Props {
@@ -46,6 +47,7 @@ const peeks = columns.filter((c) => c.id !== current);
     >
         {label && (
             <header class="deck-col__head">
+                <ColumnTile seed={`column:${current ?? "main"}`} />
                 <h2 class="deck-col__title" id="deck-head-main">
                     {href ? <a href={href}>{label}</a> : label}
                 </h2>

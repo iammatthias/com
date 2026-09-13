@@ -1,3 +1,5 @@
+import { mountAzulejoTile } from "@src/scripts/azulejo-tile";
+
 const DECK_QUERY = "(min-width: 1200px)";
 const STORE_PREFIX = "deck:";
 
@@ -208,8 +210,25 @@ function wireColumnToggles(): void {
     }
 }
 
+function mountTiles(): void {
+    for (const el of document.querySelectorAll<HTMLElement>(
+        "[data-azulejo-seed]",
+    )) {
+        if (el.dataset.azulejoMounted !== undefined) continue;
+        el.dataset.azulejoMounted = "";
+        const size = Number(el.dataset.azulejoSize) || 22;
+        const alt = el.dataset.azulejoAlt ?? "";
+        if (el.dataset.azulejoLive !== undefined) {
+            mountAzulejoTile(el, { size, alt, refireOnClick: true });
+        } else {
+            mountAzulejoTile(el, { size, alt, seed: Number(el.dataset.azulejoSeed) });
+        }
+    }
+}
+
 function init(): void {
     if (!active()) return;
+    mountTiles();
     wireColumnToggles();
     restoreScrolls();
     trackScrolls();

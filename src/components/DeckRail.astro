@@ -1,5 +1,6 @@
 ---
 import GlassArch from "@components/GlassArch.astro";
+import ColumnTile from "@components/ColumnTile.astro";
 import { SITE_LINKS, type DeckColumnModel } from "@lib/deck";
 import { SITE_IDENTITY } from "@lib/agent-surface";
 
@@ -30,7 +31,10 @@ const { columns, current, home = false } = Astro.props;
                 </section>
             </section>
         ) : (
-            <a href="/" class="rail-identity">{SITE_IDENTITY.title}</a>
+            <div class="rail-brand">
+                <ColumnTile live size={32} alt={SITE_IDENTITY.title} />
+                <a href="/" class="rail-identity">{SITE_IDENTITY.title}</a>
+            </div>
         )}
 
         <nav class="rail-nav" aria-label="Sections">
@@ -63,6 +67,14 @@ const { columns, current, home = false } = Astro.props;
                 ))}
             </ul>
         </nav>
+
+        <div class="rail-tools">
+            <details class="deck-controls" data-deck-controls>
+                <summary>columns</summary>
+                <div class="deck-controls__panel" data-deck-controls-panel></div>
+            </details>
+            <a href="/menu" data-menu-trigger>menu</a>
+        </div>
 
         <slot />
     </div>

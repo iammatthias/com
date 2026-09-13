@@ -1,4 +1,5 @@
 ---
+import ColumnTile from "@components/ColumnTile.astro";
 import { fmtDate } from "@lib/format";
 import type { DeckColumnModel } from "@lib/deck";
 
@@ -15,6 +16,7 @@ const { column } = Astro.props;
     aria-labelledby={`deck-head-${column.id}`}
 >
     <header class="deck-col__head">
+        <ColumnTile seed={`column:${column.id}`} />
         <h2 class="deck-col__title" id={`deck-head-${column.id}`}>
             <a href={column.href}>{column.label}</a>
         </h2>

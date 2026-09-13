@@ -28,8 +28,20 @@
 }
 
 .rail-identity,
+.rail-brand,
+.rail-tools,
 .rail-nav {
     display: none;
+}
+
+.column-tile {
+    display: inline-block;
+    flex: none;
+    inline-size: var(--tile, 22px);
+    block-size: var(--tile, 22px);
+    border-radius: 2px;
+    overflow: hidden;
+    vertical-align: middle;
 }
 
 .deck-col__head {
@@ -83,9 +95,7 @@
     }
 
     body[data-deck] > header {
-        max-width: none;
-        padding: var(--space-3) var(--space-5);
-        border-bottom: 1px solid var(--color-border);
+        display: none;
     }
 
     body[data-deck] > footer {
@@ -262,10 +272,40 @@
 
     .deck-col__head {
         flex: 0 0 auto;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        column-gap: var(--space-3);
         min-height: var(--deck-head);
         padding: var(--space-3) var(--space-4);
         margin-bottom: 0;
         background: var(--color-bg);
+    }
+
+    .rail-brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+    }
+
+    .rail-tools {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-4);
+        font-size: var(--fs-sm);
+    }
+
+    .rail-tools a {
+        color: var(--color-muted);
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+    }
+
+    .rail-tools .deck-controls__panel {
+        position: static;
+        margin-top: var(--space-2);
+        box-shadow: none;
+        min-width: 0;
     }
 
     .deck-col__body {

@@ -1,5 +1,6 @@
 ---
 import RecordColophon from "@components/RecordColophon.astro";
+import ColumnTile from "@components/ColumnTile.astro";
 import FeedCard from "@components/FeedCard.astro";
 import Lightbox from "@components/Lightbox.astro";
 import type { DocumentData } from "@lib/farfield-loader";
@@ -71,6 +72,7 @@ const markdownPath = `${item.href}.md`;
     aria-label="Document details"
 >
     <header class="deck-col__head">
+        <ColumnTile seed="column:details" />
         <h2 class="deck-col__title">details</h2>
     </header>
     <div class="deck-col__body" data-deck-scroll="details">
