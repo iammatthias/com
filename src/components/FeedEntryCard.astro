@@ -23,6 +23,6 @@ const noteHtml = proseHtml(item.body);
         <time datetime={item.createdAt}>{fmtDate(item.createdAt)}</time>
         <span aria-hidden="true">→</span>
     </a>
-    {noteHtml && <div class="feed-note" set:html={noteHtml} />}
+    {noteHtml && <div class="feed-note flow" set:html={noteHtml} />}
     <FeedMedia media={media} loading="lazy" />
 </li>

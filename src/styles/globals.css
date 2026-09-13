@@ -340,9 +340,12 @@ blockquote > * + * {
     margin-top: var(--space-3);
 }
 
+blockquote > * + cite {
+    margin-top: var(--space-2);
+}
+
 blockquote cite {
     display: block;
-    margin-top: var(--space-2);
     font-size: var(--fs-sm);
     font-style: normal;
     color: var(--color-muted);
@@ -528,21 +531,6 @@ video {
     }
 }
 
-.feed-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-    gap: var(--space-5);
-    align-items: start;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-@supports (grid-template-rows: masonry) {
-    .feed-grid {
-        grid-template-rows: masonry;
-    }
-}
 
 .card {
     list-style: none;
@@ -623,14 +611,12 @@ video {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--color-border);
     position: relative;
 }
 
-.feed-item:first-child {
-    padding-top: 0;
-    border-top: 0;
+.feed > * + * {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-5);
 }
 
 .feed-media {
@@ -705,13 +691,10 @@ video {
 }
 
 .feed-note {
+    --flow-gap: var(--space-3);
     margin: 0;
     font-size: var(--fs-base);
     line-height: var(--lh-relaxed);
-}
-
-.feed-note > * + * {
-    margin-top: var(--space-3);
 }
 
 .feed-note a {
@@ -791,7 +774,6 @@ video {
     font-size: var(--fs-sm);
     color: var(--color-muted);
     text-decoration: none;
-    margin-left: var(--space-2);
     white-space: nowrap;
 }
 

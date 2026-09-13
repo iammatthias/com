@@ -1,5 +1,6 @@
 ---
 import "@styles/globals.css";
+import "@styles/layout.css";
 import "@styles/deck.css";
 import SiteMenu from "@components/SiteMenu.astro";
 import HeaderTile from "@components/HeaderTile.astro";
@@ -182,7 +183,7 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
             </slot>
         </header>
 
-        <main>
+        <main class="page">
             {breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
             <slot />
         </main>
@@ -265,15 +266,5 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
         max-width: var(--content-max);
         display: flex;
         flex-direction: column;
-    }
-
-    main > :global(* + *) {
-        margin-top: var(--space-8);
-    }
-    main > :global(.page-header + *) {
-        margin-top: var(--space-7);
-    }
-    main > :global(.breadcrumbs + *) {
-        margin-top: var(--space-5);
     }
 </style>

@@ -61,7 +61,7 @@ const markdownPath = `${item.href}.md`;
                 </p>
             </header>
             <div class="deck-doc__flow">
-                <div class="doc-body" set:html={bodyWithCap} />
+                <div class="doc-body flow" set:html={bodyWithCap} />
             </div>
         </div>
     </div>
@@ -192,7 +192,7 @@ const markdownPath = `${item.href}.md`;
         </details>
     )}
 
-    <div class="doc-body" set:html={bodyWithCap} />
+    <div class="doc-body flow" set:html={bodyWithCap} />
 
     {item.tags.length > 0 && (
         <footer class="doc-tags">
@@ -210,7 +210,7 @@ const markdownPath = `${item.href}.md`;
     {related.length > 0 && (
         <section class="doc-related" aria-label="Related posts">
             <h2>Related</h2>
-            <ul class="feed-grid">
+            <ul class="grid">
                 {related.map((r) => (
                     <FeedCard
                         href={r.href}
@@ -363,16 +363,6 @@ const markdownPath = `${item.href}.md`;
         transform: translateY(0.05em);
     }
 
-    .doc-body > :global(* + *) {
-        margin-top: var(--space-5);
-    }
-    .doc-body > :global(* + h2) {
-        margin-top: var(--space-7);
-    }
-    .doc-body > :global(* + h3) {
-        margin-top: var(--space-6);
-    }
-
     .doc-body :global(h2) {
         font-family: var(--font-serif);
         font-size: var(--fs-2xl);
@@ -469,12 +459,15 @@ const markdownPath = `${item.href}.md`;
         font-size: var(--fs-xs);
         color: var(--color-muted);
         margin-right: auto;
-        margin-left: var(--space-3);
+    }
+
+    .doc-toc > .doc-toc__summary + ul {
+        margin-top: var(--space-3);
     }
 
     .doc-toc ul {
         list-style: none;
-        margin: var(--space-3) 0 0;
+        margin: 0;
         padding: 0;
         display: flex;
         flex-direction: column;

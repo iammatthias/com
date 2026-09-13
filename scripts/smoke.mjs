@@ -105,7 +105,7 @@ try {
     await check("/nonexistent-page-xyz", { status: 404 });
 
     const content = await check("/content", {
-        probe: (b) => (b.includes("feed-grid") ? null : "no feed grid"),
+        probe: (b) => (b.includes('class="grid"') && b.includes('class="card') ? null : "no entry grid"),
     });
     const docPath = content?.match(
         /href="(\/(?!content|tags|feed|menu|resume|now|onchain)[a-z-]+\/[a-z0-9-]+)"/,

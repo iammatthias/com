@@ -74,20 +74,22 @@ const deckCols = await deckColumns();
         </p>
     </header>
 
-    {paged.total === 0 ? (
-        <p class="feed-empty">Nothing recent.</p>
-    ) : (
-        <ul class="feed" data-feed-list>
-            {paged.items.map((item) => (
-                <FeedEntryCard
-                    item={item}
-                    media={mediaByRkey.get(item.rkey) ?? []}
-                />
-            ))}
-        </ul>
-    )}
+    <div class="stack stack--wide">
+        {paged.total === 0 ? (
+            <p class="feed-empty">Nothing recent.</p>
+        ) : (
+            <ul class="feed" data-feed-list>
+                {paged.items.map((item) => (
+                    <FeedEntryCard
+                        item={item}
+                        media={mediaByRkey.get(item.rkey) ?? []}
+                    />
+                ))}
+            </ul>
+        )}
 
-    {nextHref && <FeedInfiniteScroll nextHref={nextHref} />}
+        {nextHref && <FeedInfiniteScroll nextHref={nextHref} />}
+    </div>
     </Deck>
 </BaseLayout>
 

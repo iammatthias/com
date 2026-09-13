@@ -38,14 +38,14 @@ setResponseCacheHeaders(Astro.response, cacheHint);
 <BaseLayout deck>
     <Deck columns={columns} home raw>
         <section slot="rail" class="recent" aria-labelledby="feed-heading">
-            <h2 id="feed-heading">
+            <h2 id="feed-heading" class="cluster">
                 Recent <a href="/content" class="see-all">see all →</a>
             </h2>
             {
                 recent.length === 0 ? (
                     <p class="feed-empty">No entries to show right now.</p>
                 ) : (
-                    <ul class="feed-grid">
+                    <ul class="grid">
                         {recent.map((item) => (
                             <FeedCard
                                 href={item.href}
@@ -69,7 +69,6 @@ setResponseCacheHeaders(Astro.response, cacheHint);
         flex-direction: column;
         gap: var(--space-6);
         width: 100%;
-        margin-top: var(--space-8);
     }
 
     .recent h2 {

@@ -75,7 +75,7 @@ const deckCols = await deckColumns();
         <p class="feed-empty">No entries published yet.</p>
     ) : (
         <>
-            <ul class="feed-grid">
+            <ul class="grid">
                 {paged.items.map((item) => (
                     <FeedCard
                         href={item.href}
