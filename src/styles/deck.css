@@ -93,7 +93,7 @@
         display: grid;
         grid-template-rows: auto minmax(0, 1fr) auto;
         align-items: stretch;
-        padding: 0;
+        padding: var(--page-inset);
         gap: 0;
     }
 
@@ -102,12 +102,14 @@
     }
 
     body[data-deck] > footer {
+        grid-row: 3;
         max-width: none;
         border-top: 1px solid var(--color-border);
-        padding: var(--space-2) var(--inset-x);
+        padding: var(--space-2) 0 0;
     }
 
     body[data-deck] > main {
+        grid-row: 2;
         max-width: none;
         width: 100%;
         min-height: 0;
@@ -125,6 +127,8 @@
 
     .deck {
         height: 100%;
+        border-top: 1px solid var(--color-border);
+        border-left: 1px solid var(--color-border);
         flex-direction: row;
         align-items: stretch;
         gap: 0;

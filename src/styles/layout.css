@@ -17,6 +17,7 @@
     --inset-y: var(--space-4);
     --inset-x-wide: var(--space-6);
     --inset-y-wide: var(--space-5);
+    --page-inset: clamp(var(--space-5), 2.5vw, var(--space-8));
 }
 
 .stack {

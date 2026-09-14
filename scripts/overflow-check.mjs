@@ -17,6 +17,14 @@ if (OWNS_SERVER) {
         execSync("lsof -ti tcp:4399 | xargs kill", { stdio: "ignore" });
     } catch {
     }
+    for (let i = 0; i < 30; i++) {
+        try {
+            execSync("lsof -ti tcp:4399", { stdio: "ignore" });
+            await new Promise((r) => setTimeout(r, 500));
+        } catch {
+            break;
+        }
+    }
     server = spawn("bunx", ["astro", "preview", "--port", "4399"], {
         stdio: "ignore",
     });
