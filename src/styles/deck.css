@@ -15,10 +15,11 @@
 }
 
 @media (max-width: 1199px) {
-    .deck-col--meta > .deck-col__head {
+    .deck-meta__group:has(.deck-toc) {
         display: none;
     }
 }
+
 
 .deck-col--rail-home {
     display: block;
@@ -133,8 +134,6 @@
 
     .deck {
         height: 100%;
-        border-top: 1px solid var(--color-border);
-        border-left: 1px solid var(--color-border);
         flex-direction: row;
         align-items: stretch;
         gap: 0;
@@ -148,8 +147,7 @@
         min-height: 0;
         min-width: var(--deck-col);
         max-width: var(--deck-col-max);
-        border-right: 1px solid var(--color-border);
-        scroll-snap-align: start;
+        border-left: 1px solid var(--color-border);
     }
 
     .deck-col--peek {
@@ -249,9 +247,7 @@
 
     .deck-col--rail {
         display: flex;
-        position: sticky;
-        left: 0;
-        z-index: 5;
+        border-left: 0;
         flex: 0 0 var(--deck-rail);
         min-width: var(--deck-rail);
         max-width: var(--deck-rail);
@@ -289,10 +285,7 @@
         margin: 0;
         padding: 0;
         display: grid;
-    }
-
-    .rail-nav li + li {
-        border-top: 1px solid var(--color-border);
+        row-gap: var(--space-1);
     }
 
     .rail-nav a {
@@ -300,7 +293,7 @@
         justify-content: space-between;
         align-items: baseline;
         gap: var(--space-3);
-        padding: var(--space-2) 0;
+        padding: var(--space-1) 0;
         font-family: var(--font-serif);
         font-size: var(--fs-base);
         color: inherit;
@@ -479,6 +472,16 @@
 }
 
 @media (min-width: 1200px) {
+    .deck:not(:has(.deck-col--peek)) {
+        justify-content: center;
+    }
+
+    .deck-col--doc {
+        flex: 1 1 680px;
+        min-width: 520px;
+        max-width: 760px;
+    }
+
     .deck-col--doc > .deck-col__body {
         padding: 0;
     }
@@ -500,68 +503,6 @@
     }
 }
 
-@container deck-col (min-width: 700px) {
-    .deck-col--doc > .deck-col__body {
-        overflow: hidden;
-    }
-
-    .deck-col--doc .deck-doc__flow {
-        overflow: hidden;
-    }
-
-    .deck-col--doc .deck-doc__flow > .doc-body {
-        display: block;
-        height: 100%;
-        column-count: 2;
-        column-gap: var(--space-7);
-        column-rule: 1px solid var(--color-border);
-        overflow-x: auto;
-        overflow-y: hidden;
-        overscroll-behavior-x: contain;
-        scrollbar-width: thin;
-        padding-bottom: var(--space-4);
-    }
-
-    .deck-col--doc .deck-doc__flow > .doc-body > * {
-        break-inside: avoid-column;
-    }
-
-    .deck-col--doc .deck-doc__flow > .doc-body h2,
-    .deck-col--doc .deck-doc__flow > .doc-body h3 {
-        break-after: avoid-column;
-    }
-
-    .deck-col--doc .deck-doc__flow > .doc-body figure,
-    .deck-col--doc .deck-doc__flow > .doc-body img,
-    .deck-col--doc .deck-doc__flow > .doc-body video,
-    .deck-col--doc .deck-doc__flow > .doc-body pre,
-    .deck-col--doc .deck-doc__flow > .doc-body table {
-        max-height: 56%;
-    }
-
-    .deck-col--doc .deck-doc__flow > .doc-body img,
-    .deck-col--doc .deck-doc__flow > .doc-body video {
-        object-fit: contain;
-    }
-}
-
-@container deck-col (min-width: 1040px) {
-    .deck-col--doc .deck-doc__flow > .doc-body {
-        column-count: 3;
-    }
-}
-
-@container deck-col (min-width: 1400px) {
-    .deck-col--doc .deck-doc__flow > .doc-body {
-        column-count: 4;
-    }
-}
-
-@container deck-col (min-width: 1800px) {
-    .deck-col--doc .deck-doc__flow > .doc-body {
-        column-count: 5;
-    }
-}
 
 .deck-meta {
     display: grid;
@@ -589,10 +530,21 @@
 }
 
 .deck-toc,
-.deck-tags {
+.doc-hero__tags {
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+.doc-hero__tags a {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-decoration: none;
+    color: var(--color-muted);
+}
+
+.doc-hero__tags a:hover {
+    color: var(--color-accent);
 }
 
 .deck-toc li + li {
@@ -611,23 +563,6 @@
 }
 
 .deck-toc a:hover {
-    color: var(--color-accent);
-}
-
-.deck-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-}
-
-.deck-tags a {
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-    text-decoration: none;
-    color: var(--color-muted);
-}
-
-.deck-tags a:hover {
     color: var(--color-accent);
 }
 

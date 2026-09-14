@@ -120,9 +120,24 @@ describe("deck.css structure", () => {
         expect(css).toContain(".deck-col--meta");
     });
 
+    test("the deck has no exterior frame; separators sit between columns only", () => {
+        const deck = decl(desktop, ".deck");
+        expect(deck).not.toContain("border-top");
+        expect(deck).not.toContain("border-left");
+        expect(decl(desktop, ".deck-col")).toContain("border-left");
+        expect(decl(desktop, ".deck-col")).not.toContain("border-right");
+        expect(decl(desktop, ".deck-col--rail")).toContain("border-left: 0");
+    });
+
+    test("article bodies are a single reading column", () => {
+        expect(css).not.toContain("column-count");
+        expect(css).not.toContain("column-rule");
+    });
+
     test("retired selectors are gone", () => {
         expect(css).not.toContain("deck-controls");
         expect(css).not.toContain("deck-col--identity");
+        expect(css).not.toContain("deck-tags");
         expect(css).not.toContain(":global(");
     });
 });

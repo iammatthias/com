@@ -120,11 +120,17 @@ for (const [w, h] of [[390, 900], [1440, 900], [2560, 1400]]) {
     await art.waitForTimeout(400);
     const meta = await art.evaluate(() => {
         const seen = (s) => { const e = document.querySelector(s); return !!(e && e.getBoundingClientRect().width > 0); };
-        return { tags: seen(".deck-tags a"), related: seen(".deck-peek a"), colophon: seen(".colophon-meta") };
+        return {
+            tagsInHero: seen(".deck-doc__hero .doc-hero__tags a"),
+            relatedAtEnd: seen(".deck-doc__flow .doc-related .card"),
+            colophonInDetails: seen(".deck-col--meta .colophon-meta"),
+            tagsNotInDetails: !seen(".deck-col--meta .doc-hero__tags"),
+            relatedNotInDetails: !seen(".deck-col--meta .doc-related"),
+        };
     });
-    const metaOk = meta.tags && meta.related && meta.colophon;
+    const metaOk = Object.values(meta).every(Boolean);
     if (!metaOk) failures++;
-    console.log(`${metaOk ? "  ok " : "FAIL "} article details visible @${w}px — ${JSON.stringify(meta)}`);
+    console.log(`${metaOk ? "  ok " : "FAIL "} article content is where it belongs @${w}px — ${JSON.stringify(meta)}`);
     const fits = await art.evaluate(() => {
         const d = document.querySelector("[data-deck-root]");
         return { deck: d.scrollWidth - d.clientWidth, doc: document.documentElement.scrollWidth - document.documentElement.clientWidth };

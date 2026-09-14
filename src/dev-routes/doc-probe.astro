@@ -2,6 +2,8 @@
 import { parse as parseYAML } from "yaml";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import DocArticle from "@components/DocArticle.astro";
+import Deck from "@components/Deck.astro";
+import { deckColumns } from "@lib/deck";
 import type { DocumentData } from "@lib/farfield-loader";
 import { plainText } from "@lib/markdown-text";
 
@@ -42,14 +44,19 @@ const item: DocumentData = {
     tags: Array.isArray(meta.tags) ? meta.tags.map(String) : [],
     body,
 };
+
+const deckCols = await deckColumns();
 ---
 
 <BaseLayout
+    deck
     title={item.title}
     description={item.description || plainText(item.body).slice(0, 180).trim()}
     ogType="article"
     noindex
     markdownHref={`${item.href}.md`}
 >
-    <DocArticle item={item} related={[]} />
+    <Deck columns={deckCols} current={item.collection} raw>
+        <DocArticle item={item} related={[]} />
+    </Deck>
 </BaseLayout>

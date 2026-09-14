@@ -12,10 +12,9 @@ import { withLettrine } from "@lib/azulejo-cap";
 interface Props {
     item: DocumentData;
     related: DocumentData[];
-    deck?: boolean;
 }
 
-const { item, related, deck = false } = Astro.props;
+const { item, related } = Astro.props;
 
 const bodyHtml = item.body ? await renderMarkdownBody(item.body) : "";
 
@@ -34,8 +33,6 @@ const bannerSeed = hashSeed(`${item.rkey}:${item.cid}`);
 const markdownPath = `${item.href}.md`;
 ---
 
-{deck ? (
-<>
 <section
     class="deck-col deck-col--main deck-col--doc"
     data-deck-col={item.collection}
@@ -59,9 +56,37 @@ const markdownPath = `${item.href}.md`;
                         </>
                     )}
                 </p>
+                {item.tags.length > 0 && (
+                    <ul class="doc-hero__tags cluster">
+                        {item.tags.map((t) => (
+                            <li>
+                                <a href={`/tags/${encodeURIComponent(t)}`}>
+                                    {t}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </header>
             <div class="deck-doc__flow">
                 <div class="doc-body flow" set:html={bodyWithCap} />
+
+                {related.length > 0 && (
+                    <section class="doc-related" aria-label="Related posts">
+                        <h2>Related</h2>
+                        <ul class="grid">
+                            {related.map((r) => (
+                                <FeedCard
+                                    href={r.href}
+                                    title={r.title}
+                                    description={r.description}
+                                    publishedAt={r.publishedAt}
+                                    kind={r.publication.name.toLowerCase()}
+                                />
+                            ))}
+                        </ul>
+                    </section>
+                )}
             </div>
         </div>
     </div>
@@ -72,10 +97,6 @@ const markdownPath = `${item.href}.md`;
     data-deck-col="details"
     aria-label="Document details"
 >
-    <header class="deck-col__head">
-        <ColumnTile seed="column:details" />
-        <h2 class="deck-col__title">details</h2>
-    </header>
     <div class="deck-col__body" data-deck-scroll="details">
         <div class="deck-meta">
             {showToc && (
@@ -89,44 +110,6 @@ const markdownPath = `${item.href}.md`;
                         ))}
                     </ul>
                 </nav>
-            )}
-
-            {item.tags.length > 0 && (
-                <div class="deck-meta__group">
-                    <span class="deck-meta__label">tagged</span>
-                    <ul class="deck-tags">
-                        {item.tags.map((t) => (
-                            <li>
-                                <a href={`/tags/${encodeURIComponent(t)}`}>
-                                    {t}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-
-            {related.length > 0 && (
-                <div class="deck-meta__group">
-                    <span class="deck-meta__label">related</span>
-                    <ul class="deck-peek">
-                        {related.map((r) => (
-                            <li>
-                                <a href={r.href}>
-                                    <span class="deck-peek__title">
-                                        {r.title}
-                                    </span>
-                                    <time
-                                        class="deck-peek__date"
-                                        datetime={r.publishedAt}
-                                    >
-                                        {fmtDate(r.publishedAt)}
-                                    </time>
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
             )}
 
             <RecordColophon
@@ -155,96 +138,6 @@ const markdownPath = `${item.href}.md`;
         </div>
     </div>
 </section>
-</>
-) : (
-<article class="doc">
-    <header class="doc-hero">
-        {item.published === false && (
-            <p class="doc-draft">Draft — unpublished</p>
-        )}
-        <h1>{item.title}</h1>
-        <p class="dateline">
-            <time datetime={item.publishedAt}>{fmtDate(item.publishedAt)}</time>
-            {reading.minutes > 0 && (
-                <>
-                    <span aria-hidden="true"> · </span>
-                    <span>{reading.minutes} min read</span>
-                </>
-            )}
-        </p>
-    </header>
-
-    {showToc && (
-        <details class="doc-toc">
-            <summary class="doc-toc__summary">
-                <span class="doc-toc__label">On this page</span>
-                <span class="doc-toc__count" aria-hidden="true">
-                    {tocEntries.length} sections
-                </span>
-            </summary>
-            <ul>
-                {tocEntries.map((entry) => (
-                    <li class:list={[`toc-level-${entry.level}`]}>
-                        <a href={`#${entry.id}`}>{entry.text}</a>
-                    </li>
-                ))}
-            </ul>
-        </details>
-    )}
-
-    <div class="doc-body flow" set:html={bodyWithCap} />
-
-    {item.tags.length > 0 && (
-        <footer class="doc-tags">
-            <span class="tags-label">tagged</span>
-            <ul>
-                {item.tags.map((t) => (
-                    <li>
-                        <a href={`/tags/${encodeURIComponent(t)}`}>{t}</a>
-                    </li>
-                ))}
-            </ul>
-        </footer>
-    )}
-
-    {related.length > 0 && (
-        <section class="doc-related" aria-label="Related posts">
-            <h2>Related</h2>
-            <ul class="grid">
-                {related.map((r) => (
-                    <FeedCard
-                        href={r.href}
-                        title={r.title}
-                        description={r.description}
-                        publishedAt={r.publishedAt}
-                        kind={r.publication.name.toLowerCase()}
-                    />
-                ))}
-            </ul>
-        </section>
-    )}
-
-    <RecordColophon
-        seed={bannerSeed}
-        fields={[
-            { label: "collection", value: item.collection },
-            { label: "rkey", value: item.rkey },
-            { label: "record cid", value: item.cid },
-            { label: "source", value: markdownPath, href: markdownPath },
-            {
-                label: "published",
-                value: item.publishedAt,
-                datetime: item.publishedAt,
-            },
-            {
-                label: "updated",
-                value: item.updatedAt,
-                datetime: item.updatedAt,
-            },
-        ]}
-    />
-</article>
-)}
 
 <Lightbox />
 
@@ -401,98 +294,19 @@ const markdownPath = `${item.href}.md`;
         width: 100%;
     }
 
-    .doc-toc {
-        font-size: var(--fs-sm);
-        line-height: var(--lh-relaxed);
-        padding: var(--space-3) 0;
-        border-top: 1px solid var(--color-border);
-        border-bottom: 1px solid var(--color-border);
-        position: sticky;
-        top: 0;
-        z-index: 5;
-        background: var(--color-bg);
-    }
 
-    .doc-toc ul {
-        max-height: calc(100dvh - 6rem);
-        overflow-y: auto;
-    }
 
-    .doc-toc__summary {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: var(--space-3);
-        cursor: pointer;
-        user-select: none;
-        list-style: none;
-    }
 
-    .doc-toc__summary::-webkit-details-marker {
-        display: none;
-    }
 
-    .doc-toc__summary::after {
-        content: "";
-        width: 0.5em;
-        height: 0.5em;
-        border-right: 1px solid currentColor;
-        border-bottom: 1px solid currentColor;
-        transform: rotate(45deg) translate(-25%, -25%);
-        color: var(--color-muted);
-        transition: transform 150ms var(--ease);
-    }
 
-    .doc-toc[open] .doc-toc__summary::after {
-        transform: rotate(-135deg) translate(-25%, -25%);
-    }
 
-    .doc-toc__label {
-        font-family: var(--font-serif);
-        font-style: italic;
-        color: var(--color-muted);
-        font-size: var(--fs-sm);
-    }
 
-    .doc-toc__count {
-        font-family: var(--font-mono);
-        font-size: var(--fs-xs);
-        color: var(--color-muted);
-        margin-right: auto;
-    }
 
-    .doc-toc > .doc-toc__summary + ul {
-        margin-top: var(--space-3);
-    }
 
-    .doc-toc ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.35em;
-    }
 
-    .doc-toc li {
-        list-style: none;
-    }
 
-    .doc-toc .toc-level-3 {
-        padding-left: var(--space-3);
-        font-size: var(--fs-xs);
-    }
 
-    .doc-toc a {
-        color: var(--color-muted);
-        text-decoration: none;
-        text-wrap: balance;
-    }
 
-    .doc-toc a:hover {
-        color: var(--color-fg);
-        text-decoration: underline;
-    }
 
     .doc-body :global(.doc-figure) {
         overflow: hidden;
@@ -639,15 +453,6 @@ const markdownPath = `${item.href}.md`;
         outline-offset: 2px;
     }
 
-    .doc-tags {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: baseline;
-        gap: var(--space-3);
-        padding-top: var(--space-5);
-        border-top: 1px solid var(--color-border);
-        font-size: var(--fs-sm);
-    }
 
     .tags-label {
         font-family: var(--font-serif);
@@ -655,26 +460,9 @@ const markdownPath = `${item.href}.md`;
         color: var(--color-muted);
     }
 
-    .doc-tags ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-2);
-    }
 
-    .doc-tags li {
-        list-style: none;
-    }
 
-    .doc-tags a {
-        color: var(--color-muted);
-    }
 
-    .doc-tags a:hover {
-        color: var(--color-fg);
-    }
 
     .doc-related {
         display: flex;
