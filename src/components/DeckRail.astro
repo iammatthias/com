@@ -53,6 +53,15 @@ const siteGroups = (await getMenuGroups()).filter(
                             <span>{c.label}</span>
                             <span class="rail-count">{c.total}</span>
                         </a>
+                        {c.id !== current && (
+                            <button
+                                type="button"
+                                class="rail-toggle"
+                                data-deck-toggle={c.id}
+                                aria-pressed="true"
+                                aria-label={`Hide ${c.label} column`}
+                            >×</button>
+                        )}
                     </li>
                 ))}
             </ul>
@@ -77,10 +86,6 @@ const siteGroups = (await getMenuGroups()).filter(
         ))}
 
         <div class="rail-tools">
-            <details class="deck-controls" data-deck-controls>
-                <summary>columns</summary>
-                <div class="deck-controls__panel" data-deck-controls-panel></div>
-            </details>
             <a href="/menu" data-menu-trigger>menu</a>
         </div>
 

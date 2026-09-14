@@ -82,4 +82,10 @@ setResponseCacheHeaders(Astro.response, cacheHint);
             display: none;
         }
     }
+
+    @media (max-width: 480px) {
+        .recent .grid > :global(li:nth-child(n + 7)) {
+            display: none;
+        }
+    }
 </style>

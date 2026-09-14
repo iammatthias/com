@@ -1,12 +1,22 @@
 import { getCollection } from "astro:content";
-import type { DocumentData, PublicationData } from "./farfield-loader";
+import {
+    resolveBodyMedia,
+    type DocumentData,
+    type FeedEntryData,
+    type PublicationData,
+    type ResolvedMedia,
+} from "./farfield-loader";
 import { publishedDocs } from "./content-query";
-import { noteTitle } from "./markdown-text";
 
 interface DeckItem {
     href: string;
     title: string;
     date: string;
+}
+
+export interface DeckFeedEntry {
+    item: FeedEntryData;
+    media: ResolvedMedia[];
 }
 
 export interface DeckColumnModel {
@@ -15,9 +25,11 @@ export interface DeckColumnModel {
     href: string;
     total: number;
     peek: DeckItem[];
+    feed?: DeckFeedEntry[];
 }
 
 const DECK_PEEK = 22;
+const FEED_PEEK = 12;
 
 
 function toDeckItem(d: DocumentData): DeckItem {
@@ -61,26 +73,20 @@ async function buildColumns(): Promise<DeckColumnModel[]> {
     columns.sort((a, b) => b.total - a.total);
 
     const feed = await feedColumn();
-    if (feed) columns.push(feed);
+    if (feed) columns.unshift(feed);
 
     return columns;
 }
 
 async function feedColumn(): Promise<DeckColumnModel | null> {
-    const posts = (await getCollection("posts")).map(
-        (e) => e.data as { rkey: string; body: string; createdAt: string },
-    );
+    const posts = (await getCollection("posts")).map((e) => e.data as FeedEntryData);
     if (posts.length === 0) return null;
     posts.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-    return {
-        id: "feed",
-        label: "feed",
-        href: "/feed",
-        total: posts.length,
-        peek: posts.slice(0, DECK_PEEK).map((p) => ({
-            href: `/feed/${p.rkey}`,
-            title: noteTitle(p.body),
-            date: p.createdAt,
+    const feed = await Promise.all(
+        posts.slice(0, FEED_PEEK).map(async (item) => ({
+            item,
+            media: await resolveBodyMedia(item.body),
         })),
-    };
+    );
+    return { id: "feed", label: "feed", href: "/feed", total: posts.length, peek: [], feed };
 }

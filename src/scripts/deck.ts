@@ -159,53 +159,38 @@ function applyHidden(ids: Set<string>): void {
         const id = col.dataset.deckCol;
         col.hidden = !!id && ids.has(id);
     }
-}
-
-function renderControls(ids: Set<string>): void {
-    const panel = document.querySelector<HTMLElement>(
-        "[data-deck-controls-panel]",
-    );
-    if (!panel) return;
-    panel.replaceChildren();
-    for (const col of toggleableColumns()) {
-        const id = col.dataset.deckCol;
+    for (const btn of document.querySelectorAll<HTMLElement>("[data-deck-toggle]")) {
+        const id = btn.dataset.deckToggle;
         if (!id) continue;
-        const label = document.createElement("label");
-        const box = document.createElement("input");
-        box.type = "checkbox";
-        box.checked = !ids.has(id);
-        box.addEventListener("change", () => {
-            const next = readHidden();
-            if (box.checked) next.delete(id);
-            else next.add(id);
-            writeHidden(next);
-            applyHidden(next);
-            if (box.checked) focusColumn(id, "smooth");
-        });
-        const text = document.createElement("span");
-        text.textContent =
-            col.querySelector(".deck-col__title")?.textContent?.trim() ?? id;
-        label.append(box, text);
-        panel.append(label);
+        const shown = !ids.has(id);
+        btn.setAttribute("aria-pressed", String(shown));
+        btn.textContent = shown ? "×" : "+";
+        const label =
+            btn.closest("li")?.querySelector("a span")?.textContent?.trim() ?? id;
+        btn.setAttribute("aria-label", `${shown ? "Hide" : "Show"} ${label} column`);
     }
 }
 
-function wireColumnToggles(): void {
-    const ids = readHidden();
-    applyHidden(ids);
-    renderControls(ids);
+function setHidden(id: string, hide: boolean): void {
+    const next = readHidden();
+    if (hide) next.add(id);
+    else next.delete(id);
+    writeHidden(next);
+    applyHidden(next);
+    if (!hide) focusColumn(id, "smooth");
+}
 
-    for (const btn of document.querySelectorAll<HTMLElement>(
-        "[data-deck-close]",
-    )) {
+function wireColumnToggles(): void {
+    applyHidden(readHidden());
+    for (const btn of document.querySelectorAll<HTMLElement>("[data-deck-close]")) {
         btn.addEventListener("click", () => {
-            const id = btn.dataset.deckClose;
-            if (!id) return;
-            const next = readHidden();
-            next.add(id);
-            writeHidden(next);
-            applyHidden(next);
-            renderControls(next);
+            if (btn.dataset.deckClose) setHidden(btn.dataset.deckClose, true);
+        });
+    }
+    for (const btn of document.querySelectorAll<HTMLElement>("[data-deck-toggle]")) {
+        btn.addEventListener("click", () => {
+            const id = btn.dataset.deckToggle;
+            if (id) setHidden(id, !readHidden().has(id));
         });
     }
 }

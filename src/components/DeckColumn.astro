@@ -1,5 +1,6 @@
 ---
 import ColumnTile from "@components/ColumnTile.astro";
+import FeedEntryCard from "@components/FeedEntryCard.astro";
 import { fmtDate } from "@lib/format";
 import type { DeckColumnModel } from "@lib/deck";
 
@@ -35,21 +36,29 @@ const { column } = Astro.props;
     </header>
 
     <div class="deck-col__body" data-deck-scroll={column.id}>
-        <ul class="deck-peek">
-            {column.peek.map((item) => (
-                <li>
-                    <a href={item.href}>
-                        <span class="deck-peek__title">{item.title}</span>
-                        {item.date && (
-                            <time class="deck-peek__date" datetime={item.date}>
-                                {fmtDate(item.date)}
-                            </time>
-                        )}
-                    </a>
-                </li>
-            ))}
-        </ul>
-        {column.total > column.peek.length && (
+        {column.feed ? (
+            <ul class="feed">
+                {column.feed.map(({ item, media }) => (
+                    <FeedEntryCard item={item} media={media} />
+                ))}
+            </ul>
+        ) : (
+            <ul class="deck-peek">
+                {column.peek.map((item) => (
+                    <li>
+                        <a href={item.href}>
+                            <span class="deck-peek__title">{item.title}</span>
+                            {item.date && (
+                                <time class="deck-peek__date" datetime={item.date}>
+                                    {fmtDate(item.date)}
+                                </time>
+                            )}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        )}
+        {column.total > (column.feed?.length ?? column.peek.length) && (
             <a class="deck-all" href={column.href}>
                 all {column.total} →
             </a>

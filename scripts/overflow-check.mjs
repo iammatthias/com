@@ -110,9 +110,7 @@ const deckOk = circuit.headerHidden && circuit.railOverlap === 0 && circuit.tile
 if (!deckOk) failures++;
 console.log(`${deckOk ? "  ok " : "FAIL "} deck shell @2560px — ${JSON.stringify(circuit)}`);
 const before = await deck.evaluate(() => [...document.querySelectorAll(".deck-col--peek")].filter((c) => !c.hidden).length);
-await deck.click("[data-deck-controls] > summary");
-const box = await deck.$("[data-deck-controls-panel] input[type=checkbox]");
-await box.uncheck();
+await deck.click("[data-deck-toggle]");
 await deck.reload({ waitUntil: "networkidle" });
 await deck.waitForTimeout(600);
 const after = await deck.evaluate(() => [...document.querySelectorAll(".deck-col--peek")].filter((c) => !c.hidden).length);
