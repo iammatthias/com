@@ -149,23 +149,12 @@ const rail = await deck.evaluate(() => {
         rows: names.length,
         nameEdges: new Set(names.map((n) => Math.round(r(n).left))).size,
         countEdges: new Set(counts.map((c) => Math.round(r(c).right))).size,
-        toggleSlots: document.querySelectorAll(".rail-list--collections .rail-toggle").length,
-    };
+        };
 });
-const railOk = rail.rows > 1 && rail.nameEdges === 1 && rail.countEdges === 1 && rail.toggleSlots === rail.rows;
+const railOk = rail.rows > 1 && rail.nameEdges === 1 && rail.countEdges === 1;
 if (!railOk) failures++;
 console.log(`${railOk ? "  ok " : "FAIL "} rail rows share one grid — ${JSON.stringify(rail)}`);
 
-const before = await deck.evaluate(() => [...document.querySelectorAll(".deck-col--peek")].filter((c) => !c.hidden).length);
-await deck.click("[data-deck-toggle]");
-await deck.reload({ waitUntil: "networkidle" });
-await deck.waitForTimeout(600);
-const after = await deck.evaluate(() => [...document.querySelectorAll(".deck-col--peek")].filter((c) => !c.hidden).length);
-const stored = await deck.evaluate(() => localStorage.getItem("deck:hidden"));
-const toggleOk = before > 0 && after === before - 1 && !!stored;
-if (!toggleOk) failures++;
-console.log(`${toggleOk ? "  ok " : "FAIL "} column close persists across reload — ${before} → ${after}, stored=${stored}`);
-await deck.evaluate(() => localStorage.clear());
 await deck.close();
 
 const page = await browser.newPage({ viewport: { width: 390, height: 900 } });

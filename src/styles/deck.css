@@ -252,7 +252,6 @@
         min-width: var(--deck-rail);
         max-width: var(--deck-rail);
         background: var(--color-bg);
-        scroll-snap-align: none;
     }
 
     .deck-col--rail-home {
@@ -289,7 +288,7 @@
 
     .rail-list li {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto var(--space-4);
+        grid-template-columns: minmax(0, 1fr) auto;
         align-items: baseline;
         column-gap: var(--space-2);
     }
@@ -357,38 +356,9 @@
         color: var(--color-accent);
     }
 
-    .rail-toggle {
-        grid-column: 3;
-        justify-self: end;
-        appearance: none;
-        background: none;
-        border: 0;
-        padding: 0;
-        cursor: pointer;
-        color: var(--color-muted);
-        font-family: var(--font-serif);
-        font-size: var(--fs-sm);
-        line-height: 1;
-        opacity: 0;
-        transition: opacity var(--duration) var(--ease);
-    }
 
-    .rail-toggle[hidden] {
-        display: block;
-        visibility: hidden;
-    }
 
-    .rail-list li:hover .rail-toggle:not([hidden]),
-    .rail-toggle:focus-visible,
-    .rail-toggle[aria-pressed="false"] {
-        opacity: 1;
-    }
 
-    .rail-list--collections li:has(.rail-toggle[aria-pressed="false"]) .rail-name,
-    .rail-list--collections li:has(.rail-toggle[aria-pressed="false"]) .rail-count {
-        color: var(--color-muted);
-        opacity: 0.55;
-    }
 
     .deck-col--peek .feed-tile :is(img, video) {
         max-height: 40vh;
@@ -611,38 +581,10 @@
     }
 }
 
-.deck-col[hidden] {
-    display: none;
-}
 
-.deck-col__tools {
-    display: inline-flex;
-    align-items: baseline;
-    gap: var(--space-2);
-}
 
-.deck-col__close {
-    appearance: none;
-    background: none;
-    border: 0;
-    padding: 0 var(--space-1);
-    cursor: pointer;
-    color: var(--color-muted);
-    font-size: var(--fs-base);
-    line-height: 1;
-    border-radius: var(--radius);
-    opacity: 0;
-    transition: opacity var(--duration) var(--ease);
-}
 
-.deck-col:hover .deck-col__close,
-.deck-col__close:focus-visible {
-    opacity: 1;
-}
 
-.deck-col__close:hover {
-    color: var(--color-fg);
-}
 
 @media (min-width: 1200px) and (max-width: 1999px) {
     .deck-col--peek:not([data-deck-col="feed"]) {

@@ -68,7 +68,8 @@ describe("deck.css structure", () => {
             ".deck-col__body",
             ".rail-brand",
             ".rail-tools",
-            ".rail-toggle",
+            ".rail-list",
+            ".rail-name",
         ]) {
             expect(has(desktop, sel)).toBe(true);
         }
@@ -138,6 +139,9 @@ describe("deck.css structure", () => {
         expect(css).not.toContain("deck-controls");
         expect(css).not.toContain("deck-col--identity");
         expect(css).not.toContain("deck-tags");
+        expect(css).not.toContain("rail-toggle");
+        expect(css).not.toContain("deck-col__close");
+        expect(css).not.toContain("scroll-snap");
         expect(css).not.toContain(":global(");
     });
 });

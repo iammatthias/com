@@ -34,21 +34,6 @@ function panes(): HTMLElement[] {
     );
 }
 
-function columnOf(node: Element): HTMLElement | null {
-    return node.closest<HTMLElement>("[data-deck-col]");
-}
-
-function focusColumn(id: string, behavior: ScrollBehavior): boolean {
-    const root = document.querySelector<HTMLElement>("[data-deck-root]");
-    const col = document.querySelector<HTMLElement>(
-        `[data-deck-col="${CSS.escape(id)}"]`,
-    );
-    if (!root || !col) return false;
-    const rail = root.querySelector<HTMLElement>(".deck-col--rail");
-    const inset = rail && rail !== col ? rail.offsetWidth : 0;
-    root.scrollTo({ left: Math.max(0, col.offsetLeft - inset), behavior });
-    return true;
-}
 
 function restoreScrolls(): void {
     for (const pane of panes()) {
@@ -92,107 +77,8 @@ function revealHash(behavior: ScrollBehavior): boolean {
         target = document.getElementById(raw);
     }
     if (!target) return false;
-    const col = columnOf(target);
-    if (col?.dataset.deckCol) focusColumn(col.dataset.deckCol, "auto");
     target.scrollIntoView({ behavior, block: "start" });
     return true;
-}
-
-function syncColumnParam(): void {
-    const root = document.querySelector<HTMLElement>("[data-deck-root]");
-    if (!root) return;
-    let frame = 0;
-    const update = () => {
-        frame = 0;
-        let nearest: { id: string; delta: number } | null = null;
-        for (const col of root.querySelectorAll<HTMLElement>(
-            "[data-deck-col]",
-        )) {
-            const id = col.dataset.deckCol;
-            if (!id) continue;
-            const delta = Math.abs(col.offsetLeft - root.scrollLeft);
-            if (!nearest || delta < nearest.delta) nearest = { id, delta };
-        }
-        if (!nearest) return;
-        const url = new URL(location.href);
-        if (root.scrollLeft <= 4) url.searchParams.delete("col");
-        else url.searchParams.set("col", nearest.id);
-        if (url.href !== location.href) history.replaceState(null, "", url);
-    };
-    root.addEventListener(
-        "scroll",
-        () => {
-            if (!frame) frame = requestAnimationFrame(update);
-        },
-        { passive: true },
-    );
-}
-
-
-const HIDDEN_KEY = "deck:hidden";
-
-function readHidden(): Set<string> {
-    try {
-        const raw = localStorage.getItem(HIDDEN_KEY);
-        const list = raw ? (JSON.parse(raw) as unknown) : [];
-        return new Set(Array.isArray(list) ? list.map(String) : []);
-    } catch {
-        return new Set();
-    }
-}
-
-function writeHidden(ids: Set<string>): void {
-    try {
-        if (ids.size === 0) localStorage.removeItem(HIDDEN_KEY);
-        else localStorage.setItem(HIDDEN_KEY, JSON.stringify([...ids]));
-    } catch {}
-}
-
-function toggleableColumns(): HTMLElement[] {
-    return Array.from(
-        document.querySelectorAll<HTMLElement>(".deck-col--peek[data-deck-col]"),
-    );
-}
-
-function applyHidden(ids: Set<string>): void {
-    for (const col of toggleableColumns()) {
-        const id = col.dataset.deckCol;
-        col.hidden = !!id && ids.has(id);
-    }
-    for (const btn of document.querySelectorAll<HTMLElement>("[data-deck-toggle]")) {
-        const id = btn.dataset.deckToggle;
-        if (!id) continue;
-        const shown = !ids.has(id);
-        btn.setAttribute("aria-pressed", String(shown));
-        btn.textContent = shown ? "×" : "+";
-        const label =
-            btn.closest("li")?.querySelector("a span")?.textContent?.trim() ?? id;
-        btn.setAttribute("aria-label", `${shown ? "Hide" : "Show"} ${label} column`);
-    }
-}
-
-function setHidden(id: string, hide: boolean): void {
-    const next = readHidden();
-    if (hide) next.add(id);
-    else next.delete(id);
-    writeHidden(next);
-    applyHidden(next);
-    if (!hide) focusColumn(id, "smooth");
-}
-
-function wireColumnToggles(): void {
-    applyHidden(readHidden());
-    for (const btn of document.querySelectorAll<HTMLElement>("[data-deck-close]")) {
-        btn.addEventListener("click", () => {
-            if (btn.dataset.deckClose) setHidden(btn.dataset.deckClose, true);
-        });
-    }
-    for (const btn of document.querySelectorAll<HTMLElement>("[data-deck-toggle]")) {
-        btn.addEventListener("click", () => {
-            const id = btn.dataset.deckToggle;
-            if (id) setHidden(id, !readHidden().has(id));
-        });
-    }
 }
 
 function mountTiles(): void {
@@ -214,15 +100,9 @@ function mountTiles(): void {
 function init(): void {
     if (!active()) return;
     mountTiles();
-    wireColumnToggles();
     restoreScrolls();
     trackScrolls();
-    syncColumnParam();
-
-    if (!revealHash("auto")) {
-        const wanted = new URLSearchParams(location.search).get("col");
-        if (wanted) focusColumn(wanted, "auto");
-    }
+    revealHash("auto");
 
     addEventListener("hashchange", () => {
         if (active()) revealHash("smooth");
