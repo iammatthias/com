@@ -141,6 +141,21 @@ for (const [w, h] of [[390, 900], [1440, 900], [2560, 1400]]) {
     await art.close();
 }
 
+const rail = await deck.evaluate(() => {
+    const r = (e) => e.getBoundingClientRect();
+    const names = [...document.querySelectorAll(".rail-list--collections .rail-name")];
+    const counts = [...document.querySelectorAll(".rail-list--collections .rail-count")];
+    return {
+        rows: names.length,
+        nameEdges: new Set(names.map((n) => Math.round(r(n).left))).size,
+        countEdges: new Set(counts.map((c) => Math.round(r(c).right))).size,
+        toggleSlots: document.querySelectorAll(".rail-list--collections .rail-toggle").length,
+    };
+});
+const railOk = rail.rows > 1 && rail.nameEdges === 1 && rail.countEdges === 1 && rail.toggleSlots === rail.rows;
+if (!railOk) failures++;
+console.log(`${railOk ? "  ok " : "FAIL "} rail rows share one grid — ${JSON.stringify(rail)}`);
+
 const before = await deck.evaluate(() => [...document.querySelectorAll(".deck-col--peek")].filter((c) => !c.hidden).length);
 await deck.click("[data-deck-toggle]");
 await deck.reload({ waitUntil: "networkidle" });

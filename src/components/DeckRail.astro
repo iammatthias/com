@@ -43,34 +43,32 @@ const siteGroups = (await getMenuGroups()).filter(
         )}
 
         <nav class="rail-nav" aria-label="Sections">
-            <ul>
+            <ul class="rail-list rail-list--collections">
                 {columns.map((c) => (
                     <li>
                         <a
                             href={c.href}
                             aria-current={c.id === current ? "page" : undefined}
                         >
-                            <span>{c.label}</span>
+                            <span class="rail-name">{c.label}</span>
                             <span class="rail-count">{c.total}</span>
                         </a>
-                        {c.id !== current && (
-                            <button
-                                type="button"
-                                class="rail-toggle"
-                                data-deck-toggle={c.id}
-                                aria-pressed="true"
-                                aria-label={`Hide ${c.label} column`}
-                            >×</button>
-                        )}
+                        <button
+                            type="button"
+                            class="rail-toggle"
+                            data-deck-toggle={c.id}
+                            aria-pressed="true"
+                            aria-label={`Hide ${c.label} column`}
+                            hidden={c.id === current}
+                        >×</button>
                     </li>
                 ))}
             </ul>
         </nav>
 
-        {siteGroups.map((group) => (
-            <nav class="rail-nav rail-nav--site" aria-label={group.label}>
-                <span class="rail-nav__label">{group.label}</span>
-                <ul>
+        <nav class="rail-nav rail-nav--site" aria-label="Site">
+            {siteGroups.map((group) => (
+                <ul class="rail-list">
                     {group.links.map((l) => (
                         <li>
                             <a
@@ -82,8 +80,8 @@ const siteGroups = (await getMenuGroups()).filter(
                         </li>
                     ))}
                 </ul>
-            </nav>
-        ))}
+            ))}
+        </nav>
 
         <div class="rail-tools">
             <a href="/menu" data-menu-trigger>menu</a>
