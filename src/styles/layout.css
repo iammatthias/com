@@ -25,29 +25,8 @@
     gap: var(--stack-gap);
 }
 
-.stack--tight {
-    --stack-gap: var(--space-2);
-}
-
-.stack--snug {
-    --stack-gap: var(--space-3);
-}
-
-.stack--loose {
-    --stack-gap: var(--space-6);
-}
-
 .stack--wide {
     --stack-gap: var(--space-7);
-}
-
-.stack--section {
-    --stack-gap: var(--space-8);
-}
-
-.stack--divided > * + * {
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--divide-gap, var(--stack-gap));
 }
 
 .flow > * + * {
@@ -67,10 +46,6 @@
     flex-wrap: wrap;
     align-items: baseline;
     gap: var(--cluster-gap);
-}
-
-.cluster--between {
-    justify-content: space-between;
 }
 
 .grid {

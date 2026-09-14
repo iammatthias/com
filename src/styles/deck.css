@@ -173,8 +173,6 @@
     }
 
     .deck-col--rail > .deck-col__body {
-        display: grid;
-        align-content: start;
         gap: var(--space-6);
         padding: var(--space-3) var(--inset-x) var(--inset-y);
     }

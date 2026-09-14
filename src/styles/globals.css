@@ -14,7 +14,6 @@
     --fs-xl: clamp(1.219rem, 1.15rem + 0.281vw, 1.375rem);
     --fs-2xl: clamp(1.406rem, 1.256rem + 0.618vw, 1.75rem);
     --fs-3xl: clamp(1.625rem, 1.406rem + 0.899vw, 2.125rem);
-    --fs-4xl: clamp(1.875rem, 1.546rem + 1.35vw, 2.625rem);
     --fs-display: clamp(2rem, 1.726rem + 1.12vw, 2.625rem);
 
     --lh-tight: 1.2;
@@ -53,14 +52,12 @@
     --color-muted: #5f6a7a;
     --color-border: #dfddd7;
     --color-accent: #1e4d9b;
-    --color-accent-hover: #173d80;
 
     --color-bg: light-dark(#f5f2e9, #151a26);
     --color-fg: light-dark(#20293a, #e9e6da);
     --color-muted: light-dark(#5f6a7a, #8b93a5);
     --color-border: light-dark(#dfddd7, #2a3142);
     --color-accent: light-dark(#1e4d9b, #8fb4ee);
-    --color-accent-hover: light-dark(#173d80, #a9c6f4);
 
     --callout-note: light-dark(#1e4d9b, #8fb4ee);
     --callout-tip: light-dark(#3f7259, #93c4ab);
@@ -83,7 +80,6 @@
             --color-muted: #8b93a5;
             --color-border: #2a3142;
             --color-accent: #8fb4ee;
-            --color-accent-hover: #a9c6f4;
         }
     }
 }
