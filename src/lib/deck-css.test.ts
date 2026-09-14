@@ -88,6 +88,38 @@ describe("deck.css structure", () => {
         }
     });
 
+    test("the deck never scrolls sideways", () => {
+        expect(decl(desktop, ".deck")).toContain("overflow: hidden");
+        expect(decl(desktop, ".deck")).not.toContain("overflow-x: auto");
+    });
+
+    test("width bands hide collection peeks only — never the document's details", () => {
+        const bands = blocks.filter((b) => /max-width: 1999px|min-width: 2000px/.test(b.head));
+        expect(bands.length).toBe(2);
+        for (const band of bands) {
+            for (const sel of band.rules.keys()) {
+                if (!sel.includes("display")) continue;
+            }
+            expect([...band.rules.keys()].some((s) => s.includes("deck-col--meta"))).toBe(false);
+        }
+        const narrow = bands.find((b) => b.head.includes("1999px"))!;
+        expect([...narrow.rules.keys()]).toContain('.deck-col--peek:not([data-deck-col="feed"])');
+        const wide = bands.find((b) => b.head.includes("2000px"))!;
+        expect([...wide.rules.keys()]).toContain(".deck-col--mixed");
+    });
+
+    test("the details column is never blanket-hidden with the peek columns", () => {
+        const hidesPeek = blocks.filter((b) =>
+            [...b.rules.entries()].some(
+                ([sel, body]) => sel === ".deck-col--peek" && /display:\s*none/.test(body),
+            ),
+        );
+        for (const b of hidesPeek) {
+            expect([...b.rules.keys()]).not.toContain(".deck-col--meta");
+        }
+        expect(css).toContain(".deck-col--meta");
+    });
+
     test("retired selectors are gone", () => {
         expect(css).not.toContain("deck-controls");
         expect(css).not.toContain("deck-col--identity");

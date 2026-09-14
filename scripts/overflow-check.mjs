@@ -96,11 +96,16 @@ await deck.waitForTimeout(600);
 const circuit = await deck.evaluate(() => {
     const root = document.querySelector("[data-deck-root]");
     const rail = document.querySelector(".deck-col--rail");
-    const first = rail?.nextElementSibling;
+    const others = [...document.querySelectorAll("[data-deck-root] > *")]
+        .filter((c) => c !== rail && getComputedStyle(c).display !== "none");
+    const leftmost = others.length
+        ? others.reduce((a, b) => (a.getBoundingClientRect().left <= b.getBoundingClientRect().left ? a : b))
+        : null;
     const tiles = [...document.querySelectorAll(".column-tile")];
     return {
         headerHidden: getComputedStyle(document.querySelector("body > header")).display === "none",
-        railOverlap: rail && first ? Math.round(rail.getBoundingClientRect().right - first.getBoundingClientRect().left) : null,
+        railOverlap: rail && leftmost ? Math.round(rail.getBoundingClientRect().right - leftmost.getBoundingClientRect().left) : null,
+        visibleColumns: others.length + (rail ? 1 : 0),
         tiles: tiles.length,
         mounted: tiles.filter((t) => t.children.length > 0).length,
         scrollLeft: root?.scrollLeft ?? null,
@@ -109,6 +114,27 @@ const circuit = await deck.evaluate(() => {
 const deckOk = circuit.headerHidden && circuit.railOverlap === 0 && circuit.tiles > 0 && circuit.mounted === circuit.tiles && circuit.scrollLeft === 0;
 if (!deckOk) failures++;
 console.log(`${deckOk ? "  ok " : "FAIL "} deck shell @2560px — ${JSON.stringify(circuit)}`);
+for (const [w, h] of [[390, 900], [1440, 900], [2560, 1400]]) {
+    const art = await browser.newPage({ viewport: { width: w, height: h } });
+    await art.goto(`${BASE}${docPath}`, { waitUntil: "networkidle" });
+    await art.waitForTimeout(400);
+    const meta = await art.evaluate(() => {
+        const seen = (s) => { const e = document.querySelector(s); return !!(e && e.getBoundingClientRect().width > 0); };
+        return { tags: seen(".deck-tags a"), related: seen(".deck-peek a"), colophon: seen(".colophon-meta") };
+    });
+    const metaOk = meta.tags && meta.related && meta.colophon;
+    if (!metaOk) failures++;
+    console.log(`${metaOk ? "  ok " : "FAIL "} article details visible @${w}px — ${JSON.stringify(meta)}`);
+    const fits = await art.evaluate(() => {
+        const d = document.querySelector("[data-deck-root]");
+        return { deck: d.scrollWidth - d.clientWidth, doc: document.documentElement.scrollWidth - document.documentElement.clientWidth };
+    });
+    const fitsOk = fits.deck === 0 && fits.doc === 0;
+    if (!fitsOk) failures++;
+    console.log(`${fitsOk ? "  ok " : "FAIL "} nothing scrolls sideways @${w}px — ${JSON.stringify(fits)}`);
+    await art.close();
+}
+
 const before = await deck.evaluate(() => [...document.querySelectorAll(".deck-col--peek")].filter((c) => !c.hidden).length);
 await deck.click("[data-deck-toggle]");
 await deck.reload({ waitUntil: "networkidle" });

@@ -10,9 +10,10 @@ interface Props {
     label?: string;
     href?: string;
     count?: string;
-    variant?: "list" | "doc";
+    variant?: "list" | "doc" | "mixed";
     raw?: boolean;
     home?: boolean;
+    peeks?: boolean;
 }
 
 const {
@@ -24,9 +25,10 @@ const {
     variant = "list",
     raw = false,
     home = false,
+    peeks = false,
 } = Astro.props;
 
-const peeks = columns.filter((c) => c.id !== current);
+const peekColumns = peeks ? columns.filter((c) => c.id !== current) : [];
 ---
 
 <div class="deck" data-deck-root>
@@ -39,7 +41,10 @@ const peeks = columns.filter((c) => c.id !== current);
         class:list={[
             "deck-col",
             "deck-col--main",
-            { "deck-col--doc": variant === "doc" },
+            {
+                "deck-col--doc": variant === "doc",
+                "deck-col--mixed": variant === "mixed",
+            },
         ]}
         data-deck-col={current ?? "main"}
         data-current="true"
@@ -61,7 +66,7 @@ const peeks = columns.filter((c) => c.id !== current);
     </section>
     )}
 
-    {peeks.map((column) => <DeckColumn column={column} />)}
+    {peekColumns.map((column) => <DeckColumn column={column} />)}
 </div>
 
 <script>
