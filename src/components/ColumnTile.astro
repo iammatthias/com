@@ -1,20 +1,15 @@
 ---
-import { hashSeed } from "@lib/format";
-
 interface Props {
-    seed?: string;
-    live?: boolean;
     size?: number;
     alt?: string;
 }
 
-const { seed, live = false, size = 22, alt = "" } = Astro.props;
+const { size = 22, alt = "" } = Astro.props;
 ---
 
 <span
     class="column-tile"
-    data-azulejo-seed={live ? "" : String(hashSeed(seed ?? "tile"))}
-    data-azulejo-live={live ? "" : undefined}
+    data-azulejo-tile
     data-azulejo-size={String(size)}
     data-azulejo-alt={alt || undefined}
     style={`--tile: ${size}px`}

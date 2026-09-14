@@ -81,25 +81,33 @@ function revealHash(behavior: ScrollBehavior): boolean {
     return true;
 }
 
+function freshSeed(): number {
+    return (Math.random() * 0x100000000) >>> 0;
+}
+
 function mountTiles(): void {
     for (const el of document.querySelectorAll<HTMLElement>(
-        "[data-azulejo-seed]",
+        "[data-azulejo-tile]",
     )) {
         if (el.dataset.azulejoMounted !== undefined) continue;
         el.dataset.azulejoMounted = "";
-        const size = Number(el.dataset.azulejoSize) || 22;
-        const alt = el.dataset.azulejoAlt ?? "";
-        if (el.dataset.azulejoLive !== undefined) {
-            mountAzulejoTile(el, { size, alt, refireOnClick: true });
-        } else {
-            mountAzulejoTile(el, { size, alt, seed: Number(el.dataset.azulejoSeed) });
-        }
+        const redeal = mountAzulejoTile(el, {
+            size: Number(el.dataset.azulejoSize) || 22,
+            alt: el.dataset.azulejoAlt ?? "",
+        });
+        if (!redeal) continue;
+        const paint = (seed: number) => {
+            el.dataset.azulejoSeed = String(seed);
+            redeal(seed);
+        };
+        paint(freshSeed());
+        el.addEventListener("click", () => paint(freshSeed()));
     }
 }
 
 function init(): void {
-    if (!active()) return;
     mountTiles();
+    if (!active()) return;
     restoreScrolls();
     trackScrolls();
     revealHash("auto");

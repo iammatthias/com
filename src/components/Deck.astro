@@ -52,7 +52,7 @@ const peekColumns = peeks ? columns.filter((c) => c.id !== current) : [];
     >
         {label && (
             <header class="deck-col__head">
-                <ColumnTile seed={`column:${current ?? "main"}`} />
+                <ColumnTile />
                 <h2 class="deck-col__title" id="deck-head-main">
                     {href ? <a href={href}>{label}</a> : label}
                 </h2>

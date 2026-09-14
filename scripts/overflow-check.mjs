@@ -141,6 +141,27 @@ for (const [w, h] of [[390, 900], [1440, 900], [2560, 1400]]) {
     await art.close();
 }
 
+const SEEDS = `[...document.querySelectorAll('[data-azulejo-tile]')].filter(e => e.getBoundingClientRect().width > 0).map(e => e.dataset.azulejoSeed || null)`;
+const tilesA = await deck.evaluate(SEEDS);
+await deck.reload({ waitUntil: "networkidle" });
+await deck.waitForTimeout(700);
+const tilesB = await deck.evaluate(SEEDS);
+const handle = await deck.evaluateHandle(`[...document.querySelectorAll('[data-azulejo-tile]')].find(e => e.getBoundingClientRect().width > 0)`);
+const seedBefore = await deck.evaluate((e) => e.dataset.azulejoSeed, handle);
+await handle.asElement().click();
+await deck.waitForTimeout(300);
+const seedAfter = await deck.evaluate((e) => e.dataset.azulejoSeed, handle);
+const tiles = {
+    visible: tilesA.length,
+    allSeeded: tilesA.every(Boolean),
+    distinctInPage: new Set(tilesA).size === tilesA.length,
+    freshOnLoad: tilesA.some((v, i) => v !== tilesB[i]),
+    freshOnClick: seedBefore !== seedAfter,
+};
+const tilesOk = tiles.visible > 1 && tiles.allSeeded && tiles.distinctInPage && tiles.freshOnLoad && tiles.freshOnClick;
+if (!tilesOk) failures++;
+console.log(`${tilesOk ? "  ok " : "FAIL "} azulejo tiles are live — ${JSON.stringify(tiles)}`);
+
 const rail = await deck.evaluate(() => {
     const r = (e) => e.getBoundingClientRect();
     const names = [...document.querySelectorAll(".rail-list--collections .rail-name")];

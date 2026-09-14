@@ -17,7 +17,7 @@ const { column } = Astro.props;
     aria-labelledby={`deck-head-${column.id}`}
 >
     <header class="deck-col__head">
-        <ColumnTile seed={`column:${column.id}`} />
+        <ColumnTile />
         <h2 class="deck-col__title" id={`deck-head-${column.id}`}>
             <a href={column.href}>{column.label}</a>
         </h2>
