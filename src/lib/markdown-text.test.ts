@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { plainText } from "./markdown-text";
+import { noteTitle, plainText } from "./markdown-text";
 
 describe("plainText", () => {
     test("drops embeds and markup, keeps link text, collapses whitespace", () => {
@@ -16,5 +16,23 @@ describe("plainText", () => {
 
     test("blockquote and heading markers become word breaks", () => {
         expect(plainText("> quoted\n## Heading")).toBe("quoted Heading");
+    });
+});
+
+describe("noteTitle", () => {
+    test("takes the first readable line, past any leading embed", () => {
+        expect(noteTitle("![](blob://abc)\n\nHello *world*, a note.\nSecond")).toBe(
+            "Hello world, a note.",
+        );
+    });
+
+    test("truncates at the limit and trims before the ellipsis", () => {
+        expect(noteTitle("x".repeat(80))).toBe(`${"x".repeat(60)}…`);
+        expect(noteTitle(`${"y".repeat(61)} zzz`, 20)).toBe(`${"y".repeat(20)}…`);
+    });
+
+    test("falls back to a label when nothing readable remains", () => {
+        expect(noteTitle("")).toBe("Note");
+        expect(noteTitle("![](blob://x)")).toBe("Note");
     });
 });

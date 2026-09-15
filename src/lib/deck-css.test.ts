@@ -113,19 +113,11 @@ describe("deck.css structure", () => {
         expect(decl(desktop, ".deck-col--rail")).toContain("position: sticky");
     });
 
-    test("width bands hide collection peeks only — never the document's details", () => {
-        const bands = blocks.filter((b) => /max-width: 1999px|min-width: 2000px/.test(b.head));
-        expect(bands.length).toBe(2);
-        for (const band of bands) {
-            for (const sel of band.rules.keys()) {
-                if (!sel.includes("display")) continue;
-            }
-            expect([...band.rules.keys()].some((s) => s.includes("deck-col--meta"))).toBe(false);
-        }
-        const narrow = bands.find((b) => b.head.includes("1999px"))!;
-        expect([...narrow.rules.keys()]).toContain('.deck-col--peek:not([data-deck-col="feed"])');
-        const wide = bands.find((b) => b.head.includes("2000px"))!;
-        expect([...wide.rules.keys()]).toContain(".deck-col--mixed");
+    test("no width band swaps one layout for another", () => {
+        const switches = blocks.filter(
+            (b) => /max-width: 1[5-9]\d\dpx|min-width: [2-9]\d\d\dpx/.test(b.head),
+        );
+        expect(switches.map((b) => b.head)).toEqual([]);
     });
 
     test("the details column is never blanket-hidden with the peek columns", () => {

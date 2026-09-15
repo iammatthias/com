@@ -21,9 +21,6 @@
 }
 
 
-.deck-col--rail-home {
-    display: block;
-}
 
 .deck-col--rail > .deck-col__body {
     display: grid;
@@ -120,9 +117,6 @@
         display: none;
     }
 
-    body[data-deck] .arch-frame {
-        height: min(38dvh, 360px);
-    }
 
     .deck {
         flex-direction: row;
@@ -165,13 +159,6 @@
         max-width: none;
     }
 
-    .deck-col--mixed {
-        --grid-min: 240px;
-        flex: 1 1 480px;
-        min-width: 400px;
-        max-width: none;
-        order: 1;
-    }
 
 
     .deck-col--main:has(.prose) {
@@ -257,11 +244,6 @@
         background: var(--color-bg);
     }
 
-    .deck-col--rail-home {
-        flex-basis: var(--deck-rail-home);
-        min-width: var(--deck-rail-home);
-        max-width: var(--deck-rail-home);
-    }
 
     .deck-col--rail > .deck-col__body {
         gap: var(--space-6);
@@ -583,23 +565,73 @@
     }
 }
 
-
-
-
-
-
-@media (min-width: 1200px) and (max-width: 1999px) {
-    .deck-col--peek:not([data-deck-col="feed"]) {
-        display: none;
-    }
-
-    .deck-col--peek[data-deck-col="feed"] {
-        max-width: 360px;
-    }
+.home-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    justify-items: center;
 }
 
-@media (min-width: 2000px) {
-    .deck-col--mixed {
-        display: none;
+.home-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+    width: 100%;
+    max-width: var(--measure);
+}
+
+.home-intro h1 {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--fs-2xl);
+}
+
+.home-recent {
+    margin-top: var(--space-8);
+}
+
+.home-collections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: var(--space-6) var(--space-7);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+}
+
+.panel__head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--space-3);
+    padding-bottom: var(--space-2);
+}
+
+.panel__title {
+    font-family: var(--font-serif);
+    font-size: var(--fs-lg);
+    letter-spacing: var(--ls-display);
+}
+
+.panel__title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.panel__title a:hover {
+    color: var(--color-accent);
+}
+
+.panel__count {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-muted);
+}
+
+@media (min-width: 1200px) {
+    body[data-deck] .arch-frame {
+        height: min(46dvh, 460px);
     }
 }

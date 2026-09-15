@@ -3,6 +3,8 @@ export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import FeedCard from "@components/FeedCard.astro";
+import GlassArch from "@components/GlassArch.astro";
+import CollectionPanel from "@components/CollectionPanel.astro";
 import Deck from "@components/Deck.astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
@@ -37,34 +39,36 @@ setResponseCacheHeaders(Astro.response, cacheHint);
 ---
 
 <BaseLayout deck>
-    <Deck
-        columns={columns}
-        home
-        peeks
-        variant="mixed"
-        current="recent"
-        label="recent"
-        href="/content"
-        count={String(total)}
-    >
-        {
-            recent.length === 0 ? (
-                <p class="feed-empty">No entries to show right now.</p>
-            ) : (
-                <ul class="grid">
-                    {recent.map((item) => (
-                        <FeedCard
-                            href={item.href}
-                            title={item.title}
-                            description={item.description}
-                            publishedAt={item.publishedAt}
-                            kind={item.publication.name.toLowerCase()}
-                            draft={item.published === false}
-                        />
-                    ))}
-                </ul>
-            )
-        }
+    <Deck columns={columns} label="recent" href="/content" count={String(total)}>
+        <section class="home-hero">
+            <GlassArch />
+            <div class="home-intro">
+                <h1>Hi, I am Matthias.</h1>
+                <p>
+                    This is my cozy corner on the web. A collection of
+                    photographs, projects, recipes, and notes.
+                </p>
+            </div>
+        </section>
+
+        {recent.length > 0 && (
+            <ul class="grid home-recent">
+                {recent.map((item) => (
+                    <FeedCard
+                        href={item.href}
+                        title={item.title}
+                        description={item.description}
+                        publishedAt={item.publishedAt}
+                        kind={item.publication.name.toLowerCase()}
+                        draft={item.published === false}
+                    />
+                ))}
+            </ul>
+        )}
+
+        <section class="home-collections" aria-label="Collections">
+            {columns.map((c) => <CollectionPanel column={c} />)}
+        </section>
     </Deck>
 </BaseLayout>
 

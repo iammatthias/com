@@ -12,7 +12,6 @@ interface Props {
     count?: string;
     variant?: "list" | "doc" | "mixed";
     raw?: boolean;
-    home?: boolean;
     peeks?: boolean;
 }
 
@@ -24,7 +23,6 @@ const {
     count,
     variant = "list",
     raw = false,
-    home = false,
     peeks = false,
 } = Astro.props;
 
@@ -32,9 +30,7 @@ const peekColumns = peeks ? columns.filter((c) => c.id !== current) : [];
 ---
 
 <div class="deck" data-deck-root>
-    <DeckRail columns={columns} current={current} home={home}>
-        <slot name="rail" />
-    </DeckRail>
+    <DeckRail columns={columns} current={current} />
 
     {raw ? <slot /> : (
     <section

@@ -1,5 +1,4 @@
 ---
-import GlassArch from "@components/GlassArch.astro";
 import ColumnTile from "@components/ColumnTile.astro";
 import type { DeckColumnModel } from "@lib/deck";
 import { getMenuGroups } from "@lib/site-menu";
@@ -8,10 +7,9 @@ import { SITE_IDENTITY } from "@lib/agent-surface";
 interface Props {
     columns: DeckColumnModel[];
     current?: string;
-    home?: boolean;
 }
 
-const { columns, current, home = false } = Astro.props;
+const { columns, current } = Astro.props;
 
 const siteGroups = (await getMenuGroups()).filter(
     (g) => g.label && g.label !== "publications",
@@ -19,28 +17,15 @@ const siteGroups = (await getMenuGroups()).filter(
 ---
 
 <aside
-    class:list={["deck-col", "deck-col--rail", { "deck-col--rail-home": home }]}
+    class="deck-col deck-col--rail"
     data-deck-col="rail"
     aria-label="Site navigation"
 >
     <div class="deck-col__body">
-        {home ? (
-            <section class="cover">
-                <GlassArch />
-                <section class="intro" aria-label="Introduction">
-                    <h1 class="greeting">Hi, I am Matthias.</h1>
-                    <p>
-                        This is my cozy corner on the web. A collection of
-                        photographs, projects, recipes, and notes.
-                    </p>
-                </section>
-            </section>
-        ) : (
-            <div class="rail-brand">
-                <ColumnTile size={32} alt={SITE_IDENTITY.title} />
-                <a href="/" class="rail-identity">{SITE_IDENTITY.title}</a>
-            </div>
-        )}
+        <div class="rail-brand">
+            <ColumnTile size={32} alt={SITE_IDENTITY.title} />
+            <a href="/" class="rail-identity">{SITE_IDENTITY.title}</a>
+        </div>
 
         <nav class="rail-nav" aria-label="Sections">
             <ul class="rail-list rail-list--collections">
@@ -79,7 +64,6 @@ const siteGroups = (await getMenuGroups()).filter(
             <a href="/menu" data-menu-trigger>menu</a>
         </div>
 
-        <slot />
     </div>
 </aside>
 

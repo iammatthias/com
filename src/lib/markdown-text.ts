@@ -53,3 +53,14 @@ export function transformAlerts(html: string): string {
         },
     );
 }
+
+const NOTE_TITLE_MAX = 60;
+
+export function noteTitle(markdown: string, max = NOTE_TITLE_MAX): string {
+    const line =
+        stripEmbeds(markdown)
+            .split("\n")
+            .map((l) => plainText(l))
+            .find((l) => l.length > 0) ?? "";
+    return line.length > max ? `${line.slice(0, max).trimEnd()}…` : line || "Note";
+}

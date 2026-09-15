@@ -1,0 +1,49 @@
+---
+import ColumnTile from "@components/ColumnTile.astro";
+import { fmtDate } from "@lib/format";
+import { noteTitle } from "@lib/markdown-text";
+import type { DeckColumnModel } from "@lib/deck";
+
+interface Props {
+    column: DeckColumnModel;
+}
+
+const { column } = Astro.props;
+const PANEL_ITEMS = 6;
+const items = column.feed
+    ? column.feed.slice(0, PANEL_ITEMS).map(({ item }) => ({
+          href: `/feed/${item.rkey}`,
+          title: noteTitle(item.body),
+          date: item.createdAt,
+      }))
+    : column.peek.slice(0, PANEL_ITEMS);
+---
+
+<section class="panel" aria-labelledby={`panel-${column.id}`}>
+    <header class="panel__head">
+        <ColumnTile />
+        <h2 class="panel__title" id={`panel-${column.id}`}>
+            <a href={column.href}>{column.label}</a>
+        </h2>
+        <span class="panel__count">{column.total}</span>
+    </header>
+
+    <ul class="deck-peek">
+        {items.map((item) => (
+            <li>
+                <a href={item.href}>
+                    <span class="deck-peek__title">{item.title}</span>
+                    {item.date && (
+                        <time class="deck-peek__date" datetime={item.date}>
+                            {fmtDate(item.date)}
+                        </time>
+                    )}
+                </a>
+            </li>
+        ))}
+    </ul>
+
+    {column.total > items.length && (
+        <a class="deck-all" href={column.href}>all {column.total} →</a>
+    )}
+</section>
