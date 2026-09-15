@@ -637,10 +637,36 @@
         margin-bottom: var(--space-7);
     }
 
+    body[data-deck="home"] {
+        height: 100dvh;
+        overflow: hidden;
+        align-items: stretch;
+    }
+
+    body[data-deck="home"] > main {
+        min-height: 0;
+        overflow: hidden;
+    }
+
     .home {
         grid-template-columns: minmax(0, 1fr) minmax(0, var(--home-middle)) minmax(0, 1fr);
         column-gap: var(--space-8);
-        align-items: start;
+        align-items: stretch;
+        height: 100%;
+        min-height: 0;
+    }
+
+    .home-static {
+        align-self: start;
+    }
+
+    .home-feed,
+    .home-lists {
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+        padding-right: var(--space-3);
     }
 
     .home-feed {
