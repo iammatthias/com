@@ -89,17 +89,11 @@
 }
 
 @media (min-width: 1200px) {
-    html:has(body[data-deck]) {
-        overflow: hidden;
-    }
-
     body[data-deck] {
-        height: 100dvh;
-        min-height: 0;
-        overflow: hidden;
+        min-height: 100dvh;
         display: grid;
-        grid-template-rows: auto minmax(0, 1fr) auto;
-        align-items: stretch;
+        grid-template-rows: auto 1fr auto;
+        align-items: start;
         padding: var(--page-inset);
         gap: 0;
     }
@@ -119,8 +113,6 @@
         grid-row: 2;
         max-width: none;
         width: 100%;
-        min-height: 0;
-        overflow: hidden;
         display: block;
     }
 
@@ -133,21 +125,27 @@
     }
 
     .deck {
-        height: 100%;
         flex-direction: row;
-        align-items: stretch;
+        align-items: start;
         gap: 0;
-        overflow: hidden;
+        max-width: var(--deck-max);
+        margin-inline: auto;
     }
 
     .deck-col {
         flex: 1 1 var(--deck-col);
         display: flex;
         flex-direction: column;
-        min-height: 0;
         min-width: var(--deck-col);
         max-width: var(--deck-col-max);
         border-left: 1px solid var(--color-border);
+    }
+
+    .deck-col--rail,
+    .deck-col--meta {
+        position: sticky;
+        top: var(--page-inset);
+        max-height: calc(100dvh - var(--page-inset) * 2);
     }
 
     .deck-col--peek {
@@ -155,9 +153,9 @@
     }
 
     .deck-col--meta {
-        flex: 1 1 var(--deck-col);
-        min-width: var(--deck-col);
-        max-width: var(--deck-col-max);
+        flex: 0 1 var(--deck-meta);
+        min-width: var(--deck-meta);
+        max-width: var(--deck-meta);
     }
 
 
@@ -222,11 +220,16 @@
 
     .deck-col__body {
         flex: 1 1 auto;
+        min-width: 0;
+        padding: var(--inset-y) var(--inset-x);
+    }
+
+    .deck-col--rail > .deck-col__body,
+    .deck-col--meta > .deck-col__body {
         min-height: 0;
         overflow-y: auto;
         overscroll-behavior: contain;
         scrollbar-width: thin;
-        padding: var(--inset-y) var(--inset-x);
     }
 
 
@@ -466,22 +469,14 @@
 }
 
 @media (min-width: 1200px) {
-    .deck:not(:has(.deck-col--peek)) {
-        justify-content: center;
-    }
-
     .deck-col--doc {
-        flex: 1 1 680px;
-        min-width: 520px;
-        max-width: 680px;
+        flex: 1 1 auto;
+        min-width: 480px;
+        max-width: none;
     }
 
     .deck-col--doc > .deck-col__body {
         padding: 0;
-    }
-
-    .deck-doc {
-        height: 100%;
     }
 
     .deck-doc__hero {
@@ -491,9 +486,16 @@
 
     .deck-doc__flow {
         padding: var(--inset-y-wide) var(--inset-x-wide);
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        scrollbar-width: thin;
+    }
+
+    .deck-doc__hero > *,
+    .deck-doc__flow > .doc-body > * {
+        max-width: var(--measure);
+    }
+
+    .deck-doc__flow > .doc-body > :is(figure, pre, table, .triptych, .ff-recipe),
+    .deck-doc__flow > .doc-related {
+        max-width: none;
     }
 }
 

@@ -40,7 +40,10 @@ function parseTopLevel(src: string): Block[] {
 function parseRules(src: string): Map<string, string> {
     const rules = new Map<string, string>();
     for (const m of src.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
-        for (const sel of m[1].split(",")) rules.set(sel.trim().replace(/\s+/g, " "), m[2]);
+        for (const raw of m[1].split(",")) {
+            const sel = raw.trim().replace(/\s+/g, " ");
+            rules.set(sel, (rules.get(sel) ?? "") + m[2]);
+        }
     }
     return rules;
 }
@@ -90,8 +93,24 @@ describe("deck.css structure", () => {
     });
 
     test("the deck never scrolls sideways", () => {
-        expect(decl(desktop, ".deck")).toContain("overflow: hidden");
-        expect(decl(desktop, ".deck")).not.toContain("overflow-x: auto");
+        const deck = decl(desktop, ".deck");
+        expect(deck).not.toContain("overflow-x: auto");
+        expect(deck).not.toContain("overflow-x: scroll");
+        expect(css).not.toContain("scroll-padding-left");
+    });
+
+    test("the document scrolls; only the sidebars may scroll themselves", () => {
+        const body = decl(desktop, "body[data-deck]");
+        expect(body).toContain("min-height: 100dvh");
+        expect(body).not.toContain("overflow: hidden");
+        expect(decl(desktop, ".deck-col__body")).not.toContain("overflow-y: auto");
+        expect(
+            decl(desktop, ".deck-col--rail > .deck-col__body"),
+        ).toContain("overflow-y: auto");
+    });
+
+    test("the sidebars stick rather than being fixed panes", () => {
+        expect(decl(desktop, ".deck-col--rail")).toContain("position: sticky");
     });
 
     test("width bands hide collection peeks only — never the document's details", () => {

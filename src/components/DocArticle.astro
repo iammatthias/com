@@ -38,7 +38,7 @@ const markdownPath = `${item.href}.md`;
     data-deck-col={item.collection}
     data-current="true"
 >
-    <div class="deck-col__body" data-deck-scroll={item.collection}>
+    <div class="deck-col__body">
         <div class="deck-doc">
             <header class="deck-doc__hero doc-hero">
                 {item.published === false && (
@@ -97,7 +97,7 @@ const markdownPath = `${item.href}.md`;
     data-deck-col="details"
     aria-label="Document details"
 >
-    <div class="deck-col__body" data-deck-scroll="details">
+    <div class="deck-col__body">
         <div class="deck-meta">
             {showToc && (
                 <nav class="deck-meta__group" aria-label="On this page">

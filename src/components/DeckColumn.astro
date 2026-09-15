@@ -26,7 +26,7 @@ const { column } = Astro.props;
         )}
     </header>
 
-    <div class="deck-col__body" data-deck-scroll={column.id}>
+    <div class="deck-col__body">
         {column.feed ? (
             <ul class="feed">
                 {column.feed.map(({ item, media }) => (

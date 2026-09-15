@@ -60,7 +60,7 @@ const peekColumns = peeks ? columns.filter((c) => c.id !== current) : [];
             </header>
         )}
 
-        <div class="deck-col__body" data-deck-scroll={current ?? "main"}>
+        <div class="deck-col__body">
             <slot />
         </div>
     </section>

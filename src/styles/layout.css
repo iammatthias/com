@@ -3,7 +3,10 @@
     --deck-col-max: 440px;
     --deck-main: clamp(560px, 52vw, 900px);
     --deck-head: 3.25rem;
-    --deck-rail: 232px;
+    --deck-rail: 208px;
+    --deck-meta: 264px;
+    --deck-max: 1400px;
+    --measure: 38rem;
     --deck-rail-home: 400px;
 
     --stack-gap: var(--space-4);
