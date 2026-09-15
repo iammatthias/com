@@ -3,14 +3,12 @@ export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
     deck title="Not found" description="That page doesn't exist." noindex>
-    <Deck columns={deckCols}>
+    <Deck>
     <article class="not-found">
         <p class="kind">404</p>
         <h1>Not found</h1>

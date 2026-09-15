@@ -1,36 +1,27 @@
 ---
-import DeckColumn from "@components/DeckColumn.astro";
-import DeckRail from "@components/DeckRail.astro";
 import ColumnTile from "@components/ColumnTile.astro";
-import type { DeckColumnModel } from "@lib/deck";
 
 interface Props {
-    columns: DeckColumnModel[];
     current?: string;
     label?: string;
     href?: string;
     count?: string;
     variant?: "list" | "doc" | "mixed";
     raw?: boolean;
-    peeks?: boolean;
 }
 
 const {
-    columns,
     current,
     label,
     href,
     count,
     variant = "list",
     raw = false,
-    peeks = false,
 } = Astro.props;
 
-const peekColumns = peeks ? columns.filter((c) => c.id !== current) : [];
 ---
 
 <div class="deck" data-deck-root>
-    <DeckRail columns={columns} current={current} />
 
     {raw ? <slot /> : (
     <section
@@ -56,15 +47,11 @@ const peekColumns = peeks ? columns.filter((c) => c.id !== current) : [];
             </header>
         )}
 
-        <div class="deck-col__body">
+        <div class="deck-col__body page">
             <slot />
         </div>
     </section>
     )}
 
-    {peekColumns.map((column) => <DeckColumn column={column} />)}
 </div>
 
-<script>
-    import "@src/scripts/deck";
-</script>

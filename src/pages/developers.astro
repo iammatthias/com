@@ -3,7 +3,6 @@ export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 import { CONTENT_SIGNAL, EXAMPLE_DOC_PATH, API_OPERATIONS, AGENT_SKILLS, AGENT_RESOURCES, SITE_ORIGIN } from "@lib/agent-surface";
 import type { MenuMeta } from "@lib/menu";
 
@@ -32,7 +31,6 @@ const faq = [
     },
 ];
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
@@ -42,7 +40,7 @@ const deckCols = await deckColumns();
     markdownHref="/developers.md"
     faq={faq}
 >
-    <Deck columns={deckCols}>
+    <Deck>
     <header class="page-header">
         <h1>iammatthias.com developer documentation</h1>
         <p>

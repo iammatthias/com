@@ -8,7 +8,6 @@ import { getCollection } from "astro:content";
 import { renderKey, type DocumentData } from "@lib/farfield-loader";
 import { plainText } from "@lib/markdown-text";
 import { relatedDocs } from "@lib/content-query";
-import { deckColumns } from "@lib/deck";
 import { pageCacheKey } from "@lib/layout-fingerprint";
 
 export async function getStaticPaths() {
@@ -35,7 +34,6 @@ const metaDescription =
 
 const markdownPath = `${item.href}.md`;
 
-const columns = await deckColumns();
 ---
 
 <BaseLayout
@@ -56,7 +54,7 @@ const columns = await deckColumns();
     ]}
     markdownHref={markdownPath}
 >
-    <Deck columns={columns} current={item.collection} raw>
+    <Deck current={item.collection} raw>
         <DocArticle item={item} related={related} deck />
     </Deck>
 </BaseLayout>

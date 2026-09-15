@@ -3,7 +3,6 @@ export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 import FeedEntryCard from "@components/FeedEntryCard.astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
@@ -44,7 +43,6 @@ const mediaByRkey = new Map<string, ResolvedMedia[]>(
 
 const socialLinks = SOCIAL_LINKS.filter((l) => !l.schemaOnly);
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
@@ -54,7 +52,7 @@ const deckCols = await deckColumns();
     ogImage="/now"
     profilePage
 >
-    <Deck columns={deckCols}>
+    <Deck>
     <article class="prose">
         <h1>Now</h1>
 

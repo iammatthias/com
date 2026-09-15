@@ -94,26 +94,22 @@ const deck = await browser.newPage({ viewport: { width: 2560, height: 1400 } });
 await deck.goto(`${BASE}${docPath}`, { waitUntil: "networkidle" });
 await deck.waitForTimeout(600);
 const circuit = await deck.evaluate(() => {
-    const root = document.querySelector("[data-deck-root]");
-    const rail = document.querySelector(".deck-col--rail");
-    const others = [...document.querySelectorAll("[data-deck-root] > *")]
-        .filter((c) => c !== rail && getComputedStyle(c).display !== "none");
-    const leftmost = others.length
-        ? others.reduce((a, b) => (a.getBoundingClientRect().left <= b.getBoundingClientRect().left ? a : b))
-        : null;
-    const tiles = [...document.querySelectorAll(".column-tile")];
+    const cols = [...document.querySelectorAll("[data-deck-root] > *")]
+        .filter((c) => getComputedStyle(c).display !== "none");
+    const tiles = [...document.querySelectorAll("[data-azulejo-tile]")];
     return {
-        headerHidden: getComputedStyle(document.querySelector("body > header")).display === "none",
-        railOverlap: rail && leftmost ? Math.round(rail.getBoundingClientRect().right - leftmost.getBoundingClientRect().left) : null,
-        visibleColumns: others.length + (rail ? 1 : 0),
+        headerVisible: getComputedStyle(document.querySelector("body > header")).display !== "none",
+        rail: !!document.querySelector(".deck-col--rail"),
+        columns: cols.map((c) => c.dataset.deckCol ?? "?"),
         tiles: tiles.length,
         mounted: tiles.filter((t) => t.children.length > 0).length,
-        scrollLeft: root?.scrollLeft ?? null,
+        sideways: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     };
 });
-const deckOk = circuit.headerHidden && circuit.railOverlap === 0 && circuit.tiles > 0 && circuit.mounted === circuit.tiles && circuit.scrollLeft === 0;
+const deckOk = circuit.headerVisible && !circuit.rail && circuit.columns.length >= 1 &&
+    circuit.tiles > 0 && circuit.mounted === circuit.tiles && circuit.sideways === 0;
 if (!deckOk) failures++;
-console.log(`${deckOk ? "  ok " : "FAIL "} deck shell @2560px — ${JSON.stringify(circuit)}`);
+console.log(`${deckOk ? "  ok " : "FAIL "} article shell @2560px — ${JSON.stringify(circuit)}`);
 for (const [w, h] of [[390, 900], [1440, 900], [2560, 1400]]) {
     const art = await browser.newPage({ viewport: { width: w, height: h } });
     await art.goto(`${BASE}${docPath}`, { waitUntil: "networkidle" });
@@ -194,19 +190,24 @@ if (!homeOk) failures++;
 console.log(`${homeOk ? "  ok " : "FAIL "} homepage is three columns, middle capped — ${JSON.stringify(homeCols)}`);
 await home.close();
 
-const rail = await deck.evaluate(() => {
-    const r = (e) => e.getBoundingClientRect();
-    const names = [...document.querySelectorAll(".rail-list--collections .rail-name")];
-    const counts = [...document.querySelectorAll(".rail-list--collections .rail-count")];
-    return {
-        rows: names.length,
-        nameEdges: new Set(names.map((n) => Math.round(r(n).left))).size,
-        countEdges: new Set(counts.map((c) => Math.round(r(c).right))).size,
+for (const route of ["/about", "/contact", "/privacy", "/developers", "/tags", "/posts"]) {
+    const pg = await browser.newPage({ viewport: { width: 1512, height: 982 } });
+    await pg.goto(`${BASE}${route}`, { waitUntil: "networkidle" });
+    await pg.waitForTimeout(400);
+    const head = await pg.evaluate(() => {
+        const h = document.querySelector(".page-header");
+        const next = h && h.nextElementSibling;
+        return {
+            headerVisible: getComputedStyle(document.querySelector("body > header")).display !== "none",
+            gap: next ? Math.round(next.getBoundingClientRect().top - h.getBoundingClientRect().bottom) : null,
         };
-});
-const railOk = rail.rows > 1 && rail.nameEdges === 1 && rail.countEdges === 1;
-if (!railOk) failures++;
-console.log(`${railOk ? "  ok " : "FAIL "} rail rows share one grid — ${JSON.stringify(rail)}`);
+    });
+    const headOk = head.headerVisible && head.gap !== null && head.gap >= 24;
+    if (!headOk) failures++;
+    console.log(`${headOk ? "  ok " : "FAIL "} ${route} page header has room — ${JSON.stringify(head)}`);
+    await pg.close();
+}
+
 
 await deck.close();
 

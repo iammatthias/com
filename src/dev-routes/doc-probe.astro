@@ -3,7 +3,6 @@ import { parse as parseYAML } from "yaml";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import DocArticle from "@components/DocArticle.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 import type { DocumentData } from "@lib/farfield-loader";
 import { plainText } from "@lib/markdown-text";
 
@@ -45,7 +44,6 @@ const item: DocumentData = {
     body,
 };
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
@@ -56,7 +54,7 @@ const deckCols = await deckColumns();
     noindex
     markdownHref={`${item.href}.md`}
 >
-    <Deck columns={deckCols} current={item.collection} raw>
+    <Deck current={item.collection} raw>
         <DocArticle item={item} related={[]} />
     </Deck>
 </BaseLayout>

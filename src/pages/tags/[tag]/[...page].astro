@@ -3,7 +3,6 @@ export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 import { pageCacheKey } from "@lib/layout-fingerprint";
 import FeedCard from "@components/FeedCard.astro";
 import Pagination from "@components/Pagination.astro";
@@ -40,7 +39,6 @@ const { tag, items, page } = Astro.props as {
 const base = `/tags/${encodeURIComponent(tag)}`;
 const paged = getPage(items, page, base)!;
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
@@ -53,7 +51,7 @@ const deckCols = await deckColumns();
     ]}
     pagination={{ prev: paged.prevHref, next: paged.nextHref }}
 >
-    <Deck columns={deckCols}>
+    <Deck>
     <header class="page-header">
         <h1>{tag}</h1>
         <p class="meta">

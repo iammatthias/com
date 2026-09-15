@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = { group: "personal", order: 2 };
@@ -74,7 +73,6 @@ const resumeData = [
     },
 ];
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
@@ -83,7 +81,7 @@ const deckCols = await deckColumns();
     description="Professional experience and education history"
     ogImage="/resume"
 >
-    <Deck columns={deckCols}>
+    <Deck>
     <article class="prose">
         <h1>Resume</h1>
         {

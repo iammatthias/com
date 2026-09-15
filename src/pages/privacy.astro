@@ -3,13 +3,11 @@ export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 import { SITE_IDENTITY } from "@lib/agent-surface";
 import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = { group: "other", label: "privacy", order: 4 };
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
@@ -17,7 +15,7 @@ const deckCols = await deckColumns();
     title="Privacy"
     description="Privacy at iammatthias.com. No cookies, analytics, tracking, or accounts."
 >
-    <Deck columns={deckCols}>
+    <Deck>
     <header class="page-header">
         <h1>Privacy</h1>
     </header>

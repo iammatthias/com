@@ -3,14 +3,12 @@ export const prerender = true;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 import { SOCIAL_LINKS } from "@lib/identity";
 import { SITE_IDENTITY } from "@lib/agent-surface";
 import type { MenuMeta } from "@lib/menu";
 
 export const menu: MenuMeta = { group: "personal", label: "contact", order: 3 };
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
@@ -18,7 +16,7 @@ const deckCols = await deckColumns();
     title="Contact"
     description="How to reach Matthias Jordan — email, social profiles, and what to expect."
 >
-    <Deck columns={deckCols}>
+    <Deck>
     <header class="page-header">
         <h1>Contact</h1>
     </header>

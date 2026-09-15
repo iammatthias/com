@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 import FeedCard from "./FeedCard.astro";
 import Pagination from "./Pagination.astro";
 import type { PageData } from "@lib/pagination";
@@ -18,7 +17,6 @@ interface Props {
 const { paged, pubs } = Astro.props;
 const { page } = paged;
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
@@ -28,7 +26,7 @@ const deckCols = await deckColumns();
     ogImage="/content"
     pagination={{ prev: paged.prevHref, next: paged.nextHref }}
 >
-    <Deck columns={deckCols}>
+    <Deck>
     <header class="page-header">
         <h1>Content</h1>
         <p>

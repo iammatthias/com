@@ -2,7 +2,6 @@
 export const prerender = false;
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 import { setResponseCacheHeaders } from "@lib/cache";
 
 function hashToNumbers(hash: string): number[] {
@@ -230,7 +229,6 @@ setResponseCacheHeaders(Astro.response, undefined, {
     swr: 604800,
 });
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
@@ -243,7 +241,7 @@ const deckCols = await deckColumns();
       { label: `session ${hash.slice(0, 8)}…` },
     ]}
 >
-    <Deck columns={deckCols}>
+    <Deck>
     <article>
       <svg
         viewBox='-10 -10 140 160'

@@ -1,28 +1,10 @@
 ---
+import ColumnTile from "@components/ColumnTile.astro";
 ---
 
-<span class="header-tile" id="header-azulejo">
-    <noscript>
-        <img
-            src="/azulejo/001.jpg"
-            width="32"
-            height="32"
-            alt="iammatthias"
-        />
-    </noscript>
+<span class="header-tile">
+    <ColumnTile size={32} alt="iammatthias" />
 </span>
-
-<script>
-    import { mountAzulejoTile } from "@src/scripts/azulejo-tile";
-    const el = document.getElementById("header-azulejo");
-    if (el) {
-        mountAzulejoTile(el, {
-            size: 32,
-            alt: "iammatthias",
-            refireOnClick: true,
-        });
-    }
-</script>
 
 <style>
     .header-tile {

@@ -3,7 +3,6 @@ export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { deckColumns } from "@lib/deck";
 import RecordColophon from "@components/RecordColophon.astro";
 import { getLiveEntry } from "astro:content";
 import { LiveEntryNotFoundError } from "astro/content/runtime";
@@ -44,7 +43,6 @@ const media = await resolveBodyMedia(item.body);
 const markdownPath = `/feed/${rkey}.md`;
 const bannerSeed = hashSeed(`${item.rkey}:${item.cid}`);
 
-const deckCols = await deckColumns();
 ---
 
 <BaseLayout
@@ -58,7 +56,7 @@ const deckCols = await deckColumns();
     }}
     markdownHref={markdownPath}
 >
-    <Deck columns={deckCols} current={"feed"}>
+    <Deck current={"feed"}>
     <article class="entry">
         <header class="entry-hero">
             <p class="dateline">

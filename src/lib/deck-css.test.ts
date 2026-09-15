@@ -65,14 +65,10 @@ describe("deck.css structure", () => {
             "body[data-deck]",
             ".deck",
             ".deck-col",
-            ".deck-col--rail",
+            ".deck-col--meta",
             ".deck-col--main",
             ".deck-col__head",
             ".deck-col__body",
-            ".rail-brand",
-            ".rail-tools",
-            ".rail-list",
-            ".rail-name",
         ]) {
             expect(has(desktop, sel)).toBe(true);
         }
@@ -105,12 +101,12 @@ describe("deck.css structure", () => {
         expect(body).not.toContain("overflow: hidden");
         expect(decl(desktop, ".deck-col__body")).not.toContain("overflow-y: auto");
         expect(
-            decl(desktop, ".deck-col--rail > .deck-col__body"),
+            decl(desktop, ".deck-col--meta > .deck-col__body"),
         ).toContain("overflow-y: auto");
     });
 
-    test("the sidebars stick rather than being fixed panes", () => {
-        expect(decl(desktop, ".deck-col--rail")).toContain("position: sticky");
+    test("the one sidebar sticks rather than being a fixed pane", () => {
+        expect(decl(desktop, ".deck-col--meta")).toContain("position: sticky");
     });
 
     test("no width band swaps one layout for another", () => {
@@ -138,7 +134,6 @@ describe("deck.css structure", () => {
         expect(deck).not.toContain("border-left");
         expect(decl(desktop, ".deck-col")).toContain("border-left");
         expect(decl(desktop, ".deck-col")).not.toContain("border-right");
-        expect(decl(desktop, ".deck-col--rail")).toContain("border-left: 0");
     });
 
     test("article bodies are a single reading column", () => {
@@ -150,7 +145,7 @@ describe("deck.css structure", () => {
         expect(css).not.toContain("deck-controls");
         expect(css).not.toContain("deck-col--identity");
         expect(css).not.toContain("deck-tags");
-        expect(css).not.toContain("rail-toggle");
+        expect(css).not.toContain("rail-");
         expect(css).not.toContain("deck-col__close");
         expect(css).not.toContain("scroll-snap");
         expect(css).not.toContain(":global(");
