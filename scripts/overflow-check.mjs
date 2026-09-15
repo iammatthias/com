@@ -91,7 +91,7 @@ for (const width of [320, 390, 430, 768, 834, 1024, 1180, 1280, 1440, 1728, 2560
 const LONG_WORD = "Supercalifragilistic".repeat(20);
 const LONG_URL = "https://example.com/" + "path-segment/".repeat(30) + "?q=" + "x".repeat(200);
 const deck = await browser.newPage({ viewport: { width: 2560, height: 1400 } });
-await deck.goto(`${BASE}/`, { waitUntil: "networkidle" });
+await deck.goto(`${BASE}${docPath}`, { waitUntil: "networkidle" });
 await deck.waitForTimeout(600);
 const circuit = await deck.evaluate(() => {
     const root = document.querySelector("[data-deck-root]");
@@ -123,9 +123,10 @@ for (const [w, h] of [[390, 900], [1440, 900], [2560, 1400]]) {
         return {
             tagsInHero: seen(".deck-doc__hero .doc-hero__tags a"),
             relatedAtEnd: seen(".deck-doc__flow .doc-related .card"),
-            colophonInDetails: seen(".deck-col--meta .colophon-meta"),
+            colophonAtFoot: seen(".deck-doc__flow .colophon-meta"),
             tagsNotInDetails: !seen(".deck-col--meta .doc-hero__tags"),
             relatedNotInDetails: !seen(".deck-col--meta .doc-related"),
+            colophonNotInDetails: !seen(".deck-col--meta .colophon"),
         };
     });
     const metaOk = Object.values(meta).every(Boolean);
@@ -158,9 +159,30 @@ const tiles = {
     freshOnLoad: tilesA.some((v, i) => v !== tilesB[i]),
     freshOnClick: seedBefore !== seedAfter,
 };
-const tilesOk = tiles.visible > 1 && tiles.allSeeded && tiles.distinctInPage && tiles.freshOnLoad && tiles.freshOnClick;
+const tilesOk = tiles.visible >= 1 && tiles.allSeeded && tiles.distinctInPage && tiles.freshOnLoad && tiles.freshOnClick;
 if (!tilesOk) failures++;
 console.log(`${tilesOk ? "  ok " : "FAIL "} azulejo tiles are live — ${JSON.stringify(tiles)}`);
+
+const home = await browser.newPage({ viewport: { width: 2000, height: 1180 } });
+await home.goto(`${BASE}/`, { waitUntil: "networkidle" });
+await home.waitForTimeout(600);
+const homeCols = await home.evaluate(() => {
+    const r = (s) => { const e = document.querySelector(s); return e ? Math.round(e.getBoundingClientRect().width) : null; };
+    const hd = document.querySelector("body > header");
+    return {
+        headerVisible: getComputedStyle(hd).display !== "none",
+        rail: !!document.querySelector(".deck-col--rail"),
+        feed: r(".home-feed"),
+        middle: r(".home-static"),
+        lists: r(".home-lists"),
+        sideways: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    };
+});
+const homeOk = homeCols.headerVisible && !homeCols.rail && homeCols.middle <= 350 &&
+    homeCols.feed > homeCols.middle && homeCols.lists > homeCols.middle && homeCols.sideways === 0;
+if (!homeOk) failures++;
+console.log(`${homeOk ? "  ok " : "FAIL "} homepage is three columns, middle capped — ${JSON.stringify(homeCols)}`);
+await home.close();
 
 const rail = await deck.evaluate(() => {
     const r = (e) => e.getBoundingClientRect();

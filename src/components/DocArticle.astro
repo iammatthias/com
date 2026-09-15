@@ -87,32 +87,8 @@ const markdownPath = `${item.href}.md`;
                         </ul>
                     </section>
                 )}
-            </div>
-        </div>
-    </div>
-</section>
 
-<section
-    class="deck-col deck-col--meta"
-    data-deck-col="details"
-    aria-label="Document details"
->
-    <div class="deck-col__body">
-        <div class="deck-meta">
-            {showToc && (
-                <nav class="deck-meta__group" aria-label="On this page">
-                    <span class="deck-meta__label">on this page</span>
-                    <ul class="deck-toc">
-                        {tocEntries.map((entry) => (
-                            <li class:list={[`toc-level-${entry.level}`]}>
-                                <a href={`#${entry.id}`}>{entry.text}</a>
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
-            )}
-
-            <RecordColophon
+                <RecordColophon
                 seed={bannerSeed}
                 fields={[
                     { label: "collection", value: item.collection },
@@ -135,9 +111,35 @@ const markdownPath = `${item.href}.md`;
                     },
                 ]}
             />
+            </div>
         </div>
     </div>
 </section>
+
+{showToc && (
+<section
+    class="deck-col deck-col--meta"
+    data-deck-col="details"
+    aria-label="Document details"
+>
+    <div class="deck-col__body">
+        <div class="deck-meta">
+            {true && (
+                <nav class="deck-meta__group" aria-label="On this page">
+                    <span class="deck-meta__label">on this page</span>
+                    <ul class="deck-toc">
+                        {tocEntries.map((entry) => (
+                            <li class:list={[`toc-level-${entry.level}`]}>
+                                <a href={`#${entry.id}`}>{entry.text}</a>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
+            )}
+        </div>
+    </div>
+</section>
+)}
 
 <Lightbox />
 

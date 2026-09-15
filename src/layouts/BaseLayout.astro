@@ -27,7 +27,7 @@ interface Props {
     profilePage?: boolean;
     markdownHref?: string;
     pagination?: { prev?: string | null; next?: string | null };
-    deck?: boolean;
+    deck?: boolean | "home";
     faq?: Array<{ question: string; answer: string }>;
 }
 
@@ -168,7 +168,7 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
 
         <slot name="head" />
     </head>
-    <body data-deck={deck ? "" : undefined}>
+    <body data-deck={deck === true ? "" : deck ? deck : undefined}>
         {previewMode && (
             <div class="preview-banner" role="status">
                 <span>Preview — showing unpublished drafts</span>

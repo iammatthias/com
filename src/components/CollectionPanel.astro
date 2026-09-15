@@ -1,5 +1,4 @@
 ---
-import ColumnTile from "@components/ColumnTile.astro";
 import { fmtDate } from "@lib/format";
 import { noteTitle } from "@lib/markdown-text";
 import type { DeckColumnModel } from "@lib/deck";
@@ -21,7 +20,6 @@ const items = column.feed
 
 <section class="panel" aria-labelledby={`panel-${column.id}`}>
     <header class="panel__head">
-        <ColumnTile />
         <h2 class="panel__title" id={`panel-${column.id}`}>
             <a href={column.href}>{column.label}</a>
         </h2>

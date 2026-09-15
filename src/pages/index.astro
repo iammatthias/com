@@ -2,45 +2,25 @@
 export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
-import FeedCard from "@components/FeedCard.astro";
 import GlassArch from "@components/GlassArch.astro";
 import CollectionPanel from "@components/CollectionPanel.astro";
-import Deck from "@components/Deck.astro";
-import { getLiveCollection } from "astro:content";
+import FeedEntryCard from "@components/FeedEntryCard.astro";
 import { setResponseCacheHeaders } from "@lib/cache";
-import { entriesOf, type DocumentData } from "@lib/farfield-loader";
-import { builtDocFilter } from "@lib/content-query";
 import { deckColumns } from "@lib/deck";
 import { isPreview } from "@lib/preview";
 
 const preview = isPreview(Astro);
 
-const {
-    entries: feedEntries,
-    error: feedError,
-    cacheHint,
-} = await getLiveCollection("documents", { preview });
-
-let feed: DocumentData[] = [];
-if (feedError) {
-    console.error("[index] Farfield feed fetch failed:", feedError);
-} else {
-    feed = entriesOf<DocumentData>(feedEntries).filter(
-        await builtDocFilter(),
-    );
-}
-
-const RECENT_LIMIT = 24;
-const recent = feed.slice(0, RECENT_LIMIT);
-const total = feed.length;
 const columns = await deckColumns();
+const feedColumn = columns.find((c) => c.id === "feed");
+const collections = columns.filter((c) => c.id !== "feed");
 
-setResponseCacheHeaders(Astro.response, cacheHint);
+setResponseCacheHeaders(Astro.response);
 ---
 
-<BaseLayout deck>
-    <Deck columns={columns} label="recent" href="/content" count={String(total)}>
-        <section class="home-hero">
+<BaseLayout deck="home">
+    <div class="home">
+        <section class="home-static" aria-label="Introduction">
             <GlassArch />
             <div class="home-intro">
                 <h1>Hi, I am Matthias.</h1>
@@ -51,25 +31,25 @@ setResponseCacheHeaders(Astro.response, cacheHint);
             </div>
         </section>
 
-        {recent.length > 0 && (
-            <ul class="grid home-recent">
-                {recent.map((item) => (
-                    <FeedCard
-                        href={item.href}
-                        title={item.title}
-                        description={item.description}
-                        publishedAt={item.publishedAt}
-                        kind={item.publication.name.toLowerCase()}
-                        draft={item.published === false}
-                    />
-                ))}
-            </ul>
+        {feedColumn && (
+            <section class="home-feed" aria-labelledby="home-feed-heading">
+                <h2 class="home-col__head" id="home-feed-heading">
+                    <a href="/feed">feed</a>
+                    <span class="home-col__count">{feedColumn.total}</span>
+                </h2>
+                <ul class="feed">
+                    {feedColumn.feed?.map(({ item, media }) => (
+                        <FeedEntryCard item={item} media={media} />
+                    ))}
+                </ul>
+                <a class="deck-all" href="/feed">all {feedColumn.total} →</a>
+            </section>
         )}
 
-        <section class="home-collections" aria-label="Collections">
-            {columns.map((c) => <CollectionPanel column={c} />)}
+        <section class="home-lists" aria-label="Collections">
+            {collections.map((c) => <CollectionPanel column={c} />)}
         </section>
-    </Deck>
+    </div>
 </BaseLayout>
 
 <style>
