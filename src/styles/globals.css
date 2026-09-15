@@ -10,16 +10,16 @@
     --fs-xs: clamp(0.75rem, 0.7226rem + 0.112vw, 0.8125rem);
     --fs-sm: clamp(0.875rem, 0.8476rem + 0.112vw, 0.9375rem);
     --fs-base: clamp(1rem, 0.9726rem + 0.112vw, 1.0625rem);
-    --fs-lg: clamp(1.094rem, 1.053rem + 0.169vw, 1.1875rem);
-    --fs-xl: clamp(1.219rem, 1.15rem + 0.281vw, 1.375rem);
-    --fs-2xl: clamp(1.406rem, 1.256rem + 0.618vw, 1.75rem);
-    --fs-3xl: clamp(1.625rem, 1.406rem + 0.899vw, 2.125rem);
-    --fs-display: clamp(2rem, 1.726rem + 1.12vw, 2.625rem);
+    --fs-lg: clamp(1.0625rem, 1.019rem + 0.178vw, 1.1875rem);
+    --fs-xl: clamp(1.1875rem, 1.144rem + 0.178vw, 1.3125rem);
+    --fs-2xl: clamp(1.3125rem, 1.247rem + 0.267vw, 1.5rem);
+    --fs-3xl: clamp(1.5rem, 1.413rem + 0.357vw, 1.75rem);
+    --fs-display: clamp(1.75rem, 1.62rem + 0.535vw, 2.125rem);
 
     --lh-tight: 1.2;
     --lh-normal: 1.5;
     --lh-relaxed: 1.7;
-    --lh-display: 1.05;
+    --lh-display: 1.15;
 
     --fw-normal: 400;
     --fw-medium: 500;
@@ -151,10 +151,16 @@ h5,
 h6 {
     margin: 0;
     line-height: var(--lh-tight);
-    font-weight: var(--fw-medium);
+    font-weight: var(--fw-normal);
     text-wrap: balance;
     font-family: var(--font-serif);
     text-box: trim-both cap alphabetic;
+}
+
+h1,
+h2,
+h3 {
+    letter-spacing: var(--ls-display);
 }
 
 h1 {
@@ -186,6 +192,10 @@ table,
 dl,
 details {
     margin: 0;
+}
+
+p {
+    text-wrap: pretty;
 }
 
 small {
@@ -554,7 +564,7 @@ video {
 .card-link h3 {
     font-family: var(--font-serif);
     font-size: var(--fs-xl);
-    font-weight: var(--fw-medium);
+    font-weight: var(--fw-normal);
     line-height: var(--lh-tight);
     text-wrap: balance;
 }

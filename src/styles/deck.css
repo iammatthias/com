@@ -473,7 +473,7 @@
     .deck-col--doc {
         flex: 1 1 680px;
         min-width: 520px;
-        max-width: 760px;
+        max-width: 680px;
     }
 
     .deck-col--doc > .deck-col__body {
