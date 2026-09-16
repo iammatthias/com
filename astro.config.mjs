@@ -1,10 +1,30 @@
 // @ts-check
 import path from "node:path";
 import { readFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { layoutFingerprint } from "./scripts/layout-fingerprint.mjs";
+import { stripGlsl } from "./scripts/glsl-strip.mjs";
 import { defineConfig, envField, fontProviders } from "astro/config";
 import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
+
+/** Ship GLSL without its comments or indentation; keep both in the source. */
+function glslRaw() {
+    let strip = false;
+    return {
+        name: "glsl-raw",
+        enforce: "pre",
+        configResolved(config) {
+            strip = config.command === "build";
+        },
+        load(id) {
+            const match = /^(.*\.(?:vert|frag))\?raw$/.exec(id);
+            if (!match) return null;
+            const source = readFileSync(match[1], "utf8");
+            return `export default ${JSON.stringify(strip ? stripGlsl(source) : source)};`;
+        },
+    };
+}
 
 export default defineConfig({
     server: {
@@ -117,6 +137,7 @@ export default defineConfig({
         imageService: "passthrough",
     }),
     vite: {
+        plugins: [glslRaw()],
         define: {
             __LAYOUT_FINGERPRINT__: JSON.stringify(layoutFingerprint()),
         },

@@ -1,6 +1,6 @@
 
 
-import { mulberry32 } from "@components/AzulejoTile/recipe";
+import { mulberry32 } from "@lib/rand";
 
 function pick<T>(rnd: () => number, items: readonly T[]): T {
     return items[Math.floor(rnd() * items.length)];

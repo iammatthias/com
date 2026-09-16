@@ -7,7 +7,8 @@ import RecordColophon from "@components/RecordColophon.astro";
 import { getLiveEntry } from "astro:content";
 import { LiveEntryNotFoundError } from "astro/content/runtime";
 import { setResponseCacheHeaders } from "@lib/cache";
-import { fmtDateLong, hashSeed } from "@lib/format";
+import { fmtDateLong } from "@lib/format";
+import { hashSeed } from "@lib/rand";
 import {
     resolveBodyMedia,
     type FeedEntryData,

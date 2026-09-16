@@ -1,32 +1,13 @@
 
 import { vertSrc, fragSrc } from "@components/AzulejoTile/shader";
-import {
-    palettes,
-    CENTERS,
-    WRAPPERS,
-    CORNERS,
-    FIELDS,
-    FRAMES,
-    SHADER_EDGES,
-    SHADER_STRAPS,
-    SHADER_GROUNDS,
-    mulberry32,
-    generateRecipe,
-    pickColorMode,
-    applyColorMode,
-    pickGroutColor,
-} from "@components/AzulejoTile/recipe";
-import { hashSeed } from "@lib/format";
+import { dealUniforms } from "@components/AzulejoTile/deal";
+import { createRasterCanvas, sizeToDpr } from "@lib/canvas";
 
 interface AzulejoOptions {
     seed?: number;
     size?: number;
-    wildness?: number;
     alt?: string;
-    refireOnClick?: boolean;
 }
-
-const freshSeed = () => Date.now() + hashSeed(window.location.pathname);
 
 const VERT_PRELUDE = "attribute vec3 position;\nattribute vec2 uv;\n";
 const FRAG_PRELUDE =
@@ -52,15 +33,11 @@ function compileShader(
 export function mountAzulejoTile(
     container: HTMLElement,
     opts: AzulejoOptions = {},
-): ((seed?: number) => void) | null {
+): ((seed: number) => void) | null {
     const size = opts.size ?? 32;
-    const wildness = opts.wildness ?? 1.0;
     const alt = opts.alt ?? "";
 
-    const canvas = document.createElement("canvas");
-    canvas.style.display = "block";
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
+    const canvas = createRasterCanvas();
     canvas.setAttribute("role", "img");
     if (alt) canvas.setAttribute("aria-label", alt);
     else canvas.setAttribute("aria-hidden", "true");
@@ -105,87 +82,66 @@ export function mountAzulejoTile(
 
     const u = (name: string) => gl.getUniformLocation(program, name);
 
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
-    const px = Math.max(1, Math.round(size * ratio));
-    canvas.width = px;
-    canvas.height = px;
+    const { width: px } = sizeToDpr(canvas, size, size);
     gl.viewport(0, 0, px, px);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.clearColor(0, 0, 0, 0);
     gl.uniform2f(u("uRes"), px, px);
 
-    const deal = (seed: number = freshSeed()) => {
-        const rng = mulberry32(seed);
-        rng(); rng();
-        const paletteIdx = Math.floor(rng() * palettes.length);
-        const colorMode = pickColorMode(rng);
-        const recipe = generateRecipe(rng, wildness);
-        rng();
-        const iperf: [number, number] = [rng() * 1000, rng() * 1000];
-        const impJitter = 0.75 + rng() * 0.5;
-        const groutCol = pickGroutColor(palettes[paletteIdx], rng);
-        const potSwap = rng() < 0.05;
+    const loc = {
+        uCenter: u("uCenter"),
+        uWrapper: u("uWrapper"),
+        uCorners: u("uCorners"),
+        uCenter2: u("uCenter2"),
+        uWrapper2: u("uWrapper2"),
+        uCornersB: u("uCornersB"),
+        uEdges: u("uEdges"),
+        uField: u("uField"),
+        uStraps: u("uStraps"),
+        uGround: u("uGround"),
+        uFrame: u("uFrame"),
+        uV1: u("uV1"),
+        uV2: u("uV2"),
+        uImp: u("uImp"),
+        uIperf: u("uIperf"),
+        uBg: u("uBg"),
+        uOl: u("uOl"),
+        uC1: u("uC1"),
+        uC2: u("uC2"),
+        uC3: u("uC3"),
+        uGrout: u("uGrout"),
+    };
 
-        const pal = palettes[paletteIdx];
-        let eff = applyColorMode(pal, colorMode);
-        if (recipe.mut && recipe.mut.paletteMix > 0.5) {
-            const otherIdx =
-                (paletteIdx + 1 + (seed % (palettes.length - 1))) %
-                palettes.length;
-            eff = {
-                ...eff,
-                c2: [...palettes[otherIdx].c1] as [number, number, number],
-            };
-        }
-        if (potSwap) {
-            eff = { ...eff, c1: eff.c3, c3: eff.c1 };
-        }
-
-        const idx = (list: readonly string[], v: string) => list.indexOf(v);
-        gl.uniform1f(u("uCenter"), idx(CENTERS, recipe.center));
-        gl.uniform1f(u("uWrapper"), idx(WRAPPERS, recipe.wrapper));
-        gl.uniform1f(u("uCorners"), idx(CORNERS, recipe.corners));
-        gl.uniform1f(
-            u("uCenter2"),
-            recipe.mut.center2 ? idx(CENTERS, recipe.mut.center2) : -1,
-        );
-        gl.uniform1f(
-            u("uWrapper2"),
-            recipe.mut.wrapper2 ? idx(WRAPPERS, recipe.mut.wrapper2) : -1,
-        );
-        gl.uniform1f(
-            u("uCornersB"),
-            recipe.mut.cornersB ? idx(CORNERS, recipe.mut.cornersB) : -1,
-        );
-        gl.uniform1f(u("uEdges"), idx(SHADER_EDGES, recipe.edges));
-        gl.uniform1f(u("uField"), idx(FIELDS, recipe.field));
-        gl.uniform1f(u("uStraps"), idx(SHADER_STRAPS, recipe.straps));
-        gl.uniform1f(u("uGround"), idx(SHADER_GROUNDS, recipe.ground));
-        gl.uniform1f(u("uFrame"), idx(FRAMES, recipe.frame));
-        gl.uniform1f(u("uV1"), recipe.v1);
-        gl.uniform1f(u("uV2"), recipe.v2);
-        gl.uniform1f(
-            u("uImp"),
-            Math.max(0, Math.min(1, 0.65 * impJitter)),
-        );
-        gl.uniform2f(u("uIperf"), iperf[0], iperf[1]);
-        gl.uniform3f(u("uBg"), ...eff.bg);
-        gl.uniform3f(u("uOl"), ...eff.ol);
-        gl.uniform3f(u("uC1"), ...eff.c1);
-        gl.uniform3f(u("uC2"), ...eff.c2);
-        gl.uniform3f(u("uC3"), ...eff.c3);
-        gl.uniform3f(u("uGrout"), ...groutCol);
+    const deal = (seed: number) => {
+        const un = dealUniforms(seed);
+        gl.uniform1f(loc.uCenter, un.uCenter);
+        gl.uniform1f(loc.uWrapper, un.uWrapper);
+        gl.uniform1f(loc.uCorners, un.uCorners);
+        gl.uniform1f(loc.uCenter2, un.uCenter2);
+        gl.uniform1f(loc.uWrapper2, un.uWrapper2);
+        gl.uniform1f(loc.uCornersB, un.uCornersB);
+        gl.uniform1f(loc.uEdges, un.uEdges);
+        gl.uniform1f(loc.uField, un.uField);
+        gl.uniform1f(loc.uStraps, un.uStraps);
+        gl.uniform1f(loc.uGround, un.uGround);
+        gl.uniform1f(loc.uFrame, un.uFrame);
+        gl.uniform1f(loc.uV1, un.uV1);
+        gl.uniform1f(loc.uV2, un.uV2);
+        gl.uniform1f(loc.uImp, un.uImp);
+        gl.uniform2f(loc.uIperf, un.uIperf[0], un.uIperf[1]);
+        gl.uniform3f(loc.uBg, ...un.uBg);
+        gl.uniform3f(loc.uOl, ...un.uOl);
+        gl.uniform3f(loc.uC1, ...un.uC1);
+        gl.uniform3f(loc.uC2, ...un.uC2);
+        gl.uniform3f(loc.uC3, ...un.uC3);
+        gl.uniform3f(loc.uGrout, ...un.uGrout);
 
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
 
-    deal(opts.seed);
+    if (opts.seed !== undefined) deal(opts.seed);
     container.appendChild(canvas);
-
-    if (opts.refireOnClick) {
-        container.addEventListener("click", () => deal());
-    }
     return deal;
 }

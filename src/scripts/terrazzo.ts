@@ -1,5 +1,15 @@
 
-import { mulberry32 } from "@components/AzulejoTile/recipe";
+import { mulberry32 } from "@lib/rand";
+import { createRasterCanvas, sizeToDpr } from "@lib/canvas";
+import {
+    clamp01,
+    cssColor,
+    hexToRgb,
+    hslToRgb,
+    rgbToHsl,
+    srgbToLinear,
+    type Rgb,
+} from "@lib/color";
 
 const PALETTES: Record<string, string[]> = {
     Bianco: ["#f1ece1", "#1a1a1a", "#8b3a2f", "#cb6a4f", "#5a5247", "#a6a097", "#d4c8a8"],
@@ -30,62 +40,9 @@ const STYLES: Record<string, StylePreset> = {
     Pebble:     { algo: "scatter",    density: 130, minSize: 8, maxSize: 60,  sides: 9, chaos: 22, sizeBias: 1.8 },
 };
 
-type RGB = [number, number, number];
-
-function hexToRgb(hex: string): RGB {
-    const n = parseInt(hex.slice(1), 16);
-    return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
-}
-
-const srgbToLinear = (c: number) =>
-    c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-const linearToSrgb = (c: number) =>
-    c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
-
-function rgbToHsl([r, g, b]: RGB): RGB {
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const l = (max + min) / 2;
-    if (max === min) return [0, 0, l];
-    const d = max - min;
-    const s = l <= 0.5 ? d / (max + min) : d / (2 - max - min);
-    let h: number;
-    if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
-    else if (max === g) h = (b - r) / d + 2;
-    else h = (r - g) / d + 4;
-    return [h / 6, s, l];
-}
-
-function hue2rgb(p: number, q: number, t: number): number {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * 6 * (2 / 3 - t);
-    return p;
-}
-
-function hslToRgb([h, s, l]: RGB): RGB {
-    if (s === 0) return [l, l, l];
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    return [
-        hue2rgb(p, q, h + 1 / 3),
-        hue2rgb(p, q, h),
-        hue2rgb(p, q, h - 1 / 3),
-    ];
-}
-
-function cssColor([r, g, b]: RGB): string {
-    const to255 = (c: number) =>
-        Math.max(0, Math.min(255, Math.round(linearToSrgb(c) * 255)));
-    return `rgb(${to255(r)},${to255(g)},${to255(b)})`;
-}
-
-const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
 function jitterColor(hex: string, rng: () => number): string {
-    const linear = hexToRgb(hex).map(srgbToLinear) as RGB;
+    const linear = hexToRgb(hex).map(srgbToLinear) as Rgb;
     const hsl = rgbToHsl(linear);
     const h = (hsl[0] + (rng() - 0.5) * 0.025 + 1) % 1;
     const s = clamp01(hsl[1] + (rng() - 0.5) * 0.1);
@@ -137,9 +94,7 @@ function paintTerrazzo(
     width: number,
     height: number,
 ): void {
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.max(1, Math.round(width * ratio));
-    canvas.height = Math.max(1, Math.round(height * ratio));
+    const { ratio } = sizeToDpr(canvas, width, height);
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -227,7 +182,7 @@ function paintTerrazzo(
 
     const gritCount = 200 + Math.floor(rng() * 400);
     ctx.fillStyle = cssColor(
-        hexToRgb(pal[0]).map((c) => srgbToLinear(c) * 0.55) as RGB,
+        hexToRgb(pal[0]).map((c) => srgbToLinear(c) * 0.55) as Rgb,
     );
     for (let i = 0; i < gritCount; i++) {
         const x = (rng() - 0.5) * xSpan;
@@ -241,10 +196,7 @@ function paintTerrazzo(
 
 function mountTerrazzo(el: HTMLElement): void {
     const seed = Number(el.dataset.seed ?? "1") || 1;
-    const canvas = document.createElement("canvas");
-    canvas.style.display = "block";
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
+    const canvas = createRasterCanvas();
     canvas.setAttribute("aria-hidden", "true");
     el.appendChild(canvas);
 

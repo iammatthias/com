@@ -16,7 +16,9 @@
     "snapshot:azulejos": "node scripts/snapshot-azulejos.mjs",
     "agent:check": "node scripts/agent-check.mjs",
     "agent:check:live": "node scripts/agent-check.mjs --url https://iammatthias.com",
-    "test": "bun test"
+    "test": "bun test",
+    "art:verify": "node scripts/art-verify.mjs",
+    "art:golden": "node scripts/art-verify.mjs --write"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.3",

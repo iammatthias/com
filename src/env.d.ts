@@ -3,3 +3,13 @@ declare module "cloudflare:workers" {
 }
 
 declare const __LAYOUT_FINGERPRINT__: string;
+
+declare module "*.vert?raw" {
+    const src: string;
+    export default src;
+}
+
+declare module "*.frag?raw" {
+    const src: string;
+    export default src;
+}

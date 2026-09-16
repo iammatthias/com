@@ -41,4 +41,10 @@ pnpm-debug.log*
 !/scripts/smoke.mjs
 !/scripts/overflow-check.mjs
 !/scripts/snapshot-azulejos.mjs
+!/scripts/art-verify.mjs
+!/scripts/glsl-strip.mjs
+!/scripts/glsl-strip.test.mjs
+!/scripts/__goldens__/
+!/scripts/layout-fingerprint.mjs
+!/scripts/layout-fingerprint.test.mjs
 .gstack/
