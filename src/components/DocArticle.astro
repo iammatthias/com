@@ -72,6 +72,30 @@ const markdownPath = `${item.href}.md`;
             <div class="deck-doc__flow">
                 <div class="doc-body flow" set:html={bodyWithCap} />
 
+                <RecordColophon
+                    seed={bannerSeed}
+                    fields={[
+                        { label: "collection", value: item.collection },
+                        { label: "rkey", value: item.rkey },
+                        { label: "record cid", value: item.cid },
+                        {
+                            label: "source",
+                            value: markdownPath,
+                            href: markdownPath,
+                        },
+                        {
+                            label: "published",
+                            value: item.publishedAt,
+                            datetime: item.publishedAt,
+                        },
+                        {
+                            label: "updated",
+                            value: item.updatedAt,
+                            datetime: item.updatedAt,
+                        },
+                    ]}
+                />
+
                 {related.length > 0 && (
                     <section class="doc-related" aria-label="Related posts">
                         <h2>Related</h2>
@@ -88,30 +112,6 @@ const markdownPath = `${item.href}.md`;
                         </ul>
                     </section>
                 )}
-
-                <RecordColophon
-                seed={bannerSeed}
-                fields={[
-                    { label: "collection", value: item.collection },
-                    { label: "rkey", value: item.rkey },
-                    { label: "record cid", value: item.cid },
-                    {
-                        label: "source",
-                        value: markdownPath,
-                        href: markdownPath,
-                    },
-                    {
-                        label: "published",
-                        value: item.publishedAt,
-                        datetime: item.publishedAt,
-                    },
-                    {
-                        label: "updated",
-                        value: item.updatedAt,
-                        datetime: item.updatedAt,
-                    },
-                ]}
-            />
             </div>
         </div>
     </div>

@@ -120,6 +120,14 @@ for (const [w, h] of [[390, 900], [1440, 900], [2560, 1400]]) {
             tagsInHero: seen(".deck-doc__hero .doc-hero__tags a"),
             relatedAtEnd: seen(".deck-doc__flow .doc-related .card"),
             colophonAtFoot: seen(".deck-doc__flow .colophon-meta"),
+            relatedBelowColophon: (() => {
+                const flow = document.querySelector(".deck-doc__flow");
+                const rel = flow?.querySelector(".doc-related");
+                const col = flow?.querySelector(".colophon");
+                if (!rel || !col) return !rel;
+                return !!(col.compareDocumentPosition(rel) &
+                    Node.DOCUMENT_POSITION_FOLLOWING);
+            })(),
             tagsNotInDetails: !seen(".deck-col--meta .doc-hero__tags"),
             relatedNotInDetails: !seen(".deck-col--meta .doc-related"),
             colophonNotInDetails: !seen(".deck-col--meta .colophon"),

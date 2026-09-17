@@ -188,12 +188,6 @@ const previewMode = Astro.isPrerendered ? false : isPreview(Astro);
             <slot />
         </main>
 
-        <footer>
-            <slot name="footer">
-                <small>© {new Date().getFullYear()} Matthias Jordan</small>
-            </slot>
-        </footer>
-
         <SiteMenu />
 
         <script>

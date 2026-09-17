@@ -520,10 +520,6 @@ video {
     body > header {
         view-transition-name: site-header;
     }
-
-    body > footer {
-        view-transition-name: site-footer;
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {
