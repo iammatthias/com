@@ -337,7 +337,7 @@ if (ORIGIN) {
 }
 
 const { SECTION_SLUGS } = await import("../src/lib/agent-surface.ts").catch(
-    () => ({ SECTION_SLUGS: ["art", "posts", "recipes", "melange", "open-source"] }),
+    () => ({ SECTION_SLUGS: ["art", "posts", "recipes", "melange", "experiments"] }),
 );
 for (const s of SECTION_SLUGS) {
     await expectMarkdown(`/${s}/llms.txt`, `/${s}/llms.txt`);

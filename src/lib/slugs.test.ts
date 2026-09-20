@@ -45,7 +45,7 @@ describe("stamped slugs", () => {
 
 describe("humanize", () => {
     test("title-cases hyphenated slugs", () => {
-        expect(humanize("open-source")).toBe("Open Source");
+        expect(humanize("now-playing")).toBe("Now Playing");
         expect(humanize("posts")).toBe("Posts");
     });
 });

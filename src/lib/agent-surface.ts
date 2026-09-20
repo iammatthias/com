@@ -18,7 +18,7 @@ export const SECTION_SLUGS = [
     "posts",
     "recipes",
     "melange",
-    "open-source",
+    "experiments",
 ] as const;
 
 export const EXAMPLE_DOC_PATH = "posts/1779066375000-farfield";

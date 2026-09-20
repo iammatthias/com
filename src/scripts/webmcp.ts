@@ -84,7 +84,7 @@ export function registerWebMcpTools(): void {
     ctx.registerTool({
         name: "list_content",
         description:
-            "List published entries on this site, newest first, optionally filtered to one section (art, posts, recipes, melange, open-source) or one tag.",
+            "List published entries on this site, newest first, optionally filtered to one section (art, posts, recipes, melange, experiments) or one tag.",
         annotations: READ_ONLY,
         inputSchema: {
             type: "object",

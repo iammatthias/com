@@ -82,6 +82,19 @@ async function markdownTwin(pathname: string): Promise<string | null> {
     return second ? `/${first}/${second}.md` : `/${first}.md`;
 }
 
+const RENAMED_PUBLICATIONS: Record<string, string> = {
+    "open-source": "experiments",
+};
+
+function renamedPublication(pathname: string): string | null {
+    for (const [from, to] of Object.entries(RENAMED_PUBLICATIONS)) {
+        if (pathname === `/${from}`) return `/${to}`;
+        if (pathname === `/${from}.md`) return `/${to}.md`;
+        if (pathname.startsWith(`/${from}/`)) return `/${to}`;
+    }
+    return null;
+}
+
 async function stampedRedirect(pathname: string): Promise<string | null> {
     const m = pathname.match(/^\/([a-z0-9-]+)\/([a-z0-9-]+)(\.md)?$/);
     if (!m) return null;
@@ -117,6 +130,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
 
     if (method === "GET" || method === "HEAD") {
+        const renamed = renamedPublication(pathname);
+        if (renamed) return context.redirect(renamed + search, 301);
+
         const canonical = await stampedRedirect(pathname);
         if (canonical) return context.redirect(canonical + search, 301);
     }

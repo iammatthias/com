@@ -209,6 +209,10 @@ try {
     await checkRedirect("/now/", "/now");
     await checkRedirect("/sitemap-index.xml", "/sitemap.xml");
     await checkRedirect("/resume/", "/resume", [301, 307, 308]);
+    await checkRedirect("/open-source", "/experiments");
+    await checkRedirect("/open-source.md", "/experiments.md");
+    await checkRedirect("/open-source/1768762943567-nimbus", "/experiments");
+    await checkRedirect("/open-source?ref=x", "/experiments?ref=x");
 
     if (home) {
         const { res } = await get("/");
