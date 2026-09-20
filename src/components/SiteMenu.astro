@@ -161,11 +161,11 @@ import MenuLinks from "./MenuLinks.astro";
         border-radius: var(--radius);
         box-shadow:
             0 1px 0 var(--color-border),
-            0 24px 64px -12px rgba(0, 0, 0, 0.25);
+            0 24px 64px -12px oklch(0% 0 0 / 0.25);
     }
 
     .site-menu::backdrop {
-        background: rgba(0, 0, 0, 0.4);
+        background: oklch(0% 0 0 / 0.4);
         backdrop-filter: blur(2px);
     }
 

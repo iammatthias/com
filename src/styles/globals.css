@@ -47,40 +47,54 @@
 
     color-scheme: light dark;
 
-    --color-bg: #f5f2e9;
-    --color-fg: #20293a;
-    --color-muted: #5f6a7a;
-    --color-border: #dfddd7;
-    --color-accent: #1e4d9b;
+    --color-bg: oklch(96.10% 0.0124 91.52);
+    --color-fg: oklch(28.05% 0.0340 262.78);
+    --color-muted: oklch(52.08% 0.0287 257.68);
+    --color-border: oklch(89.74% 0.0084 91.49);
+    --color-accent: oklch(43.44% 0.1374 260.07);
 
-    --color-bg: light-dark(#f5f2e9, #151a26);
-    --color-fg: light-dark(#20293a, #e9e6da);
-    --color-muted: light-dark(#5f6a7a, #8b93a5);
-    --color-border: light-dark(#dfddd7, #2a3142);
-    --color-accent: light-dark(#1e4d9b, #8fb4ee);
-
-    --callout-note: light-dark(#1e4d9b, #8fb4ee);
-    --callout-tip: light-dark(#3f7259, #93c4ab);
-    --callout-important: light-dark(#6f4e8c, #bda3d6);
-    --callout-warning: light-dark(#876322, #d9bc7d);
-    --callout-caution: light-dark(#a04a2e, #dc9678);
-
-    --sel-stop-0: light-dark(#4c6798, #95b2e5);
-    --sel-stop-1: light-dark(#327354, #80be9d);
-    --sel-stop-2: light-dark(#7e6327, #c8ae75);
-    --sel-stop-3: light-dark(#925742, #e0a28c);
-    --sel-stop-4: light-dark(#7f5887, #caa3d3);
+    --color-bg: light-dark(oklch(96.10% 0.0124 91.52), oklch(21.86% 0.0249 266.86));
+    --color-fg: light-dark(oklch(28.05% 0.0340 262.78), oklch(92.40% 0.0163 95.24));
+    --color-muted: light-dark(oklch(52.08% 0.0287 257.68), oklch(66.28% 0.0283 266.50));
+    --color-border: light-dark(oklch(89.74% 0.0084 91.49), oklch(31.41% 0.0321 267.17));
+    --color-accent: light-dark(oklch(43.44% 0.1374 260.07), oklch(76.47% 0.0931 259.21));
+    --callout-note: light-dark(oklch(43.44% 0.1374 260.07), oklch(76.47% 0.0931 259.21));
+    --callout-tip: light-dark(oklch(50.85% 0.0687 161.28), oklch(77.86% 0.0627 162.32));
+    --callout-important: light-dark(oklch(48.59% 0.1027 307.52), oklch(75.55% 0.0771 307.75));
+    --callout-warning: light-dark(oklch(52.45% 0.0928 78.64), oklch(80.59% 0.0876 85.79));
+    --callout-caution: light-dark(oklch(51.36% 0.1218 38.45), oklch(73.53% 0.0947 44.01));
+    --sel-stop-0: light-dark(oklch(51.43% 0.0846 261.78), oklch(76.05% 0.0804 261.54));
+    --sel-stop-1: light-dark(oklch(50.39% 0.0838 160.43), oklch(75.00% 0.0800 160.42));
+    --sel-stop-2: light-dark(oklch(51.45% 0.0848 84.49), oklch(76.03% 0.0805 86.02));
+    --sel-stop-3: light-dark(oklch(51.90% 0.0849 40.27), oklch(76.58% 0.0804 40.37));
+    --sel-stop-4: light-dark(oklch(51.95% 0.0855 320.60), oklch(76.63% 0.0796 319.92));
 }
 
 @supports not (color: light-dark(red, blue)) {
     @media (prefers-color-scheme: dark) {
         :root {
-            --color-bg: #151a26;
-            --color-fg: #e9e6da;
-            --color-muted: #8b93a5;
-            --color-border: #2a3142;
-            --color-accent: #8fb4ee;
+            --color-bg: oklch(21.86% 0.0249 266.86);
+            --color-fg: oklch(92.40% 0.0163 95.24);
+            --color-muted: oklch(66.28% 0.0283 266.50);
+            --color-border: oklch(31.41% 0.0321 267.17);
+            --color-accent: oklch(76.47% 0.0931 259.21);
         }
+    }
+}
+
+@media (color-gamut: p3) {
+    :root {
+        --color-accent: light-dark(oklch(43.44% 0.1539 260.07), oklch(76.47% 0.1042 259.21));
+        --callout-note: light-dark(oklch(43.44% 0.1539 260.07), oklch(76.47% 0.1042 259.21));
+        --callout-tip: light-dark(oklch(50.85% 0.0769 161.28), oklch(77.86% 0.0703 162.32));
+        --callout-important: light-dark(oklch(48.59% 0.1150 307.52), oklch(75.55% 0.0863 307.75));
+        --callout-warning: light-dark(oklch(52.45% 0.1039 78.64), oklch(80.59% 0.0981 85.79));
+        --callout-caution: light-dark(oklch(51.36% 0.1364 38.45), oklch(73.53% 0.1061 44.01));
+        --sel-stop-0: light-dark(oklch(51.43% 0.0947 261.78), oklch(76.05% 0.0901 261.54));
+        --sel-stop-1: light-dark(oklch(50.39% 0.0938 160.43), oklch(75.00% 0.0896 160.42));
+        --sel-stop-2: light-dark(oklch(51.45% 0.0949 84.49), oklch(76.03% 0.0902 86.02));
+        --sel-stop-3: light-dark(oklch(51.90% 0.0951 40.27), oklch(76.58% 0.0901 40.37));
+        --sel-stop-4: light-dark(oklch(51.95% 0.0957 320.60), oklch(76.63% 0.0892 319.92));
     }
 }
 
@@ -103,7 +117,7 @@
 }
 
 :is(img, video, svg)::selection {
-    background: color-mix(in srgb, var(--sel, var(--sel-stop-0)) 35%, transparent);
+    background: color-mix(in oklab, var(--sel, var(--sel-stop-0)) 35%, transparent);
 }
 
 html {
@@ -244,7 +258,7 @@ a {
     color: inherit;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.15em;
-    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
     transition:
         text-decoration-thickness var(--duration) var(--ease),
         text-decoration-color var(--duration) var(--ease);
@@ -365,7 +379,7 @@ blockquote cite::before {
     padding: var(--space-3) var(--space-4);
     border-left: 3px solid var(--callout-color, var(--color-border));
     background: color-mix(
-        in srgb,
+        in oklab,
         var(--callout-color, var(--color-border)) 8%,
         transparent
     );
@@ -469,7 +483,7 @@ details[open] summary::before {
 }
 
 mark {
-    background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+    background: color-mix(in oklab, var(--color-accent) 18%, transparent);
     color: inherit;
     padding: 0 0.2em;
     border-radius: 2px;
@@ -658,7 +672,7 @@ video {
     width: 100%;
     height: auto;
     aspect-ratio: auto 16 / 9;
-    background: #000;
+    background: oklch(0% 0 0);
 }
 
 .feed-tile audio {
@@ -788,11 +802,11 @@ video {
     --panel: var(--color-bg);
     --ink: var(--color-fg);
     --accent: var(--color-accent);
-    --hairline: color-mix(in srgb, var(--ink) 13%, transparent);
-    --line-strong: color-mix(in srgb, var(--ink) 36%, transparent);
-    --accent-soft: color-mix(in srgb, var(--accent) 8%, transparent);
-    --accent-line: color-mix(in srgb, var(--accent) 32%, transparent);
-    --ring: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+    --hairline: color-mix(in oklab, var(--ink) 13%, transparent);
+    --line-strong: color-mix(in oklab, var(--ink) 36%, transparent);
+    --accent-soft: color-mix(in oklab, var(--accent) 8%, transparent);
+    --accent-line: color-mix(in oklab, var(--accent) 32%, transparent);
+    --ring: 0 0 0 3px color-mix(in oklab, var(--accent) 15%, transparent);
     --r-s: var(--radius);
 }
 
@@ -899,7 +913,7 @@ video {
 
 .ff-recipe-grid .ff-r-op {
     text-align: center;
-    background: color-mix(in srgb, var(--accent) 6%, var(--panel));
+    background: color-mix(in oklab, var(--accent) 6%, var(--panel));
 }
 .ff-recipe-grid .ff-r-lbl { display: block; }
 
@@ -1041,17 +1055,17 @@ video {
     outline-offset: -2px;
 }
 .ff-live .ff-r-ing:hover:not(.off) {
-    background: color-mix(in srgb, var(--accent) 8%, var(--panel));
+    background: color-mix(in oklab, var(--accent) 8%, var(--panel));
 }
 .ff-live td.ff-r-op[data-step]:hover:not(.hot),
 .ff-recipe-grid td.ff-r-op.peek:not(.hot) {
-    background: color-mix(in srgb, var(--accent) 16%, var(--panel));
+    background: color-mix(in oklab, var(--accent) 16%, var(--panel));
 }
 .ff-recipe-grid tr.peek .ff-r-ing:not(.off) {
-    background: color-mix(in srgb, var(--accent) 8%, var(--panel));
+    background: color-mix(in oklab, var(--accent) 8%, var(--panel));
 }
 .ff-recipe-steps li.peek {
-    background: color-mix(in srgb, var(--accent) 5%, transparent);
+    background: color-mix(in oklab, var(--accent) 5%, transparent);
 }
 .ff-recipe-grid.dim td.ff-r-op.peek,
 .ff-recipe-grid.dim tr.peek th {
@@ -1086,7 +1100,7 @@ video {
     opacity: 0.75;
 }
 .ff-recipe-grid tr.hot .ff-r-ing {
-    background: color-mix(in srgb, var(--accent) 14%, var(--panel));
+    background: color-mix(in oklab, var(--accent) 14%, var(--panel));
 }
 .ff-recipe-steps li.hot {
     background: var(--accent-soft);

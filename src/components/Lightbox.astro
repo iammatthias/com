@@ -179,7 +179,7 @@
     }
 
     .lightbox::backdrop {
-        background: rgba(0, 0, 0, 0.7);
+        background: oklch(0% 0 0 / 0.7);
     }
 
     .lightbox-img,
@@ -225,7 +225,7 @@
         z-index: 1;
         padding: 0;
         border: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: oklch(0% 0 0 / 0.5);
         color: white;
         line-height: 1;
         border-radius: 50%;
@@ -234,12 +234,12 @@
 
     .lightbox-close:hover,
     .lightbox-nav:hover {
-        background: rgba(0, 0, 0, 0.8);
+        background: oklch(0% 0 0 / 0.8);
     }
 
     .lightbox-close:focus-visible,
     .lightbox-nav:focus-visible {
-        background: rgba(0, 0, 0, 0.8);
+        background: oklch(0% 0 0 / 0.8);
         outline: 2px solid white;
         outline-offset: 2px;
     }
@@ -281,7 +281,7 @@
         transform: translateX(-50%);
         z-index: 1;
         padding: 0.25rem 0.75rem;
-        background: rgba(0, 0, 0, 0.5);
+        background: oklch(0% 0 0 / 0.5);
         color: white;
         font-family: var(--font-mono);
         font-size: var(--fs-xs);

@@ -218,8 +218,8 @@ const markdownPath = `${item.href}.md`;
     .doc-body :global(.azulejo-cap) {
         --cap-ground: var(--color-bg);
         --cap-ink: var(--color-accent);
-        --cap-line: color-mix(in srgb, var(--color-accent) 62%, transparent);
-        --cap-wash: color-mix(in srgb, var(--color-accent) 30%, transparent);
+        --cap-line: color-mix(in oklab, var(--color-accent) 62%, transparent);
+        --cap-wash: color-mix(in oklab, var(--color-accent) 30%, transparent);
         --cap-accent2: var(--cap-ink);
         float: left;
         position: relative;
@@ -292,7 +292,7 @@ const markdownPath = `${item.href}.md`;
         height: auto;
         aspect-ratio: auto 16 / 9;
         border-radius: var(--radius);
-        background: #000;
+        background: oklch(0% 0 0);
     }
 
     .doc-body :global(audio) {

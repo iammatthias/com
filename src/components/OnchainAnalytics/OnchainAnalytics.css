@@ -13,7 +13,7 @@
 
 .onchain-analytics-error {
   color: var(--callout-caution);
-  background: color-mix(in srgb, var(--callout-caution) 8%, transparent);
+  background: color-mix(in oklab, var(--callout-caution) 8%, transparent);
   padding: var(--space-4);
   border-radius: var(--radius);
   text-align: center;
