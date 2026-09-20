@@ -211,8 +211,33 @@ try {
     await checkRedirect("/resume/", "/resume", [301, 307, 308]);
     await checkRedirect("/open-source", "/experiments");
     await checkRedirect("/open-source.md", "/experiments.md");
-    await checkRedirect("/open-source/1768762943567-nimbus", "/experiments");
     await checkRedirect("/open-source?ref=x", "/experiments?ref=x");
+
+    const movedEntries = [
+        ["/open-source/1744172723728-obsidian-pinata-image-uploader", "/experiments/1789490903000-obsidian-plugins"],
+        ["/open-source/1744172769110-obsidian-ai-tagger", "/experiments/1789490903000-obsidian-plugins"],
+        ["/open-source/1744172798323-obsidian-ai-excerpt-generator", "/experiments/1789490903000-obsidian-plugins"],
+        ["/open-source/1746490719151-llm-fid-txt", "/experiments/1789491297000-llm-txt-fun"],
+        ["/open-source/1767381212267-llm-txt-fun", "/experiments/1789491297000-llm-txt-fun"],
+        ["/open-source/1768762943567-nimbus", "/experiments/1789491418000-atproto"],
+        ["/open-source/1769545357371-sonde", "/experiments/1789491418000-atproto"],
+        ["/open-source/1776737859309-atproto-wc", "/experiments/1789491418000-atproto"],
+    ];
+    for (const [from, to] of movedEntries) await checkRedirect(from, to);
+    await checkRedirect(
+        "/open-source/1768762943567-nimbus.md",
+        "/experiments/1789491418000-atproto.md",
+    );
+
+    // retired with no successor — falls back to the collection index
+    await checkRedirect("/open-source/1767375877152-bhvr-x402", "/experiments");
+
+    // a redirect that lands on a 404 is worse than none, so resolve each target
+    for (const target of new Set(movedEntries.map(([, to]) => to))) {
+        await check(target, {
+            probe: (b) => (b.includes("<h1") ? null : "redirect target has no <h1>"),
+        });
+    }
 
     if (home) {
         const { res } = await get("/");

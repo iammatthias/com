@@ -86,11 +86,36 @@ const RENAMED_PUBLICATIONS: Record<string, string> = {
     "open-source": "experiments",
 };
 
+const MOVED_ENTRIES: Record<string, string> = {
+    "/open-source/1744172723728-obsidian-pinata-image-uploader":
+        "/experiments/1789490903000-obsidian-plugins",
+    "/open-source/1744172769110-obsidian-ai-tagger":
+        "/experiments/1789490903000-obsidian-plugins",
+    "/open-source/1744172798323-obsidian-ai-excerpt-generator":
+        "/experiments/1789490903000-obsidian-plugins",
+    "/open-source/1746490719151-llm-fid-txt":
+        "/experiments/1789491297000-llm-txt-fun",
+    "/open-source/1767381212267-llm-txt-fun":
+        "/experiments/1789491297000-llm-txt-fun",
+    "/open-source/1768762943567-nimbus":
+        "/experiments/1789491418000-atproto",
+    "/open-source/1769545357371-sonde":
+        "/experiments/1789491418000-atproto",
+    "/open-source/1776737859309-atproto-wc":
+        "/experiments/1789491418000-atproto",
+};
+
 function renamedPublication(pathname: string): string | null {
+    const markdown = pathname.endsWith(".md");
+    const bare = markdown ? pathname.slice(0, -3) : pathname;
+    const withExt = (target: string) => (markdown ? `${target}.md` : target);
+
+    const moved = MOVED_ENTRIES[bare];
+    if (moved) return withExt(moved);
+
     for (const [from, to] of Object.entries(RENAMED_PUBLICATIONS)) {
-        if (pathname === `/${from}`) return `/${to}`;
-        if (pathname === `/${from}.md`) return `/${to}.md`;
-        if (pathname.startsWith(`/${from}/`)) return `/${to}`;
+        if (bare === `/${from}`) return withExt(`/${to}`);
+        if (bare.startsWith(`/${from}/`)) return withExt(`/${to}`);
     }
     return null;
 }
