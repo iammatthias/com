@@ -12,22 +12,12 @@ const { media, loading = "lazy" } = Astro.props;
 
 const preset = tilePreset(media.length > 1);
 const fallbackW = preset.widths[Math.floor(preset.widths.length / 2)] ?? 720;
-const count = Math.min(media.length, 4);
-
-const TALLEST = 0.8;
-const WIDEST = 16 / 9;
-const soloRatio = (m: ResolvedMedia): number | null => {
-    const w = m.meta?.width;
-    const h = m.meta?.height;
-    if (!w || !h) return null;
-    return Math.min(WIDEST, Math.max(TALLEST, w / h));
-};
+const solo = media.length === 1;
 ---
 
 {media.length > 0 && (
     <div
-        class:list={["feed-media", `feed-media--${count}`]}
-        data-count={media.length}
+        class:list={["feed-media", { "feed-media--solo": solo }]}
     >
         {media.map((m) => {
             const src = blobURL(m.cid);
@@ -60,10 +50,11 @@ const soloRatio = (m: ResolvedMedia): number | null => {
             return (
                 <figure
                     class="feed-tile"
-                    style={[
-                        m.meta?.dominantColor && `background:${m.meta.dominantColor}`,
-                        count === 1 && soloRatio(m) && `aspect-ratio:${soloRatio(m)}`,
-                    ].filter(Boolean).join(";") || undefined}
+                    style={
+                        m.meta?.dominantColor
+                            ? `background:${m.meta.dominantColor}`
+                            : undefined
+                    }
                 >
                     <img
                         src={wsrvUrl(src, fallbackW)}

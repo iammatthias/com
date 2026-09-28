@@ -217,6 +217,54 @@ for (const route of ["/about", "/contact", "/privacy", "/developers", "/tags", "
 }
 
 
+for (const width of [390, 1440]) {
+    const fp = await browser.newPage({ viewport: { width, height: 1100 } });
+    await fp.goto(`${BASE}/feed`, { waitUntil: "networkidle" });
+    await fp.evaluate(async () => {
+        for (let y = 0; y < document.body.scrollHeight; y += 600) {
+            window.scrollTo(0, y);
+            await new Promise((r) => setTimeout(r, 60));
+        }
+        window.scrollTo(0, 0);
+    });
+    await fp.waitForTimeout(1200);
+    const shape = await fp.evaluate(() => {
+        let worst = 0, measured = 0, cropped = 0;
+        for (const img of document.querySelectorAll(".feed-tile img")) {
+            if (!img.naturalWidth || !img.naturalHeight) continue;
+            const box = img.getBoundingClientRect();
+            if (!box.width || !box.height) continue;
+            measured++;
+            const natural = img.naturalWidth / img.naturalHeight;
+            const off = Math.abs(box.width / box.height - natural) / natural;
+            if (off > worst) worst = off;
+            if (getComputedStyle(img).objectFit === "cover") cropped++;
+        }
+        const list = document.querySelector(".feed[data-feed-list]");
+        const widths = new Set(
+            [...document.querySelectorAll(".feed-tile")].map((t) =>
+                Math.round(t.getBoundingClientRect().width),
+            ),
+        );
+        return {
+            measured,
+            worstOffPct: +(worst * 100).toFixed(2),
+            cropped,
+            distinctTileWidths: widths.size,
+            listWithinMeasure: list ? Math.round(list.getBoundingClientRect().width) <= 610 : false,
+        };
+    });
+    const shapeOk =
+        shape.measured > 0 &&
+        shape.worstOffPct < 2 &&
+        shape.cropped === 0 &&
+        shape.distinctTileWidths <= 2 &&
+        shape.listWithinMeasure;
+    if (!shapeOk) failures++;
+    console.log(`${shapeOk ? "  ok " : "FAIL "} feed images keep their aspect ratio @${width}px — ${JSON.stringify(shape)}`);
+    await fp.close();
+}
+
 await deck.close();
 
 const page = await browser.newPage({ viewport: { width: 390, height: 900 } });
