@@ -341,6 +341,11 @@ export async function getEntries(
     return data.entries;
 }
 
+export async function getAllSeries(): Promise<Series[]> {
+    const data = await getJSON<{ series: Series[] }>(`${CONTENT}/api/series`);
+    return data.series;
+}
+
 export function getSeries(slug: string): Promise<Series | null> {
     return getJSONOrNull<Series>(
         `${CONTENT}/api/series/${encodeURIComponent(slug)}`,

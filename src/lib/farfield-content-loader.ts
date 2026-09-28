@@ -5,6 +5,8 @@ import {
     publicationFrom,
     postToFeedEntry,
     renderKey,
+    seriesIndex,
+    seriesKeyFor,
 } from "./farfield-loader";
 import { readSecret, type Collection, type Entry, type Post } from "./farfield";
 
@@ -57,16 +59,30 @@ export function farfieldDocsLoader(): Loader {
         name: "farfield-docs",
         async load({ store, meta, logger }: LoaderContext) {
             const { qs, key } = draftsQuery();
-            const res = await fetchJSON<{ entries: Entry[] }>(
-                `${CONTENT}/api/entries${qs}`,
+            const url = `${CONTENT}/api/entries${qs}`;
+            let res = await fetchJSON<{ entries: Entry[] }>(
+                url,
                 key,
                 store.keys().length > 0
                     ? (meta.get("entries-etag") ?? undefined)
                     : undefined,
             );
-            if (res.status === 304) {
+            const series = await seriesIndex();
+            const seriesFingerprint = [...series]
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([slug, cid]) => `${slug}:${cid}`)
+                .join(",");
+            const seriesMoved = meta.get("series-fingerprint") !== seriesFingerprint;
+
+            if (res.status === 304 && !seriesMoved) {
                 logger.info("entries unchanged (304) — store kept");
                 return;
+            }
+            if (res.status === 304) {
+                // A 304 carries no body, so refetch unconditionally to rebuild
+                // digests against the series that moved.
+                logger.info("entries unchanged (304) but a series moved — resyncing");
+                res = await fetchJSON<{ entries: Entry[] }>(url, key, undefined);
             }
             const pubs = new Map(
                 (await getCollectionsOnce()).map((c) => [
@@ -83,11 +99,12 @@ export function farfieldDocsLoader(): Loader {
                 store.set({
                     id: `${entry.collection}/${entry.slug}`,
                     data,
-                    digest: renderKey(data),
+                    digest: renderKey(data, seriesKeyFor(data.body, series)),
                 });
                 n++;
             }
             if (res.etag) meta.set("entries-etag", res.etag);
+            meta.set("series-fingerprint", seriesFingerprint);
             logger.info(`synced ${n} documents`);
         },
     };

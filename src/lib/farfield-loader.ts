@@ -1,9 +1,11 @@
 
 import type { LiveLoader } from "astro/loaders";
-import { blobURL, getCollections, getEntries, getPosts, getSeries, getBlobMeta, type BlobMeta, type Collection, type Entry, type Post } from "./farfield";
+import { blobURL, getAllSeries, getCollections, getEntries, getPosts, getSeries, getBlobMeta, type BlobMeta, type Collection, type Entry, type Post, type Series } from "./farfield";
 import { memo } from "./memo";
 import { isStampedSlug, unstampSlug, humanize } from "./slugs";
 import { extractBodyEmbeds } from "./embeds";
+export { renderKey, seriesKeyFor } from "./render-key";
+
 
 const cachedCollections = () =>
     memo<Collection[]>("collections", getCollections);
@@ -13,7 +15,11 @@ const cachedEntries = (drafts = false) =>
     );
 const cachedPosts = () => memo<Post[]>("posts", getPosts);
 
-export { getSeries, getBlobMeta, blobURL };
+export { getAllSeries, getSeries, getBlobMeta, blobURL };
+
+export async function seriesIndex(): Promise<Map<string, string>> {
+    return new Map((await getAllSeries()).map((s: Series) => [s.slug, s.cid]));
+}
 
 export interface ResolvedMedia {
     cid: string;
@@ -145,11 +151,6 @@ export async function stampedHref(
     return match?.href ?? null;
 }
 
-export function renderKey(
-    doc: Pick<DocumentData, "cid" | "publishedAt" | "updatedAt">,
-): string {
-    return `${doc.cid}@${doc.publishedAt}@${doc.updatedAt}`;
-}
 
 export async function loadAllDocuments(
     drafts = false,
