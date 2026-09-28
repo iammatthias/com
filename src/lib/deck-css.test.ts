@@ -81,10 +81,9 @@ describe("deck.css structure", () => {
             const bs = byHead(head);
             expect(bs.length).toBe(1);
             const sels = [...bs[0].rules.keys()];
-            expect(sels.length).toBe(2);
+            expect(sels.length).toBe(1);
             expect(sels.every((s) => s.includes(":nth-child("))).toBe(true);
             expect(sels.some((s) => s.startsWith(".deck-peek > li"))).toBe(true);
-            expect(sels.some((s) => s.startsWith(".deck-col--peek .feed > li"))).toBe(true);
         }
     });
 
@@ -116,16 +115,25 @@ describe("deck.css structure", () => {
         expect(switches.map((b) => b.head)).toEqual([]);
     });
 
-    test("the details column is never blanket-hidden with the peek columns", () => {
-        const hidesPeek = blocks.filter((b) =>
-            [...b.rules.entries()].some(
-                ([sel, body]) => sel === ".deck-col--peek" && /display:\s*none/.test(body),
-            ),
+    test("the details column is never hidden at any width", () => {
+        const hidden = blocks.flatMap((b) =>
+            [...b.rules.entries()]
+                .filter(
+                    ([sel, body]) =>
+                        sel.includes(".deck-col--meta") && /display:\s*none/.test(body),
+                )
+                .map(([sel]) => `${b.head} { ${sel} }`),
         );
-        for (const b of hidesPeek) {
-            expect([...b.rules.keys()]).not.toContain(".deck-col--meta");
-        }
+        expect(hidden).toEqual([]);
         expect(css).toContain(".deck-col--meta");
+    });
+
+    test("every deck column modifier in the CSS is one the markup emits", () => {
+        const inCss = new Set(
+            [...css.matchAll(/\.deck-col--([a-z0-9-]+)/g)].map((m) => m[1]),
+        );
+        const emitted = new Set(["main", "meta", "doc", "mixed"]);
+        expect([...inCss].filter((m) => !emitted.has(m))).toEqual([]);
     });
 
     test("the deck has no exterior frame; separators sit between columns only", () => {

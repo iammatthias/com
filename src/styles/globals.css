@@ -635,75 +635,87 @@ video {
     padding-top: var(--space-5);
 }
 
+.feed[data-feed-list] {
+    width: 100%;
+    max-width: var(--measure);
+    gap: 0;
+}
+
+.feed[data-feed-list] > .feed-item {
+    padding-block: var(--space-6);
+}
+
+.feed[data-feed-list] > * + * {
+    padding-top: var(--space-6);
+}
+
+.feed[data-feed-list] > :first-child {
+    padding-top: 0;
+}
+
 .feed-media {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+    display: grid;
+    gap: var(--space-1);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-radius: var(--radius);
+    overflow: hidden;
 }
 
-.feed-media--gallery {
-    flex-direction: row;
-    align-items: stretch;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    position: relative;
-    z-index: 1;
-    scrollbar-width: none;
+.feed-media--1 {
+    grid-template-columns: minmax(0, 1fr);
 }
 
-.feed-media--gallery::-webkit-scrollbar {
-    display: none;
+.feed-media--3 .feed-tile:first-child {
+    grid-row: span 2;
 }
 
 .feed-tile {
     margin: 0;
+    width: 100%;
     overflow: hidden;
-    border-radius: var(--radius);
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: var(--color-border);
 }
 
-.feed-tile img {
+.feed-media--1 .feed-tile {
+    aspect-ratio: 3 / 2;
+    max-height: 32rem;
+}
+
+.feed-media--3 .feed-tile:first-child {
+    aspect-ratio: 1 / 2.02;
+}
+
+.feed-tile :is(img, video) {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
 }
 
 .feed-tile video {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: auto 16 / 9;
     background: oklch(0% 0 0);
-}
-
-.feed-tile audio {
-    display: block;
-    width: 100%;
 }
 
 .feed-tile--video,
 .feed-tile--audio {
     position: relative;
     z-index: 1;
+    aspect-ratio: 16 / 9;
+    background: oklch(0% 0 0);
 }
 
-.feed-media--gallery .feed-tile {
-    flex: none;
-    height: 340px;
-    max-width: calc(100% - var(--space-7));
-    scroll-snap-align: start;
+.feed-tile--audio {
+    aspect-ratio: auto;
+    background: none;
+    display: flex;
+    align-items: center;
 }
 
-.feed-media--gallery .feed-tile :is(img, video) {
-    height: 100%;
-    width: auto;
-    max-width: 100%;
-    object-fit: cover;
-}
-
-@media (max-width: 480px) {
-    .feed-media--gallery .feed-tile {
-        height: 260px;
-    }
+.feed-tile audio {
+    display: block;
+    width: 100%;
 }
 
 .feed-note {

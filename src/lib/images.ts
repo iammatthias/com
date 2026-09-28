@@ -1,14 +1,14 @@
 
 export const FIG_WIDTHS = [480, 720, 960, 1280];
 export const FIG_SIZES =
-    "(max-width: 768px) calc(100vw - 32px), 720px";
+    "(max-width: 768px) calc(100vw - 32px), 608px";
 
 export const SERIES_WIDTHS = [320, 480, 640, 800];
 export const SERIES_SIZES =
     "(max-width: 480px) calc(100vw - 32px), (max-width: 768px) calc((100vw - 48px) / 2), 320px";
 
-const CAROUSEL_WIDTHS = [320, 480, 640, 800];
-const CAROUSEL_SIZES = "(max-width: 768px) 80vw, 520px";
+const GRID_WIDTHS = [320, 480, 640, 800];
+const GRID_SIZES = "(max-width: 768px) 50vw, 304px";
 
 export const ARCH_WIDTHS = [480, 720, 960, 1280, 1600];
 export const ARCH_SIZES =
@@ -24,6 +24,6 @@ export function tilePreset(isGallery: boolean): {
     sizes: string;
 } {
     return isGallery
-        ? { widths: CAROUSEL_WIDTHS, sizes: CAROUSEL_SIZES }
+        ? { widths: GRID_WIDTHS, sizes: GRID_SIZES }
         : { widths: FIG_WIDTHS, sizes: FIG_SIZES };
 }
