@@ -13,7 +13,7 @@ export const menu: MenuMeta = { group: "other", label: "privacy", order: 4 };
 <BaseLayout
     deck
     title="Privacy"
-    description="Privacy at iammatthias.com. No cookies, analytics, tracking, or accounts."
+    description="Privacy at iammatthias.com. No cookies, tracking pixels, or accounts. Cookieless page counts only."
 >
     <Deck>
     <header class="page-header">
@@ -24,9 +24,11 @@ export const menu: MenuMeta = { group: "other", label: "privacy", order: 4 };
         <section>
             <h2>The short version</h2>
             <p>
-                This site has no cookies, analytics, tracking pixels, or
-                accounts. There is no consent banner because there is nothing
-                to consent to.
+                This site has no cookies, tracking pixels, or accounts. Page
+                views are counted by Cloudflare Web Analytics, which sets no
+                cookies, does not fingerprint your device, and cannot follow
+                you to other sites. There is no consent banner because none of
+                that needs your consent.
             </p>
         </section>
 
@@ -61,6 +63,13 @@ export const menu: MenuMeta = { group: "other", label: "privacy", order: 4 };
                 The onchain analytics portrait reads a public testnet contract
                 from your browser when you visit that page. It does not ask for
                 a wallet connection or write anything.
+            </p>
+            <p>
+                NOTHING reads an Ethereum mainnet contract the same way, to show
+                the artwork and its current price. That much happens on its own.
+                If you press one of its mint buttons it asks your browser wallet
+                for an address and then for a transaction — nothing is sent, and
+                no address is read, unless you press one.
             </p>
         </section>
 
