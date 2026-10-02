@@ -727,6 +727,105 @@ video {
     color: var(--color-fg);
 }
 
+.nothing {
+    display: grid;
+    gap: var(--space-5);
+    max-width: var(--measure);
+    margin-block: var(--space-7);
+}
+
+.nothing-frame {
+    margin: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: repeating-conic-gradient(
+            var(--color-border) 0% 25%,
+            transparent 0% 50%
+        )
+        50% / 16px 16px;
+}
+
+.nothing-canvas {
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+}
+
+.nothing-canvas img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.nothing-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: var(--space-3);
+    margin: 0;
+}
+
+.nothing-facts dt {
+    font-size: var(--fs-sm);
+    color: var(--color-muted);
+}
+
+.nothing-facts dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+}
+
+.nothing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.nothing-actions button {
+    font: inherit;
+    font-size: var(--fs-sm);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-fg);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--color-fg);
+    cursor: pointer;
+}
+
+.nothing-actions button:hover:not(:disabled) {
+    background: var(--color-fg);
+    color: var(--color-bg);
+}
+
+.nothing-actions button:disabled {
+    border-color: var(--color-border);
+    color: var(--color-muted);
+    cursor: not-allowed;
+}
+
+.nothing-note:empty {
+    display: none;
+}
+
+.nothing-note {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--color-muted);
+}
+
+.nothing[data-state="minted"] .nothing-actions button {
+    text-decoration: line-through;
+}
+
+.nothing:not([data-state="unreachable"]) .nothing-fallback {
+    font-size: var(--fs-sm);
+}
+
+.nothing[data-state="loading"] .nothing-actions,
+.nothing[data-state="unreachable"] .nothing-actions {
+    display: none;
+}
+
 .page-header {
     display: flex;
     flex-direction: column;

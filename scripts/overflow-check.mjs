@@ -117,6 +117,7 @@ for (const [w, h] of [[390, 900], [1440, 900], [2560, 1400]]) {
     const meta = await art.evaluate(() => {
         const seen = (s) => { const e = document.querySelector(s); return !!(e && e.getBoundingClientRect().width > 0); };
         return {
+            hasTags: !!document.querySelector(".doc-hero__tags a"),
             tagsInHero: seen(".deck-doc__hero .doc-hero__tags a"),
             relatedAtEnd: seen(".deck-doc__flow .doc-related .card"),
             colophonAtFoot: seen(".deck-doc__flow .colophon-meta"),
@@ -133,7 +134,8 @@ for (const [w, h] of [[390, 900], [1440, 900], [2560, 1400]]) {
             colophonNotInDetails: !seen(".deck-col--meta .colophon"),
         };
     });
-    const metaOk = Object.values(meta).every(Boolean);
+    const { hasTags, tagsInHero, ...rest } = meta;
+    const metaOk = tagsInHero === hasTags && Object.values(rest).every(Boolean);
     if (!metaOk) failures++;
     console.log(`${metaOk ? "  ok " : "FAIL "} article content is where it belongs @${w}px — ${JSON.stringify(meta)}`);
     const fits = await art.evaluate(() => {
