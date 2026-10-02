@@ -10,6 +10,7 @@ import {
 import { mainnet } from "viem/chains";
 import {
     NOTHING_ABI,
+    PRICE_USD,
     NOTHING_ADDRESS,
     NOTHING_CHAIN_ID,
     NOTHING_TOKEN_ID,
@@ -17,6 +18,7 @@ import {
     USDC_ABI,
     decodeContractUri,
     formatEth,
+    formatUsd,
 } from "@lib/nothing-contract";
 
 const RPCS = [
@@ -96,6 +98,7 @@ function buttons(host: HTMLElement): HTMLButtonElement[] {
 }
 
 async function refresh(host: HTMLElement): Promise<boolean> {
+    if (host.dataset.state === "pending") return false;
     const [owner, price] = await Promise.all([readOwner(), readPrice()]);
 
     if (owner) {
@@ -114,6 +117,9 @@ async function refresh(host: HTMLElement): Promise<boolean> {
     setState(host, "ready");
     say(host, "[data-nothing-status]", "unminted");
     say(host, "[data-nothing-eth]", price === null ? "feed unavailable" : `${formatEth(price)} ETH`);
+    if (price !== null) {
+        say(host, "[data-nothing-note]", `${formatEth(price)} ETH is ${formatUsd(PRICE_USD)} at the current Chainlink rate.`);
+    }
     for (const b of buttons(host)) {
         b.disabled = b.dataset.nothingMint === "eth" && price === null;
     }
@@ -144,7 +150,7 @@ async function mint(host: HTMLElement, kind: string): Promise<void> {
     const note = (t: string) => say(host, "[data-nothing-note]", t);
     const busy = (on: boolean) => {
         for (const b of buttons(host)) b.disabled = on;
-        setState(host, on ? "pending" : "ready");
+        if (on) setState(host, "pending");
     };
 
     try {
@@ -220,11 +226,12 @@ async function mint(host: HTMLElement, kind: string): Promise<void> {
         note("Minted.");
         await refresh(host);
     } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
+        const short = (err as { shortMessage?: string })?.shortMessage;
+        const message = short ?? (err instanceof Error ? err.message : String(err));
         note(message.split("\n")[0].slice(0, 160));
-        await refresh(host);
     } finally {
-        busy(false);
+        for (const b of buttons(host)) b.disabled = false;
+        setState(host, "ready");
         await refresh(host);
     }
 }

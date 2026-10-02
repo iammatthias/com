@@ -6,7 +6,6 @@ export const PRICE_USD = 100_000_000;
 
 export const NOTHING_ABI = [
     "function contractURI() pure returns (string)",
-    "function tokenURI(uint256) view returns (string)",
     "function ownerOf(uint256) view returns (address)",
     "function price() view returns (uint256)",
     "function usdc() view returns (address)",
