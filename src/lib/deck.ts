@@ -24,12 +24,13 @@ export interface DeckColumnModel {
     label: string;
     href: string;
     total: number;
+    latest: string;
     peek: DeckItem[];
     feed?: DeckFeedEntry[];
 }
 
-const DECK_PEEK = 22;
-const FEED_PEEK = 12;
+const DECK_PEEK = 3;
+const FEED_PEEK = 3;
 
 
 function toDeckItem(d: DocumentData): DeckItem {
@@ -61,16 +62,21 @@ async function buildColumns(): Promise<DeckColumnModel[]> {
     for (const pub of pubs) {
         const items = byCollection.get(pub.slug);
         if (!items || items.length === 0) continue;
+        const latest = items.reduce(
+            (newest, d) => (d.publishedAt > newest ? d.publishedAt : newest),
+            "",
+        );
         columns.push({
             id: pub.slug,
             label: pub.name.toLowerCase(),
             href: `/${pub.slug}`,
             total: items.length,
+            latest,
             peek: items.slice(0, DECK_PEEK).map(toDeckItem),
         });
     }
 
-    columns.sort((a, b) => b.total - a.total);
+    columns.sort((a, b) => b.latest.localeCompare(a.latest));
 
     const feed = await feedColumn();
     if (feed) columns.unshift(feed);
@@ -88,5 +94,13 @@ async function feedColumn(): Promise<DeckColumnModel | null> {
             media: await resolveBodyMedia(item.body),
         })),
     );
-    return { id: "feed", label: "feed", href: "/feed", total: posts.length, peek: [], feed };
+    return {
+        id: "feed",
+        label: "feed",
+        href: "/feed",
+        total: posts.length,
+        latest: posts[0]?.createdAt ?? "",
+        peek: [],
+        feed,
+    };
 }

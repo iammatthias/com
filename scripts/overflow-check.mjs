@@ -181,6 +181,10 @@ const homeCols = await home.evaluate(() => {
         const cs = getComputedStyle(e);
         return cs.overflowY === "auto" && e.scrollHeight > e.clientHeight + 4;
     };
+    const canScroll = (sel) => {
+        const e = document.querySelector(sel);
+        return !!e && getComputedStyle(e).overflowY === "auto";
+    };
     return {
         headerVisible: getComputedStyle(hd).display !== "none",
         rail: !!document.querySelector(".deck-col--rail"),
@@ -188,14 +192,16 @@ const homeCols = await home.evaluate(() => {
         middle: r(".home-static"),
         lists: r(".home-lists"),
         pageScrolls: document.documentElement.scrollHeight > innerHeight + 4,
-        feedScrolls: scrolls(".home-feed"),
-        listsScroll: scrolls(".home-lists"),
+        feedCanScroll: canScroll(".home-feed"),
+        feedOverflow: scrolls(".home-feed"),
+        listsCanScroll: canScroll(".home-lists"),
+        listsOverflow: scrolls(".home-lists"),
         sideways: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     };
 });
 const homeOk = homeCols.headerVisible && !homeCols.rail && homeCols.middle <= 350 &&
     homeCols.feed > homeCols.middle && homeCols.lists > homeCols.middle && homeCols.sideways === 0 &&
-    !homeCols.pageScrolls && homeCols.feedScrolls && homeCols.listsScroll;
+    !homeCols.pageScrolls && homeCols.feedCanScroll && homeCols.listsCanScroll;
 if (!homeOk) failures++;
 console.log(`${homeOk ? "  ok " : "FAIL "} homepage is three columns, middle capped — ${JSON.stringify(homeCols)}`);
 await home.close();
