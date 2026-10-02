@@ -283,6 +283,7 @@
 .deck-doc {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
+    gap: var(--space-6);
     min-height: 0;
 }
 
@@ -299,6 +300,10 @@
 
     .deck-col--doc > .deck-col__body {
         padding: 0;
+    }
+
+    .deck-doc {
+        gap: 0;
     }
 
     .deck-doc__hero {
