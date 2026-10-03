@@ -1,6 +1,5 @@
 ---
 import { fmtDate } from "@lib/format";
-import { noteTitle } from "@lib/markdown-text";
 import type { DeckColumnModel } from "@lib/deck";
 
 interface Props {
@@ -9,13 +8,7 @@ interface Props {
 
 const { column } = Astro.props;
 const PANEL_ITEMS = 3;
-const items = column.feed
-    ? column.feed.slice(0, PANEL_ITEMS).map(({ item }) => ({
-          href: `/feed/${item.rkey}`,
-          title: noteTitle(item.body),
-          date: item.createdAt,
-      }))
-    : column.peek.slice(0, PANEL_ITEMS);
+const items = column.peek.slice(0, PANEL_ITEMS);
 ---
 
 <section class="panel" aria-labelledby={`panel-${column.id}`}>

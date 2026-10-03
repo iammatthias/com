@@ -5,17 +5,41 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import GlassArch from "@components/GlassArch.astro";
 import CollectionPanel from "@components/CollectionPanel.astro";
 import FeedEntryCard from "@components/FeedEntryCard.astro";
+import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
 import { deckColumns } from "@lib/deck";
+import {
+    entriesOf,
+    resolveBodyMedia,
+    type FeedEntryData,
+    type ResolvedMedia,
+} from "@lib/farfield-loader";
 import { isPreview } from "@lib/preview";
 
 const preview = isPreview(Astro);
 
-const columns = await deckColumns();
-const feedColumn = columns.find((c) => c.id === "feed");
-const collections = columns.filter((c) => c.id !== "feed");
+const collections = await deckColumns();
 
-setResponseCacheHeaders(Astro.response);
+const FEED_ITEMS = 3;
+const {
+    entries: rawFeed,
+    error: feedError,
+    cacheHint,
+} = await getLiveCollection("feedEntries");
+if (feedError) {
+    console.error("[/] Farfield feed entries fetch failed:", feedError);
+}
+const allFeed: FeedEntryData[] = entriesOf<FeedEntryData>(rawFeed);
+const feedItems = allFeed.slice(0, FEED_ITEMS);
+const feedMedia = new Map<string, ResolvedMedia[]>(
+    await Promise.all(
+        feedItems.map(
+            async (it) => [it.rkey, await resolveBodyMedia(it.body)] as const,
+        ),
+    ),
+);
+
+setResponseCacheHeaders(Astro.response, cacheHint);
 ---
 
 <BaseLayout deck="home">
@@ -31,18 +55,21 @@ setResponseCacheHeaders(Astro.response);
             </div>
         </section>
 
-        {feedColumn && (
+        {feedItems.length > 0 && (
             <section class="home-feed" aria-labelledby="home-feed-heading">
                 <h2 class="home-col__head" id="home-feed-heading">
                     <a href="/feed">feed</a>
-                    <span class="home-col__count">{feedColumn.total}</span>
+                    <span class="home-col__count">{allFeed.length}</span>
                 </h2>
                 <ul class="feed">
-                    {feedColumn.feed?.map(({ item, media }) => (
-                        <FeedEntryCard item={item} media={media} />
+                    {feedItems.map((item) => (
+                        <FeedEntryCard
+                            item={item}
+                            media={feedMedia.get(item.rkey) ?? []}
+                        />
                     ))}
                 </ul>
-                <a class="deck-all" href="/feed">all {feedColumn.total} →</a>
+                <a class="deck-all" href="/feed">all {allFeed.length} →</a>
             </section>
         )}
 

@@ -209,6 +209,22 @@ try {
     await checkRedirect("/now/", "/now");
     await checkRedirect("/sitemap-index.xml", "/sitemap.xml");
     await checkRedirect("/resume/", "/resume", [301, 307, 308]);
+    {
+        const home = await get("/");
+        const feed = await get("/feed");
+        const newest = (html, from) => {
+            const seg = from ? html.slice(html.indexOf(from)) : html;
+            return seg.match(/<time datetime="([^"]+)"/)?.[1] ?? null;
+        };
+        const a = newest(home.body, "home-feed");
+        const b = newest(feed.body, null);
+        record(
+            "homepage feed is as fresh as /feed",
+            a !== null && a === b,
+            a === b ? "" : `home ${a} vs feed ${b}`,
+        );
+    }
+
     await checkRedirect("/open-source", "/experiments");
     await checkRedirect("/open-source.md", "/experiments.md");
     await checkRedirect("/open-source?ref=x", "/experiments?ref=x");

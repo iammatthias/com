@@ -1,22 +1,11 @@
 import { getCollection } from "astro:content";
-import {
-    resolveBodyMedia,
-    type DocumentData,
-    type FeedEntryData,
-    type PublicationData,
-    type ResolvedMedia,
-} from "./farfield-loader";
+import { type DocumentData, type PublicationData } from "./farfield-loader";
 import { publishedDocs } from "./content-query";
 
 interface DeckItem {
     href: string;
     title: string;
     date: string;
-}
-
-export interface DeckFeedEntry {
-    item: FeedEntryData;
-    media: ResolvedMedia[];
 }
 
 export interface DeckColumnModel {
@@ -26,11 +15,9 @@ export interface DeckColumnModel {
     total: number;
     latest: string;
     peek: DeckItem[];
-    feed?: DeckFeedEntry[];
 }
 
 const DECK_PEEK = 3;
-const FEED_PEEK = 3;
 
 
 function toDeckItem(d: DocumentData): DeckItem {
@@ -77,30 +64,6 @@ async function buildColumns(): Promise<DeckColumnModel[]> {
     }
 
     columns.sort((a, b) => b.latest.localeCompare(a.latest));
-
-    const feed = await feedColumn();
-    if (feed) columns.unshift(feed);
-
     return columns;
 }
 
-async function feedColumn(): Promise<DeckColumnModel | null> {
-    const posts = (await getCollection("posts")).map((e) => e.data as FeedEntryData);
-    if (posts.length === 0) return null;
-    posts.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-    const feed = await Promise.all(
-        posts.slice(0, FEED_PEEK).map(async (item) => ({
-            item,
-            media: await resolveBodyMedia(item.body),
-        })),
-    );
-    return {
-        id: "feed",
-        label: "feed",
-        href: "/feed",
-        total: posts.length,
-        latest: posts[0]?.createdAt ?? "",
-        peek: [],
-        feed,
-    };
-}
