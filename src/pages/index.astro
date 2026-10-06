@@ -15,17 +15,18 @@ import {
     type ResolvedMedia,
 } from "@lib/farfield-loader";
 import { isPreview } from "@lib/preview";
+import { glassPick } from "@lib/glass";
 
 const preview = isPreview(Astro);
 
-const collections = await deckColumns();
+const [collections, pick, feed] = await Promise.all([
+    deckColumns(),
+    glassPick(),
+    getLiveCollection("feedEntries"),
+]);
 
 const FEED_ITEMS = 3;
-const {
-    entries: rawFeed,
-    error: feedError,
-    cacheHint,
-} = await getLiveCollection("feedEntries");
+const { entries: rawFeed, error: feedError, cacheHint } = feed;
 if (feedError) {
     console.error("[/] Farfield feed entries fetch failed:", feedError);
 }
@@ -45,7 +46,7 @@ setResponseCacheHeaders(Astro.response, cacheHint);
 <BaseLayout deck="home">
     <div class="home">
         <section class="home-static" aria-label="Introduction">
-            <GlassArch />
+            <GlassArch pick={pick} />
             <div class="home-intro">
                 <h1>Hi, I am Matthias.</h1>
                 <p>
