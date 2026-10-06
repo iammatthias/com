@@ -21,7 +21,10 @@ const preview = isPreview(Astro);
 
 const [collections, pick, feed] = await Promise.all([
     deckColumns(),
-    glassPick(),
+    Promise.race([
+        glassPick(),
+        new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000)),
+    ]),
     getLiveCollection("feedEntries"),
 ]);
 

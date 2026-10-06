@@ -200,6 +200,16 @@ async function profile(browser, context, path, viewport) {
 }
 
 const browser = await chromium.launch({ channel: "chromium" });
+const probe = await browser.newPage();
+const parallelCompile = await probe.evaluate(
+    () => !!document.createElement("canvas").getContext("webgl")?.getExtension("KHR_parallel_shader_compile"),
+);
+await probe.close();
+if (!parallelCompile) {
+    await browser.close();
+    server?.kill("SIGTERM");
+    throw new Error("this Chromium has no KHR_parallel_shader_compile, so glStalls cannot be measured; run on a machine with a GPU");
+}
 const results = {};
 const worst = {};
 try {

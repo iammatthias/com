@@ -78,6 +78,7 @@ export function mountAzulejoTile(
     };
 
     const poll = () => {
+        if (gl.isContextLost()) return;
         if (gl.getProgramParameter(program, parallel!.COMPLETION_STATUS_KHR)) finish();
         else requestAnimationFrame(poll);
     };

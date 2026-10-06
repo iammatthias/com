@@ -12,7 +12,7 @@ const tint = pick?.prominentColor
 const details = pick
     ? [pick.equipment, pick.settings, pick.captureDate].filter(Boolean)
     : [];
-const captioned = pick && (pick.seriesTitle || details.length > 0);
+const captioned = Boolean(pick?.seriesTitle) || details.length > 0;
 ---
 
 <figure class="hero">
@@ -34,7 +34,7 @@ const captioned = pick && (pick.seriesTitle || details.length > 0);
         </div>
     </div>
 
-    {captioned && (
+    {pick && captioned && (
         <figcaption>
             {pick.seriesTitle && (
                 <span class="title">
