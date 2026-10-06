@@ -24,8 +24,4 @@ function mountTiles(): void {
     }
 }
 
-if (document.readyState === "loading") {
-    addEventListener("DOMContentLoaded", mountTiles, { once: true });
-} else {
-    mountTiles();
-}
+requestAnimationFrame(() => setTimeout(mountTiles));

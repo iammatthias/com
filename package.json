@@ -12,6 +12,8 @@
     "preview": "astro preview",
     "smoke": "node scripts/smoke.mjs",
     "overflow": "node scripts/overflow-check.mjs",
+    "perf": "node scripts/perf-check.mjs",
+    "perf:budget": "node scripts/perf-check.mjs --write",
     "astro": "astro",
     "snapshot:azulejos": "node scripts/snapshot-azulejos.mjs",
     "agent:check": "node scripts/agent-check.mjs",

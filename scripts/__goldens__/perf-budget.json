@@ -1,0 +1,162 @@
+{
+  "desktop /": {
+    "glStalls": 0,
+    "layouts": 5,
+    "styleRecalcs": 7,
+    "domNodes": 218,
+    "jsBytes": 66932,
+    "cssBytes": 45103,
+    "requests": 10,
+    "cls": 0
+  },
+  "desktop /posts/1787249855000-on-diffusion": {
+    "glStalls": 0,
+    "layouts": 5,
+    "styleRecalcs": 9,
+    "domNodes": 281,
+    "jsBytes": 74266,
+    "cssBytes": 45103,
+    "requests": 14,
+    "cls": 0
+  },
+  "desktop /art/1738786576559-ocean-dreams": {
+    "glStalls": 0,
+    "layouts": 9,
+    "styleRecalcs": 13,
+    "domNodes": 1126,
+    "jsBytes": 74266,
+    "cssBytes": 45103,
+    "requests": 14,
+    "cls": 0
+  },
+  "desktop /art/1710822761635-vsco": {
+    "glStalls": 0,
+    "layouts": 7,
+    "styleRecalcs": 15,
+    "domNodes": 477,
+    "jsBytes": 74266,
+    "cssBytes": 45103,
+    "requests": 14,
+    "cls": 0
+  },
+  "desktop /recipes/1602505860000-challah": {
+    "glStalls": 0,
+    "layouts": 4,
+    "styleRecalcs": 10,
+    "domNodes": 307,
+    "jsBytes": 79642,
+    "cssBytes": 45103,
+    "requests": 15,
+    "cls": 0
+  },
+  "desktop /feed": {
+    "glStalls": 0,
+    "layouts": 3,
+    "styleRecalcs": 7,
+    "domNodes": 207,
+    "jsBytes": 66932,
+    "cssBytes": 45103,
+    "requests": 10,
+    "cls": 0
+  },
+  "desktop /tags": {
+    "glStalls": 0,
+    "layouts": 2,
+    "styleRecalcs": 5,
+    "domNodes": 1594,
+    "jsBytes": 66932,
+    "cssBytes": 45103,
+    "requests": 10,
+    "cls": 0
+  },
+  "desktop /menu": {
+    "glStalls": 0,
+    "layouts": 2,
+    "styleRecalcs": 6,
+    "domNodes": 146,
+    "jsBytes": 66932,
+    "cssBytes": 45103,
+    "requests": 10,
+    "cls": 0
+  },
+  "mobile /": {
+    "glStalls": 0,
+    "layouts": 6,
+    "styleRecalcs": 6,
+    "domNodes": 218,
+    "jsBytes": 66932,
+    "cssBytes": 45103,
+    "requests": 10,
+    "cls": 0
+  },
+  "mobile /posts/1787249855000-on-diffusion": {
+    "glStalls": 0,
+    "layouts": 5,
+    "styleRecalcs": 10,
+    "domNodes": 281,
+    "jsBytes": 74266,
+    "cssBytes": 45103,
+    "requests": 14,
+    "cls": 0
+  },
+  "mobile /art/1738786576559-ocean-dreams": {
+    "glStalls": 0,
+    "layouts": 8,
+    "styleRecalcs": 12,
+    "domNodes": 1126,
+    "jsBytes": 74266,
+    "cssBytes": 45103,
+    "requests": 14,
+    "cls": 0
+  },
+  "mobile /art/1710822761635-vsco": {
+    "glStalls": 0,
+    "layouts": 5,
+    "styleRecalcs": 9,
+    "domNodes": 477,
+    "jsBytes": 74266,
+    "cssBytes": 45103,
+    "requests": 14,
+    "cls": 0
+  },
+  "mobile /recipes/1602505860000-challah": {
+    "glStalls": 0,
+    "layouts": 4,
+    "styleRecalcs": 9,
+    "domNodes": 307,
+    "jsBytes": 79642,
+    "cssBytes": 45103,
+    "requests": 15,
+    "cls": 0
+  },
+  "mobile /feed": {
+    "glStalls": 0,
+    "layouts": 5,
+    "styleRecalcs": 7,
+    "domNodes": 207,
+    "jsBytes": 66932,
+    "cssBytes": 45103,
+    "requests": 10,
+    "cls": 0
+  },
+  "mobile /tags": {
+    "glStalls": 0,
+    "layouts": 2,
+    "styleRecalcs": 5,
+    "domNodes": 1594,
+    "jsBytes": 66932,
+    "cssBytes": 45103,
+    "requests": 10,
+    "cls": 0
+  },
+  "mobile /menu": {
+    "glStalls": 0,
+    "layouts": 2,
+    "styleRecalcs": 5,
+    "domNodes": 146,
+    "jsBytes": 66932,
+    "cssBytes": 45103,
+    "requests": 10,
+    "cls": 0
+  }
+}

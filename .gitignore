@@ -40,6 +40,7 @@ pnpm-debug.log*
 !/scripts/agent-check.mjs
 !/scripts/smoke.mjs
 !/scripts/overflow-check.mjs
+!/scripts/perf-check.mjs
 !/scripts/snapshot-azulejos.mjs
 !/scripts/art-verify.mjs
 !/scripts/glsl-strip.mjs
