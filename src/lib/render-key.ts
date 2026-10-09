@@ -22,7 +22,11 @@ export function renderKey(doc: {
     publishedAt: string;
     updatedAt: string;
     seriesKey?: string;
+    publication?: { name: string; description?: string };
 }): string {
     const base = `${doc.cid}@${doc.publishedAt}@${doc.updatedAt}`;
-    return doc.seriesKey ? `${base}@${doc.seriesKey}` : base;
+    const withSeries = doc.seriesKey ? `${base}@${doc.seriesKey}` : base;
+    return doc.publication
+        ? `${withSeries}@${doc.publication.name}|${doc.publication.description ?? ""}`
+        : withSeries;
 }

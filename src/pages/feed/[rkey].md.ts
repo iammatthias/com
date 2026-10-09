@@ -11,7 +11,7 @@ import {
     composeFeedEntryMarkdown,
     resolveEmbedsForMarkdown,
 } from "@lib/markdown-view";
-import type { FeedEntryData } from "@lib/farfield-loader";
+import { seriesIndex, seriesKeyFor, type FeedEntryData } from "@lib/farfield-loader";
 import { markdownResponse } from "@lib/agent-http";
 
 export const GET: APIRoute = async (context) => {
@@ -34,7 +34,11 @@ export const GET: APIRoute = async (context) => {
 
     const origin = siteOrigin(context.site);
 
-    const bodyMd = await cachedRender("feedmdbody", item.cid, () =>
+    const seriesKey = item.body.includes("series://")
+        ? seriesKeyFor(item.body, await seriesIndex())
+        : "";
+    const renderId = seriesKey ? `${item.cid}@${seriesKey}` : item.cid;
+    const bodyMd = await cachedRender("feedmdbody", renderId, () =>
         resolveEmbedsForMarkdown(item.body),
     );
 

@@ -69,10 +69,15 @@ export function farfieldDocsLoader(): Loader {
                     : undefined,
             );
             const series = await seriesIndex();
+            const collections = await getCollectionsOnce();
             const seriesFingerprint = `v${DOCS_STORE_VERSION}|${[...series]
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([slug, cid]) => `${slug}:${cid}`)
-                .join(",")}`;
+                .join(",")}|${JSON.stringify(
+                collections
+                    .map((c) => publicationFrom(c))
+                    .sort((a, b) => a.slug.localeCompare(b.slug)),
+            )}`;
             const seriesMoved = meta.get("series-fingerprint") !== seriesFingerprint;
 
             if (res.status === 304 && !seriesMoved) {
@@ -81,12 +86,12 @@ export function farfieldDocsLoader(): Loader {
             }
             if (res.status === 304) {
                 // A 304 carries no body, so refetch unconditionally to rebuild
-                // digests against the series that moved.
-                logger.info("entries unchanged (304) but a series moved — resyncing");
+                // digests against the series or publications that moved.
+                logger.info("entries unchanged (304) but a series or publication moved — resyncing");
                 res = await fetchJSON<{ entries: Entry[] }>(url, key, undefined);
             }
             const pubs = new Map(
-                (await getCollectionsOnce()).map((c) => [
+                collections.map((c) => [
                     c.slug,
                     publicationFrom(c),
                 ]),

@@ -5,6 +5,7 @@ import { memo } from "./memo";
 import { isStampedSlug, unstampSlug, humanize } from "./slugs";
 import { extractBodyEmbeds } from "./embeds";
 export { renderKey, seriesKeyFor } from "./render-key";
+import { latest } from "./format";
 
 
 const cachedCollections = () =>
@@ -235,7 +236,7 @@ export function documentsLoader(): LiveLoader<
                         id: documentKey(doc),
                         data: doc,
                         cacheHint: {
-                            lastModified: new Date(doc.publishedAt),
+                            lastModified: latest(doc.publishedAt, doc.updatedAt),
                             tags: [
                                 "documents",
                                 `pub-${doc.collection}`,
@@ -297,7 +298,7 @@ export function feedEntriesLoader(): LiveLoader<
                         id: entry.rkey,
                         data: entry,
                         cacheHint: {
-                            lastModified: new Date(entry.createdAt),
+                            lastModified: latest(entry.createdAt, entry.updatedAt),
                             tags: [
                                 "feed-entries",
                                 `feed-entry-${entry.rkey}`,
@@ -327,7 +328,7 @@ export function feedEntriesLoader(): LiveLoader<
                     id: match.rkey,
                     data: match,
                     cacheHint: {
-                        lastModified: new Date(match.createdAt),
+                        lastModified: latest(match.createdAt, match.updatedAt),
                         tags: [
                             "feed-entries",
                             `feed-entry-${match.rkey}`,

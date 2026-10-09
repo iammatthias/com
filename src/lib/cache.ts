@@ -41,7 +41,7 @@ export function setResponseCacheHeaders(
     const swr = opts.swr ?? DEFAULT_SWR_SECONDS;
     response.headers.set(
         "Cache-Control",
-        `public, s-maxage=${maxAge}, stale-while-revalidate=${swr}`,
+        `public, max-age=0, s-maxage=${maxAge}, stale-while-revalidate=${swr}`,
     );
     if (opts.edge) {
         response.headers.set(EDGE_CACHE_HEADER, edgeCacheDirective(maxAge));

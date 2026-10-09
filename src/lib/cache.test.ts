@@ -38,10 +38,10 @@ describe("edge cache opt-in", () => {
 });
 
 describe("browser and CDN cache headers", () => {
-    test("defaults to a one-minute shared cache with five minutes of stale", () => {
+    test("browsers revalidate; shared caches hold a minute with five minutes of stale", () => {
         const response = new Response(null);
         setResponseCacheHeaders(response, undefined);
-        expect(response.headers.get("Cache-Control")).toBe("public, s-maxage=60, stale-while-revalidate=300");
+        expect(response.headers.get("Cache-Control")).toBe("public, max-age=0, s-maxage=60, stale-while-revalidate=300");
     });
 
     test("only the first page of a listing is short-lived", () => {

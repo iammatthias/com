@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { escapeAttr, escapeHtml } from "./format";
+import { escapeAttr, escapeHtml, latest } from "./format";
 
 describe("escaping Farfield text into markup", () => {
     test("ampersands are escaped first, so entities are not double-escaped", () => {
@@ -14,5 +14,20 @@ describe("escaping Farfield text into markup", () => {
 
     test("single quotes are left alone; every attribute is double-quoted", () => {
         expect(escapeHtml("it's")).toBe("it's");
+    });
+});
+
+describe("latest", () => {
+    test("an edit moves Last-Modified past the publish date", () => {
+        expect(latest("2026-10-09T04:20:51Z", "2026-10-09T13:25:33Z").toISOString()).toBe("2026-10-09T13:25:33.000Z");
+        expect(latest("2026-10-09T13:25:33Z", "2026-10-09T04:20:51Z").toISOString()).toBe("2026-10-09T13:25:33.000Z");
+    });
+
+    test("a missing or broken stamp is ignored", () => {
+        expect(latest("2026-01-01T00:00:00Z", undefined, "").toISOString()).toBe("2026-01-01T00:00:00.000Z");
+    });
+
+    test("never yields an invalid date", () => {
+        expect(Number.isNaN(latest(undefined, "nope").getTime())).toBe(false);
     });
 });

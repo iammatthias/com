@@ -67,3 +67,19 @@ describe("renderKey", () => {
         expect(renderKey({ ...doc, cid: "bafyDOC2", seriesKey: k })).not.toBe(renderKey({ ...doc, seriesKey: k }));
     });
 });
+
+describe("renderKey and the publication around a document", () => {
+    const inPosts = { ...doc, publication: { name: "Posts", description: "Essays" } };
+
+    test("renaming a publication moves the key of every document in it", () => {
+        expect(renderKey({ ...inPosts, publication: { name: "Writing", description: "Essays" } })).not.toBe(renderKey(inPosts));
+    });
+
+    test("so does editing its description", () => {
+        expect(renderKey({ ...inPosts, publication: { name: "Posts", description: "Long essays" } })).not.toBe(renderKey(inPosts));
+    });
+
+    test("an unchanged publication keeps the key stable", () => {
+        expect(renderKey({ ...inPosts, publication: { name: "Posts", description: "Essays" } })).toBe(renderKey(inPosts));
+    });
+});

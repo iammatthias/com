@@ -274,6 +274,7 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
         if (isImmutable) {
             await kvPutImmutable(url, new TextDecoder().decode(body), 200);
         }
+        return new Response(body, res);
     } else if (isImmutable && res.status === 404) {
         await kvPutImmutable(url, "", 404);
     }
