@@ -2,6 +2,7 @@
 import { parse as parseYAML } from "yaml";
 import { marked } from "marked";
 import { slugify } from "./slugs";
+import { words } from "./text-fold";
 
 export type Ingredient = {
     id: string; item: string; amount?: string; note?: string; group?: string;
@@ -230,7 +231,7 @@ function inline(s: string): string {
     return out;
 }
 
-const fold = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "");
+const squash = (s: string) => words(s).join("");
 
 function forSeconds(f: string | undefined): number | null {
     if (!f) return null;
@@ -246,8 +247,8 @@ function forSeconds(f: string | undefined): number | null {
 }
 
 function leadsWith(detail: string, label: string): boolean {
-    const l = fold(label);
-    return l !== "" && fold(detail).startsWith(l);
+    const l = squash(label);
+    return l !== "" && squash(detail).startsWith(l);
 }
 
 function metaHtml(rec: Recipe): string {

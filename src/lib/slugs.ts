@@ -1,8 +1,9 @@
+import { fold } from "./text-fold";
+
 const STAMPED_SLUG = /^\d{13,}-/;
 
 export function slugify(s: string): string {
-    return s
-        .toLowerCase()
+    return fold(s)
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
 }

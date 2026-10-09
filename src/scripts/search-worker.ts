@@ -1,6 +1,7 @@
 /// <reference lib="webworker" />
 
 import { SEARCH_DIMS, SEARCH_MODEL } from "@lib/search-model";
+import { fold } from "@lib/text-fold";
 
 const engine = import("@ternlight/base");
 
@@ -169,12 +170,12 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
                 ensureIndex(),
             ]);
             const qv = embed(msg.query);
-            const q = msg.query.trim().toLowerCase();
+            const q = fold(msg.query.trim());
             const scored: WorkerHit[] = items.map((item, i) => {
                 const v = vectors[i];
                 let dot = 0;
                 for (let d = 0; d < qv.length; d++) dot += qv[d] * v[d];
-                const t = item.title.toLowerCase();
+                const t = fold(item.title);
                 if (q.length >= 3) {
                     if (t === q) dot += 0.3;
                     else if (t.includes(q)) dot += 0.15;

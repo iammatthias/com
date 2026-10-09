@@ -12,8 +12,13 @@ describe("slugify", () => {
         expect(slugify("-b")).toBe("b");
     });
 
-    test("non-ascii letters are dropped, not transliterated", () => {
-        expect(slugify("Crème Brûlée (two ways)")).toBe("cr-me-br-l-e-two-ways");
+    test("accented letters fold to their base letter instead of breaking the word", () => {
+        expect(slugify("Crème Brûlée (two ways)")).toBe("creme-brulee-two-ways");
+        expect(slugify("Passionfruit purée")).toBe("passionfruit-puree");
+    });
+
+    test("symbols with no letter in them still collapse to a hyphen", () => {
+        expect(slugify("Scalability → Buildability")).toBe("scalability-buildability");
     });
 
     test("nothing sluggable yields the empty string", () => {
@@ -49,3 +54,4 @@ describe("humanize", () => {
         expect(humanize("posts")).toBe("Posts");
     });
 });
+

@@ -5,6 +5,7 @@ import {
     type PublicationData,
 } from "./farfield-loader";
 import { plainText } from "./markdown-text";
+import { words } from "./text-fold";
 import { publishedDocs } from "./content-query";
 import { SITE_ORIGIN } from "./agent-surface";
 
@@ -88,26 +89,21 @@ export async function searchContent(
     query: string,
     limit = 10,
 ): Promise<SearchHit[]> {
-    const terms = query
-        .toLowerCase()
-        .split(/[^a-z0-9]+/)
-        .filter((t) => t.length > 1);
+    const terms = [...new Set(words(query))].filter((t) => t.length > 1);
     if (terms.length === 0) return [];
 
     const docs = await allDocuments();
     const hits: SearchHit[] = [];
     for (const d of docs) {
-        const title = d.title.toLowerCase();
-        const tags = d.tags.join(" ").toLowerCase();
-        const body = bodyText(d).toLowerCase();
+        const title = new Set(words(d.title));
+        const tags = new Set(words(d.tags.join(" ")));
+        const body = new Map<string, number>();
+        for (const w of words(bodyText(d))) body.set(w, (body.get(w) ?? 0) + 1);
         let score = 0;
         for (const term of terms) {
-            const wholeWord = new RegExp(`\\b${term}\\b`);
-            if (wholeWord.test(title)) score += TITLE_MATCH_SCORE;
-            if (wholeWord.test(tags)) score += TAG_MATCH_SCORE;
-            const bodyMatches =
-                body.match(new RegExp(`\\b${term}\\b`, "g"))?.length ?? 0;
-            score += Math.min(bodyMatches, MAX_BODY_MATCHES_COUNTED);
+            if (title.has(term)) score += TITLE_MATCH_SCORE;
+            if (tags.has(term)) score += TAG_MATCH_SCORE;
+            score += Math.min(body.get(term) ?? 0, MAX_BODY_MATCHES_COUNTED);
         }
         if (score > 0) hits.push({ ...toItem(d), score });
     }
