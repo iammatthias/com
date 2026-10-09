@@ -7,6 +7,7 @@ import { BLOB_ID_SOURCE, fullEmbedRe } from "./embeds";
 import { mapWithConcurrency } from "./http";
 import { plainText, transformAlerts } from "./markdown-text";
 import { escapeAttr as attr } from "./format";
+import { mediaSize } from "./media-size";
 import {
     extractDocComponents,
     substituteDocComponents,
@@ -87,8 +88,7 @@ function renderEmbedFigure(
     const kind = mediaKind(meta);
     if (kind !== "image") return renderMediaFigure("doc-figure", kind, cid, alt);
     const src = blobURL(cid);
-    const w = meta?.width ?? 960;
-    const h = meta?.height ?? 720;
+    const { width: w, height: h } = mediaSize(meta);
     const styleAttr = meta?.dominantColor
         ? ` style="background:${meta.dominantColor}"`
         : "";
@@ -111,8 +111,7 @@ function renderSeriesTile(
     const kind = mediaKind(meta);
     if (kind !== "image") return renderMediaFigure("series-tile", kind, cid, alt);
     const src = blobURL(cid);
-    const w = meta?.width ?? 960;
-    const h = meta?.height ?? 720;
+    const { width: w, height: h } = mediaSize(meta);
     const styleAttr = meta?.dominantColor
         ? ` style="background:${meta.dominantColor}"`
         : "";

@@ -2,6 +2,7 @@
 import { tilePreset } from "@lib/images";
 import { blobURL, type ResolvedMedia } from "@lib/farfield-loader";
 import { wsrvUrl, wsrvSrcSet } from "@lib/farfield";
+import { mediaSize } from "@lib/media-size";
 
 interface Props {
     media: ResolvedMedia[];
@@ -60,8 +61,8 @@ const solo = media.length === 1;
                         src={wsrvUrl(src, fallbackW)}
                         srcset={wsrvSrcSet(src, preset.widths)}
                         sizes={preset.sizes}
-                        width={m.meta?.width ?? 960}
-                        height={m.meta?.height ?? 720}
+                        width={mediaSize(m.meta).width}
+                        height={mediaSize(m.meta).height}
                         alt={m.alt ?? ""}
                         loading={loading}
                         decoding="async"

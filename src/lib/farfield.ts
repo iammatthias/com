@@ -1,6 +1,7 @@
 import { getSecret } from "astro:env/server";
 import pLimit from "p-limit";
 import { getContentCache } from "./runtime-env";
+import { retryDelayMs } from "./retry";
 
 const CONTENT = "https://content.farfield.systems";
 const FEED = "https://feed.farfield.systems";
@@ -31,6 +32,8 @@ function authHeaders(url: string, drafts = false): Record<string, string> {
             : readSecret("CONTENT_READ_KEY");
     } else if (url.startsWith(FEED)) {
         key = readSecret("FEED_READ_KEY");
+    } else if (url.startsWith(BLOBS)) {
+        key = readSecret("BLOBS_READ_KEY");
     } else {
         return {};
     }
@@ -96,7 +99,7 @@ const SWR_SECONDS = 60 * 60;
 const IMMUTABLE_URL_RE =
     /^https:\/\/blobs\.farfield\.systems\/blobs\/[a-z0-9]+\/meta$/;
 const IMMUTABLE_TTL_SECONDS = 365 * 24 * 60 * 60;
-const NEGATIVE_TTL_SECONDS = 24 * 60 * 60;
+const NEGATIVE_TTL_SECONDS = 5 * 60;
 const KV_PREFIX = "imm:v1:";
 
 async function kvGetImmutable(url: string): Promise<Response | undefined> {
@@ -150,6 +153,9 @@ const RETRYABLE_STATUS = new Set([409, 429, 500, 502, 503, 504]);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+const MAX_FETCH_RETRIES = 3;
+const MAX_RETRY_WAIT_MS = 2_000;
+
 async function fetchWithRetry(
     input: string,
     init: RequestInit,
@@ -160,21 +166,22 @@ async function fetchWithRetry(
         ...(init.headers as Record<string, string> | undefined),
     };
     const opts: RequestInit = { ...init, headers };
-    try {
-        const res = await fetch(input, opts);
-        if (!RETRYABLE_STATUS.has(res.status)) return res;
+    for (let attempt = 0; ; attempt++) {
+        const last = attempt === MAX_FETCH_RETRIES;
+        let res: Response;
+        try {
+            res = await fetch(input, opts);
+        } catch (err) {
+            if (last) throw err instanceof Error ? err : new Error(String(err));
+            await sleep(retryDelayMs(attempt, null, MAX_RETRY_WAIT_MS));
+            continue;
+        }
+        if (last || !RETRYABLE_STATUS.has(res.status)) return res;
+        const retryAfter = res.headers.get("retry-after");
         try {
             await res.body?.cancel();
         } catch {}
-        await sleep(150 + Math.random() * 150);
-        return await fetch(input, opts);
-    } catch {
-        await sleep(80 + Math.random() * 80);
-        try {
-            return await fetch(input, opts);
-        } catch (err2) {
-            throw err2 instanceof Error ? err2 : new Error(String(err2));
-        }
+        await sleep(retryDelayMs(attempt, retryAfter, MAX_RETRY_WAIT_MS));
     }
 }
 

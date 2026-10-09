@@ -127,6 +127,11 @@ export default defineConfig({
                 access: "secret",
                 optional: true,
             }),
+            BLOBS_READ_KEY: envField.string({
+                context: "server",
+                access: "secret",
+                optional: true,
+            }),
         },
     },
     redirects: {
