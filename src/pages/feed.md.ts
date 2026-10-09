@@ -21,7 +21,7 @@ export const GET: APIRoute = async (context) => {
     const origin = siteOrigin(context.site);
 
     const response = markdownResponse(feedIndexMarkdown(items, origin));
-    setResponseCacheHeaders(response, cacheHint);
+    setResponseCacheHeaders(response, cacheHint, { edge: true });
     return response;
 };
 

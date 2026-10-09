@@ -7,6 +7,15 @@ interface CacheHeaderOptions {
     maxAge?: number;
     swr?: number;
     extraTags?: string[];
+    edge?: boolean;
+}
+
+export const EDGE_CACHE_HEADER = "Cloudflare-CDN-Cache-Control";
+const EDGE_STALE_SECONDS = 24 * 60 * 60;
+const EDGE_STALE_IF_ERROR_SECONDS = 7 * 24 * 60 * 60;
+
+export function edgeCacheDirective(maxAge: number): string {
+    return `public, max-age=${maxAge}, stale-while-revalidate=${EDGE_STALE_SECONDS}, stale-if-error=${EDGE_STALE_IF_ERROR_SECONDS}`;
 }
 
 const DEFAULT_MAX_AGE_SECONDS = 60;
@@ -34,6 +43,9 @@ export function setResponseCacheHeaders(
         "Cache-Control",
         `public, s-maxage=${maxAge}, stale-while-revalidate=${swr}`,
     );
+    if (opts.edge) {
+        response.headers.set(EDGE_CACHE_HEADER, edgeCacheDirective(maxAge));
+    }
     if (cacheHint?.lastModified) {
         response.headers.set(
             "Last-Modified",

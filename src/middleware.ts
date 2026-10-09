@@ -8,6 +8,7 @@ import {
 import { homepageMarkdown } from "@lib/agent-markdown";
 import { notFoundMarkdown } from "@lib/agent-markdown";
 import { AGENT_CRAWLERS } from "@lib/agent-surface";
+import { EDGE_CACHE_HEADER } from "@lib/cache";
 
 const CSP = [
     "default-src 'self'",
@@ -191,6 +192,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         for (const [h, v] of Object.entries(SECURITY_HEADERS)) {
             if (!res.headers.has(h)) res.headers.set(h, v);
         }
+        res.headers.set(EDGE_CACHE_HEADER, "no-store");
         return res;
     }
 
@@ -207,7 +209,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         response = await next();
     }
 
-    if (twin || pathname.endsWith(".md")) {
+    if (twin || pathname === "/" || pathname.endsWith(".md")) {
         response.headers.set("Vary", "Accept, Accept-Encoding, User-Agent");
     }
 
@@ -243,6 +245,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
         if (!response.headers.has(header)) {
             response.headers.set(header, value);
         }
+    }
+    if (!response.headers.has(EDGE_CACHE_HEADER)) {
+        response.headers.set(EDGE_CACHE_HEADER, "no-store");
     }
     return response;
 });

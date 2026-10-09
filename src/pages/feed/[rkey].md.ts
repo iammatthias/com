@@ -41,7 +41,7 @@ export const GET: APIRoute = async (context) => {
     const response = markdownResponse(
         composeFeedEntryMarkdown(item, bodyMd, origin),
     );
-    setResponseCacheHeaders(response, cacheHint);
+    setResponseCacheHeaders(response, cacheHint, { edge: true });
     return response;
 };
 

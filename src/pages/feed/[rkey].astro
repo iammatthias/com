@@ -30,7 +30,7 @@ if (error) {
 if (!entry) return new Response(null, { status: 404 });
 const item: FeedEntryData = entry.data;
 
-setResponseCacheHeaders(Astro.response, cacheHint);
+setResponseCacheHeaders(Astro.response, cacheHint, { edge: true });
 
 const bodyText = plainText(item.body);
 const bodySnippet = bodyText.slice(0, 60).trim();

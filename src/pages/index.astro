@@ -43,7 +43,7 @@ const feedMedia = new Map<string, ResolvedMedia[]>(
     ),
 );
 
-setResponseCacheHeaders(Astro.response, cacheHint);
+setResponseCacheHeaders(Astro.response, cacheHint, { edge: !feedError });
 ---
 
 <BaseLayout deck="home">

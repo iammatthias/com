@@ -40,3 +40,6 @@ id = "d355f4e9f7b8405caddfe8604029be78"
 # content negotiation can apply.
 [assets]
 not_found_handling = "none"
+
+[cache]
+enabled = true
