@@ -60,6 +60,21 @@ them the content API returns 401 and the site builds empty.
    tools, well-known documents, and `/developers` all derive from it.
    Only declare things that actually exist — an agent that trusts a
    fabricated catalog entry stops trusting the whole catalog.
+7. **A prerendered page's `cacheKey` must cover every input it renders.**
+   Build keys from `renderKey(doc)` — it carries the cids of embedded
+   series, which change without touching the document. If the docs loader
+   starts storing a new field, bump `DOCS_STORE_VERSION` in
+   `src/lib/farfield-content-loader.ts`, or a 304 keeps the old store.
+8. **Edge-cache behaviour cannot be proven locally.** The Workers cache is
+   not emulated. Anything touching cache keys, `Vary`, or
+   `Cloudflare-CDN-Cache-Control` is verified on the live site after
+   deploy.
+9. **Deploys are push-to-main** (Workers Builds). Never `wrangler deploy`.
+10. **`/scripts` is gitignored behind an allowlist** — add a
+    `!/scripts/<file>` line to `.gitignore` for a new tracked script.
+
+Code style: no comments, and no tautological tests — see
+`CODING_STANDARDS.md`.
 
 ### Layout
 
@@ -86,3 +101,7 @@ scripts/agent-check.mjs    the pre-deploy gate
 broken discovery document, a dead `llms.txt` link, a missing `<h1>`, or
 an OpenAPI path that 404s. Do not weaken a check to make it pass; fix
 the surface.
+
+Which further check a change needs (smoke, overflow, perf budget, art
+goldens, live cache and content checks) is in the `verify-site` skill,
+`.claude/skills/verify-site/SKILL.md`.

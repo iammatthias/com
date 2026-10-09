@@ -30,7 +30,8 @@ pnpm-debug.log*
 .wrangler/
 
 # claude code
-.claude/
+.claude/*
+!.claude/skills/
 
 # etc
 # Local scratch tooling stays untracked — except the gates package.json
