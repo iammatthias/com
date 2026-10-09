@@ -12,6 +12,7 @@ import { readSecret, type Collection, type Entry, type Post } from "./farfield";
 
 const CONTENT = "https://content.farfield.systems";
 const FEED = "https://feed.farfield.systems";
+const DOCS_STORE_VERSION = "2";
 
 async function fetchJSON<T>(
     url: string,
@@ -68,10 +69,10 @@ export function farfieldDocsLoader(): Loader {
                     : undefined,
             );
             const series = await seriesIndex();
-            const seriesFingerprint = [...series]
+            const seriesFingerprint = `v${DOCS_STORE_VERSION}|${[...series]
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([slug, cid]) => `${slug}:${cid}`)
-                .join(",");
+                .join(",")}`;
             const seriesMoved = meta.get("series-fingerprint") !== seriesFingerprint;
 
             if (res.status === 304 && !seriesMoved) {
@@ -96,10 +97,11 @@ export function farfieldDocsLoader(): Loader {
                 const pub = pubs.get(entry.collection);
                 if (!pub) continue;
                 const data = entryToDocument(entry, pub);
+                data.seriesKey = seriesKeyFor(data.body, series);
                 store.set({
                     id: `${entry.collection}/${entry.slug}`,
                     data,
-                    digest: renderKey(data, seriesKeyFor(data.body, series)),
+                    digest: renderKey(data),
                 });
                 n++;
             }

@@ -76,6 +76,7 @@ export interface DocumentData {
     publication: PublicationData;
     tags: string[];
     body: string;
+    seriesKey?: string;
 }
 
 export interface FeedEntryData {

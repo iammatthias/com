@@ -17,10 +17,12 @@ export function seriesKeyFor(body: string, index: Map<string, string>): string {
     return slugs.map((slug) => `${slug}:${index.get(slug) ?? "missing"}`).join(",");
 }
 
-export function renderKey(
-    doc: { cid: string; publishedAt: string; updatedAt: string },
-    seriesKey = "",
-): string {
+export function renderKey(doc: {
+    cid: string;
+    publishedAt: string;
+    updatedAt: string;
+    seriesKey?: string;
+}): string {
     const base = `${doc.cid}@${doc.publishedAt}@${doc.updatedAt}`;
-    return seriesKey ? `${base}@${seriesKey}` : base;
+    return doc.seriesKey ? `${base}@${doc.seriesKey}` : base;
 }

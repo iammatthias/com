@@ -35,30 +35,35 @@ describe("seriesKeyFor", () => {
 });
 
 describe("renderKey", () => {
+    test("ignores the extra arguments Array.map passes", () => {
+        const docs = [doc, { ...doc, seriesKey: "as-above:bafySERIES2" }];
+        expect(docs.map(renderKey)).toEqual([
+            "bafyDOC@2026-01-01T00:00:00Z@2026-01-02T00:00:00Z",
+            "bafyDOC@2026-01-01T00:00:00Z@2026-01-02T00:00:00Z@as-above:bafySERIES2",
+        ]);
+    });
+
     test("is unchanged for documents that embed no series", () => {
         expect(renderKey(doc)).toBe("bafyDOC@2026-01-01T00:00:00Z@2026-01-02T00:00:00Z");
-        expect(renderKey(doc, "")).toBe(renderKey(doc));
+        expect(renderKey({ ...doc, seriesKey: "" })).toBe(renderKey(doc));
     });
 
     test("moves when an embedded series is rewritten, even though the doc is untouched", () => {
-        const before = renderKey(doc, seriesKeyFor("![](series://no-stone-unturned)", index));
-        const after = renderKey(
-            doc,
-            seriesKeyFor("![](series://no-stone-unturned)", new Map([["no-stone-unturned", "bafySERIES1_REWRITTEN"]])),
-        );
+        const before = renderKey({ ...doc, seriesKey: seriesKeyFor("![](series://no-stone-unturned)", index) });
+        const after = renderKey({ ...doc, seriesKey: seriesKeyFor("![](series://no-stone-unturned)", new Map([["no-stone-unturned", "bafySERIES1_REWRITTEN"]])) });
         expect(before).not.toBe(after);
     });
 
     test("does not move when an unrelated series changes", () => {
         const body = "![](series://no-stone-unturned)";
-        const before = renderKey(doc, seriesKeyFor(body, index));
+        const before = renderKey({ ...doc, seriesKey: seriesKeyFor(body, index) });
         const other = new Map(index);
         other.set("as-above", "bafyOTHER_CHANGED");
-        expect(renderKey(doc, seriesKeyFor(body, other))).toBe(before);
+        expect(renderKey({ ...doc, seriesKey: seriesKeyFor(body, other) })).toBe(before);
     });
 
     test("still moves when the document itself changes", () => {
         const k = seriesKeyFor("![](series://as-above)", index);
-        expect(renderKey({ ...doc, cid: "bafyDOC2" }, k)).not.toBe(renderKey(doc, k));
+        expect(renderKey({ ...doc, cid: "bafyDOC2", seriesKey: k })).not.toBe(renderKey({ ...doc, seriesKey: k }));
     });
 });
