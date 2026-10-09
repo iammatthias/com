@@ -1,6 +1,5 @@
 
 import { defineMiddleware } from "astro:middleware";
-import type { APIContext } from "astro";
 import {
     isStampedSlug,
     publicationSlugSet,
@@ -8,8 +7,8 @@ import {
 } from "@lib/farfield-loader";
 import { homepageMarkdown } from "@lib/agent-markdown";
 import { notFoundMarkdown } from "@lib/agent-markdown";
-import { EDGE_CACHE_HEADER, edgeCacheDirective } from "@lib/cache";
-import { representationFor, type SiteProps } from "@lib/negotiate";
+import { AGENT_CRAWLERS } from "@lib/agent-surface";
+import { EDGE_CACHE_HEADER } from "@lib/cache";
 
 const CSP = [
     "default-src 'self'",
@@ -44,6 +43,30 @@ const AGENT_LINKS = [
     '</.well-known/api-catalog>; rel="api-catalog"',
     '</rss.xml>; rel="alternate"; type="application/rss+xml"',
 ].join(", ");
+
+function prefersMarkdown(accept: string | null): boolean {
+    if (!accept || !accept.toLowerCase().includes("markdown")) return false;
+    let md = 0;
+    let html = 0;
+    for (const part of accept.split(",")) {
+        const [rawType, ...params] = part.trim().split(";");
+        const type = rawType.trim().toLowerCase();
+        let q = 1;
+        for (const p of params) {
+            const [k, v] = p.trim().split("=");
+            if (k.trim() === "q") {
+                const n = Number(v);
+                if (Number.isFinite(n)) q = n;
+            }
+        }
+        if (type === "text/markdown" || type === "text/x-markdown") {
+            md = Math.max(md, q);
+        } else if (type === "text/html" || type === "application/xhtml+xml") {
+            html = Math.max(html, q);
+        }
+    }
+    return md > 0 && md > html;
+}
 
 async function markdownTwin(pathname: string): Promise<string | null> {
     const m = pathname.match(/^\/([a-z0-9-]+)(?:\/([a-z0-9-]+))?$/);
@@ -112,10 +135,13 @@ async function stampedRedirect(pathname: string): Promise<string | null> {
     }
 }
 
-function wantsMarkdown(context: APIContext): boolean {
-    const props = (context.locals as { cfContext?: { props?: Partial<SiteProps> } })
-        .cfContext?.props;
-    return (props?.representation ?? representationFor(context.request)) === "markdown";
+const AGENT_UA = new RegExp(`(${AGENT_CRAWLERS.join("|")})`, "i");
+
+function wantsMarkdown(request: Request): boolean {
+    return (
+        prefersMarkdown(request.headers.get("accept")) ||
+        AGENT_UA.test(request.headers.get("user-agent") ?? "")
+    );
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -151,7 +177,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (
         (method === "GET" || method === "HEAD") &&
         pathname === "/" &&
-        wantsMarkdown(context)
+        wantsMarkdown(context.request)
     ) {
         const body = await homepageMarkdown();
         const res = new Response(method === "HEAD" ? null : body, {
@@ -160,13 +186,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
                 "Content-Location": "/index.md",
                 Vary: "Accept, Accept-Encoding, User-Agent",
                 "Cache-Control": "public, s-maxage=300",
-                [EDGE_CACHE_HEADER]: edgeCacheDirective(300),
                 Link: AGENT_LINKS,
             },
         });
         for (const [h, v] of Object.entries(SECURITY_HEADERS)) {
             if (!res.headers.has(h)) res.headers.set(h, v);
         }
+        res.headers.set(EDGE_CACHE_HEADER, "no-store");
         return res;
     }
 
@@ -176,7 +202,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
             : null;
 
     let response: Response;
-    if (twin && wantsMarkdown(context)) {
+    if (twin && wantsMarkdown(context.request)) {
         response = await next(twin + search);
         response.headers.set("Content-Location", twin);
     } else {
@@ -199,7 +225,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (
         response.status === 404 &&
         (method === "GET" || method === "HEAD") &&
-        wantsMarkdown(context)
+        wantsMarkdown(context.request)
     ) {
         response = new Response(
             method === "HEAD" ? null : notFoundMarkdown(pathname),
@@ -219,6 +245,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
         if (!response.headers.has(header)) {
             response.headers.set(header, value);
         }
+    }
+    if (!response.headers.has(EDGE_CACHE_HEADER)) {
+        response.headers.set(EDGE_CACHE_HEADER, "no-store");
     }
     return response;
 });

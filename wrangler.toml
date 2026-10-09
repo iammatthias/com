@@ -1,5 +1,5 @@
 name = "com"
-main = "src/worker.ts"
+main = "@astrojs/cloudflare/entrypoints/server"
 compatibility_date = "2024-09-23"
 # nodejs_compat_populate_process_env: makes the deployed Worker populate
 # process.env from its bindings (vars + secrets). Without it, astro:env's
@@ -7,7 +7,7 @@ compatibility_date = "2024-09-23"
 # cloudflare:workers env) but returns undefined in the deployed Worker,
 # so CONTENT_READ_KEY / FEED_READ_KEY come back empty in prod → Farfield
 # 401 → empty content. See withastro/astro#16553.
-compatibility_flags = ["nodejs_compat", "nodejs_compat_populate_process_env", "enable_ctx_exports"]
+compatibility_flags = ["nodejs_compat", "nodejs_compat_populate_process_env"]
 
 # Preserve runtime secrets/vars set in the Cloudflare dashboard. Workers
 # Builds deploys with `wrangler deploy`, which by DEFAULT deletes any
@@ -43,15 +43,3 @@ not_found_handling = "none"
 
 [cache]
 enabled = true
-
-[exports.default]
-type = "worker"
-
-  [exports.default.cache]
-  enabled = false
-
-[exports.Site]
-type = "worker"
-
-  [exports.Site.cache]
-  enabled = true
