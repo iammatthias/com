@@ -16,12 +16,6 @@ describe("withLettrine reproduces the captured drop caps", () => {
         }
     });
 
-    test("the same seed always draws the same cap", () => {
-        for (const { s } of golden) {
-            expect(withLettrine(BODY, s)).toBe(withLettrine(BODY, s));
-        }
-    });
-
     test("different seeds draw different caps", () => {
         const shapes = new Set(golden.map(({ s }) => withLettrine(BODY, s)));
         expect(shapes.size).toBe(golden.length);
@@ -43,7 +37,7 @@ describe("withLettrine as a body transform", () => {
 
     test("leaves a body it cannot cap untouched", () => {
         for (const body of ["", "<p></p>", "<figure><img src='x'></figure>"]) {
-            expect(() => withLettrine(body, 1)).not.toThrow();
+            expect(withLettrine(body, 1)).toBe(body);
         }
     });
 

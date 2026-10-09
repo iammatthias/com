@@ -41,12 +41,15 @@ describe("buildToc", () => {
 });
 
 describe("readingTime", () => {
-    test("is zero for nothing and grows with the body", () => {
+    test("is zero for nothing", () => {
         expect(readingTime(undefined).minutes).toBe(0);
         expect(readingTime("").minutes).toBe(0);
-        const short = readingTime("word ".repeat(150)).minutes;
-        const long = readingTime("word ".repeat(1500)).minutes;
-        expect(short).toBeGreaterThan(0);
-        expect(long).toBeGreaterThan(short);
+    });
+
+    test("rounds up at 220 words a minute, never below one", () => {
+        expect(readingTime("word ".repeat(150)).minutes).toBe(1);
+        expect(readingTime("word ".repeat(220)).minutes).toBe(1);
+        expect(readingTime("word ".repeat(221)).minutes).toBe(2);
+        expect(readingTime("word ".repeat(1500)).minutes).toBe(7);
     });
 });

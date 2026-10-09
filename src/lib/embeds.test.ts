@@ -27,8 +27,10 @@ describe("extractBodyEmbeds", () => {
 });
 
 describe("fullEmbedRe", () => {
-    test("returns a fresh global regex each call, so matchAll never sees a stale lastIndex", () => {
-        expect([...BODY.matchAll(fullEmbedRe())]).toHaveLength(2);
-        expect([...BODY.matchAll(fullEmbedRe())]).toHaveLength(2);
+    test("returns a fresh global regex each call, so one caller's exec never moves another's lastIndex", () => {
+        const first = fullEmbedRe();
+        expect(first.exec(BODY)).not.toBeNull();
+        expect(first.lastIndex).toBeGreaterThan(0);
+        expect(fullEmbedRe().lastIndex).toBe(0);
     });
 });

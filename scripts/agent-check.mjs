@@ -292,7 +292,7 @@ for (const p of HTML_PAGES) {
 
 {
     const r = await get("/llms.txt");
-    const links = [...r.body.matchAll(/\]\((https:\/\/[^)]+)\)/g)].map((m) => m[1]);
+    const links = [...r.body.matchAll(/\]\(((?:https:\/\/(?:www\.)?iammatthias\.com)?\/[^)]*)\)/g)].map((m) => m[1]);
     const paths = [
         ...new Set(links.map((u) => u.replace(/^https:\/\/[^/]+/, ""))),
     ];
@@ -311,7 +311,8 @@ for (const p of HTML_PAGES) {
             fail(`llms.txt → ${p}`, "returned HTML, not markdown");
         }
     }
-    if (!broken) ok(`llms.txt: all ${paths.length} links resolve`);
+    if (paths.length === 0) fail("llms.txt links", "found no links to follow");
+    else if (!broken) ok(`llms.txt: all ${paths.length} links resolve`);
 }
 
 if (ORIGIN) {
@@ -361,7 +362,8 @@ for (const s of SECTION_SLUGS) {
                 if (r.status !== 200) fail(`openapi path ${probe}`, `status ${r.status}`);
                 else ok(`openapi path ${probe}`);
             }
-        } catch {
+        } catch (err) {
+            fail("openapi paths", err.message);
         }
     }
 }

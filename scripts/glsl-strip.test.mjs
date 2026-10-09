@@ -42,16 +42,6 @@ describe("the shader satisfies what stripGlsl assumes", () => {
             expect(stripGlsl(stripGlsl(src))).toBe(stripGlsl(src));
         });
 
-        test(`${name}: every output line is a trimmed source line, in order`, () => {
-            const out = stripGlsl(src).split("\n");
-            const bare = src
-                .replace(/\/\*[\s\S]*?\*\//g, "")
-                .replace(/\/\/[^\n]*/g, "")
-                .split("\n")
-                .map((l) => l.trim())
-                .filter(Boolean);
-            expect(out).toEqual(bare);
-        });
     }
 
     test("the strip is actually worth doing", () => {
@@ -71,6 +61,10 @@ describe("stripGlsl", () => {
     test("removes block comments, line comments, indentation and blank lines", () => {
         const src = "  /* a */\n  float x = 1.0; // trailing\n\n\n  return x;\n";
         expect(stripGlsl(src)).toBe("float x = 1.0;\nreturn x;");
+    });
+
+    test("a block comment spanning lines leaves the code around it", () => {
+        expect(stripGlsl("a; /* one\n two */ b;\n// gone\nc;")).toBe("a;  b;\nc;");
     });
 
     test("keeps newlines between statements", () => {
