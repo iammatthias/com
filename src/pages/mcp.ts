@@ -7,7 +7,9 @@ import {
     listSections,
     searchContent,
     getDocument,
+    MAX_SEARCH_LIMIT,
 } from "@lib/agent-data";
+import { boundedInt, isJsonObject, isJsonRpcNotification } from "@lib/tool-args";
 import { resolveEmbedsForMarkdown } from "@lib/markdown-view";
 import { composeDocumentMarkdown } from "@lib/markdown-view";
 import {
@@ -69,6 +71,9 @@ const skillDescription = (name: string): string => {
     return skill.description;
 };
 
+const SEARCH_LIMIT = { min: 1, max: MAX_SEARCH_LIMIT, fallback: 10 };
+const RECENT_LIMIT = { min: 1, max: 200, fallback: 20 };
+
 const TOOLS = [
     {
         name: "search_site",
@@ -85,14 +90,19 @@ const TOOLS = [
             properties: {
                 query: {
                     type: "string",
+                    minLength: 1,
                     description: "Search terms, e.g. 'cloudflare workers' or 'pizza dough'.",
                 },
                 limit: {
                     type: "integer",
-                    description: "Maximum hits to return (1-50, default 10).",
+                    minimum: 1,
+                    maximum: SEARCH_LIMIT.max,
+                    default: SEARCH_LIMIT.fallback,
+                    description: "Maximum hits to return.",
                 },
             },
             required: ["query"],
+            additionalProperties: false,
         },
     },
     {
@@ -110,10 +120,12 @@ const TOOLS = [
             properties: {
                 path: {
                     type: "string",
+                    minLength: 1,
                     description: `Document path or slug, e.g. '${EXAMPLE_DOC_PATH}' or a full URL.`,
                 },
             },
             required: ["path"],
+            additionalProperties: false,
         },
     },
     {
@@ -126,7 +138,7 @@ const TOOLS = [
         },
         title: "List sections",
         description: skillDescription("list_sections"),
-        inputSchema: { type: "object", properties: {} },
+        inputSchema: { type: "object", properties: {}, additionalProperties: false },
     },
     {
         name: "list_recent",
@@ -143,14 +155,18 @@ const TOOLS = [
             properties: {
                 section: {
                     type: "string",
-                    description:
-                        `Optional section slug: ${SECTION_SLUGS.join(", ")}.`,
+                    enum: SECTION_SLUGS,
+                    description: "Only this section. Omit for all sections.",
                 },
                 limit: {
                     type: "integer",
-                    description: "Maximum items (default 20).",
+                    minimum: 1,
+                    maximum: RECENT_LIMIT.max,
+                    default: RECENT_LIMIT.fallback,
+                    description: "Maximum items to return.",
                 },
             },
+            additionalProperties: false,
         },
     },
 ];
@@ -163,17 +179,21 @@ function rpcError(id: unknown, code: number, message: string, data?: unknown) {
     return json({ jsonrpc: "2.0", id, error: { code, message, data } });
 }
 
+const CORS_HEADERS = {
+    "Cache-Control": "no-store",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+        "content-type, mcp-protocol-version, mcp-session-id",
+    "Access-Control-Expose-Headers": "mcp-session-id",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+};
+
 function json(payload: unknown, status = 200, extra: Record<string, string> = {}) {
     return new Response(JSON.stringify(payload), {
         status,
         headers: {
             "Content-Type": "application/json; charset=utf-8",
-            "Cache-Control": "no-store",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers":
-                "content-type, mcp-protocol-version, mcp-session-id",
-            "Access-Control-Expose-Headers": "mcp-session-id",
-            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            ...CORS_HEADERS,
             ...extra,
         },
     });
@@ -187,8 +207,7 @@ async function callTool(name: string, args: Record<string, unknown>) {
     switch (name) {
         case "search_site": {
             const query = String(args.query ?? "");
-            const limit = Number(args.limit ?? 10);
-            const hits = await searchContent(query, Number.isFinite(limit) ? limit : 10);
+            const hits = await searchContent(query, boundedInt(args.limit, SEARCH_LIMIT));
             if (hits.length === 0) {
                 return textResult(`No results for "${query}".`);
             }
@@ -226,9 +245,18 @@ async function callTool(name: string, args: Record<string, unknown>) {
             );
         }
         case "list_recent": {
+            const section = args.section ? String(args.section) : undefined;
+            if (section && !(SECTION_SLUGS as readonly string[]).includes(section)) {
+                return {
+                    ...textResult(
+                        `Unknown section "${section}". Use one of: ${SECTION_SLUGS.join(", ")}, or omit it for all sections.`,
+                    ),
+                    isError: true,
+                };
+            }
             const items = await listContent({
-                section: args.section ? String(args.section) : undefined,
-                limit: Number(args.limit ?? 20),
+                section,
+                limit: boundedInt(args.limit, RECENT_LIMIT),
             });
             return textResult(
                 items
@@ -261,7 +289,8 @@ function initializeResult() {
     };
 }
 
-export const OPTIONS: APIRoute = () => json({}, 204);
+export const OPTIONS: APIRoute = () =>
+    new Response(null, { status: 204, headers: CORS_HEADERS });
 
 export const GET: APIRoute = ({ request }) => {
     if ((request.headers.get("accept") ?? "").includes("text/event-stream")) {
@@ -286,19 +315,22 @@ export const GET: APIRoute = ({ request }) => {
 };
 
 export const POST: APIRoute = async ({ request }) => {
-    let body: {
-        jsonrpc?: string;
-        id?: unknown;
-        method?: string;
-        params?: Record<string, unknown>;
-    };
+    let parsed: unknown;
     try {
-        body = await request.json();
+        parsed = await request.json();
     } catch {
         return rpcError(null, -32700, "Parse error: body is not valid JSON");
     }
+    if (!isJsonObject(parsed)) {
+        return rpcError(null, -32600, "Invalid request: expected one JSON-RPC object");
+    }
+    if (isJsonRpcNotification(parsed)) {
+        return new Response(null, { status: 202, headers: CORS_HEADERS });
+    }
 
-    const { id = null, method, params = {} } = body;
+    const id = parsed.id ?? null;
+    const method = typeof parsed.method === "string" ? parsed.method : "";
+    const params = isJsonObject(parsed.params) ? parsed.params : {};
     if (!method) return rpcError(id, -32600, "Invalid request: missing method");
 
     switch (method) {
@@ -312,9 +344,6 @@ export const POST: APIRoute = async ({ request }) => {
                 200,
                 { "Mcp-Session-Id": crypto.randomUUID() },
             );
-
-        case "notifications/initialized":
-            return new Response(null, { status: 202 });
 
         case "ping":
             return rpcResult(id, {});
@@ -333,8 +362,11 @@ export const POST: APIRoute = async ({ request }) => {
             try {
                 return rpcResult(id, await callTool(name, args));
             } catch (err) {
-                return rpcError(id, -32603, "Tool execution failed", {
-                    detail: err instanceof Error ? err.message : String(err),
+                return rpcResult(id, {
+                    ...textResult(
+                        `${name} failed: ${err instanceof Error ? err.message : String(err)}. This is usually a temporary upstream error; retry once, or read ${SITE_ORIGIN}/llms-full.txt instead.`,
+                    ),
+                    isError: true,
                 });
             }
         }

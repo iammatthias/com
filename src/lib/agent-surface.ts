@@ -55,7 +55,14 @@ interface ApiOperation {
         name: string;
         in: "query";
         required: boolean;
-        schema: { type: string; enum?: string[] };
+        schema: {
+            type: string;
+            enum?: readonly string[];
+            minimum?: number;
+            maximum?: number;
+            default?: number;
+            minLength?: number;
+        };
         description: string;
     }>;
 }
@@ -89,8 +96,8 @@ export const API_OPERATIONS: ApiOperation[] = [
                 name: "section",
                 in: "query",
                 required: false,
-                schema: { type: "string" },
-                description: `Restrict to one publication slug (${SECTION_SLUGS.join(", ")}).`,
+                schema: { type: "string", enum: SECTION_SLUGS },
+                description: "Restrict to one publication.",
             },
             {
                 name: "tag",
@@ -103,8 +110,16 @@ export const API_OPERATIONS: ApiOperation[] = [
                 name: "limit",
                 in: "query",
                 required: false,
-                schema: { type: "integer" },
-                description: "Maximum number of items to return (default 100).",
+                schema: { type: "integer", minimum: 1, maximum: 200, default: 100 },
+                description: "Maximum number of items to return.",
+            },
+            {
+                name: "cursor",
+                in: "query",
+                required: false,
+                schema: { type: "string" },
+                description:
+                    "Continue after this item: pass the previous response's nextCursor.",
             },
         ],
     },
@@ -113,22 +128,22 @@ export const API_OPERATIONS: ApiOperation[] = [
         operationId: "searchContent",
         summary: "Keyword search across the site",
         description:
-            "Ranked keyword search over titles, excerpts, tags, and body text of every published document and feed post. Returns canonical and markdown URLs per hit.",
+            "Ranked keyword search over titles, excerpts, tags, and body text of every published document. Returns canonical and markdown URLs per hit.",
         contentType: "application/json",
         params: [
             {
                 name: "q",
                 in: "query",
                 required: true,
-                schema: { type: "string" },
+                schema: { type: "string", minLength: 1 },
                 description: "Search terms.",
             },
             {
                 name: "limit",
                 in: "query",
                 required: false,
-                schema: { type: "integer" },
-                description: "Maximum number of hits (default 10, max 50).",
+                schema: { type: "integer", minimum: 1, maximum: 50, default: 10 },
+                description: "Maximum number of hits.",
             },
         ],
     },

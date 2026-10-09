@@ -82,7 +82,7 @@ interface SearchHit extends ContentItem {
 const TITLE_MATCH_SCORE = 10;
 const TAG_MATCH_SCORE = 5;
 const MAX_BODY_MATCHES_COUNTED = 5;
-const MAX_SEARCH_LIMIT = 50;
+export const MAX_SEARCH_LIMIT = 50;
 
 export async function searchContent(
     query: string,
@@ -114,7 +114,7 @@ export async function searchContent(
     hits.sort(
         (a, b) => b.score - a.score || b.published.localeCompare(a.published),
     );
-    return hits.slice(0, Math.min(limit, MAX_SEARCH_LIMIT));
+    return hits.slice(0, Math.max(1, Math.min(limit, MAX_SEARCH_LIMIT)));
 }
 
 export async function getDocument(
