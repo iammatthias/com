@@ -33,10 +33,30 @@ bun install
 bun run dev          # localhost:4321
 bun run build        # builds, then runs the agent-surface gate
 bun run agent:check  # the gate alone, against ./dist
+bun test src/lib/embeds.test.ts   # one test file
 ```
 
 Requires `CONTENT_READ_KEY` and `FEED_READ_KEY` in `.env` — without
 them the content API returns 401 and the site builds empty.
+
+### How content reaches a page
+
+- **Prerendered, rebuilt on publish.** Document pages, section and tag
+  listings, RSS, `.md` twins and `llms.txt` read the build-time `docs`
+  collection (`src/content.config.ts` → `farfield-content-loader.ts`).
+  Astro's incremental build re-renders a page only when its `cacheKey`
+  moves. Farfield's content app fires the Workers Builds deploy hook
+  when its published surface changes.
+- **Rendered per request.** `/`, `/now`, `/feed*`, `/mcp`, `/graphql` and
+  `/api/*` set `prerender = false` and read Farfield live
+  (`src/live.config.ts`, `farfield.ts`), behind the `CONTENT_CACHE` KV
+  (cid-keyed blob metadata and rendered HTML) and the Workers edge
+  cache, which only routes passing `edge: true` to
+  `setResponseCacheHeaders` opt into.
+- **Negotiated.** `src/middleware.ts` serves markdown instead of HTML
+  to `Accept: text/markdown` and known AI crawlers, for `/` and any
+  path with a `.md` twin that reaches the Worker. Prerendered pages are
+  answered by the asset layer first, so they do not negotiate.
 
 ### Rules that will bite you
 
