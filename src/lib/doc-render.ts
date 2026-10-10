@@ -8,6 +8,7 @@ import { mapWithConcurrency } from "./http";
 import { plainText, transformAlerts } from "./markdown-text";
 import { escapeAttr as attr } from "./format";
 import { mediaSize } from "./media-size";
+import { groupCaptures, type SeriesMedia } from "./series-captures";
 import {
     extractDocComponents,
     substituteDocComponents,
@@ -122,6 +123,29 @@ function renderSeriesTile(
         `sizes="${SERIES_SIZES}" width="${w}" height="${h}" ` +
         `alt="${attr(alt)}" loading="lazy" decoding="async" />` +
         `</button>` +
+        `</figure>`
+    );
+}
+
+function renderLiveTile(
+    still: SeriesMedia<BlobMeta | null>,
+    movie: SeriesMedia<BlobMeta | null>,
+): string {
+    const src = blobURL(still.cid);
+    const { width: w, height: h } = mediaSize(still.meta);
+    const styleAttr = still.meta?.dominantColor
+        ? ` style="background:${still.meta.dominantColor}"`
+        : "";
+    return (
+        `<figure class="series-tile series-tile--live"${styleAttr}>` +
+        `<button type="button" class="zoom-btn" ${zoomAttrs(src, still.alt, w, h)} aria-label="View image larger">` +
+        `<img src="${wsrvUrl(src, 640)}" srcset="${wsrvSrcSet(src, SERIES_WIDTHS)}" ` +
+        `sizes="${SERIES_SIZES}" width="${w}" height="${h}" ` +
+        `alt="${attr(still.alt)}" loading="lazy" decoding="async" />` +
+        `</button>` +
+        `<video class="series-tile__motion" muted playsinline loop preload="none" ` +
+        `disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1" ` +
+        `width="${w}" height="${h}" data-src="${attr(blobURL(movie.cid))}"></video>` +
         `</figure>`
     );
 }
@@ -248,8 +272,19 @@ async function renderSeries(slug: string): Promise<string> {
     const metas = await Promise.all(
         images.map((b) => getBlobMeta(b.cid as string)),
     );
-    const tiles = images
-        .map((b, i) => renderSeriesTile(b.cid as string, b.alt ?? "", metas[i]))
+    const media = images.map((b, i) => ({
+        cid: b.cid as string,
+        alt: b.alt ?? "",
+        meta: metas[i],
+    }));
+    const tiles = groupCaptures(media, (m) => mediaKind(m) === "video")
+        .map((c) =>
+            c.kind === "live"
+                ? renderLiveTile(c.still, c.movie)
+                : c.kind === "still"
+                  ? renderSeriesTile(c.still.cid, c.still.alt, c.still.meta)
+                  : renderSeriesTile(c.movie.cid, c.movie.alt, c.movie.meta),
+        )
         .join("");
     return `<div class="series-grid">${tiles}</div>`;
 }

@@ -375,6 +375,31 @@ const markdownPath = `${item.href}.md`;
         height: auto;
     }
 
+    .doc-body :global(.series-tile--live) {
+        position: relative;
+    }
+
+    .doc-body :global(.series-tile__motion) {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 160ms ease-out;
+    }
+
+    .doc-body :global(.series-tile--live.is-playing .series-tile__motion) {
+        opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .doc-body :global(.series-tile__motion) {
+            display: none;
+        }
+    }
+
     .doc-body :global(.triptych) {
         display: flex;
         flex-direction: column;
