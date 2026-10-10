@@ -1,6 +1,6 @@
 import { getContentCache } from "./runtime-env";
 
-const RENDER_VERSION = 4;
+const RENDER_VERSION = 5;
 
 const RENDER_TTL_SECONDS = 90 * 24 * 60 * 60;
 

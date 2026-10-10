@@ -291,6 +291,10 @@
     min-height: 0;
 }
 
+.deck-doc__flow > .doc-body + * {
+    margin-top: var(--space-5);
+}
+
 @media (min-width: 1200px) {
     .deck-col--doc {
         flex: 1 1 auto;
@@ -320,7 +324,7 @@
         max-width: var(--measure);
     }
 
-    .deck-doc__flow > .doc-body > :is(figure, pre, table, .triptych, .ff-recipe),
+    .deck-doc__flow > .doc-body > :is(figure, pre, table, .triptych, .series-grid, .ff-recipe),
     .deck-doc__flow > .doc-related {
         max-width: none;
     }

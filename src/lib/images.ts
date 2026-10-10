@@ -3,9 +3,9 @@ export const FIG_WIDTHS = [480, 720, 960, 1280];
 export const FIG_SIZES =
     "(max-width: 768px) calc(100vw - 32px), 608px";
 
-export const SERIES_WIDTHS = [320, 480, 640, 800];
+export const SERIES_WIDTHS = [320, 480, 640, 800, 960, 1280];
 export const SERIES_SIZES =
-    "(max-width: 480px) calc(100vw - 32px), (max-width: 768px) calc((100vw - 48px) / 2), 320px";
+    "(max-width: 480px) calc(100vw - 32px), (max-width: 768px) calc((100vw - 48px) / 2), (min-width: 1200px) 30vw, 320px";
 
 const GRID_WIDTHS = [320, 480, 640, 800];
 const GRID_SIZES = "(max-width: 768px) 50vw, 304px";
