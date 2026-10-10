@@ -34,7 +34,6 @@ Done means the check that matches the change passed, and for anything cache-, ed
 - A bare `curl` of a blob or page can return a cached 200 for something that is gone — add `?cb=$RANDOM` when checking deletions.
 - Prerendered pages (`/art/...`, `/posts/...`) are served by the asset layer before the Worker; they do not negotiate markdown. Only `/`, `/feed*`, and on-demand routes do.
 - Deploys are push-to-main via Workers Builds. Never `wrangler deploy`. To force a content rebuild, push an empty commit.
-- Farfield's `content import-vault`, `import-series`, `reslug-entries` and `reslug-series` CLI subcommands write the database directly and never fire the deploy hook — push an empty commit after them (until farfield persists a last-fired fingerprint).
-- `blobs.farfield.systems/blobs/<cid>/meta` answers `If-None-Match: "<cid>"` with 304 even after the blob is deleted (being fixed upstream); never use revalidation to detect a deletion. A meta 404 can later become 200; a 200 never changes; width 0 means "dimensions unknown" (uploads over 32 MiB, non-images).
+- Blob meta: a 404 can later become 200 (published before the upload landed); a 200 never changes; width 0 means "dimensions unknown" (uploads over 32 MiB, non-images). Nothing public lives under `/private/` on any farfield host — the WAF 403s it.
 - Blobs rate-limits 600 req/min per IP, shared by every Workers Build. Setting `BLOBS_READ_KEY` (a read-scope `ffk_` key) in the build env bypasses it.
 - If a doc edit didn't appear: check the deploy hook fired (`ssh iam@homelab.local 'docker logs --since 2h farfield-content-1 | grep "deploy hook"'`), then whether the build re-rendered the page (its `cacheKey` must cover every input).
