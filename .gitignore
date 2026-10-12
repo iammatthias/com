@@ -49,4 +49,5 @@ pnpm-debug.log*
 !/scripts/__goldens__/
 !/scripts/layout-fingerprint.mjs
 !/scripts/layout-fingerprint.test.mjs
+!/scripts/publish-latency.mjs
 .gstack/

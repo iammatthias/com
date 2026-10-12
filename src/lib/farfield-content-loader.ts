@@ -3,15 +3,13 @@ import type { Loader, LoaderContext } from "astro/loaders";
 import {
     entryToDocument,
     publicationFrom,
-    postToFeedEntry,
     renderKey,
     seriesIndex,
     seriesKeyFor,
 } from "./farfield-loader";
-import { readSecret, type Collection, type Entry, type Post } from "./farfield";
+import { readSecret, type Collection, type Entry } from "./farfield";
 
 const CONTENT = "https://content.farfield.systems";
-const FEED = "https://feed.farfield.systems";
 const DOCS_STORE_VERSION = "2";
 
 async function fetchJSON<T>(
@@ -113,53 +111,6 @@ export function farfieldDocsLoader(): Loader {
             if (res.etag) meta.set("entries-etag", res.etag);
             meta.set("series-fingerprint", seriesFingerprint);
             logger.info(`synced ${n} documents`);
-        },
-    };
-}
-
-export function farfieldPubsLoader(): Loader {
-    return {
-        name: "farfield-pubs",
-        async load({ store, generateDigest }: LoaderContext) {
-            const collections = await getCollectionsOnce();
-            store.clear();
-            for (const c of collections) {
-                const data = publicationFrom(c);
-                store.set({
-                    id: c.slug,
-                    data,
-                    digest: generateDigest(data),
-                });
-            }
-        },
-    };
-}
-
-export function farfieldPostsLoader(): Loader {
-    return {
-        name: "farfield-posts",
-        async load({ store, meta, logger }: LoaderContext) {
-            const res = await fetchJSON<{ posts: Post[] }>(
-                `${FEED}/api/posts`,
-                readSecret("FEED_READ_KEY"),
-                store.keys().length > 0
-                    ? (meta.get("posts-etag") ?? undefined)
-                    : undefined,
-            );
-            if (res.status === 304) {
-                logger.info("posts unchanged (304) — store kept");
-                return;
-            }
-            store.clear();
-            for (const post of res.data!.posts) {
-                store.set({
-                    id: post.slug,
-                    data: postToFeedEntry(post),
-                    digest: post.cid,
-                });
-            }
-            if (res.etag) meta.set("posts-etag", res.etag);
-            logger.info(`synced ${res.data!.posts.length} posts`);
         },
     };
 }
