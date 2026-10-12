@@ -7,6 +7,7 @@ import CollectionPanel from "@components/CollectionPanel.astro";
 import FeedEntryCard from "@components/FeedEntryCard.astro";
 import { getLiveCollection } from "astro:content";
 import { setResponseCacheHeaders } from "@lib/cache";
+import { DOCUMENTS_TAG } from "@lib/revalidate";
 import { deckColumns } from "@lib/deck";
 import {
     entriesOf,
@@ -43,7 +44,10 @@ const feedMedia = new Map<string, ResolvedMedia[]>(
     ),
 );
 
-setResponseCacheHeaders(Astro.response, cacheHint, { edge: !feedError });
+setResponseCacheHeaders(Astro.response, cacheHint, {
+    edge: !feedError,
+    extraTags: [DOCUMENTS_TAG],
+});
 ---
 
 <BaseLayout deck="home">

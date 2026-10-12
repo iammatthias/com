@@ -32,9 +32,10 @@ const { SECTION_SLUGS } = await import("../src/lib/agent-surface.ts").catch(
 
 const ON_DEMAND_PREFIXES = [
     "/tags",
-    "/content/page/",
+    "/content",
     "/llms.txt",
-    "/llms-full.txt",
+    "/llms.md",
+    "/index.md",
     "/rss.xml",
     "/sitemap",
     ...SECTION_SLUGS.map((s) => `/${s}`),
@@ -309,7 +310,7 @@ for (const p of HTML_PAGES) {
     }
 }
 
-{
+if (!ssrSkipped("/llms.txt")) {
     const r = await get("/llms.txt");
     const links = [...r.body.matchAll(/\]\(((?:https:\/\/(?:www\.)?iammatthias\.com)?\/[^)]*)\)/g)].map((m) => m[1]);
     const paths = [

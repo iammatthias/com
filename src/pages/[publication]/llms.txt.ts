@@ -1,35 +1,16 @@
 
-export const prerender = true;
+export const prerender = false;
 
-import type { APIRoute, GetStaticPaths } from "astro";
-import { getCollection } from "astro:content";
-import {
-    renderKey,
-    type DocumentData,
-    type PublicationData,
-} from "@lib/farfield-loader";
+import type { APIRoute } from "astro";
 import { SITE_ORIGIN } from "@lib/agent-surface";
-import { publishedDocs } from "@lib/content-query";
+import { sectionForRoute } from "@lib/content-query";
 import { markdownResponse } from "@lib/agent-http";
+import { setDocumentPageCacheHeaders } from "@lib/cache";
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const pubs = (await getCollection("pubs")).map(
-        (e) => e.data as PublicationData,
-    );
-    const docs = await publishedDocs();
-    return pubs.map((pub) => {
-        const items = docs.filter((d) => d.collection === pub.slug);
-        return {
-            params: { publication: pub.slug },
-            props: { pub, items },
-            cacheKey: items.map(renderKey).join(","),
-        };
-    });
-};
-
-export const GET: APIRoute = ({ props }) => {
-    const pub = props.pub as PublicationData;
-    const items = props.items as DocumentData[];
+export const GET: APIRoute = async ({ params }) => {
+    const section = await sectionForRoute(params.publication);
+    if (!section) return new Response(null, { status: 404 });
+    const { pub, items } = section;
     const body = `# ${pub.name}
 
 > ${pub.description ?? `The ${pub.name.toLowerCase()} section of iammatthias.com.`}
@@ -51,5 +32,7 @@ ${items
 - Whole corpus in one file: ${SITE_ORIGIN}/llms-full.txt
 - Search and MCP: ${SITE_ORIGIN}/developers.md
 `;
-    return markdownResponse(body, 300);
+    const response = markdownResponse(body, 300);
+    setDocumentPageCacheHeaders(response);
+    return response;
 };

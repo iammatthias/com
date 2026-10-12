@@ -1,33 +1,17 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import DocArticle from "@components/DocArticle.astro";
 import Deck from "@components/Deck.astro";
-import { getCollection } from "astro:content";
-import { renderKey, type DocumentData } from "@lib/farfield-loader";
 import { plainText } from "@lib/markdown-text";
-import { relatedDocs } from "@lib/content-query";
-import { pageCacheKey } from "@lib/layout-fingerprint";
+import { documentForRoute } from "@lib/content-query";
+import { setDocumentPageCacheHeaders } from "@lib/cache";
 
-export async function getStaticPaths() {
-    const all = (await getCollection("docs")).map(
-        (e) => e.data as DocumentData,
-    );
-    return all.map((item) => {
-        const related = relatedDocs(item, all);
-        return {
-            params: { publication: item.collection, slug: item.rkey },
-            props: { item, related },
-            cacheKey: pageCacheKey([item, ...related].map(renderKey).join(":")),
-        };
-    });
-}
-
-const { item, related } = Astro.props as {
-    item: DocumentData;
-    related: DocumentData[];
-};
+const found = await documentForRoute(Astro.params.publication, Astro.params.slug);
+if (!found) return new Response(null, { status: 404 });
+const { doc: item, related } = found;
+setDocumentPageCacheHeaders(Astro.response);
 
 const metaDescription =
     item.description || plainText(item.body).slice(0, 180).trim();

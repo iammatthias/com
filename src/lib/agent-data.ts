@@ -1,8 +1,7 @@
-import { getCollection } from "astro:content";
 import {
+    livePublications,
     unstampSlug,
     type DocumentData,
-    type PublicationData,
 } from "./farfield-loader";
 import { plainText } from "./markdown-text";
 import { words } from "./text-fold";
@@ -64,9 +63,7 @@ export async function listContent(opts: {
 export async function listSections(): Promise<
     Array<{ slug: string; name: string; description?: string; entries: number }>
 > {
-    const pubs = (await getCollection("pubs")).map(
-        (e) => e.data as PublicationData,
-    );
+    const pubs = await livePublications();
     const docs = await allDocuments();
     return pubs.map((p) => ({
         slug: p.slug,

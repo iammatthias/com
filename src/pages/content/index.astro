@@ -1,8 +1,9 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import ContentIndex from "@components/ContentIndex.astro";
 import { loadContentIndex } from "@lib/content-index";
+import { setDocumentPageCacheHeaders } from "@lib/cache";
 import { getPage } from "@lib/pagination";
 import type { MenuMeta } from "@lib/menu";
 
@@ -15,6 +16,7 @@ export const menu: MenuMeta = {
 const { items, pubs } = await loadContentIndex();
 
 const paged = getPage(items, 1, "/content")!;
+setDocumentPageCacheHeaders(Astro.response);
 ---
 
 <ContentIndex paged={paged} pubs={pubs} />

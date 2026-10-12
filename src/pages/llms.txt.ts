@@ -1,9 +1,9 @@
 
-export const prerender = true;
+export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { getCollection } from "astro:content";
-import type { PublicationData } from "@lib/farfield-loader";
+import { livePublications } from "@lib/farfield-loader";
+import { setDocumentPageCacheHeaders } from "@lib/cache";
 import { publishedDocs } from "@lib/content-query";
 import { SITE_IDENTITY } from "@lib/agent-surface";
 import { siteOrigin } from "@lib/http";
@@ -13,9 +13,7 @@ export const GET: APIRoute = async ({ site }) => {
     const origin = siteOrigin(site);
 
     const docs = await publishedDocs();
-    const pubs = (await getCollection("pubs")).map(
-        (e) => e.data as PublicationData,
-    );
+    const pubs = await livePublications();
 
     const sections = pubs
         .map((pub) => {
@@ -57,5 +55,7 @@ ${sections.join("\n\n")}
 - [Sitemap](${origin}/sitemap.xml)
 `;
 
-    return markdownResponse(body);
+    const response = markdownResponse(body);
+    setDocumentPageCacheHeaders(response);
+    return response;
 };

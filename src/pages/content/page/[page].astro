@@ -1,40 +1,19 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import ContentIndex from "@components/ContentIndex.astro";
 import { loadContentIndex } from "@lib/content-index";
-import { paginationCacheKey, getPage, PAGE_SIZE } from "@lib/pagination";
-import { renderKey } from "@lib/farfield-loader";
-import { pageCacheKey } from "@lib/layout-fingerprint";
-import type { ContentIndexData } from "@lib/content-index";
+import { getPage } from "@lib/pagination";
+import { setDocumentPageCacheHeaders } from "@lib/cache";
 
-export async function getStaticPaths() {
-    const data = await loadContentIndex();
-    const totalPages = Math.max(
-        1,
-        Math.ceil(data.items.length / PAGE_SIZE),
-    );
-    const paths = [];
-    for (let page = 2; page <= totalPages; page++) {
-        const slice = data.items.slice(
-            (page - 1) * PAGE_SIZE,
-            page * PAGE_SIZE,
-        );
-        paths.push({
-            params: { page: String(page) },
-            props: { data, page },
-            cacheKey: pageCacheKey(paginationCacheKey(page, totalPages, slice.map(renderKey))),
-        });
-    }
-    return paths;
+const page = Number(Astro.params.page);
+if (!Number.isInteger(page) || page < 2 || String(page) !== Astro.params.page) {
+    return new Response(null, { status: 404 });
 }
-
-const { data, page } = Astro.props as {
-    data: ContentIndexData;
-    page: number;
-};
-
-const paged = getPage(data.items, page, "/content")!;
+const data = await loadContentIndex();
+const paged = getPage(data.items, page, "/content");
+if (!paged) return new Response(null, { status: 404 });
+setDocumentPageCacheHeaders(Astro.response);
 ---
 
 <ContentIndex paged={paged} pubs={data.pubs} />

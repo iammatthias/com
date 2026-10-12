@@ -41,22 +41,30 @@ them the content API returns 401 and the site builds empty.
 
 ### How content reaches a page
 
-- **Prerendered, rebuilt on publish.** Document pages, section and tag
-  listings, RSS, `.md` twins and `llms.txt` read the build-time `docs`
-  collection (`src/content.config.ts` → `farfield-content-loader.ts`).
-  Astro's incremental build re-renders a page only when its `cacheKey`
-  moves. Farfield's content app fires the Workers Builds deploy hook
-  when its published surface changes.
-- **Rendered per request.** `/`, `/now`, `/feed*`, `/mcp`, `/graphql` and
-  `/api/*` set `prerender = false` and read Farfield live
-  (`src/live.config.ts`, `farfield.ts`), behind the `CONTENT_CACHE` KV
-  (cid-keyed blob metadata and rendered HTML) and the Workers edge
-  cache, which only routes passing `edge: true` to
-  `setResponseCacheHeaders` opt into.
+- **Rendered per request, cached at the edge, purged on publish.**
+  Documents, their `.md` twins, sections, tags, `/content`, RSS,
+  `llms.txt`, the sitemap, `/`, `/now` and `/feed*` read Farfield live
+  (`src/live.config.ts`, `farfield-loader.ts`, `content-query.ts`).
+  Document-derived pages carry `Cache-Tag: documents` and live at the
+  edge for an hour (`setDocumentPageCacheHeaders`); feed pages carry
+  `feed-entries`. Farfield POSTs each save to `/api/revalidate`
+  (Bearer `CONTENT_READ_KEY`), which purges the matching tag, so a
+  publish shows up on the next request — no build.
+- **Freshness depends on never trusting an old upstream copy.** Upstream
+  JSON always revalidates by ETag (a 304 is cheap) and the in-isolate
+  memos only coalesce concurrent loads. A purge refilled from data a few
+  seconds old would be cached for an hour.
+- **Rendered bodies are cached in KV** (`doc-body-cache.ts`) by content
+  hash plus embedded-series hashes, so a cold page is a KV read plus
+  the page shell.
+- **Still prerendered:** static pages, the agent discovery documents,
+  `llms-full.txt` and the search vectors/corpus. Those refresh on the
+  consolidation build Farfield fires after publishing settles.
 - **Negotiated.** `src/middleware.ts` serves markdown instead of HTML
-  to `Accept: text/markdown` and known AI crawlers, for `/` and any
-  path with a `.md` twin that reaches the Worker. Prerendered pages are
-  answered by the asset layer first, so they do not negotiate.
+  to `Accept: text/markdown` and known AI crawlers only on `/` and the
+  feed. Documents and sections deliberately do not negotiate — agents use
+  the `.md` twin — because a `Vary: User-Agent` response splits the edge
+  cache into one copy per browser build.
 
 ### Rules that will bite you
 
@@ -80,11 +88,11 @@ them the content API returns 401 and the site builds empty.
    tools, well-known documents, and `/developers` all derive from it.
    Only declare things that actually exist — an agent that trusts a
    fabricated catalog entry stops trusting the whole catalog.
-7. **A prerendered page's `cacheKey` must cover every input it renders.**
-   Build keys from `renderKey(doc)` — it carries the cids of embedded
-   series, which change without touching the document. If the docs loader
-   starts storing a new field, bump `DOCS_STORE_VERSION` in
-   `src/lib/farfield-content-loader.ts`, or a 304 keeps the old store.
+7. **A new page that shows document data must call
+   `setDocumentPageCacheHeaders`**, or a publish will not purge it. If the
+   docs loader starts storing a new field, bump `DOCS_STORE_VERSION` in
+   `src/lib/farfield-content-loader.ts` (it still feeds the search
+   vectors).
 8. **Edge-cache behaviour cannot be proven locally.** The Workers cache is
    not emulated. Anything touching cache keys, `Vary`, or
    `Cloudflare-CDN-Cache-Control` is verified on the live site after

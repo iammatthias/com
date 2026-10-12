@@ -196,8 +196,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
         return res;
     }
 
+    const negotiates = pathname === "/feed" || pathname.startsWith("/feed/");
     const twin =
-        method === "GET" || method === "HEAD"
+        negotiates && (method === "GET" || method === "HEAD")
             ? await markdownTwin(pathname)
             : null;
 
@@ -209,8 +210,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
         response = await next();
     }
 
-    if (twin || pathname === "/" || pathname.endsWith(".md")) {
+    if (twin || pathname === "/") {
         response.headers.set("Vary", "Accept, Accept-Encoding, User-Agent");
+    } else if (pathname.endsWith(".md")) {
+        response.headers.set("Vary", "Accept, Accept-Encoding");
     }
 
     const contentType = response.headers.get("Content-Type") ?? "";

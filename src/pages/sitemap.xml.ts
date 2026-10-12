@@ -1,13 +1,14 @@
 
-export const prerender = true;
+export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { getCollection } from "astro:content";
-import type {
-    DocumentData,
-    FeedEntryData,
-    PublicationData,
+import {
+    livePublications,
+    loadAllFeedEntries,
+    type DocumentData,
 } from "@lib/farfield-loader";
+import { setDocumentPageCacheHeaders } from "@lib/cache";
+import { FEED_TAG } from "@lib/revalidate";
 import { publishedDocs } from "@lib/content-query";
 import { siteOrigin } from "@lib/http";
 
@@ -29,12 +30,7 @@ export const GET: APIRoute = async ({ site }) => {
     const origin = siteOrigin(site);
 
     const docs = await publishedDocs();
-    const pubs = (await getCollection("pubs")).map(
-        (e) => e.data as PublicationData,
-    );
-    const feed = (await getCollection("posts")).map(
-        (e) => e.data as FeedEntryData,
-    );
+    const [pubs, feed] = await Promise.all([livePublications(), loadAllFeedEntries()]);
 
     const tags = [...new Set(docs.flatMap((d) => d.tags))];
 
@@ -92,7 +88,9 @@ export const GET: APIRoute = async ({ site }) => {
             .join("\n") +
         `\n</urlset>\n`;
 
-    return new Response(body, {
+    const response = new Response(body, {
         headers: { "Content-Type": "application/xml; charset=utf-8" },
     });
+    setDocumentPageCacheHeaders(response, [FEED_TAG]);
+    return response;
 };

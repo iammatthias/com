@@ -1,35 +1,18 @@
+export const prerender = false;
 
-export const prerender = true;
-
-import type { APIRoute, GetStaticPaths } from "astro";
-import { getCollection } from "astro:content";
+import type { APIRoute } from "astro";
 import { publicationIndexMarkdown } from "@lib/markdown-view";
-import {
-    renderKey,
-    type DocumentData,
-    type PublicationData,
-} from "@lib/farfield-loader";
-import { publishedDocs } from "@lib/content-query";
+import { sectionForRoute } from "@lib/content-query";
 import { SITE_ORIGIN } from "@lib/agent-surface";
 import { markdownResponse } from "@lib/agent-http";
+import { setDocumentPageCacheHeaders } from "@lib/cache";
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const pubs = (await getCollection("pubs")).map(
-        (e) => e.data as PublicationData,
+export const GET: APIRoute = async ({ params }) => {
+    const section = await sectionForRoute(params.publication);
+    if (!section) return new Response(null, { status: 404 });
+    const response = markdownResponse(
+        publicationIndexMarkdown(section.pub, section.items, SITE_ORIGIN),
     );
-    const docs = await publishedDocs();
-    return pubs.map((pub) => {
-        const items = docs.filter((d) => d.collection === pub.slug);
-        return {
-            params: { publication: pub.slug },
-            props: { pub, items },
-            cacheKey: items.map(renderKey).join(","),
-        };
-    });
-};
-
-export const GET: APIRoute = ({ props }) => {
-    const pub = props.pub as PublicationData;
-    const items = props.items as DocumentData[];
-    return markdownResponse(publicationIndexMarkdown(pub, items, SITE_ORIGIN));
+    setDocumentPageCacheHeaders(response);
+    return response;
 };
