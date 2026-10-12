@@ -1,24 +1,32 @@
 
 import type { LiveLoader } from "astro/loaders";
 import { blobURL, getAllSeries, getCollections, getEntries, getPosts, getSeries, getBlobMeta, type BlobMeta, type Collection, type Entry, type Post, type Series } from "./farfield";
-import { memo } from "./memo";
+import { memo, type MemoOptions } from "./memo";
 import { isStampedSlug, unstampSlug, humanize } from "./slugs";
 import { extractBodyEmbeds } from "./embeds";
 export { renderKey, seriesKeyFor } from "./render-key";
 import { latest } from "./format";
 
 
-const COALESCE = { ttlMs: 1_000 };
+function coalesce<T>(): MemoOptions<T> {
+    return {
+        ttlMs: 1_000,
+        onError: (err, stale) => {
+            if (stale !== undefined) return stale;
+            throw err;
+        },
+    };
+}
 
 const cachedCollections = () =>
-    memo<Collection[]>("collections", getCollections, COALESCE);
+    memo<Collection[]>("collections", getCollections, coalesce());
 const cachedEntries = (drafts = false) =>
     memo<Entry[]>(
         `entries:_all:${drafts ? "all" : "pub"}`,
         () => getEntries(undefined, { drafts }),
-        COALESCE,
+        coalesce(),
     );
-const cachedPosts = () => memo<Post[]>("posts", getPosts, COALESCE);
+const cachedPosts = () => memo<Post[]>("posts", getPosts, coalesce());
 
 export { getAllSeries, getSeries, getBlobMeta, blobURL };
 

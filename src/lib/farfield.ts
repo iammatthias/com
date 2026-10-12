@@ -242,7 +242,25 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
     if (canReuseBodyOn304) {
         headers["If-None-Match"] = cachedETag;
     }
-    const res = await upstreamLimit(() => fetchWithRetry(url, { headers }));
+    const lastGood = () =>
+        cached && cachedBody !== undefined
+            ? withCacheMetadata(cached, cachedBody, now)
+            : undefined;
+    let res: Response;
+    try {
+        res = await upstreamLimit(() => fetchWithRetry(url, { headers }));
+    } catch (err) {
+        const fallback = lastGood();
+        if (fallback) return fallback;
+        throw err;
+    }
+    if (res.status >= 500) {
+        const fallback = lastGood();
+        if (fallback) {
+            await discardBody(res);
+            return fallback;
+        }
+    }
 
     if (res.status === 304 && cached && cachedBody !== undefined) {
         const refreshed = withCacheMetadata(cached, cachedBody, now);

@@ -79,3 +79,33 @@ describe("memo", () => {
         expect(await retry).toBe("recovered");
     });
 });
+
+describe("memo during an upstream outage", () => {
+    test("a failed reload after expiry hands the last good value to onError", async () => {
+        forgetMemo("outage");
+        let clock = 0;
+        const now = () => clock;
+        const keepStale = {
+            ttlMs: 1_000,
+            now,
+            onError: (err: unknown, stale: string | undefined) => {
+                if (stale !== undefined) return stale;
+                throw err;
+            },
+        };
+        expect(await memo("outage", async () => "fresh", keepStale)).toBe("fresh");
+        clock = 5_000;
+        expect(await memo("outage", async () => { throw new Error("502"); }, keepStale)).toBe("fresh");
+    });
+
+    test("with nothing cached the error still surfaces", async () => {
+        forgetMemo("outage-cold");
+        const keepStale = {
+            onError: (err: unknown, stale: string | undefined) => {
+                if (stale !== undefined) return stale;
+                throw err;
+            },
+        };
+        await expect(memo("outage-cold", async () => { throw new Error("502"); }, keepStale)).rejects.toThrow("502");
+    });
+});
