@@ -1,10 +1,8 @@
 
 import { marked } from "marked";
 import { blobURL, getBlobMeta, getSeries } from "./farfield-loader";
-import type { DocumentData } from "./farfield-loader";
 import { wsrvUrl, wsrvSrcSet, type BlobMeta } from "./farfield";
 import { BLOB_ID_SOURCE, fullEmbedRe } from "./embeds";
-import { mapWithConcurrency } from "./http";
 import { plainText, transformAlerts } from "./markdown-text";
 import { escapeAttr as attr } from "./format";
 import { mediaSize } from "./media-size";
@@ -352,28 +350,6 @@ export const FEED_ENVELOPE = {
     customData: "<language>en-us</language>",
     stylesheet: "/rss.xml.xsl",
 } as const;
-
-export async function docFeedItems(items: DocumentData[], origin: string) {
-    return mapWithConcurrency(items, 8, async (item) => {
-        const canonical = `${origin}${item.href}`;
-        const content = await renderFeedBody(item.body, {
-            maxImages: 6,
-            moreUrl: canonical,
-        });
-        const thumb = content.match(/<img src="([^"]+)"/)?.[1];
-        return {
-            title: item.title,
-            description: item.description,
-            content,
-            link: item.href,
-            pubDate: new Date(item.publishedAt),
-            categories: [item.publication.name, ...item.tags],
-            ...(thumb && {
-                customData: `<media:content url="${thumb}" medium="image" />`,
-            }),
-        };
-    });
-}
 
 export async function renderFeedBody(
     body: string,

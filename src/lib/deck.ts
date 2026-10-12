@@ -1,5 +1,5 @@
-import { getCollection } from "astro:content";
-import { type DocumentData, type PublicationData } from "./farfield-loader";
+import { livePublications, type DocumentData } from "./farfield-loader";
+import { memo } from "./memo";
 import { publishedDocs } from "./content-query";
 
 interface DeckItem {
@@ -24,19 +24,12 @@ function toDeckItem(d: DocumentData): DeckItem {
     return { href: d.href, title: d.title, date: d.publishedAt };
 }
 
-async function publications(): Promise<PublicationData[]> {
-    return (await getCollection("pubs")).map((e) => e.data as PublicationData);
-}
-
-let columnsOnce: Promise<DeckColumnModel[]> | null = null;
-
 export function deckColumns(): Promise<DeckColumnModel[]> {
-    columnsOnce ??= buildColumns();
-    return columnsOnce;
+    return memo("deck-columns", buildColumns, { ttlMs: 1_000 });
 }
 
 async function buildColumns(): Promise<DeckColumnModel[]> {
-    const [pubs, docs] = await Promise.all([publications(), publishedDocs()]);
+    const [pubs, docs] = await Promise.all([livePublications(), publishedDocs()]);
 
     const byCollection = new Map<string, DocumentData[]>();
     for (const d of docs) {

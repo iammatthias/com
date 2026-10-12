@@ -1,5 +1,5 @@
 
-import { getCollection, getLiveCollection } from "astro:content";
+import { getLiveCollection } from "astro:content";
 import { memo } from "./memo";
 
 export interface MenuMeta {
@@ -29,13 +29,6 @@ async function loadPublicationLinks(): Promise<PublicationLink[]> {
         getLiveCollection("documents"),
     ]);
     if (pubResult.error) throw pubResult.error;
-    const builtPubs = import.meta.env.DEV
-        ? null
-        : new Set(
-              (await getCollection("pubs")).map(
-                  (e) => (e.data as { slug: string }).slug,
-              ),
-          );
     const publishedSlugs = new Set(
         (docResult.entries ?? []).map(
             (e: { data: { collection: string } }) => e.data.collection,
@@ -48,11 +41,7 @@ async function loadPublicationLinks(): Promise<PublicationLink[]> {
         return publishedSlugs.has(slug);
     };
     return pubResult.entries
-        .filter(
-            (p) =>
-                hasContent(p.data.slug, p.data.entryCount) &&
-                (!builtPubs || builtPubs.has(p.data.slug)),
-        )
+        .filter((p) => hasContent(p.data.slug, p.data.entryCount))
         .map((p, i) => ({
             href: `/${p.data.slug}`,
             label: p.data.name.toLowerCase(),
@@ -62,6 +51,7 @@ async function loadPublicationLinks(): Promise<PublicationLink[]> {
 
 export function getPublicationLinks(): Promise<PublicationLink[]> {
     return memo("publication-links", loadPublicationLinks, {
+        ttlMs: 1_000,
         onError: (err, stale) => {
             console.error("[menu] Farfield publications fetch failed:", err);
             return stale ?? [];

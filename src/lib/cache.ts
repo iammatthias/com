@@ -1,3 +1,4 @@
+import { DOCUMENTS_TAG } from "./revalidate";
 interface CacheHintLike {
     lastModified?: Date;
     tags?: string[];
@@ -19,6 +20,7 @@ export function edgeCacheDirective(maxAge: number): string {
 }
 
 const DEFAULT_MAX_AGE_SECONDS = 60;
+const DOCUMENT_PAGE_MAX_AGE_SECONDS = 60 * 60;
 const DEFAULT_SWR_SECONDS = 300;
 const DEEP_PAGE_MAX_AGE_SECONDS = 300;
 const DEEP_PAGE_SWR_SECONDS = 600;
@@ -59,4 +61,16 @@ export function setResponseCacheHeaders(
     if (surfaceLevelTags.length > 0) {
         response.headers.set("Cache-Tag", [...new Set(surfaceLevelTags)].join(","));
     }
+}
+
+export function setDocumentPageCacheHeaders(
+    response: { headers: Headers },
+    extraTags: string[] = [],
+): void {
+    setResponseCacheHeaders(response, undefined, {
+        maxAge: DOCUMENT_PAGE_MAX_AGE_SECONDS,
+        swr: DOCUMENT_PAGE_MAX_AGE_SECONDS,
+        edge: true,
+        extraTags: [DOCUMENTS_TAG, ...extraTags],
+    });
 }

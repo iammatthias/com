@@ -6,7 +6,7 @@ import Lightbox from "@components/Lightbox.astro";
 import type { DocumentData } from "@lib/farfield-loader";
 import { fmtDateLong as fmtDate } from "@lib/format";
 import { hashSeed } from "@lib/rand";
-import { renderMarkdownBody } from "@lib/doc-render";
+import { cachedDocBody } from "@lib/doc-body-cache";
 import { readingTime, buildToc } from "@lib/toc";
 import { withLettrine } from "@lib/azulejo-cap";
 
@@ -17,7 +17,7 @@ interface Props {
 
 const { item, related } = Astro.props;
 
-const bodyHtml = item.body ? await renderMarkdownBody(item.body) : "";
+const bodyHtml = await cachedDocBody(item);
 
 const reading = readingTime(item.body);
 

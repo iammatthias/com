@@ -8,13 +8,17 @@ export { renderKey, seriesKeyFor } from "./render-key";
 import { latest } from "./format";
 
 
+const COALESCE = { ttlMs: 1_000 };
+
 const cachedCollections = () =>
-    memo<Collection[]>("collections", getCollections);
+    memo<Collection[]>("collections", getCollections, COALESCE);
 const cachedEntries = (drafts = false) =>
-    memo<Entry[]>(`entries:_all:${drafts ? "all" : "pub"}`, () =>
-        getEntries(undefined, { drafts }),
+    memo<Entry[]>(
+        `entries:_all:${drafts ? "all" : "pub"}`,
+        () => getEntries(undefined, { drafts }),
+        COALESCE,
     );
-const cachedPosts = () => memo<Post[]>("posts", getPosts);
+const cachedPosts = () => memo<Post[]>("posts", getPosts, COALESCE);
 
 export { getAllSeries, getSeries, getBlobMeta, blobURL };
 
@@ -109,6 +113,10 @@ export function publicationFrom(collection: Collection): PublicationData {
 async function publicationsBySlug(): Promise<Map<string, PublicationData>> {
     const list = await cachedCollections();
     return new Map(list.map((c) => [c.slug, publicationFrom(c)]));
+}
+
+export async function livePublications(): Promise<PublicationData[]> {
+    return (await cachedCollections()).map(publicationFrom);
 }
 
 export async function publicationSlugSet(): Promise<Set<string>> {

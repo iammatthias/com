@@ -26,8 +26,27 @@ const SSR_ONLY = new Set([
     "/mcp",
 ]);
 
+const { SECTION_SLUGS } = await import("../src/lib/agent-surface.ts").catch(
+    () => ({ SECTION_SLUGS: ["art", "posts", "recipes", "melange", "experiments"] }),
+);
+
+const ON_DEMAND_PREFIXES = [
+    "/tags",
+    "/content/page/",
+    "/llms.txt",
+    "/llms-full.txt",
+    "/rss.xml",
+    "/sitemap",
+    ...SECTION_SLUGS.map((s) => `/${s}`),
+];
+
+function onDemand(p) {
+    const path = p.split("?")[0];
+    return SSR_ONLY.has(path) || ON_DEMAND_PREFIXES.some((prefix) => path === prefix || path.startsWith(prefix.endsWith("/") ? prefix : `${prefix}/`) || path.startsWith(`${prefix}.`));
+}
+
 function ssrSkipped(p) {
-    if (ORIGIN || !SSR_ONLY.has(p)) return false;
+    if (ORIGIN || !onDemand(p)) return false;
     skipped++;
     if (process.env.VERBOSE) console.log(`  skip ${p} (on-demand route)`);
     return true;
@@ -337,9 +356,6 @@ if (ORIGIN) {
     }
 }
 
-const { SECTION_SLUGS } = await import("../src/lib/agent-surface.ts").catch(
-    () => ({ SECTION_SLUGS: ["art", "posts", "recipes", "melange", "experiments"] }),
-);
 for (const s of SECTION_SLUGS) {
     await expectMarkdown(`/${s}/llms.txt`, `/${s}/llms.txt`);
     await expectMarkdown(`/${s}.md`, `/${s}.md`);

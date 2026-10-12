@@ -1,35 +1,26 @@
-
-export const prerender = true;
+export const prerender = false;
 
 import rss from "@astrojs/rss";
-import type { APIRoute, GetStaticPaths } from "astro";
-import { renderKey, type DocumentData } from "@lib/farfield-loader";
-import { docFeedItems, FEED_ENVELOPE, RSS_ITEM_CAP } from "@lib/doc-render";
+import type { APIRoute } from "astro";
+import { FEED_ENVELOPE, RSS_ITEM_CAP } from "@lib/doc-render";
+import { docFeedItems } from "@lib/doc-body-cache";
 import { siteOrigin } from "@lib/http";
 import { documentsByTag } from "@lib/content-query";
+import { setDocumentPageCacheHeaders } from "@lib/cache";
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const byTag = await documentsByTag();
-    return [...byTag.entries()].map(([tag, items]) => {
-        const capped = items.slice(0, RSS_ITEM_CAP);
-        return {
-            params: { tag },
-            props: { tag, items: capped },
-            cacheKey: capped.map(renderKey).join(","),
-        };
-    });
-};
-
-export const GET: APIRoute = async ({ props, site }) => {
-    const tag = props.tag as string;
-    const items = props.items as DocumentData[];
+export const GET: APIRoute = async ({ params, site }) => {
+    const tag = params.tag ?? "";
+    const items = (await documentsByTag()).get(tag)?.slice(0, RSS_ITEM_CAP);
+    if (!items?.length) return new Response(null, { status: 404 });
     const origin = siteOrigin(site);
 
-    return rss({
+    const response = await rss({
         title: `iammatthias — #${tag}`,
         description: `Entries tagged ${tag}.`,
         site: site?.toString() ?? "https://iammatthias.com",
         items: await docFeedItems(items, origin),
         ...FEED_ENVELOPE,
     });
+    setDocumentPageCacheHeaders(response);
+    return response;
 };

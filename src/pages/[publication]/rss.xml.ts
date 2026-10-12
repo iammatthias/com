@@ -9,7 +9,8 @@ import {
     type DocumentData,
     type PublicationData,
 } from "@lib/farfield-loader";
-import { docFeedItems, FEED_ENVELOPE, RSS_ITEM_CAP } from "@lib/doc-render";
+import { FEED_ENVELOPE, RSS_ITEM_CAP } from "@lib/doc-render";
+import { docFeedItems } from "@lib/doc-body-cache";
 import { siteOrigin } from "@lib/http";
 import { publishedDocs } from "@lib/content-query";
 

@@ -1,6 +1,5 @@
 
-import { getCollection } from "astro:content";
-import type { DocumentData, PublicationData } from "./farfield-loader";
+import { livePublications, type DocumentData, type PublicationData } from "./farfield-loader";
 import { publishedDocs } from "./content-query";
 
 export interface ContentIndexData {
@@ -10,8 +9,6 @@ export interface ContentIndexData {
 
 export async function loadContentIndex(): Promise<ContentIndexData> {
     const items = await publishedDocs();
-    const pubs = (await getCollection("pubs")).map(
-        (e) => e.data as PublicationData,
-    );
+    const pubs = await livePublications();
     return { items, pubs };
 }

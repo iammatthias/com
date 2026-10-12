@@ -1,11 +1,8 @@
 import { getCollection } from "astro:content";
-import type { DocumentData } from "@lib/farfield-loader";
+import { loadAllDocuments, type DocumentData } from "@lib/farfield-loader";
 
 export async function publishedDocs(): Promise<DocumentData[]> {
-    return (await getCollection("docs"))
-        .map((e) => e.data as DocumentData)
-        .filter((d) => d.published !== false)
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    return (await loadAllDocuments()).filter((d) => d.published !== false);
 }
 
 export async function documentsByTag(): Promise<Map<string, DocumentData[]>> {

@@ -92,7 +92,6 @@ export interface BlobMeta {
     createdAt?: string;
 }
 
-const SOFT_TTL_MS = 60_000;
 const HARD_TTL_SECONDS = 24 * 60 * 60;
 const SWR_SECONDS = 60 * 60;
 
@@ -185,11 +184,6 @@ async function fetchWithRetry(
     }
 }
 
-function getCachedAt(res: Response): number {
-    const v = res.headers.get("x-cached-at");
-    return v ? Number.parseInt(v, 10) || 0 : 0;
-}
-
 function withCacheMetadata(
     res: Response,
     body: ArrayBuffer,
@@ -218,11 +212,6 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
     const now = Date.now();
 
     if (cached && isImmutable) {
-        return cached;
-    }
-
-    const withinSoftTtl = cached && now - getCachedAt(cached) < SOFT_TTL_MS;
-    if (withinSoftTtl) {
         return cached;
     }
 

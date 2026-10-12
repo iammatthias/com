@@ -1,43 +1,23 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
-import { pageCacheKey } from "@lib/layout-fingerprint";
 import FeedCard from "@components/FeedCard.astro";
 import Pagination from "@components/Pagination.astro";
-import { paginationCacheKey, getPage, PAGE_SIZE } from "@lib/pagination";
-import { renderKey, type DocumentData } from "@lib/farfield-loader";
+import { getPage, parsePageParam } from "@lib/pagination";
 import { documentsByTag } from "@lib/content-query";
+import { setDocumentPageCacheHeaders } from "@lib/cache";
 
-export async function getStaticPaths() {
-    const byTag = await documentsByTag();
-    const paths = [];
-    for (const [tag, items] of byTag) {
-        const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
-        for (let page = 1; page <= totalPages; page++) {
-            const slice = items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-            paths.push({
-                params: {
-                    tag,
-                    page: page === 1 ? undefined : `page/${page}`,
-                },
-                props: { tag, items, page },
-                cacheKey: pageCacheKey(paginationCacheKey(page, totalPages, slice.map(renderKey))),
-            });
-        }
-    }
-    return paths;
-}
-
-const { tag, items, page } = Astro.props as {
-    tag: string;
-    items: DocumentData[];
-    page: number;
-};
+const tag = Astro.params.tag ?? "";
+const page = parsePageParam(Astro.params.page);
+const items = (await documentsByTag()).get(tag);
+if (page === null || !items?.length) return new Response(null, { status: 404 });
 
 const base = `/tags/${encodeURIComponent(tag)}`;
-const paged = getPage(items, page, base)!;
+const paged = getPage(items, page, base);
+if (!paged) return new Response(null, { status: 404 });
+setDocumentPageCacheHeaders(Astro.response);
 
 ---
 

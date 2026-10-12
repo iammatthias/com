@@ -1,10 +1,11 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Deck from "@components/Deck.astro";
 import type { MenuMeta } from "@lib/menu";
 import { documentsByTag } from "@lib/content-query";
+import { setDocumentPageCacheHeaders } from "@lib/cache";
 
 export const menu: MenuMeta = { group: "archive", order: 2 };
 
@@ -12,6 +13,7 @@ const byTag = await documentsByTag();
 const tags = [...byTag.entries()]
     .map(([tag, list]) => ({ tag, count: list.length }))
     .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+setDocumentPageCacheHeaders(Astro.response);
 
 ---
 

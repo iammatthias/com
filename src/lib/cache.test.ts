@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { deepPageCacheOptions, EDGE_CACHE_HEADER, setResponseCacheHeaders } from "./cache";
+import { deepPageCacheOptions, EDGE_CACHE_HEADER, setDocumentPageCacheHeaders, setResponseCacheHeaders } from "./cache";
 
 function directives(value: string | null): Map<string, string> {
     const out = new Map<string, string>();
@@ -69,5 +69,21 @@ describe("browser and CDN cache headers", () => {
         const response = new Response(null);
         setResponseCacheHeaders(response, { lastModified: new Date("2026-10-09T13:25:58Z") });
         expect(response.headers.get("Last-Modified")).toBe("Fri, 09 Oct 2026 13:25:58 GMT");
+    });
+});
+
+describe("document pages", () => {
+    test("live at the edge for an hour, tagged so a publish can purge them", () => {
+        const response = new Response(null);
+        setDocumentPageCacheHeaders(response);
+        expect(response.headers.get("Cache-Tag")).toBe("documents");
+        expect(directives(response.headers.get(EDGE_CACHE_HEADER)).get("max-age")).toBe("3600");
+        expect(response.headers.get("Cache-Control")).toBe("public, max-age=0, s-maxage=3600, stale-while-revalidate=3600");
+    });
+
+    test("pages that also show feed posts carry both tags", () => {
+        const response = new Response(null);
+        setDocumentPageCacheHeaders(response, ["feed-entries"]);
+        expect(response.headers.get("Cache-Tag")).toBe("documents,feed-entries");
     });
 });
