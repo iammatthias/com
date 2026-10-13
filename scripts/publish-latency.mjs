@@ -16,6 +16,9 @@ const TIMEOUT_S = Number(flag("--timeout", "600"));
 const KEY = readFileSync(new URL("../.env", import.meta.url), "utf8").match(/^CONTENT_READ_KEY=(.*)$/m)?.[1]?.trim();
 const HEADERS = { Authorization: `Bearer ${KEY}`, "User-Agent": "iammatthias.com-latency/1.0" };
 let path = target === "--any" ? null : target;
+const POLL_MS = path ? 500 : 2_000;
+let listEtag = null;
+let listStamp = null;
 
 async function farfieldUpdated() {
     if (path) {
@@ -23,10 +26,26 @@ async function farfieldUpdated() {
         if (!res.ok) throw new Error(`farfield ${res.status}`);
         return (await res.json()).updatedAt;
     }
-    const res = await fetch("https://content.farfield.systems/api/entries", { headers: HEADERS });
+    const res = await fetch("https://content.farfield.systems/api/entries", {
+        headers: listEtag ? { ...HEADERS, "If-None-Match": listEtag } : HEADERS,
+    });
+    if (res.status === 304) return listStamp;
     if (!res.ok) throw new Error(`farfield ${res.status}`);
     const newest = (await res.json()).entries.filter((e) => e.published).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
-    return `${newest.collection}/${newest.slug}@${newest.updatedAt}`;
+    listEtag = res.headers.get("etag");
+    listStamp = `${newest.collection}/${newest.slug}@${newest.updatedAt}`;
+    return listStamp;
+}
+
+async function tolerant(fn) {
+    for (;;) {
+        try {
+            return await fn();
+        } catch (err) {
+            console.error(`retrying after ${err.cause?.code ?? err.message}`);
+            await sleep(5_000);
+        }
+    }
 }
 
 async function siteUpdated() {
@@ -35,15 +54,15 @@ async function siteUpdated() {
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const baseline = await farfieldUpdated();
+const baseline = await tolerant(farfieldUpdated);
 console.log(`watching ${path ?? "every published entry"} — latest ${baseline}; save in Farfield now`);
 const started = Date.now();
 let saved = null;
 while (!saved) {
     if ((Date.now() - started) / 1000 > TIMEOUT_S) throw new Error("no save seen");
-    const now = await farfieldUpdated();
+    const now = await tolerant(farfieldUpdated);
     if (now !== baseline) saved = { stamp: now, seenAt: Date.now() };
-    else await sleep(500);
+    else await sleep(POLL_MS);
 }
 if (!path) {
     const [ref, stamp] = saved.stamp.split("@");
@@ -52,7 +71,7 @@ if (!path) {
 }
 console.log(`saved ${path} at ${saved.stamp}`);
 const savedAt = Date.parse(saved.stamp);
-while ((await siteUpdated()) !== saved.stamp) {
+while ((await tolerant(siteUpdated)) !== saved.stamp) {
     if ((Date.now() - saved.seenAt) / 1000 > TIMEOUT_S) throw new Error("site never caught up");
     await sleep(500);
 }
