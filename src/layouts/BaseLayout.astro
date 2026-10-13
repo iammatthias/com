@@ -54,7 +54,7 @@ const {
 const siteOrigin = Astro.site?.toString() ?? SITE_URL;
 const canonicalURL = canonical
     ? new URL(canonical, siteOrigin)
-    : new URL(Astro.url.pathname, siteOrigin);
+    : new URL(Astro.url.pathname.replace(/\.html$/, ""), siteOrigin);
 
 const isAbsolute = /^https?:\/\//i.test(ogImage);
 const ogOrigin = import.meta.env.DEV
