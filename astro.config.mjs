@@ -5,7 +5,6 @@ import { readFileSync } from "node:fs";
 import { layoutFingerprint } from "./scripts/layout-fingerprint.mjs";
 import { stripGlsl } from "./scripts/glsl-strip.mjs";
 import { defineConfig, envField, fontProviders } from "astro/config";
-import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
 
 /** Ship GLSL without its comments or indentation; keep both in the source. */
@@ -44,7 +43,6 @@ export default defineConfig({
         incrementalBuild: true,
     },
     integrations: [
-        react(),
         {
             name: "dev-only-internal-routes",
             hooks: {
@@ -154,29 +152,18 @@ export default defineConfig({
                 "@lib": path.resolve("./src/lib"),
                 "@styles": path.resolve("./src/styles"),
             },
-            dedupe: ["react", "react-dom"],
         },
         worker: {
             format: "es",
         },
         optimizeDeps: {
             exclude: ["@ternlight/base"],
-            include: [
-                "react",
-                "react-dom/client",
-                "react/jsx-runtime",
-                "react/jsx-dev-runtime",
-                "mermaid",
-            ],
+            include: ["mermaid"],
         },
         environments: {
             ssr: {
                 optimizeDeps: {
                     include: [
-                        "react",
-                        "react-dom/server",
-                        "react/jsx-runtime",
-                        "react/jsx-dev-runtime",
                         "astro/zod",
                         "astro/virtual-modules/live-config",
                         "astro/env/runtime",
