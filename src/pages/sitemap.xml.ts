@@ -56,7 +56,6 @@ export const GET: APIRoute = async ({ site }) => {
         { loc: `${origin}/content`, lastmod: siteNewest },
         { loc: `${origin}/tags`, lastmod: siteNewest },
         { loc: `${origin}/feed`, lastmod: siteNewest },
-        { loc: `${origin}/onchain-analytics` },
         ...pubs.map((p) => ({
             loc: `${origin}/${p.slug}`,
             lastmod: newest(docs.filter((d) => d.collection === p.slug)),

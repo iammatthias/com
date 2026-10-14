@@ -87,6 +87,8 @@ const RENAMED_PUBLICATIONS: Record<string, string> = {
     "open-source": "experiments",
 };
 
+const ONCHAIN_ANALYTICS_POST = "/experiments/1791937789859-onchain-analytics";
+
 const MOVED_ENTRIES: Record<string, string> = {
     "/open-source/1744172723728-obsidian-pinata-image-uploader":
         "/experiments/1789490903000-obsidian-plugins",
@@ -104,7 +106,16 @@ const MOVED_ENTRIES: Record<string, string> = {
         "/experiments/1789491418000-atproto",
     "/open-source/1776737859309-atproto-wc":
         "/experiments/1789491418000-atproto",
+    "/onchain-analytics": ONCHAIN_ANALYTICS_POST,
 };
+
+function onchainSession(bare: string, markdown: boolean): string | null {
+    const m = bare.match(/^\/onchain-analytics\/(0x[0-9a-fA-F]{64})$/);
+    if (!m) return null;
+    return markdown
+        ? `${ONCHAIN_ANALYTICS_POST}.md`
+        : `${ONCHAIN_ANALYTICS_POST}#${m[1].toLowerCase()}`;
+}
 
 function renamedPublication(pathname: string): string | null {
     const markdown = pathname.endsWith(".md");
@@ -113,6 +124,9 @@ function renamedPublication(pathname: string): string | null {
 
     const moved = MOVED_ENTRIES[bare];
     if (moved) return withExt(moved);
+
+    const session = onchainSession(bare, markdown);
+    if (session) return session;
 
     for (const [from, to] of Object.entries(RENAMED_PUBLICATIONS)) {
         if (bare === `/${from}`) return withExt(`/${to}`);
@@ -157,7 +171,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     if (method === "GET" || method === "HEAD") {
         const renamed = renamedPublication(pathname);
-        if (renamed) return context.redirect(renamed + search, 301);
+        if (renamed) {
+            const [path, fragment] = renamed.split("#");
+            return context.redirect(
+                path + search + (fragment ? `#${fragment}` : ""),
+                301,
+            );
+        }
 
         const canonical = await stampedRedirect(pathname);
         if (canonical) return context.redirect(canonical + search, 301);

@@ -16,7 +16,6 @@ const files = walk(SRC).map((p) => ({ p: p.slice(SRC.length), s: readFileSync(p,
 
 /** Hash-seeded generative pieces own their colour space; changing it changes the art. */
 const GENERATIVE = [
-    "pages/onchain-analytics",
     "components/AzulejoTile",
 ];
 const styled = files.filter((f) => !GENERATIVE.some((g) => f.p.startsWith(g)));

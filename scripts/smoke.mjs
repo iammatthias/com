@@ -101,7 +101,11 @@ try {
     });
     await check("/resume");
     await check("/tags");
-    await check("/onchain-analytics");
+    await checkRedirect("/onchain-analytics", "/experiments/1791937789859-onchain-analytics");
+    await checkRedirect(
+        "/onchain-analytics/0xebf247b43923c6d36de2e79d0d738bd257e19e93f2f842d2a54bc1a33a100eeb",
+        "/experiments/1791937789859-onchain-analytics#0xebf247b43923c6d36de2e79d0d738bd257e19e93f2f842d2a54bc1a33a100eeb",
+    );
     await check("/nonexistent-page-xyz", { status: 404 });
 
     const content = await check("/content", {
