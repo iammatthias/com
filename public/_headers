@@ -66,3 +66,8 @@
 # published between builds.
 /api/search-vectors.json
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/embeds/*
+  Access-Control-Allow-Origin: *
+  Cross-Origin-Resource-Policy: cross-origin
+  Cache-Control: public, max-age=300, stale-while-revalidate=86400

@@ -1,6 +1,10 @@
+import { ONCHAIN_ANALYTICS_EMBED } from "@lib/doc-components/onchain-analytics";
+
 const LOADERS: Record<string, () => Promise<unknown>> = {
     "ff-tuner": () => import("../vendor/conet-tuner/embed.js"),
     "ff-nothing": () => import("./nothing-client"),
+    "ff-onchain-analytics": () =>
+        import(/* @vite-ignore */ new URL(ONCHAIN_ANALYTICS_EMBED, location.origin).href),
     ".series-tile--live": () => import("./live-tiles"),
 };
 
