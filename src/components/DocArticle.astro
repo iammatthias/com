@@ -145,8 +145,8 @@ const markdownPath = `${item.href}.md`;
 <Lightbox />
 
 <script>
-    import { renderMermaid } from "@lib/mermaid-client";
-    void renderMermaid();
+    import { renderDiagrams } from "@lib/diagram-client";
+    void renderDiagrams();
 </script>
 
 <script>
@@ -325,16 +325,20 @@ const markdownPath = `${item.href}.md`;
         height: auto;
     }
 
-    .doc-body :global(.mermaid-figure) {
+    .doc-body :global(.diagram-figure) {
         margin: 0;
         display: flex;
         justify-content: safe center;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .doc-body :global(.mermaid-figure svg) {
-        height: auto;
+        --pele-bg: var(--color-bg);
+        --pele-fg: var(--color-fg);
+        --pele-muted: var(--color-muted);
+        --pele-line: var(--color-muted);
+        --pele-surface: color-mix(in oklab, var(--color-border) 55%, var(--color-bg));
+        --pele-surface-alt: var(--color-border);
+        --pele-border: var(--color-muted);
+        --pele-accent: var(--color-accent);
+        --pele-font: var(--font-sans);
+        --pele-font-mono: var(--font-mono);
     }
 
     .doc-body :global(.ff-component-missing) {

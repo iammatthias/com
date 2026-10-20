@@ -158,7 +158,6 @@ export default defineConfig({
         },
         optimizeDeps: {
             exclude: ["@ternlight/base"],
-            include: ["mermaid"],
         },
         environments: {
             ssr: {
