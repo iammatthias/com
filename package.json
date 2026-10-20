@@ -6,9 +6,9 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "rm -rf dist .astro && bun test && astro build && node scripts/agent-check.mjs",
-    "build:force": "rm -rf dist .astro node_modules/.astro && bun test && astro build --force && node scripts/agent-check.mjs",
+    "dev": "node scripts/build-diagrams.mjs && astro dev",
+    "build": "rm -rf dist .astro && node scripts/build-diagrams.mjs && bun test && astro build && node scripts/agent-check.mjs",
+    "build:force": "rm -rf dist .astro node_modules/.astro && node scripts/build-diagrams.mjs && bun test && astro build --force && node scripts/agent-check.mjs",
     "preview": "astro preview",
     "smoke": "node scripts/smoke.mjs",
     "overflow": "node scripts/overflow-check.mjs",
@@ -35,6 +35,7 @@
     "yaml": "^2.9.1"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "playwright": "^1.63.0"
   }
 }

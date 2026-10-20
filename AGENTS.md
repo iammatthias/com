@@ -121,6 +121,8 @@ src/vendor/conet-tuner/    conet.fm's <conet-tuner> element, copied verbatim
                            from ~/Developer/number-station/web/dist/embed.js
 src/lib/azulejo-cap.ts     cid-seeded drop-cap tile generator
 scripts/agent-check.mjs    the pre-deploy gate
+scripts/build-diagrams.mjs one self-contained pele renderer per diagram type,
+                           so a failed load can be retried (dev and build run it)
 ```
 
 ### Before you commit
