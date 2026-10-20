@@ -51,3 +51,4 @@ pnpm-debug.log*
 !/scripts/layout-fingerprint.test.mjs
 !/scripts/publish-latency.mjs
 .gstack/
+/.audit
