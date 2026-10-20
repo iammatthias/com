@@ -1,6 +1,6 @@
 import { build } from "esbuild";
 import { createHash } from "node:crypto";
-import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 
@@ -9,19 +9,23 @@ const outDir = join(root, "public/diagrams");
 const manifestPath = join(root, "src/lib/diagram-bundles.json");
 const require = createRequire(join(root, "package.json"));
 const diagramsDir = join(dirname(require.resolve("pele/lazy")), "diagrams");
+const types = readdirSync(diagramsDir)
+    .filter((f) => f.endsWith(".js"))
+    .map((f) => f.replace(/\.js$/, ""));
+const declared = readFileSync(join(dirname(require.resolve("pele/package.json")), "dist/detect.d.ts"), "utf8")
+    .match(/type DiagramType = ([^;]+);/)[1]
+    .match(/'([^']+)'/g)
+    .map((t) => t.slice(1, -1));
+const unmatched = [...types.filter((t) => !declared.includes(t)), ...declared.filter((t) => !types.includes(t))];
+if (unmatched.length) throw new Error(`pele diagram entries and DiagramType disagree: ${unmatched.join(", ")}`);
 
 const entries = {
     detect: `export { detectType } from "pele/core";`,
     ...Object.fromEntries(
-        readdirSync(diagramsDir)
-            .filter((f) => f.endsWith(".js"))
-            .map((f) => {
-                const type = f.replace(/\.js$/, "");
-                return [
-                    type,
-                    `import { mount, register } from "pele/core";\nimport diagram from "pele/diagrams/${type}";\nregister(diagram);\nexport { mount };`,
-                ];
-            }),
+        types.map((type) => [
+            type,
+            `import { mount, register } from "pele/core";\nimport diagram from "pele/diagrams/${type}";\nregister(diagram);\nexport { mount };`,
+        ]),
     ),
 };
 
@@ -40,7 +44,7 @@ for (const [name, contents] of Object.entries(entries)) {
         logLevel: "error",
     });
     const code = result.outputFiles[0].text;
-    if (/\bimport\s*\(|\bimport\s*["'{*]|\bimport\.meta\b/.test(code)) {
+    if (/\bimport\s*\(|\bimport\s*["'{*]|\bimport\s+[\w$]+\s*from|\bimport\.meta\b/.test(code)) {
         throw new Error(`${name} bundle is not self-contained`);
     }
     const file = `${name}.${createHash("sha256").update(code).digest("hex").slice(0, 8)}.js`;

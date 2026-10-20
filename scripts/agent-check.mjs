@@ -493,6 +493,13 @@ if (!ORIGIN) {
             }
         }
     }
+    const diagramManifest = JSON.parse(await readFile(new URL("../src/lib/diagram-bundles.json", import.meta.url), "utf8"));
+    const absentDiagrams = [];
+    for (const asset of Object.values(diagramManifest)) {
+        if (await stat(path.join(DIST, asset)).then(() => false, () => true)) absentDiagrams.push(asset);
+    }
+    if (absentDiagrams.length === 0) ok(`diagram bundles resolve (${Object.keys(diagramManifest).length})`);
+    else fail("diagram bundles", `manifest names files absent from dist: ${absentDiagrams.join(", ")}`);
     if (missing.size === 0) {
         ok(`bundled assets resolve (${pages.length} pages)`);
     } else {

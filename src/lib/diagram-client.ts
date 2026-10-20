@@ -1,9 +1,10 @@
 import type { DiagramType, detectType as DetectType, mount as Mount } from "pele/core";
-import bundles from "./diagram-bundles.json";
+import manifest from "./diagram-bundles.json";
 
+const bundles: Partial<Record<DiagramType | "detect", string>> = manifest;
 const RETRY_DELAYS_MS = [400, 1600];
 
-async function importFresh<T>(path: string): Promise<T> {
+async function importWithRetry<T>(path: string): Promise<T> {
     const url = new URL(path, location.origin);
     for (let attempt = 0; ; attempt++) {
         if (attempt > 0) url.searchParams.set("retry", String(attempt));
@@ -17,48 +18,55 @@ async function importFresh<T>(path: string): Promise<T> {
     }
 }
 
-const loaded = new Map<string, Promise<{ mount: typeof Mount }>>();
+const renderers = new Map<DiagramType, Promise<typeof Mount>>();
 
-function loadBundle(type: DiagramType) {
-    const url = (bundles as Record<string, string>)[type];
-    if (!url) return null;
-    let bundle = loaded.get(url);
-    if (!bundle) {
-        bundle = importFresh<{ mount: typeof Mount }>(url);
-        loaded.set(url, bundle);
+function loadRenderer(type: DiagramType): Promise<typeof Mount> {
+    let renderer = renderers.get(type);
+    if (!renderer) {
+        const path = bundles[type];
+        renderer = path
+            ? importWithRetry<{ mount: typeof Mount }>(path).then((m) => m.mount)
+            : Promise.reject(new Error(`no renderer for ${type}`));
+        renderers.set(type, renderer);
     }
-    return bundle;
+    return renderer;
+}
+
+async function rendererFor(
+    source: string,
+    detectType: typeof DetectType,
+): Promise<typeof Mount | null> {
+    try {
+        const type = detectType(source);
+        if (!type) throw new Error("unrecognised diagram");
+        return await loadRenderer(type);
+    } catch (error) {
+        console.error("diagram renderer unavailable", error);
+        return null;
+    }
 }
 
 export async function renderDiagrams(): Promise<void> {
     const blocks = Array.from(
         document.querySelectorAll<HTMLElement>("pre > code.language-mermaid"),
     );
-    if (blocks.length === 0) return;
+    if (blocks.length === 0 || !bundles.detect) return;
 
-    const { detectType } = await importFresh<{ detectType: typeof DetectType }>(bundles.detect);
+    let detectType: typeof DetectType;
+    try {
+        ({ detectType } = await importWithRetry<{ detectType: typeof DetectType }>(bundles.detect));
+    } catch (error) {
+        console.error("diagram detector failed to load", error);
+        return;
+    }
 
     await Promise.all(
         blocks.map(async (code) => {
             const pre = code.closest("pre");
             if (!pre) return;
             const source = code.textContent ?? "";
-            let type: DiagramType | null = null;
-            try {
-                type = detectType(source);
-            } catch {}
-            const bundle = type && loadBundle(type);
-            if (!bundle) {
-                console.error("diagram type not recognised", type);
-                return;
-            }
-            let mount: typeof Mount;
-            try {
-                ({ mount } = await bundle);
-            } catch (error) {
-                console.error("diagram renderer failed to load", error);
-                return;
-            }
+            const mount = await rendererFor(source, detectType);
+            if (!mount) return;
             const figure = document.createElement("figure");
             figure.className = "diagram-figure";
             pre.after(figure);

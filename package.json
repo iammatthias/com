@@ -12,6 +12,7 @@
     "preview": "astro preview",
     "smoke": "node scripts/smoke.mjs",
     "overflow": "node scripts/overflow-check.mjs",
+    "diagram:retry": "node scripts/diagram-retry-check.mjs",
     "perf": "node scripts/perf-check.mjs",
     "perf:budget": "node scripts/perf-check.mjs --write",
     "astro": "astro",
