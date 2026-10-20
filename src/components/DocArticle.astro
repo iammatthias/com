@@ -325,10 +325,23 @@ const markdownPath = `${item.href}.md`;
         height: auto;
     }
 
+    .doc-body :global(.diagram-canvas) {
+        display: flex;
+        justify-content: safe center;
+    }
+
+    .doc-body :global(.diagram-caption) {
+        text-align: center;
+        font-family: var(--font-mono);
+        font-size: var(--fs-xs);
+        color: var(--color-muted);
+    }
+
     .doc-body :global(.diagram-figure) {
         margin: 0;
         display: flex;
-        justify-content: safe center;
+        flex-direction: column;
+        gap: var(--space-2);
         --pele-bg: var(--color-bg);
         --pele-fg: var(--color-fg);
         --pele-muted: var(--color-muted);

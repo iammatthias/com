@@ -5,6 +5,10 @@ import { importWithRetry } from "./import-with-retry";
 const bundles: Partial<Record<DiagramType | "detect", string>> = manifest;
 const renderers = new Map<DiagramType, Promise<typeof Mount>>();
 
+export function playgroundUrl(source: string): string {
+    return `https://pele.run/playground#${new URLSearchParams({ source })}`;
+}
+
 function loadRenderer(type: DiagramType): Promise<typeof Mount> {
     let renderer = renderers.get(type);
     if (!renderer) {
@@ -54,8 +58,11 @@ export async function renderDiagrams(): Promise<void> {
             if (!mount) return;
             const figure = document.createElement("figure");
             figure.className = "diagram-figure";
+            const canvas = document.createElement("div");
+            canvas.className = "diagram-canvas";
+            figure.append(canvas);
             pre.after(figure);
-            const mounted = mount(figure, source);
+            const mounted = mount(canvas, source);
             if (mounted.error) {
                 mounted.destroy();
                 figure.remove();
@@ -63,13 +70,21 @@ export async function renderDiagrams(): Promise<void> {
                 return;
             }
             pre.remove();
-            if (!figure.querySelector("svg")?.hasAttribute("aria-labelledby")) {
-                figure.setAttribute("role", "img");
-                figure.setAttribute(
+            if (!canvas.querySelector("svg")?.hasAttribute("aria-labelledby")) {
+                canvas.setAttribute("role", "img");
+                canvas.setAttribute(
                     "aria-label",
                     `Diagram${mounted.result ? `: ${mounted.result.type}` : ""}`,
                 );
             }
+            const caption = document.createElement("figcaption");
+            caption.className = "diagram-caption";
+            const link = document.createElement("a");
+            link.href = playgroundUrl(source);
+            link.rel = "noopener";
+            link.textContent = "View diagram →";
+            caption.append(link);
+            figure.append(caption);
         }),
     );
 }
