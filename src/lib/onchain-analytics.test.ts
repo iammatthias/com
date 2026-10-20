@@ -108,6 +108,19 @@ describe("readAnalytics when the record fails to load", () => {
         expect(calls).toBe(3);
     });
 
+    test("a missing src fails without fetching", async () => {
+        let calls = 0;
+        await expect(readAnalytics({ src: "", fetchImpl: async () => (calls++, new Response(record)) })).rejects.toThrow("no record src");
+        expect(calls).toBe(0);
+    });
+
+    test("the markdown twin links the contract and the JSONL record", () => {
+        expect(onchainAnalytics.markdown!({ src: `blob://${CID}` }, "", (s) => s)).toBe(
+            "[Read the onchain analytics contract on Basescan](https://sepolia.basescan.org/address/0x29867a886F96e84196fa47DEe2Fb4a5853412C03#code)" +
+                ` · [every session, page view and event, one per line (JSONL)](https://blobs.farfield.systems/blobs/${CID})`,
+        );
+    });
+
     test("blob links resolve to the blobs host", () => {
         expect(blobUrl(`blob://${CID}`)).toBe(`https://blobs.farfield.systems/blobs/${CID}`);
     });

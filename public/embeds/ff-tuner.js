@@ -1,8 +1,8 @@
-export const CHAINS = {
+const CHAINS = {
     base: { name: "Base", explorer: "https://basescan.org" },
 };
-export const KINDS = { 0: "ping", 1: "note", 2: "bootstrap", 3: "digest", 255: "opaque" };
-export const PAGE_SIZE = 5;
+const KINDS = { 0: "ping", 1: "note", 2: "bootstrap", 3: "digest", 255: "opaque" };
+const PAGE_SIZE = 5;
 const BLOBS = "https://blobs.farfield.systems/blobs/";
 
 export function fiveFigureGroups(cipher) {
@@ -31,6 +31,7 @@ export function blobUrl(src) {
 }
 
 export async function readRecording({ src, fetchImpl = fetch, retryDelays = [400, 1600] }) {
+    if (!src) throw new Error("no recording src");
     for (let attempt = 0; ; attempt++) {
         try {
             const res = await fetchImpl(blobUrl(src));
@@ -93,6 +94,7 @@ button:disabled{opacity:.4;cursor:default}
 export class TunerElement extends (typeof HTMLElement === "undefined" ? class {} : HTMLElement) {
     #body;
     #transmissions = [];
+    #summary;
     #page = 0;
 
     connectedCallback() {
@@ -100,8 +102,9 @@ export class TunerElement extends (typeof HTMLElement === "undefined" ? class {}
         const root = this.attachShadow({ mode: "open" });
         const style = el("style");
         style.textContent = STYLE;
-        this.#body = el("div", { class: "tn", "aria-live": "polite" }, el("p", { class: "note" }, "Loading the recording…"));
+        this.#body = el("div", { class: "tn", "aria-live": "polite" });
         root.append(style, this.#body);
+        this.#body.append(el("p", { class: "note" }, "Loading the recording…"));
         const observer = new IntersectionObserver((entries) => {
             if (!entries.some((e) => e.isIntersecting)) return;
             observer.disconnect();
@@ -115,29 +118,29 @@ export class TunerElement extends (typeof HTMLElement === "undefined" ? class {}
     }
 
     #read() {
-        const src = this.getAttribute("src");
-        readRecording({ src })
-            .then((transmissions) => {
+        const src = this.getAttribute("src") ?? "";
+        this.#body.replaceChildren(el("p", { class: "note" }, "Loading the recording…"));
+        readRecording({ src }).then(
+            (transmissions) => {
                 this.#transmissions = transmissions;
+                this.#summary = summarize(transmissions);
                 this.#render();
-            })
-            .catch(() => {
+            },
+            () => {
                 const retry = el("button", { type: "button" }, "Try again");
-                retry.addEventListener("click", () => {
-                    this.#body.replaceChildren(el("p", { class: "note" }, "Loading the recording…"));
-                    this.#read();
-                });
+                retry.addEventListener("click", () => this.#read());
                 this.#body.replaceChildren(
                     el("p", { class: "note" }, "The recording didn't load. ", link(blobUrl(src), "Download it as JSONL"), " instead. "),
                     retry,
                 );
-            });
+            },
+        );
     }
 
     #render() {
         const station = this.getAttribute("station") ?? "";
         const { explorer, name } = this.#chain;
-        const summary = summarize(this.#transmissions);
+        const summary = this.#summary;
         const pages = Math.ceil(summary.count / PAGE_SIZE);
         const start = this.#page * PAGE_SIZE;
         const shown = this.#transmissions.slice(start, start + PAGE_SIZE);
@@ -167,7 +170,7 @@ export class TunerElement extends (typeof HTMLElement === "undefined" ? class {}
                 el("span", {}, `blocks ${summary.firstBlock.toLocaleString("en-US")}–${summary.lastBlock.toLocaleString("en-US")}`),
                 el("span", {}, summary.kinds.map(([label, n]) => plural(n, label)).join(", ")),
             ),
-            el("p", { class: "note" }, `${plural(summary.count, "transmission")}, each as it was heard, in five-figure groups. `, link(blobUrl(this.getAttribute("src")), "Download the recording as JSONL"), "."),
+            el("p", { class: "note" }, `${plural(summary.count, "transmission")}, each as it was heard, in five-figure groups. `, link(blobUrl(this.getAttribute("src") ?? ""), "Download the recording as JSONL"), "."),
             pager(),
             el(
                 "ol",

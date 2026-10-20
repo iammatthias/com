@@ -55,6 +55,7 @@ export function monthYear(seconds) {
 }
 
 export async function readAnalytics({ src, fetchImpl = fetch, retryDelays = [400, 1600] }) {
+    if (!src) throw new Error("no record src");
     for (let attempt = 0; ; attempt++) {
         try {
             const res = await fetchImpl(blobUrl(src));
@@ -292,23 +293,21 @@ export class OnchainAnalyticsElement extends ElementBase {
         const root = this.attachShadow({ mode: "open" });
         const style = el("style");
         style.textContent = STYLE;
-        const body = el("div", { class: "oa", "aria-live": "polite" }, el("p", { class: "note" }, "Loading the record…"));
+        const body = el("div", { class: "oa", "aria-live": "polite" });
         root.append(style, body);
         this.#read(body);
     }
 
     #read(body) {
-        const contract = this.getAttribute("contract") || CONTRACT;
-        readAnalytics({ src: this.getAttribute("src") ?? "" })
-            .then((data) => this.#show(body, data))
-            .catch(() => {
+        body.replaceChildren(el("p", { class: "note" }, "Loading the record…"));
+        readAnalytics({ src: this.getAttribute("src") ?? "" }).then(
+            (data) => this.#show(body, data),
+            () => {
                 const retry = el("button", { type: "button" }, "Try again");
-                retry.addEventListener("click", () => {
-                    body.replaceChildren(el("p", { class: "note" }, "Loading the record…"));
-                    this.#read(body);
-                });
-                body.replaceChildren(el("p", { class: "note" }, "The record didn't load. Every entry is still in ", contractLink(contract), ". "), retry);
-            });
+                retry.addEventListener("click", () => this.#read(body));
+                body.replaceChildren(el("p", { class: "note" }, "The record didn't load. Every entry is still in ", contractLink(CONTRACT), ". "), retry);
+            },
+        );
     }
 
     #show(body, data) {

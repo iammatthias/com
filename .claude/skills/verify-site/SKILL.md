@@ -15,6 +15,7 @@ Done means the check that matches the change passed, and for anything cache-, ed
 | Agent surface, middleware, negotiation, on-demand routes | gate against a running preview: `node scripts/agent-check.mjs --url http://localhost:4399` |
 | Layout, CSS, components | `bun run smoke` and `bun run overflow` (1440/1512, full page) — then show the owner before pushing |
 | Diagrams, `diagram-client.ts`, `build-diagrams.mjs`, pele upgrades | `bun run diagram:retry` against a running dev or preview server (`BASE_URL`); it cuts bundle fetches in Chromium, WebKit and Firefox and expects a retry or the source fallback |
+| `public/embeds/*` (ff-tuner, ff-onchain-analytics) | `bun run embed:retry` against dev, preview or live (`BASE_URL`); it cuts the JSONL blob fetch in Chromium, WebKit and Firefox and expects a retry, then a working Try again |
 | Anything on the critical path (fonts, scripts, images, homepage) | `bun run perf`; only `bun run perf:budget` when a regression is intended and approved |
 | Azulejo / terrazzo / shaders | `bun run art:verify`; `art:golden` only for an intended change |
 | Cache keys, edge cache, `Vary`, content freshness | the live checks below — local runs cannot prove these |

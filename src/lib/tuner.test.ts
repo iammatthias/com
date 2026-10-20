@@ -30,7 +30,7 @@ describe("Station 1 recording", () => {
         expect(summarize(recording)).toEqual({
             count: 5,
             firstBlock: 50801985,
-            lastBlock: recording[4].block,
+            lastBlock: 51599529,
             kinds: [
                 ["note", 3],
                 ["bootstrap", 1],
@@ -57,6 +57,12 @@ describe("Station 1 recording", () => {
         });
         expect(calls).toBe(3);
         expect(recording).toHaveLength(5);
+    });
+
+    test("a missing src fails without fetching", async () => {
+        let calls = 0;
+        await expect(readRecording({ src: "", fetchImpl: async () => (calls++, new Response(sample)) })).rejects.toThrow("no recording src");
+        expect(calls).toBe(0);
     });
 
     test("the recording read gives up after three attempts", async () => {

@@ -11,7 +11,6 @@ function recording(props: ComponentProps) {
     const station = props.station ?? "";
     const explorer = EXPLORERS[props.chain ?? "base"] ?? EXPLORERS.base;
     return {
-        props,
         url: src.startsWith("blob://") ? BLOBS + src.slice("blob://".length) : src,
         stationUrl: `${explorer}/address/${station}`,
         label: `Station ${props["station-id"] ?? ""}`.trim(),

@@ -52,6 +52,7 @@ pnpm-debug.log*
 !/scripts/publish-latency.mjs
 !/scripts/build-diagrams.mjs
 !/scripts/diagram-retry-check.mjs
+!/scripts/embed-retry-check.mjs
 .gstack/
 /.audit
 
