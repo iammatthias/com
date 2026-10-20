@@ -73,6 +73,42 @@ describe("ABI decoding of the stopped analytics contract", () => {
     });
 });
 
+describe("readAnalytics when the RPC drops requests", () => {
+    const answer = async (_url: string, init: RequestInit) => {
+        const sent = JSON.parse(String(init.body));
+        return new Response(
+            JSON.stringify(sent.map((c: { id: number }) => ({ jsonrpc: "2.0", id: c.id, result: reply(c.id + 1) }))),
+        );
+    };
+
+    test("recovers after two failed requests", async () => {
+        let calls = 0;
+        const data = await readAnalytics({
+            retryDelays: [0, 0],
+            fetchImpl: async (url: string, init: RequestInit) => {
+                calls++;
+                if (calls <= 2) throw new TypeError("connection reset");
+                return answer(url, init);
+            },
+        });
+        expect(calls).toBe(3);
+        expect(data.sessionCount).toBe(205n);
+    });
+
+    test("gives up after three attempts with the last error", async () => {
+        let calls = 0;
+        const read = readAnalytics({
+            retryDelays: [0, 0],
+            fetchImpl: async () => {
+                calls++;
+                return new Response("", { status: 503 });
+            },
+        });
+        await expect(read).rejects.toThrow("RPC answered 503");
+        expect(calls).toBe(3);
+    });
+});
+
 describe("session portraits match what /onchain-analytics/[hash] drew", () => {
     const goldens: Array<[string, number, string]> = [
         [

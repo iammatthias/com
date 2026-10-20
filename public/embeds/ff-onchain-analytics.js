@@ -75,7 +75,19 @@ export function topEvents(tally, limit = 3) {
     return [...tally].sort((a, b) => b.count - a.count).slice(0, limit);
 }
 
-export async function readAnalytics({ contract = CONTRACT, rpc = RPC, fetchImpl = fetch } = {}) {
+export async function readAnalytics({ retryDelays = [400, 1600], ...options } = {}) {
+    for (let attempt = 0; ; attempt++) {
+        try {
+            return await readOnce(options);
+        } catch (error) {
+            const delay = retryDelays[attempt];
+            if (delay === undefined) throw error;
+            await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+    }
+}
+
+async function readOnce({ contract = CONTRACT, rpc = RPC, fetchImpl = fetch } = {}) {
     const keys = Object.keys(SELECTORS);
     const res = await fetchImpl(rpc, {
         method: "POST",
@@ -259,6 +271,7 @@ td,summary{-webkit-hyphens:manual;hyphens:manual}
 p,h3{margin:0}
 h3{font:inherit;font-weight:600}
 .note{color:var(--oa-muted)}
+button{align-self:flex-start;font:inherit;color:inherit;background:none;border:1px solid var(--oa-rule);border-radius:999px;padding:.25em .9em;cursor:pointer}
 a{color:inherit;text-underline-offset:.2em}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 th,td{padding:.4em 0;text-align:left;border-bottom:1px solid var(--oa-rule);vertical-align:top}
@@ -331,11 +344,20 @@ export class OnchainAnalyticsElement extends ElementBase {
         style.textContent = STYLE;
         const body = el("div", { class: "oa", "aria-live": "polite" }, el("p", { class: "note" }, "Reading the contract on Base Sepolia…"));
         root.append(style, body);
+        this.#read(body);
+    }
+
+    #read(body) {
         const contract = this.getAttribute("contract") || CONTRACT;
         readAnalytics({ contract, rpc: this.getAttribute("rpc") || RPC })
             .then((data) => this.#show(body, data))
             .catch(() => {
-                body.replaceChildren(el("p", { class: "note" }, "The chain didn't answer. The data lives in ", contractLink(contract), "."));
+                const retry = el("button", { type: "button" }, "Try again");
+                retry.addEventListener("click", () => {
+                    body.replaceChildren(el("p", { class: "note" }, "Reading the contract on Base Sepolia…"));
+                    this.#read(body);
+                });
+                body.replaceChildren(el("p", { class: "note" }, "The chain didn't answer. The data lives in ", contractLink(contract), ". "), retry);
             });
     }
 
