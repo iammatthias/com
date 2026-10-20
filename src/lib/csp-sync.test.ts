@@ -52,7 +52,7 @@ describe("the two Content-Security-Policy copies stay in sync", () => {
         for (const origin of [
             "https://ethereum-rpc.publicnode.com",
             "https://cloudflare-eth.com",
-            "https://conet.fm",
+            "https://blobs.farfield.systems",
         ]) {
             expect(connect.has(origin)).toBe(true);
         }

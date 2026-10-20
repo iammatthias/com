@@ -117,8 +117,8 @@ src/lib/doc-components/    <ff-*> tags in Farfield bodies (reveal, tuner); each
                            declares its site, feed, markdown, and text forms
 src/components/DocArticle.astro   one document, shared by the page and the probe
 src/dev-routes/doc-probe.astro    dev only: /internal/doc?file=/path/to/draft.md
-src/vendor/conet-tuner/    conet.fm's <conet-tuner> element, copied verbatim
-                           from ~/Developer/number-station/web/dist/embed.js
+public/embeds/             dependency-free <ff-*> elements, loaded on demand; ff-tuner
+                           pages through a finished CONET Station recording (a JSONL blob)
 src/lib/azulejo-cap.ts     cid-seeded drop-cap tile generator
 scripts/agent-check.mjs    the pre-deploy gate
 scripts/build-diagrams.mjs one self-contained pele renderer per diagram type,

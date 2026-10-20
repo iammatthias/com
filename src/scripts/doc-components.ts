@@ -1,10 +1,11 @@
 import { ONCHAIN_ANALYTICS_EMBED } from "@lib/doc-components/onchain-analytics";
+import { TUNER_EMBED } from "@lib/doc-components/tuner";
+import { importWithRetry } from "@lib/import-with-retry";
 
 const LOADERS: Record<string, () => Promise<unknown>> = {
-    "ff-tuner": () => import("../vendor/conet-tuner/embed.js"),
+    "ff-tuner": () => importWithRetry(TUNER_EMBED),
     "ff-nothing": () => import("./nothing-client"),
-    "ff-onchain-analytics": () =>
-        import(/* @vite-ignore */ new URL(ONCHAIN_ANALYTICS_EMBED, location.origin).href),
+    "ff-onchain-analytics": () => importWithRetry(ONCHAIN_ANALYTICS_EMBED),
     ".series-tile--live": () => import("./live-tiles"),
 };
 

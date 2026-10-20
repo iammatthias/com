@@ -1,28 +1,51 @@
-import type { DocComponent } from "./types";
+import { escapeAttr, escapeHtml } from "../format";
+import type { ComponentProps, DocComponent } from "./types";
 
-const CONET_ORIGIN = "https://conet.fm";
-const LINK_TEXT = "Open the CONET tuner on conet.fm";
+export const TUNER_EMBED = "/embeds/ff-tuner.js";
+
+const BLOBS = "https://blobs.farfield.systems/blobs/";
+const EXPLORERS: Record<string, string> = { base: "https://basescan.org" };
+
+function recording(props: ComponentProps) {
+    const src = props.src ?? "";
+    const station = props.station ?? "";
+    const explorer = EXPLORERS[props.chain ?? "base"] ?? EXPLORERS.base;
+    return {
+        props,
+        url: src.startsWith("blob://") ? BLOBS + src.slice("blob://".length) : src,
+        stationUrl: `${explorer}/address/${station}`,
+        label: `Station ${props["station-id"] ?? ""}`.trim(),
+    };
+}
 
 export const tuner: DocComponent = {
     name: "ff-tuner",
 
-    render(): string {
+    render(props): string {
+        const r = recording(props);
+        const attrs = ["src", "station", "station-id", "chain"]
+            .filter((name) => props[name])
+            .map((name) => ` ${name}="${escapeAttr(props[name])}"`)
+            .join("");
         return (
-            `<ff-tuner class="ff-tuner"><conet-tuner>` +
-            `<p class="ff-tuner-fallback"><a href="${CONET_ORIGIN}" rel="noopener">${LINK_TEXT}</a></p>` +
-            `</conet-tuner></ff-tuner>`
+            `<ff-tuner class="ff-tuner"${attrs}>` +
+            `<p class="ff-tuner-fallback"><a href="${escapeAttr(r.url)}" rel="noopener">Download the ${escapeHtml(r.label)} recording as JSONL</a>, ` +
+            `or read <a href="${escapeAttr(r.stationUrl)}" rel="noopener">the Station on the block explorer</a>.</p>` +
+            `</ff-tuner>`
         );
     },
 
-    feed(): string {
-        return `<p><a href="${CONET_ORIGIN}">${LINK_TEXT}</a></p>`;
+    feed(props): string {
+        const r = recording(props);
+        return `<p><a href="${escapeAttr(r.url)}">Download the ${escapeHtml(r.label)} recording as JSONL</a></p>`;
     },
 
-    markdown(): string {
-        return `[${LINK_TEXT}](${CONET_ORIGIN})`;
+    markdown(props): string {
+        const r = recording(props);
+        return `[${r.label} recording, one transmission per line (JSONL)](${r.url}) · [the Station on the block explorer](${r.stationUrl})`;
     },
 
-    text(): string {
-        return "[live CONET tuner]";
+    text(props): string {
+        return `[${recording(props).label} recording]`;
     },
 };
