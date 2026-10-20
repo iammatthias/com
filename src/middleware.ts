@@ -16,7 +16,7 @@ const CSP = [
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https://wsrv.nl https://blobs.farfield.systems",
     "media-src 'self' https://blobs.farfield.systems",
-    "connect-src 'self' https://sepolia.base.org https://blobs.farfield.systems https://ethereum-rpc.publicnode.com https://cloudflare-eth.com https://cloudflareinsights.com",
+    "connect-src 'self' https://blobs.farfield.systems https://ethereum-rpc.publicnode.com https://cloudflare-eth.com https://cloudflareinsights.com",
     "font-src 'self'",
     "worker-src 'self'",
     "object-src 'none'",

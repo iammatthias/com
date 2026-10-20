@@ -1,3 +1,4 @@
+import { escapeAttr } from "../format";
 import type { DocComponent } from "./types";
 
 export const ONCHAIN_ANALYTICS_EMBED = "/embeds/ff-onchain-analytics.js";
@@ -9,9 +10,10 @@ const LINK_TEXT = "Read the onchain analytics contract on Basescan";
 export const onchainAnalytics: DocComponent = {
     name: "ff-onchain-analytics",
 
-    render(): string {
+    render(props): string {
+        const src = props.src ? ` src="${escapeAttr(props.src)}"` : "";
         return (
-            `<ff-onchain-analytics class="ff-onchain-analytics">` +
+            `<ff-onchain-analytics class="ff-onchain-analytics"${src}>` +
             `<p class="ff-onchain-analytics-fallback"><a href="${CONTRACT_URL}" rel="noopener">${LINK_TEXT}</a></p>` +
             `</ff-onchain-analytics>`
         );

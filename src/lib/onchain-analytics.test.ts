@@ -2,14 +2,18 @@ import { describe, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
 import { decodeFunctionResult, parseAbi } from "viem";
 import rpc from "./__fixtures__/onchain-analytics-rpc.json";
+import { readFileSync } from "node:fs";
 import {
     artworkSvg,
-    decodeBytes32Array,
-    decodeTally,
-    decodeUint,
+    blobUrl,
+    monthYear,
+    parseRecord,
     readAnalytics,
+    summarize,
+    tally,
     topPages,
 } from "../../public/embeds/ff-onchain-analytics.js";
+import { onchainAnalytics } from "./doc-components/onchain-analytics";
 
 const abi = parseAbi([
     "function getSessionCount() view returns (uint256)",
@@ -19,93 +23,98 @@ const abi = parseAbi([
 ]);
 
 const reply = (id: number) => rpc.find((r) => r.id === id)!.result as `0x${string}`;
+const record = readFileSync(new URL("./__fixtures__/onchain-analytics.jsonl", import.meta.url), "utf8");
+const rows = parseRecord(record);
+const CID = "bafkreiekwdorblbyizygzxsxusogxpe3z7zkgv6tlccwadshmannyntb4q";
 
-function viemTally(functionName: "getAllPageViews" | "getAllEvents", data: `0x${string}`) {
-    const [labels, counts, stamps] = decodeFunctionResult({ abi, functionName, data });
-    return labels.map((label, i) => ({ label, count: Number(counts[i]), last: Number(stamps[i]) }));
+function contractTally(functionName: "getAllPageViews" | "getAllEvents", data: `0x${string}`) {
+    const [labels, counts, firstSeen] = decodeFunctionResult({ abi, functionName, data });
+    return labels.map((label, i) => ({ label, count: Number(counts[i]), first: Number(firstSeen[i]) }));
 }
 
-describe("ABI decoding of the stopped analytics contract", () => {
-    test("session count matches viem", () => {
-        const data = reply(1);
-        expect(decodeUint(data)).toBe(decodeFunctionResult({ abi, functionName: "getSessionCount", data }));
-        expect(decodeUint(data)).toBe(205n);
+describe("the JSONL record agrees with the stopped contract's own tallies", () => {
+    test("one session line per session, in the contract's order", () => {
+        const ids = decodeFunctionResult({ abi, functionName: "getAllSessionIds", data: reply(2) }).map((id) => id.toLowerCase());
+        expect(summarize(rows).sessionIds).toEqual(ids);
+        expect(summarize(rows).sessionCount).toBe(Number(decodeFunctionResult({ abi, functionName: "getSessionCount", data: reply(1) })));
     });
 
-    test("session ids match viem", () => {
-        const data = reply(2);
-        expect(decodeBytes32Array(data)).toEqual([
-            ...decodeFunctionResult({ abi, functionName: "getAllSessionIds", data }),
+    test("every page path, its count and first view match", () => {
+        expect(tally(rows, "pageview", "path")).toEqual(contractTally("getAllPageViews", reply(3)));
+    });
+
+    test("every event, its count and first sighting match", () => {
+        expect(tally(rows, "event", "name")).toEqual(contractTally("getAllEvents", reply(4)));
+    });
+
+    test("the record spans July to November 2024", () => {
+        expect(summarize(rows).span.map(monthYear)).toEqual(["July 2024", "November 2024"]);
+    });
+
+    test("the summary shows the busiest pages without the test pages", () => {
+        expect(summarize(rows).pages.map((p) => [p.label, p.count])).toEqual([
+            ["/", 769],
+            ["/onchain-analytics", 167],
+            ["/notes/1720542994688-starting-a-spice-company", 54],
+            ["/art", 37],
+            ["/posts", 32],
+        ]);
+        expect(summarize(rows).events.map((e) => [e.label, e.count])).toEqual([
+            ["zoomOpen", 14],
+            ["zoomClose", 13],
+            ["share", 1],
         ]);
     });
 
-    test("page views and events match viem", () => {
-        expect(decodeTally(reply(3))).toEqual(viemTally("getAllPageViews", reply(3)));
-        expect(decodeTally(reply(4))).toEqual(viemTally("getAllEvents", reply(4)));
-    });
-
     test("top pages drop the test pages", () => {
-        const tally = [
-            { label: "/test", count: 99, last: 0 },
-            { label: "/posts/1546329600000-markdown-test", count: 98, last: 0 },
-            { label: "/a", count: 3, last: 0 },
-            { label: "/b", count: 7, last: 0 },
+        const sample = [
+            { label: "/test", count: 99, first: 0 },
+            { label: "/posts/1546329600000-markdown-test", count: 98, first: 0 },
+            { label: "/a", count: 3, first: 0 },
+            { label: "/b", count: 7, first: 0 },
         ];
-        expect(topPages(tally).map((r) => r.label)).toEqual(["/b", "/a"]);
-    });
-
-    test("readAnalytics batches one request and decodes it", async () => {
-        const calls: string[] = [];
-        const data = await readAnalytics({
-            fetchImpl: async (_url: string, init: RequestInit) => {
-                const sent = JSON.parse(String(init.body));
-                calls.push(...sent.map((c: { params: [{ data: string }] }) => c.params[0].data));
-                return new Response(
-                    JSON.stringify(sent.map((c: { id: number }) => ({ jsonrpc: "2.0", id: c.id, result: reply(c.id + 1) }))),
-                );
-            },
-        });
-        expect(calls).toEqual(["0x6e6734bf", "0x1200d5a6", "0x3b325ffd", "0xc27a500d"]);
-        expect(data.sessionCount).toBe(205n);
-        expect(data.sessionIds).toHaveLength(205);
-        expect(data.pages).toHaveLength(5);
-        expect(data.events).toHaveLength(3);
+        expect(topPages(sample).map((r) => r.label)).toEqual(["/b", "/a"]);
     });
 });
 
-describe("readAnalytics when the RPC drops requests", () => {
-    const answer = async (_url: string, init: RequestInit) => {
-        const sent = JSON.parse(String(init.body));
-        return new Response(
-            JSON.stringify(sent.map((c: { id: number }) => ({ jsonrpc: "2.0", id: c.id, result: reply(c.id + 1) }))),
-        );
-    };
-
+describe("readAnalytics when the record fails to load", () => {
     test("recovers after two failed requests", async () => {
         let calls = 0;
         const data = await readAnalytics({
+            src: `blob://${CID}`,
             retryDelays: [0, 0],
-            fetchImpl: async (url: string, init: RequestInit) => {
+            fetchImpl: async (url: string) => {
                 calls++;
+                expect(url).toBe(`https://blobs.farfield.systems/blobs/${CID}`);
                 if (calls <= 2) throw new TypeError("connection reset");
-                return answer(url, init);
+                return new Response(record);
             },
         });
         expect(calls).toBe(3);
-        expect(data.sessionCount).toBe(205n);
+        expect(data.sessionCount).toBe(205);
     });
 
     test("gives up after three attempts with the last error", async () => {
         let calls = 0;
         const read = readAnalytics({
+            src: `blob://${CID}`,
             retryDelays: [0, 0],
             fetchImpl: async () => {
                 calls++;
                 return new Response("", { status: 503 });
             },
         });
-        await expect(read).rejects.toThrow("RPC answered 503");
+        await expect(read).rejects.toThrow("record answered 503");
         expect(calls).toBe(3);
+    });
+
+    test("blob links resolve to the blobs host", () => {
+        expect(blobUrl(`blob://${CID}`)).toBe(`https://blobs.farfield.systems/blobs/${CID}`);
+    });
+
+    test("the page element carries an escaped src", () => {
+        const html = onchainAnalytics.render({ src: `blob://x" onload="y` }, "", async (s) => s) as string;
+        expect(html).toContain(`src="blob://x&quot; onload=&quot;y"`);
     });
 });
 

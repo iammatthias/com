@@ -1,121 +1,71 @@
 export const CONTRACT = "0x29867a886F96e84196fa47DEe2Fb4a5853412C03";
-export const RPC = "https://sepolia.base.org";
 export const EXPLORER = "https://sepolia.basescan.org";
 export const HIDDEN_PAGES = new Set(["/test", "/posts/1546329600000-markdown-test"]);
-
-const SELECTORS = {
-    sessionCount: "0x6e6734bf",
-    sessionIds: "0x1200d5a6",
-    pageViews: "0x3b325ffd",
-    events: "0xc27a500d",
-};
+const BLOBS = "https://blobs.farfield.systems/blobs/";
 
 const HASH_RE = /^0x[0-9a-f]{64}$/i;
 
-function words(hex) {
-    const body = hex.startsWith("0x") ? hex.slice(2) : hex;
-    return (byteOffset) => BigInt(`0x${body.slice(byteOffset * 2, byteOffset * 2 + 64)}`);
+export function blobUrl(src) {
+    return src.startsWith("blob://") ? BLOBS + src.slice("blob://".length) : src;
 }
 
-function bytesAt(hex, byteOffset, length) {
-    const body = hex.startsWith("0x") ? hex.slice(2) : hex;
-    const out = new Uint8Array(length);
-    for (let i = 0; i < length; i++) {
-        out[i] = parseInt(body.slice((byteOffset + i) * 2, (byteOffset + i) * 2 + 2), 16);
+export function parseRecord(text) {
+    return text
+        .split("\n")
+        .filter((line) => line.trim())
+        .map((line) => JSON.parse(line))
+        .sort((a, b) => a.block - b.block || a.logIndex - b.logIndex);
+}
+
+export function tally(rows, type, key) {
+    const byLabel = new Map();
+    for (const row of rows) {
+        if (row.type !== type) continue;
+        const entry = byLabel.get(row[key]) ?? { label: row[key], count: 0, first: row.timestamp };
+        entry.count++;
+        byLabel.set(row[key], entry);
     }
-    return out;
+    return [...byLabel.values()];
 }
 
-export function decodeUint(hex) {
-    return words(hex)(0);
-}
-
-export function decodeBytes32Array(hex) {
-    const body = hex.startsWith("0x") ? hex.slice(2) : hex;
-    const word = words(hex);
-    const start = Number(word(0));
-    const count = Number(word(start));
-    return Array.from({ length: count }, (_, i) => {
-        const at = (start + 32 + i * 32) * 2;
-        return `0x${body.slice(at, at + 64)}`;
-    });
-}
-
-function uintArrayAt(word, start) {
-    const count = Number(word(start));
-    return Array.from({ length: count }, (_, i) => word(start + 32 + i * 32));
-}
-
-function stringArrayAt(hex, word, start) {
-    const count = Number(word(start));
-    const base = start + 32;
-    const utf8 = new TextDecoder();
-    return Array.from({ length: count }, (_, i) => {
-        const at = base + Number(word(base + i * 32));
-        return utf8.decode(bytesAt(hex, at + 32, Number(word(at))));
-    });
-}
-
-export function decodeTally(hex) {
-    const word = words(hex);
-    const labels = stringArrayAt(hex, word, Number(word(0)));
-    const counts = uintArrayAt(word, Number(word(32)));
-    const stamps = uintArrayAt(word, Number(word(64)));
-    return labels.map((label, i) => ({ label, count: Number(counts[i]), last: Number(stamps[i]) }));
-}
-
-export function topPages(tally, limit = 5) {
-    return tally
+export function topPages(rows, limit = 5) {
+    return rows
         .filter((row) => !HIDDEN_PAGES.has(row.label))
         .sort((a, b) => b.count - a.count)
         .slice(0, limit);
 }
 
-export function topEvents(tally, limit = 3) {
-    return [...tally].sort((a, b) => b.count - a.count).slice(0, limit);
+export function topEvents(rows, limit = 3) {
+    return [...rows].sort((a, b) => b.count - a.count).slice(0, limit);
 }
 
-export async function readAnalytics({ retryDelays = [400, 1600], ...options } = {}) {
+export function summarize(rows) {
+    const sessionIds = rows.filter((row) => row.type === "session").map((row) => row.session);
+    return {
+        sessionCount: sessionIds.length,
+        sessionIds,
+        span: [rows[0]?.timestamp, rows.at(-1)?.timestamp],
+        pages: topPages(tally(rows, "pageview", "path")),
+        events: topEvents(tally(rows, "event", "name")),
+    };
+}
+
+export function monthYear(seconds) {
+    return new Date(seconds * 1000).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+export async function readAnalytics({ src, fetchImpl = fetch, retryDelays = [400, 1600] }) {
     for (let attempt = 0; ; attempt++) {
         try {
-            return await readOnce(options);
+            const res = await fetchImpl(blobUrl(src));
+            if (!res.ok) throw new Error(`record answered ${res.status}`);
+            return summarize(parseRecord(await res.text()));
         } catch (error) {
             const delay = retryDelays[attempt];
             if (delay === undefined) throw error;
             await new Promise((resolve) => setTimeout(resolve, delay));
         }
     }
-}
-
-async function readOnce({ contract = CONTRACT, rpc = RPC, fetchImpl = fetch } = {}) {
-    const keys = Object.keys(SELECTORS);
-    const res = await fetchImpl(rpc, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(
-            keys.map((key, i) => ({
-                jsonrpc: "2.0",
-                id: i,
-                method: "eth_call",
-                params: [{ to: contract, data: SELECTORS[key] }, "latest"],
-            })),
-        ),
-    });
-    if (!res.ok) throw new Error(`RPC answered ${res.status}`);
-    const replies = await res.json();
-    const result = (key) => {
-        const reply = replies.find((r) => r.id === keys.indexOf(key));
-        if (!reply || reply.error || typeof reply.result !== "string") {
-            throw new Error(reply?.error?.message ?? `no result for ${key}`);
-        }
-        return reply.result;
-    };
-    return {
-        sessionCount: decodeUint(result("sessionCount")),
-        sessionIds: decodeBytes32Array(result("sessionIds")),
-        pages: topPages(decodeTally(result("pageViews"))),
-        events: topEvents(decodeTally(result("events"))),
-    };
 }
 
 function hashToNumbers(hash) {
@@ -342,28 +292,34 @@ export class OnchainAnalyticsElement extends ElementBase {
         const root = this.attachShadow({ mode: "open" });
         const style = el("style");
         style.textContent = STYLE;
-        const body = el("div", { class: "oa", "aria-live": "polite" }, el("p", { class: "note" }, "Reading the contract on Base Sepolia…"));
+        const body = el("div", { class: "oa", "aria-live": "polite" }, el("p", { class: "note" }, "Loading the record…"));
         root.append(style, body);
         this.#read(body);
     }
 
     #read(body) {
         const contract = this.getAttribute("contract") || CONTRACT;
-        readAnalytics({ contract, rpc: this.getAttribute("rpc") || RPC })
+        readAnalytics({ src: this.getAttribute("src") ?? "" })
             .then((data) => this.#show(body, data))
             .catch(() => {
                 const retry = el("button", { type: "button" }, "Try again");
                 retry.addEventListener("click", () => {
-                    body.replaceChildren(el("p", { class: "note" }, "Reading the contract on Base Sepolia…"));
+                    body.replaceChildren(el("p", { class: "note" }, "Loading the record…"));
                     this.#read(body);
                 });
-                body.replaceChildren(el("p", { class: "note" }, "The chain didn't answer. The data lives in ", contractLink(contract), ". "), retry);
+                body.replaceChildren(el("p", { class: "note" }, "The record didn't load. Every entry is still in ", contractLink(contract), ". "), retry);
             });
     }
 
     #show(body, data) {
         body.replaceChildren(
-            el("p", {}, `${data.sessionCount} unique sessions have been recorded.`),
+            el("p", {}, `${data.sessionCount} unique sessions were recorded between ${monthYear(data.span[0])} and ${monthYear(data.span[1])}.`),
+            el(
+                "p",
+                { class: "note" },
+                el("a", { href: blobUrl(this.getAttribute("src") ?? ""), rel: "noopener" }, "Download every session, page view and event as JSONL"),
+                ".",
+            ),
             tallyTable("Top 5 pages", "Views", data.pages),
             tallyTable("Top events", "Count", data.events),
             el("h3", {}, "Session hashes"),
