@@ -13,14 +13,22 @@ export async function renderDiagrams(): Promise<void> {
             const source = code.textContent ?? "";
             const figure = document.createElement("figure");
             figure.className = "diagram-figure";
-            pre.replaceWith(figure);
-            await mountAsync(figure, source, {
-                zoom: false,
-                onError: (err) => {
-                    console.error("diagram render failed", err);
-                    figure.replaceChildren(pre);
-                },
-            });
+            pre.after(figure);
+            const mounted = await mountAsync(figure, source);
+            if (mounted.error) {
+                mounted.destroy();
+                figure.remove();
+                console.error("diagram render failed", mounted.error);
+                return;
+            }
+            pre.remove();
+            if (!figure.querySelector("svg")?.hasAttribute("aria-labelledby")) {
+                figure.setAttribute("role", "img");
+                figure.setAttribute(
+                    "aria-label",
+                    `Diagram${mounted.result ? `: ${mounted.result.type}` : ""}`,
+                );
+            }
         }),
     );
 }
