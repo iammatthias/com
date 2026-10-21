@@ -30,6 +30,7 @@ const IMAGE_HEADERS = {
     // each edge keeps its own copy (the site Worker would otherwise mark it no-store)
     "Cloudflare-CDN-Cache-Control": "public, max-age=31536000, immutable",
     "X-Content-Type-Options": "nosniff",
+    "Access-Control-Allow-Origin": "*",
 };
 const kvKey = (sig: string) => `og:${CARD_VERSION}:${sig}`;
 const FALLBACK_KEY = `og:${CARD_VERSION}:fallback`;

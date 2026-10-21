@@ -191,6 +191,10 @@ export function headHtml(head: PageHead, card?: string): string {
     }
     tags.push(
         `<meta name="twitter:card" content="summary_large_image">`,
+        `<meta name="twitter:title" content="${a(ogTitle)}">`,
+        `<meta name="twitter:description" content="${a(description)}">`,
+        `<meta name="twitter:image" content="${a(ogImageURL)}">`,
+        `<meta name="twitter:image:alt" content="${a(ogTitle)}">`,
         `<script type="application/ld+json">${jsonLd(head, canonical, ogTitle, description, ogImageURL)}</script>`,
         `<link rel="alternate" type="application/rss+xml" title="${SITE_NAME} RSS" href="/rss.xml">`,
         `<link rel="sitemap" type="application/xml" href="/sitemap.xml">`,
