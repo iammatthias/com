@@ -92,14 +92,16 @@ export async function verifyCard(spec: CardSpec, sig: string, key: string): Prom
     return diff === 0;
 }
 
+const CARD_HOSTS: Record<string, string> = { "https://iammatthias.com": "https://og.iammatthias.com" };
+
 /**
- * The card's URL on `origin` (the request's own, so staging cards are staging's), or the old
- * og.iammatthias.com image when no signing key is configured.
+ * The card's URL on the og Worker's own host for the live site, or on `origin` elsewhere (so
+ * staging cards are staging's). Undefined when no signing key is configured.
  */
 export async function cardImageUrl(head: PageHead, origin: string): Promise<string | undefined> {
     const key = runtimeEnv()?.OG_SIGNING_KEY;
     if (typeof key !== "string" || !key) return undefined;
     const spec = cardSpec(head);
     const sig = await signCard(spec, key);
-    return `${origin}/og/${sig}.jpg?${cardQuery(spec)}`;
+    return `${CARD_HOSTS[origin] ?? origin}/og/${sig}.jpg?${cardQuery(spec)}`;
 }

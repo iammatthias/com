@@ -28,8 +28,13 @@ describe("cardSpec", () => {
     test("bogus paths get the home card's URL, not one each", async () => {
         setRuntimeEnv({ OG_SIGNING_KEY: "k" });
         const home = await cardImageUrl({ path: "/" }, "https://iammatthias.com");
-        expect(home).toMatch(/^https:\/\/iammatthias\.com\/og\/[0-9a-f]{24}\.jpg\?kind=home&seed=1592594996$/);
+        expect(home).toMatch(/^https:\/\/og\.iammatthias\.com\/og\/[0-9a-f]{24}\.jpg\?kind=home&seed=1592594996$/);
         expect(await cardImageUrl(notFoundPage("/wp-admin").head, "https://iammatthias.com")).toBe(home!);
         expect(await cardImageUrl(notFoundPage("/.env").head, "https://iammatthias.com")).toBe(home!);
+    });
+
+    test("staging and local origins keep their cards on their own host", async () => {
+        setRuntimeEnv({ OG_SIGNING_KEY: "k" });
+        expect(await cardImageUrl({ path: "/" }, "http://127.0.0.1:8796")).toMatch(/^http:\/\/127\.0\.0\.1:8796\/og\/[0-9a-f]{24}\.jpg\?/);
     });
 });
