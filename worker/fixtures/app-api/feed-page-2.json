@@ -1,0 +1,230 @@
+{
+  "kind": "feed",
+  "page": 2,
+  "pages": 2,
+  "total": 24,
+  "posts": [
+    {
+      "rkey": "j195hlbso6",
+      "cid": "bafkreib6ituxlmzhg4y7p6jbdygdycehhxm22lviz2vmecfyfeqcyaiq4u",
+      "renderKey": "bafkreib6ituxlmzhg4y7p6jbdygdycehhxm22lviz2vmecfyfeqcyaiq4u",
+      "href": "/feed/j195hlbso6",
+      "body": "![](blob://bafkreieczsyvcznr4flrbtrpxj65lravyzvsw3eo3o4fjerb3ojlhrscoi)",
+      "createdAt": "2026-07-13T22:30:59Z",
+      "updatedAt": "2026-09-28T15:23:22Z",
+      "tags": [],
+      "media": {
+        "bafkreieczsyvcznr4flrbtrpxj65lravyzvsw3eo3o4fjerb3ojlhrscoi": {
+          "mime": "image/jpeg",
+          "width": 1536,
+          "height": 2048,
+          "dominantColor": "#73767f",
+          "blurhash": "LZF=~_oLD%WB~qofRQoL9Fofxut6",
+          "thumbCid": "bafkreic7h4dtmj5t6cv6ssdq4iuvw4gikgcshpfskidyfp65edknkriyxy"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "2wk32zvipt",
+      "cid": "bafkreifmpe5fv3w4sa4g5gldfsghev4qedxycyem7f2wa4trm4bsd3igva",
+      "renderKey": "bafkreifmpe5fv3w4sa4g5gldfsghev4qedxycyem7f2wa4trm4bsd3igva",
+      "href": "/feed/2wk32zvipt",
+      "body": "After a brief stint experimenting with Hermes on my homelab server, I've ripped it out and migrated it to an [Autonomous Intern](https://iammatthias.com/posts/1781835006151-intern). The agent running on my homelab is now just bog standard Claude Code that I can talk to via SSH over Tailscale. \r\n\r\nThe whole set up deserves a blog post of its own at some point. The gist is that I was exploring the idea of an agent harness as a c-panel. When it works, it works well, but ultimately Claude Code running at root with Opus is just a nicer system for handling Caddy + Docker + Tailscale on Arch.",
+      "createdAt": "2026-07-02T17:05:49Z",
+      "updatedAt": "2026-07-02T17:05:49Z",
+      "tags": [],
+      "media": {},
+      "series": {}
+    },
+    {
+      "rkey": "6isbjo32b9",
+      "cid": "bafkreihw32mwurdburqjoy2fgniztxv4l4t7j2ka3o3ujgfnp7nyjgyrqi",
+      "renderKey": "bafkreihw32mwurdburqjoy2fgniztxv4l4t7j2ka3o3ujgfnp7nyjgyrqi",
+      "href": "/feed/6isbjo32b9",
+      "body": "Monterey Bay Aquarium is such a magical place.  \n\n![](blob://bafkreibwen3nmbw5qr2qmfqz7ppmeptcfiszyjqt4tylpcfvsepv2frupa)\n![](blob://bafkreigg4zep2izx4djt56nbvdpbnknefhnrflrgiabuhopqdas6e2u5hy)\n![](blob://bafkreiep4crwojtxudhyqnyognmp3lf3ryhxem36elglojlwveya63cl6u)",
+      "createdAt": "2026-06-26T19:31:47Z",
+      "updatedAt": "2026-06-26T19:31:47Z",
+      "tags": [],
+      "media": {
+        "bafkreibwen3nmbw5qr2qmfqz7ppmeptcfiszyjqt4tylpcfvsepv2frupa": {
+          "mime": "image/jpeg",
+          "width": 1080,
+          "height": 1620,
+          "dominantColor": "#739c92",
+          "blurhash": "LrG]:KI^M{nh~pR,WBjuiws,kCbF",
+          "thumbCid": "bafkreib7yevmrtjooxrz2gebu3oftzya5dg3pdij3fxk7tloedwyidu4yu"
+        },
+        "bafkreigg4zep2izx4djt56nbvdpbnknefhnrflrgiabuhopqdas6e2u5hy": {
+          "mime": "image/jpeg",
+          "width": 1080,
+          "height": 1620,
+          "dominantColor": "#335b5f",
+          "blurhash": "L985vAL#8~x-=XXBI@nf4TR%xme?",
+          "thumbCid": "bafkreib4uzttbhj3ipsvjy2oibpeqenl44k2qkzbjvfyz3tlymp3435coe"
+        },
+        "bafkreiep4crwojtxudhyqnyognmp3lf3ryhxem36elglojlwveya63cl6u": {
+          "mime": "image/jpeg",
+          "width": 1080,
+          "height": 1620,
+          "dominantColor": "#196ce3",
+          "blurhash": "LN8G05NuE6s7*HSRj2n,D$Sd,8nh",
+          "thumbCid": "bafkreiep7kpr2kmkudr5oxugnk2itqjjuo5hus7b2tbc4bxj25fo6efs6m"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "jzvya4qpzx",
+      "cid": "bafkreigoupqsgfkgx75s7fwg54hcdkvgxiecwlpa4hexpg3cmyhdce4oay",
+      "renderKey": "bafkreigoupqsgfkgx75s7fwg54hcdkvgxiecwlpa4hexpg3cmyhdce4oay",
+      "href": "/feed/jzvya4qpzx",
+      "body": "Big Trees \n\n![](blob://bafkreibx6zf4ltfwgpwk3xflg7z42jqijtpjc3eunhhsyt5lopbx5bi7fi)\n![](blob://bafkreic5zwy55tbuiw3lbtk2mkbdw5jopf5hfluv75cxmqu6glkfkez5t4)",
+      "createdAt": "2026-06-23T23:31:43Z",
+      "updatedAt": "2026-06-23T23:31:43Z",
+      "tags": [],
+      "media": {
+        "bafkreibx6zf4ltfwgpwk3xflg7z42jqijtpjc3eunhhsyt5lopbx5bi7fi": {
+          "mime": "image/jpeg",
+          "width": 1620,
+          "height": 1080,
+          "dominantColor": "#635b46",
+          "blurhash": "LVE{LZjr4moI%iWAIUWC_4WBITob",
+          "thumbCid": "bafkreib7uf2g5r25ze46j5wcqfguq3mul2mrnydzt42yjwuegogj4maaka"
+        },
+        "bafkreic5zwy55tbuiw3lbtk2mkbdw5jopf5hfluv75cxmqu6glkfkez5t4": {
+          "mime": "image/jpeg",
+          "width": 1080,
+          "height": 1620,
+          "dominantColor": "#4d504e",
+          "blurhash": "LaBzRvV?I9of%%R%ROoLtVWAV?j?",
+          "thumbCid": "bafkreicyp3xplgccnlfpofe2vqxt2oqzuivljwucwlmnjoslgeejnc6csy"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "f9vc1tisl5",
+      "cid": "bafkreidhm5d2btb4yshw2avarvyxjwhbeod3yt7peohloawuunbx3p43ei",
+      "renderKey": "bafkreidhm5d2btb4yshw2avarvyxjwhbeod3yt7peohloawuunbx3p43ei",
+      "href": "/feed/f9vc1tisl5",
+      "body": "Almost heaven\n\n![](blob://bafkreidg3tfvjlocbq3dcklknapucxx65sihao4k2ouoyp5suzvlpgh5f4)",
+      "createdAt": "2026-06-22T16:25:47Z",
+      "updatedAt": "2026-09-28T15:23:21Z",
+      "tags": [],
+      "media": {
+        "bafkreidg3tfvjlocbq3dcklknapucxx65sihao4k2ouoyp5suzvlpgh5f4": {
+          "mime": "image/jpeg",
+          "width": 2701,
+          "height": 3602,
+          "dominantColor": "#7591bf",
+          "blurhash": "LWFjEdM{jaf6%jt7ofj[00t7ofay",
+          "thumbCid": "bafkreih6qnkyuudqfizyosrirviarzfu6wuqm5lsb6byqpchd6vqzvj4yu"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "3z20vdhavu",
+      "cid": "bafkreigeg4unzzuw6ie45fzvzgei4cwcdpwfhqherjfjig3p36l2g7oa2y",
+      "renderKey": "bafkreigeg4unzzuw6ie45fzvzgei4cwcdpwfhqherjfjig3p36l2g7oa2y",
+      "href": "/feed/3z20vdhavu",
+      "body": "The Apple Foundation Models work really nicely for local image classification. Finally have a tool that can tag + caption almost 20 years of images in my Lightroom catalog.",
+      "createdAt": "2026-06-16T03:26:36Z",
+      "updatedAt": "2026-06-16T03:26:36Z",
+      "tags": [],
+      "media": {},
+      "series": {}
+    },
+    {
+      "rkey": "6vlpsdorso",
+      "cid": "bafkreicsvoau3ylfjc5bv2dofkdnyng2ofwpnr4tnvihxzx6y4yehh2cwa",
+      "renderKey": "bafkreicsvoau3ylfjc5bv2dofkdnyng2ofwpnr4tnvihxzx6y4yehh2cwa",
+      "href": "/feed/6vlpsdorso",
+      "body": "Of all the self hosted things I've explored recently, I think an OPDS might be the coolest",
+      "createdAt": "2026-06-08T04:06:40Z",
+      "updatedAt": "2026-06-08T04:06:40Z",
+      "tags": [],
+      "media": {},
+      "series": {}
+    },
+    {
+      "rkey": "1e1ieqpi78",
+      "cid": "bafkreifehytxxrm5rzmgtmatw4lmcw244ombs3hcofgl3dv33346hevrvy",
+      "renderKey": "bafkreifehytxxrm5rzmgtmatw4lmcw244ombs3hcofgl3dv33346hevrvy",
+      "href": "/feed/1e1ieqpi78",
+      "body": "Dusting off my Daylight DC-1. Thinking it could make a nice remote agent terminal.",
+      "createdAt": "2026-06-04T03:00:59Z",
+      "updatedAt": "2026-06-04T03:00:59Z",
+      "tags": [],
+      "media": {},
+      "series": {}
+    },
+    {
+      "rkey": "3vqg9fdmc5",
+      "cid": "bafkreig6zgmzvsx3lq6n6zu2lzvhvfphutqhuzjdkmzctw7t6krjwcpkky",
+      "renderKey": "bafkreig6zgmzvsx3lq6n6zu2lzvhvfphutqhuzjdkmzctw7t6krjwcpkky",
+      "href": "/feed/3vqg9fdmc5",
+      "body": "![](blob://bafkreibq7bdz2r34tuv6qe5iwetofmjrit7mjlgnw637jk5mspbubdp4xa)\r\n\r\nMy little brother got married. A beautiful night to cap a beautiful day.",
+      "createdAt": "2026-05-25T05:41:23Z",
+      "updatedAt": "2026-09-28T15:23:21Z",
+      "tags": [],
+      "media": {
+        "bafkreibq7bdz2r34tuv6qe5iwetofmjrit7mjlgnw637jk5mspbubdp4xa": {
+          "mime": "image/jpeg",
+          "width": 3024,
+          "height": 4032,
+          "dominantColor": "#273d5a",
+          "blurhash": "L86k;ujE0LWCZ}bHWCj[02az^%oe",
+          "thumbCid": "bafkreibq2sq5l54zfcp75bmptzvqjiiwinj6p5hp2uedfz52cfa7dexwc4"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "4ayok4kt45",
+      "cid": "bafkreibvqhqgxfdi32pal5gu5my4mfuoh7zbuafl6kywnsl4pt2mkmzbwe",
+      "renderKey": "bafkreibvqhqgxfdi32pal5gu5my4mfuoh7zbuafl6kywnsl4pt2mkmzbwe",
+      "href": "/feed/4ayok4kt45",
+      "body": "Farfield runs on my home server. Alongside it is a Hermes agent. It is probably more accurate to say that Hermes runs Farfield on the server, the agent harness is set up to manage the Caddy + Cloudflare tunnel infra. \r\n\r\nOne of the features that this Hermes agent has is the Claude Code skill. This lets it spin up Claude Code sessions, offloading compute to my oath'ed subscription, rather than raw token spend. \r\n\r\nTo test it out, I had the agent develop a new Farfield app locally. It put together a Photo of the Day calendar, pulling from NASA: https://daily.farfield.systems/photo\r\n\r\nI love this. Not only did it produce a full app in the background while I cooked dinner, it showcased the flexibility of that is developing around Farfield. Personalized software.",
+      "createdAt": "2026-05-19T04:24:33Z",
+      "updatedAt": "2026-08-15T04:19:54Z",
+      "tags": [
+        "farfield",
+        "nasa",
+        "calendar",
+        "software"
+      ],
+      "media": {},
+      "series": {}
+    },
+    {
+      "rkey": "7h39ui9qal",
+      "cid": "bafkreicw3ob37z2gtbm7wi346jsrpe2wy3daiaiqb45ljvzksut5b4yfrq",
+      "renderKey": "bafkreicw3ob37z2gtbm7wi346jsrpe2wy3daiaiqb45ljvzksut5b4yfrq",
+      "href": "/feed/7h39ui9qal",
+      "body": "I like \"feeds\". I was an early Twitter adopter in high school, and the format has stuck with me. \r\n\r\nWhat hasn't stuck is social media. \r\n\r\nAs I try to be more intentional about tending to my personal website, I took a leaf out of my friend [Steve](https://stevedylan.dev/now)'s book and started building some of my own software to solve things I wanted to accomplish on the web. \r\n\r\nOne piece was a new backend for the site you are looking at right now. The posts, the images, even this feed, all managed through some homebrew CRUD.",
+      "createdAt": "2026-05-17T23:16:58Z",
+      "updatedAt": "2026-05-17T23:16:58Z",
+      "tags": [
+        "software",
+        "development",
+        "social media"
+      ],
+      "media": {},
+      "series": {}
+    },
+    {
+      "rkey": "uymw165h6p",
+      "cid": "bafkreiabdwfjy6wf3eemdy5amy5l7htlzzdnf7bq2ujemdkmmihnip5eua",
+      "renderKey": "bafkreiabdwfjy6wf3eemdy5amy5l7htlzzdnf7bq2ujemdkmmihnip5eua",
+      "href": "/feed/uymw165h6p",
+      "body": "hello world",
+      "createdAt": "2026-05-17T19:03:53Z",
+      "updatedAt": "2026-05-17T19:03:53Z",
+      "tags": [],
+      "media": {},
+      "series": {}
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "kind": "now",
+  "title": "Now",
+  "bio": "Hi, I am Matthias.\n\nI'm a photographer who builds software. Most of what I build is for me, and some of it turns out to be useful for other people too.\n\nThis site is my cozy corner of the web. I want a web that's open and personal, so everything here lives on infrastructure I run. You can keep up with my career on my [resume](/resume).\n\nI live in Southern California. When I'm not at my desk I'm usually cooking or out with a camera.",
+  "working": "- Solutions Engineer @ Stablecore\n- Cooking [recipes](/recipes)\n- Photographing [art](/art)",
+  "recent": [
+    {
+      "rkey": "1hmyfx9dfq",
+      "cid": "bafkreibseyr5tdythmygrlvq7xskgbw3lg6ovyn6a2t3tjlzk3ijnt5ezq",
+      "renderKey": "bafkreibseyr5tdythmygrlvq7xskgbw3lg6ovyn6a2t3tjlzk3ijnt5ezq",
+      "href": "/feed/1hmyfx9dfq",
+      "body": "![](blob://bafkreiev7qz4zhusxsjwlpggz4uocvcgjzvvlifrmvdkr2ev7fc2iomewq)\n\n![](blob://bafkreic6yrwwdss4bbver3kiep2qdev2dxd2qr3xhccrvpg4ax4aozwi2i)",
+      "createdAt": "2026-10-09T15:31:11Z",
+      "updatedAt": "2026-10-09T15:31:11Z",
+      "tags": [],
+      "media": {
+        "bafkreiev7qz4zhusxsjwlpggz4uocvcgjzvvlifrmvdkr2ev7fc2iomewq": {
+          "mime": "image/jpeg",
+          "width": 720,
+          "height": 1280,
+          "dominantColor": "#525755",
+          "blurhash": "LBDJbTohrWI9?wIUj?R%8^a0gNyE",
+          "thumbCid": "bafkreidjbvkfnpwqsk6mdzstswrtyuc4dknqg26mo6wqoehh3lb6drzbvq"
+        },
+        "bafkreic6yrwwdss4bbver3kiep2qdev2dxd2qr3xhccrvpg4ax4aozwi2i": {
+          "mime": "image/jpeg",
+          "width": 720,
+          "height": 1280,
+          "dominantColor": "#4c4949",
+          "blurhash": "L5C6ry~V?b$$%54nNen%8_Dit8Ip",
+          "thumbCid": "bafkreigsul3fdis657svnwiuo76kpo4ydpshs73vqwxrycbr3mvwpyavwq"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "4e8x9isp90",
+      "cid": "bafkreicqoouu4wuos43gss34mxhodmnrizharbyp33tsq2lih4xdlt33fi",
+      "renderKey": "bafkreicqoouu4wuos43gss34mxhodmnrizharbyp33tsq2lih4xdlt33fi",
+      "href": "/feed/4e8x9isp90",
+      "body": "![](blob://bafkreifjln3h4a6nwm4imhetcec2z2mvxhau5gmitrrb5z6qyoqpdcxsyy)",
+      "createdAt": "2026-10-09T14:02:48Z",
+      "updatedAt": "2026-10-09T14:02:48Z",
+      "tags": [],
+      "media": {
+        "bafkreifjln3h4a6nwm4imhetcec2z2mvxhau5gmitrrb5z6qyoqpdcxsyy": {
+          "mime": "image/jpeg",
+          "width": 1320,
+          "height": 475,
+          "dominantColor": "#423c4e",
+          "blurhash": "LH9s_B4,xwITt8RjofWBI;awxDkD",
+          "thumbCid": "bafkreid7dfxtvratfmm3wcoywkj6qr7k5mtrzpyvhxlkgzrjzxldr3yzj4"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "5st9l6c3mi",
+      "cid": "bafkreia66d6bjvx3irxpf6wb2kavxv4wc7n3z7krnk65fexaixji5dtaxy",
+      "renderKey": "bafkreia66d6bjvx3irxpf6wb2kavxv4wc7n3z7krnk65fexaixji5dtaxy",
+      "href": "/feed/5st9l6c3mi",
+      "body": "![](blob://bafkreidwz2lnuanogdmlhp3cgl4xqoibyu77awqlwxlfla4fegsiblyazm)",
+      "createdAt": "2026-10-04T04:53:27Z",
+      "updatedAt": "2026-10-04T04:53:27Z",
+      "tags": [],
+      "media": {
+        "bafkreidwz2lnuanogdmlhp3cgl4xqoibyu77awqlwxlfla4fegsiblyazm": {
+          "mime": "image/png",
+          "width": 3364,
+          "height": 4757,
+          "dominantColor": "#efe9da",
+          "blurhash": "L4RyZ#j[~qoeslfQWYfQ_3fQ9FfQ",
+          "thumbCid": "bafkreia7etx7brmi7w44hoj6ifvbxa4js7arywkv6gvegayps6o4isfngm"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "2o8y0wehq3",
+      "cid": "bafkreigdutb2cvkpgwhpjjdy4afswicud73wpy6feqytnbzbnspr7et6ia",
+      "renderKey": "bafkreigdutb2cvkpgwhpjjdy4afswicud73wpy6feqytnbzbnspr7et6ia",
+      "href": "/feed/2o8y0wehq3",
+      "body": "![](blob://bafkreidr44no3c7sbjg46ah3ga5og63cjkqgbi5ftg5p2aoo2rymu4plui)\n\n![](blob://bafkreiblujkuw3av4vkj64aob4w4zqgsh5kiak6a5shmzuz4oewqggf42m)",
+      "createdAt": "2026-10-03T03:51:16Z",
+      "updatedAt": "2026-10-03T03:51:16Z",
+      "tags": [],
+      "media": {
+        "bafkreidr44no3c7sbjg46ah3ga5og63cjkqgbi5ftg5p2aoo2rymu4plui": {
+          "mime": "image/jpeg",
+          "width": 2560,
+          "height": 3840,
+          "dominantColor": "#273a54",
+          "blurhash": "LC7nd}9ZoHay.AM{j=ay5Y$yWXjs",
+          "thumbCid": "bafkreiacevy24rbtdrvovoert6svlyb2qigfefrwdmf7a5admvf3imtdee"
+        },
+        "bafkreiblujkuw3av4vkj64aob4w4zqgsh5kiak6a5shmzuz4oewqggf42m": {
+          "mime": "image/jpeg",
+          "width": 2560,
+          "height": 3840,
+          "dominantColor": "#373e49",
+          "blurhash": "LPA9~UEMjYWVXVf5jsjs0$$~fRj@",
+          "thumbCid": "bafkreieqj4c3vlmhci3m7cqlozlavuiuouzjklnnjozx3jcfb5hclnb4zm"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "3xd3gx877w",
+      "cid": "bafkreiatung5vvmbo5zhusbudebtegwmugp34ivhlw7yl3pigvogdmpkme",
+      "renderKey": "bafkreiatung5vvmbo5zhusbudebtegwmugp34ivhlw7yl3pigvogdmpkme",
+      "href": "/feed/3xd3gx877w",
+      "body": "Plotting self portraits\n\n![](blob://bafkreigz3pjps225t27rlg73gdwmrfcgm7vai6jccicroyqasexkazk3ie)",
+      "createdAt": "2026-09-28T16:34:21Z",
+      "updatedAt": "2026-09-28T16:34:21Z",
+      "tags": [],
+      "media": {
+        "bafkreigz3pjps225t27rlg73gdwmrfcgm7vai6jccicroyqasexkazk3ie": {
+          "mime": "image/jpeg",
+          "width": 3024,
+          "height": 4032,
+          "dominantColor": "#a8afbc",
+          "blurhash": "LTLEd1M|xuof-=9ERit74mWAj]Ri",
+          "thumbCid": "bafkreieodt7u3hdpu4zaxzzmufp7r7iawefqe7fkbmm2wgwvpzf2zzadva"
+        }
+      },
+      "series": {}
+    }
+  ],
+  "findMe": [
+    {
+      "label": "Glass",
+      "href": "https://glass.photo/iam",
+      "username": "@iam"
+    },
+    {
+      "label": "GitHub",
+      "href": "https://github.com/iammatthias",
+      "username": "@iammatthias"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://linkedin.com/in/iammatthias",
+      "username": "@iammatthias"
+    },
+    {
+      "label": "Bluesky",
+      "href": "https://bsky.app/profile/iammatthias.com",
+      "username": "@iammatthias.com"
+    },
+    {
+      "label": "Farcaster",
+      "href": "https://farcaster.xyz/iammatthias",
+      "username": "@iammatthias"
+    },
+    {
+      "label": "Instagram",
+      "href": "https://instagram.com/iammatthias",
+      "username": "@iammatthias"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "com-next-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "scripts/dev.sh",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "agent:check": "node scripts/agent-check.mjs --url http://127.0.0.1:8796",
+    "fixtures": "bun scripts/capture-fixtures.ts http://127.0.0.1:8796",
+    "vectors": "bun scripts/build-search-vectors.ts http://127.0.0.1:8796",
+    "deploy": "scripts/deploy.sh"
+  },
+  "dependencies": {
+    "graphql": "^17",
+    "marked": "^18",
+    "yaml": "^2.9"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261012.1",
+    "@ternlight/base": "0.1.1",
+    "@types/bun": "^1.4.3",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.149.0"
+  }
+}

@@ -1,0 +1,204 @@
+{
+  "kind": "list",
+  "section": {
+    "slug": "posts",
+    "name": "Posts",
+    "description": null,
+    "count": 49
+  },
+  "page": 2,
+  "pages": 5,
+  "items": [
+    {
+      "title": "OpenClaw and the Rabbit R1",
+      "href": "/posts/1774911232779-openclaw-and-the-rabbit-r1",
+      "section": "posts",
+      "publishedAt": "2026-03-30T15:53:00Z",
+      "excerpt": "I got my Rabbit R1 talking to my Pinata-hosted agent. The agent did most of the work.",
+      "tags": [
+        "ai",
+        "pinata",
+        "openclaw",
+        "rabbit-r1",
+        "agents",
+        "hardware"
+      ],
+      "cid": "bafkreifszwgq4woq7hd6hxuotg42hmo2keq27h3vufig52woxgllaooobq"
+    },
+    {
+      "title": "Koios: Memory, Feedback, and Containment",
+      "href": "/posts/1768671170751-koios-memory-feedback-and-containment",
+      "section": "posts",
+      "publishedAt": "2026-01-17T09:32:00Z",
+      "excerpt": "Autonomous agent with persistent memory inspired by classical theory of mind",
+      "tags": [
+        "ai",
+        "agents",
+        "memory",
+        "cognitive-systems",
+        "containerization",
+        "VDD"
+      ],
+      "cid": "bafkreibh544estrb5i4hte6xxrpl63r2tnn3d6gkcbofzg7yzahty3ad7q"
+    },
+    {
+      "title": "Notes on using a PDS as Content Infrastructure",
+      "href": "/posts/1767505149657-notes-on-using-a-pds-as-content-infrastructure",
+      "section": "posts",
+      "publishedAt": "2026-01-03T21:39:00Z",
+      "excerpt": "Content addressing with normal web requests, identity baked in, delivery over boring HTTPS.",
+      "tags": [
+        "at-protocol",
+        "bluesky",
+        "ipfs",
+        "identity"
+      ],
+      "cid": "bafkreie6kfvybufowypgnteoeie6rbtpv524fpnr5qtzpi46x4mgnsfwae"
+    },
+    {
+      "title": "What's the $POINTS?",
+      "href": "/posts/1764868806838-whats-the-points",
+      "section": "posts",
+      "publishedAt": "2025-12-04T09:20:00Z",
+      "excerpt": "$POINTS was deployed on December 13th, 2023 and made a lot of people very angry",
+      "tags": [
+        "memecoin",
+        "farcaster",
+        "tokenomics",
+        "clanker",
+        "points",
+        "tokens"
+      ],
+      "cid": "bafkreifxpnobkm3iwdj6krnj4tkbnhmbx76k4sa4bou3bgrsjccuwgwyzy"
+    },
+    {
+      "title": "My office as entropy",
+      "href": "/posts/1756826230035-my-office-as-entropy",
+      "section": "posts",
+      "publishedAt": "2025-09-02T08:17:00Z",
+      "excerpt": "Turning my office's environmental data into verifiable randomness.",
+      "tags": [
+        "hardware",
+        "blockchain",
+        "randomness",
+        "circom",
+        "entropy",
+        "ipfs"
+      ],
+      "cid": "bafkreieiymtmfagv4rgotmt6dvfhit6pdfkugjqiiis4m4smxnlwery3pq"
+    },
+    {
+      "title": "Take Your Network With You",
+      "href": "/posts/1754759911088-take-your-network-with-you",
+      "section": "posts",
+      "publishedAt": "2025-08-09T10:18:00Z",
+      "excerpt": "Bring your home network anywhere with the tiny Beryl AX router.",
+      "tags": [
+        "travel",
+        "networking",
+        "tailscale",
+        "router",
+        "gl-inet"
+      ],
+      "cid": "bafkreihcifkjn42ffnvyefxc5as7faogawno3lquozzhowjgukee5ulpti"
+    },
+    {
+      "title": "Single-origin deployment with bhvr",
+      "href": "/posts/1747182886660-single-origin-deployment-with-bhvr",
+      "section": "posts",
+      "publishedAt": "2025-05-13T17:34:00Z",
+      "excerpt": "Fried my Pi using a 10V solar panel without a buck converter.",
+      "tags": [
+        "raspberry-pi",
+        "hardware",
+        "solar-powered",
+        "web-development",
+        "cloudflare-tunnel"
+      ],
+      "cid": "bafkreibf6c3xwvhiszc2y6hwzxaxq7qizamhgw4n22jhzlfnz4qe2dvp3i"
+    },
+    {
+      "title": "Breaking the AI in Parallax",
+      "href": "/posts/1746765173152-breaking-the-ai-in-parallax",
+      "section": "posts",
+      "publishedAt": "2025-05-08T21:32:00Z",
+      "excerpt": "I used simple jailbreaks to extract information that Parallax's AI mystery-game characters were not supposed to reveal.",
+      "tags": [
+        "farcaster",
+        "ai",
+        "mystery",
+        "claude",
+        "gemini",
+        "prompt-engineering"
+      ],
+      "cid": "bafkreiewhiq5hptzmyx7ggjrvunlva7kydhcasqajiiz6wuh643s7bcune"
+    },
+    {
+      "title": "Create and Use Farcaster Signers",
+      "href": "/posts/1745543922514-create-and-use-farcaster-signers",
+      "section": "posts",
+      "publishedAt": "2025-04-24T18:18:00Z",
+      "excerpt": "I got nerdsniped on Farcaster today. @keccers.eth was talking about the Sent from coinbasewallet tag. You usually only see these on third-party clients, which is why @artlu having his own stands out o",
+      "tags": [
+        "farcaster",
+        "development",
+        "tutorial"
+      ],
+      "cid": "bafkreifyh355rhjzaz4yjsgtz5oofdziuxqnjuoi5w4kaw5t6qak7r3kgu"
+    },
+    {
+      "title": "Code and Cloth",
+      "href": "/posts/1743724413087-code-and-cloth",
+      "section": "posts",
+      "publishedAt": "2025-04-03T16:53:00Z",
+      "excerpt": "The loom is an old model for programmable work, and a useful way to think about what AI changes in software craft.",
+      "tags": [
+        "weaving",
+        "craft",
+        "technology",
+        "software-development",
+        "industrialization",
+        "creative-process",
+        "artisanal",
+        "metaphor",
+        "textile-history",
+        "vibe-coding"
+      ],
+      "cid": "bafkreigkmb3toiipoaw6xnji4hgr3tfqtopcpserxccfsuor236fzl2ona"
+    },
+    {
+      "title": "Pure Internet: no-html",
+      "href": "/posts/1740682611811-pure-internet-no-html",
+      "section": "posts",
+      "publishedAt": "2025-02-27T10:56:00Z",
+      "excerpt": "A plain Markdown file hosted on Bluesky's blob storage and rendered directly by the browser.",
+      "tags": [
+        "web-development",
+        "pure-internet",
+        "alternative-hosting",
+        "bluesky",
+        "at-protocol",
+        "decentralized-web",
+        "test"
+      ],
+      "cid": "bafkreiawsqsw5ggknse6lnnzt33cs6df4jbxyxmu2gkkvnwe4jsknal65m"
+    },
+    {
+      "title": "Scalability → Buildability",
+      "href": "/posts/1739212426700-scalability-buildability",
+      "section": "posts",
+      "publishedAt": "2025-02-10T10:33:00Z",
+      "excerpt": "A system scales internally when each feature leaves behind primitives that make the next one easier to build.",
+      "tags": [
+        "development",
+        "scalability",
+        "composability",
+        "analytics",
+        "ai-workflows",
+        "growth-engineering",
+        "e-commerce"
+      ],
+      "cid": "bafkreiebsaiwms7obdxbfptalzvrufacrjqav2lv7dvymr5xku2v2cu3ke"
+    }
+  ]
+}

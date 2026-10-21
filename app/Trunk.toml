@@ -1,0 +1,37 @@
+[build]
+no_sri = true
+
+[watch]
+# the pre-build hook writes here; watching it would rebuild forever
+ignore = ["e2e", "card/gen", "assets/search", "search/node_modules", "assets/diagrams", "diagrams/node_modules"]
+
+[serve]
+addresses = ["127.0.0.1"]
+port = 8080
+
+# the Worker (`wrangler dev --port 8796` in ../worker) serves the data and image routes in development
+[[proxy]]
+backend = "http://127.0.0.1:8796/api/"
+
+[[proxy]]
+backend = "http://127.0.0.1:8796/img/"
+
+# the social card draws with the plate's own shaders, translated to GLSL (WebGL2) by naga
+# (`cargo install naga-cli`) whenever plate.wgsl changes; see card/card.js
+[[hooks]]
+stage = "pre_build"
+command = "sh"
+command_arguments = ["-c", "mkdir -p card/gen && if [ ! -f card/gen/optics.frag ] || [ src/plate.wgsl -nt card/gen/optics.frag ]; then naga src/plate.wgsl card/gen/vs.vert --entry-point vs_main --profile es300 --shader-stage vert && naga src/plate.wgsl card/gen/plate.frag --entry-point fs_plate --profile es300 --shader-stage frag && naga src/plate.wgsl card/gen/optics.frag --entry-point fs_optics --profile es300 --shader-stage frag; fi"]
+
+# on-device semantic search: ternlight's browser build and the worker that drives it
+[[hooks]]
+stage = "pre_build"
+command = "sh"
+command_arguments = ["-c", "test -d search/node_modules/@ternlight || (cd search && bun install --frozen-lockfile || bun install); mkdir -p assets/search && cp search/search-worker.js search/node_modules/@ternlight/base/pkg-web/tern_engine.js search/node_modules/@ternlight/base/pkg-web/tern_engine_bg.wasm assets/search/ && cp search/node_modules/@ternlight/base/LICENSE assets/search/LICENSE-ternlight"]
+
+# pele, one module per kind of diagram (see diagrams/build.ts for why), rebuilt
+# only when diagrams/ changes
+[[hooks]]
+stage = "pre_build"
+command = "sh"
+command_arguments = ["-c", "test -d diagrams/node_modules/pele || (cd diagrams && bun install --frozen-lockfile || bun install); if [ ! -f assets/diagrams/diagrams.js ] || [ -n \"$(find diagrams -maxdepth 1 -newer assets/diagrams/diagrams.js -type f)\" ]; then (cd diagrams && bun build.ts); fi"]

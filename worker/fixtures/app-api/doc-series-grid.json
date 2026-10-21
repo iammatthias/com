@@ -1,0 +1,465 @@
+{
+  "kind": "doc",
+  "doc": {
+    "title": "Datamosh",
+    "section": {
+      "slug": "art",
+      "name": "Art"
+    },
+    "rkey": "1791519648658-datamosh",
+    "cid": "bafkreia4sfvrdm2t4ytrkvtgtlmnhm44klo2naotbfuijr7e4bydzvhjja",
+    "renderKey": "bafkreia4sfvrdm2t4ytrkvtgtlmnhm44klo2naotbfuijr7e4bydzvhjja@2026-10-09T04:20:51Z@2026-10-09T13:25:33Z@datamosh:bafkreihyu46s3tltnrruyyidczru56tcbq7seu6vuy5rndlzwjz7eftpyq@Art|",
+    "href": "/art/1791519648658-datamosh",
+    "publishedAt": "2026-10-09T04:20:51Z",
+    "updatedAt": "2026-10-09T13:25:33Z",
+    "tags": [
+      "datamosh",
+      "digital-art",
+      "creative-process"
+    ],
+    "description": "An iOS app",
+    "readingMinutes": 1,
+    "markdown": "![](series://datamosh) ",
+    "media": {
+      "bafkreigxdzks5a3vhrit2vii7gixijjipcmlieeorhou5pter3slvodpie": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#8c8d82",
+        "blurhash": "LOI5i2?aI9t7*0jFRNj[-?D%Mxj]",
+        "thumbCid": "bafkreibjwdehoqit5sgwp7alzqxslhp4rop37gelsfrkyugp4sxwa6wy2u"
+      },
+      "bafkreihsd6pswwtgjatx6vdeug5t4hhsotlzza6mocu4i6ywyadelrxwoa": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreidwt2j2kkitmidegotv7fj62hdpwac7shobsotpiaitleqls5nkw4": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#747d6b",
+        "blurhash": "LLE{?~M{WBxv%jIVj?xunoM_oft7",
+        "thumbCid": "bafkreigfwpdcttffjbgxacmkcjuybnsj4ydyy4p5226ccoet6b54aadbo4"
+      },
+      "bafkreifnp4qs34yft5t4k5jqnnzhxdmfsmxli34w22a52zyfy4t76xbpky": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreid3tvjol5fsscoujain6jkfiawfrotyn2u4akwyb6cfq5ha2atsyy": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#828880",
+        "blurhash": "LjH.i~M{M{oL_4WCWBoeWVt7ofof",
+        "thumbCid": "bafkreibdunekdrp243q6orxciskcrv6vwy5qexkvf4if5ygbf6uu7v5z3y"
+      },
+      "bafkreid6mp6ubhps43urefs46fss2koi3lu3rtdv5mrgy7bttu5xmscjja": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreiarl7ykznsz2feqkfxhavsivl6x7dfkqfbkobrnj7ni6yhe3s7d6q": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#83796d",
+        "blurhash": "LAGbVHE2RjoJ4T%1ofR%Nbi_n~oz",
+        "thumbCid": "bafkreia4hhlwf3o62ntknvtttonibfmx3q4bsja62lvvhfpftt33t6hkb4"
+      },
+      "bafkreiellildhfyh3oze5s5c3mzcbwzzh4c2pqpnt6whevehrbf3db2shq": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreibxfap7p4w7gyschpsi3hpphbgpdgdpbfxu2w6bp4z54rxkaydlnq": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#756d62",
+        "blurhash": "LTGl09D%0Kt7~pIUM{j[IUNGxuWB",
+        "thumbCid": "bafkreibaztm6etur4wzpxvjo7fiijhhjviwcbzu2t3xitjfceagaip66vq"
+      },
+      "bafkreiarfnndvk3mwrec37vo5ae2uo22se5v5m2dfxrnzxdp2njamth4ne": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreiacgykbju46mqhzxincpo6rv7rjv7hkm3z5epxeh2pjn7fdtvv2m4": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#2a5072",
+        "blurhash": "LI7{8xIzRPtOiYkYRmobo~t5bdai",
+        "thumbCid": "bafkreidxqs3na74h3fpbx4hk6bi267bkatf26vomiezck6bessyzstrxhm"
+      },
+      "bafkreiblthxs2mb2pck7epbqnjk4slwbx5vhsnuwefbto4d7arxnruhshy": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreid2zjbxmhk43jgqoed5iuz7wvrcgykeaxa7cv5pdybzqrnuo2hpci": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#7a7b7a",
+        "blurhash": "LDHVC*W9NG%g~ooLtRt8.8IV%Mt7",
+        "thumbCid": "bafkreih6ogjaj7efz2amtkioib3eoiity2jgx6bn444russnnpt77425ey"
+      },
+      "bafkreife4ik3hhrhh4mvm7hhmjfdrvqd7x325xipy2lns5tok2uvw47zyq": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreidygxnjhg4r7m255vsnbbma2c5uevdrozthaajxz4spipw7h2duo4": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#514a47",
+        "blurhash": "LQC$}^Rmo#n+00bIs:xuxsxsMxRi",
+        "thumbCid": "bafkreicnk2fymgdif74rfjqddmeg2bdg6n44fee6t3eiz2tnsubzhn2bny"
+      },
+      "bafkreie2g7udsxnka4bhp53u7bi3piy7ugbdnytvvnblo65hzjbestqwui": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreiczzna7zx4jnodbubpb44tmnhmodlgcq4n2acwmlnnxks7zxrs2pm": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#505d61",
+        "blurhash": "LFBD=^tOHqn49uxus7nhISR:tSWB",
+        "thumbCid": "bafkreif2m2poxjersxu5ic3udvosgzr5rhcp3wlqqqv7g3zifysd2wowqa"
+      },
+      "bafkreidbs4t37ttgabm4zioaen5yqebeynbbyxvzpwv33tz3vxw6bz5ajm": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreieunn5ph6n6a6w3l7gsefud6npr37n7qa7qhh6io6acfxjoh7v4yu": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#93846f",
+        "blurhash": "LBIhB8%KtP?ZACwIIYE2zA.8%MM}",
+        "thumbCid": "bafkreidzf536l3jskq37kra2nbkmz6waah6am755thuuer666bgfbvjgie"
+      },
+      "bafkreiek5mhddwsaiwombg4qwrlmmpeozhfsrwtkzxmbmekuoeeifo3lju": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreifh2h6adbugjazth3ud6bol3at2upxup2lhc3nnjffyjsl5uphabm": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#827c76",
+        "blurhash": "LGI5MU01xubIBqM}t6jra1R-kCRj",
+        "thumbCid": "bafkreiaspk2c7m4ki2opwx2wsdvsass5ayc4c2a33ib3zowyti43hwoawi"
+      },
+      "bafkreighqr2cfxaafod5xwfhvqmgdzdlmkacjtu3azririqn6o5wsr4vbe": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreihzrfuoyf3mf32ef5yqvube6x5etg4fty7fzkubhrfxizv2qvc3cu": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#857f7a",
+        "blurhash": "L7I#iX4T%Mt71i01xtozxW-;oJtQ",
+        "thumbCid": "bafkreia6gr7ivmtwmf36ujn3b7g23iwzl6kqt3rdhykdtgch3czk3bhbbi"
+      },
+      "bafkreigvpodpzoj27fg2no5kdbrkjrzq6br3ejgsbm33zumdnkvb32ltje": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreia24xrx3jud53d6mtgy6fmvcsdi5rtjnpor447j7bfzeqgejgrulu": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#9f9488",
+        "blurhash": "LKKKl|I9Rj9Gy?9GM_M{D*S5M{NF",
+        "thumbCid": "bafkreibw6fhzjbnlzlrkjb5l3immt3z2fscsxfn3ew3fw7icg5wtigjgc4"
+      },
+      "bafkreidf3zwujm7i6sgcywsq4uyvr3okuwdfcv6ln42slgnsw2rviezrtu": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreiecjtcsccrmvdz6i6qax27jtmqp5xxkuvzc32nyry4lqwqz2ycxmq": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#1f191e",
+        "blurhash": "L14_b3Mcx[oZ4X-4Nbac,2$]Ngad",
+        "thumbCid": "bafkreihfxfcsyuylwskrr2o7xglhocxrmnjdtgw6o5iv6dxm5ky227phsy"
+      },
+      "bafkreihel67xrhmkbarmpleupgtsyvlptnesdliigtlas6yntjiiyz7tum": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreihbeuzj4bw7yvfmonvdeqf4kix7j3637kxekdugk56iflhsuqbcqm": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#a3947d",
+        "blurhash": "LAKKWU~7D+IrD-DiM|W=-UM{Ipxu",
+        "thumbCid": "bafkreiawg6m6qaowijy5r6vosnuo6cazup3fuubj3x64cv5dk25etv46dq"
+      },
+      "bafkreif4fhzbvfx5jfnzwkf4thhjxn2c72gh2qegfh2laf3lttl3v5obf4": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreihcfgduawkzmtbijulbaigmqqfgn42cp537nkfrbgbrwskecsr7ze": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#746f63",
+        "blurhash": "LRFiGTX1W9xu_NNFawxuNFRkt8t7",
+        "thumbCid": "bafkreiaxideafnmbwf3dnprekmr7xlboqum6kuoio3bpbsgxj3ovgolf3u"
+      },
+      "bafkreidbzewls47ub3lqtgmwrfwc2ri5ysxj2lgycfhihthdlcsau65vki": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreiayeevgzkzz33jigtejg6fgxc4epztfdfms7hipnystawiffzolke": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#6d6b65",
+        "blurhash": "LCG8}@IVRjR*~WNGIU%M-;jYV@xt",
+        "thumbCid": "bafkreihhlm74dmx4o347d2mwfkmf4lcp626nutyjmqyhvb72oiin7lep2e"
+      },
+      "bafkreigkfkplkex44okyokmc7ozp5uqhizan6yhxyyfdd2potgyvdjvoui": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreiev7qz4zhusxsjwlpggz4uocvcgjzvvlifrmvdkr2ev7fc2iomewq": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#525755",
+        "blurhash": "LBDJbTohrWI9?wIUj?R%8^a0gNyE",
+        "thumbCid": "bafkreidjbvkfnpwqsk6mdzstswrtyuc4dknqg26mo6wqoehh3lb6drzbvq"
+      },
+      "bafkreihisf5qy65sm67aw7dfvx6clbraabl7fpwd5zrfeuy2557xbsx6we": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreic6yrwwdss4bbver3kiep2qdev2dxd2qr3xhccrvpg4ax4aozwi2i": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#4c4949",
+        "blurhash": "L5C6ry~V?b$$%54nNen%8_Dit8Ip",
+        "thumbCid": "bafkreigsul3fdis657svnwiuo76kpo4ydpshs73vqwxrycbr3mvwpyavwq"
+      },
+      "bafkreif7a4iegnxaeyyrbbp3uqpbu36lisshbnkb2q4hnojlkmkcqnnlie": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreidx7n4erw46anvrdwgotodt3chxst7ktrqi5yi5fzivkxkk3ssjwu": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#8f887a",
+        "blurhash": "L8JRN#~AVFaR5z4-M_sF;zx]x^$,",
+        "thumbCid": "bafkreiag7ntnqkvpbj75klbfao77oanhbiha2jfzm2rvdt674wzvbjurb4"
+      },
+      "bafkreigwx7jyri3ufe2k7reqtb6sd7db6shi5pvzqkuwhiudsevn3acff4": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreihw7bgu6qziennk7oywacnfxmmcf6xpjvh2bf3punp7gxtjqps22y": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#928171",
+        "blurhash": "LAJj}3{#VDY6sPvgITT2=FJBt7Iu",
+        "thumbCid": "bafkreigsmpcdmoezwawakdz5ut45sk22rlztqvztoxwdbgrbxqhpdtdmgi"
+      },
+      "bafkreiadl6uukfctolzpvf4eeigxnrnqblr5ifzi7cykaioasx7py2p4zy": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreih7z6atbiilqmopriosysgo7rxenbuaypyiyk5qf6bytzyorc2c6m": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#8f9189",
+        "blurhash": "LSHoOG_2RjRP_NxaoIaxR6jFt6bG",
+        "thumbCid": "bafkreiaicfriefdqo6hb33xr5zt4ekvxpalifdnn35yomazigxbymhdywy"
+      },
+      "bafkreifw2y4jc44y6xpddjkp7b5gt5vmhyz4g2ozto2y3sdwskonnxqmoq": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreieb4tlgpkfdk2fwnnmgyfxxay3co4gmizwnki5pme2jllitdhaa5i": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#6b6d6c",
+        "blurhash": "LcGSGp00?HMxM{IU%MM{s:%MRjWV",
+        "thumbCid": "bafkreigh2x5ak4ia2h6moojtz76djxu3vcngsehgb5tw57pnguszrd4abi"
+      },
+      "bafkreiagy6avbi23fewlp7shm54mwzmyiilezlwoae7gt7766hpnoqchim": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      },
+      "bafkreif3ndgpiqwudmfqv5z2vfpcftfv7mcsvoeqfd7ai6a6fekhiyiymu": {
+        "mime": "image/jpeg",
+        "width": 720,
+        "height": 1280,
+        "dominantColor": "#363635",
+        "blurhash": "L77^=8[-,oIAxbwbnNjF0KOsE1tS",
+        "thumbCid": "bafkreic7hpg7clajt3s7fzcojv7d4beoi4mltskozj7jy2mw3ymirt4ryy"
+      },
+      "bafkreib4jmueeufuyhgkbe32n4hcn7woh2fu7eeyab5upfl2c5hly6afni": {
+        "mime": "video/quicktime",
+        "width": null,
+        "height": null,
+        "dominantColor": null,
+        "blurhash": null,
+        "thumbCid": null
+      }
+    },
+    "series": {
+      "datamosh": {
+        "title": "Datamosh",
+        "body": "![](blob://bafkreigxdzks5a3vhrit2vii7gixijjipcmlieeorhou5pter3slvodpie)\n\n![](blob://bafkreihsd6pswwtgjatx6vdeug5t4hhsotlzza6mocu4i6ywyadelrxwoa)\n\n![](blob://bafkreidwt2j2kkitmidegotv7fj62hdpwac7shobsotpiaitleqls5nkw4)\n\n![](blob://bafkreifnp4qs34yft5t4k5jqnnzhxdmfsmxli34w22a52zyfy4t76xbpky)\n\n![](blob://bafkreid3tvjol5fsscoujain6jkfiawfrotyn2u4akwyb6cfq5ha2atsyy)\n\n![](blob://bafkreid6mp6ubhps43urefs46fss2koi3lu3rtdv5mrgy7bttu5xmscjja)\n\n![](blob://bafkreiarl7ykznsz2feqkfxhavsivl6x7dfkqfbkobrnj7ni6yhe3s7d6q)\n\n![](blob://bafkreiellildhfyh3oze5s5c3mzcbwzzh4c2pqpnt6whevehrbf3db2shq)\n\n![](blob://bafkreibxfap7p4w7gyschpsi3hpphbgpdgdpbfxu2w6bp4z54rxkaydlnq)\n\n![](blob://bafkreiarfnndvk3mwrec37vo5ae2uo22se5v5m2dfxrnzxdp2njamth4ne)\n\n![](blob://bafkreiacgykbju46mqhzxincpo6rv7rjv7hkm3z5epxeh2pjn7fdtvv2m4)\n\n![](blob://bafkreiblthxs2mb2pck7epbqnjk4slwbx5vhsnuwefbto4d7arxnruhshy)\n\n![](blob://bafkreid2zjbxmhk43jgqoed5iuz7wvrcgykeaxa7cv5pdybzqrnuo2hpci)\n\n![](blob://bafkreife4ik3hhrhh4mvm7hhmjfdrvqd7x325xipy2lns5tok2uvw47zyq)\n\n![](blob://bafkreidygxnjhg4r7m255vsnbbma2c5uevdrozthaajxz4spipw7h2duo4)\n\n![](blob://bafkreie2g7udsxnka4bhp53u7bi3piy7ugbdnytvvnblo65hzjbestqwui)\n\n![](blob://bafkreiczzna7zx4jnodbubpb44tmnhmodlgcq4n2acwmlnnxks7zxrs2pm)\n\n![](blob://bafkreidbs4t37ttgabm4zioaen5yqebeynbbyxvzpwv33tz3vxw6bz5ajm)\n\n![](blob://bafkreieunn5ph6n6a6w3l7gsefud6npr37n7qa7qhh6io6acfxjoh7v4yu)\n\n![](blob://bafkreiek5mhddwsaiwombg4qwrlmmpeozhfsrwtkzxmbmekuoeeifo3lju)\n\n![](blob://bafkreifh2h6adbugjazth3ud6bol3at2upxup2lhc3nnjffyjsl5uphabm)\n\n![](blob://bafkreighqr2cfxaafod5xwfhvqmgdzdlmkacjtu3azririqn6o5wsr4vbe)\n\n![](blob://bafkreihzrfuoyf3mf32ef5yqvube6x5etg4fty7fzkubhrfxizv2qvc3cu)\n\n![](blob://bafkreigvpodpzoj27fg2no5kdbrkjrzq6br3ejgsbm33zumdnkvb32ltje)\n\n![](blob://bafkreia24xrx3jud53d6mtgy6fmvcsdi5rtjnpor447j7bfzeqgejgrulu)\n\n![](blob://bafkreidf3zwujm7i6sgcywsq4uyvr3okuwdfcv6ln42slgnsw2rviezrtu)\n\n![](blob://bafkreiecjtcsccrmvdz6i6qax27jtmqp5xxkuvzc32nyry4lqwqz2ycxmq)\n\n![](blob://bafkreihel67xrhmkbarmpleupgtsyvlptnesdliigtlas6yntjiiyz7tum)\n\n![](blob://bafkreihbeuzj4bw7yvfmonvdeqf4kix7j3637kxekdugk56iflhsuqbcqm)\n\n![](blob://bafkreif4fhzbvfx5jfnzwkf4thhjxn2c72gh2qegfh2laf3lttl3v5obf4)\n\n![](blob://bafkreihcfgduawkzmtbijulbaigmqqfgn42cp537nkfrbgbrwskecsr7ze)\n\n![](blob://bafkreidbzewls47ub3lqtgmwrfwc2ri5ysxj2lgycfhihthdlcsau65vki)\n\n![](blob://bafkreiayeevgzkzz33jigtejg6fgxc4epztfdfms7hipnystawiffzolke)\n\n![](blob://bafkreigkfkplkex44okyokmc7ozp5uqhizan6yhxyyfdd2potgyvdjvoui)\n\n![](blob://bafkreiev7qz4zhusxsjwlpggz4uocvcgjzvvlifrmvdkr2ev7fc2iomewq)\n\n![](blob://bafkreihisf5qy65sm67aw7dfvx6clbraabl7fpwd5zrfeuy2557xbsx6we)\n\n![](blob://bafkreic6yrwwdss4bbver3kiep2qdev2dxd2qr3xhccrvpg4ax4aozwi2i)\n\n![](blob://bafkreif7a4iegnxaeyyrbbp3uqpbu36lisshbnkb2q4hnojlkmkcqnnlie)\n\n![](blob://bafkreidx7n4erw46anvrdwgotodt3chxst7ktrqi5yi5fzivkxkk3ssjwu)\n\n![](blob://bafkreigwx7jyri3ufe2k7reqtb6sd7db6shi5pvzqkuwhiudsevn3acff4)\n\n![](blob://bafkreihw7bgu6qziennk7oywacnfxmmcf6xpjvh2bf3punp7gxtjqps22y)\n\n![](blob://bafkreiadl6uukfctolzpvf4eeigxnrnqblr5ifzi7cykaioasx7py2p4zy)\n\n![](blob://bafkreih7z6atbiilqmopriosysgo7rxenbuaypyiyk5qf6bytzyorc2c6m)\n\n![](blob://bafkreifw2y4jc44y6xpddjkp7b5gt5vmhyz4g2ozto2y3sdwskonnxqmoq)\n\n![](blob://bafkreieb4tlgpkfdk2fwnnmgyfxxay3co4gmizwnki5pme2jllitdhaa5i)\n\n![](blob://bafkreiagy6avbi23fewlp7shm54mwzmyiilezlwoae7gt7766hpnoqchim)\n\n![](blob://bafkreif3ndgpiqwudmfqv5z2vfpcftfv7mcsvoeqfd7ai6a6fekhiyiymu)\n\n![](blob://bafkreib4jmueeufuyhgkbe32n4hcn7woh2fu7eeyab5upfl2c5hly6afni)",
+        "layout": "grid"
+      }
+    },
+    "related": [
+      {
+        "title": "Phosphene",
+        "href": "/art/1781816428977-phosphene",
+        "section": "art",
+        "description": "A camera that turns each photo into a poem, then paints a new image from those words.",
+        "publishedAt": "2026-06-18T21:00:28Z"
+      },
+      {
+        "title": "Code and Cloth",
+        "href": "/posts/1743724413087-code-and-cloth",
+        "section": "posts",
+        "description": "The loom is an old model for programmable work, and a useful way to think about what AI changes in software craft.",
+        "publishedAt": "2025-04-03T16:53:00Z"
+      },
+      {
+        "title": "Ocean Dreams",
+        "href": "/art/1738786576559-ocean-dreams",
+        "section": "art",
+        "description": "Early GAN art from coastal images, creating three collections of dreamy, hallucinatory seascapes that inspired further.",
+        "publishedAt": "2025-02-05T12:16:00Z"
+      },
+      {
+        "title": "No Stone Unturned",
+        "href": "/art/1710823985569-no-stone-unturned",
+        "section": "art",
+        "description": "A rock traveled in my camera bag, and was photographed time and time again.",
+        "publishedAt": "2024-03-18T21:53:00Z"
+      },
+      {
+        "title": "Flatframe",
+        "href": "/posts/1563778800000-flatframe",
+        "section": "posts",
+        "description": "Aerial photography technique capturing motion in a static frame (like waves or crowds) using stationary drone footage between 10-60 seconds.",
+        "publishedAt": "2020-04-27T11:27:00Z"
+      },
+      {
+        "title": "Own The Means of Cognition",
+        "href": "/posts/1789494942000-own-the-means-of-cognition",
+        "section": "posts",
+        "description": "Own the means of cognition and you don't need a ministry of truth, the modal in everyone's pocket does the job.",
+        "publishedAt": "2026-10-02T02:01:14Z"
+      }
+    ],
+    "prev": {
+      "title": "Phosphene",
+      "href": "/art/1781816428977-phosphene"
+    }
+  }
+}

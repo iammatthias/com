@@ -1,0 +1,8 @@
+{
+  "name": "com-search",
+  "private": true,
+  "description": "On-device semantic search for the site (ternlight in a Web Worker), copied into assets/search by a Trunk pre-build hook.",
+  "dependencies": {
+    "@ternlight/base": "0.1.1"
+  }
+}

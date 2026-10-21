@@ -1,0 +1,59 @@
+{
+  "kind": "developers",
+  "title": "iammatthias.com developer documentation",
+  "lede": "This site makes its content available in machine-readable form. It is public and free. There is no account, API key, or paid tier.",
+  "markdownHref": "/developers.md",
+  "quickstart": "# Search the site\ncurl \"https://iammatthias.com/api/search.json?q=cloudflare+workers\"\n\n# List one section\ncurl \"https://iammatthias.com/api/content.json?section=recipes\"\n\n# Read a document as markdown\ncurl \"https://iammatthias.com/posts/1779066375000-farfield.md\"\n\n# The whole corpus in one request\ncurl \"https://iammatthias.com/llms-full.txt\"",
+  "endpoints": [
+    {
+      "label": "GET /api/search-corpus.json",
+      "href": "/api/search-corpus.json",
+      "description": "Every searchable item on the site (documents and feed posts) as compact text, each carrying its Farfield content hash (cid). Intended for building your own index; the site's own search embeds this locally in the browser."
+    },
+    {
+      "label": "GET /api/search-vectors.json",
+      "href": "/api/search-vectors.json",
+      "description": "Precomputed embedding vectors for the corpus, keyed by cid, with the model name and dimension count. Built at deploy time with the ternlight model."
+    },
+    {
+      "label": "GET /api/content.json",
+      "href": "/api/content.json",
+      "description": "Every published document as structured JSON: title, section, tags, dates, content hash, canonical URL, and markdown URL. Filterable by section and tag."
+    },
+    {
+      "label": "GET /api/search.json",
+      "href": "/api/search.json",
+      "description": "Ranked keyword search over titles, excerpts, tags, and body text of every published document. Returns canonical and markdown URLs per hit."
+    }
+  ],
+  "sections": [
+    {
+      "title": "HTTP endpoints",
+      "body": "The full specification is at [openapi.json](/openapi.json). Errors are RFC 9457 problem documents. Each one has a `resolution` field that says how to retry."
+    },
+    {
+      "title": "MCP server",
+      "body": "The MCP server uses Streamable HTTP at `https://iammatthias.com/mcp`. It does not require authentication. Add it to any MCP client:\n\n```json\n{ \"mcpServers\": { \"iammatthias\": { \"url\": \"https://iammatthias.com/mcp\" } } }\n```\n\n- `search_site`: Search Matthias Jordan's writing, photography notes, and recipes by keyword. Returns titles, excerpts, and both HTML and markdown URLs.\n- `get_document`: Fetch the full markdown source of one document by its path or slug, with front matter (title, dates, tags, content hash) and images resolved to public URLs.\n- `list_sections`: List the site's publications (art, posts, recipes, melange, experiments) with descriptions and entry counts.\n- `list_recent`: List the most recently published documents, newest first, optionally filtered to one section.\n\nPreview the tools without connecting: [server-card.json](/.well-known/mcp/server-card.json)."
+    },
+    {
+      "title": "Markdown twins",
+      "body": "Every content URL has a markdown twin at the same path plus `.md`. It includes front matter with the title, dates, tags, content hash, and canonical URL. Images resolve to public URLs. Section indexes are at `/<section>.md`. Each section has scoped context at `/<section>/llms.txt`."
+    },
+    {
+      "title": "Versioning",
+      "body": "The API is versioned under `/api/v1`: `/api/v1/search.json` and `/api/v1/content.json` are version-pinned aliases of the query endpoints, and every API response carries an `API-Version` header. Breaking changes will be announced here, in [/developers](/developers)."
+    },
+    {
+      "title": "Everything else",
+      "body": "- [llms.txt site map](https://iammatthias.com/llms.txt): Index of every published document with links to its markdown twin.\n- [Full corpus in one file](https://iammatthias.com/llms-full.txt): Every published document, front matter included, in a single markdown file.\n- [iammatthias.com MCP server](https://iammatthias.com/mcp): Streamable HTTP MCP server exposing site search and document retrieval as tools. No authentication required.\n- [GraphQL endpoint](https://iammatthias.com/graphql): Typed, introspectable GraphQL over the same content: search, list, and read documents in one round trip. Relay connections, schema-modeled errors, no authentication.\n- [GraphQL schema (SDL)](https://iammatthias.com/schema.graphql): The GraphQL schema as SDL, for codegen or reading without an introspection query.\n- [OpenAPI specification](https://iammatthias.com/openapi.json): OpenAPI 3.1 description of the site's public read-only JSON endpoints.\n- [XML sitemap](https://iammatthias.com/sitemap.xml): Every indexable URL with last-modified dates.\n- [RSS feed](https://iammatthias.com/rss.xml): Sitewide RSS with full article bodies; per-section feeds at /<section>/rss.xml."
+    },
+    {
+      "title": "Caching and etiquette",
+      "body": "Every record has a `cid`, which is a CIDv1 content hash. The same cid means the same bytes, forever. Cache against it instead of fetching the record again. Prefer [llms-full.txt](/llms-full.txt) to crawling page by page. Send a descriptive `User-Agent`. The source is at [github.com/iammatthias/com](https://github.com/iammatthias/com)."
+    },
+    {
+      "title": "FAQ",
+      "body": "**Does the iammatthias.com API require authentication?**\n\nNo. Every endpoint, feed, and MCP tool is public and anonymous. Do not send an Authorization header; it is ignored.\n\n**What does the iammatthias.com API cost?**\n\nNothing. There is no account, no API key, and no paid tier. Rate limits are Cloudflare's edge defaults.\n\n**Does iammatthias.com have an MCP server?**\n\nYes, at https://iammatthias.com/mcp over Streamable HTTP with no authentication. It exposes search_site, get_document, list_sections, list_recent.\n\n**How do I get a page from iammatthias.com as markdown?**\n\nAppend .md to any content URL. The whole corpus is available in one request at https://iammatthias.com/llms-full.txt.\n\n**Can I use content from iammatthias.com for AI training?**\n\nNo. The site's Content-Signal policy is search=yes, ai-input=yes, ai-train=no. Quoting with attribution and a link to the canonical URL is welcome."
+    }
+  ]
+}

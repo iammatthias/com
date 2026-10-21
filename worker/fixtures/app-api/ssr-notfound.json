@@ -1,0 +1,16 @@
+{
+  "kind": "ssr",
+  "status": 404,
+  "title": "Not found — iammatthias",
+  "description": "That page doesn't exist.",
+  "canonical": null,
+  "noindex": true,
+  "og": {
+    "title": "Not found",
+    "description": "That page doesn't exist.",
+    "image": "https://og.iammatthias.com/",
+    "url": "https://iammatthias.com/definitely-not-a-page",
+    "type": "website"
+  },
+  "html": "<noscript><p class=\"ssr-note\">This site is drawn by an app that needs JavaScript and WebGPU or WebGL. Without it you are reading the plain version below; every page also has a markdown twin (add <code>.md</code>) and the whole site is indexed at <a href=\"/llms.txt\">/llms.txt</a>.</p></noscript><article class=\"not-found\"><p class=\"kind\">404</p><h1>Not found</h1><p>That page doesn't exist — or it moved during the redesign.</p><p>Try the <a href=\"/\">homepage</a>, browse <a href=\"/content\">all content</a> or the <a href=\"/feed\">feed</a>, or wander the <a href=\"/tags\">tag index</a>.</p></article>"
+}

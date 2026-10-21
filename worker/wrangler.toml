@@ -1,0 +1,45 @@
+name = "com"
+main = "src/index.ts"
+compatibility_date = "2025-09-01"
+# AsyncLocalStorage scopes in-flight coalescing to one request (src/lib/request-scope.ts).
+compatibility_flags = ["nodejs_als"]
+
+# Secrets (CONTENT_READ_KEY, FEED_READ_KEY, CONTENT_API_KEY, OG_SIGNING_KEY) live on the Worker,
+# set with `wrangler secret put`; without this a deploy would drop them.
+keep_vars = true
+
+# No routes: iammatthias.com, iam.contact, www and next are custom domains attached to `com`
+# in the dashboard, so a deploy never moves one between Workers.
+workers_dev = false
+
+# The Workers cache: what makes the Cache-Tag / Cloudflare-CDN-Cache-Control
+# headers count, and what /api/revalidate purges.
+[cache]
+enabled = true
+
+[observability]
+enabled = true
+
+# The app shell: Trunk's build of ../app (index.html + hashed com-*.js /
+# com-*_bg.wasm). The Worker runs first for every path so it owns routing,
+# serves the shell with per-route SSR content, and hands hashed assets back
+# to the asset layer.
+[assets]
+directory = "../app/dist-deploy"
+binding = "ASSETS"
+run_worker_first = true
+not_found_handling = "none"
+
+# cid-keyed blob meta, rendered bodies and the search vectors. Its own namespace,
+# not com's: both write render:v<n>:<kind>:<cid> with different HTML for the same
+# cid, so a shared one would have each site serve the other's markup.
+# `wrangler dev` keeps its local simulation under preview_id.
+[[kv_namespaces]]
+binding = "CONTENT_CACHE"
+id = "54d1e62d078b4fb88d5434f77ef5c21a"
+preview_id = "00000000000000000000000000000000"
+
+# social cards: /og/* goes to the og Worker (../og)
+[[services]]
+binding = "OG"
+service = "com-next-og"

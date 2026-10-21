@@ -1,0 +1,214 @@
+{
+  "kind": "content",
+  "page": 1,
+  "pages": 9,
+  "total": 105,
+  "sections": [
+    {
+      "slug": "art",
+      "name": "Art",
+      "count": 8
+    },
+    {
+      "slug": "experiments",
+      "name": "Experiments",
+      "count": 11
+    },
+    {
+      "slug": "melange",
+      "name": "Melange",
+      "count": 0
+    },
+    {
+      "slug": "posts",
+      "name": "Posts",
+      "count": 49
+    },
+    {
+      "slug": "recipes",
+      "name": "Recipes",
+      "count": 37
+    }
+  ],
+  "items": [
+    {
+      "title": "Datamosh",
+      "href": "/art/1791519648658-datamosh",
+      "section": "art",
+      "publishedAt": "2026-10-09T04:20:51Z",
+      "excerpt": "An iOS app",
+      "tags": [
+        "datamosh",
+        "digital-art",
+        "creative-process"
+      ],
+      "cid": "bafkreia4sfvrdm2t4ytrkvtgtlmnhm44klo2naotbfuijr7e4bydzvhjja"
+    },
+    {
+      "title": "Own The Means of Cognition",
+      "href": "/posts/1789494942000-own-the-means-of-cognition",
+      "section": "posts",
+      "publishedAt": "2026-10-02T02:01:14Z",
+      "excerpt": "Own the means of cognition and you don't need a ministry of truth, the modal in everyone's pocket does the job.",
+      "tags": [
+        "llms",
+        "open-weights",
+        "enclosure",
+        "commons"
+      ],
+      "cid": "bafkreigbxlm652nzdkkoiwfseb53ogtpdfrga23blqphf2fm7txzllpytu"
+    },
+    {
+      "title": "pure---internet",
+      "href": "/experiments/1789661060000-pure-internet",
+      "section": "experiments",
+      "publishedAt": "2026-10-01T23:56:48Z",
+      "excerpt": "PROJECT pure---internet is a collection of things built on the web off the beaten path. It started as an exploration of novel hosting and outgrew that framing. - Bard\\ A tiny GPT whose weights live en",
+      "tags": [],
+      "cid": "bafkreifa57qxsp5ihfndpo57d7tazrjpovax2xwpxegruay6yr6yejqlde"
+    },
+    {
+      "title": "Conet",
+      "href": "/experiments/1789408263000-conet",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:16:07Z",
+      "excerpt": "CONET is a public, append-only Ethereum message log that broadcasts cold war style number stations to AI agents, with no client library or CLI — agents build their own tooling from contract ABIs.",
+      "tags": [
+        "ethereum",
+        "ai-agents",
+        "number-stations",
+        "append-only-log",
+        "smart-contracts",
+        "on-chain"
+      ],
+      "cid": "bafkreiapdtdhvrp34getebdmrpahvvhqe4w2gkbmbakeotbrl7zyerpzz4"
+    },
+    {
+      "title": "Now Playing",
+      "href": "/experiments/1789660555000-now-playing",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:15:33Z",
+      "excerpt": "A Raspberry Pi Zero 2 W drives a 64×64 LED matrix showing the album art of whatever is playing, decoded from an AirPlay 2 stream via shairport-sync, with an ambient video loop and sun-following brightness when idle.",
+      "tags": [
+        "raspberry-pi",
+        "led-matrix",
+        "airplay",
+        "shairport-sync",
+        "album-art"
+      ],
+      "cid": "bafkreifwmy433yetfa53f3jjvxkkdojqbsju7sa3afyfzqszudvc2pxgya"
+    },
+    {
+      "title": "Buddydex",
+      "href": "/experiments/1789660275000-buddydex",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:15:21Z",
+      "excerpt": "BuddyDex brute-forces the deterministic hashing pipeline behind Claude Code's short-lived April Fools' buddies, finding account ids that produce a desired species, rarity, stats, or shiny status.",
+      "tags": [
+        "claude-code",
+        "hashing",
+        "brute-force",
+        "easter-egg",
+        "deterministic-generation",
+        "reverse-engineering"
+      ],
+      "cid": "bafkreif5c7xfxbgxe2hcdefqszni7jk7pe2jckw66y7yrzyjjpyyn7e6jq"
+    },
+    {
+      "title": "AtProto",
+      "href": "/experiments/1789491418000-atproto",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:15:08Z",
+      "excerpt": "Three ATProto tools: Nimbus handles firehose and backfill via Cloudflare Durable Objects; Sonde is an AT Protocol explorer; atproto-wc provides framework-agnostic web components with no AppView dependency.",
+      "tags": [
+        "atproto",
+        "cloudflare-workers",
+        "durable-objects",
+        "web-components",
+        "json-events",
+        "pds"
+      ],
+      "cid": "bafkreie6xxysrtkw6gqawj3y5ri7bzyheit6hous7bblk3q7khsxrgb5ly"
+    },
+    {
+      "title": "llm-txt.fun",
+      "href": "/experiments/1789491297000-llm-txt-fun",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:14:23Z",
+      "excerpt": "A suite of tools that generates llm-txt files from Farcaster profiles, Bluesky profiles, RSS/Atom feeds, and Git repos, with MPP and x402 micropayments covering more computationally intensive actions.",
+      "tags": [
+        "llm-txt",
+        "farcaster",
+        "bluesky",
+        "rss-feeds",
+        "git-repos",
+        "micropayments"
+      ],
+      "cid": "bafkreichgmkx6dcygnxfoovl2dxptq6utzum2jmk7g26l2j3kixtkbnwjq"
+    },
+    {
+      "title": "Obsidian Plugins",
+      "href": "/experiments/1789490903000-obsidian-plugins",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:10:12Z",
+      "excerpt": "An overview of three Obsidian plugins the author built: an image uploader that sends embedded images to Pinata and rewrites references as ipfs:// URIs, plus AI-powered generators for note excerpts and tags.",
+      "tags": [
+        "obsidian",
+        "obsidian-plugins",
+        "ipfs",
+        "pinata",
+        "ai",
+        "frontmatter"
+      ],
+      "cid": "bafkreia4svrix5n6efsz2gbmitvpcdachomgraq7cldmq3sb3hm3jqjibu"
+    },
+    {
+      "title": "Styx",
+      "href": "/experiments/1789407119000-styx",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:09:57Z",
+      "excerpt": "Styx is a library of eight agent souls plus a toolbox of skills for Hermes, Claude Code, or any LLM that takes a system prompt. It installs into ~/.hermes/styx or souls can be pasted into another runtime.",
+      "tags": [
+        "agent-souls",
+        "llm-agents",
+        "system-prompts",
+        "claude-code",
+        "hermes",
+        "open-source"
+      ],
+      "cid": "bafkreifi5bxx4sk3o2cxjvusiy67sn2zxhn4vjcmz3cf34tow4ul43haru"
+    },
+    {
+      "title": "Frame Skylight",
+      "href": "/experiments/1789407104000-frame-skylight",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:09:23Z",
+      "excerpt": "A Docker sync daemon that drives a rooted Skylight Frame from a public iCloud Shared Album, polling CloudKit and reconciling photos and videos over network ADB — no Skylight cloud, no subscription.",
+      "tags": [
+        "skylight-frame",
+        "icloud",
+        "cloudkit",
+        "docker",
+        "adb",
+        "rooted-android"
+      ],
+      "cid": "bafkreia2upkcpmtldzo3w5fulyybjkexfggw27rf2vvqontauufsqjkvca"
+    },
+    {
+      "title": "Intern",
+      "href": "/experiments/1789407081000-intern",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:08:59Z",
+      "excerpt": "Bootstrap for the Autonomous Intern, an agentic Raspberry Pi project running Hermes with Caddy, Tailscale, and a HAL-driven LED ring, plus optional Rabbit R1 support and a single idempotent setup script.",
+      "tags": [
+        "raspberry-pi",
+        "agentic",
+        "hermes",
+        "tailscale",
+        "caddy",
+        "rabbit-r1"
+      ],
+      "cid": "bafkreid3rjyzswoiickceehjh4yzgcffq4ij3jcn2sbupsmkwewxowtlo4"
+    }
+  ]
+}

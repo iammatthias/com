@@ -1,0 +1,71 @@
+{
+  "kind": "resume",
+  "title": "Resume",
+  "sections": [
+    {
+      "title": "Present",
+      "entries": [
+        {
+          "date": "2026 → Current",
+          "company": "Stablecore",
+          "position": "Solutions Engineer"
+        },
+        {
+          "date": "Since I first picked up a camera until the day I die",
+          "company": "Photographer",
+          "position": "Fine art & freelance"
+        }
+      ]
+    },
+    {
+      "title": "Historic",
+      "entries": [
+        {
+          "date": "2025 → 2026",
+          "company": "Pinata",
+          "position": "Developer Relations"
+        },
+        {
+          "date": "2024 → 2026",
+          "company": "day---break",
+          "position": "Owner"
+        },
+        {
+          "date": "2023 → 2024",
+          "company": "Ice Barrel (Contractor)",
+          "position": "Web Development & Performance Marketing Manager"
+        },
+        {
+          "date": "2022 → 2024",
+          "company": "Opul (Contractor)",
+          "position": "Design System Engineer"
+        },
+        {
+          "date": "2021 → 2022",
+          "company": "Tornado",
+          "position": "Growth Engineer"
+        },
+        {
+          "date": "2018 → 2021",
+          "company": "Aspiration",
+          "position": "CRM Architect"
+        },
+        {
+          "date": "2016 → 2018",
+          "company": "Surf Air",
+          "position": "Product & Marketing Coordinator"
+        }
+      ]
+    },
+    {
+      "title": "Education",
+      "entries": [
+        {
+          "date": "2010 → 2014",
+          "company": "Brooks Institute",
+          "position": "Bachelors Degree, Commercial Photography"
+        }
+      ]
+    }
+  ]
+}

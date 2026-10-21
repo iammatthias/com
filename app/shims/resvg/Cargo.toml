@@ -1,0 +1,24 @@
+# A stand-in for `resvg` (gpui-ce's SVG renderer): see shims/usvg/Cargo.toml.
+[package]
+name = "resvg"
+version = "0.48.1"
+edition = "2021"
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[features]
+default = []
+text = []
+system-fonts = []
+memmap-fonts = []
+raster-images = []
+svgz = []
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+usvg = "0.48.1"
+tiny-skia = { version = "0.12", default-features = false, features = ["std"] }
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+resvg_real = { package = "resvg", git = "https://github.com/linebender/resvg", tag = "v0.48.1", default-features = false, features = ["text", "system-fonts", "memmap-fonts", "raster-images"] }

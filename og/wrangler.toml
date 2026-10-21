@@ -1,0 +1,35 @@
+# Social cards for com-next: /og/<sig>.png, drawn by the site's own card page
+# (app/card/card.html) in Browser Run and kept in KV. Reached only through the site
+# Worker's OG service binding; no routes of its own.
+name = "com-next-og"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+keep_vars = true
+
+browser = { binding = "BROWSER" }
+
+# the site Worker's namespace: cards under og:v1:<sig>
+[[kv_namespaces]]
+binding = "CONTENT_CACHE"
+id = "54d1e62d078b4fb88d5434f77ef5c21a"
+preview_id = "00000000000000000000000000000000"
+
+# the site itself, for the sweep's sitemap and pages (straight to the Worker, past the zone's
+# bot protection, which turns away a Worker fetching over HTTP)
+[[services]]
+binding = "SITE"
+service = "com"
+
+[vars]
+SITE_ORIGIN = "https://iammatthias.com"
+
+# No schedule: cards are drawn on demand (a page's card the first time it's asked for) or by
+# an explicit POST /og/sweep. Browser Run is metered past its free hours, so nothing runs
+# on a timer until it's been decided how often it should.
+[triggers]
+crons = []
+
+[observability]
+enabled = true

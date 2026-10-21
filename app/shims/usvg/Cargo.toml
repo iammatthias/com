@@ -1,0 +1,34 @@
+# A stand-in for `usvg` (the SVG parser gpui-ce draws SVG images with), swapped in by
+# `[patch.crates-io]` in app/Cargo.toml, with shims/resvg.
+#
+# Why: on the web the site draws no SVG through gpui (the browser draws what it has: mermaid
+# diagrams in js/dom.js, the web components). The real parser, renderer and their emoji regex
+# are ~1MB of the app.
+# On the web this keeps only the types gpui-ce names and parses nothing; off the web it is the
+# real usvg, so a desktop build draws SVG exactly as before.
+#
+# Keep `version` and `tag` at the usvg gpui-ce resolves; `build_guards` in app/src/main.rs fails
+# if the stand-in stops applying. To remove: delete shims/usvg and shims/resvg and their
+# `[patch]` lines.
+[package]
+name = "usvg"
+version = "0.48.1"
+edition = "2021"
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[features]
+default = []
+text = []
+system-fonts = []
+memmap-fonts = []
+svgz = []
+writer = []
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+fontdb = { version = "0.24", default-features = false, features = ["fs"] }
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+usvg_real = { package = "usvg", git = "https://github.com/linebender/resvg", tag = "v0.48.1", default-features = false, features = ["text", "system-fonts", "memmap-fonts"] }

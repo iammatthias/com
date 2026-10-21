@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="robots" content="noindex" />
+<title>card</title>
+<!--
+  A social card, drawn by the plate's own shaders (plate.wgsl through naga, see card.js) in
+  WebGL2 so a headless browser without WebGPU can draw it, and screenshotted at 1200x630.
+    ?kind=home                         the spiral and the portrait, no text
+    ?kind=page&title=..&eyebrow=..&description=..   the line framing a paper box, the text set in it
+    ?kind=icon                         the bare spiral, 192 square at 8x: the app icon (scripts/icons.mjs)
+    &seed=<u32>                        the plate's variance (stable per page)
+  window.__cardReady turns true once the fonts are in and the frame is drawn.
+-->
+<style>
+@font-face { font-family: "Newsreader"; src: url(/fonts-v1/Newsreader.ttf); font-weight: 200 800; font-style: normal; }
+@font-face { font-family: "Newsreader"; src: url(/fonts-v1/Newsreader-Italic.ttf); font-weight: 200 800; font-style: italic; }
+@font-face { font-family: "Inter"; src: url(/fonts-v1/Inter.ttf); font-weight: 100 900; font-style: normal; }
+html, body { margin: 0; padding: 0; background: #F4EFE4; }
+#card { position: relative; width: 1200px; height: 630px; overflow: hidden; }
+canvas { position: absolute; inset: 0; width: 1200px; height: 630px; transform: scaleY(-1); }
+.icon #card, .icon canvas { width: 192px; height: 192px; }
+#text { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 760px; color: #1B1814; display: none; }
+.page #text { display: block; }
+#eyebrow { font: 500 15px/1 Inter, sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: #1F55C2; margin: 0 0 22px; }
+#title { font: 400 64px/1.04 Newsreader, serif; letter-spacing: -0.012em; margin: 0; text-wrap: balance; }
+#description { font: italic 400 24px/1.35 Newsreader, serif; color: #665E52; margin: 20px 0 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+#site { font: 500 14px/1 Inter, sans-serif; letter-spacing: 0.04em; color: #665E52; margin: 30px 0 0; }
+</style>
+</head>
+<body>
+<div id="card">
+  <canvas id="plate" width="2400" height="1260"></canvas>
+  <div id="text">
+    <p id="eyebrow"></p>
+    <h1 id="title"></h1>
+    <p id="description"></p>
+    <p id="site">iammatthias.com</p>
+  </div>
+</div>
+<script type="module" src="card.js"></script>
+</body>
+</html>

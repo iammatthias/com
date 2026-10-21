@@ -1,0 +1,2110 @@
+{
+  "sections": [
+    {
+      "slug": "art",
+      "name": "Art",
+      "description": null,
+      "count": 8
+    },
+    {
+      "slug": "experiments",
+      "name": "Experiments",
+      "description": "Open source projects and experiments",
+      "count": 11
+    },
+    {
+      "slug": "posts",
+      "name": "Posts",
+      "description": null,
+      "count": 49
+    },
+    {
+      "slug": "recipes",
+      "name": "Recipes",
+      "description": null,
+      "count": 37
+    }
+  ],
+  "items": [
+    {
+      "title": "Datamosh",
+      "href": "/art/1791519648658-datamosh",
+      "section": "art",
+      "publishedAt": "2026-10-09T04:20:51Z",
+      "excerpt": "An iOS app",
+      "tags": [
+        "datamosh",
+        "digital-art",
+        "creative-process"
+      ],
+      "cid": "bafkreia4sfvrdm2t4ytrkvtgtlmnhm44klo2naotbfuijr7e4bydzvhjja"
+    },
+    {
+      "title": "Own The Means of Cognition",
+      "href": "/posts/1789494942000-own-the-means-of-cognition",
+      "section": "posts",
+      "publishedAt": "2026-10-02T02:01:14Z",
+      "excerpt": "Own the means of cognition and you don't need a ministry of truth, the modal in everyone's pocket does the job.",
+      "tags": [
+        "llms",
+        "open-weights",
+        "enclosure",
+        "commons"
+      ],
+      "cid": "bafkreigbxlm652nzdkkoiwfseb53ogtpdfrga23blqphf2fm7txzllpytu"
+    },
+    {
+      "title": "pure---internet",
+      "href": "/experiments/1789661060000-pure-internet",
+      "section": "experiments",
+      "publishedAt": "2026-10-01T23:56:48Z",
+      "excerpt": "PROJECT pure---internet is a collection of things built on the web off the beaten path. It started as an exploration of novel hosting and outgrew that framing. - Bard\\ A tiny GPT whose weights live en",
+      "tags": [],
+      "cid": "bafkreifa57qxsp5ihfndpo57d7tazrjpovax2xwpxegruay6yr6yejqlde"
+    },
+    {
+      "title": "Conet",
+      "href": "/experiments/1789408263000-conet",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:16:07Z",
+      "excerpt": "CONET is a public, append-only Ethereum message log that broadcasts cold war style number stations to AI agents, with no client library or CLI — agents build their own tooling from contract ABIs.",
+      "tags": [
+        "ethereum",
+        "ai-agents",
+        "number-stations",
+        "append-only-log",
+        "smart-contracts",
+        "on-chain"
+      ],
+      "cid": "bafkreiapdtdhvrp34getebdmrpahvvhqe4w2gkbmbakeotbrl7zyerpzz4"
+    },
+    {
+      "title": "Now Playing",
+      "href": "/experiments/1789660555000-now-playing",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:15:33Z",
+      "excerpt": "A Raspberry Pi Zero 2 W drives a 64×64 LED matrix showing the album art of whatever is playing, decoded from an AirPlay 2 stream via shairport-sync, with an ambient video loop and sun-following brightness when idle.",
+      "tags": [
+        "raspberry-pi",
+        "led-matrix",
+        "airplay",
+        "shairport-sync",
+        "album-art"
+      ],
+      "cid": "bafkreifwmy433yetfa53f3jjvxkkdojqbsju7sa3afyfzqszudvc2pxgya"
+    },
+    {
+      "title": "Buddydex",
+      "href": "/experiments/1789660275000-buddydex",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:15:21Z",
+      "excerpt": "BuddyDex brute-forces the deterministic hashing pipeline behind Claude Code's short-lived April Fools' buddies, finding account ids that produce a desired species, rarity, stats, or shiny status.",
+      "tags": [
+        "claude-code",
+        "hashing",
+        "brute-force",
+        "easter-egg",
+        "deterministic-generation",
+        "reverse-engineering"
+      ],
+      "cid": "bafkreif5c7xfxbgxe2hcdefqszni7jk7pe2jckw66y7yrzyjjpyyn7e6jq"
+    },
+    {
+      "title": "AtProto",
+      "href": "/experiments/1789491418000-atproto",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:15:08Z",
+      "excerpt": "Three ATProto tools: Nimbus handles firehose and backfill via Cloudflare Durable Objects; Sonde is an AT Protocol explorer; atproto-wc provides framework-agnostic web components with no AppView dependency.",
+      "tags": [
+        "atproto",
+        "cloudflare-workers",
+        "durable-objects",
+        "web-components",
+        "json-events",
+        "pds"
+      ],
+      "cid": "bafkreie6xxysrtkw6gqawj3y5ri7bzyheit6hous7bblk3q7khsxrgb5ly"
+    },
+    {
+      "title": "llm-txt.fun",
+      "href": "/experiments/1789491297000-llm-txt-fun",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:14:23Z",
+      "excerpt": "A suite of tools that generates llm-txt files from Farcaster profiles, Bluesky profiles, RSS/Atom feeds, and Git repos, with MPP and x402 micropayments covering more computationally intensive actions.",
+      "tags": [
+        "llm-txt",
+        "farcaster",
+        "bluesky",
+        "rss-feeds",
+        "git-repos",
+        "micropayments"
+      ],
+      "cid": "bafkreichgmkx6dcygnxfoovl2dxptq6utzum2jmk7g26l2j3kixtkbnwjq"
+    },
+    {
+      "title": "Obsidian Plugins",
+      "href": "/experiments/1789490903000-obsidian-plugins",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:10:12Z",
+      "excerpt": "An overview of three Obsidian plugins the author built: an image uploader that sends embedded images to Pinata and rewrites references as ipfs:// URIs, plus AI-powered generators for note excerpts and tags.",
+      "tags": [
+        "obsidian",
+        "obsidian-plugins",
+        "ipfs",
+        "pinata",
+        "ai",
+        "frontmatter"
+      ],
+      "cid": "bafkreia4svrix5n6efsz2gbmitvpcdachomgraq7cldmq3sb3hm3jqjibu"
+    },
+    {
+      "title": "Styx",
+      "href": "/experiments/1789407119000-styx",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:09:57Z",
+      "excerpt": "Styx is a library of eight agent souls plus a toolbox of skills for Hermes, Claude Code, or any LLM that takes a system prompt. It installs into ~/.hermes/styx or souls can be pasted into another runtime.",
+      "tags": [
+        "agent-souls",
+        "llm-agents",
+        "system-prompts",
+        "claude-code",
+        "hermes",
+        "open-source"
+      ],
+      "cid": "bafkreifi5bxx4sk3o2cxjvusiy67sn2zxhn4vjcmz3cf34tow4ul43haru"
+    },
+    {
+      "title": "Frame Skylight",
+      "href": "/experiments/1789407104000-frame-skylight",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:09:23Z",
+      "excerpt": "A Docker sync daemon that drives a rooted Skylight Frame from a public iCloud Shared Album, polling CloudKit and reconciling photos and videos over network ADB — no Skylight cloud, no subscription.",
+      "tags": [
+        "skylight-frame",
+        "icloud",
+        "cloudkit",
+        "docker",
+        "adb",
+        "rooted-android"
+      ],
+      "cid": "bafkreia2upkcpmtldzo3w5fulyybjkexfggw27rf2vvqontauufsqjkvca"
+    },
+    {
+      "title": "Intern",
+      "href": "/experiments/1789407081000-intern",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:08:59Z",
+      "excerpt": "Bootstrap for the Autonomous Intern, an agentic Raspberry Pi project running Hermes with Caddy, Tailscale, and a HAL-driven LED ring, plus optional Rabbit R1 support and a single idempotent setup script.",
+      "tags": [
+        "raspberry-pi",
+        "agentic",
+        "hermes",
+        "tailscale",
+        "caddy",
+        "rabbit-r1"
+      ],
+      "cid": "bafkreid3rjyzswoiickceehjh4yzgcffq4ij3jcn2sbupsmkwewxowtlo4"
+    },
+    {
+      "title": "Farfield",
+      "href": "/experiments/1789407007000-farfield",
+      "section": "experiments",
+      "publishedAt": "2026-09-20T05:08:04Z",
+      "excerpt": "Farfield is a growing collection of Go apps and an opinionated Arch-based OS, with static binaries handling feeds, bookmarks, and blob storage in a homelab alongside a kiosk dashboard setup.",
+      "tags": [
+        "go",
+        "homelab",
+        "arch-linux",
+        "self-hosting",
+        "cloudflare-tunnel",
+        "tailscale"
+      ],
+      "cid": "bafkreigbesafjv3axj7hbkpqbrviwfky3wfyynytjxu7gvcksgfdhvtxru"
+    },
+    {
+      "title": "Whats the frequency, Kenneth?",
+      "href": "/posts/1788199665000-whats-the-frequency-kenneth",
+      "section": "posts",
+      "publishedAt": "2026-09-03T14:07:59Z",
+      "excerpt": "Cold war style number stations for good little bots built on Ethereum",
+      "tags": [
+        "number-stations",
+        "ethereum",
+        "one-time-pad",
+        "ai-agents",
+        "smart-contracts",
+        "cryptography"
+      ],
+      "cid": "bafkreibpr233pocdqnj4gtg6c7yiwccdhhymjgk2lhm7eifv6fyaiudhpq"
+    },
+    {
+      "title": "On Diffusion",
+      "href": "/posts/1787249855000-on-diffusion",
+      "section": "posts",
+      "publishedAt": "2026-08-27T13:44:49Z",
+      "excerpt": "From early StyleGAN experiments and latent walks to Mercury 2's fast diffusion language model, and a simulation stripped down until its agents begin coining terms of their own.",
+      "tags": [
+        "diffusion-models",
+        "mercury-2",
+        "generative-ai",
+        "agent-simulation",
+        "emergence",
+        "language-models"
+      ],
+      "cid": "bafkreic6kxd5yi5a7rdmwbl5mckc3sqkbzrsq4nxkboite7svenioeoiu4"
+    },
+    {
+      "title": "Text your tools",
+      "href": "/posts/1787671012000-text-your-tools",
+      "section": "posts",
+      "publishedAt": "2026-08-25T15:16:52Z",
+      "excerpt": "Wiring a Farfield homelab up to iMessage with Photon and OpenPoke, so slash commands reach personal apps and talking to your agent feels like texting a friend instead of learning another tool.",
+      "tags": [
+        "ai-agents",
+        "imessage",
+        "self-hosting",
+        "homelab",
+        "personal-software"
+      ],
+      "cid": "bafkreigiazsn66idd2e3iaqvnwr6tymo2cvuhsij2uzk3tw4yfvz67u6i4"
+    },
+    {
+      "title": "Now Playing",
+      "href": "/posts/1784736733544-now-playing",
+      "section": "posts",
+      "publishedAt": "2026-07-25T17:18:48Z",
+      "excerpt": "Putting my Apple Music \"Now Playing\" on display with a Raspberry Pi and a 64x64 LED matrix.",
+      "tags": [
+        "hardware",
+        "music",
+        "raspberry-pi",
+        "generative"
+      ],
+      "cid": "bafkreicakpzagl5b7of3qv43ksge6gcifjzcmritin7et26shjizpu3kvy"
+    },
+    {
+      "title": "Post-UI",
+      "href": "/posts/1784126858578-post-ui",
+      "section": "posts",
+      "publishedAt": "2026-07-15T17:27:00Z",
+      "excerpt": "Do we still need to ship a frontend?",
+      "tags": [
+        "web-development",
+        "user-interface",
+        "hateoas",
+        "llm",
+        "webgpu",
+        "browser"
+      ],
+      "cid": "bafkreigixyfadgc5j3ab56jq4qg75taf6uyhrnfjyv2w4bplcxxdapjgfe"
+    },
+    {
+      "title": "Intern",
+      "href": "/posts/1781835006151-intern",
+      "section": "posts",
+      "publishedAt": "2026-06-19T02:10:06Z",
+      "excerpt": "The Autonomous Intern ships as a Raspberry Pi 5 in a desk-toy case running a stack I didn't pick. I flashed it to Debian Trixie, swapped the whole thing for the Hermes agent with its own built-in memory, and folded it all into one setup script.",
+      "tags": [
+        "raspberry-pi",
+        "hardware",
+        "ai-agents",
+        "self-hosting",
+        "side-projects",
+        "hermes"
+      ],
+      "cid": "bafkreigvicwyjnkjzij5rrmqc55yn5sse4wlz2muhk5zfufe7kwb7zxb6q"
+    },
+    {
+      "title": "Phosphene",
+      "href": "/art/1781816428977-phosphene",
+      "section": "art",
+      "publishedAt": "2026-06-18T21:00:28Z",
+      "excerpt": "A camera that turns each photo into a poem, then paints a new image from those words.",
+      "tags": [
+        "ai",
+        "generative",
+        "photography",
+        "apple-intelligence",
+        "on-device",
+        "ios",
+        "image-to-image",
+        "creative-process",
+        "claude-code"
+      ],
+      "cid": "bafkreib4yothgbhazbxivjfeuiyxktnb5bk4mbx7fg5j4rvy6utewjql4q"
+    },
+    {
+      "title": "Toy GPTs",
+      "href": "/posts/1780416704000-toy-gpts",
+      "section": "posts",
+      "publishedAt": "2026-06-02T16:11:44Z",
+      "excerpt": "Two tiny GPTs out of Karpathy's microGPT. One keeps its weights on Ethereum. The other holds a séance with dead presidents.",
+      "tags": [
+        "machine-learning",
+        "gpt",
+        "transformers",
+        "ethereum",
+        "onchain",
+        "browser",
+        "side-projects"
+      ],
+      "cid": "bafkreiepqewffbsqolwxgkpyfxq22hbydv3vwq6ewprnfw5doqydepiyfa"
+    },
+    {
+      "title": "Adventures in Machine Vision",
+      "href": "/posts/1780360240000-adventures-in-machine-vision",
+      "section": "posts",
+      "publishedAt": "2026-06-02T00:30:40Z",
+      "excerpt": "A Nat Friedman anecdote about an AI watching him drink water sent me digging for a spare Raspberry Pi. Now a camera and a sensor HAT watch my desk, a self-inflicted panopticon that logs who walks by and what the room is doing.",
+      "tags": [
+        "computer-vision",
+        "edge-computing",
+        "raspberry-pi",
+        "hardware",
+        "machine-learning",
+        "side-projects",
+        "quantified-self"
+      ],
+      "cid": "bafkreicvjm4fxm6keasl2uykua5xnuuzrofzfkcpbbp73qelngrszlxxa4"
+    },
+    {
+      "title": "Farfield",
+      "href": "/posts/1779066375000-farfield",
+      "section": "posts",
+      "publishedAt": "2026-05-18T01:06:15Z",
+      "excerpt": "Five small Go services, single binaries, content-addressed records, running on my homelab. The new backend for the site.",
+      "tags": [
+        "development",
+        "go",
+        "cms",
+        "self-hosting",
+        "content-addressing",
+        "ipfs",
+        "sqlite",
+        "astro",
+        "homelab"
+      ],
+      "cid": "bafkreiafor4bdzviqap3yt3adgljic5oe6uhc2qxbttwxunxysr52gsrle"
+    },
+    {
+      "title": "I Got a Common Turtle",
+      "href": "/posts/1775137360175-i-got-a-common-turtle",
+      "section": "posts",
+      "publishedAt": "2026-04-02T06:42:00Z",
+      "excerpt": "I got a Common turtle from Claude Code's deterministic buddy system, so I brute-forced the generation algorithm.",
+      "tags": [
+        "ai",
+        "claude-code",
+        "reverse-engineering",
+        "tools"
+      ],
+      "cid": "bafkreieemlvbz4roibtorzea46n6qc2gbhrygpmyesz5rq7gv3gq25fxkm"
+    },
+    {
+      "title": "Replacing a Rabbit's Brain: Connecting the R1 to Hermes",
+      "href": "/posts/1775069974473-replacing-rabbit-s-brain-connecting-a-rabbit-r1-to-hermes",
+      "section": "posts",
+      "publishedAt": "2026-04-01T11:59:00Z",
+      "excerpt": "I replaced the OpenClaw agent on my R1 with Hermes, running locally on a MacBook Pro.",
+      "tags": [
+        "ai",
+        "rabbit-r1",
+        "agents",
+        "hardware",
+        "hermes",
+        "openclaw"
+      ],
+      "cid": "bafkreiemiglhbjv2wbo7pbeicc7n2avjonrqdswbkjvx54jzuqs7it7jqe"
+    },
+    {
+      "title": "OpenClaw and the Rabbit R1",
+      "href": "/posts/1774911232779-openclaw-and-the-rabbit-r1",
+      "section": "posts",
+      "publishedAt": "2026-03-30T15:53:00Z",
+      "excerpt": "I got my Rabbit R1 talking to my Pinata-hosted agent. The agent did most of the work.",
+      "tags": [
+        "ai",
+        "pinata",
+        "openclaw",
+        "rabbit-r1",
+        "agents",
+        "hardware"
+      ],
+      "cid": "bafkreifszwgq4woq7hd6hxuotg42hmo2keq27h3vufig52woxgllaooobq"
+    },
+    {
+      "title": "Koios: Memory, Feedback, and Containment",
+      "href": "/posts/1768671170751-koios-memory-feedback-and-containment",
+      "section": "posts",
+      "publishedAt": "2026-01-17T09:32:00Z",
+      "excerpt": "Autonomous agent with persistent memory inspired by classical theory of mind",
+      "tags": [
+        "ai",
+        "agents",
+        "memory",
+        "cognitive-systems",
+        "containerization",
+        "VDD"
+      ],
+      "cid": "bafkreibh544estrb5i4hte6xxrpl63r2tnn3d6gkcbofzg7yzahty3ad7q"
+    },
+    {
+      "title": "Notes on using a PDS as Content Infrastructure",
+      "href": "/posts/1767505149657-notes-on-using-a-pds-as-content-infrastructure",
+      "section": "posts",
+      "publishedAt": "2026-01-03T21:39:00Z",
+      "excerpt": "Content addressing with normal web requests, identity baked in, delivery over boring HTTPS.",
+      "tags": [
+        "at-protocol",
+        "bluesky",
+        "ipfs",
+        "identity"
+      ],
+      "cid": "bafkreie6kfvybufowypgnteoeie6rbtpv524fpnr5qtzpi46x4mgnsfwae"
+    },
+    {
+      "title": "Brandy Peppercorn Sauce (two ways)",
+      "href": "/recipes/1766509866956-brandy-peppercorn-sauce-two-ways",
+      "section": "recipes",
+      "publishedAt": "2025-12-23T09:11:00Z",
+      "excerpt": "Versatile peppercorn sauce recipe with classic and dairy-free/wheat-free options. Rich, creamy base with brandy and crushed peppercorns.",
+      "tags": [
+        "sauce",
+        "peppercorn",
+        "brandy",
+        "butter"
+      ],
+      "cid": "bafkreidooxusrhsvk5q3n3psbldwbdpjgznhiczko45lfmlbqfslbkcxcm"
+    },
+    {
+      "title": "Almond Financier Pastry Sheet Cake",
+      "href": "/recipes/1766448586654-almond-financier-pastry-sheet-cake",
+      "section": "recipes",
+      "publishedAt": "2025-12-22T16:09:00Z",
+      "excerpt": "A gluten-free almond sheet cake made with coconut oil, egg whites, coconut sugar, and coconut flour.",
+      "tags": [
+        "gluten-free",
+        "dairy-free",
+        "almond",
+        "financier",
+        "dessert",
+        "coconut",
+        "pastry"
+      ],
+      "cid": "bafkreid4f3x4ntkpcou2crzqjrieo44o4tdumiuyxilemhcphsry6vrbme"
+    },
+    {
+      "title": "What's the $POINTS?",
+      "href": "/posts/1764868806838-whats-the-points",
+      "section": "posts",
+      "publishedAt": "2025-12-04T09:20:00Z",
+      "excerpt": "$POINTS was deployed on December 13th, 2023 and made a lot of people very angry",
+      "tags": [
+        "memecoin",
+        "farcaster",
+        "tokenomics",
+        "clanker",
+        "points",
+        "tokens"
+      ],
+      "cid": "bafkreifxpnobkm3iwdj6krnj4tkbnhmbx76k4sa4bou3bgrsjccuwgwyzy"
+    },
+    {
+      "title": "My office as entropy",
+      "href": "/posts/1756826230035-my-office-as-entropy",
+      "section": "posts",
+      "publishedAt": "2025-09-02T08:17:00Z",
+      "excerpt": "Turning my office's environmental data into verifiable randomness.",
+      "tags": [
+        "hardware",
+        "blockchain",
+        "randomness",
+        "circom",
+        "entropy",
+        "ipfs"
+      ],
+      "cid": "bafkreieiymtmfagv4rgotmt6dvfhit6pdfkugjqiiis4m4smxnlwery3pq"
+    },
+    {
+      "title": "Take Your Network With You",
+      "href": "/posts/1754759911088-take-your-network-with-you",
+      "section": "posts",
+      "publishedAt": "2025-08-09T10:18:00Z",
+      "excerpt": "Bring your home network anywhere with the tiny Beryl AX router.",
+      "tags": [
+        "travel",
+        "networking",
+        "tailscale",
+        "router",
+        "gl-inet"
+      ],
+      "cid": "bafkreihcifkjn42ffnvyefxc5as7faogawno3lquozzhowjgukee5ulpti"
+    },
+    {
+      "title": "Eggplant Parmesan",
+      "href": "/recipes/1753717869129-eggplant-parmesan",
+      "section": "recipes",
+      "publishedAt": "2025-07-28T08:51:00Z",
+      "excerpt": "Crispy panko-crusted eggplant topped with melted mozzarella, served over a vibrant blistered cherry tomato sauce.",
+      "tags": [
+        "italian",
+        "vegetarian",
+        "eggplant",
+        "tomato",
+        "comfort",
+        "food"
+      ],
+      "cid": "bafkreifx43lchjndlaxk4knkdhoap6cskch6hmyzf4uekneyn5yaz6orke"
+    },
+    {
+      "title": "Thunderbolt Sub",
+      "href": "/recipes/1751951070010-thunderbolt-sub",
+      "section": "recipes",
+      "publishedAt": "2025-07-07T22:04:00Z",
+      "excerpt": "First attempt at cloning the Thunderbolt Italian Sub.",
+      "tags": [
+        "sandwich",
+        "italian",
+        "bread",
+        "baking",
+        "dough"
+      ],
+      "cid": "bafkreibsnf4evgaz2bztvczdb4532silbzgam5eerj64jti2zquokdbgua"
+    },
+    {
+      "title": "Single-origin deployment with bhvr",
+      "href": "/posts/1747182886660-single-origin-deployment-with-bhvr",
+      "section": "posts",
+      "publishedAt": "2025-05-13T17:34:00Z",
+      "excerpt": "Fried my Pi using a 10V solar panel without a buck converter.",
+      "tags": [
+        "raspberry-pi",
+        "hardware",
+        "solar-powered",
+        "web-development",
+        "cloudflare-tunnel"
+      ],
+      "cid": "bafkreibf6c3xwvhiszc2y6hwzxaxq7qizamhgw4n22jhzlfnz4qe2dvp3i"
+    },
+    {
+      "title": "Breaking the AI in Parallax",
+      "href": "/posts/1746765173152-breaking-the-ai-in-parallax",
+      "section": "posts",
+      "publishedAt": "2025-05-08T21:32:00Z",
+      "excerpt": "I used simple jailbreaks to extract information that Parallax's AI mystery-game characters were not supposed to reveal.",
+      "tags": [
+        "farcaster",
+        "ai",
+        "mystery",
+        "claude",
+        "gemini",
+        "prompt-engineering"
+      ],
+      "cid": "bafkreiewhiq5hptzmyx7ggjrvunlva7kydhcasqajiiz6wuh643s7bcune"
+    },
+    {
+      "title": "Create and Use Farcaster Signers",
+      "href": "/posts/1745543922514-create-and-use-farcaster-signers",
+      "section": "posts",
+      "publishedAt": "2025-04-24T18:18:00Z",
+      "excerpt": "I got nerdsniped on Farcaster today. @keccers.eth was talking about the Sent from coinbasewallet tag. You usually only see these on third-party clients, which is why @artlu having his own stands out o",
+      "tags": [
+        "farcaster",
+        "development",
+        "tutorial"
+      ],
+      "cid": "bafkreifyh355rhjzaz4yjsgtz5oofdziuxqnjuoi5w4kaw5t6qak7r3kgu"
+    },
+    {
+      "title": "Code and Cloth",
+      "href": "/posts/1743724413087-code-and-cloth",
+      "section": "posts",
+      "publishedAt": "2025-04-03T16:53:00Z",
+      "excerpt": "The loom is an old model for programmable work, and a useful way to think about what AI changes in software craft.",
+      "tags": [
+        "weaving",
+        "craft",
+        "technology",
+        "software-development",
+        "industrialization",
+        "creative-process",
+        "artisanal",
+        "metaphor",
+        "textile-history",
+        "vibe-coding"
+      ],
+      "cid": "bafkreigkmb3toiipoaw6xnji4hgr3tfqtopcpserxccfsuor236fzl2ona"
+    },
+    {
+      "title": "Small Batch Croissant Loaf",
+      "href": "/recipes/1743442618201-small-batch-croissant-loaf",
+      "section": "recipes",
+      "publishedAt": "2025-03-31T10:36:00Z",
+      "excerpt": "A small laminated milk-bread loaf made with a pasta roller and a 115-gram butter block.",
+      "tags": [
+        "bread",
+        "baking",
+        "pastry",
+        "butter",
+        "lamination",
+        "croissant",
+        "recipe"
+      ],
+      "cid": "bafkreif2yroiyw57hhhagsd37mb4fggqpb6wy2w6mtnouuczoxyqzqw7pu"
+    },
+    {
+      "title": "NYC Halal Cart Style Beef & Lamb Rice Bowls",
+      "href": "/recipes/1743442208161-nyc-halal-cart-style-beef-lamb-rice-bowls",
+      "section": "recipes",
+      "publishedAt": "2025-03-31T10:30:00Z",
+      "excerpt": "Classic beef & lamb with yellow rice recipe featuring homemade white sauce.",
+      "tags": [
+        "rice",
+        "beef",
+        "lime",
+        "meat",
+        "middle-eastern",
+        "street-food",
+        "bowls"
+      ],
+      "cid": "bafkreid37kdj3be55usv6mvkg3zmbu2ui2m5e4hbqhsdkebixhhrnthn7q"
+    },
+    {
+      "title": "Pure Internet: no-html",
+      "href": "/posts/1740682611811-pure-internet-no-html",
+      "section": "posts",
+      "publishedAt": "2025-02-27T10:56:00Z",
+      "excerpt": "A plain Markdown file hosted on Bluesky's blob storage and rendered directly by the browser.",
+      "tags": [
+        "web-development",
+        "pure-internet",
+        "alternative-hosting",
+        "bluesky",
+        "at-protocol",
+        "decentralized-web",
+        "test"
+      ],
+      "cid": "bafkreiawsqsw5ggknse6lnnzt33cs6df4jbxyxmu2gkkvnwe4jsknal65m"
+    },
+    {
+      "title": "Scalability → Buildability",
+      "href": "/posts/1739212426700-scalability-buildability",
+      "section": "posts",
+      "publishedAt": "2025-02-10T10:33:00Z",
+      "excerpt": "A system scales internally when each feature leaves behind primitives that make the next one easier to build.",
+      "tags": [
+        "development",
+        "scalability",
+        "composability",
+        "analytics",
+        "ai-workflows",
+        "growth-engineering",
+        "e-commerce"
+      ],
+      "cid": "bafkreiebsaiwms7obdxbfptalzvrufacrjqav2lv7dvymr5xku2v2cu3ke"
+    },
+    {
+      "title": "Ocean Dreams",
+      "href": "/art/1738786576559-ocean-dreams",
+      "section": "art",
+      "publishedAt": "2025-02-05T12:16:00Z",
+      "excerpt": "Early GAN art from coastal images, creating three collections of dreamy, hallucinatory seascapes that inspired further.",
+      "tags": [
+        "ai",
+        "generative",
+        "stylegan",
+        "runwayml",
+        "drone",
+        "photography",
+        "oceans",
+        "creative-process"
+      ],
+      "cid": "bafkreid7ahjqv6w37h3wfsa7lgzcjskshxttk22ttsdt3bmsda273no3oi"
+    },
+    {
+      "title": "Who Really Wants Carbon Offsets?",
+      "href": "/posts/1738778326344-who-really-wants-carbon-offsets",
+      "section": "posts",
+      "publishedAt": "2025-02-05T09:58:00Z",
+      "excerpt": "We expected electric-vehicle drivers to engage most with carbon-offset messaging. The strongest response came from truck and SUV drivers.",
+      "tags": [
+        "sustainability",
+        "carbon-footprint",
+        "marketing",
+        "customer-engagement",
+        "data-analytics",
+        "consumer-behavior",
+        "fintech"
+      ],
+      "cid": "bafkreih5pkjvrpah3umycm55cme6ynzwsywibt37zdugux3sp7lrpzxnd4"
+    },
+    {
+      "title": "AndreiBot-3000",
+      "href": "/posts/1738693093717-andreibot-3000",
+      "section": "posts",
+      "publishedAt": "2025-02-04T10:18:00Z",
+      "excerpt": "A GPT-2 system trained on approved Aspiration emails generated additional variants for the existing A/B testing program in 2020.",
+      "tags": [
+        "ai",
+        "content-testing",
+        "marketing",
+        "email-marketing",
+        "ai-workflows",
+        "customer-engagement",
+        "growth-engineering"
+      ],
+      "cid": "bafkreihhlnncn5us2pkatz2e2ex3qgiam2hlireiono6r44fwd6gwvxtta"
+    },
+    {
+      "title": "orbz dot com",
+      "href": "/posts/1736537615834-orbz-dot-com",
+      "section": "posts",
+      "publishedAt": "2025-01-10T11:33:00Z",
+      "excerpt": "orbz.fun reads Orbiter's onchain site registry and turns it into a StumbleUpon-style discovery tool.",
+      "tags": [
+        "web-development",
+        "decentralization",
+        "blockchain",
+        "ipfs",
+        "web3",
+        "pure-internet",
+        "tech-history"
+      ],
+      "cid": "bafkreiho7443cu7e7uycpj3ojlykl3uumrim25pxkphimxabau2mdqtghq"
+    },
+    {
+      "title": "Pure Internet: office---space",
+      "href": "/posts/1736536967495-pure-internet-office-space",
+      "section": "posts",
+      "publishedAt": "2025-01-10T11:22:00Z",
+      "excerpt": "A Pi Zero 2 W and Waveshare Environment HAT record my office conditions every 60 seconds.",
+      "tags": [
+        "raspberry-pi",
+        "sensors",
+        "open-source",
+        "monitoring",
+        "hardware",
+        "mint",
+        "data-collection"
+      ],
+      "cid": "bafkreia4wcdlpcgvsrnu7pnines3h4r2qmwhjdslz7xjvzlbeaebbcgzti"
+    },
+    {
+      "title": "Test",
+      "href": "/posts/1734113731423-test",
+      "section": "posts",
+      "publishedAt": "2024-12-12T10:15:00Z",
+      "excerpt": "Friday, December 12th. Courtesy of the DoD.",
+      "tags": [
+        "test",
+        "dod"
+      ],
+      "cid": "bafkreifsgnrcwa2htg4q5rnvpk6uukmcc6zllrnbufcb7oayrwe2mpzmhi"
+    },
+    {
+      "title": "Pure Internet: Feral",
+      "href": "/posts/1733357455673-pure-internet-feral",
+      "section": "posts",
+      "publishedAt": "2024-12-04T16:10:00Z",
+      "excerpt": "A solar-powered Raspberry Pi runs a small Hono app through a Cloudflare Tunnel and disappears when the battery drains.",
+      "tags": [
+        "raspberry-pi",
+        "solar-powered",
+        "cloudflare-tunnel",
+        "honey",
+        "feral-server",
+        "pure-internet",
+        "decentralized-web"
+      ],
+      "cid": "bafkreia5amrdy22lvpajhhdacrsb7phhkuj66yxsllywei5yyu4m6yztse"
+    },
+    {
+      "title": "Pure Internet: Bluesky",
+      "href": "/posts/1732585567703-pure-internet-bluesky",
+      "section": "posts",
+      "publishedAt": "2024-11-25T17:46:00Z",
+      "excerpt": "Static-site hosting on Bluesky's AT Protocol using content-addressed blob storage.",
+      "tags": [
+        "web-development",
+        "alternative-hosting",
+        "at-protocol",
+        "bluesky",
+        "decentralization",
+        "ipfs",
+        "web-hosting"
+      ],
+      "cid": "bafkreiey22nlo3yw74csliw5pgi5kj7v4cw4oo6arz5mafpqisqydglvwy"
+    },
+    {
+      "title": "Pure Internet: NFC",
+      "href": "/posts/1731984900000-pure-internet-nfc",
+      "section": "posts",
+      "publishedAt": "2024-11-18T10:55:00Z",
+      "excerpt": "HTML, CSS & minimal JS combined with NFC tech to create serverless web experiences.",
+      "tags": [
+        "web-development",
+        "nfc",
+        "data-urls",
+        "html",
+        "ipfs",
+        "egg",
+        "decentralized-web"
+      ],
+      "cid": "bafkreie5ij7rghiderfncm6auo77ico5ybud2wf2c6usd6m2ljdh24ezli"
+    },
+    {
+      "title": "Pure Internet",
+      "href": "/posts/1731955749292-pure-internet",
+      "section": "posts",
+      "publishedAt": "2024-11-18T10:49:00Z",
+      "excerpt": "Pure Internet is a running collection of small experiments in publishing with fewer layers.",
+      "tags": [
+        "web-development",
+        "tech-history",
+        "decentralization",
+        "ipfs",
+        "raspberry-pi",
+        "at-protocol",
+        "bluesky",
+        "cloudflare-tunnel",
+        "solar-powered",
+        "sensors",
+        "nfc",
+        "data-urls"
+      ],
+      "cid": "bafkreifm7gr6nhjrnusl3gweckc52lcaavslzberucohjn2rnrvlft73ae"
+    },
+    {
+      "title": "Shitposting Towards a Pizza Oven",
+      "href": "/posts/1731475962422-shitposting-towards-a-pizza-oven",
+      "section": "posts",
+      "publishedAt": "2024-11-12T21:32:00Z",
+      "excerpt": "Automated YouTube Shorts about pizza lead viewers to shouldibuyagozney.com with its one-word answer: \"yes.\" The algorithm grows daily.",
+      "tags": [
+        "automation",
+        "marketing",
+        "pizza",
+        "web-development",
+        "content-distribution",
+        "algorithms"
+      ],
+      "cid": "bafkreiahxoi2txotcj5izo4bsplv5x2eaznuvu37zn6tryfwqmdh6t6kpy"
+    },
+    {
+      "title": "Spicy Tom Kha with Char-grilled Pork Loin",
+      "href": "/recipes/1729456768249-spicy-tom-kha-with-char-grilled-pork-loin",
+      "section": "recipes",
+      "publishedAt": "2024-10-20T13:39:00Z",
+      "excerpt": "Spicy coconut tom kha with mushrooms and tofu, served with char-grilled pork loin in a soy-lime marinade.",
+      "tags": [
+        "thai",
+        "soup",
+        "tom-kha",
+        "coconut",
+        "spicy",
+        "asian",
+        "pork",
+        "grilled",
+        "meat",
+        "lemongrass",
+        "lime",
+        "garlic",
+        "dinner",
+        "chili",
+        "tofu",
+        "mushrooms",
+        "coriander",
+        "recipe",
+        "main-dish"
+      ],
+      "cid": "bafkreigq4psrgzivu6ywhvseyergk46lxmwm2bzulneb4y6oq3gbvcefh4"
+    },
+    {
+      "title": "Case Study: Migrating Ice Barrel to Shopify",
+      "href": "/posts/1728582380556-case-study-ice-barrel",
+      "section": "posts",
+      "publishedAt": "2024-10-10T09:00:00Z",
+      "excerpt": "Ice Barrel moved from WooCommerce to Shopify in under two months, lifting conversion 165% while handling a major product launch without checkout downtime.",
+      "tags": [
+        "e-commerce",
+        "platform-migration",
+        "shopify",
+        "cold-therapy",
+        "case-study",
+        "conversion-optimization",
+        "analytics"
+      ],
+      "cid": "bafkreic2o55w6gqi73crdqcvg2g2xd7lbetfkgybej6e44dh5uiuowdpt4"
+    },
+    {
+      "title": "Crème Brûlée",
+      "href": "/recipes/1727460674219-creme-brulee",
+      "section": "recipes",
+      "publishedAt": "2024-09-27T11:11:00Z",
+      "excerpt": "Vanilla custard baked in a water bath and finished with a caramelized sugar crust.",
+      "tags": [
+        "dessert",
+        "cr-me",
+        "br-l-e",
+        "french",
+        "custard",
+        "egg",
+        "vanilla",
+        "baking"
+      ],
+      "cid": "bafkreieahdeovmdtzz2cvq7bbpfda26b5evfw3ogr3z454hpndqiakwrca"
+    },
+    {
+      "title": "Pavlova",
+      "href": "/recipes/1726450168175-pavlova",
+      "section": "recipes",
+      "publishedAt": "2024-09-15T18:29:00Z",
+      "excerpt": "A classic Pavlova recipe with crisp meringue shell and creamy custard filling, topped with fresh fruit and ready in under 2 hours.",
+      "tags": [
+        "dessert",
+        "pavlova",
+        "meringue",
+        "custard",
+        "fruit",
+        "baking",
+        "egg"
+      ],
+      "cid": "bafkreiawfyym2ba7fhjvfmctrrksnuanpcxpqrifcg7wpi3b6yaaporh7a"
+    },
+    {
+      "title": "Mumbai Street Style Vada Pav",
+      "href": "/recipes/1726417129936-mumbai-street-style-vada-pav",
+      "section": "recipes",
+      "publishedAt": "2024-09-15T09:18:00Z",
+      "excerpt": "Iconic Mumbai street food with spiced potato fritters in buns.",
+      "tags": [
+        "indian",
+        "street-food",
+        "vegan",
+        "vegetarian",
+        "recipe",
+        "potato",
+        "spicy",
+        "snacks"
+      ],
+      "cid": "bafkreibsxwpx7m77vkrjxwpns3t6he2v6jruqw45idhjhiz6jpsgcjxg2y"
+    },
+    {
+      "title": "Honey Liliko‘i Foam",
+      "href": "/recipes/1726330512509-honey-liliko-i-foam",
+      "section": "recipes",
+      "publishedAt": "2024-09-14T09:15:00Z",
+      "excerpt": "Smooth passionfruit foam made by blending honey, purée, syrup, egg white and water, then charged in a siphon with N2O.",
+      "tags": [
+        "foam",
+        "passionfruit",
+        "honey",
+        "egg-white",
+        "recipe",
+        "cocktails",
+        "mixology"
+      ],
+      "cid": "bafkreicl3jdx5gkzvewdiuwguohtck6s6z7emzljvenv6lxvrjeniqbftu"
+    },
+    {
+      "title": "Liliko'i Rum Punch Medley",
+      "href": "/recipes/1726330319079-liliko-i-rum-punch-medley",
+      "section": "recipes",
+      "publishedAt": "2024-09-14T09:11:00Z",
+      "excerpt": "A tropical rum punch blending pineapple, passion fruit and three rums with homemade pineapple rose syrup.",
+      "tags": [
+        "cocktails",
+        "rum-punch",
+        "tropical",
+        "passionfruit",
+        "pineapple",
+        "meyer-lemon",
+        "spirits",
+        "recipe"
+      ],
+      "cid": "bafkreigvmaxgkfgcerapg52doev4qicxodv64hgplti745mtepykqoflmm"
+    },
+    {
+      "title": "Summer chili, two ways",
+      "href": "/recipes/1717954493179-summer-chili-two-ways",
+      "section": "recipes",
+      "publishedAt": "2024-06-09T10:34:00Z",
+      "excerpt": "Dual-batch recipe for grilled meat and vegetarian chilis with toppings. Both share core seasonings, beans, and grilled corn garnish.",
+      "tags": [
+        "recipe",
+        "chili",
+        "grilled",
+        "meat",
+        "vegetarian",
+        "gans",
+        "spicy",
+        "mexican"
+      ],
+      "cid": "bafkreigm7ii6j6e3ktqllzyaql5beimwp64asadvluec2bg7zimmb76aqm"
+    },
+    {
+      "title": "Creamy Honey Cilantro Dressing",
+      "href": "/recipes/1717101197446-creamy-honey-cilantro-dressing",
+      "section": "recipes",
+      "publishedAt": "2024-05-30T13:33:00Z",
+      "excerpt": "A cilantro-lime dressing with Greek yogurt, mayonnaise, honey, Dijon, garlic, and olive oil.",
+      "tags": [
+        "recipe",
+        "salad-dressing",
+        "cilantro",
+        "honey",
+        "lime",
+        "garlic",
+        "olive-oil"
+      ],
+      "cid": "bafkreiddfx772pbv37vlru3s257vurfq7jp66qre6h6wn4fh2il4u6xq2u"
+    },
+    {
+      "title": "Vegetarian Coconut Curry Ramen",
+      "href": "/recipes/1714335695318-vegetarian-coconut-curry-ramen",
+      "section": "recipes",
+      "publishedAt": "2024-04-28T13:21:00Z",
+      "excerpt": "A simple coconut curry ramen bowl featuring fresh noodles in a fragrant broth, topped with veggies and soft-boiled eggs.",
+      "tags": [
+        "curry",
+        "ramen",
+        "coconut-milk",
+        "noodles",
+        "soup",
+        "thai",
+        "vegetarian"
+      ],
+      "cid": "bafkreidy44nrvqup5ryjxrpv326nxnooir373r7nbhs2bpf3xn5q4is44i"
+    },
+    {
+      "title": "Thai Curry Sweet Potato Soup",
+      "href": "/recipes/1713300772377-thai-curry-sweet-potato-soup",
+      "section": "recipes",
+      "publishedAt": "2024-04-16T13:52:00Z",
+      "excerpt": "Sweet potato soup with coconut milk, red curry paste, ginger, lemongrass, lime, and almond butter.",
+      "tags": [
+        "soup",
+        "thai",
+        "sweet-potato",
+        "red-curry",
+        "coconut-milk",
+        "vegan",
+        "recipe",
+        "lime"
+      ],
+      "cid": "bafkreihz46o7zx6aisk7huuyno5errocmdj6rorwsrwtwjf5uljpsjxozu"
+    },
+    {
+      "title": "Generate a new private key",
+      "href": "/posts/1712432046964-generate-a-new-private-key",
+      "section": "posts",
+      "publishedAt": "2024-04-06T12:34:00Z",
+      "excerpt": "Create wallet addresses quickly with OpenSSL: just run `openssl rand -hex 32` to generate a secure private key. Remember to keep it safe!",
+      "tags": [
+        "blockchain",
+        "crypto",
+        "wallet",
+        "private-key",
+        "openssl",
+        "security",
+        "web3"
+      ],
+      "cid": "bafkreibwlmltz6uvguxvyjr65juqwpykmbyf7w7k44iklaydjbop357amm"
+    },
+    {
+      "title": "Onchain Hit Counter",
+      "href": "/posts/1712329304675-onchain-hit-counter",
+      "section": "posts",
+      "publishedAt": "2024-04-05T08:01:00Z",
+      "excerpt": "A GeoCities-style hit counter that stores its count on an Ethereum testnet because a database felt excessive.",
+      "tags": [
+        "web-development",
+        "blockchain",
+        "astro",
+        "testnet",
+        "smart-contract",
+        "viem",
+        "hit-counter"
+      ],
+      "cid": "bafkreibjhqf6y56kil3h24hblbhtdfqx2utosxnla2hwdhlovro5fq7dbe"
+    },
+    {
+      "title": "Siesta",
+      "href": "/recipes/1711599203773-siesta",
+      "section": "recipes",
+      "publishedAt": "2024-03-27T21:13:00Z",
+      "excerpt": "A tequila cocktail with Campari, grapefruit juice, lime juice, and simple syrup. Shake with ice and serve chilled with a grapefruit peel.",
+      "tags": [
+        "cocktails",
+        "mixology",
+        "tequila",
+        "campari",
+        "grapefruit",
+        "lime",
+        "simple-syrup"
+      ],
+      "cid": "bafkreig6ehnl7j22kk6dgoowdxx2umj6vezpc4nqe7exb5wtple3f7yimq"
+    },
+    {
+      "title": "Broken Glass",
+      "href": "/art/1710824453471-broken-glass",
+      "section": "art",
+      "publishedAt": "2024-03-18T22:00:00Z",
+      "excerpt": "A broken lens and college memories",
+      "tags": [
+        "photographs",
+        "nature",
+        "travel",
+        "life"
+      ],
+      "cid": "bafkreifslu5mruvghyjljojooxrl3qwfxcttle6q4nsbqplmpat6rmxkfy"
+    },
+    {
+      "title": "As Above",
+      "href": "/art/1710824280787-as-above",
+      "section": "art",
+      "publishedAt": "2024-03-18T21:58:00Z",
+      "excerpt": "High-altitude aerial photos with quirks of light and color.",
+      "tags": [
+        "photography",
+        "travel",
+        "aerial",
+        "altitude",
+        "oceans",
+        "pictures"
+      ],
+      "cid": "bafkreiaiedhrxzwzyy56qe3hpnj3vph2ltdtk7f276wx6hiyvszw7cgnli"
+    },
+    {
+      "title": "No Stone Unturned",
+      "href": "/art/1710823985569-no-stone-unturned",
+      "section": "art",
+      "publishedAt": "2024-03-18T21:53:00Z",
+      "excerpt": "A rock traveled in my camera bag, and was photographed time and time again.",
+      "tags": [
+        "photography",
+        "travel",
+        "creative-process",
+        "iphone",
+        "eos-r",
+        "pictures",
+        "nature"
+      ],
+      "cid": "bafkreife2wpfcs2l75bxk2xpynimrojho7d6nciumak7bmbe36ityxqat4"
+    },
+    {
+      "title": "VSCO",
+      "href": "/art/1710822761635-vsco",
+      "section": "art",
+      "publishedAt": "2024-03-18T21:32:00Z",
+      "excerpt": "A collection of iPhone photos from California, Hawaii, and India, edited with VSCO",
+      "tags": [
+        "photography",
+        "vsco",
+        "iphone",
+        "travel",
+        "pictures",
+        "mobile-photography",
+        "photo-editing"
+      ],
+      "cid": "bafkreifqucib2uze2zliwgykndxrxyzsyd6brtklynenyzhfoccdtd2hdq"
+    },
+    {
+      "title": "Madison Park Smash",
+      "href": "/recipes/1710776965449-madison-park-smash",
+      "section": "recipes",
+      "publishedAt": "2024-03-18T08:49:00Z",
+      "excerpt": "A refreshing cognac punch with Royal Combier, fresh lemon, and mint. Features a whip shake technique and crushed ice topped with bitters.",
+      "tags": [
+        "cocktails",
+        "mixology",
+        "cognac",
+        "lemon",
+        "royal-combier",
+        "demerara-syrup",
+        "mint",
+        "bitters"
+      ],
+      "cid": "bafkreigque5nvhnsdqhsjqyb262wzbscpcvxd2ik7pejxdxu5l6czkvpxq"
+    },
+    {
+      "title": "Irish Maid",
+      "href": "/recipes/1710565492602-irish-maid",
+      "section": "recipes",
+      "publishedAt": "2024-03-15T22:04:00Z",
+      "excerpt": "A refreshing cocktail with Irish whiskey, elderflower liqueur, balanced by lemon juice and cucumber for a bright, garden-inspired flavor.",
+      "tags": [
+        "cocktails",
+        "mixology",
+        "irish-whiskey",
+        "elderflower",
+        "cucumber",
+        "lemon",
+        "simple-syrup",
+        "spirits"
+      ],
+      "cid": "bafkreigc5ktjylwxsgczawpetove5chwmlz762ogcwfglbtujk3dlzzkle"
+    },
+    {
+      "title": "Espresso Rum-Tiki",
+      "href": "/recipes/1710564975345-espresso-rum-tiki",
+      "section": "recipes",
+      "publishedAt": "2024-03-15T21:56:00Z",
+      "excerpt": "Cold brew, aged and white rums, orgeat, falernum, and bitters shaken until foamy and served over fresh ice.",
+      "tags": [
+        "cocktails",
+        "rum",
+        "cold-brew",
+        "espresso",
+        "orgeat",
+        "falernum",
+        "mixology"
+      ],
+      "cid": "bafkreihwjd6iby7jeehnqjrmptefdnqfy4mjkat655ozpenli46wob7csa"
+    },
+    {
+      "title": "Halekulani",
+      "href": "/recipes/1710564673473-halekulani",
+      "section": "recipes",
+      "publishedAt": "2024-03-15T21:51:00Z",
+      "excerpt": "A citrus-forward bourbon cocktail combining lime, orange, and pineapple juices with simple syrup, grenadine and bitters.",
+      "tags": [
+        "bourbon",
+        "cocktails",
+        "mixology",
+        "spirits",
+        "tropical",
+        "lime",
+        "orange-juice",
+        "pineapple",
+        "grenadine",
+        "simple-syrup",
+        "bitters"
+      ],
+      "cid": "bafkreifmoti4s2gwikoylah67lzetggbtydmz2yh6wm2wq3huoxwrntzgu"
+    },
+    {
+      "title": "Fermented Hot Honey",
+      "href": "/recipes/1710564234519-fermented-hot-honey",
+      "section": "recipes",
+      "publishedAt": "2024-03-15T21:43:00Z",
+      "excerpt": "Fermented hot honey recipe: combine raw and roasted garlic, shallots, and chilies with honey.",
+      "tags": [
+        "fermentation",
+        "honey",
+        "garlic",
+        "chili",
+        "condiments",
+        "spicy",
+        "homemade",
+        "recipe"
+      ],
+      "cid": "bafkreiflaj6zvuhtrev4y3qqzp6rsio5dmthce4fzu6ovsvrf2q2wsj76i"
+    },
+    {
+      "title": "Caramel Apple Mille Feuille",
+      "href": "/recipes/1710563320517-caramel-apple-mille-feuille",
+      "section": "recipes",
+      "publishedAt": "2024-03-15T21:28:00Z",
+      "excerpt": "Elegant mille-feuille dessert with flaky puff pastry layers, caramelized cinnamon apples, and vanilla cream.",
+      "tags": [
+        "pastry",
+        "dessert",
+        "puff-pastry",
+        "apple",
+        "caramel",
+        "cinnamon",
+        "baking",
+        "french",
+        "bread",
+        "layered"
+      ],
+      "cid": "bafkreick3mkomqgrvpb4snuxaljxbkm6ju4bt5tn5zplqlbdrre2saiv3m"
+    },
+    {
+      "title": "Harissa",
+      "href": "/recipes/1710443206146-harissa",
+      "section": "recipes",
+      "publishedAt": "2024-03-14T12:06:00Z",
+      "excerpt": "Recipes for traditional harissa using either dried or fresh peppers with toasted spices, garlic, oil and lemon.",
+      "tags": [
+        "harissa",
+        "peppers",
+        "spice",
+        "homemade",
+        "condiments",
+        "cumin",
+        "coriander",
+        "olive-oil",
+        "garlic",
+        "recipe"
+      ],
+      "cid": "bafkreifb2pzd6r35bs3dzuldpw7ymm5fusva54vktlmcdoi6yz7zkastky"
+    },
+    {
+      "title": "Revisiting Obsidian as a CMS, again",
+      "href": "/posts/1710177704945-revisiting-obsidian-as-a-cms-again",
+      "section": "posts",
+      "publishedAt": "2024-03-11T10:21:00Z",
+      "excerpt": "Obsidian, GitHub's GraphQL API, and Astro form a free, flexible publishing system for Markdown content.",
+      "tags": [
+        "obsidian",
+        "cms",
+        "markdown",
+        "github",
+        "astro",
+        "nextjs",
+        "content-management",
+        "web-development"
+      ],
+      "cid": "bafkreif3jxsichpyzzidn4j6xlkzhyak7o2rrxkefp77wtzztmvmim7cky"
+    },
+    {
+      "title": "Pineapple Bourbon Honey Sour",
+      "href": "/recipes/1710045021303-pineapple-bourbon-honey-sour",
+      "section": "recipes",
+      "publishedAt": "2024-03-09T20:30:00Z",
+      "excerpt": "Bourbon, pineapple, lemon, and honey dry-shaken with egg white, served over ice with bitters and edible flowers.",
+      "tags": [
+        "bourbon",
+        "cocktails",
+        "mixology",
+        "pineapple",
+        "honey",
+        "egg-white",
+        "edible-flowers",
+        "spirits"
+      ],
+      "cid": "bafkreigm6umta4pubmkrixwxgek6phreyhjjrbl2p5yzwlzmypfi7ngbau"
+    },
+    {
+      "title": "Pizza Margherita",
+      "href": "/recipes/1710032637430-pizza-margherita",
+      "section": "recipes",
+      "publishedAt": "2024-03-09T17:03:00Z",
+      "excerpt": "Margherita pizza with homemade dough and sauce, fresh mozzarella, basil, and olive oil.",
+      "tags": [
+        "pizza",
+        "italian",
+        "recipe",
+        "mozzarella",
+        "basil",
+        "olive-oil",
+        "neapolitan"
+      ],
+      "cid": "bafkreifsbdiqhq6qz6tukocvpead355lcuuwd4cvrktslueo7nlf4sj324"
+    },
+    {
+      "title": "Pizza Sauce",
+      "href": "/recipes/1710031949965-pizza-sauce",
+      "section": "recipes",
+      "publishedAt": "2024-03-09T16:52:00Z",
+      "excerpt": "Simple 3-ingredient pizza sauce: blend drained canned tomatoes with olive oil and salt until smooth. Use immediately or refrigerate.",
+      "tags": [
+        "pizza",
+        "sauce",
+        "tomatoes",
+        "olive-oil",
+        "italian"
+      ],
+      "cid": "bafkreifrl3k4hqozwhx3mxbxfhqlrvh5xt5oqofa3ciok2qosf63lrxt24"
+    },
+    {
+      "title": "Neopolitan Pizza Dough",
+      "href": "/recipes/1710031406664-pizza-dough",
+      "section": "recipes",
+      "publishedAt": "2024-03-09T16:43:00Z",
+      "excerpt": "Classic Neapolitan pizza dough recipe using 00 and all-purpose flours.",
+      "tags": [
+        "pizza",
+        "dough",
+        "baking",
+        "italian",
+        "neapolitan",
+        "bread",
+        "recipe"
+      ],
+      "cid": "bafkreiggfuetxz3gmba7t3wgzprudiph2e5nlzk6ygcfzv6yzmaw5hlsze"
+    },
+    {
+      "title": "Epochs",
+      "href": "/art/1709816319000-epochs",
+      "section": "art",
+      "publishedAt": "2024-03-07T12:58:00Z",
+      "excerpt": "A generative onchain svg, powered by Highlight.xyz",
+      "tags": [
+        "svg",
+        "generative",
+        "blockchain",
+        "onchain",
+        "algorithms",
+        "gpt",
+        "patterns"
+      ],
+      "cid": "bafkreihsfccpeobwofhhhq4aiqf6vu27ptvoimftcykbqgktnxhqh4rlp4"
+    },
+    {
+      "title": "Creamy Bell Pepper Alfredo Sauce",
+      "href": "/recipes/1709406325649-creamy-bell-pepper-alfredo-sauce",
+      "section": "recipes",
+      "publishedAt": "2024-03-02T19:05:00Z",
+      "excerpt": "A creamy red pepper pasta dish with sautéed peppers, garlic, wine and cheese, brightened with lemon and finished with a hint of nutmeg.",
+      "tags": [
+        "pasta",
+        "red-bell-peppers",
+        "white-wine",
+        "parmesan",
+        "lemon",
+        "nutmeg",
+        "italian",
+        "sauce"
+      ],
+      "cid": "bafkreielzzpowgl4i63psoddudjdoqqkaqqp4jv6c6q4zwd6fnxamennxi"
+    },
+    {
+      "title": "Case Study: Rebuilding Opul on Framer",
+      "href": "/posts/1709280000000-case-study-revance-opul",
+      "section": "posts",
+      "publishedAt": "2024-03-01T16:19:00Z",
+      "excerpt": "A two-month WordPress-to-Framer migration that gave Opul's team control of the site and lifted new-customer demo conversion 50% over projections.",
+      "tags": [
+        "e-commerce",
+        "platform-migration",
+        "case-study",
+        "ramen",
+        "wordpress",
+        "web-development",
+        "ai",
+        "conversion-optimization"
+      ],
+      "cid": "bafkreigev7jbqtuvfoj45eesw6wm6jvdz3ntgrjakn7lq6f2smc3w5hxmi"
+    },
+    {
+      "title": "Bermuda Hundred",
+      "href": "/recipes/1709064533452-bermuda-hundred",
+      "section": "recipes",
+      "publishedAt": "2024-02-27T12:08:00Z",
+      "excerpt": "A tropical cocktail mixing gin, Campari, orgeat, lime and pineapple juice. Shake with ice and garnish with pineapple leaf and cherry.",
+      "tags": [
+        "cocktails",
+        "mixology",
+        "gin",
+        "campari",
+        "tropical",
+        "pineapple",
+        "lime"
+      ],
+      "cid": "bafkreidgcs7smezgezbyilcjfv6ghevcwehcpfiitc65ykct2y5dkperti"
+    },
+    {
+      "title": "Revisiting Obsidian as a CMS",
+      "href": "/posts/1699332127006-revisiting-obsidian-as-a-cms",
+      "section": "posts",
+      "publishedAt": "2023-11-06T08:57:00Z",
+      "excerpt": "A home-built publishing system using Obsidian for writing, GitHub for storage, and Next.js for rendering.",
+      "tags": [
+        "development",
+        "web-development",
+        "obsidian",
+        "github",
+        "nextjs",
+        "cms",
+        "graphql"
+      ],
+      "cid": "bafkreieo4tipxhq3v4bjtzl4ptldoulcnvhltuafv3ydppkr7iqvfmhe6q"
+    },
+    {
+      "title": "Sourdough",
+      "href": "/posts/1587970800000-sourdough",
+      "section": "posts",
+      "publishedAt": "2023-11-02T12:14:00Z",
+      "excerpt": "I grew up on sourdough near San Francisco, then started a starter named Fred.",
+      "tags": [
+        "sourdough",
+        "bread",
+        "baking",
+        "starter",
+        "fermentation",
+        "life"
+      ],
+      "cid": "bafkreie4uy6g5vb3s3pm2sy6bb3rmikas2zsw5zgv2bdf5c33rrushuj2m"
+    },
+    {
+      "title": "Deploy html on Replit",
+      "href": "/posts/1691436904927-deploy-html-on-replit",
+      "section": "posts",
+      "publishedAt": "2023-09-07T13:15:00Z",
+      "excerpt": "Replit is great but lacks HTML deployment.",
+      "tags": [
+        "web-development",
+        "deployment",
+        "replit",
+        "surge",
+        "html",
+        "static-site-hosting"
+      ],
+      "cid": "bafkreigqq72np7u6bzbibxmayte5tzshwu7xvspmgywlmilrbrcbntk2wi"
+    },
+    {
+      "title": "Mint thyself",
+      "href": "/posts/1685948400001-mint-thyself",
+      "section": "posts",
+      "publishedAt": "2023-06-28T13:00:00Z",
+      "excerpt": "A Zora HTML edition that embeds its own mint interface and can be minted from itself.",
+      "tags": [
+        "zora",
+        "html",
+        "gpt",
+        "ipfs",
+        "blockchain",
+        "web-development",
+        "decentralization"
+      ],
+      "cid": "bafkreiarq5c6jqnfsdjhsp6dohn6htbsfnyxex7564hl26cmbqbkfwqsn4"
+    },
+    {
+      "title": "Feels Like Summer",
+      "href": "/posts/1687071600000-feels-like-summer",
+      "section": "posts",
+      "publishedAt": "2023-06-18T13:00:00Z",
+      "excerpt": "A perfect Father's Day with my twins and three kids total. Summer has finally arrived and it feels just right.",
+      "tags": [
+        "parenting",
+        "life",
+        "summer",
+        "pictures"
+      ],
+      "cid": "bafkreiese72j5twzqyqunlcftvfro3ynyequvcymmg3ikhfbsdy6rfefxy"
+    },
+    {
+      "title": "AI-Legion on Bluesky",
+      "href": "/posts/1681369200000-ai-legion-on-bluesky",
+      "section": "posts",
+      "publishedAt": "2023-04-11T13:00:00Z",
+      "excerpt": "I gave AI-Legion the Bluesky agent types and asked it to extend itself into the open social protocol.",
+      "tags": [
+        "ai",
+        "bluesky",
+        "at-protocol",
+        "ai-tools",
+        "automation",
+        "development",
+        "social-media",
+        "decentralization"
+      ],
+      "cid": "bafkreibwbxnwrp4hl4vzrq2655wszvf27jrq55rlozozpbaoitz5skgkaa"
+    },
+    {
+      "title": "Case Study: Building Tornado's Growth Engine",
+      "href": "/posts/1675271943000-case-study-tornado",
+      "section": "posts",
+      "publishedAt": "2023-02-01T09:31:00Z",
+      "excerpt": "Growth engineering at Tornado: analytics, experimentation, and personalization systems behind major gains in customers, revenue, and engagement.",
+      "tags": [
+        "growth-engineering",
+        "data-analytics",
+        "marketing",
+        "customer-engagement",
+        "a-b-testing",
+        "fintech",
+        "scalability"
+      ],
+      "cid": "bafkreig7wcjm5jqaevn3wnxj2d7cjxegw5u4i2oerg3ixf4p2hg7l2miwy"
+    },
+    {
+      "title": "Obsidian as a CMS",
+      "href": "/posts/1670659200001-obsidian-as-a-cms",
+      "section": "posts",
+      "publishedAt": "2022-12-10T08:55:00Z",
+      "excerpt": "Obsidian as a CMS using structured frontmatter, GitHub sync, Cloudflare R2 for assets, and Next.js for rendering.",
+      "tags": [
+        "obsidian",
+        "github",
+        "cms",
+        "nextjs",
+        "cloudflared",
+        "graphql",
+        "decentralization"
+      ],
+      "cid": "bafkreie24fzdijtqebcnyo7voq6kadp7lkpqvs5ind5yugnbkuij74howe"
+    },
+    {
+      "title": "Eggnog",
+      "href": "/recipes/1670140800000-eggnog",
+      "section": "recipes",
+      "publishedAt": "2022-12-04T12:00:00Z",
+      "excerpt": "A creamy, festive eggnog recipe with cooked custard base, whipped egg whites, vanilla, and spirits, topped with whipped cream and nutmeg.",
+      "tags": [
+        "eggnog",
+        "holiday",
+        "dessert",
+        "drinks",
+        "rum",
+        "brandy",
+        "nutmeg",
+        "custard"
+      ],
+      "cid": "bafkreibq7s7zocwtupypmdzgcuq6grzazxdwemk46v4atugfa4ikaa3fri"
+    },
+    {
+      "title": "Saag (Palak) Paneer",
+      "href": "/recipes/1640442840000-saag-palak-paneer",
+      "section": "recipes",
+      "publishedAt": "2021-12-24T12:54:00Z",
+      "excerpt": "Puréed spinach with paneer, ginger, green chili, tomato, and cream, made in an Instant Pot.",
+      "tags": [
+        "indian",
+        "spinach",
+        "paneer",
+        "vegetarian",
+        "curry",
+        "dinner",
+        "spicy"
+      ],
+      "cid": "bafkreieim7wo5glbstzanj2sv5qlgvp7kmmogqbclbvuoai5wrhcxz7ioe"
+    },
+    {
+      "title": "Case study: Aspiration's CRM platform",
+      "href": "/posts/1625156340000-case-study-aspiration",
+      "section": "posts",
+      "publishedAt": "2021-07-01T09:19:00Z",
+      "excerpt": "Two years running CRM and lifecycle at Aspiration. A platform migration, first-party analytics, and campaigns that lifted lead conversion 53%.",
+      "tags": [
+        "marketing",
+        "email-marketing",
+        "analytics",
+        "sustainability",
+        "platform-migration",
+        "data-visualization",
+        "customer-engagement"
+      ],
+      "cid": "bafkreihftrgpnmtjeq2lsr63g6vjbxba22xylsdpxqizvswfegov4qht4q"
+    },
+    {
+      "title": "Yorkshire Pudding",
+      "href": "/recipes/1602523860000-yorkshire-pudding",
+      "section": "recipes",
+      "publishedAt": "2020-10-12T15:51:00Z",
+      "excerpt": "A simple Yorkshire pudding recipe with just 6 ingredients.",
+      "tags": [
+        "baking",
+        "british",
+        "yorkshire-pudding",
+        "egg",
+        "butter",
+        "sour",
+        "side-dish"
+      ],
+      "cid": "bafkreiepzs7duiueelguqwoaltiutze2cw52ohzy4dvee64tbvb3m2fpva"
+    },
+    {
+      "title": "Crab Cakes",
+      "href": "/recipes/1602523740000-crab-cakes",
+      "section": "recipes",
+      "publishedAt": "2020-10-12T15:49:00Z",
+      "excerpt": "Classic crab cakes made with canned crab, eggs, mayo and seasonings. Form into patties and sauté in butter until golden brown on both sides.",
+      "tags": [
+        "seafood",
+        "craft",
+        "dill",
+        "cajun",
+        "dinner"
+      ],
+      "cid": "bafkreifv7rz7aeu4bhatzdgpbtgxltpyl2b6es7gtzalsxvpvdiztafuyi"
+    },
+    {
+      "title": "Beef Stroganoff",
+      "href": "/recipes/1602523680000-beef-stroganoff",
+      "section": "recipes",
+      "publishedAt": "2020-10-12T15:48:00Z",
+      "excerpt": "Tri-tip and mushrooms simmered in red wine, finished with sour cream, and served over egg noodles.",
+      "tags": [
+        "beef",
+        "stroganoff",
+        "red-wine",
+        "mushrooms",
+        "egg-noodles",
+        "russian",
+        "dinner"
+      ],
+      "cid": "bafkreif36jcar6oz7feqftxutw4mzo5tx2rw4pmnjp47xiisohhsqu2hsm"
+    },
+    {
+      "title": "Goulash, two ways",
+      "href": "/recipes/1602522360000-goulash",
+      "section": "recipes",
+      "publishedAt": "2020-10-12T15:46:00Z",
+      "excerpt": "Hearty goulash with roasted vegetables in paprika broth, available in both vegetarian and meat versions with rotisserie chuck roast.",
+      "tags": [
+        "goulash",
+        "soup",
+        "stew",
+        "meat",
+        "vegetarian",
+        "grilled",
+        "rotisserie",
+        "chuck-roast",
+        "paprika",
+        "hungarian",
+        "slow-cooking"
+      ],
+      "cid": "bafkreigzuvv6xy27ezz55in7udkme3ga5jdbbnervfxbrk3hzxu2uhij3y"
+    },
+    {
+      "title": "Challah",
+      "href": "/recipes/1602505860000-challah",
+      "section": "recipes",
+      "publishedAt": "2020-10-12T11:31:00Z",
+      "excerpt": "Traditional challah recipe with simple steps: mix yeast, water, flour, salt, honey, oil, eggs; knead, proof, braid, rise, brush with egg.",
+      "tags": [
+        "bread",
+        "baking",
+        "challah",
+        "jewish",
+        "braiding",
+        "egg",
+        "honey"
+      ],
+      "cid": "bafkreibnkwqm5llg6quhda7iydzaniateayec5qt22cpnbj4ikr44gbcfy"
+    },
+    {
+      "title": "Flatframe",
+      "href": "/posts/1563778800000-flatframe",
+      "section": "posts",
+      "publishedAt": "2020-04-27T11:27:00Z",
+      "excerpt": "Aerial photography technique capturing motion in a static frame (like waves or crowds) using stationary drone footage between 10-60 seconds.",
+      "tags": [
+        "drone",
+        "photography",
+        "flatframe",
+        "aerial",
+        "technique",
+        "mobile-photography",
+        "creative-process"
+      ],
+      "cid": "bafkreibx6s4766terdtxm737socfvvhnqniaeo524sprd36cjjfw6bmydi"
+    }
+  ],
+  "feed": [
+    {
+      "rkey": "1hmyfx9dfq",
+      "href": "/feed/1hmyfx9dfq",
+      "excerpt": "",
+      "createdAt": "2026-10-09T15:31:11Z"
+    },
+    {
+      "rkey": "4e8x9isp90",
+      "href": "/feed/4e8x9isp90",
+      "excerpt": "",
+      "createdAt": "2026-10-09T14:02:48Z"
+    },
+    {
+      "rkey": "5st9l6c3mi",
+      "href": "/feed/5st9l6c3mi",
+      "excerpt": "",
+      "createdAt": "2026-10-04T04:53:27Z"
+    },
+    {
+      "rkey": "2o8y0wehq3",
+      "href": "/feed/2o8y0wehq3",
+      "excerpt": "",
+      "createdAt": "2026-10-03T03:51:16Z"
+    },
+    {
+      "rkey": "3xd3gx877w",
+      "href": "/feed/3xd3gx877w",
+      "excerpt": "Plotting self portraits",
+      "createdAt": "2026-09-28T16:34:21Z"
+    },
+    {
+      "rkey": "k8piin316r",
+      "href": "/feed/k8piin316r",
+      "excerpt": "\"Agent Orbit Event Relay\"",
+      "createdAt": "2026-09-16T20:21:03Z"
+    },
+    {
+      "rkey": "vg3fxh2i21",
+      "href": "/feed/vg3fxh2i21",
+      "excerpt": "",
+      "createdAt": "2026-09-02T00:00:24Z"
+    },
+    {
+      "rkey": "35pihy3bls",
+      "href": "/feed/35pihy3bls",
+      "excerpt": "",
+      "createdAt": "2026-08-24T22:07:31Z"
+    },
+    {
+      "rkey": "x9l2jqwshb",
+      "href": "/feed/x9l2jqwshb",
+      "excerpt": "California skies are hard to beat",
+      "createdAt": "2026-08-22T16:21:49Z"
+    },
+    {
+      "rkey": "3995b0udmg",
+      "href": "/feed/3995b0udmg",
+      "excerpt": "There are many homelabs but this one is mine",
+      "createdAt": "2026-08-16T16:40:54Z"
+    },
+    {
+      "rkey": "54z5lro3oo",
+      "href": "/feed/54z5lro3oo",
+      "excerpt": "Once upon a time, in the long long ago of 2015, a Pi 0 was something you could get taped to a magazine from a newsstand.",
+      "createdAt": "2026-07-18T05:15:54Z"
+    },
+    {
+      "rkey": "w5n3k2ecoy",
+      "href": "/feed/w5n3k2ecoy",
+      "excerpt": "\"post-ui\"",
+      "createdAt": "2026-07-15T14:19:56Z"
+    },
+    {
+      "rkey": "j195hlbso6",
+      "href": "/feed/j195hlbso6",
+      "excerpt": "",
+      "createdAt": "2026-07-13T22:30:59Z"
+    },
+    {
+      "rkey": "2wk32zvipt",
+      "href": "/feed/2wk32zvipt",
+      "excerpt": "After a brief stint experimenting with Hermes on my homelab server, I've ripped it out and migrated it to an Autonomous Intern. The agent running on my homelab is now just bog standard Claude Code tha",
+      "createdAt": "2026-07-02T17:05:49Z"
+    },
+    {
+      "rkey": "6isbjo32b9",
+      "href": "/feed/6isbjo32b9",
+      "excerpt": "Monterey Bay Aquarium is such a magical place.",
+      "createdAt": "2026-06-26T19:31:47Z"
+    },
+    {
+      "rkey": "jzvya4qpzx",
+      "href": "/feed/jzvya4qpzx",
+      "excerpt": "Big Trees",
+      "createdAt": "2026-06-23T23:31:43Z"
+    },
+    {
+      "rkey": "f9vc1tisl5",
+      "href": "/feed/f9vc1tisl5",
+      "excerpt": "Almost heaven",
+      "createdAt": "2026-06-22T16:25:47Z"
+    },
+    {
+      "rkey": "3z20vdhavu",
+      "href": "/feed/3z20vdhavu",
+      "excerpt": "The Apple Foundation Models work really nicely for local image classification. Finally have a tool that can tag + caption almost 20 years of images in my Lightroom catalog.",
+      "createdAt": "2026-06-16T03:26:36Z"
+    },
+    {
+      "rkey": "6vlpsdorso",
+      "href": "/feed/6vlpsdorso",
+      "excerpt": "Of all the self hosted things I've explored recently, I think an OPDS might be the coolest",
+      "createdAt": "2026-06-08T04:06:40Z"
+    },
+    {
+      "rkey": "1e1ieqpi78",
+      "href": "/feed/1e1ieqpi78",
+      "excerpt": "Dusting off my Daylight DC-1. Thinking it could make a nice remote agent terminal.",
+      "createdAt": "2026-06-04T03:00:59Z"
+    }
+  ],
+  "elsewhere": [
+    {
+      "label": "Glass",
+      "href": "https://glass.photo/iam"
+    },
+    {
+      "label": "GitHub",
+      "href": "https://github.com/iammatthias"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://linkedin.com/in/iammatthias"
+    },
+    {
+      "label": "Bluesky",
+      "href": "https://bsky.app/profile/iammatthias.com"
+    },
+    {
+      "label": "Farcaster",
+      "href": "https://farcaster.xyz/iammatthias"
+    },
+    {
+      "label": "Instagram",
+      "href": "https://instagram.com/iammatthias"
+    }
+  ],
+  "menu": [
+    {
+      "group": "",
+      "links": [
+        {
+          "label": "home",
+          "href": "/"
+        }
+      ]
+    },
+    {
+      "group": "publications",
+      "links": [
+        {
+          "label": "art",
+          "href": "/art"
+        },
+        {
+          "label": "experiments",
+          "href": "/experiments"
+        },
+        {
+          "label": "posts",
+          "href": "/posts"
+        },
+        {
+          "label": "recipes",
+          "href": "/recipes"
+        }
+      ]
+    },
+    {
+      "group": "archive",
+      "links": [
+        {
+          "label": "all content",
+          "href": "/content"
+        },
+        {
+          "label": "tags",
+          "href": "/tags"
+        }
+      ]
+    },
+    {
+      "group": "personal",
+      "links": [
+        {
+          "label": "about",
+          "href": "/about"
+        },
+        {
+          "label": "now",
+          "href": "/now"
+        },
+        {
+          "label": "resume",
+          "href": "/resume"
+        },
+        {
+          "label": "contact",
+          "href": "/contact"
+        }
+      ]
+    },
+    {
+      "group": "other",
+      "links": [
+        {
+          "label": "onchain analytics",
+          "href": "/onchain-analytics"
+        },
+        {
+          "label": "developers",
+          "href": "/developers"
+        },
+        {
+          "label": "privacy",
+          "href": "/privacy"
+        },
+        {
+          "label": "rss",
+          "href": "/rss.xml"
+        }
+      ]
+    }
+  ],
+  "latestFeed": [
+    {
+      "rkey": "1hmyfx9dfq",
+      "cid": "bafkreibseyr5tdythmygrlvq7xskgbw3lg6ovyn6a2t3tjlzk3ijnt5ezq",
+      "renderKey": "bafkreibseyr5tdythmygrlvq7xskgbw3lg6ovyn6a2t3tjlzk3ijnt5ezq",
+      "href": "/feed/1hmyfx9dfq",
+      "body": "![](blob://bafkreiev7qz4zhusxsjwlpggz4uocvcgjzvvlifrmvdkr2ev7fc2iomewq)\n\n![](blob://bafkreic6yrwwdss4bbver3kiep2qdev2dxd2qr3xhccrvpg4ax4aozwi2i)",
+      "createdAt": "2026-10-09T15:31:11Z",
+      "updatedAt": "2026-10-09T15:31:11Z",
+      "tags": [],
+      "media": {
+        "bafkreiev7qz4zhusxsjwlpggz4uocvcgjzvvlifrmvdkr2ev7fc2iomewq": {
+          "mime": "image/jpeg",
+          "width": 720,
+          "height": 1280,
+          "dominantColor": "#525755",
+          "blurhash": "LBDJbTohrWI9?wIUj?R%8^a0gNyE",
+          "thumbCid": "bafkreidjbvkfnpwqsk6mdzstswrtyuc4dknqg26mo6wqoehh3lb6drzbvq"
+        },
+        "bafkreic6yrwwdss4bbver3kiep2qdev2dxd2qr3xhccrvpg4ax4aozwi2i": {
+          "mime": "image/jpeg",
+          "width": 720,
+          "height": 1280,
+          "dominantColor": "#4c4949",
+          "blurhash": "L5C6ry~V?b$$%54nNen%8_Dit8Ip",
+          "thumbCid": "bafkreigsul3fdis657svnwiuo76kpo4ydpshs73vqwxrycbr3mvwpyavwq"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "4e8x9isp90",
+      "cid": "bafkreicqoouu4wuos43gss34mxhodmnrizharbyp33tsq2lih4xdlt33fi",
+      "renderKey": "bafkreicqoouu4wuos43gss34mxhodmnrizharbyp33tsq2lih4xdlt33fi",
+      "href": "/feed/4e8x9isp90",
+      "body": "![](blob://bafkreifjln3h4a6nwm4imhetcec2z2mvxhau5gmitrrb5z6qyoqpdcxsyy)",
+      "createdAt": "2026-10-09T14:02:48Z",
+      "updatedAt": "2026-10-09T14:02:48Z",
+      "tags": [],
+      "media": {
+        "bafkreifjln3h4a6nwm4imhetcec2z2mvxhau5gmitrrb5z6qyoqpdcxsyy": {
+          "mime": "image/jpeg",
+          "width": 1320,
+          "height": 475,
+          "dominantColor": "#423c4e",
+          "blurhash": "LH9s_B4,xwITt8RjofWBI;awxDkD",
+          "thumbCid": "bafkreid7dfxtvratfmm3wcoywkj6qr7k5mtrzpyvhxlkgzrjzxldr3yzj4"
+        }
+      },
+      "series": {}
+    },
+    {
+      "rkey": "5st9l6c3mi",
+      "cid": "bafkreia66d6bjvx3irxpf6wb2kavxv4wc7n3z7krnk65fexaixji5dtaxy",
+      "renderKey": "bafkreia66d6bjvx3irxpf6wb2kavxv4wc7n3z7krnk65fexaixji5dtaxy",
+      "href": "/feed/5st9l6c3mi",
+      "body": "![](blob://bafkreidwz2lnuanogdmlhp3cgl4xqoibyu77awqlwxlfla4fegsiblyazm)",
+      "createdAt": "2026-10-04T04:53:27Z",
+      "updatedAt": "2026-10-04T04:53:27Z",
+      "tags": [],
+      "media": {
+        "bafkreidwz2lnuanogdmlhp3cgl4xqoibyu77awqlwxlfla4fegsiblyazm": {
+          "mime": "image/png",
+          "width": 3364,
+          "height": 4757,
+          "dominantColor": "#efe9da",
+          "blurhash": "L4RyZ#j[~qoeslfQWYfQ_3fQ9FfQ",
+          "thumbCid": "bafkreia7etx7brmi7w44hoj6ifvbxa4js7arywkv6gvegayps6o4isfngm"
+        }
+      },
+      "series": {}
+    }
+  ],
+  "glassPick": {
+    "href": "https://glass.photo/iam/2pvofQF0N39XSTpetzI4MT",
+    "image": "https://wsrv.nl/?url=https%3A%2F%2Fcdn.glass.photo%2Fr6qELRosBSmpuI0tTKIzpVaHyclLN6lOagLc9uFqI3M%2Frs%3Afit%3A1656%3A0%3A0%2Fq%3A90%2FL3Bvc3QvOTc1Y2MzZjgtNjYwZi00MDI4LWI5ZTItODQ0YmFmZjc1NjA5L3Bob3Rv&w=960&q=80&output=webp",
+    "width": 1080,
+    "height": 1620,
+    "prominentColor": "#a27f58",
+    "caption": {
+      "series": "Joshua Tree",
+      "equipment": "Canon EOS R · Canon EF 85mm ƒ/1.8 USM",
+      "settings": "ƒ/8.0 · 85mm · 1/250s · ISO 250",
+      "date": "April 10, 2026"
+    }
+  },
+  "intro": "Hi, I am Matthias.\n\nThis is my cozy corner on the web. A collection of photographs, projects, recipes, and notes."
+}

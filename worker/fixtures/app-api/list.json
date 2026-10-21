@@ -1,0 +1,203 @@
+{
+  "kind": "list",
+  "section": {
+    "slug": "posts",
+    "name": "Posts",
+    "description": null,
+    "count": 49
+  },
+  "page": 1,
+  "pages": 5,
+  "items": [
+    {
+      "title": "Own The Means of Cognition",
+      "href": "/posts/1789494942000-own-the-means-of-cognition",
+      "section": "posts",
+      "publishedAt": "2026-10-02T02:01:14Z",
+      "excerpt": "Own the means of cognition and you don't need a ministry of truth, the modal in everyone's pocket does the job.",
+      "tags": [
+        "llms",
+        "open-weights",
+        "enclosure",
+        "commons"
+      ],
+      "cid": "bafkreigbxlm652nzdkkoiwfseb53ogtpdfrga23blqphf2fm7txzllpytu"
+    },
+    {
+      "title": "Whats the frequency, Kenneth?",
+      "href": "/posts/1788199665000-whats-the-frequency-kenneth",
+      "section": "posts",
+      "publishedAt": "2026-09-03T14:07:59Z",
+      "excerpt": "Cold war style number stations for good little bots built on Ethereum",
+      "tags": [
+        "number-stations",
+        "ethereum",
+        "one-time-pad",
+        "ai-agents",
+        "smart-contracts",
+        "cryptography"
+      ],
+      "cid": "bafkreibpr233pocdqnj4gtg6c7yiwccdhhymjgk2lhm7eifv6fyaiudhpq"
+    },
+    {
+      "title": "On Diffusion",
+      "href": "/posts/1787249855000-on-diffusion",
+      "section": "posts",
+      "publishedAt": "2026-08-27T13:44:49Z",
+      "excerpt": "From early StyleGAN experiments and latent walks to Mercury 2's fast diffusion language model, and a simulation stripped down until its agents begin coining terms of their own.",
+      "tags": [
+        "diffusion-models",
+        "mercury-2",
+        "generative-ai",
+        "agent-simulation",
+        "emergence",
+        "language-models"
+      ],
+      "cid": "bafkreic6kxd5yi5a7rdmwbl5mckc3sqkbzrsq4nxkboite7svenioeoiu4"
+    },
+    {
+      "title": "Text your tools",
+      "href": "/posts/1787671012000-text-your-tools",
+      "section": "posts",
+      "publishedAt": "2026-08-25T15:16:52Z",
+      "excerpt": "Wiring a Farfield homelab up to iMessage with Photon and OpenPoke, so slash commands reach personal apps and talking to your agent feels like texting a friend instead of learning another tool.",
+      "tags": [
+        "ai-agents",
+        "imessage",
+        "self-hosting",
+        "homelab",
+        "personal-software"
+      ],
+      "cid": "bafkreigiazsn66idd2e3iaqvnwr6tymo2cvuhsij2uzk3tw4yfvz67u6i4"
+    },
+    {
+      "title": "Now Playing",
+      "href": "/posts/1784736733544-now-playing",
+      "section": "posts",
+      "publishedAt": "2026-07-25T17:18:48Z",
+      "excerpt": "Putting my Apple Music \"Now Playing\" on display with a Raspberry Pi and a 64x64 LED matrix.",
+      "tags": [
+        "hardware",
+        "music",
+        "raspberry-pi",
+        "generative"
+      ],
+      "cid": "bafkreicakpzagl5b7of3qv43ksge6gcifjzcmritin7et26shjizpu3kvy"
+    },
+    {
+      "title": "Post-UI",
+      "href": "/posts/1784126858578-post-ui",
+      "section": "posts",
+      "publishedAt": "2026-07-15T17:27:00Z",
+      "excerpt": "Do we still need to ship a frontend?",
+      "tags": [
+        "web-development",
+        "user-interface",
+        "hateoas",
+        "llm",
+        "webgpu",
+        "browser"
+      ],
+      "cid": "bafkreigixyfadgc5j3ab56jq4qg75taf6uyhrnfjyv2w4bplcxxdapjgfe"
+    },
+    {
+      "title": "Intern",
+      "href": "/posts/1781835006151-intern",
+      "section": "posts",
+      "publishedAt": "2026-06-19T02:10:06Z",
+      "excerpt": "The Autonomous Intern ships as a Raspberry Pi 5 in a desk-toy case running a stack I didn't pick. I flashed it to Debian Trixie, swapped the whole thing for the Hermes agent with its own built-in memory, and folded it all into one setup script.",
+      "tags": [
+        "raspberry-pi",
+        "hardware",
+        "ai-agents",
+        "self-hosting",
+        "side-projects",
+        "hermes"
+      ],
+      "cid": "bafkreigvicwyjnkjzij5rrmqc55yn5sse4wlz2muhk5zfufe7kwb7zxb6q"
+    },
+    {
+      "title": "Toy GPTs",
+      "href": "/posts/1780416704000-toy-gpts",
+      "section": "posts",
+      "publishedAt": "2026-06-02T16:11:44Z",
+      "excerpt": "Two tiny GPTs out of Karpathy's microGPT. One keeps its weights on Ethereum. The other holds a séance with dead presidents.",
+      "tags": [
+        "machine-learning",
+        "gpt",
+        "transformers",
+        "ethereum",
+        "onchain",
+        "browser",
+        "side-projects"
+      ],
+      "cid": "bafkreiepqewffbsqolwxgkpyfxq22hbydv3vwq6ewprnfw5doqydepiyfa"
+    },
+    {
+      "title": "Adventures in Machine Vision",
+      "href": "/posts/1780360240000-adventures-in-machine-vision",
+      "section": "posts",
+      "publishedAt": "2026-06-02T00:30:40Z",
+      "excerpt": "A Nat Friedman anecdote about an AI watching him drink water sent me digging for a spare Raspberry Pi. Now a camera and a sensor HAT watch my desk, a self-inflicted panopticon that logs who walks by and what the room is doing.",
+      "tags": [
+        "computer-vision",
+        "edge-computing",
+        "raspberry-pi",
+        "hardware",
+        "machine-learning",
+        "side-projects",
+        "quantified-self"
+      ],
+      "cid": "bafkreicvjm4fxm6keasl2uykua5xnuuzrofzfkcpbbp73qelngrszlxxa4"
+    },
+    {
+      "title": "Farfield",
+      "href": "/posts/1779066375000-farfield",
+      "section": "posts",
+      "publishedAt": "2026-05-18T01:06:15Z",
+      "excerpt": "Five small Go services, single binaries, content-addressed records, running on my homelab. The new backend for the site.",
+      "tags": [
+        "development",
+        "go",
+        "cms",
+        "self-hosting",
+        "content-addressing",
+        "ipfs",
+        "sqlite",
+        "astro",
+        "homelab"
+      ],
+      "cid": "bafkreiafor4bdzviqap3yt3adgljic5oe6uhc2qxbttwxunxysr52gsrle"
+    },
+    {
+      "title": "I Got a Common Turtle",
+      "href": "/posts/1775137360175-i-got-a-common-turtle",
+      "section": "posts",
+      "publishedAt": "2026-04-02T06:42:00Z",
+      "excerpt": "I got a Common turtle from Claude Code's deterministic buddy system, so I brute-forced the generation algorithm.",
+      "tags": [
+        "ai",
+        "claude-code",
+        "reverse-engineering",
+        "tools"
+      ],
+      "cid": "bafkreieemlvbz4roibtorzea46n6qc2gbhrygpmyesz5rq7gv3gq25fxkm"
+    },
+    {
+      "title": "Replacing a Rabbit's Brain: Connecting the R1 to Hermes",
+      "href": "/posts/1775069974473-replacing-rabbit-s-brain-connecting-a-rabbit-r1-to-hermes",
+      "section": "posts",
+      "publishedAt": "2026-04-01T11:59:00Z",
+      "excerpt": "I replaced the OpenClaw agent on my R1 with Hermes, running locally on a MacBook Pro.",
+      "tags": [
+        "ai",
+        "rabbit-r1",
+        "agents",
+        "hardware",
+        "hermes",
+        "openclaw"
+      ],
+      "cid": "bafkreiemiglhbjv2wbo7pbeicc7n2avjonrqdswbkjvx54jzuqs7it7jqe"
+    }
+  ]
+}

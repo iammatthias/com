@@ -1,0 +1,82 @@
+{
+  "kind": "doc",
+  "doc": {
+    "title": "Generate a new private key",
+    "section": {
+      "slug": "posts",
+      "name": "Posts"
+    },
+    "rkey": "1712432046964-generate-a-new-private-key",
+    "cid": "bafkreibwlmltz6uvguxvyjr65juqwpykmbyf7w7k44iklaydjbop357amm",
+    "renderKey": "bafkreibwlmltz6uvguxvyjr65juqwpykmbyf7w7k44iklaydjbop357amm@2024-04-06T12:34:00Z@2025-05-24T16:58:00Z@Posts|",
+    "href": "/posts/1712432046964-generate-a-new-private-key",
+    "publishedAt": "2024-04-06T12:34:00Z",
+    "updatedAt": "2025-05-24T16:58:00Z",
+    "tags": [
+      "blockchain",
+      "crypto",
+      "wallet",
+      "private-key",
+      "openssl",
+      "security",
+      "web3"
+    ],
+    "description": "Create wallet addresses quickly with OpenSSL: just run `openssl rand -hex 32` to generate a secure private key. Remember to keep it safe!",
+    "readingMinutes": 1,
+    "markdown": "Sometimes you just want to quickly generate a new wallet address without jumping through a bunch of hoops.\n\nProvided you have OpenSSL installed on your system, you can create a new private key in one simple command: `openssl rand -hex 32`\n\nThis will generate 32 random bytes in hexadecimal format, which can be used as a private key. The output will be a 64-character hexadecimal string, like this:\n\n```\ne1d4f2c8a1b9c3d4e5f6a7b8c9d1e2f3a4b5c6d7e8f9a1b2c3d4e5f6a7b8c9d0\n```\n\nYou can then use this private key to derive a public key and generate a wallet address. Just remember to keep your private key secure, anyone who has access to it can control your wallet and the associated funds.\n\n> [!IMPORTANT]\n> The private key used in this example is valid, but should not be used by anyone, as it has been shared publicly in this post.",
+    "media": {},
+    "series": {},
+    "related": [
+      {
+        "title": "orbz dot com",
+        "href": "/posts/1736537615834-orbz-dot-com",
+        "section": "posts",
+        "description": "orbz.fun reads Orbiter's onchain site registry and turns it into a StumbleUpon-style discovery tool.",
+        "publishedAt": "2025-01-10T11:33:00Z"
+      },
+      {
+        "title": "My office as entropy",
+        "href": "/posts/1756826230035-my-office-as-entropy",
+        "section": "posts",
+        "description": "Turning my office's environmental data into verifiable randomness.",
+        "publishedAt": "2025-09-02T08:17:00Z"
+      },
+      {
+        "title": "Onchain Hit Counter",
+        "href": "/posts/1712329304675-onchain-hit-counter",
+        "section": "posts",
+        "description": "A GeoCities-style hit counter that stores its count on an Ethereum testnet because a database felt excessive.",
+        "publishedAt": "2024-04-05T08:01:00Z"
+      },
+      {
+        "title": "Epochs",
+        "href": "/art/1709816319000-epochs",
+        "section": "art",
+        "description": "A generative onchain svg, powered by Highlight.xyz",
+        "publishedAt": "2024-03-07T12:58:00Z"
+      },
+      {
+        "title": "Mint thyself",
+        "href": "/posts/1685948400001-mint-thyself",
+        "section": "posts",
+        "description": "A Zora HTML edition that embeds its own mint interface and can be minted from itself.",
+        "publishedAt": "2023-06-28T13:00:00Z"
+      },
+      {
+        "title": "Datamosh",
+        "href": "/art/1791519648658-datamosh",
+        "section": "art",
+        "description": "An iOS app",
+        "publishedAt": "2026-10-09T04:20:51Z"
+      }
+    ],
+    "prev": {
+      "title": "Onchain Hit Counter",
+      "href": "/posts/1712329304675-onchain-hit-counter"
+    },
+    "next": {
+      "title": "Case Study: Migrating Ice Barrel to Shopify",
+      "href": "/posts/1728582380556-case-study-ice-barrel"
+    }
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "kind": "doc",
+  "doc": {
+    "title": "Phosphene",
+    "section": {
+      "slug": "art",
+      "name": "Art"
+    },
+    "rkey": "1781816428977-phosphene",
+    "cid": "bafkreib4yothgbhazbxivjfeuiyxktnb5bk4mbx7fg5j4rvy6utewjql4q",
+    "renderKey": "bafkreib4yothgbhazbxivjfeuiyxktnb5bk4mbx7fg5j4rvy6utewjql4q@2026-06-18T21:00:28Z@2026-07-16T16:53:01Z@phosphene:bafkreieyuuscjzknjak3op6rmw7pxrkjkisocxrpu3l3kukczlvzwoecmu@Art|",
+    "href": "/art/1781816428977-phosphene",
+    "publishedAt": "2026-06-18T21:00:28Z",
+    "updatedAt": "2026-07-16T16:53:01Z",
+    "tags": [
+      "ai",
+      "generative",
+      "photography",
+      "apple-intelligence",
+      "on-device",
+      "ios",
+      "image-to-image",
+      "creative-process",
+      "claude-code"
+    ],
+    "description": "A camera that turns each photo into a poem, then paints a new image from those words.",
+    "readingMinutes": 2,
+    "markdown": "# Phosphene\n\nPhosphene shoots a photo, writes a poem, then generates an image. The output is a triptych: the original frame, the poem, and the generated image, side by side. The image model only sees the poem and the sensors, never the photo it's reinterpreting.\n\nI built the first version from my phone, in bed, the night the idea showed up. SSH into the laptop, tmux, a Claude Code instance running with a `/goal`. By morning I had an app.\n\nTwo other projects I've seen come close. Poetry Camera, by Kelin Carolyn Zhang and Ryan Mather, shoots a frame and prints a poem on a thermal printer, no image kept. Paragraphica, by Bjørn Karmann, drops the lens and builds a picture out of location, weather, and time.\n\nEach of those picks one direction. Phosphene does the whole loop and keeps all three pieces: the frame, the poem it compresses to, and the image a model dreams back out from that poem and the sensors. I built it for the drift between the first panel and the last.\n\nThat's where the name comes from. A phosphene is the light you see with your eyes shut, the optic nerve firing with nothing in front of it. The third panel is the phosphene, a place the model never saw, only read about in a poem. The first panel is what was actually there.\n\nThe capture and the poem run on-device, on an iPhone 17 Pro Max, on Apple's foundation models from WWDC 2026. There is no API for that part, where Poetry Camera and Paragraphica both reach out to one. The image is the exception: it's painted on Apple's Private Cloud Compute, which needs a connection. So with no signal Phosphene still shoots and writes the poem on the spot, then paints the image later, once service comes back. Mostly local. That's the version I want.\n\nRight now it's not good. The poems are trite. The generated images look like stock slop. But it's fun anyway, and I'm not done with it. I might open the repo if anyone wants to build their own.\n\n![](series://phosphene)",
+    "media": {
+      "bafkreifvgfs3s3nac4nfgmplagbhud2yzauj5gvfdpwr4wgmducn6xcouq": {
+        "mime": "image/png",
+        "width": 768,
+        "height": 432,
+        "dominantColor": "#4a5b67",
+        "blurhash": "LxA_PAVrx^ozyZaJo~kCt9kCj]ay",
+        "thumbCid": "bafkreihc24s7x3ifdwxo3oxtjlnf5sskrjoe2n4waqwbs5w7ixegbf6ile"
+      },
+      "bafkreiavvwfjgkzycmpjq7nwy4k6emexihbans65nu7reveu5hk2but2im": {
+        "mime": "image/png",
+        "width": 1024,
+        "height": 576,
+        "dominantColor": "#706e61",
+        "blurhash": "LiFPEIoft7t7_4t7j]ofxvkCRjWB",
+        "thumbCid": "bafkreiflqy7txosvcp4faojex5o7ec3vzysuoco2h7xd5yaf7y4z756b5i"
+      },
+      "bafkreicjmwp3zj3nogwn4fsqvwrzwb7yuv4vzjari5qhp3usw3rxkx336m": {
+        "mime": "image/png",
+        "width": 768,
+        "height": 432,
+        "dominantColor": "#6691c2",
+        "blurhash": "LuC[IlRjV@aeyGf6fQfQMyj[ogkC",
+        "thumbCid": "bafkreidvimmlanwitvehv25hnljxovnp3j4ukhmuj52doafg55k72twwra"
+      },
+      "bafkreif2rojumsxo4kpvupdn4u7bvefs6ls6qplctur62ipxnybl24byhu": {
+        "mime": "image/png",
+        "width": 1024,
+        "height": 576,
+        "dominantColor": "#858c89",
+        "blurhash": "LUHx{M8^WBWC~WNKRjay?bM{xuf5",
+        "thumbCid": "bafkreic4nx3kssqolbl3h4qv2uxfzltmqxwyfvpius5qu4gs22w2vctv4q"
+      },
+      "bafkreigltiscc2ltcwa6xvdyashfc3kxibt5pqj6vo6tazauhepg3vhnsy": {
+        "mime": "image/png",
+        "width": 768,
+        "height": 432,
+        "dominantColor": "#618fc0",
+        "blurhash": "LqCI5=tSogoKpMV@aya#N2VsayWV",
+        "thumbCid": "bafkreidaot66vswks7ehz2czwbpjhis25zrjs3acdmfygpoqmygymv5hgi"
+      },
+      "bafkreihyqwif4bqvvc745rckfufwinv3kz2avjusommiced3vtlhsmvumm": {
+        "mime": "image/png",
+        "width": 1024,
+        "height": 576,
+        "dominantColor": "#646769",
+        "blurhash": "LWE{wvxtITM{?ct7ofaz~qt6axj[",
+        "thumbCid": "bafkreih2wmrizoxhojn3fk6zlot5sxu3qedrcacswj4eyud2xa7pacwo4i"
+      },
+      "bafkreif73dkmdi653kp5x7kqt6o2brm4kuososfw4gb4ezmr6mi5krpbbe": {
+        "mime": "image/png",
+        "width": 768,
+        "height": 432,
+        "dominantColor": "#636f70",
+        "blurhash": "LJDc{?DiHqyEAexZelW=-pkrkWem",
+        "thumbCid": "bafkreiblzi6ltm6364acjkhbimcakn7uybpgfwj4m5au6ppzcoead3af6a"
+      },
+      "bafkreicu6lvobh6f5pbw7dcgf5fsrqy4xxwvq6m2ab67fzmnc6cfloogni": {
+        "mime": "image/png",
+        "width": 1024,
+        "height": 576,
+        "dominantColor": "#807f77",
+        "blurhash": "LTGIo,M{n$W?.TWAt7jsxux]x]s,",
+        "thumbCid": "bafkreia4caqbuhifcqphm2srabifiuhixwifwjlhmvanp4zw4hflmu2z4m"
+      },
+      "bafkreig3oxahwoifgz453lsnc6yohkpqdryuxvhjun2sse7qpexyutpzm4": {
+        "mime": "image/png",
+        "width": 768,
+        "height": 432,
+        "dominantColor": "#626a6a",
+        "blurhash": "LQDTO@WBDN%hK7t7r=R+xbg4kXnh",
+        "thumbCid": "bafkreid6744rhdl4r3oo7k4xjuqq2hh6ul77yhouvniavhlf6uwgpxatzu"
+      },
+      "bafkreid7esenmjqjofgcodod5oise3vzyar3p2xkya323cftwr4ofjcfzm": {
+        "mime": "image/png",
+        "width": 1024,
+        "height": 576,
+        "dominantColor": "#70716e",
+        "blurhash": "LbFr@eIUIoog_NNGWBoeayxuofWB",
+        "thumbCid": "bafkreigxe6ygcnludjhqibf3clkibhghgc36jvqnvgppg6sutv4gu47ie4"
+      },
+      "bafkreihc3rmvvenpg57atlwq366uqcdoqqajcooj5ezffnnxq4gaxhuh3q": {
+        "mime": "image/png",
+        "width": 768,
+        "height": 768,
+        "dominantColor": "#62524a",
+        "blurhash": "LDDlZo?bnhM^LNT0NGRO^,%2s:W9",
+        "thumbCid": "bafkreibvysrareyjopsmfmt2dnljnkz2jwsbjyovmr67a6bmgfa3ni22te"
+      },
+      "bafkreighxiv55r3i4n4yxk7isyanpvnc42hi5u7lrzlf3aptflb2q74kym": {
+        "mime": "image/png",
+        "width": 2048,
+        "height": 2048,
+        "dominantColor": "#696b64",
+        "blurhash": "LTEylDD%D$Rk?wsjMxRkIXobt7WA",
+        "thumbCid": "bafkreieeiqjgzdsmb5xklgclshnapkrh4z2xztiis2nqhyfpueyb2rccfe"
+      }
+    },
+    "series": {
+      "phosphene": {
+        "title": "Phosphene",
+        "body": "![](blob://bafkreifvgfs3s3nac4nfgmplagbhud2yzauj5gvfdpwr4wgmducn6xcouq)\n\n> The high pines drag their needles across a sharp blue sky.\n> In the clearing, the wooden stage sits heavy in the shade—\n> all this timber gathered to hold a crowd,\n> and the forest is the only thing looking down.\n>\n> *clear daylight from the west, overcast, heavy grey sky*\n\n![](blob://bafkreiavvwfjgkzycmpjq7nwy4k6emexihbans65nu7reveu5hk2but2im)\n\n![](blob://bafkreicjmwp3zj3nogwn4fsqvwrzwb7yuv4vzjari5qhp3usw3rxkx336m)\n\n> The wind shatters the noon into a million flashing coins.\n> At the rim, the dark pines refuse the bribe.\n> High up, a single scrap of cloud\n> forgets what it came to spill.\n>\n> *harsh overhead light, short shadows, thin clear mountain air, sharp distance, overcast, heavy grey sky*\n\n![](blob://bafkreif2rojumsxo4kpvupdn4u7bvefs6ls6qplctur62ipxnybl24byhu)\n\n![](blob://bafkreigltiscc2ltcwa6xvdyashfc3kxibt5pqj6vo6tazauhepg3vhnsy)\n\n> The water folds against a wall of pine.\n> A million needles swallow up the noon,\n> keeping their dark against a glaring sky—\n> leaving the stripped stone at the summit\n> to burn alone.\n>\n> *harsh overhead light, short shadows, thin clear mountain air, sharp distance, overcast, heavy grey sky*\n\n![](blob://bafkreihyqwif4bqvvc745rckfufwinv3kz2avjusommiced3vtlhsmvumm)\n\n![](blob://bafkreif73dkmdi653kp5x7kqt6o2brm4kuososfw4gb4ezmr6mi5krpbbe)\n\n> Noon pins the pine shadows tight to the dirt.\n> Down on the baking asphalt, four white letters\n> order an absolute halt—\n> a desperate rule drawn at the shore,\n> as if the heavy blue water was planning to leave.\n>\n> *harsh overhead light, short shadows, thin clear mountain air, sharp distance, overcast, heavy grey sky*\n\n![](blob://bafkreicu6lvobh6f5pbw7dcgf5fsrqy4xxwvq6m2ab67fzmnc6cfloogni)\n\n![](blob://bafkreig3oxahwoifgz453lsnc6yohkpqdryuxvhjun2sse7qpexyutpzm4)\n\n> The road paints its white panic on the asphalt\n> just short of the pines.\n> *STOP*, it orders the midday heat—\n> as if the deep mountain water\n> gave a damn where our pavement ends.\n>\n> *harsh overhead light, short shadows, thin clear mountain air, sharp distance, overcast, heavy grey sky*\n\n![](blob://bafkreid7esenmjqjofgcodod5oise3vzyar3p2xkya323cftwr4ofjcfzm)\n\n![](blob://bafkreihc3rmvvenpg57atlwq366uqcdoqqajcooj5ezffnnxq4gaxhuh3q)\n\n> The broken log holds the sky,  \n> while the stump listens to the edge of quiet —  \n> light bleeding through the tops of trees  \n> and the earth exhales, unbroken.\n>\n> *clear daylight from the east, thin clear mountain air, sharp distance, overcast, heavy grey sky*\n\n![](blob://bafkreighxiv55r3i4n4yxk7isyanpvnc42hi5u7lrzlf3aptflb2q74kym)",
+        "layout": "triptych"
+      }
+    },
+    "related": [
+      {
+        "title": "Ocean Dreams",
+        "href": "/art/1738786576559-ocean-dreams",
+        "section": "art",
+        "description": "Early GAN art from coastal images, creating three collections of dreamy, hallucinatory seascapes that inspired further.",
+        "publishedAt": "2025-02-05T12:16:00Z"
+      },
+      {
+        "title": "I Got a Common Turtle",
+        "href": "/posts/1775137360175-i-got-a-common-turtle",
+        "section": "posts",
+        "description": "I got a Common turtle from Claude Code's deterministic buddy system, so I brute-forced the generation algorithm.",
+        "publishedAt": "2026-04-02T06:42:00Z"
+      },
+      {
+        "title": "No Stone Unturned",
+        "href": "/art/1710823985569-no-stone-unturned",
+        "section": "art",
+        "description": "A rock traveled in my camera bag, and was photographed time and time again.",
+        "publishedAt": "2024-03-18T21:53:00Z"
+      },
+      {
+        "title": "Flatframe",
+        "href": "/posts/1563778800000-flatframe",
+        "section": "posts",
+        "description": "Aerial photography technique capturing motion in a static frame (like waves or crowds) using stationary drone footage between 10-60 seconds.",
+        "publishedAt": "2020-04-27T11:27:00Z"
+      },
+      {
+        "title": "Datamosh",
+        "href": "/art/1791519648658-datamosh",
+        "section": "art",
+        "description": "An iOS app",
+        "publishedAt": "2026-10-09T04:20:51Z"
+      },
+      {
+        "title": "Buddydex",
+        "href": "/experiments/1789660275000-buddydex",
+        "section": "experiments",
+        "description": "BuddyDex brute-forces the deterministic hashing pipeline behind Claude Code's short-lived April Fools' buddies, finding account ids that produce a desired species, rarity, stats, or shiny status.",
+        "publishedAt": "2026-09-20T05:15:21Z"
+      }
+    ],
+    "prev": {
+      "title": "Ocean Dreams",
+      "href": "/art/1738786576559-ocean-dreams"
+    },
+    "next": {
+      "title": "Datamosh",
+      "href": "/art/1791519648658-datamosh"
+    }
+  }
+}

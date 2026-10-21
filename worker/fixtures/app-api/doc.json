@@ -1,0 +1,84 @@
+{
+  "kind": "doc",
+  "doc": {
+    "title": "Farfield",
+    "section": {
+      "slug": "posts",
+      "name": "Posts"
+    },
+    "rkey": "1779066375000-farfield",
+    "cid": "bafkreiafor4bdzviqap3yt3adgljic5oe6uhc2qxbttwxunxysr52gsrle",
+    "renderKey": "bafkreiafor4bdzviqap3yt3adgljic5oe6uhc2qxbttwxunxysr52gsrle@2026-05-18T01:06:15Z@2026-08-25T15:16:33Z@Posts|",
+    "href": "/posts/1779066375000-farfield",
+    "publishedAt": "2026-05-18T01:06:15Z",
+    "updatedAt": "2026-08-25T15:16:33Z",
+    "tags": [
+      "development",
+      "go",
+      "cms",
+      "self-hosting",
+      "content-addressing",
+      "ipfs",
+      "sqlite",
+      "astro",
+      "homelab"
+    ],
+    "description": "Five small Go services, single binaries, content-addressed records, running on my homelab. The new backend for the site.",
+    "readingMinutes": 3,
+    "markdown": "If you've followed along at all you'll be aware of the various evolutions this site has undergone. From Wordpress to a Ghost blog built around a template from Themeforest, Squarespace, Hugo, Gatsby, NextJS, and now Astro. And for each framework in the mix, there has been a revolving door of backend. Flat files, a private GitHub repo read over the GraphQL API, a single-user PDS. The frontend changed and the backend changed under it, year after year.\n\n[Obsidian as a CMS](1670659200001-obsidian-as-a-cms.md) carried me the longest. Write in Obsidian, sync to a private repo, query GitHub's GraphQL API from the frontend, render the markdown. It was cheap, it was mine, and for a few years it did the job. The rough edges stayed rough. Tag aggregation lived in a hacky flat file. Images went through a plugin. There was no real notion of a record, just files in folders.\n\nA friend had been building everything on a personalized Rust stack, [Andromeda](https://github.com/stevedylandev/andromeda) and a thin slice of dependencies. I wanted that shape for my content. So I built my own CRUD apps. Not a new concept. This collection is mine.\n\n## Farfield\n\nF[arfield](https://github.com/iammatthias/farfield) is a set of small, single-binary Go services. Each one is an HTML admin UI for writing and moderating content, plus a public JSON API the website reads.\n\n`apex` serves the landing page. `content` holds collections, entries, and series fragments. `feed` holds short ephemeral posts. `blobs` stores image bytes and metadata on Cloudflare R2. A fifth service, `backup`, runs tailnet-only and snapshots every database into R2 on a schedule.\n\nThe stack is the Go standard library plus one dependency: `modernc.org/sqlite`, a pure-Go SQLite driver. No cgo, so every build is a static binary. HTTP is `net/http`, templates are `html/template`, assets get embedded with `embed`. It's a Go adaptation of andromeda's shape, standard library first, one deliberate dependency.\n\n## Content addressing\n\nEvery record carries a CID, a sha-256 hash of its content. The slug is the stable key and never changes. The CID changes whenever the content does, which makes change detection, ETag caching, and verification fall out for free. [Content addressing on a PDS](1767505149657-notes-on-using-a-pds-as-content-infrastructure.md) sold me on this, and I wanted it here too.\n\n## A private IPFS\n\nI do devrel at [Pinata](http://pinata.cloud/), so content addressing is the day job. IPFS is good. The DHT, the gateways, the pinning network, all of that is more than a personal site needs.\n\nfarfield keeps the part that earns its place. The CIDs are CIDv1, sha-256, the same identifiers IPFS would mint. They live as columns in SQLite and serve over plain HTTPS. Content addressing without the network. A private IPFS, shaped to one site.\n\nA blob's CID is the hash of its bytes, so `/blobs/{cid}` is immutable and caches forever.\n\n## How it runs\n\n`docker compose` builds each app into a `distroless/static` image. Production is my homelab server, exposed through a Cloudflare tunnel. Reads are public and send `Access-Control-Allow-Origin: *`, so Astro fetches them straight from the browser. Writes need an `X-API-Key`.\n\nThe site is rebuilt around this now. Astro reads three JSON APIs instead of cloning a markdown repo at build time. Entry bodies embed `blob://` and `series://` URIs that resolve to real URLs before rendering.\n\nThe home server those services run on is its own story. That's a post for later.",
+    "media": {},
+    "series": {},
+    "related": [
+      {
+        "title": "Farfield",
+        "href": "/experiments/1789407007000-farfield",
+        "section": "experiments",
+        "description": "Farfield is a growing collection of Go apps and an opinionated Arch-based OS, with static binaries handling feeds, bookmarks, and blob storage in a homelab alongside a kiosk dashboard setup.",
+        "publishedAt": "2026-09-20T05:08:04Z"
+      },
+      {
+        "title": "Text your tools",
+        "href": "/posts/1787671012000-text-your-tools",
+        "section": "posts",
+        "description": "Wiring a Farfield homelab up to iMessage with Photon and OpenPoke, so slash commands reach personal apps and talking to your agent feels like texting a friend instead of learning another tool.",
+        "publishedAt": "2026-08-25T15:16:52Z"
+      },
+      {
+        "title": "Revisiting Obsidian as a CMS, again",
+        "href": "/posts/1710177704945-revisiting-obsidian-as-a-cms-again",
+        "section": "posts",
+        "description": "Obsidian, GitHub's GraphQL API, and Astro form a free, flexible publishing system for Markdown content.",
+        "publishedAt": "2024-03-11T10:21:00Z"
+      },
+      {
+        "title": "Revisiting Obsidian as a CMS",
+        "href": "/posts/1699332127006-revisiting-obsidian-as-a-cms",
+        "section": "posts",
+        "description": "A home-built publishing system using Obsidian for writing, GitHub for storage, and Next.js for rendering.",
+        "publishedAt": "2023-11-06T08:57:00Z"
+      },
+      {
+        "title": "Obsidian Plugins",
+        "href": "/experiments/1789490903000-obsidian-plugins",
+        "section": "experiments",
+        "description": "An overview of three Obsidian plugins the author built: an image uploader that sends embedded images to Pinata and rewrites references as ipfs:// URIs, plus AI-powered generators for note excerpts and tags.",
+        "publishedAt": "2026-09-20T05:10:12Z"
+      },
+      {
+        "title": "Intern",
+        "href": "/posts/1781835006151-intern",
+        "section": "posts",
+        "description": "The Autonomous Intern ships as a Raspberry Pi 5 in a desk-toy case running a stack I didn't pick. I flashed it to Debian Trixie, swapped the whole thing for the Hermes agent with its own built-in memory, and folded it all into one setup script.",
+        "publishedAt": "2026-06-19T02:10:06Z"
+      }
+    ],
+    "prev": {
+      "title": "I Got a Common Turtle",
+      "href": "/posts/1775137360175-i-got-a-common-turtle"
+    },
+    "next": {
+      "title": "Adventures in Machine Vision",
+      "href": "/posts/1780360240000-adventures-in-machine-vision"
+    }
+  }
+}

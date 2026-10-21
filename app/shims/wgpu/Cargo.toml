@@ -1,0 +1,30 @@
+# A stand-in for `wgpu`, swapped in by `[patch.crates-io]` in app/Cargo.toml.
+#
+# Why: gpui-ce's wgpu crate asks for wgpu's WebGL backend on the web, which brings a whole
+# second graphics stack (wgpu-core, wgpu-hal, naga: ~1.1MB of the app). This site draws with
+# WebGPU; browsers without it get the plain page. On the web this builds real wgpu with only
+# WebGPU and ignores the `webgl` request. Off the web it passes everything through unchanged,
+# so a desktop build is exactly as before.
+#
+# Keep `version` and the `tag` below at the wgpu that gpui-ce resolves (`cargo tree -i wgpu`).
+# If they drift, Cargo warns "patch was not used" and WebGL silently comes back; the test in
+# app/src/main.rs (`web_build_has_no_webgl`) fails when that happens. To remove the stand-in,
+# delete this folder and its `[patch]` line.
+[package]
+name = "wgpu"
+version = "29.0.4"
+edition = "2021"
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[features]
+default = []
+webgl = []
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+wgpu_real = { package = "wgpu", git = "https://github.com/gfx-rs/wgpu", tag = "v29.0.4", default-features = false, features = ["std", "webgpu", "wgsl"] }
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+wgpu_real = { package = "wgpu", git = "https://github.com/gfx-rs/wgpu", tag = "v29.0.4" }

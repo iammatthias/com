@@ -1,0 +1,23 @@
+{
+  "kind": "tag",
+  "tag": "llms",
+  "page": 1,
+  "pages": 1,
+  "total": 1,
+  "items": [
+    {
+      "title": "Own The Means of Cognition",
+      "href": "/posts/1789494942000-own-the-means-of-cognition",
+      "section": "posts",
+      "publishedAt": "2026-10-02T02:01:14Z",
+      "excerpt": "Own the means of cognition and you don't need a ministry of truth, the modal in everyone's pocket does the job.",
+      "tags": [
+        "llms",
+        "open-weights",
+        "enclosure",
+        "commons"
+      ],
+      "cid": "bafkreigbxlm652nzdkkoiwfseb53ogtpdfrga23blqphf2fm7txzllpytu"
+    }
+  ]
+}

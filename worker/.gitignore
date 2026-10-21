@@ -1,0 +1,6 @@
+node_modules/
+.wrangler/
+.dev.vars
+.dev.vars.*
+.dist-mirror/
+.dist-mirror-tmp/

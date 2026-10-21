@@ -1,0 +1,5 @@
+{
+  "kind": "redirect",
+  "to": "/experiments",
+  "status": 301
+}

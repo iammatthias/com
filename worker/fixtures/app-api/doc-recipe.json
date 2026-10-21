@@ -1,0 +1,82 @@
+{
+  "kind": "doc",
+  "doc": {
+    "title": "Neopolitan Pizza Dough",
+    "section": {
+      "slug": "recipes",
+      "name": "Recipes"
+    },
+    "rkey": "1710031406664-pizza-dough",
+    "cid": "bafkreiggfuetxz3gmba7t3wgzprudiph2e5nlzk6ygcfzv6yzmaw5hlsze",
+    "renderKey": "bafkreiggfuetxz3gmba7t3wgzprudiph2e5nlzk6ygcfzv6yzmaw5hlsze@2024-03-09T16:43:00Z@2026-07-29T21:20:26Z@Recipes|",
+    "href": "/recipes/1710031406664-pizza-dough",
+    "publishedAt": "2024-03-09T16:43:00Z",
+    "updatedAt": "2026-07-29T21:20:26Z",
+    "tags": [
+      "pizza",
+      "dough",
+      "baking",
+      "italian",
+      "neapolitan",
+      "bread",
+      "recipe"
+    ],
+    "description": "Classic Neapolitan pizza dough recipe using 00 and all-purpose flours.",
+    "readingMinutes": 2,
+    "markdown": "```recipe\nyield: \"2 dough balls — two 12-in. pizzas\"\ntime: \"25 min active · 5 h total\"\n\ningredients:\n  - { id: 00-flour, item: \"00 flour\", amount: \"153 grams (1 cup plus 1 tbsp)\" }\n  - { id: all-purpose-flour, item: \"all-purpose flour\", amount: \"153 grams (1 cup plus 1 tbsp and 2 tsp)\" }\n  - { id: fine-sea-salt, item: \"fine sea salt\", amount: \"8 grams (1 tsp)\" }\n  - { id: active-dry-yeast, item: \"active dry yeast\", amount: \"2 grams (¾ tsp)\" }\n  - { id: extra-virgin-olive-oil, item: \"extra-virgin olive oil\", amount: \"4 grams (1 tsp)\", note: \"optional\" }\n\nsteps:\n  - id: s1\n    in: [00-flour, all-purpose-flour, fine-sea-salt, active-dry-yeast]\n    do: \"combine the 00 flour\"\n    detail: \"In a large mixing bowl, combine the 00 flour, all-purpose flour, and fine sea salt. In a separate container, dissolve the active dry yeast in 200 grams of cold water.\"\n  - id: s2\n    in: [s1, extra-virgin-olive-oil]\n    do: \"pour the yeast mixture\"\n    detail: \"Pour the yeast mixture into the flour mixture and mix by hand until a rough dough forms. Add the olive oil (if using) and continue to mix until fully incorporated.\"\n  - id: s3\n    in: [s2]\n    do: \"knead the dough\"\n    for: \"10–15 min\"\n    detail: \"Knead the dough on a lightly floured surface for about 10-15 minutes until it becomes smooth and elastic. Divide the dough into 4 equal portions.\"\n  - id: s4\n    in: [s3]\n    do: \"shape each portion\"\n    for: \"2 h\"\n    detail: \"Shape each portion into a ball and place them on a floured surface or tray. Place the dough balls in an oven with the light on and let rise for 2 hours.\"\n  - id: s5\n    in: [s4]\n    do: \"transfer the dough balls\"\n    for: \"1–2 h\"\n    detail: \"Transfer the dough balls to the refrigerator and let them rest for 1-2 hours. Remove the dough from the refrigerator and let it come to room temperature before using (about 1 hour).\"\n  - id: s6\n    in: [s5]\n    do: \"preheat your pizza oven\"\n    detail: \"Preheat your pizza oven outside to its highest setting. On a floured surface, stretch each dough ball into a 12-inch round, being careful not to deflate the edges.\"\n  - id: s7\n    in: [s6]\n    do: \"top with your favorite\"\n    for: \"6–8 min\"\n    detail: \"Top with your favorite ingredients and bake one pizza at a time for 6-8 minutes, or until the crust is golden and the toppings are cooked.\"\n```\n",
+    "media": {},
+    "series": {},
+    "related": [
+      {
+        "title": "Thunderbolt Sub",
+        "href": "/recipes/1751951070010-thunderbolt-sub",
+        "section": "recipes",
+        "description": "First attempt at cloning the Thunderbolt Italian Sub.",
+        "publishedAt": "2025-07-07T22:04:00Z"
+      },
+      {
+        "title": "Pizza Margherita",
+        "href": "/recipes/1710032637430-pizza-margherita",
+        "section": "recipes",
+        "description": "Margherita pizza with homemade dough and sauce, fresh mozzarella, basil, and olive oil.",
+        "publishedAt": "2024-03-09T17:03:00Z"
+      },
+      {
+        "title": "Small Batch Croissant Loaf",
+        "href": "/recipes/1743442618201-small-batch-croissant-loaf",
+        "section": "recipes",
+        "description": "A small laminated milk-bread loaf made with a pasta roller and a 115-gram butter block.",
+        "publishedAt": "2025-03-31T10:36:00Z"
+      },
+      {
+        "title": "Caramel Apple Mille Feuille",
+        "href": "/recipes/1710563320517-caramel-apple-mille-feuille",
+        "section": "recipes",
+        "description": "Elegant mille-feuille dessert with flaky puff pastry layers, caramelized cinnamon apples, and vanilla cream.",
+        "publishedAt": "2024-03-15T21:28:00Z"
+      },
+      {
+        "title": "Pizza Sauce",
+        "href": "/recipes/1710031949965-pizza-sauce",
+        "section": "recipes",
+        "description": "Simple 3-ingredient pizza sauce: blend drained canned tomatoes with olive oil and salt until smooth. Use immediately or refrigerate.",
+        "publishedAt": "2024-03-09T16:52:00Z"
+      },
+      {
+        "title": "Sourdough",
+        "href": "/posts/1587970800000-sourdough",
+        "section": "posts",
+        "description": "I grew up on sourdough near San Francisco, then started a starter named Fred.",
+        "publishedAt": "2023-11-02T12:14:00Z"
+      }
+    ],
+    "prev": {
+      "title": "Creamy Bell Pepper Alfredo Sauce",
+      "href": "/recipes/1709406325649-creamy-bell-pepper-alfredo-sauce"
+    },
+    "next": {
+      "title": "Pizza Sauce",
+      "href": "/recipes/1710031949965-pizza-sauce"
+    }
+  }
+}
