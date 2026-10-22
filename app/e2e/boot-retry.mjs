@@ -18,12 +18,17 @@ const NEW = "2222222222222222";
 // what the boot screen says once it has given up
 const FAILED = "The site didn't answer. The connection may have dropped.";
 
-// the page as a build `id` names its code; null: the build's own paths, as trunk serve has them
-const scoped = (html, id) => (id ? html.replaceAll(`"/com-`, `"/b/${id}/com-`).replaceAll(`'/com-`, `'/b/${id}/com-`).replaceAll(`"/snippets/`, `"/b/${id}/snippets/`) : html);
+// the page as a build `id` names its code (null: as served). `live` is the /b/ the served page
+// names, deployed; trunk serve builds none and names the build's own paths at the root.
+function scoped(html, id, live) {
+    if (!id) return html;
+    if (live) return html.replaceAll(`/b/${live}/`, `/b/${id}/`);
+    return html.replaceAll(`"/com-`, `"/b/${id}/com-`).replaceAll(`'/com-`, `'/b/${id}/com-`).replaceAll(`"/snippets/`, `"/b/${id}/snippets/`);
+}
 
 /** `site.page(n)` is the build the nth page (from 0) names; `site.gone(path, served)` is a file no build has. */
 function proxy(site) {
-    const served = { pages: 0, code: [] };
+    const served = { pages: 0, code: [], live: null };
     const server = Bun.serve({
         port: 0,
         async fetch(req) {
@@ -31,7 +36,7 @@ function proxy(site) {
             let path = url.pathname;
             if (/\.(js|wasm)$/.test(path)) served.code.push([req.method, path]);
             if (site.gone?.(path, served)) return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });
-            path = path.replace(/^\/b\/[0-9a-f]{16}\//, "/");
+            path = path.replace(/^\/b\/[0-9a-f]{16}\//, served.live ? `/b/${served.live}/` : "/");
             const isPage = !/\.[a-z0-9]+$/i.test(path) && !path.startsWith("/api/") && !path.startsWith("/img/") && !path.startsWith("/.well-known/");
             if (isPage && req.headers.get("if-modified-since") === LAST_MODIFIED) return new Response(null, { status: 304, headers: { "Last-Modified": LAST_MODIFIED } });
             const upstream = await fetch(base + path + url.search, { method: req.method, headers: { accept: req.headers.get("accept") ?? "*/*" } });
@@ -42,7 +47,8 @@ function proxy(site) {
             headers.set("Last-Modified", LAST_MODIFIED);
             headers.set("Cache-Control", "public, max-age=0, s-maxage=60, stale-while-revalidate=300");
             const html = (await upstream.text()).replace(/<script>"use strict";[\s\S]*?<\/script>/, "");
-            return new Response(scoped(html, site.page(served.pages++)), { status: upstream.status, headers });
+            served.live ??= html.match(/\/b\/([0-9a-f]{16})\//)?.[1] ?? null;
+            return new Response(scoped(html, site.page(served.pages++), served.live), { status: upstream.status, headers });
         },
     });
     return { url: `http://127.0.0.1:${server.port}`, served, stop: () => server.stop(true) };
