@@ -265,6 +265,63 @@ async function toParagraphs(page) {
     await browser.close();
 }
 
+// a drag inside a recipe step selects its text without picking the step, which a click does:
+// the step row is found by what a drag across it copies (a click would pick it), and its
+// pixels are compared, the selection cleared, after a drag and after a click
+{
+    const { browser, context, page, errors } = await open("desktop");
+    await context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: base });
+    const RECIPE = "/recipes/1753717869129-eggplant-parmesan";
+    const { doc } = await (await fetch(base + "/api/app/route?path=" + RECIPE)).json();
+    const details = [...doc.markdown.matchAll(/detail: "([^"]+)"/g)].map((m) => m[1]);
+    await page.goto(base + RECIPE);
+    await page.waitForTimeout(8000);
+    const drag = async (y) => {
+        await page.mouse.move(332, y);
+        await page.mouse.down();
+        await page.mouse.move(900, y, { steps: 6 });
+        await page.mouse.up();
+        return copy(page);
+    };
+    let step = null;
+    for (let screen = 0; screen < 12 && !step; screen++) {
+        await page.mouse.move(640, 400);
+        await page.mouse.wheel(0, 500);
+        await page.waitForTimeout(900);
+        for (const row of await textRows(page, 640, 120, 780)) {
+            const text = await drag(mid(row));
+            if (text.length > 20 && details.some((d) => d.includes(text.slice(2, 22)))) {
+                step = { y: mid(row), text };
+                break;
+            }
+        }
+    }
+    check(step !== null, `a drag across a recipe step copies its text: ${JSON.stringify(step?.text.slice(0, 30))}`);
+    if (step) {
+        const clip = { x: 300, y: step.y - 60, width: 700, height: 120 };
+        const clear = async () => {
+            await page.mouse.click(270, 400);
+            await page.waitForTimeout(600);
+        };
+        const row = async () => {
+            await page.mouse.move(270, 400);
+            await page.waitForTimeout(400);
+            return page.screenshot({ clip });
+        };
+        await clear();
+        const before = await row();
+        check(before.equals(await row()), "the step row draws the same twice while idle");
+        await drag(step.y);
+        await clear();
+        check(before.equals(await row()), "a drag inside the step does not pick it");
+        await page.mouse.click(500, step.y);
+        await page.waitForTimeout(600);
+        check(!before.equals(await row()), "a click on the step picks it");
+    }
+    check(errors.length === 0, `no page errors on the recipe ${errors.join(" | ")}`);
+    await browser.close();
+}
+
 // a phone: WebKit as an iPhone, touches as pointer events on the canvas (what gpui reads)
 {
     const { browser, context, page, errors } = await open("phone");
