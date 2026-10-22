@@ -11,7 +11,7 @@ import { mediaSize } from "./media-size";
 import { deckColumns } from "./deck";
 import { STATIC_PAGES, SOCIAL_HREFS } from "../pages/static";
 import { transformAlerts } from "./markdown-text";
-import { feedCacheHint, seriesTags } from "./cache";
+import { seriesTags } from "./cache";
 import { glassPick, type GlassPick } from "./glass";
 import { SITE_IDENTITY } from "./agent-surface";
 
@@ -24,8 +24,8 @@ import { SITE_IDENTITY } from "./agent-surface";
 export type CachePolicy =
     | { kind: "document" }
     | { kind: "feed"; page?: number; edge: boolean; extraTags?: string[] }
-    | { kind: "home"; lastModified?: Date }
-    | { kind: "now"; lastModified?: Date }
+    | { kind: "home" }
+    | { kind: "now" }
     | { kind: "static" }
     | { kind: "long" }
     | { kind: "none" };
@@ -34,8 +34,8 @@ export type CachePolicy =
  * /now lists the newest feed posts; /menu lists the publications. Every other
  * hand-written page changes only with a deploy, which purges `shell`.
  */
-export function pageCachePolicy(slug: string, lastModified?: Date): CachePolicy {
-    if (slug === "now") return { kind: "now", lastModified };
+export function pageCachePolicy(slug: string): CachePolicy {
+    if (slug === "now") return { kind: "now" };
     if (slug === "menu") return { kind: "document" };
     return { kind: "static" };
 }
@@ -228,7 +228,7 @@ async function nowPage(route: AppNowRoute, path: string): Promise<SsrPage> {
         head: staticHead("now", path),
         main: `<article class="prose">${relMe(buildToc(html).html)}</article>`,
         status: 200,
-        cache: pageCachePolicy("now", feedCacheHint(all).lastModified),
+        cache: pageCachePolicy("now"),
     };
 }
 
@@ -337,7 +337,7 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                         .join("") +
                     `</section></div>`,
                 status: 200,
-                cache: { kind: "home", lastModified: feedCacheHint(feed).lastModified },
+                cache: { kind: "home" },
             };
         }
 

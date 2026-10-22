@@ -105,12 +105,12 @@ export function setPageCacheHeaders(res: { headers: Headers }, page: { cache: Ca
         case "document":
             setDocumentPageCacheHeaders(res, extraTags);
             return;
+        // No Last-Modified: the newest post's date outlives a deploy, so the edge would answer a
+        // browser's If-Modified-Since with a 304 and it would boot the page it had, naming a
+        // build that may be gone.
         case "home":
-            setResponseCacheHeaders(
-                res,
-                { lastModified: page.cache.lastModified, tags: [FEED_TAG] },
-                { edge: true, extraTags: [DOCUMENTS_TAG, ...extraTags] },
-            );
+        case "now":
+            setResponseCacheHeaders(res, { tags: [FEED_TAG] }, { edge: true, extraTags: [DOCUMENTS_TAG, ...extraTags] });
             return;
         case "feed":
             setResponseCacheHeaders(
@@ -121,13 +121,6 @@ export function setPageCacheHeaders(res: { headers: Headers }, page: { cache: Ca
                     edge: page.cache.edge,
                     extraTags: [...(page.cache.extraTags ?? []), ...extraTags],
                 },
-            );
-            return;
-        case "now":
-            setResponseCacheHeaders(
-                res,
-                { lastModified: page.cache.lastModified, tags: [FEED_TAG] },
-                { edge: true, extraTags: [DOCUMENTS_TAG, ...extraTags] },
             );
             return;
         case "static":

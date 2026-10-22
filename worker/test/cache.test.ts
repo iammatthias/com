@@ -9,6 +9,7 @@ import {
 } from "../src/lib/cache";
 import { setRouteCacheHeaders } from "../src/routes/app";
 import type { AppRoute } from "../src/app-api";
+import type { CachePolicy } from "../src/lib/ssr";
 
 function directives(value: string | null): Map<string, string> {
     const out = new Map<string, string>();
@@ -94,6 +95,24 @@ describe("document pages", () => {
         const response = new Response(null);
         setDocumentPageCacheHeaders(response, ["feed-entries"]);
         expect(response.headers.get("Cache-Tag")).toBe("documents,feed-entries");
+    });
+});
+
+describe("pages across a deploy", () => {
+    test("no page carries a Last-Modified, which a deploy wouldn't change", () => {
+        for (const cache of [
+            { kind: "document" },
+            { kind: "feed", edge: true },
+            { kind: "home", lastModified: new Date("2026-10-14T00:18:00Z") },
+            { kind: "now", lastModified: new Date("2026-10-14T00:18:00Z") },
+            { kind: "static" },
+            { kind: "long" },
+            { kind: "none" },
+        ] as CachePolicy[]) {
+            const response = new Response(null);
+            setPageCacheHeaders(response, { cache });
+            expect([cache.kind, response.headers.get("Last-Modified")]).toEqual([cache.kind, null]);
+        }
     });
 });
 
