@@ -129,6 +129,11 @@ impl Element for Selectable {
             }
         }
         let scope = Selection::current();
+        // the scope follows links, so outside one they are dead
+        debug_assert!(
+            scope.is_some() || self.links.is_empty(),
+            "a Selectable with links is prepainting outside a SelectionScope"
+        );
         let ordinal = scope.as_ref().and_then(|scope| {
             scope.0.borrow_mut().registry.push(Block {
                 fingerprint: Fingerprint::of(&live.layout.text()),
@@ -232,6 +237,45 @@ mod tests {
         let rects = layout.line_layouts()[0].selection_bounds(0..TEXT.len(), layout.line_height());
         assert_eq!(rects.len(), 1, "{rects:?}");
         assert!(rects.iter().all(|r| r.size.width > px(0.)));
+    }
+
+    #[gpui::test]
+    fn an_empty_selectable_measures_as_nothing_without_panicking(cx: &mut TestAppContext) {
+        let cx = cx.add_empty_window();
+        let text = StyledText::new("");
+        let layout = text.layout().clone();
+        cx.draw(point(px(0.), px(0.)), size(px(200.), px(300.)), |_, _| {
+            div()
+                .w(px(200.))
+                .child(Selectable::new(text, Some("".into())))
+        });
+        assert_eq!(layout.len(), 0);
+        assert_eq!(
+            layout.bounds().size.width,
+            px(200.),
+            "the block keeps the column's width, like any block"
+        );
+        let live = Live {
+            bounds: layout.bounds(),
+            layout,
+        };
+        use super::super::registry::BlockGeometry;
+        assert_eq!(live.caret(point(px(50.), px(5.))), 0);
+        assert_eq!(live.glyph(point(px(50.), px(5.))), None);
+        assert!(live.rects(0..0).is_empty());
+    }
+
+    #[gpui::test]
+    fn a_selectable_with_links_outside_a_scope_is_a_bug(cx: &mut TestAppContext) {
+        let cx = cx.add_empty_window();
+        let panicked = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            cx.draw(point(px(0.), px(0.)), size(px(200.), px(300.)), |_, _| {
+                div().w(px(200.)).child(
+                    Selectable::new(StyledText::new(TEXT), None).links(vec![0..7], |_, _, _| {}),
+                )
+            });
+        }));
+        assert!(panicked.is_err(), "no scope follows the links");
     }
 
     #[gpui::test]
