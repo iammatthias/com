@@ -50,7 +50,7 @@ html.no-gpu,html.no-gpu body{overflow:auto!important;height:auto!important}
 #boot .note{color:#665E52;font-size:13px;letter-spacing:.02em}
 #boot button{font:inherit;font-size:14px;color:inherit;background:transparent;border:1px solid rgba(21,22,26,.2);border-radius:999px;padding:8px 18px;cursor:pointer;display:none}
 #boot.failed path{animation:none;stroke-dashoffset:0;opacity:.35}
-#boot.failed button{display:block}
+#boot.failed button,#boot.slow button{display:block}
 @media (prefers-color-scheme: dark){#boot{background:#15120F;color:#F0E9DB}#boot .note{color:#A39A8C}#boot button{border-color:rgba(216,213,202,.25)}}
 @media (prefers-reduced-motion: reduce){#boot path{animation:none;stroke-dashoffset:0}}
 #diag{position:fixed;left:8px;right:8px;bottom:8px;z-index:9;max-height:40vh;overflow:auto;padding:8px 10px;font:11px/1.4 ui-monospace,Menlo,monospace;color:#fff;background:rgba(120,20,10,.88);border-radius:6px;white-space:pre-wrap;display:none}
@@ -75,30 +75,67 @@ if (!window.__noGpu) {
 if (!window.__noGpu && /AppleWebKit/.test(navigator.userAgent) && !/Chrome|Chromium|Edg|Firefox/.test(navigator.userAgent)) {
   setInterval(function () { new Uint8Array(32 << 20)[0] = 1; }, 4000);
 }
-// The app's files are renamed on every build: a page caught mid-deploy asks for a file that's
-// gone. One quiet reload fetches the new ones; after that, say so and offer to try again. The
-// reload is stamped, never cleared by a later success: the app can finish booting in the moment
-// before a reload lands, and a cleared mark there let every load reload again.
-window.__bootFailed = function (msg) {
-  if (window.__noGpu) return true;
-  if (window.__reloading) return true;
-  if (document.querySelector("canvas")) return false;
-  if (!/load failed|failed to fetch|networkerror|webassembly|import/i.test(String(msg))) return false;
-  try {
-    if (Date.now() - Number(sessionStorage.getItem("burin.retried") || 0) > 60000) {
-      sessionStorage.setItem("burin.retried", String(Date.now()));
-      window.__reloading = true;
-      location.reload();
-      return true;
-    }
-  } catch (_) {}
-  var boot = document.getElementById("boot");
-  if (boot) {
-    boot.classList.add("failed");
-    boot.querySelector(".note").textContent = "The engraving didn't load.";
+// The app's files are renamed on every build: a page from before a deploy asks for files that
+// are gone, and one caught mid-deploy can ask before they've landed. The boot tries again while
+// the line keeps engraving: it fetches the page and the files that failed past the browser's
+// cache (a plain reload can be handed back the page it has, and WebKit the failure it kept for a
+// preloaded file), then reloads into them, waiting longer each time. The tries are
+// counted in sessionStorage, and only a page that draws resets the count, so reloads can't loop.
+// Once they're spent the site or the connection is down, and the screen says so.
+(function () {
+  var WAITS = [1000, 3000, 8000];
+  var failed = [];
+  // read whole, so the browser's cache keeps it for the reload
+  function fresh(url) { return fetch(url, { cache: "reload" }).then(function (r) { return r.arrayBuffer().then(function () { return r.status; }); }); }
+  function tries() { try { return Number(sessionStorage.getItem("burin.boot")) || 0; } catch (_) { return WAITS.length; } }
+  function note(text, state) {
+    var boot = document.getElementById("boot");
+    if (!boot) return;
+    boot.classList.remove("failed", "slow");
+    if (state) boot.classList.add(state);
+    boot.querySelector(".note").textContent = text;
   }
-  return true;
-};
+  function retry() {
+    var n = tries();
+    try { if (n >= WAITS.length) throw 0; sessionStorage.setItem("burin.boot", String(n + 1)); } catch (_) {
+      window.__reloading = false;
+      note("The site didn't answer. The connection may have dropped.", "failed");
+      return;
+    }
+    window.__reloading = true;
+    setTimeout(function () {
+      Promise.all(failed.map(function (url) { return fresh(url).catch(function () {}); }))
+        .then(function () { return fresh(location.href); })
+        .then(function (status) {
+          if (document.querySelector("canvas")) window.__reloading = false;
+          else if (status >= 500) retry();
+          else location.reload();
+        }, retry);
+    }, WAITS[n]);
+  }
+  window.__fileFailed = function (url) { if (failed.indexOf(url) < 0) failed.push(url); };
+  window.__bootFailed = function (msg) {
+    if (window.__noGpu) return true;
+    if (window.__reloading) return true;
+    if (document.querySelector("canvas")) return false;
+    if (!/load failed|failed to fetch|networkerror|webassembly|import/i.test(String(msg))) return false;
+    retry();
+    return true;
+  };
+  window.__tryAgain = function () {
+    try { sessionStorage.removeItem("burin.boot"); } catch (_) {}
+    note("engraving…");
+    retry();
+  };
+  window.__booted = function () {
+    // a page that drew as its reload was landing is no proof the next one will
+    if (!window.__reloading) try { sessionStorage.removeItem("burin.boot"); } catch (_) {}
+  };
+  window.__slow = function () {
+    var boot = document.getElementById("boot");
+    if (boot && !boot.classList.contains("failed") && !window.__reloading) note("Still engraving…", "slow");
+  };
+})();
 </script>
 <script>
 // Startup and GPU failures show on screen (tap to dismiss): phones have no console to read.
@@ -120,9 +157,16 @@ window.__bootFailed = function (msg) {
   function foreign(stack) { return (String(stack || "").match(/https?:\/\/[^\s/:)]+(:\d+)?/g) || []).some(function (o) { return o !== location.origin; }); }
   addEventListener("error", function (e) { var m = e.message || e.error; if (m !== "Script error." && ours(e.filename) && !window.__bootFailed(m)) show("error: " + m); });
   // a module the app's script imports that's gone (renamed by a deploy) errors on the script
-  // element only, which never bubbles: caught on the way down instead (images error here too).
-  // Only the app's own: a blocked third-party script (the analytics beacon) is no boot failure.
-  addEventListener("error", function (e) { var t = e.target; if (t && t.tagName === "SCRIPT" && ours(t.src)) window.__bootFailed("import failed"); }, true);
+  // element only, which never bubbles: caught on the way down instead (images error here too),
+  // with the preloads that failed alongside it. Only the app's own: a blocked third-party script
+  // (the analytics beacon) is no boot failure.
+  addEventListener("error", function (e) {
+    var t = e.target, url = t && (t.src || t.href);
+    if (!t || (t.tagName !== "SCRIPT" && t.tagName !== "LINK") || !ours(url)) return;
+    if (url) window.__fileFailed(url);
+    // the app's boot is an inline module, with no src of its own
+    if (t.tagName === "SCRIPT") window.__bootFailed("import failed");
+  }, true);
   addEventListener("unhandledrejection", function (e) { var m = e.reason && (e.reason.stack || e.reason.message) || e.reason; if (!foreign(e.reason && e.reason.stack) && !window.__bootFailed(m)) show("rejection: " + m); });
   var ce = console.error;
   console.error = function () { try { if (!foreign(new Error().stack)) show(Array.prototype.join.call(arguments, " ")); } catch (_) {} return ce.apply(console, arguments); };
@@ -132,6 +176,7 @@ window.__bootFailed = function (msg) {
     var c = document.querySelector("canvas");
     if (!c) return;
     obs.disconnect();
+    window.__booted();
     // and the line hands over to the plate: fade the loader once the canvas has drawn
     var boot = document.getElementById("boot");
     if (boot) setTimeout(function () {
@@ -140,9 +185,9 @@ window.__bootFailed = function (msg) {
       setTimeout(function () { boot.remove(); }, 600);
     }, 250);
   }).observe(document.documentElement, { childList: true, subtree: true });
-  setTimeout(function () { if (!document.querySelector("canvas")) { var b = document.getElementById("boot"); if (b) { b.classList.add("failed"); b.querySelector(".note").textContent = "This is taking a while."; } } }, 25000);
+  setTimeout(function () { if (!document.querySelector("canvas")) window.__slow(); }, 25000);
 })();
 </script>
 </head>
-<body><div id="boot" aria-hidden="true"><svg viewBox="-50 -50 100 100"><path d="M0.0 -0.0 L0.1 -0.0 L0.2 -0.0 L0.3 -0.1 L0.4 -0.1 L0.5 -0.2 L0.6 -0.3 L0.6 -0.4 L0.7 -0.5 L0.7 -0.6 L0.8 -0.7 L0.8 -0.8 L0.8 -1.0 L0.8 -1.1 L0.7 -1.3 L0.7 -1.4 L0.6 -1.6 L0.5 -1.7 L0.4 -1.8 L0.3 -2.0 L0.2 -2.1 L0.0 -2.2 L-0.2 -2.3 L-0.4 -2.4 L-0.6 -2.5 L-0.8 -2.5 L-1.0 -2.5 L-1.2 -2.5 L-1.5 -2.5 L-1.7 -2.5 L-2.0 -2.5 L-2.2 -2.4 L-2.5 -2.3 L-2.7 -2.2 L-2.9 -2.0 L-3.2 -1.8 L-3.4 -1.6 L-3.6 -1.4 L-3.8 -1.2 L-4.0 -0.9 L-4.1 -0.6 L-4.3 -0.3 L-4.4 -0.0 L-4.5 0.3 L-4.6 0.7 L-4.6 1.0 L-4.6 1.4 L-4.6 1.8 L-4.5 2.2 L-4.4 2.6 L-4.3 3.0 L-4.2 3.3 L-4.0 3.7 L-3.8 4.1 L-3.5 4.4 L-3.2 4.8 L-2.9 5.1 L-2.6 5.4 L-2.2 5.7 L-1.8 5.9 L-1.4 6.1 L-1.0 6.3 L-0.5 6.5 L-0.0 6.6 L0.5 6.7 L1.0 6.7 L1.5 6.7 L2.1 6.7 L2.6 6.6 L3.1 6.5 L3.7 6.4 L4.2 6.1 L4.7 5.9 L5.2 5.6 L5.7 5.3 L6.1 4.9 L6.6 4.5 L7.0 4.0 L7.4 3.5 L7.7 3.0 L8.0 2.5 L8.3 1.9 L8.5 1.3 L8.7 0.6 L8.8 0.0 L8.9 -0.7 L8.9 -1.3 L8.9 -2.0 L8.8 -2.7 L8.7 -3.4 L8.5 -4.1 L8.3 -4.8 L8.0 -5.4 L7.6 -6.1 L7.2 -6.7 L6.8 -7.3 L6.3 -7.9 L5.7 -8.4 L5.1 -8.9 L4.5 -9.3 L3.8 -9.8 L3.1 -10.1 L2.4 -10.4 L1.6 -10.7 L0.8 -10.9 L0.0 -11.0 L-0.8 -11.1 L-1.7 -11.1 L-2.5 -11.0 L-3.4 -10.9 L-4.2 -10.7 L-5.0 -10.5 L-5.9 -10.2 L-6.7 -9.8 L-7.4 -9.3 L-8.2 -8.8 L-8.9 -8.3 L-9.6 -7.6 L-10.2 -7.0 L-10.8 -6.2 L-11.3 -5.5 L-11.8 -4.6 L-12.2 -3.8 L-12.6 -2.9 L-12.8 -1.9 L-13.1 -1.0 L-13.2 -0.0 L-13.3 1.0 L-13.3 2.0 L-13.2 3.0 L-13.0 4.0 L-12.8 5.0 L-12.5 6.0 L-12.1 7.0 L-11.6 7.9 L-11.1 8.8 L-10.4 9.7 L-9.8 10.5 L-9.0 11.3 L-8.2 12.0 L-7.3 12.7 L-6.4 13.3 L-5.4 13.8 L-4.4 14.3 L-3.4 14.7 L-2.3 15.0 L-1.1 15.3 L-0.0 15.4 L1.2 15.5 L2.3 15.4 L3.5 15.3 L4.7 15.1 L5.8 14.8 L7.0 14.4 L8.1 14.0 L9.1 13.4 L10.2 12.8 L11.2 12.1 L12.1 11.3 L13.0 10.4 L13.8 9.4 L14.6 8.4 L15.3 7.4 L15.9 6.2 L16.4 5.1 L16.9 3.8 L17.2 2.6 L17.4 1.3 L17.6 0.0 L17.7 -1.3 L17.6 -2.7 L17.5 -4.0 L17.2 -5.3 L16.9 -6.6 L16.4 -7.9 L15.9 -9.2 L15.2 -10.4 L14.5 -11.6 L13.7 -12.7 L12.8 -13.7 L11.8 -14.7 L10.7 -15.7 L9.5 -16.5 L8.3 -17.3 L7.0 -17.9 L5.7 -18.5 L4.3 -19.0 L2.9 -19.4 L1.5 -19.6 L0.0 -19.8 L-1.5 -19.8 L-3.0 -19.8 L-4.5 -19.6 L-6.0 -19.3 L-7.4 -18.9 L-8.9 -18.4 L-10.3 -17.8 L-11.6 -17.1 L-12.9 -16.2 L-14.2 -15.3 L-15.4 -14.3 L-16.5 -13.1 L-17.5 -11.9 L-18.4 -10.6 L-19.3 -9.3 L-20.0 -7.8 L-20.6 -6.4 L-21.1 -4.8 L-21.5 -3.2 L-21.8 -1.6 L-22.0 -0.0 L-22.0 1.7 L-22.0 3.3 L-21.8 5.0 L-21.4 6.6 L-21.0 8.2 L-20.4 9.8 L-19.7 11.4 L-18.9 12.9 L-17.9 14.3 L-16.9 15.7 L-15.7 17.0 L-14.5 18.2 L-13.2 19.3 L-11.7 20.3 L-10.2 21.2 L-8.6 22.0 L-7.0 22.7 L-5.3 23.3 L-3.6 23.7 L-1.8 24.0 L-0.0 24.2 L1.8 24.2 L3.6 24.1 L5.5 23.9 L7.3 23.5 L9.0 23.0 L10.8 22.4 L12.5 21.6 L14.1 20.7 L15.7 19.7 L17.2 18.5 L18.6 17.2 L19.9 15.9 L21.1 14.4 L22.2 12.8 L23.2 11.2 L24.1 9.5 L24.8 7.7 L25.4 5.8 L25.9 3.9 L26.2 2.0 L26.4 0.0 L26.4 -2.0 L26.3 -4.0 L26.0 -5.9 L25.6 -7.9 L25.1 -9.8 L24.4 -11.7 L23.5 -13.6 L22.5 -15.3 L21.4 -17.0 L20.1 -18.7 L18.7 -20.2 L17.2 -21.6 L15.6 -22.9 L13.9 -24.1 L12.1 -25.2 L10.3 -26.1 L8.3 -26.9 L6.3 -27.6 L4.2 -28.1 L2.1 -28.4 L-0.0 -28.6 L-2.1 -28.6 L-4.3 -28.5 L-6.4 -28.2 L-8.6 -27.7 L-10.6 -27.1 L-12.7 -26.3 L-14.7 -25.4 L-16.6 -24.3 L-18.4 -23.1 L-20.2 -21.7 L-21.8 -20.2 L-23.3 -18.6 L-24.8 -16.9 L-26.0 -15.0 L-27.2 -13.1 L-28.2 -11.1 L-29.0 -9.0 L-29.7 -6.8 L-30.2 -4.6 L-30.6 -2.3 L-30.8 -0.0 L-30.8 2.3 L-30.7 4.6 L-30.3 6.9 L-29.8 9.2 L-29.2 11.4 L-28.3 13.6 L-27.3 15.8 L-26.1 17.8 L-24.8 19.8 L-23.3 21.7 L-21.7 23.4 L-20.0 25.1 L-18.1 26.6 L-16.1 27.9 L-14.0 29.2 L-11.9 30.2 L-9.6 31.1 L-7.3 31.9 L-4.9 32.4 L-2.5 32.8 L-0.0 33.0 L2.5 33.0 L4.9 32.8 L7.4 32.5 L9.9 31.9 L12.2 31.2 L14.6 30.3 L16.9 29.2 L19.1 28.0 L21.2 26.5 L23.2 25.0 L25.0 23.2 L26.8 21.4 L28.4 19.4 L29.8 17.2 L31.1 15.0 L32.3 12.7 L33.2 10.3 L34.0 7.8 L34.6 5.2 L35.0 2.6 L35.2 0.0 L35.2 -2.6 L35.0 -5.3 L34.6 -7.9 L34.0 -10.5 L33.3 -13.1 L32.3 -15.5 L31.1 -18.0 L29.8 -20.3 L28.3 -22.5 L26.6 -24.7 L24.7 -26.6 L22.7 -28.5 L20.6 -30.2 L18.3 -31.8 L16.0 -33.1 L13.5 -34.3 L10.9 -35.3 L8.3 -36.2 L5.5 -36.8 L2.8 -37.2 L-0.0 -37.4 L-2.8 -37.4 L-5.6 -37.2 L-8.4 -36.8 L-11.1 -36.1 L-13.9 -35.3 L-16.5 -34.3 L-19.1 -33.0 L-21.5 -31.6 L-23.9 -30.0 L-26.2 -28.2 L-28.3 -26.2 L-30.2 -24.1 L-32.0 -21.8 L-33.7 -19.4 L-35.1 -16.9 L-36.4 -14.3 L-37.4 -11.5 L-38.3 -8.7 L-39.0 -5.9 L-39.4 -3.0 L-39.6 -0.0 L-39.6 3.0 L-39.4 5.9 L-38.9 8.9 L-38.2 11.8 L-37.4 14.7 L-36.2 17.5 L-34.9 20.2 L-33.4 22.8 L-31.7 25.3 L-29.8 27.6 L-27.7 29.9 L-25.5 31.9 L-23.1 33.8 L-20.5 35.6 L-17.9 37.1 L-15.1 38.4 L-12.2 39.5 L-9.2 40.4 L-6.2 41.1 L-3.1 41.6 L-0.0 41.8 L3.1 41.8 L6.3 41.5 L9.4 41.1 L12.4 40.3 L15.5 39.4 L18.4 38.2 L21.3 36.8 L24.0 35.2 L26.6 33.4 L29.1 31.4 L31.5 29.2 L33.7 26.8 L35.7 24.3 L37.5 21.6 L39.1 18.8 L40.5 15.9 L41.6 12.8 L42.6 9.7 L43.3 6.5 L43.8 3.3 L44.0 0.0"/></svg><div class="note">engraving…</div><button type="button" onclick="sessionStorage.removeItem('burin.retried');location.reload()">Try again</button></div></body>
+<body><div id="boot" aria-hidden="true"><svg viewBox="-50 -50 100 100"><path d="M0.0 -0.0 L0.1 -0.0 L0.2 -0.0 L0.3 -0.1 L0.4 -0.1 L0.5 -0.2 L0.6 -0.3 L0.6 -0.4 L0.7 -0.5 L0.7 -0.6 L0.8 -0.7 L0.8 -0.8 L0.8 -1.0 L0.8 -1.1 L0.7 -1.3 L0.7 -1.4 L0.6 -1.6 L0.5 -1.7 L0.4 -1.8 L0.3 -2.0 L0.2 -2.1 L0.0 -2.2 L-0.2 -2.3 L-0.4 -2.4 L-0.6 -2.5 L-0.8 -2.5 L-1.0 -2.5 L-1.2 -2.5 L-1.5 -2.5 L-1.7 -2.5 L-2.0 -2.5 L-2.2 -2.4 L-2.5 -2.3 L-2.7 -2.2 L-2.9 -2.0 L-3.2 -1.8 L-3.4 -1.6 L-3.6 -1.4 L-3.8 -1.2 L-4.0 -0.9 L-4.1 -0.6 L-4.3 -0.3 L-4.4 -0.0 L-4.5 0.3 L-4.6 0.7 L-4.6 1.0 L-4.6 1.4 L-4.6 1.8 L-4.5 2.2 L-4.4 2.6 L-4.3 3.0 L-4.2 3.3 L-4.0 3.7 L-3.8 4.1 L-3.5 4.4 L-3.2 4.8 L-2.9 5.1 L-2.6 5.4 L-2.2 5.7 L-1.8 5.9 L-1.4 6.1 L-1.0 6.3 L-0.5 6.5 L-0.0 6.6 L0.5 6.7 L1.0 6.7 L1.5 6.7 L2.1 6.7 L2.6 6.6 L3.1 6.5 L3.7 6.4 L4.2 6.1 L4.7 5.9 L5.2 5.6 L5.7 5.3 L6.1 4.9 L6.6 4.5 L7.0 4.0 L7.4 3.5 L7.7 3.0 L8.0 2.5 L8.3 1.9 L8.5 1.3 L8.7 0.6 L8.8 0.0 L8.9 -0.7 L8.9 -1.3 L8.9 -2.0 L8.8 -2.7 L8.7 -3.4 L8.5 -4.1 L8.3 -4.8 L8.0 -5.4 L7.6 -6.1 L7.2 -6.7 L6.8 -7.3 L6.3 -7.9 L5.7 -8.4 L5.1 -8.9 L4.5 -9.3 L3.8 -9.8 L3.1 -10.1 L2.4 -10.4 L1.6 -10.7 L0.8 -10.9 L0.0 -11.0 L-0.8 -11.1 L-1.7 -11.1 L-2.5 -11.0 L-3.4 -10.9 L-4.2 -10.7 L-5.0 -10.5 L-5.9 -10.2 L-6.7 -9.8 L-7.4 -9.3 L-8.2 -8.8 L-8.9 -8.3 L-9.6 -7.6 L-10.2 -7.0 L-10.8 -6.2 L-11.3 -5.5 L-11.8 -4.6 L-12.2 -3.8 L-12.6 -2.9 L-12.8 -1.9 L-13.1 -1.0 L-13.2 -0.0 L-13.3 1.0 L-13.3 2.0 L-13.2 3.0 L-13.0 4.0 L-12.8 5.0 L-12.5 6.0 L-12.1 7.0 L-11.6 7.9 L-11.1 8.8 L-10.4 9.7 L-9.8 10.5 L-9.0 11.3 L-8.2 12.0 L-7.3 12.7 L-6.4 13.3 L-5.4 13.8 L-4.4 14.3 L-3.4 14.7 L-2.3 15.0 L-1.1 15.3 L-0.0 15.4 L1.2 15.5 L2.3 15.4 L3.5 15.3 L4.7 15.1 L5.8 14.8 L7.0 14.4 L8.1 14.0 L9.1 13.4 L10.2 12.8 L11.2 12.1 L12.1 11.3 L13.0 10.4 L13.8 9.4 L14.6 8.4 L15.3 7.4 L15.9 6.2 L16.4 5.1 L16.9 3.8 L17.2 2.6 L17.4 1.3 L17.6 0.0 L17.7 -1.3 L17.6 -2.7 L17.5 -4.0 L17.2 -5.3 L16.9 -6.6 L16.4 -7.9 L15.9 -9.2 L15.2 -10.4 L14.5 -11.6 L13.7 -12.7 L12.8 -13.7 L11.8 -14.7 L10.7 -15.7 L9.5 -16.5 L8.3 -17.3 L7.0 -17.9 L5.7 -18.5 L4.3 -19.0 L2.9 -19.4 L1.5 -19.6 L0.0 -19.8 L-1.5 -19.8 L-3.0 -19.8 L-4.5 -19.6 L-6.0 -19.3 L-7.4 -18.9 L-8.9 -18.4 L-10.3 -17.8 L-11.6 -17.1 L-12.9 -16.2 L-14.2 -15.3 L-15.4 -14.3 L-16.5 -13.1 L-17.5 -11.9 L-18.4 -10.6 L-19.3 -9.3 L-20.0 -7.8 L-20.6 -6.4 L-21.1 -4.8 L-21.5 -3.2 L-21.8 -1.6 L-22.0 -0.0 L-22.0 1.7 L-22.0 3.3 L-21.8 5.0 L-21.4 6.6 L-21.0 8.2 L-20.4 9.8 L-19.7 11.4 L-18.9 12.9 L-17.9 14.3 L-16.9 15.7 L-15.7 17.0 L-14.5 18.2 L-13.2 19.3 L-11.7 20.3 L-10.2 21.2 L-8.6 22.0 L-7.0 22.7 L-5.3 23.3 L-3.6 23.7 L-1.8 24.0 L-0.0 24.2 L1.8 24.2 L3.6 24.1 L5.5 23.9 L7.3 23.5 L9.0 23.0 L10.8 22.4 L12.5 21.6 L14.1 20.7 L15.7 19.7 L17.2 18.5 L18.6 17.2 L19.9 15.9 L21.1 14.4 L22.2 12.8 L23.2 11.2 L24.1 9.5 L24.8 7.7 L25.4 5.8 L25.9 3.9 L26.2 2.0 L26.4 0.0 L26.4 -2.0 L26.3 -4.0 L26.0 -5.9 L25.6 -7.9 L25.1 -9.8 L24.4 -11.7 L23.5 -13.6 L22.5 -15.3 L21.4 -17.0 L20.1 -18.7 L18.7 -20.2 L17.2 -21.6 L15.6 -22.9 L13.9 -24.1 L12.1 -25.2 L10.3 -26.1 L8.3 -26.9 L6.3 -27.6 L4.2 -28.1 L2.1 -28.4 L-0.0 -28.6 L-2.1 -28.6 L-4.3 -28.5 L-6.4 -28.2 L-8.6 -27.7 L-10.6 -27.1 L-12.7 -26.3 L-14.7 -25.4 L-16.6 -24.3 L-18.4 -23.1 L-20.2 -21.7 L-21.8 -20.2 L-23.3 -18.6 L-24.8 -16.9 L-26.0 -15.0 L-27.2 -13.1 L-28.2 -11.1 L-29.0 -9.0 L-29.7 -6.8 L-30.2 -4.6 L-30.6 -2.3 L-30.8 -0.0 L-30.8 2.3 L-30.7 4.6 L-30.3 6.9 L-29.8 9.2 L-29.2 11.4 L-28.3 13.6 L-27.3 15.8 L-26.1 17.8 L-24.8 19.8 L-23.3 21.7 L-21.7 23.4 L-20.0 25.1 L-18.1 26.6 L-16.1 27.9 L-14.0 29.2 L-11.9 30.2 L-9.6 31.1 L-7.3 31.9 L-4.9 32.4 L-2.5 32.8 L-0.0 33.0 L2.5 33.0 L4.9 32.8 L7.4 32.5 L9.9 31.9 L12.2 31.2 L14.6 30.3 L16.9 29.2 L19.1 28.0 L21.2 26.5 L23.2 25.0 L25.0 23.2 L26.8 21.4 L28.4 19.4 L29.8 17.2 L31.1 15.0 L32.3 12.7 L33.2 10.3 L34.0 7.8 L34.6 5.2 L35.0 2.6 L35.2 0.0 L35.2 -2.6 L35.0 -5.3 L34.6 -7.9 L34.0 -10.5 L33.3 -13.1 L32.3 -15.5 L31.1 -18.0 L29.8 -20.3 L28.3 -22.5 L26.6 -24.7 L24.7 -26.6 L22.7 -28.5 L20.6 -30.2 L18.3 -31.8 L16.0 -33.1 L13.5 -34.3 L10.9 -35.3 L8.3 -36.2 L5.5 -36.8 L2.8 -37.2 L-0.0 -37.4 L-2.8 -37.4 L-5.6 -37.2 L-8.4 -36.8 L-11.1 -36.1 L-13.9 -35.3 L-16.5 -34.3 L-19.1 -33.0 L-21.5 -31.6 L-23.9 -30.0 L-26.2 -28.2 L-28.3 -26.2 L-30.2 -24.1 L-32.0 -21.8 L-33.7 -19.4 L-35.1 -16.9 L-36.4 -14.3 L-37.4 -11.5 L-38.3 -8.7 L-39.0 -5.9 L-39.4 -3.0 L-39.6 -0.0 L-39.6 3.0 L-39.4 5.9 L-38.9 8.9 L-38.2 11.8 L-37.4 14.7 L-36.2 17.5 L-34.9 20.2 L-33.4 22.8 L-31.7 25.3 L-29.8 27.6 L-27.7 29.9 L-25.5 31.9 L-23.1 33.8 L-20.5 35.6 L-17.9 37.1 L-15.1 38.4 L-12.2 39.5 L-9.2 40.4 L-6.2 41.1 L-3.1 41.6 L-0.0 41.8 L3.1 41.8 L6.3 41.5 L9.4 41.1 L12.4 40.3 L15.5 39.4 L18.4 38.2 L21.3 36.8 L24.0 35.2 L26.6 33.4 L29.1 31.4 L31.5 29.2 L33.7 26.8 L35.7 24.3 L37.5 21.6 L39.1 18.8 L40.5 15.9 L41.6 12.8 L42.6 9.7 L43.3 6.5 L43.8 3.3 L44.0 0.0"/></svg><div class="note">engraving…</div><button type="button" onclick="window.__tryAgain()">Try again</button></div></body>
 </html>
