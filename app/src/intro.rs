@@ -31,6 +31,11 @@ const WRITE_SHARE: f32 = 3.2;
 const BREATHS: [f32; 2] = [0.5, 0.3];
 /// seconds the finished greeting rests before it falls: long enough to read the last line
 const REST: f32 = 0.9;
+/// the lines lift onto the spiral one at a time, the lead first (it's already in the band the
+/// spiral sits in, and curls up in place; the next then wraps round it instead of landing on
+/// it): a line's points set off over LIFT_STAGGER, its end first, the next line LIFT_NEXT after
+const LIFT_STAGGER: f32 = 0.35;
+const LIFT_NEXT: f32 = 0.5;
 /// keep in step with intro.wgsl: the last of the sentence is reeled in REEL_AT + REEL after
 /// it starts to lift
 const FALL: f32 = 1.0 + 1.5;
@@ -68,6 +73,8 @@ struct Vertex {
     gap: f32,
     /// the row's size against the lead line
     k: f32,
+    /// seconds into the fall this point lifts off the block
+    at: f32,
 }
 
 /// The greeting shaped and rasterized once into a single-row coverage atlas.
@@ -105,6 +112,18 @@ impl Atlas {
             head = a + (b - a) * e;
         }
         head
+    }
+
+    /// Seconds into the fall the point `u` atlas px along the text lifts off the block.
+    fn lift_at(&self, u: f32) -> f32 {
+        let line = self
+            .pen
+            .iter()
+            .position(|&(_, b, _, _)| u <= b)
+            .unwrap_or(self.pen.len().saturating_sub(1));
+        let (a, b, _, _) = self.pen[line];
+        let left = ((b - u) / (b - a).max(1.0)).clamp(0.0, 1.0);
+        line as f32 * LIFT_NEXT + LIFT_STAGGER * left
     }
 }
 
@@ -358,6 +377,7 @@ impl Layout {
         for u in us {
             let (pa, k) = place(u);
             let gap = if in_gap(u) { 1.0 } else { 0.0 };
+            let at = atlas.lift_at(u);
             for side in [-1.0, 1.0] {
                 vertices.push(Vertex {
                     u,
@@ -365,6 +385,7 @@ impl Layout {
                     pa,
                     gap,
                     k,
+                    at,
                 });
             }
         }
@@ -602,7 +623,7 @@ impl Greeting {
                 buffers: &[wgpu::VertexBufferLayout {
                     array_stride: std::mem::size_of::<Vertex>() as u64,
                     step_mode: wgpu::VertexStepMode::Vertex,
-                    attributes: &wgpu::vertex_attr_array![0 => Float32, 1 => Float32, 2 => Float32x2, 3 => Float32, 4 => Float32],
+                    attributes: &wgpu::vertex_attr_array![0 => Float32, 1 => Float32, 2 => Float32x2, 3 => Float32, 4 => Float32, 5 => Float32],
                 }],
             },
             fragment: Some(wgpu::FragmentState {

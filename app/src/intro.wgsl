@@ -1,4 +1,4 @@
-// Greeting: written in script on the plate, then lifted, tail first, onto the plate's own
+// Greeting: written in script on the plate, then lifted, line by line, onto the plate's own
 // spiral and reeled in along it, the reverse of the way the plate's pen will draw it: the
 // words stay words the whole way, written at the plate's lettering size, thinning into the
 // line over the last turn, and go in at the point the line starts from. The plate then
@@ -32,11 +32,10 @@ struct U {
 
 const PI: f32 = 3.14159265359;
 const TAU: f32 = 6.28318530718;
-// keep in step with intro.rs FALL: the sentence lifts onto the spiral (the end of it first,
-// the start STAGGER later, each point over GATHER), and the reel starts winding it in at REEL_AT
-// and has it all in the point REEL later
-const GATHER: f32 = 1.0;
-const STAGGER: f32 = 0.45;
+// keep in step with intro.rs FALL: each point of the sentence lifts onto the spiral over GATHER
+// from its own moment (intro.rs lift_at), and the reel starts winding it in at REEL_AT and has
+// it all in the point REEL later
+const GATHER: f32 = 0.8;
 const REEL_AT: f32 = 1.0;
 const REEL: f32 = 1.5;
 // the plate's line starts half a turn out (plate.wgsl: its turn 0 is r = d/2, on the left)
@@ -53,6 +52,7 @@ struct VIn {
     @location(2) pa: vec2<f32>,
     @location(3) gap: f32,
     @location(4) k: f32,
+    @location(5) at: f32,
 };
 
 struct VOut {
@@ -100,9 +100,8 @@ fn vs_main(v: VIn) -> VOut {
     let near = smoothstep(START, THIN_FROM, tc);
     let sc = max(s_c * mix(0.3, 1.0, near), 1.5 * u.hair / max(u.yc, u.atlas_h - u.yc));
     let spiral = vec2<f32>(0.0, u.sink) + r * radial + up * band * sc;
-    // each point lifts from the block onto the spiral, the end of the sentence first: it goes
-    // to the outer turn, out of the way of the words that follow it down
-    let la = clamp((lt - STAGGER * (1.0 - v.u / u.text_len)) / GATHER, 0.0, 1.0);
+    // each point lifts from the block onto the spiral in its turn
+    let la = clamp((lt - v.at) / GATHER, 0.0, 1.0);
     let lift = la * la * la * (la * (la * 6.0 - 15.0) + 10.0);
     let p2 = mix(block, spiral, lift);
     // how far into the point: the letters give way to the line there
