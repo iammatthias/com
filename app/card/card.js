@@ -96,10 +96,10 @@ const WARP_RATES = [0.4, -0.33, -0.27, 0.21];
 // and its grain on floor(ab * 60), so a frame can hand it any pair with the right sum, and the
 // warp's phases carry the difference so the line stays where T puts it. turns: where each light
 // is along the line.
-function moment({ T, c, ut, ab, turns }) {
+function moment({ T, c, ut, ab, turns, phase = 0 }) {
     const ease = (period, phase) => 0.5 - 0.5 * Math.cos((c / period + phase) * TAU);
     return {
-        T, ut, ab, turns,
+        T, ut, ab, turns, phase,
         eWarp: CALM * CONTROLS.warp * (0.35 + 0.65 * ease(29, z.osc[1])),
         eDisp: CONTROLS.disp * (0.35 + 0.65 * ease(53, z.osc[2])),
         wph: z.wph.map((p, i) => p + WARP_RATES[i] * (T - ut)),
@@ -113,8 +113,11 @@ const still = () => moment({ T: T0, c: C0, ut: T0, ab: C0 * 0.4, turns: restingT
 // swing back where it started at frame n. The grain can't swing (its frame index would stall
 // and retrace at the turns), so it deals afresh each frame through a cycle of `deals` (n a
 // multiple of it), the shader's two clocks sharing the optics' time between them. The swings
-// start out of step, so no two rest together.
-function turning(k, n, seconds, deals, pace) {
+// start out of step, so no two rest together. `flow` turns of the spiral's phase over the loop
+// (the shader's mph.w): the line flows outward (negative: inward) by one spacing per turn, and a
+// whole turn maps the spiral onto itself, so the loop closes. The lights stay where the resting
+// line puts them: a light riding the flow would end a spacing out.
+function turning(k, n, seconds, deals, pace, flow = 0) {
     const phi = (k / n) * TAU;
     const swing = (rate, phase) => ((pace * rate * seconds) / TAU) * Math.sin(phi + phase);
     const optics = T0 / 2 + C0 * 0.4 + swing(0.46, 0);
@@ -125,6 +128,7 @@ function turning(k, n, seconds, deals, pace) {
         ut: 2 * (optics - ab),
         ab,
         turns: restingTurns().map((p, i) => p + Math.sign(z.fl[i][1]) * swing((8 * DPR) / (TAU * d * (p + 0.5)), ((i + 1) * TAU) / 4)),
+        phase: ((((flow * k) / n) % 1) + 1) % 1,
     });
 }
 
@@ -290,7 +294,7 @@ function uniforms(m) {
     set(SLOT.view, [0, 0, -9, -9]); // no pan, nothing hovered
     set(SLOT.wph, m.wph);
     set(SLOT.wfq, z.wfq);
-    set(SLOT.mph, [z.mph[0], z.mph[1], z.mph[2], 0]);
+    set(SLOT.mph, [z.mph[0], z.mph[1], z.mph[2], m.phase]);
     set(SLOT.optics, [1, CONTROLS.flare, CONTROLS.haze, CONTROLS.ab * CALM]);
     set(SLOT.clocks, [DPR, z.ab_freq, m.ab, 1]); // fully revealed
     set(SLOT.ab_ph, z.ab_ph);
@@ -310,9 +314,21 @@ function uniforms(m) {
 }
 
 async function setup() {
-    const [vs, fsPlate, fsOptics] = await Promise.all(
+    const [vs, fsPlate, fsOptics0] = await Promise.all(
         ["gen/vs.vert", "gen/plate.frag", "gen/optics.frag"].map(async (f) => (await fetch(f)).text()),
     );
+    // ?grain=<scale> scales the film grain's amplitude (1 as drawn, 0 none). The social loop
+    // asks for 0: H.264 can't carry the grain over a moving plate at any affordable size. It's a
+    // knob for that one generator, so it edits the generated GLSL's one grain term rather than
+    // costing the site a uniform (struct U, gpu.rs, contract.rs and the SLOT table would all
+    // change for a value the site never varies). Without it the shaders compile as generated.
+    const grainScale = q.get("grain") === null ? 1 : Number(q.get("grain"));
+    let fsOptics = fsOptics0;
+    if (grainScale !== 1) {
+        const GRAIN_TERM = "(g_2 * 1.9)";
+        if (fsOptics0.split(GRAIN_TERM).length !== 2) throw new Error("grain term not found once in optics.frag");
+        fsOptics = fsOptics0.replace(GRAIN_TERM, `(g_2 * 1.9 * ${grainScale.toFixed(4)})`);
+    }
     const plate = program(vs, fsPlate), optics = program(vs, fsOptics);
     const ubo = gl.createBuffer();
     gl.bindBuffer(gl.UNIFORM_BUFFER, ubo);
@@ -365,8 +381,8 @@ try {
     const scene = await setup();
     draw(scene, still());
     // the loop's generator (scripts/og-loop.ts) asks for frame k of n, and waits for it to show
-    window.__cardLoop = (k, n, seconds, deals, pace) => {
-        draw(scene, turning(k, n, seconds, deals, pace));
+    window.__cardLoop = (k, n, seconds, deals, pace, flow = 0) => {
+        draw(scene, turning(k, n, seconds, deals, pace, flow));
         return shown();
     };
     await shown();

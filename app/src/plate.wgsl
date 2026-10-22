@@ -13,7 +13,7 @@ struct U {
     view: vec4<f32>,    // pan.xy, hover.xy (atlas px of the hovered title's middle)
     wph: vec4<f32>,
     wfq: vec4<f32>,
-    mph: vec4<f32>,     // mph.xyz, inv
+    mph: vec4<f32>,     // mph.xyz, flow (turns the line sits further out; 0 on the site)
     optics: vec4<f32>,  // avoid, flare, haze, ab
     clocks: vec4<f32>,  // dpr, ab_freq, ab_clock, reveal
     ab_ph: vec4<f32>,
@@ -249,13 +249,19 @@ fn plate(fc: vec2<f32>) -> vec4<f32> {
     }
     let rr = dist + d * (u.line.y * warp_f(q, qr, a, ut()) * calm + u.line.z * (dark - 0.5)) * reveal();
     let an = core_turn(pc, max(rr, 0.0));
-    let tt = rr / d - an;
+    let tt0 = rr / d - an;
+    let turn0 = floor(tt0) + an;
+    // the social loop's flow (card.js): the line mph.w of a turn further out. A whole turn maps
+    // the spiral onto itself, so a phase run from 0 to 1 flows the line outward and back to the
+    // start; the site draws at 0
+    let tt = tt0 - u.mph.w;
     let kk = floor(tt);
     let f = tt - kk;
     let turn = kk + an;
-    // drawn only behind the pen while the line comes out of the greeting's point
-    let pen_at = arc_of(turn + 0.5);
-    let alive = step(0.0, turn) * clamp((u.glass.z - pen_at) / (1.5 * d) + 0.5, 0.0, 1.0);
+    // drawn only behind the pen while the line comes out of the greeting's point; the drawn
+    // region stays put while the line flows through it
+    let pen_at = arc_of(turn0 + 0.5);
+    let alive = step(0.0, turn0) * clamp((u.glass.z - pen_at) / (1.5 * d) + 0.5, 0.0, 1.0);
     let vy = (f - 0.5) * d;
 
     let sc = u.line.w / (d * u.script.x);

@@ -11,8 +11,9 @@
     ?kind=page&title=..&eyebrow=..&description=..   the line framing a paper box, the text set in it
     ?kind=icon                         the bare spiral, 192 square at 8x: the app icon (scripts/icons.mjs)
     &seed=<u32>                        the plate's variance (stable per page)
+    &grain=<scale>                     the film grain's amplitude, 1 as drawn (the social loop asks for 0)
   window.__cardReady turns true once the fonts are in and the frame is drawn.
-  window.__cardLoop(k, n, seconds, deals, pace) then draws frame k of an n-frame loop (scripts/og-loop.ts).
+  window.__cardLoop(k, n, seconds, deals, pace, flow) then draws frame k of an n-frame loop (scripts/og-loop.ts).
 -->
 <style>
 @font-face { font-family: "Newsreader"; src: url(/fonts-v1/Newsreader.ttf); font-weight: 200 800; font-style: normal; }
