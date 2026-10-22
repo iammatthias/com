@@ -137,4 +137,5 @@ native build gets everything back.
   web components). Off the web they
   are the real crates. `build_guards::web_build_has_no_svg_renderer` checks they still apply.
 - **`vendor/parley`** turns off parley's complex-script line breaking (ICU dictionaries for
-  Thai, Khmer and CJK). The site is English.
+  Thai, Khmer and CJK). The site is English. It also breaks a word too long for its line
+  (`overflow-wrap: break-word`), which gpui has no style for.

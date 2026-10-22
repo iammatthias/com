@@ -194,7 +194,9 @@ impl<B: Brush> Default for TextStyle<'static, 'static, B> {
             word_spacing: 0.0,
             letter_spacing: 0.0,
             word_break: WordBreak::default(),
-            overflow_wrap: OverflowWrap::default(),
+            // the site's patch: a word too long for its line breaks where it must, as the web's
+            // `overflow-wrap: break-word` (gpui sets no wrap style of its own)
+            overflow_wrap: OverflowWrap::BreakWord,
             text_wrap_mode: TextWrapMode::default(),
         }
     }
