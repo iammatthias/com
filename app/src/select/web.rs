@@ -61,7 +61,7 @@ pub fn install() {
 }
 
 /// The selection's geometry as JSON, for browser tests that cannot read the canvas: the text,
-/// its highlight rects, and where the Copy pill sits.
+/// its highlight rects, and where the Copy pill was drawn (null when it wasn't).
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn selection_debug() -> String {
     let Some(scope) = Selection::active() else {
@@ -77,15 +77,9 @@ pub fn selection_debug() -> String {
             f32::from(r.size.height)
         )
     };
-    let pill = rects
-        .first()
-        .map(|r| {
-            format!(
-                "[{},{}]",
-                f32::from(r.origin.x),
-                f32::from(r.origin.y - super::scope::PILL_LIFT)
-            )
-        })
+    let pill = scope
+        .pill()
+        .map(|p| format!("[{},{}]", f32::from(p.x), f32::from(p.y)))
         .unwrap_or_else(|| "null".into());
     let text = scope.selected_text().unwrap_or_default();
     let escaped: String = text.chars().flat_map(|c| c.escape_default()).collect();

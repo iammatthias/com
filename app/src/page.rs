@@ -159,6 +159,13 @@ impl Render for Page {
             "page render {:.2}ms",
             started.elapsed().as_secs_f64() * 1e3
         ));
+        // clear of the controls, with air between them and the page (the frame round it comes
+        // down with it), and of the status bar and notch the canvas reaches under
+        let top = if design::is_phone(window) {
+            108.0
+        } else {
+            112.0
+        } + crate::route::safe_insets()[0];
         crate::theme::with_fallbacks(div())
             .size_full()
             .image_cache(self.images.clone())
@@ -174,15 +181,7 @@ impl Render for Page {
                     .overflow_y_scroll()
                     .track_scroll(&self.scroll)
                     .px(gpui::px(if design::is_phone(window) { 22.0 } else { 48.0 }))
-                    // clear of the controls, with air between them and the page (the frame round it
-                    // comes down with it), and of the status bar and notch the canvas reaches under
-                    .pt(gpui::px(
-                        if design::is_phone(window) {
-                            108.0
-                        } else {
-                            112.0
-                        } + crate::route::safe_insets()[0],
-                    ))
+                    .pt(gpui::px(top))
                     .pb(gpui::px(120. + crate::route::safe_insets()[2]))
                     .child(
                         div()
@@ -192,7 +191,8 @@ impl Render for Page {
                             .mx_auto()
                             .child(
                                 self.selection
-                                    .scope(self.path.clone(), body, theme.selection()),
+                                    .scope(self.path.clone(), body, theme.selection())
+                                    .pill_clearance(gpui::px(top)),
                             )
                             .child(self.probe.element(Redraw::NextFrame)),
                     ),

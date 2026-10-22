@@ -33,8 +33,10 @@ const KNOB: Pixels = px(7.);
 const HANDLE_LIFT: Pixels = px(22.);
 /// A finger-sized square round each knob.
 const HANDLE_HIT: Pixels = px(44.);
-/// How far above the selection's first line the Copy pill sits.
-pub(super) const PILL_LIFT: Pixels = px(40.);
+/// How far above the selection's first line the Copy pill sits, or below its last line (past
+/// the handle's knob) when there is no room above.
+const PILL_LIFT: Pixels = px(40.);
+const PILL_DROP: Pixels = px(22.);
 
 pub(super) struct ScopeState {
     key: Option<SharedString>,
@@ -46,6 +48,8 @@ pub(super) struct ScopeState {
     /// the views whose paint drew a block: who to notify when the selection changes
     pub views: Vec<EntityId>,
     handles: [Option<Hitbox>; 2],
+    /// where the Copy pill was drawn this render, if it was
+    pub pill: Option<Point<Pixels>>,
 }
 
 impl ScopeState {
@@ -122,6 +126,7 @@ impl Selection {
             last_click: None,
             views: Vec::new(),
             handles: [None, None],
+            pill: None,
         }));
         SCOPES.with(|s| {
             let mut s = s.borrow_mut();
@@ -143,6 +148,7 @@ impl Selection {
             key: key.into(),
             child: child.into_any_element(),
             style,
+            clearance: px(0.),
         }
     }
 
@@ -196,8 +202,14 @@ impl Selection {
             s.registry = Registry::default();
             s.gesture = Gesture::Idle;
             s.handles = [None, None];
+            s.pill = None;
         }
         self.clear(cx);
+    }
+
+    /// Where the Copy pill is drawn, when it is.
+    pub(super) fn pill(&self) -> Option<Point<Pixels>> {
+        self.0.borrow().pill
     }
 
     /// The scope whose children are prepainting right now.
@@ -294,6 +306,9 @@ pub struct SelectionScope {
     key: SharedString,
     child: AnyElement,
     style: SelectionStyle,
+    /// how far down from the window's top the Copy pill may sit: what the app draws over the
+    /// document's top edge
+    clearance: Pixels,
 }
 
 pub struct ScopePrepaint {
@@ -302,6 +317,12 @@ pub struct ScopePrepaint {
 }
 
 impl SelectionScope {
+    /// Keeps the Copy pill below `top`: the controls the app draws over the document.
+    pub fn pill_clearance(mut self, top: Pixels) -> Self {
+        self.clearance = top;
+        self
+    }
+
     fn pill(&self) -> AnyElement {
         let state = self.state.clone();
         let style = &self.style;
@@ -379,6 +400,7 @@ impl Element for SelectionScope {
             s.gesture = Gesture::Idle;
         }
         s.handles = [None, None];
+        s.pill = None;
         let Some(span) = s.touch_selection() else {
             return ScopePrepaint { handles: None };
         };
@@ -396,15 +418,33 @@ impl Element for SelectionScope {
             let hit = Bounds::centered_at(knob.center(), size(HANDLE_HIT, HANDLE_HIT));
             s.handles[i] = Some(window.insert_hitbox(hit, HitboxBehavior::Normal));
         }
-        let pill_at = point(first.left(), first.top() - PILL_LIFT);
+        let (first, last) = (*first, *last);
         drop(s);
         // a deferred element is prepainted where it is drawn, but laid out here
         let mut pill = self.pill();
-        pill.layout_as_root(
+        let pill_size = pill.layout_as_root(
             size(AvailableSpace::MaxContent, AvailableSpace::MaxContent),
             window,
             cx,
         );
+        let viewport = window.viewport_size();
+        // above the first line; below the last when that would sit under the app's controls or
+        // off the top; failing both, just under the controls, over the text
+        let above = first.top() - PILL_LIFT;
+        let below = last.bottom() + PILL_DROP;
+        let (y, beside) = if above >= self.clearance {
+            (above, first)
+        } else if below + pill_size.height <= viewport.height {
+            (below, last)
+        } else {
+            (self.clearance, first)
+        };
+        let x = beside
+            .left()
+            .min(viewport.width - pill_size.width)
+            .max(px(0.));
+        let pill_at = point(x, y);
+        self.state.0.borrow_mut().pill = Some(pill_at);
         window.defer_draw(pill, pill_at, 1, Some(window.content_mask()));
         ScopePrepaint {
             handles: Some(handles),
