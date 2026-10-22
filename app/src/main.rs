@@ -93,7 +93,8 @@ thread_local! {
 }
 
 /// Which build this is (in the #perf log). Its bytes are part of the wasm, so bumping it gives the
-/// build new hashed file names: the way out if an edge ever keeps a bad copy of one.
+/// build new hashed file names under a new /b/<id>/: the way out if an edge ever keeps a bad copy
+/// of one.
 const BUILD: &str = "2026-10-14.2";
 
 /// A startup timing, in ms since the app began, logged to the console with `#perf` in the URL.

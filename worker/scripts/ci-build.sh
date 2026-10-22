@@ -86,7 +86,8 @@ else
     find vendor shims -type f -exec touch -d 2000-01-01 {} +
 
     trunk --version 2>/dev/null | grep -q "$TRUNK" || curl -sSfL --retry 3 --retry-all-errors "https://github.com/trunk-rs/trunk/releases/download/v$TRUNK/trunk-x86_64-unknown-linux-gnu.tar.gz" | tar xz -C "$cache/bin"
-    naga --version 2>/dev/null | grep -q "$NAGA" || cargo install naga-cli --version "$NAGA" --locked --quiet --force --root "$cache"
+    # (its own target dir: cargo install honours CARGO_TARGET_DIR, and its native build is a gigabyte)
+    naga --version 2>/dev/null | grep -q "$NAGA" || CARGO_TARGET_DIR="$HOME/target-naga" cargo install naga-cli --version "$NAGA" --locked --quiet --force --root "$cache"
     mark "trunk and naga"
     rm -rf dist-deploy
     trunk build --release --dist dist-deploy
@@ -107,8 +108,7 @@ else
         # the key last: a build cut off before here is a miss, not a half cache
         echo "$key" > "$cache/app/key"
     fi
-    # TEMPORARY: deploy-speed uploads too, to prove the restore on a branch; the next commit removes it
-    if { [ $main = 1 ] || [ "${WORKERS_CI_BRANCH:-}" = deploy-speed ]; } && [ $restored = 0 ]; then
+    if [ $main = 1 ] && [ $restored = 0 ]; then
         upload && mark "cargo cache $ckey uploaded, $(du -sh "$parts" | cut -f1) in $n parts" \
             || echo "ci: the cargo cache upload failed; the next app build compiles from crates.io"
     fi
