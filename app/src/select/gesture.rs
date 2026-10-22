@@ -44,6 +44,9 @@ pub enum Input {
         at: Point<Pixels>,
         /// the block nearest the pointer (None only with an empty document)
         hit: Option<Hit>,
+        /// the left button is still down; false means the press was lost without an Up (the
+        /// browser cancelled the pointer)
+        held: bool,
     },
     Up {
         hit: Option<Hit>,
@@ -70,7 +73,8 @@ pub struct Effects {
     pub changed: bool,
     /// `window.prevent_default()`: claim the long press or touch drag being offered
     pub claim: bool,
-    /// `cx.stop_propagation()`: the keystroke was ours
+    /// `cx.stop_propagation()`: the keystroke was ours, or the release ended a drag and is no
+    /// click for whatever holds the text
     pub consume: bool,
     /// write the selection to the clipboard
     pub copy: bool,
@@ -107,8 +111,13 @@ pub fn step(gesture: &mut Gesture, sel: &mut Option<Span>, input: Input) -> Effe
                         s.focus = hit.group(s.granularity);
                         true
                     }
+                    // a caret: nothing to see, but a shift-click extends from it
                     (false, 1) => {
-                        *sel = None;
+                        *sel = Some(Span::new(
+                            (hit.pos, hit.pos),
+                            Granularity::Char,
+                            Origin::Pointer,
+                        ));
                         false
                     }
                     (false, 2) => {
@@ -124,7 +133,14 @@ pub fn step(gesture: &mut Gesture, sel: &mut Option<Span>, input: Input) -> Effe
             }
         },
         Input::Down { .. } => {}
-        Input::Move { at, hit: Some(hit) } => match gesture {
+        Input::Move { held: false, .. } => {
+            if matches!(gesture, Gesture::Pressed { .. }) {
+                *gesture = Gesture::Idle;
+            }
+        }
+        Input::Move {
+            at, hit: Some(hit), ..
+        } => match gesture {
             Gesture::Pressed {
                 at: from,
                 hit: down,
@@ -156,14 +172,18 @@ pub fn step(gesture: &mut Gesture, sel: &mut Option<Span>, input: Input) -> Effe
         Input::Up { hit } => {
             if let Gesture::Pressed {
                 hit: down,
-                dragging: false,
+                dragging,
                 ..
             } = gesture
-                && let (Some(l), Some(up)) = (down.link, hit)
-                && up.pos.block == down.pos.block
-                && up.link == Some(l)
             {
-                fx.link = Some((down.pos.block, l));
+                if *dragging {
+                    fx.consume = true;
+                } else if let (Some(l), Some(up)) = (down.link, hit)
+                    && up.pos.block == down.pos.block
+                    && up.link == Some(l)
+                {
+                    fx.link = Some((down.pos.block, l));
+                }
             }
             *gesture = Gesture::Idle;
         }
@@ -229,10 +249,6 @@ pub fn step(gesture: &mut Gesture, sel: &mut Option<Span>, input: Input) -> Effe
             }
         }
     }
-    // an empty selection left behind by a settled gesture is no selection
-    if *gesture == Gesture::Idle && sel.is_some_and(|s| s.is_empty()) {
-        *sel = None;
-    }
     fx.changed = visible(sel) != before;
     fx
 }
@@ -273,6 +289,7 @@ mod tests {
         Input::Move {
             at: at(x),
             hit: Some(h),
+            held: true,
         }
     }
 
@@ -286,7 +303,10 @@ mod tests {
         );
         assert_eq!(fx, Effects::default());
         assert!(!step(&mut g, &mut s, mv(12., hit(0, 4, (0, 5), None))).changed);
-        assert_eq!(s, None, "within the slop it is still a click");
+        assert!(
+            s.is_some_and(|s| s.is_empty()),
+            "within the slop it is still a click: a caret, nothing selected"
+        );
         let fx = step(&mut g, &mut s, mv(60., hit(1, 7, (6, 9), None)));
         assert!(fx.changed);
         assert_eq!(s.unwrap().span(), (p(0, 3), p(1, 7)));
@@ -298,8 +318,61 @@ mod tests {
         );
         let fx = step(&mut g, &mut s, Input::Up { hit: None });
         assert_eq!(fx.link, None);
+        assert!(
+            fx.consume,
+            "the release of a drag is no click for the row under it"
+        );
         assert_eq!(g, Gesture::Idle);
         assert_eq!(s.unwrap().span(), (p(0, 1), p(0, 3)));
+    }
+
+    #[test]
+    fn a_lost_press_ends_the_drag_where_it_is() {
+        let (mut g, mut s) = (Gesture::Idle, None);
+        step(
+            &mut g,
+            &mut s,
+            down(10., 1, false, Some(hit(0, 3, (0, 5), None))),
+        );
+        step(&mut g, &mut s, mv(60., hit(1, 7, (6, 9), None)));
+        let fx = step(
+            &mut g,
+            &mut s,
+            Input::Move {
+                at: at(70.),
+                hit: Some(hit(1, 8, (6, 9), None)),
+                held: false,
+            },
+        );
+        assert_eq!(fx, Effects::default());
+        assert_eq!(g, Gesture::Idle);
+        assert_eq!(s.unwrap().span(), (p(0, 3), p(1, 7)));
+        step(&mut g, &mut s, mv(90., hit(1, 12, (10, 15), None)));
+        assert_eq!(
+            s.unwrap().span(),
+            (p(0, 3), p(1, 7)),
+            "a later move with the button up moves nothing"
+        );
+    }
+
+    #[test]
+    fn a_shift_click_extends_from_the_caret_a_plain_click_left() {
+        let (mut g, mut s) = (Gesture::Idle, None);
+        let fx = step(
+            &mut g,
+            &mut s,
+            down(10., 1, false, Some(hit(0, 3, (0, 5), None))),
+        );
+        assert!(!fx.changed);
+        let fx = step(&mut g, &mut s, Input::Up { hit: None });
+        assert!(!fx.consume && !fx.changed);
+        let fx = step(
+            &mut g,
+            &mut s,
+            down(300., 1, true, Some(hit(2, 4, (2, 6), None))),
+        );
+        assert!(fx.changed);
+        assert_eq!(s.unwrap().span(), (p(0, 3), p(2, 4)));
     }
 
     #[test]

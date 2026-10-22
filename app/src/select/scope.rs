@@ -231,9 +231,6 @@ impl Selection {
             };
             s.step(input)
         };
-        if fx.consume {
-            cx.stop_propagation();
-        }
         self.apply(fx, window, cx);
     }
 
@@ -242,6 +239,9 @@ impl Selection {
     fn apply(&self, fx: Effects, window: &mut Window, cx: &mut App) {
         if fx.claim {
             window.prevent_default();
+        }
+        if fx.consume {
+            cx.stop_propagation();
         }
         if fx.changed {
             let views = self.0.borrow().views.clone();
@@ -448,6 +448,7 @@ impl Element for SelectionScope {
             matches!(s.gesture, Gesture::Pressed { .. }).then(|| Input::Move {
                 at: e.position,
                 hit: s.nearest_hit(e.position),
+                held: e.pressed_button == Some(MouseButton::Left),
             })
         });
         state.mouse(window, |s, e: &MouseUpEvent, window| {
