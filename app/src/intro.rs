@@ -34,6 +34,10 @@ const REST: f32 = 0.9;
 /// keep in step with intro.wgsl: the last of the sentence is reeled in REEL_AT + REEL after
 /// it starts to lift
 const FALL: f32 = 0.7 + 1.5;
+/// how far into the fall the plate's pen sets off: as the coil starts closing on the point, so
+/// the line is already coming out of it when the last of the sentence goes in (intro.wgsl's
+/// REEL_AT + REEL * CLOSE_AT)
+const DRAW_FROM: f32 = 0.7 + 1.5 * 0.55;
 
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
@@ -446,10 +450,20 @@ impl Greeting {
         self.t() > WRITE_AT + self.atlas.write_for + 0.1
     }
 
-    /// The greeting has wound into its point: the plate draws its line out from there.
+    /// The coil is closing on its point: the plate's line sets off out of it.
+    pub fn drawing_out(&self) -> bool {
+        self.after(DRAW_FROM)
+    }
+
+    /// The greeting has wound into its point and is gone.
     pub fn done(&self) -> bool {
+        self.after(FALL)
+    }
+
+    /// More than `secs` into the fall (never, on a frozen clock).
+    fn after(&self, secs: f32) -> bool {
         !matches!(self.clock, Clock::Frozen(_))
-            && self.t() > WRITE_AT + self.atlas.write_for + REST + FALL
+            && self.t() > WRITE_AT + self.atlas.write_for + REST + secs
     }
 
     fn ensure_gpu(&mut self, context: &WgpuContextHandle, format: wgpu::TextureFormat) {

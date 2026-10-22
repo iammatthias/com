@@ -123,7 +123,9 @@ fn fs_main(i: VOut) -> @location(0) vec4<f32> {
     let glyph = cov * in_text * pen * seam * (1.0 - smoothstep(0.7, 0.97, i.p));
 
     // the letters' joining stroke takes over only once they're too small to read
-    let drawn = smoothstep(0.6, 0.9, i.p) * in_text;
+    // and gives way in turn to the plate's own line, drawn out of the point as the coil closes
+    let handed = smoothstep(0.0, 0.3, u.t - u.fall_t0 - REEL_AT - REEL * CLOSE_AT);
+    let drawn = smoothstep(0.6, 0.9, i.p) * in_text * (1.0 - handed);
     let hw = 0.5 * u.hair * drawn;
     let line = clamp(hw - abs(i.off) + 0.5, 0.0, 1.0) * step(0.02, hw) * seam;
 

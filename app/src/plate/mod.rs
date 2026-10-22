@@ -415,9 +415,11 @@ impl Plate {
             self.rest_told = true;
             cx.emit(Greeted::Resting);
         }
+        if greeting.drawing_out() {
+            self.reveal.start_pen();
+        }
         if greeting.done() {
             self.greeting = None;
-            self.reveal.start_pen();
             cx.emit(Greeted::Done);
         }
     }
