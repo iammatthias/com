@@ -375,13 +375,16 @@ impl Plate {
     /// SCRIPT_EM css px (SCRIPT_EM_PHONE on a phone), and the spacing follows from where the
     /// atlas puts the x-height (XH_BAND of a turn).
     fn spacing(&self) -> f32 {
-        let css_w = self.w / self.dpr;
-        let em = if css_w < crate::design::PLATE_SMALL_W {
+        self.script_em() * self.atlas.font_ref / (FONT * CONTROLS.em)
+    }
+
+    /// The em the titles are written at, css px.
+    fn script_em(&self) -> f32 {
+        if self.w / self.dpr < crate::design::PLATE_SMALL_W {
             SCRIPT_EM_PHONE
         } else {
             SCRIPT_EM
-        };
-        em * self.atlas.font_ref / (FONT * CONTROLS.em)
+        }
     }
 
     /// How far above the middle the spiral starts, device px: out of the portrait's forehead

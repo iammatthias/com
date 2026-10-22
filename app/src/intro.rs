@@ -34,10 +34,10 @@ const REST: f32 = 0.9;
 /// keep in step with intro.wgsl: the last of the sentence is reeled in REEL_AT + REEL after
 /// it starts to lift
 const FALL: f32 = 1.0 + 1.5;
-/// how far into the fall the plate's pen sets off: as the coil starts closing on the point, so
-/// the line is already coming out of it when the last of the sentence goes in (intro.wgsl's
-/// REEL_AT + REEL * CLOSE_AT)
-const DRAW_FROM: f32 = 1.0 + 1.5 * 0.6;
+/// how far into the fall the plate's pen sets off: once the last of the sentence is on the turn
+/// where the words thin into the line, so the line comes out of the point under a hairline, not
+/// under words, and is there before the last of them goes in (intro.wgsl's REEL_AT + REEL * 0.72)
+const DRAW_FROM: f32 = 1.0 + 1.5 * 0.72;
 
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
@@ -54,8 +54,9 @@ struct Uniforms {
     fall_t0: f32,
     sink: f32,
     ink: [f32; 4],
-    /// the block's lower edge, device px down from the middle (the rest pad the struct)
-    below: [f32; 4],
+    /// the plate's line: its turns' spacing and the words' size on it (device px per atlas px),
+    /// the rest padding the struct
+    coil: [f32; 4],
 }
 
 #[repr(C)]
@@ -281,13 +282,14 @@ struct Layout {
 
 impl Layout {
     /// Laid out for the plate's engraving: `size` device px at `dpr`, its spiral starting `lift`
-    /// device px above the middle, its turns `d` device px apart.
+    /// device px above the middle, its turns `d` device px apart, lettered at `em` device px.
     fn new(
         atlas: &Atlas,
         size: gpui::Size<gpui::DevicePixels>,
         dpr: f32,
         lift: f32,
         d: f32,
+        em: f32,
     ) -> Self {
         let (w, h) = (size.width.0 as f32, size.height.0 as f32);
         let css_w = w / dpr;
@@ -333,7 +335,7 @@ impl Layout {
             unreachable!()
         };
 
-        // the black hole sits where the plate's spiral starts (y down from the middle)
+        // the words go in where the plate's spiral starts (y down from the middle)
         let sink = -lift;
 
         // one strip along the sentence
@@ -356,20 +358,15 @@ impl Layout {
         for u in us {
             let (pa, k) = place(u);
             let gap = if in_gap(u) { 1.0 } else { 0.0 };
-            vertices.push(Vertex {
-                u,
-                side: -1.0,
-                pa,
-                gap,
-                k,
-            });
-            vertices.push(Vertex {
-                u,
-                side: 1.0,
-                pa,
-                gap,
-                k,
-            });
+            for side in [-1.0, 1.0] {
+                vertices.push(Vertex {
+                    u,
+                    side,
+                    pa,
+                    gap,
+                    k,
+                });
+            }
         }
 
         let uniforms = Uniforms {
@@ -386,7 +383,8 @@ impl Layout {
             fall_t0: WRITE_AT + atlas.write_for + REST,
             sink,
             ink: [0.0; 4],
-            below: [y - mid, 0.0, 0.0, 0.0],
+            // on the plate's line the words are written at the plate's own size
+            coil: [d, em / FONT, 0.0, 0.0],
         };
         Self {
             size,
@@ -636,7 +634,8 @@ impl Greeting {
 
     /// Ready the greeting for the plate's engraving pass: `format` and `size` are that pass's
     /// target at `dpr`, the spiral starts `lift` device px above the middle with its turns `d`
-    /// apart, written in `ink`.
+    /// apart and its titles at `em` px, written in `ink`.
+    #[allow(clippy::too_many_arguments)]
     pub fn prepare(
         &mut self,
         context: &WgpuContextHandle,
@@ -645,13 +644,14 @@ impl Greeting {
         dpr: f32,
         lift: f32,
         d: f32,
+        em: f32,
         ink: [f32; 4],
     ) {
         self.ensure_gpu(context, format);
         let t = self.t();
         let Some(gpu) = self.gpu.as_mut() else { return };
         if self.layout.as_ref().is_none_or(|l| l.size != size) {
-            let layout = Layout::new(&self.atlas, size, dpr, lift, d);
+            let layout = Layout::new(&self.atlas, size, dpr, lift, d, em);
             let buffer = wgpu::util::DeviceExt::create_buffer_init(
                 context.device(),
                 &wgpu::util::BufferInitDescriptor {

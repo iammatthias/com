@@ -1,8 +1,8 @@
-// Greeting: written in script on the plate, then lifted, tail first, onto one
-// spiral below it, which slides up onto the point the plate's line starts from as
-// it reels the sentence in: the words stay words the whole way, written smaller as
-// they near the middle, where each letter thins into the line. The plate then draws
-// its line out of that point.
+// Greeting: written in script on the plate, then lifted, tail first, onto the plate's own
+// spiral and reeled in along it, the reverse of the way the plate's pen will draw it: the
+// words stay words the whole way, written at the plate's lettering size, thinning into the
+// line over the last turn, and go in at the point the line starts from. The plate then
+// draws its line out of that point along the curve the words came in on.
 // Drawn into the plate's engraving (colour over it, plus ink amount), so the
 // plate's optics fall on it too.
 //
@@ -21,9 +21,9 @@ struct U {
     hair: f32,       // stroke width, device px
     text_len: f32,
     fall_t0: f32,    // when the sentence starts to fall
-    sink: f32,       // where everything falls to: the plate's spiral start, y down from the middle
+    sink: f32,       // the plate's spiral start, y down from the middle
     ink: vec4<f32>,
-    below: vec4<f32>, // x: the block's lower edge, y down from the middle
+    coil: vec4<f32>, // x: the plate's turn spacing, device px; y: device px per atlas px on it
 };
 
 @group(0) @binding(0) var<uniform> u: U;
@@ -34,21 +34,18 @@ const PI: f32 = 3.14159265359;
 const TAU: f32 = 6.28318530718;
 // keep in step with intro.rs FALL: the sentence lifts onto the spiral (the end of it first,
 // the start STAGGER later, each point over GATHER), and the reel starts winding it in at REEL_AT
-// and has it all in the centre REEL later
+// and has it all in the point REEL later
 const GATHER: f32 = 1.0;
 const STAGGER: f32 = 0.45;
 const REEL_AT: f32 = 1.0;
 const REEL: f32 = 1.5;
-// the words on the spiral, against their size in the block; and the turns' spacing, in bands
-// of script (a line of it and a little air)
-const REEL_SCALE: f32 = 0.5;
-const TURN_BANDS: f32 = 1.15;
-const START_TURNS: f32 = 1.0;
-// how far through the reel the coil starts closing on the sink
-const CLOSE_AT: f32 = 0.6;
-// the coil forms below the block, clear of it, and slides up onto the sink through this much
-// of the reel, there by the time it closes
-const SLIDE_FROM: f32 = 0.3;
+// the plate's line starts half a turn out (plate.wgsl: its turn 0 is r = d/2, on the left)
+const START: f32 = 0.5;
+// the sentence rests with its start this many turns out, so "Hi," is read on the spiral
+// before it goes in
+const REST_TURN: f32 = 1.5;
+// inside this turn the words thin into the line, a hairline by the point
+const THIN_FROM: f32 = 1.5;
 
 struct VIn {
     @location(0) u: f32,
@@ -66,6 +63,7 @@ struct VOut {
     @location(3) along: f32,
     @location(4) gap: f32,
     @location(5) k: f32,
+    @location(6) past: f32,
 };
 
 @vertex
@@ -77,46 +75,40 @@ fn vs_main(v: VIn) -> VOut {
     o.k = v.k;
     o.along = v.u;
     o.gap = v.gap;
+    let d = u.coil.x;
+    let s_c = u.coil.y;
     let lt = u.t - u.fall_t0;
     // in the block: where the greeting was written
     let block = v.pa + vec2<f32>(0.0, -1.0) * band * u.s_a * v.k;
-    // on the spiral: an Archimedean turn round the sink, the sentence laid along it by arc
-    // length, its start innermost; `lead` atlas px of it are already reeled into the centre
-    let s_c = u.s_a * REEL_SCALE;
-    let d_f = u.atlas_h * s_c * TURN_BANDS;
+    // on the spiral: the plate's own line round the sink (plate.wgsl: r = d·tc, the turn TAU·tc
+    // counter-clockwise from the right, arc π·d·tc²), the sentence laid along it by arc length,
+    // its start innermost; `lead` atlas px of it are already reeled in through the point
+    let s_start = PI * d * START * START;
+    let s_rest = PI * d * REST_TURN * REST_TURN;
     let rp = clamp((lt - REEL_AT) / REEL, 0.0, 1.0);
-    let lead = rp * rp * (3.0 - 2.0 * rp) * (u.text_len + 0.25 * u.atlas_h);
-    // the sentence starts a turn out, so "Hi," is read on the spiral before it goes in; what
-    // the reel has passed slides the last turn into the centre (same speed at the hand-over)
-    let s0 = PI * d_f * START_TURNS * START_TURNS;
-    let ahead = (v.u - lead) * s_c;
-    // the coil's outer edge, and its centre: below the block, kept on screen, then up to the sink
-    let r_out = d_f * sqrt((s0 + u.text_len * s_c) / (PI * d_f)) + 0.5 * u.atlas_h * s_c;
-    let below = max(min(u.below.x + r_out + 0.25 * d_f, 0.5 * u.res.y - r_out - 0.25 * d_f), u.sink);
-    let c = vec2<f32>(0.0, mix(below, u.sink, smoothstep(SLIDE_FROM, CLOSE_AT, rp)));
-    let s = select(s0 * exp(ahead / s0), s0 + ahead, ahead >= 0.0);
-    let tc = sqrt(s / (PI * d_f));
+    // the reel runs until the last of the sentence is at the point
+    let lead = rp * rp * (3.0 - 2.0 * rp) * (u.text_len + (s_rest - s_start) / s_c);
+    let past = s_rest + (v.u - lead) * s_c - s_start;
+    let s = s_start + max(past, 0.0);
+    let tc = sqrt(s / (PI * d));
     let th = TAU * tc;
-    // the last of it doesn't stop a turn out: the whole coil draws tight into the sink,
-    // quickening, so the plate's line can start from the point it closes on
-    let cq = clamp((rp - CLOSE_AT) / (1.0 - CLOSE_AT), 0.0, 1.0);
-    let close = 1.0 - cq * cq;
-    let r = d_f * tc * close;
+    let r = d * tc;
     let radial = vec2<f32>(cos(th), -sin(th));
-    let dir = normalize(radial * (d_f / TAU) + vec2<f32>(-sin(th), -cos(th)) * max(r, 1.0));
+    let dir = normalize(radial * (d / TAU) + vec2<f32>(-sin(th), -cos(th)) * r);
     let up = vec2<f32>(dir.y, -dir.x);
-    // written smaller as it nears the middle, never thinner than the stroke itself
-    let near = smoothstep(0.0, 1.6 * d_f, r);
-    let sc = max(s_c * mix(0.3, 1.0, near) * close, 1.5 * u.hair / max(u.yc, u.atlas_h - u.yc));
-    let spiral = c + r * radial + up * band * sc;
+    // written thinner as it nears the point, never thinner than the stroke itself
+    let near = smoothstep(START, THIN_FROM, tc);
+    let sc = max(s_c * mix(0.3, 1.0, near), 1.5 * u.hair / max(u.yc, u.atlas_h - u.yc));
+    let spiral = vec2<f32>(0.0, u.sink) + r * radial + up * band * sc;
     // each point lifts from the block onto the spiral, the end of the sentence first: it goes
     // to the outer turn, out of the way of the words that follow it down
     let la = clamp((lt - STAGGER * (1.0 - v.u / u.text_len)) / GATHER, 0.0, 1.0);
     let lift = la * la * la * (la * (la * 6.0 - 15.0) + 10.0);
     let p2 = mix(block, spiral, lift);
-    // how far into the centre: the letters give way to the line there
+    // how far into the point: the letters give way to the line there
     o.p = lift * (1.0 - near);
     o.off = band * mix(u.s_a * v.k, sc, lift);
+    o.past = past;
     o.pos = vec4<f32>(p2.x * 2.0 / u.res.x, -p2.y * 2.0 / u.res.y, 0.0, 1.0);
     return o;
 }
@@ -125,16 +117,16 @@ fn vs_main(v: VIn) -> VOut {
 fn fs_main(i: VOut) -> @location(0) vec4<f32> {
     // smaller lines are written with a slightly fuller pen, so their hairlines hold
     let cov = smoothstep(0.0, mix(0.55, 1.0, (i.k - 0.5) * 2.0), textureSample(atlas, samp, i.uv).r);
-    let in_text = step(0.0, i.along) * step(i.along, u.text_len);
+    // what has gone in through the point is gone
+    let in_text = step(0.0, i.along) * step(i.along, u.text_len) * step(0.0, i.past);
     let pen = clamp((u.head - i.along) / 6.0, 0.0, 1.0);
     // a row break is a seam stretched between rows: it never carries ink
     let seam = 1.0 - step(0.001, i.gap);
     let glyph = cov * in_text * pen * seam * (1.0 - smoothstep(0.7, 0.97, i.p));
 
-    // the letters' joining stroke takes over only once they're too small to read
-    // and gives way in turn to the plate's own line, drawn out of the point as the coil closes
-    let handed = smoothstep(0.0, 0.3, u.t - u.fall_t0 - REEL_AT - REEL * CLOSE_AT);
-    let drawn = smoothstep(0.6, 0.9, i.p) * in_text * (1.0 - handed);
+    // the letters' joining stroke takes over only once they're too small to read: the plate's
+    // own line, which the plate draws out over it from the point
+    let drawn = smoothstep(0.6, 0.9, i.p) * in_text;
     let hw = 0.5 * u.hair * drawn;
     let line = clamp(hw - abs(i.off) + 0.5, 0.0, 1.0) * step(0.02, hw) * seam;
 

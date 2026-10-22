@@ -477,9 +477,9 @@ impl Plate {
             });
             gpu.engraved = Some((tsize, view, group));
         }
-        let (lift, d, ink) = (self.lift(), self.spacing() * dpr, u.ink);
+        let (lift, d, em) = (self.lift(), self.spacing() * dpr, self.script_em() * dpr);
         if let Some(greeting) = self.greeting.as_mut() {
-            greeting.prepare(&context, ENGRAVED_FORMAT, tsize, dpr, lift, d, ink);
+            greeting.prepare(&context, ENGRAVED_FORMAT, tsize, dpr, lift, d, em, u.ink);
         }
         let gpu = self.gpu.as_ref().expect("checked at the top of draw");
         let Some(bind_group) = gpu.bind_group.as_ref() else {
