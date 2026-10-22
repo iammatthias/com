@@ -112,4 +112,107 @@ const mid = (r) => (r.top + r.bottom) / 2;
     await browser.close();
 }
 
+// a phone: WebKit as an iPhone, touches as pointer events on the canvas (what gpui reads)
+{
+    const { browser, context, page, errors } = await open("phone");
+    // WebKit grants no clipboard read to a test: record what the app writes instead
+    await context.addInitScript(() => {
+        window.__copied = [];
+        const write = (t) => {
+            window.__copied.push(t);
+            return Promise.resolve();
+        };
+        Object.defineProperty(navigator, "clipboard", { value: { writeText: write }, configurable: true });
+    });
+    await page.goto(base + POST);
+    await page.waitForTimeout(8000);
+    const touch = (type, x, y, id = 7) =>
+        page.evaluate(
+            ([type, x, y, id]) =>
+                document.querySelector("canvas").dispatchEvent(
+                    new PointerEvent(type, { pointerType: "touch", pointerId: id, isPrimary: true, clientX: x, clientY: y, bubbles: true, cancelable: true, buttons: type === "pointerup" ? 0 : 1 }),
+                ),
+            [type, x, y, id],
+        );
+    const swipe = async (x, y0, y1, steps = 12) => {
+        await touch("pointerdown", x, y0);
+        for (let i = 1; i <= steps; i++) {
+            await touch("pointermove", x, y0 + ((y1 - y0) * i) / steps);
+            await page.waitForTimeout(30);
+        }
+        await touch("pointerup", x, y1);
+    };
+    const longPress = async (x, y) => {
+        await touch("pointerdown", x, y);
+        await page.waitForTimeout(750);
+        await touch("pointerup", x, y);
+        await page.waitForTimeout(400);
+    };
+    const tap = async (x, y) => {
+        await touch("pointerdown", x, y);
+        await page.waitForTimeout(40);
+        await touch("pointerup", x, y);
+        await page.waitForTimeout(400);
+    };
+    const selection = () => page.evaluate(() => JSON.parse(window.wasmBindings.selection_debug()));
+
+    // past the title: a screen of paragraphs
+    await swipe(196, 560, 160);
+    await page.waitForTimeout(2500);
+    // a long press on text: try a few rows, a paragraph gap selects nothing
+    let sel = { text: "" };
+    for (const y of [330, 360, 390, 420, 450]) {
+        await longPress(120, y);
+        sel = await selection();
+        if (sel.text) break;
+    }
+    check(/^\S+$/.test(sel.text), `a long press selects a word: ${JSON.stringify(sel.text)}`);
+    check(sel.rects.length === 1 && sel.pill, "the word has one highlight rect and a Copy pill");
+    await page.screenshot({ path: "shots/select-phone-word.png" }).catch(() => {});
+
+    // the end handle's knob sits under the selection's last line: drag it a line down
+    const [rx, ry, rw, rh] = sel.rects[0];
+    const knob = { x: rx + rw, y: ry + rh + 7 };
+    await touch("pointerdown", knob.x, knob.y);
+    for (let i = 1; i <= 8; i++) {
+        await touch("pointermove", knob.x + i * 8, knob.y + i * 4);
+        await page.waitForTimeout(30);
+    }
+    await touch("pointerup", knob.x + 64, knob.y + 32);
+    await page.waitForTimeout(400);
+    const grown = await selection();
+    check(grown.text.length > sel.text.length && grown.text.startsWith(sel.text), `dragging a handle extends the selection: ${JSON.stringify(grown.text.slice(0, 40))}`);
+    await page.screenshot({ path: "shots/select-phone-handle.png" }).catch(() => {});
+
+    // a slow swipe down (held still before the lift, so it doesn't fling) still scrolls, and
+    // the selection rides with the text
+    const before = (await selection()).rects[0][1];
+    await touch("pointerdown", 300, 300);
+    for (let i = 1; i <= 10; i++) {
+        await touch("pointermove", 300, 300 + i * 8);
+        await page.waitForTimeout(40);
+    }
+    await page.waitForTimeout(400);
+    await touch("pointerup", 300, 380);
+    await page.waitForTimeout(1500);
+    const after = await selection();
+    const dy = after.rects[0]?.[1] - before;
+    check(after.text === grown.text && dy > 40 && dy < 120, `a vertical swipe scrolls with the selection kept (moved ${dy}px)`);
+
+    // the Copy pill writes the clipboard and the selection goes
+    await tap(after.pill[0] + 28, after.pill[1] + 16);
+    const copied = await page.evaluate(() => window.__copied);
+    check(copied.at(-1) === grown.text, `tapping Copy writes the clipboard: ${JSON.stringify(copied.at(-1)?.slice(0, 40))}`);
+    check((await selection()).text === "", "the selection clears after Copy");
+
+    // a tap elsewhere clears
+    await longPress(120, ry + dy + rh / 2);
+    check((await selection()).text !== "", "a second long press selects again");
+    await tap(196, 120);
+    check((await selection()).text === "", "a tap elsewhere clears");
+
+    check(errors.length === 0, `no page errors on the phone ${errors.join(" | ")}`);
+    await browser.close();
+}
+
 done();

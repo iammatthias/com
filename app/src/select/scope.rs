@@ -7,10 +7,10 @@ use std::rc::{Rc, Weak};
 
 use gpui::prelude::*;
 use gpui::{
-    AnyElement, App, Bounds, ClipboardItem, DispatchPhase, Element, EntityId, GlobalElementId,
-    Hitbox, HitboxBehavior, Hsla, InspectorElementId, LayoutId, LongPressEvent, MouseButton,
-    MouseDownEvent, MouseMoveEvent, MouseUpEvent, Pixels, Point, SharedString, StyledText,
-    TouchDragEvent, TouchPhase, Window, div, fill, point, px, size,
+    AnyElement, App, AvailableSpace, Bounds, ClipboardItem, DispatchPhase, Element, EntityId,
+    GlobalElementId, Hitbox, HitboxBehavior, Hsla, InspectorElementId, LayoutId, LongPressEvent,
+    MouseButton, MouseDownEvent, MouseMoveEvent, MouseUpEvent, Pixels, Point, SharedString,
+    StyledText, TouchDragEvent, TouchPhase, Window, div, fill, point, px, size,
 };
 
 use super::element::Selectable;
@@ -33,6 +33,8 @@ const KNOB: Pixels = px(7.);
 const HANDLE_LIFT: Pixels = px(22.);
 /// A finger-sized square round each knob.
 const HANDLE_HIT: Pixels = px(44.);
+/// How far above the selection's first line the Copy pill sits.
+pub(super) const PILL_LIFT: Pixels = px(40.);
 
 pub(super) struct ScopeState {
     key: Option<SharedString>,
@@ -66,19 +68,24 @@ impl ScopeState {
         Some(self.registry.hit(o, p))
     }
 
+    /// The handle under the finger. Round a short selection both finger-sized hitboxes overlap,
+    /// so the nearer knob wins.
     fn handle_under(&self, window: &Window) -> Option<End> {
-        let hovered = |i: usize| {
-            self.handles[i]
-                .as_ref()
-                .is_some_and(|h| h.is_hovered(window))
+        let at = window.mouse_position();
+        let distance = |h: &Hitbox| {
+            let c = h.bounds.center();
+            f32::from(c.x - at.x).powi(2) + f32::from(c.y - at.y).powi(2)
         };
-        if hovered(0) {
-            Some(End::Start)
-        } else if hovered(1) {
-            Some(End::End)
-        } else {
-            None
-        }
+        [End::Start, End::End]
+            .into_iter()
+            .zip(&self.handles)
+            .filter_map(|(end, h)| {
+                h.as_ref()
+                    .filter(|h| h.is_hovered(window))
+                    .map(|h| (end, h))
+            })
+            .min_by(|a, b| distance(a.1).total_cmp(&distance(b.1)))
+            .map(|(end, _)| end)
     }
 
     fn touch_selection(&self) -> Option<&Span> {
@@ -136,7 +143,6 @@ impl Selection {
             key: key.into(),
             child: child.into_any_element(),
             style,
-            pill: None,
         }
     }
 
@@ -152,6 +158,15 @@ impl Selection {
         let s = self.0.borrow();
         let span = s.selection.as_ref().filter(|s| !s.is_empty())?;
         Some(s.registry.text(span))
+    }
+
+    /// The highlight rects of the selection, in window coordinates, in document order.
+    pub fn rects(&self) -> Vec<Bounds<Pixels>> {
+        let s = self.0.borrow();
+        match s.selection.as_ref().filter(|s| !s.is_empty()) {
+            Some(span) => s.registry.span_rects(span),
+            None => Vec::new(),
+        }
     }
 
     pub fn clear(&self, cx: &mut App) {
@@ -262,7 +277,6 @@ pub struct SelectionScope {
     key: SharedString,
     child: AnyElement,
     style: SelectionStyle,
-    pill: Option<AnyElement>,
 }
 
 pub struct ScopePrepaint {
@@ -365,9 +379,15 @@ impl Element for SelectionScope {
             let hit = Bounds::centered_at(knob.center(), size(HANDLE_HIT, HANDLE_HIT));
             s.handles[i] = Some(window.insert_hitbox(hit, HitboxBehavior::Normal));
         }
-        let pill_at = point(first.left(), first.top() - px(40.));
+        let pill_at = point(first.left(), first.top() - PILL_LIFT);
         drop(s);
-        let pill = self.pill.take().unwrap_or_else(|| self.pill());
+        // a deferred element is prepainted where it is drawn, but laid out here
+        let mut pill = self.pill();
+        pill.layout_as_root(
+            size(AvailableSpace::MaxContent, AvailableSpace::MaxContent),
+            window,
+            cx,
+        );
         window.defer_draw(pill, pill_at, 1, Some(window.content_mask()));
         ScopePrepaint {
             handles: Some(handles),

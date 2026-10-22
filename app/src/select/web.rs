@@ -42,3 +42,38 @@ pub fn install() {
     before.forget();
     copy.forget();
 }
+
+/// The selection's geometry as JSON, for browser tests that cannot read the canvas: the text,
+/// its highlight rects, and where the Copy pill sits.
+#[wasm_bindgen::prelude::wasm_bindgen]
+pub fn selection_debug() -> String {
+    let Some(scope) = Selection::active() else {
+        return "{}".into();
+    };
+    let rects = scope.rects();
+    let rect = |r: &gpui::Bounds<gpui::Pixels>| {
+        format!(
+            "[{},{},{},{}]",
+            f32::from(r.origin.x),
+            f32::from(r.origin.y),
+            f32::from(r.size.width),
+            f32::from(r.size.height)
+        )
+    };
+    let pill = rects
+        .first()
+        .map(|r| {
+            format!(
+                "[{},{}]",
+                f32::from(r.origin.x),
+                f32::from(r.origin.y - super::scope::PILL_LIFT)
+            )
+        })
+        .unwrap_or_else(|| "null".into());
+    let text = scope.selected_text().unwrap_or_default();
+    let escaped: String = text.chars().flat_map(|c| c.escape_default()).collect();
+    format!(
+        "{{\"text\":\"{escaped}\",\"rects\":[{}],\"pill\":{pill}}}",
+        rects.iter().map(rect).collect::<Vec<_>>().join(",")
+    )
+}
