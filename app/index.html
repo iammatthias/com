@@ -107,7 +107,7 @@ if (!window.__noGpu && /AppleWebKit/.test(navigator.userAgent) && !/Chrome|Chrom
       Promise.all(failed.map(function (url) { return fresh(url).catch(function () {}); }))
         .then(function () { return fresh(location.href); })
         .then(function (status) {
-          if (document.querySelector("canvas")) window.__reloading = false;
+          if (document.querySelector("canvas")) { window.__reloading = false; window.__booted(); }
           else if (status >= 500) retry();
           else location.reload();
         }, retry);
