@@ -33,8 +33,9 @@ bun run vectors       # embed the corpus with ternlight into local KV
 
 `bun run dev` serves a mirror of `../app/dist` without Trunk's `.stage/`
 (an in-progress debug wasm can exceed the 25 MiB asset limit and stop
-wrangler). The deployable assets directory is `../app/dist-deploy`; `bun run deploy` builds it (`trunk build --release --dist dist-deploy`, after the tests) and deploys
-in `../app` if it is missing (the Worker answers 503 without it).
+wrangler). The deployable assets directory is `../app/dist-deploy`, which Workers Builds
+makes on every push (`scripts/ci-build.sh`, then `scripts/ci-deploy.sh`) and
+`scripts/deploy.sh --production` makes here when Builds can't; the Worker answers 503 without it.
 
 A deployed build keeps its code under `/b/<id>/` (`scripts/scope-build.ts`; the id
 hashes the bytes moved): the wasm and its glue, dom.js and the other snippets, and the
@@ -42,17 +43,16 @@ modules loaded later (diagrams, search, embeds). A page only ever loads the buil
 with, and the Worker caches every `/b/` file for a year. Nothing is carried across a deploy:
 a tab left open over one finds its build gone and needs a reload.
 
-## Before any deploy
+## Caching
 
-Not deployed. `wrangler.toml` carries a placeholder `CONTENT_CACHE` id.
-
-**Every deploy must purge the `shell` cache tag.** All HTML responses carry
-`Cache-Tag: shell` because they reference hashed bundle names, and the
+The Worker's version is part of its cache key (`[cache] enabled` in `wrangler.toml`, without
+`cross_version_cache`), so a deploy starts with an empty cache and purges nothing. All HTML
+responses carry `Cache-Tag: shell` because they reference hashed bundle names, and the
 hand-written pages (`/about`, `/contact`, `/privacy`, `/developers`,
 `/resume`, `/onchain-analytics`) are edge-cached for an hour with `shell` as
 their only tag: their copy lives in `src/pages/static.ts`, so only a deploy
 changes them. Pages that embed Farfield data carry the content tags as well,
-so `/api/revalidate` keeps them fresh between deploys:
+so `/api/revalidate` (Farfield's webhook) keeps them fresh between deploys:
 
 | Response | Cache-Tag |
 | --- | --- |

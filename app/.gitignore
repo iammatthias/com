@@ -2,13 +2,10 @@ target/
 dist/
 assets/search/*
 !assets/search/.gitkeep
-dist-preview/
 assets/diagrams/*
 !assets/diagrams/.gitkeep
 diagrams/node_modules/
 diagrams/.entries/
-dist-build/
-dist-preview.old/
 .wrangler/
 dist-deploy/
 card/gen/*

@@ -12,9 +12,13 @@ import { SEARCH_DIMS, SEARCH_MODEL } from "../src/lib/search-model";
 
 const origin = (process.argv.find((a) => a.startsWith("http")) ?? "http://127.0.0.1:8796").replace(/\/$/, "");
 
-const { items } = (await (await fetch(`${origin}/api/search-corpus.json`)).json()) as {
-    items: Array<{ cid: string; text: string }>;
-};
+// A corpus with a Farfield fetch missing is served without an ETag (worker/src/routes/api.ts):
+// nothing from it is written, so the last vectors stand until a whole corpus comes.
+const res = await fetch(`${origin}/api/search-corpus.json`);
+if (!res.ok) throw new Error(`search corpus: ${res.status} ${res.statusText}; nothing written`);
+if (!res.headers.get("ETag")) throw new Error("search corpus: partial (no ETag); nothing written");
+const { items } = (await res.json()) as { items: Array<{ cid: string; text: string }> };
+if (!items?.length) throw new Error("search corpus: empty; nothing written");
 const vectors: Record<string, string> = {};
 for (const item of items) {
     const v = embed(item.text) as Float32Array;

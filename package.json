@@ -2,5 +2,5 @@
   "name": "com-next",
   "private": true,
   "packageManager": "bun@1.4.2",
-  "description": "Workers Builds caches only a package manager it detects at the root: this lets it keep bun's cache, which carries cargo's (worker/scripts/ci-build.sh)."
+  "description": "Workers Builds caches only a package manager it detects at the root: this lets it keep bun's cache, which carries the build tools and the last built app (worker/scripts/ci-build.sh)."
 }

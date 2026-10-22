@@ -27,11 +27,11 @@ command_arguments = ["-c", "mkdir -p card/gen && if [ ! -f card/gen/optics.frag 
 [[hooks]]
 stage = "pre_build"
 command = "sh"
-command_arguments = ["-c", "test -d search/node_modules/@ternlight || (cd search && bun install --frozen-lockfile || bun install); mkdir -p assets/search && cp search/search-worker.js search/node_modules/@ternlight/base/pkg-web/tern_engine.js search/node_modules/@ternlight/base/pkg-web/tern_engine_bg.wasm assets/search/ && cp search/node_modules/@ternlight/base/LICENSE assets/search/LICENSE-ternlight"]
+command_arguments = ["-c", "(cd search && bun install --frozen-lockfile); mkdir -p assets/search && cp search/search-worker.js search/node_modules/@ternlight/base/pkg-web/tern_engine.js search/node_modules/@ternlight/base/pkg-web/tern_engine_bg.wasm assets/search/ && cp search/node_modules/@ternlight/base/LICENSE assets/search/LICENSE-ternlight"]
 
 # pele, one module per kind of diagram (see diagrams/build.ts for why), rebuilt
 # only when diagrams/ changes
 [[hooks]]
 stage = "pre_build"
 command = "sh"
-command_arguments = ["-c", "test -d diagrams/node_modules/pele || (cd diagrams && bun install --frozen-lockfile || bun install); if [ ! -f assets/diagrams/diagrams.js ] || [ -n \"$(find diagrams -maxdepth 1 -newer assets/diagrams/diagrams.js -type f)\" ]; then (cd diagrams && bun build.ts); fi"]
+command_arguments = ["-c", "(cd diagrams && bun install --frozen-lockfile); if [ ! -f assets/diagrams/diagrams.js ] || [ -n \"$(find diagrams -maxdepth 1 -newer assets/diagrams/diagrams.js -type f)\" ]; then (cd diagrams && bun build.ts); fi"]
