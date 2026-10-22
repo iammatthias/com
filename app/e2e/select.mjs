@@ -90,6 +90,14 @@ const mid = (r) => (r.top + r.bottom) / 2;
     const cursor = await page.evaluate(() => document.body.style.cursor);
     check(cursor === "text", `the I-beam shows over text (${cursor})`);
 
+    // the browser's own copy command (Edit > Copy) fires the copy event the app answers
+    await page.mouse.click(500, mid(a), { clickCount: 3 });
+    await seed();
+    const ran = await page.evaluate(() => document.execCommand("copy"));
+    await page.waitForTimeout(300);
+    text = await page.evaluate(() => navigator.clipboard.readText());
+    check(ran && text !== "sentinel" && text.length > 40 && !text.includes("\n\n"), `the copy command copies the selection: ${JSON.stringify(text.slice(0, 40))}`);
+
     // a plain click on a link navigates: scan a row for the pointing hand
     await page.mouse.click(270, 400);
     let link = null;
@@ -106,6 +114,23 @@ const mid = (r) => (r.top + r.bottom) / 2;
         await page.mouse.click(link.x, link.y);
         await page.waitForTimeout(1500);
         check(path(page) !== POST || context.pages().length > 1, "a plain click on a link navigates");
+    }
+
+    // every kind of text on a page copies: the title, a code block, table cells, a caption,
+    // the colophon
+    await page.goto(base + "/posts/1784126858578-post-ui");
+    await page.waitForTimeout(8000);
+    await page.mouse.click(270, 400);
+    await page.keyboard.press(`${mod}+a`);
+    text = await copy();
+    for (const [what, needle] of [
+        ["the title", "Post-UI\n\n"],
+        ["a code block", "latitude:n,\n  longitude:n,"],
+        ["a table row, cells tabbed", "Hacker News\t8.4 KB\t0.4 s"],
+        ["a caption", "The exact weather JSON beside the interface"],
+        ["a colophon row", "PUBLISHED\t15 July 2026"],
+    ]) {
+        check(text.includes(needle), `select all takes in ${what}`);
     }
 
     check(errors.length === 0, `no page errors ${errors.join(" | ")}`);

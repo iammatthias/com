@@ -23,7 +23,6 @@ mod scope;
 #[cfg(target_family = "wasm")]
 mod web;
 
-pub use element::Selectable;
 pub use keys::init;
 pub use model::Join;
 pub use scope::{Selection, SelectionStyle};

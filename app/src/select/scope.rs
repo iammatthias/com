@@ -147,11 +147,12 @@ impl Selection {
     }
 
     pub fn text(&self, text: impl Into<SharedString>) -> Selectable {
-        Selectable::new(StyledText::new(text))
+        let text = text.into();
+        Selectable::new(StyledText::new(text.clone()), Some(text))
     }
 
     pub fn styled(&self, text: StyledText) -> Selectable {
-        Selectable::new(text)
+        Selectable::new(text, None)
     }
 
     pub fn selected_text(&self) -> Option<String> {

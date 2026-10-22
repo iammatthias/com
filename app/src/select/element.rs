@@ -9,8 +9,8 @@ use std::rc::Rc;
 
 use gpui::{
     AnyElement, App, Bounds, CursorStyle, DispatchPhase, Display, Element, GlobalElementId, Hitbox,
-    HitboxBehavior, InspectorElementId, IntoElement, LayoutId, MouseMoveEvent, Pixels, Style,
-    StyledText, TextLayout, Window, fill,
+    HitboxBehavior, InspectorElementId, IntoElement, LayoutId, MouseMoveEvent, Pixels,
+    SharedString, Style, StyledText, TextLayout, Window, fill,
 };
 
 use super::model::{Fingerprint, Join, Ordinal};
@@ -26,6 +26,7 @@ pub struct Selectable {
     on_link: Option<OnLink>,
     on_link_hover: Option<OnLinkHover>,
     join: Join,
+    source: Option<SharedString>,
 }
 
 pub struct Prepainted {
@@ -37,8 +38,9 @@ pub struct Prepainted {
 }
 
 impl Selectable {
-    pub(super) fn new(text: StyledText) -> Self {
+    pub(super) fn new(text: StyledText, source: Option<SharedString>) -> Self {
         Self {
+            source,
             layout: text.layout().clone(),
             text: text.into_any_element(),
             links: Rc::from(Vec::new()),
@@ -134,6 +136,7 @@ impl Element for Selectable {
                 join: self.join,
                 links: self.links.clone(),
                 on_link: self.on_link.clone(),
+                source: self.source.clone(),
                 hitbox: Some(hitbox.clone()),
             })
         });
@@ -220,7 +223,7 @@ mod tests {
         let text = StyledText::new(TEXT);
         let layout = text.layout().clone();
         cx.draw(point(px(0.), px(0.)), size(px(200.), px(300.)), |_, _| {
-            div().w(px(200.)).child(Selectable::new(text))
+            div().w(px(200.)).child(Selectable::new(text, None))
         });
         let bounds = layout.bounds();
         assert!(bounds.size.width > px(0.));

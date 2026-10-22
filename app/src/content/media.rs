@@ -202,7 +202,7 @@ pub fn figure(src: &MediaSrc, alt: &str, width: f32, caption: bool, ctx: &Ctx) -
                     .text_size(px(15.))
                     .line_height(px(22.))
                     .text_color(ctx.theme.muted)
-                    .child(alt.trim().to_string()),
+                    .child(ctx.sel.text(alt.trim().to_string())),
             )
         })
         .into_any_element()
@@ -281,7 +281,7 @@ pub fn moving(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
                     .text_size(px(15.))
                     .line_height(px(22.))
                     .text_color(theme.muted)
-                    .child(alt.trim().to_string()),
+                    .child(ctx.sel.text(alt.trim().to_string())),
             )
         })
         .into_any_element()
@@ -362,7 +362,7 @@ pub fn video(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
                     .text_size(px(15.))
                     .line_height(px(22.))
                     .text_color(theme.muted)
-                    .child(alt.trim().to_string()),
+                    .child(ctx.sel.text(alt.trim().to_string())),
             )
         })
         .into_any_element()

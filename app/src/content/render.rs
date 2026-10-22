@@ -17,7 +17,7 @@ use gpui::{
 
 use crate::api::{Media, Navigate};
 use crate::design;
-use crate::select::Selection;
+use crate::select::{Join, Selection};
 use crate::theme::{self, Theme};
 
 use super::cache::Parsed;
@@ -108,7 +108,7 @@ pub fn alpha(c: Rgba, a: f32) -> Rgba {
 
 /// The site's one small label: Inter, medium, tracked capitals (pass the text already in caps
 /// or let the caller decide), for eyebrows, metadata and the panels' field names.
-pub fn label(text: impl Into<SharedString>, color: Rgba) -> gpui::Div {
+pub fn label(text: impl IntoElement, color: Rgba) -> gpui::Div {
     div()
         .font_family(theme::SANS)
         .font_weight(gpui::FontWeight::MEDIUM)
@@ -116,7 +116,7 @@ pub fn label(text: impl Into<SharedString>, color: Rgba) -> gpui::Div {
         .line_height(px(design::LABEL_LEADING))
         .letter_spacing(px(design::LABEL_TRACKING))
         .text_color(color)
-        .child(text.into())
+        .child(text)
 }
 
 /// A pair of hairlines, the plate's own rule.
@@ -194,17 +194,25 @@ fn styled_runs(r: &Rich, theme: &Theme, hovered: Option<u16>) -> Runs {
 
 /// A run of rich text: emphasis, small-caps strong, mono code, links that navigate.
 pub fn rich(r: &Rich, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElement {
+    rich_joined(r, ctx, Join::Paragraph, window, cx)
+}
+
+/// `rich`, with what copied text puts before this run.
+fn rich_joined(r: &Rich, ctx: &Ctx, join: Join, window: &mut Window, cx: &mut App) -> AnyElement {
     if r.text.is_empty() {
         return div().into_any_element();
     }
     let _ = (window, cx);
     let hover_id = ctx.id("t");
     let s = styled_runs(r, ctx.theme, state::get::<Option<u16>>(&hover_id));
-    let text = ctx.sel.styled(
-        StyledText::new(r.text.clone())
-            .with_highlights(s.highlights)
-            .with_font_family_overrides(s.fonts),
-    );
+    let text = ctx
+        .sel
+        .styled(
+            StyledText::new(r.text.clone())
+                .with_highlights(s.highlights)
+                .with_font_family_overrides(s.fonts),
+        )
+        .join(join);
     if r.links.is_empty() {
         return text.into_any_element();
     }
@@ -518,7 +526,11 @@ pub(super) fn code_block(code: &str, tag: Option<&str>, diagram: bool, ctx: &Ctx
                     .text_size(px(14.))
                     .line_height(px(22.))
                     .text_color(alpha(theme.ink, 0.88))
-                    .child(div().whitespace_nowrap().child(code.to_string())),
+                    .child(
+                        div()
+                            .whitespace_nowrap()
+                            .child(ctx.sel.text(code.to_string())),
+                    ),
                 theme,
             )
         })
@@ -691,7 +703,11 @@ fn table(
             _ => el,
         };
         match r {
-            Some(r) => el.child(ctx.with_width(col_w - 16., |c| rich(r, c, window, cx))),
+            // copied, a row is a line of tab-separated cells
+            Some(r) => el.child(ctx.with_width(col_w - 16., |c| {
+                let join = if i == 0 { Join::Line } else { Join::Tab };
+                rich_joined(r, c, join, window, cx)
+            })),
             None => el,
         }
     };

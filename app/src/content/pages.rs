@@ -13,7 +13,7 @@ use crate::api::{
     Doc, Item, Media, Navigate, Paging, Post, RelatedRef, SectionRef, Series, TagCount,
 };
 use crate::design;
-use crate::select::Selection;
+use crate::select::{Join, Selection};
 use crate::theme::{self, Theme};
 
 use super::cache::{self, Parsed};
@@ -173,18 +173,22 @@ pub fn page_href(base: &str, page: u32) -> String {
 
 /// A page's title: Newsreader, large, the same on every kind of page (the script belongs to
 /// the plate).
-fn display_title(text: &str, theme: &Theme) -> gpui::Div {
+fn title(theme: &Theme) -> gpui::Div {
     div()
         .font_family(theme::DISPLAY)
         .text_size(px(design::TITLE_SIZE))
         .line_height(px(design::TITLE_LEADING))
         .letter_spacing(px(-0.6))
         .text_color(theme.ink)
-        .child(text.to_string())
+}
+
+/// A document's title, selectable with its body.
+fn display_title(text: &str, theme: &Theme, sel: &Selection) -> gpui::Div {
+    title(theme).child(sel.text(text.to_string()))
 }
 
 pub(super) fn script_title(text: &str, theme: &Theme) -> gpui::Div {
-    display_title(text, theme)
+    title(theme).child(text.to_string())
 }
 
 /// Tags as small rounded chips: `# ai`.
@@ -328,7 +332,7 @@ pub fn doc(
         .flex_col()
         .gap(px(14.))
         .child(kicker)
-        .child(display_title(&doc.title, theme));
+        .child(display_title(&doc.title, theme, sel));
     if let Some(desc) = doc
         .description
         .as_deref()
@@ -365,7 +369,7 @@ pub fn doc(
         .child(render::stack(body, &ctx, window, cx))
         .child(div().pt(px(24.)).child(double_rule(theme, 64.)))
         .child(terrazzo_banner(&doc.rkey, &doc.cid, width, window, cx))
-        .child(colophon(doc, &key, nav, theme));
+        .child(colophon(doc, &key, nav, theme, sel));
     if !doc.related.is_empty() {
         col = col.child(related(&doc.related, &key, nav, theme));
     }
@@ -412,22 +416,25 @@ fn terrazzo_banner(
         .into_any_element()
 }
 
-fn colophon(doc: &Doc, key: &str, nav: &Navigate, theme: &Theme) -> AnyElement {
+fn colophon(doc: &Doc, key: &str, nav: &Navigate, theme: &Theme, sel: &Selection) -> AnyElement {
     let row = |k: &str, v: AnyElement| {
         div()
             .flex()
             .items_center()
             .gap(px(14.))
-            .child(
-                div()
-                    .w(px(110.))
-                    .flex_none()
-                    .child(label(k.to_uppercase(), theme.muted)),
-            )
+            .child(div().w(px(110.)).flex_none().child(label(
+                sel.text(k.to_uppercase()).join(Join::Line),
+                theme.muted,
+            )))
             .child(div().flex_1().min_w_0().child(v))
             .into_any_element()
     };
-    let text = |s: String| div().italic().child(s).into_any_element();
+    let text = |s: String| {
+        div()
+            .italic()
+            .child(sel.text(s).join(Join::Tab))
+            .into_any_element()
+    };
     let mut col = div()
         .flex()
         .flex_col()
@@ -456,7 +463,7 @@ fn colophon(doc: &Doc, key: &str, nav: &Navigate, theme: &Theme) -> AnyElement {
                 .whitespace_nowrap()
                 .overflow_hidden()
                 .text_ellipsis_middle()
-                .child(doc.cid.clone())
+                .child(sel.text(doc.cid.clone()).join(Join::Tab))
                 .into_any_element(),
         ));
     }
@@ -1171,6 +1178,7 @@ pub fn post(
             &format!("post:{}", post.rkey),
             nav,
             theme,
+            sel,
         ))
         .into_any_element()
 }
@@ -1279,7 +1287,7 @@ pub fn page(
     let title = if title.is_empty() { slug } else { title };
     column(theme)
         .gap(px(18.))
-        .child(display_title(title, theme))
+        .child(display_title(title, theme, sel))
         .child(div().pb(px(6.)).child(double_rule(theme, width)))
         .child(render::stack(
             body_blocks(&parsed.blocks, title),

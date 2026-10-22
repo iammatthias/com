@@ -5,7 +5,9 @@
 use std::ops::Range;
 use std::rc::Rc;
 
-use gpui::{App, Bounds, Hitbox, Pixels, Point, TextLayout, TextSelectionKind, Window, px};
+use gpui::{
+    App, Bounds, Hitbox, Pixels, Point, SharedString, TextLayout, TextSelectionKind, Window, px,
+};
 
 use super::model::{Fingerprint, Granularity, Join, Ordinal, Pos, Span, plain_text};
 
@@ -30,6 +32,8 @@ pub struct Block<G> {
     pub join: Join,
     pub links: Rc<[Range<usize>]>,
     pub on_link: Option<OnLink>,
+    /// the text as given, when it was given as a string: a truncated block copies whole as this
+    pub source: Option<SharedString>,
     /// the element's hitbox: a press counts only where nothing drawn over the page covers it
     pub hitbox: Option<Hitbox>,
 }
@@ -209,7 +213,13 @@ impl<G: BlockGeometry> Registry<G> {
         let texts: Vec<(Ordinal, String, Join)> = (s.block.0..=e.block.0)
             .filter_map(|i| {
                 let b = self.blocks.get(i as usize)?;
-                Some((Ordinal(i), b.geometry.text(), b.join))
+                let shaped = b.geometry.text();
+                let whole = span.range_in(Ordinal(i), shaped.len()) == Some(0..shaped.len());
+                let text = match (&b.source, whole) {
+                    (Some(source), true) => source.to_string(),
+                    _ => shaped,
+                };
+                Some((Ordinal(i), text, b.join))
             })
             .collect();
         plain_text(span, texts.iter().map(|(o, t, j)| (*o, t.as_str(), *j)))
@@ -328,6 +338,7 @@ pub(super) mod grid {
             join: Join::Paragraph,
             links: Rc::from(Vec::new()),
             on_link: None,
+            source: None,
             hitbox: None,
         }
     }
