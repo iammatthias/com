@@ -112,6 +112,7 @@ impl Page {
 impl Render for Page {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let theme = Theme::of(window, cx);
+        let started = web_time::Instant::now();
         for image in crate::content::diagram::take_evicted() {
             let _ = cx.drop_image(image, Some(window));
         }
@@ -148,6 +149,11 @@ impl Render for Page {
             }
         };
         crate::overlay::set_page_shown(self.shown > 0.99);
+        // how long building the page's element tree took, in the #perf log
+        crate::mark(&format!(
+            "page render {:.2}ms",
+            started.elapsed().as_secs_f64() * 1e3
+        ));
         crate::theme::with_fallbacks(div())
             .size_full()
             .image_cache(self.images.clone())
