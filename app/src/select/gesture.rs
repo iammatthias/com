@@ -285,15 +285,17 @@ mod tests {
             down(10., 1, false, Some(hit(0, 3, (0, 5), None))),
         );
         assert_eq!(fx, Effects::default());
-        // within the slop: still a click
         assert!(!step(&mut g, &mut s, mv(12., hit(0, 4, (0, 5), None))).changed);
-        assert_eq!(s, None);
+        assert_eq!(s, None, "within the slop it is still a click");
         let fx = step(&mut g, &mut s, mv(60., hit(1, 7, (6, 9), None)));
         assert!(fx.changed);
         assert_eq!(s.unwrap().span(), (p(0, 3), p(1, 7)));
-        // dragging back before the press reverses the ends
         step(&mut g, &mut s, mv(0., hit(0, 1, (0, 5), None)));
-        assert_eq!(s.unwrap().span(), (p(0, 1), p(0, 3)));
+        assert_eq!(
+            s.unwrap().span(),
+            (p(0, 1), p(0, 3)),
+            "dragging back before the press reverses the ends"
+        );
         let fx = step(&mut g, &mut s, Input::Up { hit: None });
         assert_eq!(fx.link, None);
         assert_eq!(g, Gesture::Idle);
@@ -310,9 +312,12 @@ mod tests {
         );
         assert!(fx.changed);
         assert_eq!(s.unwrap().span(), (p(0, 0), p(0, 5)));
-        // dragging a word selection grows by whole words
         step(&mut g, &mut s, mv(90., hit(0, 12, (10, 15), None)));
-        assert_eq!(s.unwrap().span(), (p(0, 0), p(0, 15)));
+        assert_eq!(
+            s.unwrap().span(),
+            (p(0, 0), p(0, 15)),
+            "a word selection grows by whole words"
+        );
         step(&mut g, &mut s, Input::Up { hit: None });
         step(
             &mut g,
@@ -394,7 +399,6 @@ mod tests {
             },
         );
         assert_eq!(g, Gesture::Idle);
-        // a drag not on a handle is not claimed, so the page still pans
         let fx = step(
             &mut g,
             &mut s,
@@ -404,7 +408,10 @@ mod tests {
                 hit: None,
             },
         );
-        assert!(!fx.claim);
+        assert!(
+            !fx.claim,
+            "a drag off the handles is not claimed, so the page still pans"
+        );
         let fx = step(
             &mut g,
             &mut s,
@@ -425,7 +432,6 @@ mod tests {
             },
         );
         assert_eq!(s.unwrap().span(), (p(0, 7), p(1, 15)));
-        // crossing the other end swaps them
         step(
             &mut g,
             &mut s,
@@ -435,7 +441,11 @@ mod tests {
                 hit: Some(hit(1, 18, (16, 20), None)),
             },
         );
-        assert_eq!(s.unwrap().span(), (p(1, 15), p(1, 18)));
+        assert_eq!(
+            s.unwrap().span(),
+            (p(1, 15), p(1, 18)),
+            "crossing the other end swaps them"
+        );
         step(
             &mut g,
             &mut s,

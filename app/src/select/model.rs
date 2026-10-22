@@ -205,12 +205,15 @@ mod tests {
         assert_eq!(s.range_in(Ordinal(2), 7), Some(0..7));
         assert_eq!(s.range_in(Ordinal(3), 10), Some(0..2));
         assert_eq!(s.range_in(Ordinal(4), 10), None);
-        // a selection ending at a block's start selects nothing of it
         let s = Span {
             focus: (p(3, 0), p(3, 0)),
             ..s
         };
-        assert_eq!(s.range_in(Ordinal(3), 10), None);
+        assert_eq!(
+            s.range_in(Ordinal(3), 10),
+            None,
+            "a selection ending at a block's start takes none of it"
+        );
     }
 
     #[test]
