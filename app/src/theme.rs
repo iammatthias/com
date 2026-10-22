@@ -35,6 +35,21 @@ pub fn section_hue(slug: &str) -> u8 {
 }
 
 impl Theme {
+    /// How selected text is shown: a wash of the accent, ink-on-paper for the phone's Copy pill.
+    pub fn selection(&self) -> crate::select::SelectionStyle {
+        let hsla = gpui::rgb_to_hsla;
+        crate::select::SelectionStyle {
+            highlight: hsla(Rgba {
+                alpha: 0.28,
+                ..self.accent
+            }),
+            handle: hsla(self.accent),
+            pill_bg: hsla(self.ink),
+            pill_fg: hsla(self.paper),
+            copy_label: "Copy".into(),
+        }
+    }
+
     /// The colour of a section (its stop), or ink.
     pub fn section(&self, slug: &str) -> Rgba {
         match section_hue(slug) {

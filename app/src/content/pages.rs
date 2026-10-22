@@ -13,6 +13,7 @@ use crate::api::{
     Doc, Item, Media, Navigate, Paging, Post, RelatedRef, SectionRef, Series, TagCount,
 };
 use crate::design;
+use crate::select::Selection;
 use crate::theme::{self, Theme};
 
 use super::cache::{self, Parsed};
@@ -67,6 +68,7 @@ impl<'a> Prose<'a> {
         self,
         theme: &'a Theme,
         nav: &'a Navigate,
+        sel: &Selection,
         key: impl Into<SharedString>,
         window: &Window,
     ) -> (Rc<Parsed>, Ctx<'a>) {
@@ -74,6 +76,7 @@ impl<'a> Prose<'a> {
         let ctx = Ctx::new(
             theme,
             nav,
+            sel,
             self.media,
             parsed.clone(),
             measure(window),
@@ -263,6 +266,7 @@ pub fn doc(
     doc: &Doc,
     nav: &Navigate,
     theme: &Theme,
+    sel: &Selection,
     window: &mut Window,
     cx: &mut App,
 ) -> AnyElement {
@@ -271,7 +275,7 @@ pub fn doc(
     } else {
         doc.cid.clone()
     };
-    let (parsed, ctx) = Prose::doc(doc).of(theme, nav, key.clone(), window);
+    let (parsed, ctx) = Prose::doc(doc).of(theme, nav, sel, key.clone(), window);
     let width = ctx.width;
 
     let minutes = doc
@@ -995,11 +999,12 @@ pub(super) fn post_body(
     single: bool,
     nav: &Navigate,
     theme: &Theme,
+    sel: &Selection,
     window: &mut Window,
     cx: &mut App,
 ) -> AnyElement {
     let key = format!("post:{}", post.rkey);
-    let (parsed, ctx) = Prose::post(post).of(theme, nav, key.clone(), window);
+    let (parsed, ctx) = Prose::post(post).of(theme, nav, sel, key.clone(), window);
     let width = ctx.width;
 
     let mut prose = Vec::new();
@@ -1080,6 +1085,7 @@ pub fn feed(
     paging: &Paging,
     nav: &Navigate,
     theme: &Theme,
+    sel: &Selection,
     window: &mut Window,
     cx: &mut App,
 ) -> AnyElement {
@@ -1113,7 +1119,7 @@ pub fn feed(
         if i > 0 {
             col = col.child(double_rule(theme, 48.));
         }
-        col = col.child(post_body(p, false, nav, theme, window, cx));
+        col = col.child(post_body(p, false, nav, theme, sel, window, cx));
     }
     col.child(super::feed::tail(tail, theme)).into_any_element()
 }
@@ -1122,6 +1128,7 @@ pub fn post(
     post: &Post,
     nav: &Navigate,
     theme: &Theme,
+    sel: &Selection,
     window: &mut Window,
     cx: &mut App,
 ) -> AnyElement {
@@ -1134,7 +1141,7 @@ pub fn post(
                 .text_size(px(design::LABEL_SIZE))
                 .letter_spacing(px(design::LABEL_TRACKING)),
         )
-        .child(post_body(post, true, nav, theme, window, cx))
+        .child(post_body(post, true, nav, theme, sel, window, cx))
         .child(div().pt(px(12.)).child(double_rule(theme, 64.)))
         .child(terrazzo_banner(
             &post.rkey,
@@ -1249,10 +1256,11 @@ pub(super) fn markdown(
     key: &str,
     nav: &Navigate,
     theme: &Theme,
+    sel: &Selection,
     window: &mut Window,
     cx: &mut App,
 ) -> AnyElement {
-    let (parsed, ctx) = Prose::text(md).of(theme, nav, key.to_string(), window);
+    let (parsed, ctx) = Prose::text(md).of(theme, nav, sel, key.to_string(), window);
     render::stack(&parsed.blocks, &ctx, window, cx).into_any_element()
 }
 
@@ -1262,10 +1270,11 @@ pub fn page(
     markdown: &str,
     nav: &Navigate,
     theme: &Theme,
+    sel: &Selection,
     window: &mut Window,
     cx: &mut App,
 ) -> AnyElement {
-    let (parsed, ctx) = Prose::text(markdown).of(theme, nav, format!("page:{slug}"), window);
+    let (parsed, ctx) = Prose::text(markdown).of(theme, nav, sel, format!("page:{slug}"), window);
     let width = ctx.width;
     let title = if title.is_empty() { slug } else { title };
     column(theme)

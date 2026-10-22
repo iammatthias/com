@@ -36,7 +36,7 @@ image = { version = "0.25", default-features = false, features = ["webp", "jpeg"
 gpui = { git = "https://github.com/gpui-ce/gpui-ce", rev = "43dacc568497c615c55a1ea0f77ab381c0d9865b", package = "gpui-ce", default-features = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-web-sys = { version = "0.3", features = ["console", "Window", "Location", "History", "Document", "HtmlDocument", "Navigator", "EventTarget", "Storage", "MediaQueryList", "Worker", "WorkerOptions", "WorkerType", "MessageEvent", "Event", "Element", "Node", "HtmlElement", "HtmlMediaElement", "HtmlVideoElement"] }
+web-sys = { version = "0.3", features = ["console", "Window", "Location", "History", "Document", "HtmlDocument", "Navigator", "EventTarget", "Storage", "MediaQueryList", "Worker", "WorkerOptions", "WorkerType", "MessageEvent", "Event", "Element", "Node", "HtmlElement", "HtmlMediaElement", "HtmlVideoElement", "ClipboardEvent", "DataTransfer"] }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 

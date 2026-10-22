@@ -45,6 +45,7 @@ use gpui::{AnyElement, App, FontWeight, Window, div};
 
 use crate::api::{Navigate, RoutePayload};
 use crate::design;
+use crate::select::Selection;
 use crate::theme::{self, Theme};
 
 /// The page body for a route. `nav` opens site paths in place and anything else in a new tab.
@@ -52,12 +53,13 @@ pub fn view(
     payload: &RoutePayload,
     nav: &Navigate,
     theme: &Theme,
+    sel: &Selection,
     window: &mut Window,
     cx: &mut App,
 ) -> AnyElement {
     state::set_page_view(window.current_view());
     crate::dom_video::begin_render();
-    let body = body(payload, nav, theme, window, cx);
+    let body = body(payload, nav, theme, sel, window, cx);
     match lightbox::overlay(theme, window, cx) {
         Some(overlay) => div()
             .flex()
@@ -74,16 +76,17 @@ fn body(
     payload: &RoutePayload,
     nav: &Navigate,
     theme: &Theme,
+    sel: &Selection,
     window: &mut Window,
     cx: &mut App,
 ) -> AnyElement {
     match payload {
-        RoutePayload::Doc { doc } => pages::doc(doc, nav, theme, window, cx),
+        RoutePayload::Doc { doc } => pages::doc(doc, nav, theme, sel, window, cx),
         RoutePayload::Page {
             slug,
             title,
             markdown,
-        } => pages::page(slug, title, markdown, nav, theme, window, cx),
+        } => pages::page(slug, title, markdown, nav, theme, sel, window, cx),
         RoutePayload::List {
             section,
             items,
@@ -98,11 +101,13 @@ fn body(
             pages::tag_listing(tag, items, paging, nav, theme)
         }
         RoutePayload::Tags { tags, .. } => pages::tags(tags, nav, theme),
-        RoutePayload::Feed { posts, paging } => pages::feed(posts, paging, nav, theme, window, cx),
-        RoutePayload::Post { post } => pages::post(post, nav, theme, window, cx),
-        RoutePayload::Now(n) => special::now(n, nav, theme, window, cx),
+        RoutePayload::Feed { posts, paging } => {
+            pages::feed(posts, paging, nav, theme, sel, window, cx)
+        }
+        RoutePayload::Post { post } => pages::post(post, nav, theme, sel, window, cx),
+        RoutePayload::Now(n) => special::now(n, nav, theme, sel, window, cx),
         RoutePayload::Resume { title, sections } => special::resume(title, sections, nav, theme),
-        RoutePayload::Developers(d) => special::developers(d, nav, theme, window, cx),
+        RoutePayload::Developers(d) => special::developers(d, nav, theme, sel, window, cx),
         RoutePayload::NotFound => pages::not_found(nav, theme),
         RoutePayload::Home | RoutePayload::Redirect { .. } => div().into_any_element(),
     }

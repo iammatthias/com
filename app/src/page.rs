@@ -13,6 +13,7 @@ use crate::api::{Navigate, RoutePayload};
 use crate::content;
 use crate::design;
 use crate::overlay::{Probe, Redraw};
+use crate::select::Selection;
 use crate::theme::{self, Theme};
 
 pub enum Load {
@@ -36,6 +37,8 @@ pub struct Page {
     images: Entity<NearCache>,
     /// the next route is loading; what's showing is the previous page
     pending: bool,
+    /// the text the reader has selected, if any; cleared when the path changes
+    selection: Selection,
 }
 
 impl Page {
@@ -50,6 +53,7 @@ impl Page {
             shown: 0.0,
             images: NearCache::new(cx),
             pending: false,
+            selection: Selection::new(),
         }
     }
 
@@ -139,7 +143,9 @@ impl Render for Page {
                     )
                     .into_any_element()
             }
-            Load::Ready(payload) => content::view(payload, &self.nav, &theme, window, cx),
+            Load::Ready(payload) => {
+                content::view(payload, &self.nav, &theme, &self.selection, window, cx)
+            }
         };
         crate::overlay::set_page_shown(self.shown > 0.99);
         crate::theme::with_fallbacks(div())
@@ -173,7 +179,10 @@ impl Render for Page {
                             .w_full()
                             .max_w(px(design::COLUMN_MAX_W))
                             .mx_auto()
-                            .child(body)
+                            .child(
+                                self.selection
+                                    .scope(self.path.clone(), body, theme.selection()),
+                            )
                             .child(self.probe.element(Redraw::NextFrame)),
                     ),
             )

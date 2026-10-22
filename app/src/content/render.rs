@@ -11,12 +11,13 @@ use gpui::prelude::*;
 
 use gpui::px;
 use gpui::{
-    AnyElement, App, ElementId, FontStyle, HighlightStyle, Hsla, InteractiveText, Rgba,
-    SharedString, StrikethroughStyle, StyledText, UnderlineStyle, Window, div,
+    AnyElement, App, ElementId, FontStyle, HighlightStyle, Hsla, Rgba, SharedString,
+    StrikethroughStyle, StyledText, UnderlineStyle, Window, div,
 };
 
 use crate::api::{Media, Navigate};
 use crate::design;
+use crate::select::Selection;
 use crate::theme::{self, Theme};
 
 use super::cache::Parsed;
@@ -27,6 +28,8 @@ use super::{media, recipe_view, series_view, state};
 pub struct Ctx<'a> {
     pub theme: &'a Theme,
     pub nav: &'a Navigate,
+    /// the page's selection: every run of text registers with it
+    pub sel: Selection,
     pub media: &'a HashMap<String, Media>,
     /// the tree being drawn, for the series it embeds
     pub parsed: Rc<Parsed>,
@@ -45,6 +48,7 @@ impl<'a> Ctx<'a> {
     pub fn new(
         theme: &'a Theme,
         nav: &'a Navigate,
+        sel: &Selection,
         media: &'a HashMap<String, Media>,
         parsed: Rc<Parsed>,
         width: f32,
@@ -54,6 +58,7 @@ impl<'a> Ctx<'a> {
         Self {
             theme,
             nav,
+            sel: sel.clone(),
             media,
             parsed,
             width,
@@ -77,6 +82,7 @@ impl<'a> Ctx<'a> {
         let inner = Ctx {
             theme: self.theme,
             nav: self.nav,
+            sel: self.sel.clone(),
             media: self.media,
             parsed: self.parsed.clone(),
             width,
@@ -191,40 +197,32 @@ pub fn rich(r: &Rich, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElemen
     if r.text.is_empty() {
         return div().into_any_element();
     }
-    let id = ctx.id("t");
-    if r.links.is_empty() {
-        let s = styled_runs(r, ctx.theme, None);
-        return StyledText::new(r.text.clone())
-            .with_highlights(s.highlights)
-            .with_font_family_overrides(s.fonts)
-            .into_any_element();
-    }
     let _ = (window, cx);
-    let s = styled_runs(r, ctx.theme, state::get::<Option<u16>>(&id));
-    let hover_id = id.clone();
+    let hover_id = ctx.id("t");
+    let s = styled_runs(r, ctx.theme, state::get::<Option<u16>>(&hover_id));
+    let text = ctx.sel.styled(
+        StyledText::new(r.text.clone())
+            .with_highlights(s.highlights)
+            .with_font_family_overrides(s.fonts),
+    );
+    if r.links.is_empty() {
+        return text.into_any_element();
+    }
     let targets: Vec<String> = s
         .link_ids
         .iter()
         .map(|l| r.links[*l as usize].clone())
         .collect();
     let nav = ctx.nav.clone();
-    let ranges = s.link_ranges.clone();
     let ids = s.link_ids.clone();
-    InteractiveText::new(
-        id,
-        StyledText::new(r.text.clone())
-            .with_highlights(s.highlights)
-            .with_font_family_overrides(s.fonts),
-    )
-    .on_click(s.link_ranges, move |ix, window, cx| {
+    text.links(s.link_ranges, move |ix, window, cx| {
         let href = targets[ix].clone();
         if !href.starts_with('#') {
             nav(href, window, cx);
         }
     })
-    .on_hover(move |ix, _event, window, _cx| {
-        let over = ix.and_then(|i| ranges.iter().position(|r| r.contains(&i)).map(|p| ids[p]));
-        state::update::<Option<u16>>(&hover_id, window, |h| *h = over);
+    .on_link_hover(move |ix, window, _cx| {
+        state::update::<Option<u16>>(&hover_id, window, |h| *h = ix.map(|i| ids[i]));
     })
     .into_any_element()
 }

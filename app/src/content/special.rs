@@ -6,6 +6,7 @@ use gpui::px;
 use gpui::{AnyElement, App, SharedString, Window, div};
 
 use crate::api::{Developers, Navigate, Now, ResumeSection};
+use crate::select::Selection;
 use crate::theme::{self, Theme};
 
 use super::pages;
@@ -32,6 +33,7 @@ pub fn now(
     n: &Now,
     nav: &Navigate,
     theme: &Theme,
+    sel: &Selection,
     window: &mut Window,
     cx: &mut App,
 ) -> AnyElement {
@@ -41,7 +43,9 @@ pub fn now(
         .child(pages::script_title(title, theme))
         .child(hairline(theme));
     if !n.bio.trim().is_empty() {
-        col = col.child(pages::markdown(&n.bio, "now:bio", nav, theme, window, cx));
+        col = col.child(pages::markdown(
+            &n.bio, "now:bio", nav, theme, sel, window, cx,
+        ));
     }
     if !n.working.trim().is_empty() {
         col = col
@@ -51,6 +55,7 @@ pub fn now(
                 "now:working",
                 nav,
                 theme,
+                sel,
                 window,
                 cx,
             ));
@@ -61,7 +66,7 @@ pub fn now(
             if i > 0 {
                 col = col.child(double_rule(theme, 48.));
             }
-            col = col.child(pages::post_body(p, false, nav, theme, window, cx));
+            col = col.child(pages::post_body(p, false, nav, theme, sel, window, cx));
         }
         col = col.child(
             link("now:feed", "All updates →", "/feed", nav, theme)
@@ -159,6 +164,7 @@ pub fn developers(
     d: &Developers,
     nav: &Navigate,
     theme: &Theme,
+    sel: &Selection,
     window: &mut Window,
     cx: &mut App,
 ) -> AnyElement {
@@ -171,7 +177,9 @@ pub fn developers(
         .gap(px(16.))
         .child(pages::script_title(title, theme));
     if !d.lede.trim().is_empty() {
-        col = col.child(pages::markdown(&d.lede, "dev:lede", nav, theme, window, cx));
+        col = col.child(pages::markdown(
+            &d.lede, "dev:lede", nav, theme, sel, window, cx,
+        ));
     }
     if !d.markdown_href.is_empty() {
         col = col.child(
@@ -242,6 +250,7 @@ pub fn developers(
             &format!("dev:s{i}"),
             nav,
             theme,
+            sel,
             window,
             cx,
         ));
