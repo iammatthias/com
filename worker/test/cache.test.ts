@@ -6,6 +6,7 @@ import {
     setDocumentPageCacheHeaders,
     setPageCacheHeaders,
     setResponseCacheHeaders,
+    setShellCacheHeaders,
 } from "../src/lib/cache";
 import { setRouteCacheHeaders } from "../src/routes/app";
 import type { AppRoute } from "../src/app-api";
@@ -113,6 +114,23 @@ describe("pages across a deploy", () => {
             setPageCacheHeaders(response, { cache });
             expect([cache.kind, response.headers.get("Last-Modified")]).toEqual([cache.kind, null]);
         }
+    });
+
+    test("a browser asks before it shows a page it kept, and never serves one stale", () => {
+        for (const kind of ["document", "home", "static", "none"] as const) {
+            const response = new Response(null);
+            setShellCacheHeaders(response, { cache: { kind } });
+            expect([kind, response.headers.get("Cache-Control")]).toEqual([kind, "no-cache"]);
+        }
+    });
+
+    test("the edge keeps the page as long as it did", () => {
+        const home = new Response(null);
+        setShellCacheHeaders(home, { cache: { kind: "home" } });
+        expect(home.headers.get(EDGE_CACHE_HEADER)).toBe("public, max-age=60, stale-while-revalidate=86400, stale-if-error=604800");
+        const post = new Response(null);
+        setShellCacheHeaders(post, { cache: { kind: "document" } });
+        expect(post.headers.get(EDGE_CACHE_HEADER)).toBe("public, max-age=3600, stale-while-revalidate=86400, stale-if-error=604800");
     });
 });
 

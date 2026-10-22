@@ -133,3 +133,13 @@ export function setPageCacheHeaders(res: { headers: Headers }, page: { cache: Ca
             return;
     }
 }
+
+/**
+ * The page itself names the build its code is under (/b/<id>/): a browser asks before it shows a
+ * copy it kept, and never serves one stale. The edge keeps its own policy in EDGE_CACHE_HEADER,
+ * which it reads ahead of Cache-Control and doesn't pass on.
+ */
+export function setShellCacheHeaders(res: { headers: Headers }, page: { cache: CachePolicy }): void {
+    setPageCacheHeaders(res, page);
+    res.headers.set("Cache-Control", "no-cache");
+}

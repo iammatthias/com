@@ -12,7 +12,7 @@ import { redirectDeps, resolveAppRoute } from "./lib/app-route";
 import { publicationSlugSet } from "./lib/farfield-loader";
 import { homepageMarkdown, notFoundMarkdown } from "./lib/agent-markdown";
 import { AGENT_LINKS, SECURITY_HEADERS, markdownByAgentOnly, wantsMarkdown } from "./lib/negotiate";
-import { EDGE_CACHE_HEADER, setPageCacheHeaders } from "./lib/cache";
+import { EDGE_CACHE_HEADER, setShellCacheHeaders } from "./lib/cache";
 import { notFoundPage, renderRoute, type SsrPage } from "./lib/ssr";
 import { shellResponse } from "./lib/shell";
 import { STATIC_PAGES } from "./pages/static";
@@ -92,7 +92,7 @@ async function shellPage(ctx: Ctx, page: SsrPage, pending: Promise<Response> = f
         });
     }
     const res = await shellResponse(shell, page, ctx.request.method, ctx.url.pathname, ctx.url.origin);
-    setPageCacheHeaders(res, page);
+    setShellCacheHeaders(res, page);
     return res;
 }
 
