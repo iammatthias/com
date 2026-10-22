@@ -107,10 +107,10 @@ else
         { echo "$id"; echo "$prev"; } | grep . > "$cache/app/ids"
         # the key last: a build cut off before here is a miss, not a half cache
         echo "$key" > "$cache/app/key"
-    fi
-    if [ $main = 1 ] && [ $restored = 0 ]; then
-        upload && mark "cargo cache $ckey uploaded, $(du -sh "$parts" | cut -f1) in $n parts" \
-            || echo "ci: the cargo cache upload failed; the next app build compiles from crates.io"
+        if [ $restored = 0 ]; then
+            upload && mark "cargo cache $ckey uploaded, $(du -sh "$parts" | cut -f1) in $n parts" \
+                || echo "ci: the cargo cache upload failed; the next app build compiles from crates.io"
+        fi
     fi
     rm -rf "$parts"
 fi
