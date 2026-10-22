@@ -636,12 +636,13 @@ impl Plate {
 
 impl Render for Plate {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        if self.animating() {
-            window.request_animation_frame();
-        }
         let theme = Theme::of(window, cx);
         self.draw(window, &theme);
         self.follow_greeting(cx);
+        // asked after drawing: the draw is what finds the frame has a new column to wind to
+        if self.animating() {
+            window.request_animation_frame();
+        }
 
         let mut root = self.input(div().id("plate").size_full().relative(), cx);
         if let Some(target) = self.target.as_ref() {
