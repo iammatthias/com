@@ -33,11 +33,11 @@ const BREATHS: [f32; 2] = [0.5, 0.3];
 const REST: f32 = 0.9;
 /// keep in step with intro.wgsl: the last of the sentence is reeled in REEL_AT + REEL after
 /// it starts to lift
-const FALL: f32 = 0.7 + 1.5;
+const FALL: f32 = 1.0 + 1.5;
 /// how far into the fall the plate's pen sets off: as the coil starts closing on the point, so
 /// the line is already coming out of it when the last of the sentence goes in (intro.wgsl's
 /// REEL_AT + REEL * CLOSE_AT)
-const DRAW_FROM: f32 = 0.7 + 1.5 * 0.55;
+const DRAW_FROM: f32 = 1.0 + 1.5 * 0.6;
 
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
@@ -54,6 +54,8 @@ struct Uniforms {
     fall_t0: f32,
     sink: f32,
     ink: [f32; 4],
+    /// the block's lower edge, device px down from the middle (the rest pad the struct)
+    below: [f32; 4],
 }
 
 #[repr(C)]
@@ -384,6 +386,7 @@ impl Layout {
             fall_t0: WRITE_AT + atlas.write_for + REST,
             sink,
             ink: [0.0; 4],
+            below: [y - mid, 0.0, 0.0, 0.0],
         };
         Self {
             size,

@@ -1,7 +1,8 @@
-// Greeting: written in script on the plate, then lifted, head first, onto one
-// spiral round the point the plate's line starts from and reeled in along it: the
-// words stay words the whole way, written smaller as they near the middle, where
-// each letter thins into the line. The plate then draws its line out of that point.
+// Greeting: written in script on the plate, then lifted, tail first, onto one
+// spiral below it, which slides up onto the point the plate's line starts from as
+// it reels the sentence in: the words stay words the whole way, written smaller as
+// they near the middle, where each letter thins into the line. The plate then draws
+// its line out of that point.
 // Drawn into the plate's engraving (colour over it, plus ink amount), so the
 // plate's optics fall on it too.
 //
@@ -22,6 +23,7 @@ struct U {
     fall_t0: f32,    // when the sentence starts to fall
     sink: f32,       // where everything falls to: the plate's spiral start, y down from the middle
     ink: vec4<f32>,
+    below: vec4<f32>, // x: the block's lower edge, y down from the middle
 };
 
 @group(0) @binding(0) var<uniform> u: U;
@@ -30,12 +32,12 @@ struct U {
 
 const PI: f32 = 3.14159265359;
 const TAU: f32 = 6.28318530718;
-// keep in step with intro.rs FALL: the sentence lifts onto the spiral (the start of it first,
-// the end STAGGER later, each point over GATHER), and the reel starts winding it in at REEL_AT
+// keep in step with intro.rs FALL: the sentence lifts onto the spiral (the end of it first,
+// the start STAGGER later, each point over GATHER), and the reel starts winding it in at REEL_AT
 // and has it all in the centre REEL later
 const GATHER: f32 = 1.0;
 const STAGGER: f32 = 0.45;
-const REEL_AT: f32 = 0.7;
+const REEL_AT: f32 = 1.0;
 const REEL: f32 = 1.5;
 // the words on the spiral, against their size in the block; and the turns' spacing, in bands
 // of script (a line of it and a little air)
@@ -43,7 +45,10 @@ const REEL_SCALE: f32 = 0.5;
 const TURN_BANDS: f32 = 1.15;
 const START_TURNS: f32 = 1.0;
 // how far through the reel the coil starts closing on the sink
-const CLOSE_AT: f32 = 0.55;
+const CLOSE_AT: f32 = 0.6;
+// the coil forms below the block, clear of it, and slides up onto the sink through this much
+// of the reel, there by the time it closes
+const SLIDE_FROM: f32 = 0.3;
 
 struct VIn {
     @location(0) u: f32,
@@ -72,7 +77,6 @@ fn vs_main(v: VIn) -> VOut {
     o.k = v.k;
     o.along = v.u;
     o.gap = v.gap;
-    let c = vec2<f32>(0.0, u.sink);
     let lt = u.t - u.fall_t0;
     // in the block: where the greeting was written
     let block = v.pa + vec2<f32>(0.0, -1.0) * band * u.s_a * v.k;
@@ -86,6 +90,10 @@ fn vs_main(v: VIn) -> VOut {
     // the reel has passed slides the last turn into the centre (same speed at the hand-over)
     let s0 = PI * d_f * START_TURNS * START_TURNS;
     let ahead = (v.u - lead) * s_c;
+    // the coil's outer edge, and its centre: below the block, kept on screen, then up to the sink
+    let r_out = d_f * sqrt((s0 + u.text_len * s_c) / (PI * d_f)) + 0.5 * u.atlas_h * s_c;
+    let below = max(min(u.below.x + r_out + 0.25 * d_f, 0.5 * u.res.y - r_out - 0.25 * d_f), u.sink);
+    let c = vec2<f32>(0.0, mix(below, u.sink, smoothstep(SLIDE_FROM, CLOSE_AT, rp)));
     let s = select(s0 * exp(ahead / s0), s0 + ahead, ahead >= 0.0);
     let tc = sqrt(s / (PI * d_f));
     let th = TAU * tc;
@@ -101,8 +109,9 @@ fn vs_main(v: VIn) -> VOut {
     let near = smoothstep(0.0, 1.6 * d_f, r);
     let sc = max(s_c * mix(0.3, 1.0, near) * close, 1.5 * u.hair / max(u.yc, u.atlas_h - u.yc));
     let spiral = c + r * radial + up * band * sc;
-    // each point lifts from the block onto the spiral, the start of the sentence first
-    let la = clamp((lt - STAGGER * v.u / u.text_len) / GATHER, 0.0, 1.0);
+    // each point lifts from the block onto the spiral, the end of the sentence first: it goes
+    // to the outer turn, out of the way of the words that follow it down
+    let la = clamp((lt - STAGGER * (1.0 - v.u / u.text_len)) / GATHER, 0.0, 1.0);
     let lift = la * la * la * (la * (la * 6.0 - 15.0) + 10.0);
     let p2 = mix(block, spiral, lift);
     // how far into the centre: the letters give way to the line there
