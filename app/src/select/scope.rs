@@ -264,7 +264,7 @@ impl Selection {
         if fx.copy
             && let Some(text) = self.selected_text()
         {
-            cx.write_to_clipboard(ClipboardItem::new_string(text));
+            write_clipboard(text, cx);
         }
         if let Some((block, link)) = fx.link {
             let on_link = self
@@ -299,6 +299,18 @@ impl Selection {
             state.apply(fx, window, cx);
         });
     }
+}
+
+/// gpui's web clipboard throws through wasm when `navigator.clipboard` is missing (a plain http
+/// origin): there the browser's own copy command, answered by the module's `copy` listener,
+/// writes instead.
+fn write_clipboard(text: String, cx: &mut App) {
+    #[cfg(target_family = "wasm")]
+    if !super::web::has_clipboard_api() {
+        super::web::copy_by_command();
+        return;
+    }
+    cx.write_to_clipboard(ClipboardItem::new_string(text));
 }
 
 pub struct SelectionScope {

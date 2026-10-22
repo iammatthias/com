@@ -60,6 +60,23 @@ pub fn install() {
     copy.forget();
 }
 
+/// `navigator.clipboard` exists only on a secure origin (and a test may take it away).
+pub fn has_clipboard_api() -> bool {
+    web_sys::window().is_some_and(|w| {
+        js_sys::Reflect::get(&w.navigator(), &"clipboard".into()).is_ok_and(|v| !v.is_undefined())
+    })
+}
+
+/// The browser's copy command, which fires the `copy` event the listener above answers.
+pub fn copy_by_command() {
+    let document = web_sys::window()
+        .and_then(|w| w.document())
+        .and_then(|d| d.dyn_into::<web_sys::HtmlDocument>().ok());
+    if let Some(document) = document {
+        let _ = document.exec_command("copy");
+    }
+}
+
 /// The selection's geometry as JSON, for browser tests that cannot read the canvas: the text,
 /// its highlight rects, and where the Copy pill was drawn (null when it wasn't).
 #[wasm_bindgen::prelude::wasm_bindgen]
