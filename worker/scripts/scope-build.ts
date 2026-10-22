@@ -1,8 +1,8 @@
 // Moves a release build's code under /b/<id>/, id a hash of everything moved: the app's wasm
 // and glue, dom.js and the other snippets, and the modules it loads later (diagrams, search,
 // embeds). A page keeps loading the code it booted with across a deploy, since a new build
-// never writes a URL an old one used, and the Worker can keep every /b/ file for a year.
-// Everything else (the page, icons, fonts-v1, the card page) stays where it is.
+// never writes a URL an old one used, and ci-build.sh carries the two builds before it into
+// each deploy. Everything else (the page, icons, fonts-v1, the card page) stays where it is.
 //
 //   bun scope-build.ts <dist>     prints the id
 

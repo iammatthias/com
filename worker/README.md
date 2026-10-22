@@ -40,8 +40,9 @@ makes on every push (`scripts/ci-build.sh`, then `scripts/ci-deploy.sh`) and
 A deployed build keeps its code under `/b/<id>/` (`scripts/scope-build.ts`; the id
 hashes the bytes moved): the wasm and its glue, dom.js and the other snippets, and the
 modules loaded later (diagrams, search, embeds). A page only ever loads the build it booted
-with, and the Worker caches every `/b/` file for a year. Nothing is carried across a deploy:
-a tab left open over one finds its build gone and needs a reload.
+with, and the browser keeps every `/b/` file for a year. A deploy from Workers Builds carries
+the two builds before it (`scripts/ci-build.sh`), so a tab left open over a deploy or two still
+finds its modules; one left open longer finds its build gone and needs a reload.
 
 ## Caching
 

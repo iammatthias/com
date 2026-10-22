@@ -30,7 +30,8 @@ const ROUTES: Route[] = [
     apiFallbackRoute,
 ];
 
-/** A release build's code (worker/scripts/scope-build.ts): a new build never writes a URL an old one used. */
+/** A release build's code (worker/scripts/scope-build.ts): a new build never writes a URL an old one
+ *  used, and a deploy carries the two builds before it (worker/scripts/ci-build.sh). */
 const HASHED_ASSET = /^\/b\/[0-9a-f]{16}\//;
 /** Files whose URL changes when they do: the versioned faces. */
 const IMMUTABLE_ASSET = /^\/fonts-v\d+\//;
@@ -137,7 +138,7 @@ async function dispatch(ctx: Ctx, pathname: string): Promise<Response> {
 
     if (/\.[a-z0-9]+$/i.test(pathname) && !pathname.endsWith(".html")) {
         const immutable = HASHED_ASSET.test(pathname) || IMMUTABLE_ASSET.test(pathname);
-        // a file kept for a year is fetched whole: a plain GET, never a HEAD, a range or a
+        // a file the browser keeps for a year is fetched whole: a plain GET, never a HEAD, a range or a
         // conditional request, whose bodiless answer the edge would otherwise keep in its place
         const asset = await ctx.env.ASSETS.fetch(immutable ? new Request(ctx.url, { method: "GET" }) : ctx.request);
         if (asset.status < 400) {
