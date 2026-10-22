@@ -1,6 +1,7 @@
 // The social card: plate.wgsl's two passes (the engraving, then its optics), compiled to GLSL by
 // naga at build time (card/gen/), drawn once in WebGL2 with the plate's seeded variance and its
-// clocks pinned, so the same inputs give the same picture. No lettering on the line: the home
+// clocks pinned, so the same inputs give the same picture (or, for the social loop, drawn frame
+// by frame with the clocks walked round a circle: `turning`). No lettering on the line: the home
 // card is the spiral and the portrait; a page card is the line framing a paper box, its title
 // set in the box as type; the app icon is the bare spiral, square and coarse enough to read small.
 //
@@ -78,17 +79,54 @@ const penWeight = () => {
 };
 
 // ---- the moment the card shows: the clocks pinned by the seed ----
-const clock = 10 + z.osc[0] * 50; // the controls' clock (C)
-const ease = (period, phase) => 0.5 - 0.5 * Math.cos((clock / period + phase) * TAU);
-const T = 4 + z.t_off * 40; // the drift (T)
+const C0 = 10 + z.osc[0] * 50; // the controls' clock (C)
+const T0 = 4 + z.t_off * 40; // the drift (T)
 // an icon's few turns tangle at the card's warp and fringe: it takes a calmer share of both
 const CALM = kind === "icon" ? Number(q.get("calm") || 0.35) : 1;
-const eWarp = CALM * CONTROLS.warp * (0.35 + 0.65 * ease(29, z.osc[1]));
-const eDisp = CONTROLS.disp * (0.35 + 0.65 * ease(53, z.osc[2]));
 const framing = kind === "page" ? 1 : 0;
 const mn = Math.min(W, H);
 const lift = kind === "icon" ? 0 : LIFT * mn * (1 - framing); // the head sits high; an icon has none
 const d = SPACING * DPR;
+// how fast each of warp_f's four terms turns with the drift (plate.wgsl warp_f)
+const WARP_RATES = [0.4, -0.33, -0.27, 0.21];
+
+// Everything on the plate that moves, at one instant. T is the drift the line's warp follows
+// (here and in the shader) and c the controls' clock the warp and disp breathe on. The shader
+// reads its own two clocks, ut (the drift) and ab (the ab clock): its optics run on ut/2 + ab
+// and its grain on floor(ab * 60), so a frame can hand it any pair with the right sum, and the
+// warp's phases carry the difference so the line stays where T puts it. turns: where each light
+// is along the line.
+function moment({ T, c, ut, ab, turns }) {
+    const ease = (period, phase) => 0.5 - 0.5 * Math.cos((c / period + phase) * TAU);
+    return {
+        T, ut, ab, turns,
+        eWarp: CALM * CONTROLS.warp * (0.35 + 0.65 * ease(29, z.osc[1])),
+        eDisp: CONTROLS.disp * (0.35 + 0.65 * ease(53, z.osc[2])),
+        wph: z.wph.map((p, i) => p + WARP_RATES[i] * (T - ut)),
+    };
+}
+const still = () => moment({ T: T0, c: C0, ut: T0, ab: C0 * 0.4, turns: restingTurns() });
+
+// The plate round a closed path: frame k of n over `seconds`. Each clock swings about its
+// pinned value on one sine, at `pace` times its live pace at the fastest (the drift at speed
+// 0.9·0.2·0.675, the controls at 1/s, so the optics at 0.46/s; a light at 8 css px/s), every
+// swing back where it started at frame n. The grain can't swing (its frame index would stall
+// and retrace at the turns), so it deals afresh each frame through a cycle of `deals` (n a
+// multiple of it), the shader's two clocks sharing the optics' time between them. The swings
+// start out of step, so no two rest together.
+function turning(k, n, seconds, deals, pace) {
+    const phi = (k / n) * TAU;
+    const swing = (rate, phase) => ((pace * rate * seconds) / TAU) * Math.sin(phi + phase);
+    const optics = T0 / 2 + C0 * 0.4 + swing(0.46, 0);
+    const ab = (Math.floor(C0 * 0.4 * 60) + (k % deals) + 0.5) / 60;
+    return moment({
+        T: T0 + swing(0.12, 0.5 * Math.PI),
+        c: C0 + swing(1, Math.PI),
+        ut: 2 * (optics - ab),
+        ab,
+        turns: restingTurns().map((p, i) => p + Math.sign(z.fl[i][1]) * swing((8 * DPR) / (TAU * d * (p + 0.5)), ((i + 1) * TAU) / 4)),
+    });
+}
 
 // ---- the portrait, for the home card (and for where the line lies under it) ----
 let portrait = null;
@@ -129,35 +167,38 @@ function coreTurn(x, y, bx, by, dd) {
     return Math.min(Math.max(l / Math.max(total, 1e-3), 0), 1);
 }
 // the line's own coordinates at a plate point, as plate/ line_at
-function lineAt(px, py) {
+function lineAt(px, py, m) {
     const qx = px / mn, qy = py / mn, qr = Math.hypot(qx, qy), ang = Math.atan2(py, px);
     const pcx = px - core[0], pcy = py - core[1];
     const dist = coreDist(pcx, pcy, core[2], core[3]);
     const tn0 = tone(qx, qy + lift / mn);
     const dark = 0.06 + (tn0 + (0.1 - tn0) * framing - 0.06);
     const calm = smooth(0, 0.12, qr) + (smooth(0, 6 * d, dist) - smooth(0, 0.12, qr)) * framing;
-    const rr = dist + d * (eWarp * warpAt(qx, qy, qr, ang, T) * calm + eDisp * (dark - 0.5));
+    const rr = dist + d * (m.eWarp * warpAt(qx, qy, qr, ang, m.T) * calm + m.eDisp * (dark - 0.5));
     const an = coreTurn(pcx, pcy, core[2], core[3], Math.max(rr, 0));
     return [rr / d - an, an];
 }
 // where a light sits: on the centre of the line, p turns out (as plate/ point_on_line)
-function pointOnLine(p) {
+function pointOnLine(p, m) {
     const theta = ((((p % 1) + 1) % 1) - 0.5) * TAU, cx = Math.cos(theta), cy = Math.sin(theta);
     const edge = Math.abs(cx) * core[3] > Math.abs(cy) * core[2] ? core[2] / Math.max(Math.abs(cx), 1e-4) : core[3] / Math.max(Math.abs(cy), 1e-4);
     let r = edge + d * (p + 0.5);
     for (let i = 0; i < 24; i++) {
-        const [tt, an] = lineAt(core[0] + cx * r, core[1] + cy * r);
+        const [tt, an] = lineAt(core[0] + cx * r, core[1] + cy * r, m);
         const step = (p + 0.5 - (tt + an)) * d;
         r = Math.max(r + Math.min(Math.max(step, -0.5 * d), 0.5 * d), 0);
         if (Math.abs(step) < 0.05) break;
     }
     return [core[0] + cx * r, core[1] + cy * r];
 }
-function flares() {
+// the turn each light starts on (plate/ move_flares): clear of the face, at its seeded radius
+function restingTurns() {
     const first = Math.max((SUBJECT * 1.25 * mn + lift) / d, 4) * (1 - framing) + 4 * framing;
-    return z.fl.map(([radius, , phase, hue]) => {
-        const p = Math.max(Math.floor((radius * mn) / d), Math.ceil(first)) + phase / TAU;
-        const [x, y] = pointOnLine(p);
+    return z.fl.map(([radius, , phase]) => Math.max(Math.floor((radius * mn) / d), Math.ceil(first)) + phase / TAU);
+}
+function flares(m) {
+    return z.fl.map(([, , phase, hue], i) => {
+        const [x, y] = pointOnLine(m.turns[i], m);
         return [x, y, phase, hue];
     });
 }
@@ -238,24 +279,24 @@ const SLOT = {
     glass: 24, stops: 25,
 };
 
-function uniforms() {
+function uniforms(m) {
     const u = new Float32Array(30 * 4);
     const set = (i, v) => u.set(v, i * 4);
-    set(SLOT.rtd, [W, H, T, d]);
-    set(SLOT.line, [-3, eWarp, eDisp, 1]); // a lettering bias low enough that nothing is written
+    set(SLOT.rtd, [W, H, m.ut, d]);
+    set(SLOT.line, [-3, m.eWarp, m.eDisp, 1]); // a lettering bias low enough that nothing is written
     set(SLOT.script, [1, 0, HAIR, 2]);
     set(SLOT.sheet, [1, 1, 1, 1]); // the (empty) atlas
     set(SLOT.rows, [PAD, 1, 1, 0]); // zoom 1
     set(SLOT.view, [0, 0, -9, -9]); // no pan, nothing hovered
-    set(SLOT.wph, z.wph);
+    set(SLOT.wph, m.wph);
     set(SLOT.wfq, z.wfq);
     set(SLOT.mph, [z.mph[0], z.mph[1], z.mph[2], 0]);
     set(SLOT.optics, [1, CONTROLS.flare, CONTROLS.haze, CONTROLS.ab * CALM]);
-    set(SLOT.clocks, [DPR, z.ab_freq, clock * 0.4, 1]); // fully revealed
+    set(SLOT.clocks, [DPR, z.ab_freq, m.ab, 1]); // fully revealed
     set(SLOT.ab_ph, z.ab_ph);
     set(SLOT.pen, [z.ab_dir[0], z.ab_dir[1], framing, PEN_RAW * (penFactor(penWeight()) - penFactor(300))]);
     set(SLOT.frame, core);
-    const fl = flares();
+    const fl = flares(m);
     set(SLOT.fl0, fl[0]);
     set(SLOT.fl1, fl[1]);
     set(SLOT.fl2, fl[2]);
@@ -268,14 +309,13 @@ function uniforms() {
     return u;
 }
 
-async function draw() {
+async function setup() {
     const [vs, fsPlate, fsOptics] = await Promise.all(
         ["gen/vs.vert", "gen/plate.frag", "gen/optics.frag"].map(async (f) => (await fetch(f)).text()),
     );
     const plate = program(vs, fsPlate), optics = program(vs, fsOptics);
     const ubo = gl.createBuffer();
     gl.bindBuffer(gl.UNIFORM_BUFFER, ubo);
-    gl.bufferData(gl.UNIFORM_BUFFER, uniforms(), gl.STATIC_DRAW);
     for (const p of [plate, optics]) {
         const block = gl.getUniformBlockIndex(p, "U_block_0Fragment");
         if (block !== gl.INVALID_INDEX) gl.uniformBlockBinding(p, block, 0);
@@ -290,22 +330,31 @@ async function draw() {
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, engraved, 0);
     gl.bindVertexArray(gl.createVertexArray());
     gl.viewport(0, 0, W, H);
+    return { plate, optics, ubo, empty, face, engraved, fbo };
+}
+
+function draw(s, m) {
+    gl.bindBuffer(gl.UNIFORM_BUFFER, s.ubo);
+    gl.bufferData(gl.UNIFORM_BUFFER, uniforms(m), gl.STATIC_DRAW);
 
     // pass 1: the engraving
-    gl.useProgram(plate);
-    bindSampler(plate, "_group_0_binding_1_fs", 0, empty); // the title atlas: nothing written
-    bindSampler(plate, "_group_0_binding_3_fs", 1, empty); // its segment table
-    bindSampler(plate, "_group_0_binding_4_fs", 2, face);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, s.fbo);
+    gl.useProgram(s.plate);
+    bindSampler(s.plate, "_group_0_binding_1_fs", 0, s.empty); // the title atlas: nothing written
+    bindSampler(s.plate, "_group_0_binding_3_fs", 1, s.empty); // its segment table
+    bindSampler(s.plate, "_group_0_binding_4_fs", 2, s.face);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     // pass 2: the optics over it, to the canvas
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.useProgram(optics);
-    bindSampler(optics, "_group_1_binding_0_fs", 3, engraved);
-    bindSampler(optics, "_group_0_binding_4_fs", 2, face);
+    gl.useProgram(s.optics);
+    bindSampler(s.optics, "_group_1_binding_0_fs", 3, s.engraved);
+    bindSampler(s.optics, "_group_0_binding_4_fs", 2, s.face);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.finish();
 }
+
+const shown = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
 try {
     await document.fonts.load('400 64px "Newsreader"');
@@ -313,8 +362,15 @@ try {
     await document.fonts.load('500 15px "Inter"');
     await loadPortrait();
     setText();
-    await draw();
-    requestAnimationFrame(() => requestAnimationFrame(() => (window.__cardReady = true)));
+    const scene = await setup();
+    draw(scene, still());
+    // the loop's generator (scripts/og-loop.ts) asks for frame k of n, and waits for it to show
+    window.__cardLoop = (k, n, seconds, deals, pace) => {
+        draw(scene, turning(k, n, seconds, deals, pace));
+        return shown();
+    };
+    await shown();
+    window.__cardReady = true;
 } catch (err) {
     window.__cardError = String((err && err.message) || err);
     console.error("card:", err);

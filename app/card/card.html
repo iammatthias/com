@@ -12,6 +12,7 @@
     ?kind=icon                         the bare spiral, 192 square at 8x: the app icon (scripts/icons.mjs)
     &seed=<u32>                        the plate's variance (stable per page)
   window.__cardReady turns true once the fonts are in and the frame is drawn.
+  window.__cardLoop(k, n, seconds, deals, pace) then draws frame k of an n-frame loop (scripts/og-loop.ts).
 -->
 <style>
 @font-face { font-family: "Newsreader"; src: url(/fonts-v1/Newsreader.ttf); font-weight: 200 800; font-style: normal; }
