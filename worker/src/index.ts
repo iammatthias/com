@@ -17,7 +17,7 @@ import { notFoundPage, renderRoute, type SsrPage } from "./lib/ssr";
 import { shellResponse } from "./lib/shell";
 import { STATIC_PAGES } from "./pages/static";
 import { bindExecution, runInRequest } from "./lib/request-scope";
-import { etagMatches } from "./lib/http";
+import { byteRange, etagMatches } from "./lib/http";
 
 const ROUTES: Route[] = [
     ...mcpRoutes,
@@ -33,8 +33,9 @@ const ROUTES: Route[] = [
 /** A release build's code (worker/scripts/scope-build.ts): a new build never writes a URL an old one
  *  used, and a deploy carries the two builds before it (worker/scripts/ci-build.sh). */
 const HASHED_ASSET = /^\/b\/[0-9a-f]{16}\//;
-/** Files whose URL changes when they do: the versioned faces. */
-const IMMUTABLE_ASSET = /^\/fonts-v\d+\//;
+/** Files whose URL changes when they do: the versioned faces and the social loop (og:video). */
+const IMMUTABLE_ASSET = /^\/(?:fonts|og)-v\d+\//;
+const KEPT_FOR_A_YEAR = "public, max-age=31536000, immutable";
 
 /**
  * com's _headers puts this Link on every asset response, and the asset-config
@@ -76,6 +77,41 @@ function keepPrivate(res: Response): void {
 
 function withoutBody(res: Response): Response {
     return new Response(null, { status: res.status, statusText: res.statusText, headers: res.headers });
+}
+
+/**
+ * A file kept for a year, answered from the whole of it as the asset layer sent it: a HEAD gets
+ * its headers, and a Range the slice it asks for (a video's player asks in ranges; Safari's won't
+ * play without them), marked so the edge never keeps the slice in place of the whole.
+ */
+async function kept(ctx: Ctx, asset: Response): Promise<Response> {
+    const method = ctx.request.method;
+    const res = new Response(method === "HEAD" ? null : asset.body, asset);
+    if (method === "HEAD") await asset.body?.cancel();
+    if (asset.status !== 200) {
+        res.headers.set("Cache-Control", "no-store");
+        res.headers.set(EDGE_CACHE_HEADER, "no-store");
+        return res;
+    }
+    res.headers.set("Cache-Control", KEPT_FOR_A_YEAR);
+    res.headers.set("Accept-Ranges", "bytes");
+    const range = method === "GET" ? ctx.request.headers.get("Range") : null;
+    if (!range) return res;
+    const whole = await res.arrayBuffer();
+    const want = byteRange(range, whole.byteLength);
+    if (want.kind === "whole") return new Response(whole, res);
+    const headers = new Headers(res.headers);
+    headers.set(EDGE_CACHE_HEADER, "no-store");
+    // the slice is of the decoded body: no encoding the runtime would apply again
+    headers.delete("Content-Encoding");
+    if (want.kind === "none") {
+        headers.set("Content-Range", `bytes */${whole.byteLength}`);
+        headers.set("Cache-Control", "no-store");
+        return new Response(null, { status: 416, headers });
+    }
+    headers.set("Content-Range", `bytes ${want.start}-${want.end}/${whole.byteLength}`);
+    headers.set("Content-Length", String(want.end - want.start + 1));
+    return new Response(whole.slice(want.start, want.end + 1), { status: 206, headers });
 }
 
 function fetchShell(ctx: Ctx): Promise<Response> {
@@ -141,18 +177,7 @@ async function dispatch(ctx: Ctx, pathname: string): Promise<Response> {
         // a file the browser keeps for a year is fetched whole: a plain GET, never a HEAD, a range or a
         // conditional request, whose bodiless answer the edge would otherwise keep in its place
         const asset = await ctx.env.ASSETS.fetch(immutable ? new Request(ctx.url, { method: "GET" }) : ctx.request);
-        if (asset.status < 400) {
-            if (!immutable) return asset;
-            const res = new Response(method === "HEAD" ? null : asset.body, asset);
-            if (method === "HEAD") await asset.body?.cancel();
-            if (asset.status === 200) {
-                res.headers.set("Cache-Control", "public, max-age=31536000, immutable");
-            } else {
-                res.headers.set("Cache-Control", "no-store");
-                res.headers.set(EDGE_CACHE_HEADER, "no-store");
-            }
-            return res;
-        }
+        if (asset.status < 400) return immutable ? kept(ctx, asset) : asset;
         await asset.body?.cancel();
         // a build's file or a face that isn't there: no page to render, and nothing for the edge
         // to keep in place of the file a deploy will add

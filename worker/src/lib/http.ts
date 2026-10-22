@@ -50,6 +50,25 @@ export async function assetResponse(
     return new Response(bytes, { headers });
 }
 
+/** What a Range header asks of a body of `size` bytes: all of it (no range, or one this doesn't
+ *  serve: several at once, or malformed), one slice, or bytes the body doesn't have (a 416). */
+export type ByteRange = { kind: "whole" } | { kind: "part"; start: number; end: number } | { kind: "none" };
+
+/** RFC 9110 Range, single `bytes=` ranges only: `a-b`, `a-` and the suffix `-n`. */
+export function byteRange(header: string | null, size: number): ByteRange {
+    const m = header?.match(/^bytes=(\d*)-(\d*)$/);
+    if (!m || (m[1] === "" && m[2] === "")) return { kind: "whole" };
+    if (m[1] === "") {
+        const suffix = Number(m[2]);
+        if (suffix === 0 || size === 0) return { kind: "none" };
+        return { kind: "part", start: Math.max(size - suffix, 0), end: size - 1 };
+    }
+    const start = Number(m[1]);
+    const end = m[2] === "" ? size - 1 : Math.min(Number(m[2]), size - 1);
+    if (start >= size || start > end) return { kind: "none" };
+    return { kind: "part", start, end };
+}
+
 /** RFC 9110 If-None-Match against a strong ETag (weak comparison, as GET allows). */
 export function etagMatches(ifNoneMatch: string | null, etag: string | null): boolean {
     if (!ifNoneMatch || !etag) return false;
