@@ -9,7 +9,7 @@ use gpui::{
     App, Bounds, Hitbox, Pixels, Point, SharedString, TextLayout, TextSelectionKind, Window, px,
 };
 
-use super::model::{Fingerprint, Granularity, Join, Ordinal, Pos, Span, plain_text};
+use super::model::{Fingerprint, Granularity, Join, Ordinal, Pos, Span};
 
 /// A block's geometry, in window coordinates. `TextLayout` implements it; tests use a grid.
 pub trait BlockGeometry {
@@ -17,6 +17,8 @@ pub trait BlockGeometry {
     fn len(&self) -> usize;
     /// The caret closest to a point inside `bounds`.
     fn caret(&self, p: Point<Pixels>) -> usize;
+    /// The glyph under a point: None off the text, including beside a short wrapped line.
+    fn glyph(&self, p: Point<Pixels>) -> Option<usize>;
     /// The word or hard line under a point inside `bounds`.
     fn group(&self, p: Point<Pixels>, kind: TextSelectionKind) -> Range<usize>;
     /// One rect per visual line the byte range covers.
@@ -171,7 +173,11 @@ impl<G: BlockGeometry> Registry<G> {
         } else {
             (pos, pos)
         };
-        let link = b.links.iter().position(|l| l.contains(&pos.byte));
+        // a link is what the pointer is on, not the nearest caret: the right half of its last
+        // character is still the link, and the right half of the character before it is not
+        let link = g
+            .glyph(p)
+            .and_then(|byte| b.links.iter().position(|l| l.contains(&byte)));
         Hit {
             pos,
             word,
@@ -208,21 +214,32 @@ impl<G: BlockGeometry> Registry<G> {
         out
     }
 
+    /// The selection as plain text: each block's selected bytes, joined by what each block
+    /// puts before itself.
     pub fn text(&self, span: &Span) -> String {
         let (s, e) = span.span();
-        let texts: Vec<(Ordinal, String, Join)> = (s.block.0..=e.block.0)
-            .filter_map(|i| {
-                let b = self.blocks.get(i as usize)?;
-                let shaped = b.geometry.text();
-                let whole = span.range_in(Ordinal(i), shaped.len()) == Some(0..shaped.len());
-                let text = match (&b.source, whole) {
-                    (Some(source), true) => source.to_string(),
-                    _ => shaped,
-                };
-                Some((Ordinal(i), text, b.join))
-            })
-            .collect();
-        plain_text(span, texts.iter().map(|(o, t, j)| (*o, t.as_str(), *j)))
+        let mut out = String::new();
+        let mut first = true;
+        for i in s.block.0..=e.block.0 {
+            let Some(b) = self.blocks.get(i as usize) else {
+                break;
+            };
+            let shaped = b.geometry.text();
+            let piece = match (span.range_in(Ordinal(i), shaped.len()), &b.source) {
+                // the whole of a truncated block is the text it was given, not the shaped prefix
+                (Some(r), Some(source)) if r == (0..shaped.len()) => source.as_ref(),
+                (Some(r), _) => shaped.get(r).unwrap_or(""),
+                // an empty block inside the span keeps its join: an empty table cell is a tab
+                (None, _) if shaped.is_empty() && s.block.0 < i && i < e.block.0 => "",
+                (None, _) => continue,
+            };
+            if !first {
+                out.push_str(b.join.as_str());
+            }
+            first = false;
+            out.push_str(piece);
+        }
+        out
     }
 }
 
@@ -247,6 +264,12 @@ impl BlockGeometry for Live {
         };
         line.closest_byte_index_for_pixel_point(p - self.bounds.origin, self.layout.line_height())
             .unwrap_or_else(|edge| edge)
+    }
+
+    fn glyph(&self, p: Point<Pixels>) -> Option<usize> {
+        let line = self.layout.line_layouts().into_iter().next()?;
+        line.byte_index_for_pixel_point(p - self.bounds.origin, self.layout.line_height())
+            .ok()
     }
 
     fn group(&self, p: Point<Pixels>, kind: TextSelectionKind) -> Range<usize> {
@@ -303,6 +326,9 @@ pub(super) mod grid {
         fn caret(&self, p: Point<Pixels>) -> usize {
             let x = f32::from(p.x - self.origin.x) / self.cell;
             (x.round().max(0.) as usize).min(self.text.len())
+        }
+        fn glyph(&self, p: Point<Pixels>) -> Option<usize> {
+            self.bounds().contains(&p).then(|| self.col(p))
         }
         fn group(&self, p: Point<Pixels>, _: TextSelectionKind) -> Range<usize> {
             let c = self.col(p).min(self.text.len().saturating_sub(1));
@@ -393,6 +419,85 @@ mod tests {
         assert_eq!(h.word, (Pos::new(Ordinal(1), 6), Pos::new(Ordinal(1), 10)));
         assert_eq!(h.block, (Pos::new(Ordinal(1), 0), Pos::new(Ordinal(1), 15)));
         assert_eq!(h.group(Granularity::Char), (h.pos, h.pos));
+    }
+
+    #[test]
+    fn a_link_is_the_glyph_under_the_point_not_the_nearest_caret() {
+        let mut r = Registry::default();
+        r.begin();
+        let mut b = block(100., "see here now");
+        b.links = Rc::from(vec![4..8]);
+        r.push(b);
+        r.commit(None);
+        // the right half of the link's last character (byte 7, whose caret rounds to 8)
+        assert_eq!(r.hit(Ordinal(0), at(178., 105.)).link, Some(0));
+        // the right half of the space before it (byte 3, whose caret rounds to 4)
+        assert_eq!(r.hit(Ordinal(0), at(138., 105.)).link, None);
+        // beside the line, past its end
+        assert_eq!(r.hit(Ordinal(0), at(260., 105.)).link, None);
+    }
+
+    #[test]
+    fn text_joins_the_touched_blocks_with_what_each_puts_before_itself() {
+        let mut r = Registry::default();
+        r.begin();
+        r.push(block(100., "Hello world"));
+        let mut cell = block(130., "cell");
+        cell.join = Join::Tab;
+        r.push(cell);
+        r.push(block(160., "Third paragraph"));
+        r.push(block(190., "never"));
+        r.commit(None);
+        let span = |from: Pos, to: Pos| {
+            Span::new(
+                (from, to),
+                Granularity::Char,
+                super::super::model::Origin::Pointer,
+            )
+        };
+        assert_eq!(
+            r.text(&span(Pos::new(Ordinal(0), 6), Pos::new(Ordinal(2), 3))),
+            "world\tcell\n\nThi"
+        );
+        assert_eq!(
+            r.text(&span(Pos::new(Ordinal(0), 6), Pos::new(Ordinal(2), 0))),
+            "world\tcell",
+            "a span ending at a block's start takes none of it, and no join"
+        );
+    }
+
+    #[test]
+    fn a_whole_truncated_block_copies_its_source_and_an_empty_cell_keeps_its_tab() {
+        let mut r = Registry::default();
+        r.begin();
+        r.push(block(100., "a"));
+        let mut empty = block(130., "");
+        empty.join = Join::Tab;
+        r.push(empty);
+        let mut id = block(160., "bafk…ru4");
+        id.join = Join::Tab;
+        id.source = Some("bafkreicjqcawccrpwvuxtdjpis5fc46aqsadxmg2m4bexpqsspderz6ru4".into());
+        r.push(id);
+        r.commit(None);
+        let whole = Span::new(
+            r.whole().unwrap(),
+            Granularity::Block,
+            super::super::model::Origin::Pointer,
+        );
+        assert_eq!(
+            r.text(&whole),
+            "a\t\tbafkreicjqcawccrpwvuxtdjpis5fc46aqsadxmg2m4bexpqsspderz6ru4"
+        );
+        let part = Span::new(
+            (Pos::new(Ordinal(2), 0), Pos::new(Ordinal(2), 4)),
+            Granularity::Char,
+            super::super::model::Origin::Pointer,
+        );
+        assert_eq!(
+            r.text(&part),
+            "bafk",
+            "part of a truncated block is the shaped text"
+        );
     }
 
     #[test]

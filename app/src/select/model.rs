@@ -151,27 +151,6 @@ pub fn effective_click_count(
     }
 }
 
-/// The selection as plain text. `blocks` yields every block of the document in order with its
-/// join; only the ones the span touches contribute.
-pub fn plain_text<'a>(
-    span: &Span,
-    blocks: impl Iterator<Item = (Ordinal, &'a str, Join)>,
-) -> String {
-    let mut out = String::new();
-    let mut first = true;
-    for (ordinal, text, join) in blocks {
-        let Some(r) = span.range_in(ordinal, text.len()) else {
-            continue;
-        };
-        if !first {
-            out.push_str(join.as_str());
-        }
-        first = false;
-        out.push_str(text.get(r).unwrap_or(""));
-    }
-    out
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -214,23 +193,6 @@ mod tests {
             None,
             "a selection ending at a block's start takes none of it"
         );
-    }
-
-    #[test]
-    fn plain_text_joins_only_the_touched_blocks() {
-        let s = Span {
-            anchor: (p(0, 6), p(0, 6)),
-            focus: (p(2, 3), p(2, 3)),
-            granularity: Granularity::Char,
-            origin: Origin::Pointer,
-        };
-        let blocks = [
-            (Ordinal(0), "Hello world", Join::Paragraph),
-            (Ordinal(1), "cell", Join::Tab),
-            (Ordinal(2), "Third paragraph", Join::Paragraph),
-            (Ordinal(3), "never", Join::Paragraph),
-        ];
-        assert_eq!(plain_text(&s, blocks.iter().copied()), "world\tcell\n\nThi");
     }
 
     #[test]

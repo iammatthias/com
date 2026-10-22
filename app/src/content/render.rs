@@ -702,14 +702,12 @@ fn table(
             Align::Center => el.text_center(),
             _ => el,
         };
-        match r {
-            // copied, a row is a line of tab-separated cells
-            Some(r) => el.child(ctx.with_width(col_w - 16., |c| {
-                let join = if i == 0 { Join::Line } else { Join::Tab };
-                rich_joined(r, c, join, window, cx)
-            })),
-            None => el,
-        }
+        // copied, a row is a line of tab-separated cells, and an empty cell keeps its tab
+        let join = if i == 0 { Join::Line } else { Join::Tab };
+        el.child(ctx.with_width(col_w - 16., |c| match r {
+            Some(r) if !r.text.is_empty() => rich_joined(r, c, join, window, cx),
+            _ => c.sel.text("").join(join).into_any_element(),
+        }))
     };
     let mut grid = div().w(px(width)).flex().flex_col();
     if !head.is_empty() {
