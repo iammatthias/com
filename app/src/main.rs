@@ -20,6 +20,7 @@ mod prefs;
 mod route;
 mod search;
 mod seed;
+mod select;
 mod site;
 mod theme;
 
@@ -109,6 +110,7 @@ pub fn mark(what: &str) {
 
 fn start(cx: &mut App) {
     mark("fonts fetched");
+    select::init(cx);
     if let Err(e) = cx.text_system().add_fonts(fonts::all()) {
         route::plain_page();
         eprintln!("font load failed: {e:#}");

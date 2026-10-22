@@ -58,3 +58,7 @@ wgpu = { path = "shims/wgpu" }
 # no SVG renderer on the web (shims/usvg explains); desktop builds are unchanged
 usvg = { path = "shims/usvg" }
 resvg = { path = "shims/resvg" }
+
+[dev-dependencies]
+# gpui's test window, for the module tests that need a real layout pass
+gpui = { git = "https://github.com/gpui-ce/gpui-ce", rev = "43dacc568497c615c55a1ea0f77ab381c0d9865b", package = "gpui-ce", features = ["test-support"] }
