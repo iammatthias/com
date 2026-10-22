@@ -4,6 +4,7 @@
 # or deploys what this leaves in app/dist-deploy. Each step prints its time.
 set -euo pipefail
 cd "$(dirname "$0")/../.."
+root=$PWD
 t0=$(date +%s)
 mark() { echo "ci: $1 at $(( $(date +%s) - t0 ))s"; }
 # only a build of main writes a cache: a branch's would evict main's, which every publish reads
@@ -46,10 +47,14 @@ else
     command -v rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sSf --retry 3 --retry-all-errors https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none --no-modify-path
     mark "rust $(rustc --version)"
 
-    # the crates and their compiled artifacts, keyed on what decides them; nothing there is fine
-    ckey=$(cat Cargo.lock Cargo.toml rust-toolchain.toml | sha256sum | cut -c1-16)
+    # The crates and their compiled artifacts, keyed on what decides them (the vendored crates
+    # too: see the touch below); nothing there is fine. The .crate files and the git databases
+    # ride, not what cargo unpacks from them in seconds. The host target tree holds the proc
+    # macros and build scripts.
+    ckey=$({ cat Cargo.lock Cargo.toml rust-toolchain.toml; git rev-parse HEAD:app/vendor HEAD:app/shims; } | sha256sum | cut -c1-16)
     cargo_cache="com-build-cache/cargo-$ckey"
-    r2() { (cd ../worker && npx wrangler r2 object "$@" --remote); }
+    cached=".cargo/registry/index .cargo/registry/cache .cargo/git/db target/release target/wasm32-unknown-unknown/release"
+    r2() { (cd "$root/worker" && npx wrangler r2 object "$@" --remote); }
     parts=$(mktemp -d)
     # the parts, then a count that's only written once they all are
     restore() {
@@ -59,7 +64,8 @@ else
         for i in $(seq 0 $((n - 1))); do cat "$parts/$i"; done | tar -I zstd -xf - -C "$HOME"
     }
     upload() {
-        tar -C "$HOME" -cf - .cargo/registry .cargo/git target/release target/wasm32-unknown-unknown/release | zstd -T0 | split -d -b 250m - "$parts/part."
+        (cd "$HOME" && du -sh $cached | sed 's/^/ci: caching /')
+        tar -C "$HOME" -cf - $cached | zstd -T0 | split -d -b 250m - "$parts/part."
         n=$(ls "$parts" | wc -l)
         for i in $(seq 0 $((n - 1))); do r2 put "$cargo_cache.tar.zst.$i" --file "$parts/part.$(printf %02d "$i")" || return 1; done
         echo "$n" > "$parts/n" && r2 put "$cargo_cache.parts" --file "$parts/n"
@@ -74,6 +80,10 @@ else
         mark "no cargo cache $ckey"
     fi
     rm -rf "${parts:?}"/*
+    # cargo takes a path dependency as changed when a source is newer than its last build, and a
+    # clone's files all are: dated back, so the cache's build of gpui-ce (it depends on the shims)
+    # stands. A change to these files changes the key above, so it's never missed.
+    find vendor shims -type f -exec touch -d 2000-01-01 {} +
 
     trunk --version 2>/dev/null | grep -q "$TRUNK" || curl -sSfL --retry 3 --retry-all-errors "https://github.com/trunk-rs/trunk/releases/download/v$TRUNK/trunk-x86_64-unknown-linux-gnu.tar.gz" | tar xz -C "$cache/bin"
     naga --version 2>/dev/null | grep -q "$NAGA" || cargo install naga-cli --version "$NAGA" --locked --quiet --force --root "$cache"
@@ -99,7 +109,7 @@ else
     fi
     # TEMPORARY: deploy-speed uploads too, to prove the restore on a branch; the next commit removes it
     if { [ $main = 1 ] || [ "${WORKERS_CI_BRANCH:-}" = deploy-speed ]; } && [ $restored = 0 ]; then
-        (cd app && upload) && mark "cargo cache $ckey uploaded, $(du -sh "$parts" | cut -f1) in $n parts" \
+        upload && mark "cargo cache $ckey uploaded, $(du -sh "$parts" | cut -f1) in $n parts" \
             || echo "ci: the cargo cache upload failed; the next app build compiles from crates.io"
     fi
     rm -rf "$parts"
