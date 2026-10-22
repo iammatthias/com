@@ -23,6 +23,25 @@ const buildModuleTries = new Map();
 // the waits before asking again for a module that didn't load, then it's forgotten
 const MODULE_RETRY_MS = [400, 1600];
 
+let buildGoneChecked = false;
+/** A deploy dropped the build this page booted with (a tab open across more deploys than
+ *  ci-build.sh keeps) when one of its files under /b/<id>/ is a 404: only the new page can draw
+ *  what it named. One reload a session, so a build that's missing for good can't loop. */
+async function reloadIfBuildGone(url) {
+    if (buildGoneChecked || !/^\/b\/[0-9a-f]{16}\//.test(new URL(url).pathname)) return;
+    buildGoneChecked = true;
+    try {
+        if (sessionStorage.getItem("burin.gone")) return;
+        if ((await fetch(url, { method: "HEAD", cache: "no-store" })).status !== 404) return;
+        sessionStorage.setItem("burin.gone", "1");
+        // past the browser's cache, which may hand a reload the page it has
+        await (await fetch(location.href, { cache: "reload" })).arrayBuffer();
+    } catch {
+        return;
+    }
+    location.reload();
+}
+
 /** The module at `path` in this build, imported once; one that never loads isn't kept, so the
  *  next ask starts over. A retry is a fresh fetch only for a module that imports nothing (a
  *  failed dependency stays failed in Chromium and WebKit): diagrams/build.ts checks its own. */
@@ -38,7 +57,10 @@ function buildModule(path) {
                 return await import(tries ? `${url}?retry=${tries}` : url);
             } catch (e) {
                 // the one error that's the network's, not the module's: worth another try later
-                if (attempt >= MODULE_RETRY_MS.length) throw Object.assign(e instanceof Error ? e : new Error(String(e)), { code: "load" });
+                if (attempt >= MODULE_RETRY_MS.length) {
+                    reloadIfBuildGone(buildUrl(path));
+                    throw Object.assign(e instanceof Error ? e : new Error(String(e)), { code: "load" });
+                }
                 await new Promise((wake) => setTimeout(wake, MODULE_RETRY_MS[attempt]));
             }
         }
