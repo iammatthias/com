@@ -776,6 +776,9 @@ impl Site {
                     .cached(StyleRefinement::default().size_full()),
             )
         });
+        if leaving.is_none() {
+            self.page.update(cx, |page, cx| page.hidden(cx));
+        }
         let panel = self.drawer_cards(true, theme, window, cx);
         self.root(theme, cx)
             .child(plate)
@@ -872,6 +875,7 @@ impl Site {
     ) -> gpui::AnyElement {
         let mut root = self.root(theme, cx);
         if self.route == Route::Home {
+            self.page.update(cx, |page, cx| page.hidden(cx));
             if let Some(index) = self.index.as_ref() {
                 root = root.child(home::list(index, &self.home, &self.nav, theme, window));
             }

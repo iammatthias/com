@@ -184,6 +184,22 @@ impl Selection {
         }
     }
 
+    /// The document is off the screen: forget it, so a keystroke cannot select or copy what is
+    /// no longer drawn. The scope cannot tell on its own, since a cached view replays without
+    /// prepainting, so the app says so from where it stops drawing the document.
+    pub fn reset(&self, cx: &mut App) {
+        {
+            let mut s = self.0.borrow_mut();
+            if s.registry.is_empty() && s.selection.is_none() {
+                return;
+            }
+            s.registry = Registry::default();
+            s.gesture = Gesture::Idle;
+            s.handles = [None, None];
+        }
+        self.clear(cx);
+    }
+
     /// The scope whose children are prepainting right now.
     pub(super) fn current() -> Option<Selection> {
         CURRENT.with(|c| c.borrow().clone())

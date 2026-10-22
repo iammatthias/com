@@ -7,7 +7,22 @@ use wasm_bindgen::prelude::Closure;
 
 use super::scope::Selection;
 
-fn selected_text() -> Option<String> {
+/// The selection a copy command should take, unless a DOM field (an app's own input) has the
+/// focus and a selection of its own: that copy is the field's. gpui's IME textarea is always
+/// empty, so it never claims one.
+fn selected_text(document: &web_sys::Document) -> Option<String> {
+    let focused = document.active_element()?;
+    let field_selected = |start: Option<u32>, end: Option<u32>| start != end;
+    let own = if let Some(input) = focused.dyn_ref::<web_sys::HtmlInputElement>() {
+        field_selected(input.selection_start().ok()?, input.selection_end().ok()?)
+    } else if let Some(area) = focused.dyn_ref::<web_sys::HtmlTextAreaElement>() {
+        field_selected(area.selection_start().ok()?, area.selection_end().ok()?)
+    } else {
+        false
+    };
+    if own {
+        return None;
+    }
     Selection::active()?.selected_text()
 }
 
@@ -17,13 +32,15 @@ pub fn install() {
     };
     // a cancelled beforecopy is what enables the Copy menu item while nothing in the DOM is
     // selected
-    let before = Closure::<dyn FnMut(web_sys::Event)>::new(|e: web_sys::Event| {
-        if selected_text().is_some() {
+    let doc = document.clone();
+    let before = Closure::<dyn FnMut(web_sys::Event)>::new(move |e: web_sys::Event| {
+        if selected_text(&doc).is_some() {
             e.prevent_default();
         }
     });
-    let copy = Closure::<dyn FnMut(web_sys::Event)>::new(|e: web_sys::Event| {
-        let Some(text) = selected_text() else {
+    let doc = document.clone();
+    let copy = Closure::<dyn FnMut(web_sys::Event)>::new(move |e: web_sys::Event| {
+        let Some(text) = selected_text(&doc) else {
             return;
         };
         let Some(data) = e

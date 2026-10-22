@@ -133,6 +133,28 @@ const mid = (r) => (r.top + r.bottom) / 2;
         check(text.includes(needle), `select all takes in ${what}`);
     }
 
+    // with page text selected, a copy inside the find box is still the box's own
+    await page.keyboard.press("Slash");
+    await page.waitForTimeout(500);
+    await page.keyboard.type("pizza", { delay: 40 });
+    await page.keyboard.press(`${mod}+a`);
+    await page.keyboard.press(`${mod}+c`);
+    await page.waitForTimeout(300);
+    text = await page.evaluate(() => navigator.clipboard.readText());
+    const typed = await page.evaluate(() => document.querySelector("input[aria-label='Find a title']")?.value);
+    check(typed.length > 2 && text === typed, `a copy inside the find box takes the box's text (${JSON.stringify(text.slice(0, 20))} for ${JSON.stringify(typed)})`);
+    await page.keyboard.press("Escape");
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(500);
+
+    // on the home plate the page is gone, and so is anything to select
+    await seed();
+    await page.mouse.click(57, 37);
+    await page.waitForTimeout(4000);
+    await page.keyboard.press(`${mod}+a`);
+    text = await copy();
+    check(path(page) === "/" && text === "sentinel", `home has nothing to select or copy (${JSON.stringify(text.slice(0, 20))})`);
+
     check(errors.length === 0, `no page errors ${errors.join(" | ")}`);
     await browser.close();
 }

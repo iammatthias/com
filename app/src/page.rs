@@ -96,6 +96,11 @@ impl Page {
         }
     }
 
+    /// The page is off the screen (the plate shows alone): its selection goes with it.
+    pub fn hidden(&mut self, cx: &mut Context<Self>) {
+        self.selection.reset(cx);
+    }
+
     pub fn ready(&self) -> bool {
         !self.pending && !matches!(self.load, Load::Loading)
     }
