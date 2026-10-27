@@ -52,6 +52,31 @@ struct Registry {
 
 thread_local! {
     static REG: RefCell<Registry> = RefCell::new(Registry::default());
+    /// each clip's own width over height, by source, once its `<video>` has read it
+    static ASPECTS: RefCell<HashMap<String, f32>> = RefCell::new(HashMap::new());
+    static RESIZED: crate::site::signal::Signal<()> = const { crate::site::signal::Signal::new() };
+}
+
+/// A signal whenever a clip's own size comes in, so its figure takes that shape.
+pub fn subscribe() -> futures::channel::mpsc::UnboundedReceiver<()> {
+    RESIZED.with(|r| r.subscribe())
+}
+
+/// The clip's width over height, from the video itself, once it is known.
+pub fn aspect(src: &str) -> Option<f32> {
+    ASPECTS.with(|a| a.borrow().get(src).copied())
+}
+
+#[cfg_attr(not(target_family = "wasm"), allow(dead_code))]
+fn learned(src: &str, aspect: f32) {
+    let changed = ASPECTS.with(|a| {
+        a.borrow_mut()
+            .insert(src.to_string(), aspect)
+            .is_none_or(|old| (old - aspect).abs() > 0.001)
+    });
+    if changed {
+        RESIZED.with(|r| r.send(()));
+    }
 }
 
 /// A new content render is starting: clips it doesn't place again will hide.
@@ -128,7 +153,7 @@ mod web {
     use wasm_bindgen::JsValue;
     use wasm_bindgen::closure::Closure;
 
-    use super::{Mode, REG};
+    use super::{Mode, REG, learned};
 
     pub struct Video {
         el: web_sys::HtmlVideoElement,
@@ -274,9 +299,14 @@ mod web {
                     e.el = create(e.poster.as_deref(), e.mode);
                 }
                 let Some(v) = e.el.as_mut() else { continue };
-                if want && !v.src_set {
+                // a figure's clip loads even before it plays: its own size is the figure's shape
+                if (want || e.mode == Mode::Auto) && !v.src_set {
                     v.el.set_src(&e.src);
                     v.src_set = true;
+                }
+                let (w, h) = (v.el.video_width(), v.el.video_height());
+                if e.mode == Mode::Auto && w > 0 && h > 0 {
+                    learned(&e.src, w as f32 / h as f32);
                 }
                 let paused = v.el.paused();
                 if want && paused {
@@ -295,10 +325,16 @@ mod web {
                         // the still stays until the motion is actually running
                         Mode::Live => want && has_frame && !paused,
                     };
+                // a clip that is the figure is never cropped: its box can be a guess (blobs may not
+                // know a video's size), so it letterboxes. A live tile fills its still's frame.
+                let fit = match e.mode {
+                    Mode::Auto => "contain",
+                    Mode::Live => "cover",
+                };
                 let css = match (visible, inset) {
                     (true, Some([t, rt, b, l])) => format!(
                         // moved by transform, not left/top: scrolling then never asks the browser for layout
-                        "position:absolute;left:0;top:0;transform:translate3d({:.1}px,{:.1}px,0);will-change:transform;width:{:.1}px;height:{:.1}px;object-fit:cover;\
+                        "position:absolute;left:0;top:0;transform:translate3d({:.1}px,{:.1}px,0);will-change:transform;width:{:.1}px;height:{:.1}px;object-fit:{fit};\
                          pointer-events:none;z-index:2;margin:0;border:0;background:transparent;\
                          clip-path:inset({t:.1}px {rt:.1}px {b:.1}px {l:.1}px)",
                         e.rect.x, e.rect.y, e.rect.w, e.rect.h

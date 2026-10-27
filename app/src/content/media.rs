@@ -293,7 +293,11 @@ pub fn moving(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
 pub fn video(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
     let theme = ctx.theme;
     let m = meta(src, ctx);
-    let height = (width / m.map(Media::aspect).unwrap_or(16. / 9.)).round();
+    // the clip's own shape once its <video> has read it; until then blobs' size, or a guess
+    let aspect = dom_video::aspect(&original_url(src))
+        .or_else(|| m.and_then(Media::known_aspect))
+        .unwrap_or(16. / 9.);
+    let height = (width / aspect).round();
     let poster = m.and_then(|m| m.thumb_cid.as_deref()).map(|cid| {
         chosen_url(ctx, cid, || {
             api::img_url(cid, preset(width, ctx.scale), ctx.media.get(cid))
@@ -316,7 +320,7 @@ pub fn video(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
                 .relative()
                 .overflow_hidden()
                 .when_some(poster.clone(), |d, p| {
-                    d.child(picture(p, |i| i.size_full().object_fit(ObjectFit::Cover)))
+                    d.child(picture(p, |i| i.size_full().object_fit(ObjectFit::Contain)))
                 })
                 .child(clip_probe(
                     key,

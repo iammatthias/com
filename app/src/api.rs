@@ -149,9 +149,14 @@ pub struct Media {
 
 impl Media {
     pub fn aspect(&self) -> f32 {
+        self.known_aspect().unwrap_or(4.0 / 3.0)
+    }
+
+    /// Width over height, when blobs measured it (it doesn't for video).
+    pub fn known_aspect(&self) -> Option<f32> {
         match (self.width, self.height) {
-            (Some(w), Some(h)) if w > 0 && h > 0 => w as f32 / h as f32,
-            _ => 4.0 / 3.0,
+            (Some(w), Some(h)) if w > 0 && h > 0 => Some(w as f32 / h as f32),
+            _ => None,
         }
     }
 

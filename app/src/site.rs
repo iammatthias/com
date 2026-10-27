@@ -144,6 +144,8 @@ impl Site {
             ),
             // a web component in the page changed height: the column makes room
             pump(window, cx, crate::dom_embed::subscribe(), redraw_page),
+            // a clip read its own size: its figure takes that shape
+            pump(window, cx, crate::dom_video::subscribe(), redraw_page),
         ];
 
         let mut site = Self {
