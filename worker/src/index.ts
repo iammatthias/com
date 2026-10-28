@@ -117,12 +117,40 @@ async function kept(ctx: Ctx, asset: Response): Promise<Response> {
 }
 
 /**
- * A page's own social loop: the blob its card's sig maps to (ogv:v1:<sig>, written by
- * app/scripts/og-entries.ts). Until it is drawn, or while blobs can't answer, the shared loop
- * stands in, kept only briefly so the page's own replaces it once it's there.
+ * The blob a page's loop is pinned as in Farfield's blobs (ogv:v1:<sig>, pinned by
+ * app/scripts/og-entries.ts), kept in KV once known. A pin can move to a new blob, so a lookup is
+ * kept an hour; no pin yet is asked about again next time.
+ */
+async function loopCid(ctx: Ctx, sig: string): Promise<string | null> {
+    const label = `ogv:v1:${sig}`;
+    const known = await ctx.env.CONTENT_CACHE?.get(label, { cacheTtl: 300 });
+    if (known) return known;
+    try {
+        const res = await fetch(`https://blobs.farfield.systems/pins/${label}`, {
+            headers: { "User-Agent": "iammatthias.com/1.0 (+https://iammatthias.com)" },
+            signal: AbortSignal.timeout(3000),
+        });
+        if (res.status !== 200) {
+            await res.body?.cancel();
+            return null;
+        }
+        const { cid } = (await res.json()) as { cid?: string };
+        if (!cid) return null;
+        const kv = ctx.env.CONTENT_CACHE;
+        if (kv) ctx.exec.waitUntil(kv.put(label, cid, { expirationTtl: 3600 }));
+        return cid;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * A page's own social loop: the blob its card's sig is pinned as. Until it is drawn, or while
+ * blobs can't answer, the shared loop stands in, kept only briefly so the page's own replaces it
+ * once it's there.
  */
 async function entryLoop(ctx: Ctx, sig: string): Promise<Response> {
-    const cid = await ctx.env.CONTENT_CACHE?.get(`ogv:v1:${sig}`, { cacheTtl: 300 });
+    const cid = await loopCid(ctx, sig);
     if (cid) {
         const own = await proxyBlob(cid, ctx.request);
         if (own.ok || own.status === 206 || own.status === 416) return own;
