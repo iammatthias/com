@@ -12,7 +12,8 @@
 // What KV names already is skipped: run it again after publishing and only new or edited entries
 // (their card, so their sig, changed) are drawn. A loop whose seam doesn't pass isn't stored.
 // Drawn loops are kept in --keep (default .og-loops/) as <sig>.mp4, so a rerun never draws one
-// twice; --draw-only stops there. Storing needs BLOBS_WRITE_KEY (a blobs key with write scope) in
+// twice; --draw-only stops there. Each is pinned in blobs under its KV key as it is stored. Storing
+// needs blobs with pins (POST /blobs?pin=), BLOBS_WRITE_KEY (a blobs key with write scope) in
 // the environment or worker/.dev.vars, and wrangler logged in; drawing needs what og-loop.ts needs.
 
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
@@ -108,10 +109,17 @@ async function draw(e: Entry): Promise<boolean> {
     return ok;
 }
 
+// pinned under its KV key as it's stored, so blobs' hygiene counts it used and "Delete unused"
+// passes it over; a blobs without pins answers without "pin", and then nothing is named
 async function store(e: Entry): Promise<boolean> {
-    const res = await fetch(BLOBS, { method: "POST", headers: { "X-API-Key": key, "Content-Type": "video/mp4", "User-Agent": UA }, body: Bun.file(drawn(e)) });
-    const meta = res.ok ? ((await res.json()) as { cid?: string; mime?: string }) : null;
-    if (!meta?.cid || !meta.mime?.startsWith("video/")) {
+    const label = PREFIX + e.sig;
+    const res = await fetch(`${BLOBS}?pin=${encodeURIComponent(label)}`, {
+        method: "POST",
+        headers: { "X-API-Key": key, "Content-Type": "video/mp4", "User-Agent": UA },
+        body: Bun.file(drawn(e)),
+    });
+    const meta = res.ok ? ((await res.json()) as { cid?: string; mime?: string; pin?: string }) : null;
+    if (!meta?.cid || !meta.mime?.startsWith("video/") || meta.pin !== label) {
         console.log(`FAIL ${e.path}: blobs answered ${res.status} ${meta ? JSON.stringify(meta).slice(0, 200) : (await res.text()).slice(0, 200)}`);
         return false;
     }
