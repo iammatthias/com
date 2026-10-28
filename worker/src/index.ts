@@ -4,7 +4,7 @@ import { mcpRoutes } from "./routes/mcp";
 import { wellKnownRoutes } from "./routes/wellknown";
 import { apiFallbackRoute, apiRoutes } from "./routes/api";
 import { graphqlRoutes } from "./routes/graphql";
-import { appRoutes } from "./routes/app";
+import { appRoutes, proxyBlob } from "./routes/app";
 import { ogRoutes } from "./routes/og";
 import { setRuntimeEnv } from "./lib/runtime-env";
 import { agentModeRedirect, markdownTwin, redirectFor, sameOriginPath } from "./lib/redirects";
@@ -15,6 +15,8 @@ import { AGENT_LINKS, SECURITY_HEADERS, markdownByAgentOnly, wantsMarkdown } fro
 import { EDGE_CACHE_HEADER, setShellCacheHeaders } from "./lib/cache";
 import { notFoundPage, renderRoute, type SsrPage } from "./lib/ssr";
 import { shellResponse } from "./lib/shell";
+import { ENTRY_LOOP_PATH } from "./lib/og-card";
+import { OG_VIDEO } from "./lib/seo";
 import { STATIC_PAGES } from "./pages/static";
 import { bindExecution, runInRequest } from "./lib/request-scope";
 import { byteRange, etagMatches } from "./lib/http";
@@ -114,6 +116,24 @@ async function kept(ctx: Ctx, asset: Response): Promise<Response> {
     return new Response(whole.slice(want.start, want.end + 1), { status: 206, headers });
 }
 
+/**
+ * A page's own social loop: the blob its card's sig maps to (ogv:v1:<sig>, written by
+ * app/scripts/og-entries.ts). Until it is drawn, or while blobs can't answer, the shared loop
+ * stands in, kept only briefly so the page's own replaces it once it's there.
+ */
+async function entryLoop(ctx: Ctx, sig: string): Promise<Response> {
+    const cid = await ctx.env.CONTENT_CACHE?.get(`ogv:v1:${sig}`, { cacheTtl: 300 });
+    if (cid) {
+        const own = await proxyBlob(cid, ctx.request);
+        if (own.ok || own.status === 206 || own.status === 416) return own;
+        await own.body?.cancel();
+    }
+    const shared = await kept(ctx, await ctx.env.ASSETS.fetch(new Request(new URL(OG_VIDEO.path, ctx.url), { method: "GET" })));
+    shared.headers.set("Cache-Control", "public, max-age=300");
+    shared.headers.set(EDGE_CACHE_HEADER, "no-store");
+    return shared;
+}
+
 function fetchShell(ctx: Ctx): Promise<Response> {
     return ctx.env.ASSETS.fetch(new Request(new URL("/", ctx.url)));
 }
@@ -203,6 +223,8 @@ async function handle(request: Request, env: Env, exec: ExecutionContext): Promi
         const res = await dispatch(ctx, pathname);
         return secure(new Response(res.body, res));
     }
+    const loop = isRead ? pathname.match(ENTRY_LOOP_PATH) : null;
+    if (loop) return secure(await entryLoop(ctx, loop[1]));
     // the social card's own page (app/card), for the og Worker's browser: files, never a route
     if (pathname.startsWith("/card/")) {
         const res = await env.ASSETS.fetch(request);

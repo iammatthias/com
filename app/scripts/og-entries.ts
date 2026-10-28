@@ -1,0 +1,133 @@
+// Every entry's own social loop: its card (title, section, seed) over the flowing plate, drawn by
+// og-loop.ts, stored in Farfield's blobs, and named in the site's KV as ogv:v1:<sig> → cid. The
+// Worker serves it at /og-video/v1/<sig>.mp4, the address each entry's og:video names, and sends
+// the shared loop for an entry not drawn yet. A loop is an ~70 s render, too slow to draw when a
+// link is first shared, so they are drawn here, ahead of time.
+//
+//   bun scripts/og-entries.ts [--site https://iammatthias.com] [--jobs 3] [--only <path>] [--dry]
+//                             [--keep <dir>] [--draw-only]
+//
+// Which entries, and their cards, come from the live site: each page in the sitemap but the tag
+// pages, and the sig and card query in its og:image, so a loop matches its card by construction.
+// What KV names already is skipped: run it again after publishing and only new or edited entries
+// (their card, so their sig, changed) are drawn. A loop whose seam doesn't pass isn't stored.
+// Drawn loops are kept in --keep (default .og-loops/) as <sig>.mp4, so a rerun never draws one
+// twice; --draw-only stops there. Storing needs BLOBS_WRITE_KEY (a blobs key with write scope) in
+// the environment or worker/.dev.vars, and wrangler logged in; drawing needs what og-loop.ts needs.
+
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const app = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const worker = resolve(app, "../worker");
+// the site's CONTENT_CACHE (worker/wrangler.toml)
+const NAMESPACE = "54d1e62d078b4fb88d5434f77ef5c21a";
+const PREFIX = "ogv:v1:";
+const BLOBS = "https://blobs.farfield.systems/blobs";
+const UA = "iammatthias.com og-entries (+https://iammatthias.com)";
+
+function flag(name: string, fallback: string): string {
+    const i = process.argv.indexOf(`--${name}`);
+    return i > 0 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
+}
+const site = flag("site", "https://iammatthias.com").replace(/\/$/, "");
+const jobs = Number(flag("jobs", "3"));
+const only = flag("only", "");
+const dry = process.argv.includes("--dry");
+const drawOnly = process.argv.includes("--draw-only");
+const keepDir = resolve(app, flag("keep", ".og-loops"));
+mkdirSync(keepDir, { recursive: true });
+
+function writeKey(): string {
+    if (process.env.BLOBS_WRITE_KEY) return process.env.BLOBS_WRITE_KEY;
+    const vars = existsSync(join(worker, ".dev.vars")) ? readFileSync(join(worker, ".dev.vars"), "utf8") : "";
+    const key = vars.match(/^BLOBS_WRITE_KEY\s*=\s*"?([^"\n]+)"?/m)?.[1];
+    if (!key) throw new Error("no BLOBS_WRITE_KEY in the environment or worker/.dev.vars: a blobs key with write scope");
+    return key;
+}
+const key = drawOnly || dry ? "" : writeKey();
+
+function wrangler(args: string[]): string {
+    const p = Bun.spawnSync(["./node_modules/.bin/wrangler", ...args], { cwd: worker, stdout: "pipe", stderr: "pipe" });
+    if (p.exitCode !== 0) throw new Error(`wrangler ${args[0]} ${args[1]} failed:\n${p.stderr.toString()}`);
+    return p.stdout.toString();
+}
+
+type Entry = { path: string; sig: string; query: URLSearchParams };
+
+async function entry(path: string): Promise<Entry | null> {
+    const html = await (await fetch(site + path)).text();
+    const image = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1]?.replaceAll("&amp;", "&");
+    const m = image && new URL(image).pathname.match(/^\/og\/([0-9a-f]{24})\.jpg$/);
+    if (!image || !m) return null;
+    const query = new URL(image).searchParams;
+    return query.get("kind") === "page" ? { path, sig: m[1], query } : null;
+}
+
+const sitemap = await (await fetch(`${site}/sitemap.xml`)).text();
+const paths = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)]
+    .map((m) => new URL(m[1]).pathname)
+    .filter((p) => (only ? p === only : !p.startsWith("/tags")));
+const entries: Entry[] = [];
+for (const path of paths) {
+    const e = await entry(path);
+    if (e) entries.push(e);
+}
+const named = drawOnly
+    ? new Set<string>()
+    : new Set((JSON.parse(wrangler(["kv", "key", "list", "--namespace-id", NAMESPACE, "--remote", "--prefix", PREFIX])) as { name: string }[]).map((k) => k.name));
+const missing = entries.filter((e) => !named.has(PREFIX + e.sig));
+const drawn = (e: Entry) => join(keepDir, `${e.sig}.mp4`);
+console.log(`${entries.length} entries: ${entries.length - missing.length} stored, ${missing.length} to store, ${missing.filter((e) => !existsSync(drawn(e))).length} of them to draw`);
+if (dry) {
+    for (const e of missing) console.log(`  ${e.path} ${e.sig}${existsSync(drawn(e)) ? " (drawn)" : ""}`);
+    process.exit(0);
+}
+
+async function draw(e: Entry): Promise<boolean> {
+    if (existsSync(drawn(e))) return true;
+    const work = mkdtempSync(join(tmpdir(), "og-entry-"));
+    const query = new URLSearchParams(e.query);
+    const seed = query.get("seed") ?? "0";
+    query.delete("seed");
+    const out = join(work, "loop.mp4");
+    const started = Date.now();
+    const p = Bun.spawn(["bun", "scripts/og-loop.ts", "--card", query.toString(), "--seed", seed, "--out", out, "--work", work], {
+        cwd: app,
+        stdout: "pipe",
+        stderr: "pipe",
+    });
+    const [log, code] = await Promise.all([new Response(p.stdout).text(), p.exited]);
+    const ok = code === 0;
+    if (ok) copyFileSync(out, drawn(e));
+    const seam = log.trim().split("\n").at(-1) ?? "";
+    console.log(ok ? `drew ${e.path}: ${(Bun.file(out).size / 1e6).toFixed(2)} MB in ${Math.round((Date.now() - started) / 1000)} s` : `FAIL ${e.path}: ${seam || (await new Response(p.stderr).text()).slice(-300)}`);
+    rmSync(work, { recursive: true, force: true });
+    return ok;
+}
+
+async function store(e: Entry): Promise<boolean> {
+    const res = await fetch(BLOBS, { method: "POST", headers: { "X-API-Key": key, "Content-Type": "video/mp4", "User-Agent": UA }, body: Bun.file(drawn(e)) });
+    const meta = res.ok ? ((await res.json()) as { cid?: string; mime?: string }) : null;
+    if (!meta?.cid || !meta.mime?.startsWith("video/")) {
+        console.log(`FAIL ${e.path}: blobs answered ${res.status} ${meta ? JSON.stringify(meta).slice(0, 200) : (await res.text()).slice(0, 200)}`);
+        return false;
+    }
+    wrangler(["kv", "key", "put", "--namespace-id", NAMESPACE, "--remote", PREFIX + e.sig, meta.cid]);
+    console.log(`stored ${e.path} ${e.sig} → ${meta.cid}`);
+    return true;
+}
+
+const failed: string[] = [];
+const queue = [...missing];
+await Promise.all(
+    Array.from({ length: jobs }, async () => {
+        for (let e = queue.shift(); e; e = queue.shift()) {
+            if (!(await draw(e)) || (!drawOnly && !(await store(e)))) failed.push(e.path);
+        }
+    }),
+);
+console.log(failed.length ? `${failed.length} not done: ${failed.join(" ")}` : drawOnly ? "every entry drawn" : "every entry stored");
+process.exit(failed.length ? 1 : 0);

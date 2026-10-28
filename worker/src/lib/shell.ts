@@ -1,5 +1,5 @@
 import { fullTitle, headHtml } from "./seo";
-import { cardImageUrl } from "./og-card";
+import { cardImageUrl, cardVideoUrl } from "./og-card";
 import type { SsrPage } from "./ssr";
 import { etagFor } from "./http";
 
@@ -83,7 +83,7 @@ export async function shellResponse(
     pathname = "/",
     origin = "https://iammatthias.com",
 ): Promise<Response> {
-    const card = await cardImageUrl(page.head, origin);
+    const [card, video] = await Promise.all([cardImageUrl(page.head, origin), cardVideoUrl(page.head, origin)]);
     // a deep link's own payload, fetched with the app rather than after it
     const path = pathname.replace(/\/+$/, "") || "/";
     const routePreload =
@@ -104,7 +104,7 @@ export async function shellResponse(
         })
         .on("head", {
             element(el) {
-                el.append(`${headHtml(page.head, card)}\n${SHELL_CSS}\n${appPreloads(path)}${routePreload}`, { html: true });
+                el.append(`${headHtml(page.head, card, video)}\n${SHELL_CSS}\n${appPreloads(path)}${routePreload}`, { html: true });
             },
         })
         .on("body", {

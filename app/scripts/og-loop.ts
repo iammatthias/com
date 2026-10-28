@@ -6,6 +6,7 @@
 //
 //   bun scripts/og-loop.ts [--seconds 8] [--fps 24] [--seed 0x5eed1234] [--flow 2] [--grain 0]
 //                          [--deals 4] [--pace 0] [--qp 27] [--out assets/og-v1/loop.mp4] [--work <dir>]
+//                          [--card "kind=page&title=…"]   a page's card instead of the home plate
 //
 // The motion is the spiral flowing. card.js `turning` walks the line's phase (plate.wgsl mph.w)
 // through `flow` whole turns over the loop, each turn carrying the line one spacing outward and
@@ -112,7 +113,9 @@ const server = Bun.serve({
 // ---- the frames: 0..n, the last one the proof that the loop closes ----
 const browser = await chromium.launch();
 const page = await (await browser.newContext({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 })).newPage();
-await page.goto(`http://127.0.0.1:${server.port}/card/card.html?kind=home&seed=${seed}&grain=${grain}`);
+// a page's card instead of the home plate: its query as the og Worker sends it (cardQuery)
+const query = flag("card", "kind=home");
+await page.goto(`http://127.0.0.1:${server.port}/card/card.html?${query}&seed=${seed}&grain=${grain}`);
 await page.waitForFunction(() => (window as unknown as { __cardReady?: boolean; __cardError?: string }).__cardReady || (window as unknown as { __cardError?: string }).__cardError, null, { timeout: 30000 });
 const error = await page.evaluate(() => (window as unknown as { __cardError?: string }).__cardError);
 if (error) throw new Error(`card: ${error}`);

@@ -105,3 +105,18 @@ export async function cardImageUrl(head: PageHead, origin: string): Promise<stri
     const sig = await signCard(spec, key);
     return `${CARD_HOSTS[origin] ?? origin}/og/${sig}.jpg?${cardQuery(spec)}`;
 }
+
+/** Where a page's own social loop is served: its card's sig names it (app/scripts/og-entries.ts). */
+export const ENTRY_LOOP_PATH = /^\/og-video\/v1\/([0-9a-f]{24})\.mp4$/;
+
+/**
+ * The page's own social loop, its card over the flowing plate, on `origin`: for a page card, so
+ * undefined for the home card (the shared loop is its own) and when no signing key is configured.
+ */
+export async function cardVideoUrl(head: PageHead, origin: string): Promise<string | undefined> {
+    const key = runtimeEnv()?.OG_SIGNING_KEY;
+    if (typeof key !== "string" || !key) return undefined;
+    const spec = cardSpec(head);
+    if (spec.kind !== "page") return undefined;
+    return `${origin}/og-video/v1/${await signCard(spec, key)}.mp4`;
+}

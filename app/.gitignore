@@ -10,3 +10,4 @@ diagrams/.entries/
 dist-deploy/
 card/gen/*
 !card/gen/.gitkeep
+.og-loops/

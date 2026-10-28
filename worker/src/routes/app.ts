@@ -213,7 +213,7 @@ async function fetchHeadersWithin(url: string, init: RequestInit): Promise<Respo
  * meta or wsrv.nl was unavailable: that answer is kept briefly, not for a year, so the resize
  * is tried again soon.
  */
-async function proxyBlob(cid: string, request: Request, fallback = false): Promise<Response> {
+export async function proxyBlob(cid: string, request: Request, fallback = false): Promise<Response> {
     const headers: Record<string, string> = { "User-Agent": "iammatthias.com/1.0 (+https://iammatthias.com)" };
     const range = request.headers.get("range");
     if (range) headers.Range = range;

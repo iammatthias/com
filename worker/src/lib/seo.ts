@@ -27,9 +27,9 @@ export interface PageHead {
 
 export const SITE_NAME = "iammatthias";
 const OG_ORIGIN = "https://og.iammatthias.com";
-/** The home plate looping (app/scripts/og-loop.ts): one clip for every page, kept for a year
- *  under its versioned path, so a new look is a new -v path. The page's card stays its poster. */
-const OG_VIDEO = { url: `${SITE_ORIGIN}/og-v1/loop.mp4`, type: "video/mp4", width: 1200, height: 630 };
+/** The home plate looping (app/scripts/og-loop.ts), kept for a year under its versioned path, so
+ *  a new look is a new -v path: the home's clip, and any page's that has no loop of its own. */
+export const OG_VIDEO = { url: `${SITE_ORIGIN}/og-v1/loop.mp4`, path: "/og-v1/loop.mp4", type: "video/mp4", width: 1200, height: 630 };
 
 export function fullTitle(head: PageHead): string {
     return head.title ? `${head.title} — ${SITE_NAME}` : SITE_NAME;
@@ -160,8 +160,9 @@ export function headMeta(head: PageHead, card?: string): HeadMeta {
     };
 }
 
-/** Everything BaseLayout put in <head>, minus charset/viewport (the shell has them). */
-export function headHtml(head: PageHead, card?: string): string {
+/** Everything BaseLayout put in <head>, minus charset/viewport (the shell has them). `video`: the
+ *  page's own loop (lib/og-card.ts cardVideoUrl), else the shared one. */
+export function headHtml(head: PageHead, card?: string, video = OG_VIDEO.url): string {
     const { description, canonical, ogImage: ogImageURL, ogTitle } = headMeta(head, card);
     const a = escapeAttr;
     const tags: string[] = [
@@ -185,8 +186,8 @@ export function headHtml(head: PageHead, card?: string): string {
         `<meta property="og:image:width" content="1200">`,
         `<meta property="og:image:height" content="630">`,
         `<meta property="og:image:alt" content="${a(ogTitle)}">`,
-        `<meta property="og:video" content="${OG_VIDEO.url}">`,
-        `<meta property="og:video:secure_url" content="${OG_VIDEO.url}">`,
+        `<meta property="og:video" content="${a(video)}">`,
+        `<meta property="og:video:secure_url" content="${a(video)}">`,
         `<meta property="og:video:type" content="${OG_VIDEO.type}">`,
         `<meta property="og:video:width" content="${OG_VIDEO.width}">`,
         `<meta property="og:video:height" content="${OG_VIDEO.height}">`,
