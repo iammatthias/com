@@ -2,8 +2,9 @@
 #   docker build -f og-render.Dockerfile -t og-render .
 # Run it with a write-scope blobs key, and BLOBS_URL for blobs as the box reaches it:
 #   docker run --rm -e BLOBS_API_KEY -e BLOBS_URL=http://172.17.0.1:8789 og-render
-# The GPU, when there is one to give it: --device /dev/dri/renderD128 and OG_CHROMIUM_ARGS
-# (ANGLE on Vulkan, say). Without them Chromium draws in software. Each loop's log says which.
+# On the homelab, give it the Radeon, which draws a loop in 26 s against 79 s in software:
+#   --device /dev/dri/renderD128 -e OG_CHROMIUM_ARGS="--use-angle=vulkan --enable-gpu --ignore-gpu-blocklist"
+# Without them Chromium draws in software (SwiftShader). Each loop's log says which it got.
 # One run draws what isn't pinned yet and stops; run it again after a publish, or on a timer.
 
 # the card's GLSL, made from plate.wgsl as Trunk's hook makes it, so the renderer needs no naga
@@ -19,9 +20,10 @@ FROM oven/bun:1.4.4 AS bun
 
 # Playwright's own image at the version e2e/bun.lock resolves, so its Chromium is the one the
 # script drives
+# Mesa's Vulkan drivers: without an ICD, ANGLE finds only SwiftShader even with the GPU handed in
 FROM mcr.microsoft.com/playwright:v1.64.1-noble
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg x264 \
+    && apt-get install -y --no-install-recommends ffmpeg x264 mesa-vulkan-drivers \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
 WORKDIR /app
