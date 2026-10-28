@@ -47,7 +47,7 @@ const RAMP = { start: 12, end: 24, floor: 4 };
 // the pass line: how far above the clip's other steps the seam may stand
 const BOUND = { overInnerMax: 1.02, wrapOverMedian: 1.25 };
 
-for (const [tool, install] of [["ffmpeg", "brew install ffmpeg"], ["ffprobe", "brew install ffmpeg"], ["x264", "brew install x264"], ["naga", "cargo install naga-cli"]]) {
+for (const [tool, install] of [["ffmpeg", "brew install ffmpeg"], ["ffprobe", "brew install ffmpeg"], ["x264", "brew install x264"]]) {
     if (!Bun.which(tool)) throw new Error(`${tool} is not on PATH (${install})`);
 }
 
@@ -91,6 +91,8 @@ function runBytes(cmd: string[]): Uint8Array {
 // ---- the card's shaders, as Trunk's pre-build hook makes them ----
 const gen = join(app, "card/gen");
 if (!existsSync(join(gen, "optics.frag")) || statSync(join(app, "src/plate.wgsl")).mtimeMs > statSync(join(gen, "optics.frag")).mtimeMs) {
+    // only a stale card needs naga: a renderer shipped its GLSL made doesn't
+    if (!Bun.which("naga")) throw new Error("card/gen is older than src/plate.wgsl and naga is not on PATH (cargo install naga-cli)");
     mkdirSync(gen, { recursive: true });
     const wgsl = join(app, "src/plate.wgsl");
     run(["naga", wgsl, join(gen, "vs.vert"), "--entry-point", "vs_main", "--profile", "es300", "--shader-stage", "vert"]);
