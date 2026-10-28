@@ -17,6 +17,9 @@ async function visit(name, cut) {
     const warned = [];
     page.on("console", (m) => m.text().startsWith("diagram:") && warned.push(m.text().slice(0, 120)));
     await context.route(/\/diagrams\/\w+\.js/, (r) => {
+        // a deployed build HEADs a module that failed, to tell a dropped build from a cut fetch
+        // (dom.js reloadIfBuildGone): that isn't an ask for the module
+        if (r.request().method() === "HEAD") return r.continue();
         const module = new URL(r.request().url()).pathname.match(/(\w+)\.js$/)[1];
         asked[module] = (asked[module] ?? 0) + 1;
         return asked[module] <= cut(module) ? r.abort("failed") : r.continue();
