@@ -1,0 +1,15 @@
+*
+!src/plate.wgsl
+!e2e/package.json
+!e2e/bun.lock
+!card/card.html
+!card/card.js
+!card/portrait.r8
+!assets/fonts/Inter.ttf
+!assets/fonts/Inter-Italic.ttf
+!assets/fonts/Newsreader.ttf
+!assets/fonts/Newsreader-Italic.ttf
+!assets/fonts/OFL-Inter.txt
+!assets/fonts/OFL-Newsreader.txt
+!scripts/og-loop.ts
+!scripts/og-entries.ts

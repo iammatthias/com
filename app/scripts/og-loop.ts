@@ -113,7 +113,16 @@ const server = Bun.serve({
 });
 
 // ---- the frames: 0..n, the last one the proof that the loop closes ----
-const browser = await chromium.launch();
+// OG_CHROMIUM_ARGS: extra flags, space-separated (the homelab's GPU: ANGLE on Vulkan, say)
+const browser = await chromium.launch({ args: (process.env.OG_CHROMIUM_ARGS ?? "").split(" ").filter(Boolean) });
+const gpu = await browser.newPage();
+const renderer = await gpu.evaluate(() => {
+    const gl = document.createElement("canvas").getContext("webgl2");
+    const info = gl?.getExtension("WEBGL_debug_renderer_info");
+    return gl ? String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER)) : "no WebGL2";
+});
+await gpu.close();
+console.log(`webgl: ${renderer}`);
 const page = await (await browser.newContext({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 })).newPage();
 // a page's card instead of the home plate: its query as the og Worker sends it (cardQuery)
 const query = flag("card", "kind=home");
