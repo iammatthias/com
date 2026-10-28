@@ -141,7 +141,20 @@ async function store(e: Entry): Promise<boolean> {
         console.log(`FAIL ${e.path}: blobs answered ${res.status} ${meta ? JSON.stringify(meta).slice(0, 200) : (await res.text()).slice(0, 200)}`);
         return false;
     }
-    wrangler(["kv", "key", "put", "--namespace-id", NAMESPACE, "--remote", PREFIX + e.sig, meta.cid]);
+    // wranglers running side by side can trip on one another's login refresh: a few tries, then
+    // this entry alone is left for the next run (stored and pinned already, so it's only named)
+    for (let tries = 1; ; tries++) {
+        try {
+            wrangler(["kv", "key", "put", "--namespace-id", NAMESPACE, "--remote", label, meta.cid]);
+            break;
+        } catch (err) {
+            if (tries === 4) {
+                console.log(`FAIL ${e.path}: stored as ${meta.cid}, but not named in KV: ${String(err).slice(0, 200)}`);
+                return false;
+            }
+            await Bun.sleep(5000 * tries);
+        }
+    }
     console.log(`stored ${e.path} ${e.sig} → ${meta.cid}`);
     return true;
 }
