@@ -127,36 +127,37 @@ async function draw(e: Entry): Promise<boolean> {
     return ok;
 }
 
-// pinned under its KV key as it's stored, so blobs' hygiene counts it used and "Delete unused"
-// passes it over; a blobs without pins answers without "pin", and then nothing is named
-async function store(e: Entry): Promise<boolean> {
-    const label = PREFIX + e.sig;
-    const res = await fetch(`${BLOBS}?pin=${encodeURIComponent(label)}`, {
-        method: "POST",
-        headers: { "X-API-Key": key, "Content-Type": "video/mp4", "User-Agent": UA },
-        body: Bun.file(drawn(e)),
-    });
-    const meta = res.ok ? ((await res.json()) as { cid?: string; mime?: string; pin?: string }) : null;
-    if (!meta?.cid || !meta.mime?.startsWith("video/") || meta.pin !== label) {
-        console.log(`FAIL ${e.path}: blobs answered ${res.status} ${meta ? JSON.stringify(meta).slice(0, 200) : (await res.text()).slice(0, 200)}`);
-        return false;
-    }
-    // wranglers running side by side can trip on one another's login refresh: a few tries, then
-    // this entry alone is left for the next run (stored and pinned already, so it's only named)
+// Four tries, waiting longer each time: blobs and wrangler both drop the odd call (a reset
+// connection, a 5xx, wranglers side by side tripping on one another's login refresh). Every step
+// is safe to repeat: the same bytes are the same cid, pinning and naming are idempotent.
+async function tried<T>(what: string, step: () => Promise<T> | T): Promise<T> {
     for (let tries = 1; ; tries++) {
         try {
-            wrangler(["kv", "key", "put", "--namespace-id", NAMESPACE, "--remote", label, meta.cid]);
-            break;
+            return await step();
         } catch (err) {
-            if (tries === 4) {
-                console.log(`FAIL ${e.path}: stored as ${meta.cid}, but not named in KV: ${String(err).slice(0, 200)}`);
-                return false;
-            }
+            if (tries === 4) throw new Error(`${what}: ${String(err).slice(0, 200)}`);
             await Bun.sleep(5000 * tries);
         }
     }
-    console.log(`stored ${e.path} ${e.sig} → ${meta.cid}`);
-    return true;
+}
+
+// pinned under its KV key as it's stored, so blobs' hygiene counts it used and "Delete unused"
+// passes it over; a blobs without pins answers without "pin", and then nothing is named
+async function store(e: Entry): Promise<void> {
+    const label = PREFIX + e.sig;
+    const meta = await tried("blobs", async () => {
+        const res = await fetch(`${BLOBS}?pin=${encodeURIComponent(label)}`, {
+            method: "POST",
+            headers: { "X-API-Key": key, "Content-Type": "video/mp4", "User-Agent": UA },
+            body: Bun.file(drawn(e)),
+        });
+        if (res.status >= 500) throw new Error(`${res.status} ${(await res.text()).slice(0, 200)}`);
+        return { status: res.status, body: (await res.text()).slice(0, 2000) };
+    });
+    const got = meta.status === 201 || meta.status === 200 ? (JSON.parse(meta.body) as { cid?: string; mime?: string; pin?: string }) : null;
+    if (!got?.cid || !got.mime?.startsWith("video/") || got.pin !== label) throw new Error(`blobs answered ${meta.status} ${meta.body.slice(0, 200)}`);
+    await tried(`stored as ${got.cid}, but not named in KV`, () => wrangler(["kv", "key", "put", "--namespace-id", NAMESPACE, "--remote", label, got.cid!]));
+    console.log(`stored ${e.path} ${e.sig} → ${got.cid}`);
 }
 
 const failed: string[] = [];
@@ -164,7 +165,13 @@ const queue = [...missing];
 await Promise.all(
     Array.from({ length: jobs }, async () => {
         for (let e = queue.shift(); e; e = queue.shift()) {
-            if (!(await draw(e)) || (!drawOnly && !(await store(e)))) failed.push(e.path);
+            try {
+                if (!(await draw(e))) failed.push(e.path);
+                else if (!drawOnly) await store(e);
+            } catch (err) {
+                failed.push(e.path);
+                console.log(`FAIL ${e.path}: ${String(err).slice(0, 300)}`);
+            }
         }
     }),
 );
