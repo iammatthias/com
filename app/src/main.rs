@@ -40,7 +40,7 @@ fn main() {
     #[cfg(target_family = "wasm")]
     gpui_platform::web_init();
     mark(&format!("wasm main (t=0), build {BUILD}"));
-    gpui_platform::application().run(|cx: &mut App| {
+    let app = gpui_platform::application().run(|cx: &mut App| {
         // the faces first (fetched beside the app on the web), then the window
         #[cfg(target_family = "wasm")]
         {
@@ -85,6 +85,9 @@ fn main() {
         #[cfg(not(target_family = "wasm"))]
         start(cx);
     });
+    // on the web `run` returns at once, and the app lives only as long as its handle: the page
+    // keeps it until it's torn down (natively `run` returns at shutdown)
+    std::mem::forget(app);
 }
 
 #[cfg(target_family = "wasm")]

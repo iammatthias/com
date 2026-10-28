@@ -9,8 +9,8 @@ use std::rc::Rc;
 
 use gpui::{
     AnyElement, App, Bounds, CursorStyle, DispatchPhase, Display, Element, GlobalElementId, Hitbox,
-    HitboxBehavior, InspectorElementId, IntoElement, LayoutId, MouseMoveEvent, Pixels,
-    SharedString, Style, StyledText, TextLayout, Window, fill,
+    HitboxBehavior, InspectorElementId, IntoElement, LayoutId, MouseMoveEvent, PaintQuad, Pixels,
+    SharedString, Style, StyledText, TextLayout, Window,
 };
 
 use super::model::{Fingerprint, Join, Ordinal};
@@ -173,7 +173,7 @@ impl Element for Selectable {
                 && let Some(range) = sel.range_in(ordinal, self.layout.len())
             {
                 for rect in s.registry.rects(ordinal, range) {
-                    window.paint_quad(fill(rect, style.highlight));
+                    window.paint_quad(PaintQuad::new(rect).background(style.highlight));
                 }
             }
         }

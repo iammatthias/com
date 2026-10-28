@@ -143,7 +143,7 @@ impl Render for Page {
                             .cursor_pointer()
                             .italic()
                             .text_color(theme.ink)
-                            .hover(move |s| s.text_color(accent))
+                            .hover_style(move |s| s.text_color(accent))
                             .child("Try again →")
                             .on_click(move |_, window, cx| nav(path.clone(), window, cx)),
                     )

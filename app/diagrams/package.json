@@ -3,6 +3,6 @@
   "description": "pele (Mermaid syntax to SVG), built into one module per kind of diagram (assets/diagrams, by build.ts) by a Trunk pre-build hook and loaded only on pages with a diagram.",
   "private": true,
   "dependencies": {
-    "pele": "1.7.0"
+    "pele": "1.12.0"
   }
 }

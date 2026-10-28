@@ -127,7 +127,7 @@ pub fn view(entries: &[Entry], key: &str, theme: &Theme) -> AnyElement {
                 .text_size(px(if top { 17. } else { 16. }))
                 .line_height(px(if top { 27. } else { 24. }))
                 .text_color(if top { ink } else { alpha(ink, 0.75) })
-                .hover(move |s| s.text_color(accent))
+                .hover_style(move |s| s.text_color(accent))
                 .when(top, |d| {
                     d.child(
                         div()

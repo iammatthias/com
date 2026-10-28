@@ -112,7 +112,7 @@ pub fn view(block: &RecipeBlock, ctx: &Ctx, window: &mut Window, cx: &mut App) -
                 .italic()
                 .text_size(px(17.))
                 .text_color(theme.accent)
-                .hover(move |s| s.text_color(alpha(accent, 0.7)))
+                .hover_style(move |s| s.text_color(alpha(accent, 0.7)))
                 .child("Cook step by step →")
                 .on_click(move |_, window, cx| recipe_steps::go(&st, &rec, Some(0), window, cx)),
         );
@@ -205,7 +205,7 @@ fn serves_toggle(serves: u32, factor: f64, state: &ElementId, ctx: &Ctx) -> AnyE
                 .text_size(px(17.))
                 .text_color(if on { theme.ink } else { theme.muted })
                 .when(on, |d| d.border_b_1().border_color(theme.accent))
-                .hover(move |s| s.text_color(accent))
+                .hover_style(move |s| s.text_color(accent))
                 .child(recipe::serves_label(serves, f))
                 .on_click(move |_, window, _| {
                     state::update::<RecipeState>(&state, window, |s| s.factor = f)
@@ -285,7 +285,7 @@ fn grid(
                 .flex()
                 .flex_col()
                 .gap(px(1.))
-                .hover(move |s| s.bg(alpha(accent, 0.05)))
+                .hover_style(move |s| s.bg(alpha(accent, 0.05)))
                 .when(lit, |d| d.bg(alpha(accent, 0.06)))
                 .when(dim && !lit, |d| d.opacity(0.35))
                 .when_some(group, |d, gr| {
@@ -331,7 +331,7 @@ fn grid(
             div()
                 .id(ctx.id("op"))
                 .cursor_pointer()
-                .hover(move |s| s.bg(alpha(accent, 0.05)))
+                .hover_style(move |s| s.bg(alpha(accent, 0.05)))
                 .when(hot, |d| d.bg(alpha(accent, 0.12)))
                 .when(dim && !hot, |d| d.opacity(0.35))
                 .on_click(move |_, window, cx| {
@@ -517,7 +517,7 @@ fn method(
                 .id(ctx.id("step"))
                 .cursor_pointer()
                 .flex()
-                .hover(move |s| s.bg(alpha(accent, 0.04)))
+                .hover_style(move |s| s.bg(alpha(accent, 0.04)))
                 .when(hot, |d| d.bg(alpha(accent, 0.08)))
                 .when(active.is_some() && !hot, |d| d.opacity(0.55))
                 .on_click(move |_, window, cx| recipe_steps::pick(&state_c, &rec_c, i, window, cx))

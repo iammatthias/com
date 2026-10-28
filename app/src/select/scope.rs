@@ -9,8 +9,8 @@ use gpui::prelude::*;
 use gpui::{
     AnyElement, App, AvailableSpace, Bounds, ClipboardItem, DispatchPhase, Element, EntityId,
     GlobalElementId, Hitbox, HitboxBehavior, Hsla, InspectorElementId, LayoutId, LongPressEvent,
-    MouseButton, MouseDownEvent, MouseMoveEvent, MouseUpEvent, Pixels, Point, SharedString,
-    StyledText, TouchDragEvent, TouchPhase, Window, div, fill, point, px, size,
+    MouseButton, MouseDownEvent, MouseMoveEvent, MouseUpEvent, PaintQuad, Pixels, Point,
+    SharedString, StyledText, TouchDragEvent, TouchPhase, Window, div, point, px, size,
 };
 
 use super::element::Selectable;
@@ -476,8 +476,12 @@ impl Element for SelectionScope {
         self.child.paint(window, cx);
         if let Some(handles) = &prepaint.handles {
             for (stem, knob) in handles {
-                window.paint_quad(fill(*stem, self.style.handle));
-                window.paint_quad(fill(*knob, self.style.handle).corner_radii(KNOB));
+                window.paint_quad(PaintQuad::new(*stem).background(self.style.handle));
+                window.paint_quad(
+                    PaintQuad::new(*knob)
+                        .background(self.style.handle)
+                        .corner_radii(KNOB),
+                );
             }
         }
 

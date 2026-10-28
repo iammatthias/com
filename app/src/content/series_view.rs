@@ -92,7 +92,7 @@ fn live(still: &SeriesMedia, movie: &SeriesMedia, width: f32, ctx: &Ctx) -> AnyE
                         .text_color(theme.ink)
                         .child("live"),
                 )
-                .hover(move |s| s.bg(theme.veil(0.8)))
+                .hover_style(move |s| s.bg(theme.veil(0.8)))
                 .on_click(move |_, window, _| {
                     crate::dom_video::toggle(&toggle_key);
                     window.refresh();

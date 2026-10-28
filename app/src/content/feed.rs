@@ -151,7 +151,7 @@ pub fn tail(tail: Tail, theme: &Theme) -> AnyElement {
             .cursor_pointer()
             .italic()
             .text_color(theme.ink)
-            .hover(move |s| s.text_color(accent))
+            .hover_style(move |s| s.text_color(accent))
             .child("The next notes would not load. Try again →")
             .on_click(|_, _, cx| fetch(cx))
             .into_any_element(),

@@ -779,7 +779,7 @@ fn reveal(
         .items_baseline()
         .gap(px(10.))
         .text_color(theme.ink)
-        .hover(move |s| s.text_color(accent))
+        .hover_style(move |s| s.text_color(accent))
         .child(
             div()
                 .w(px(14.))

@@ -948,7 +948,7 @@ impl Site {
                 .px(gpui::px(16.))
                 .flex()
                 .items_center()
-                .hover(move |s| s.text_color(t.accent))
+                .hover_style(move |s| s.text_color(t.accent))
                 .child(label)
         };
         let home = half("pill-home", "home")

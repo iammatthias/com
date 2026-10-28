@@ -269,7 +269,7 @@ pub fn moving(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
                                 .child("play →"),
                         ),
                 )
-                .hover(move |s| s.border_1().border_color(accent))
+                .hover_style(move |s| s.border_1().border_color(accent))
                 .on_click(move |_, _, _| crate::route::open_external(&url)),
         )
         .when(!alt.trim().is_empty(), |d| {

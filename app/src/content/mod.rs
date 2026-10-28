@@ -161,7 +161,7 @@ pub fn link(
         .id(id)
         .cursor_pointer()
         .text_color(theme.ink)
-        .hover(move |s| s.text_color(accent))
+        .hover_style(move |s| s.text_color(accent))
         .child(label)
         .on_click(move |_, window, cx| nav(href.clone(), window, cx))
 }

@@ -191,7 +191,7 @@ pub fn overlay(theme: &Theme, window: &mut Window, cx: &mut App) -> Option<AnyEl
             .text_size(px(28.))
             .line_height(px(28.))
             .text_color(ink)
-            .hover(move |s| s.text_color(accent).border_color(accent))
+            .hover_style(move |s| s.text_color(accent).border_color(accent))
             .child(glyph)
     };
 

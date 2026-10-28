@@ -82,7 +82,7 @@ fn button(id: impl Into<gpui::ElementId>, text: &str, theme: &Theme) -> gpui::St
         .font_family(theme::SANS)
         .text_size(px(14.))
         .text_color(t.ink)
-        .hover(move |s| s.text_color(t.accent))
+        .hover_style(move |s| s.text_color(t.accent))
         .child(text.to_string())
 }
 
@@ -120,7 +120,7 @@ fn segmented<T: Clone + PartialEq + 'static>(
                 .when(pressed, |d| d.bg(theme.ink).text_color(theme.paper))
                 .when(!pressed, |d| {
                     d.text_color(theme.ink)
-                        .hover(move |s| s.text_color(theme.accent))
+                        .hover_style(move |s| s.text_color(theme.accent))
                 })
                 .child(*name)
                 .on_click(cx.listener(move |site, _, _, cx| on_pick(site, value.clone(), cx)))
@@ -342,7 +342,7 @@ pub fn drawer(
         .cursor_pointer()
         .font_family(theme::SCRIPT)
         .text_size(px(design::SCRIPT_BUTTON_SIZE))
-        .hover(move |s| s.text_color(t.accent))
+        .hover_style(move |s| s.text_color(t.accent))
         .child(which.label())
         .child(
             div()

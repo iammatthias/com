@@ -200,7 +200,7 @@ fn control(id: ElementId, text: &str, ctx: &Ctx) -> gpui::Stateful<gpui::Div> {
         .text_size(px(15.))
         .letter_spacing(px(0.8))
         .text_color(ctx.theme.ink)
-        .hover(move |s| s.text_color(accent))
+        .hover_style(move |s| s.text_color(accent))
         .child(text.to_string())
 }
 

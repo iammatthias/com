@@ -213,7 +213,7 @@ fn tag_chips(tags: &[String], key: &str, nav: &Navigate, theme: &Theme) -> AnyEl
                 .text_size(px(13.))
                 .line_height(px(18.))
                 .text_color(theme.ink)
-                .hover(move |s| s.text_color(accent).border_color(accent))
+                .hover_style(move |s| s.text_color(accent).border_color(accent))
                 .child(div().text_color(theme.muted).child("#"))
                 .child(t.clone())
                 .on_click(move |_, window, cx| nav(href.clone(), window, cx)),
@@ -244,7 +244,7 @@ fn tag_row(tags: &[String], key: &str, nav: &Navigate, theme: &Theme) -> AnyElem
                 .cursor_pointer()
                 .italic()
                 .text_color(ink)
-                .hover(move |s| s.text_color(accent))
+                .hover_style(move |s| s.text_color(accent))
                 .child(t.to_lowercase())
                 .on_click(move |_, window, cx| nav(href.clone(), window, cx)),
         );
@@ -480,7 +480,7 @@ fn colophon(doc: &Doc, key: &str, nav: &Navigate, theme: &Theme, sel: &Selection
                 .items_baseline()
                 .gap(px(6.))
                 .text_color(theme.ink)
-                .hover(move |s| s.text_color(accent))
+                .hover_style(move |s| s.text_color(accent))
                 .child(
                     div()
                         .min_w_0()
@@ -1215,7 +1215,7 @@ pub fn tags(tags: &[TagCount], nav: &Navigate, theme: &Theme) -> AnyElement {
                 .items_baseline()
                 .gap(px(3.))
                 .text_color(color)
-                .hover(move |s| s.text_color(accent))
+                .hover_style(move |s| s.text_color(accent))
                 .child(
                     div()
                         .font_family(theme::DISPLAY)

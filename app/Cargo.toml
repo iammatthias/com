@@ -12,10 +12,10 @@ path = "src/main.rs"
 # gpui-ce (the community edition of Zed's GPUI), imported as `gpui`. Its default features are
 # for the desktop (every image codec, Linux and macOS font backends): the web build leaves them
 # off, and a native build (below) turns them back on.
-gpui = { git = "https://github.com/gpui-ce/gpui-ce", rev = "43dacc568497c615c55a1ea0f77ab381c0d9865b", package = "gpui-ce", default-features = false }
-gpui_platform = { git = "https://github.com/gpui-ce/gpui-ce", rev = "43dacc568497c615c55a1ea0f77ab381c0d9865b", package = "gpui_ce_platform" }
-gpui_wgpu = { git = "https://github.com/gpui-ce/gpui-ce", rev = "43dacc568497c615c55a1ea0f77ab381c0d9865b", package = "gpui_ce_wgpu", features = ["custom-gpu"] }
-gpui_fonts = { git = "https://github.com/gpui-ce/gpui-ce", rev = "43dacc568497c615c55a1ea0f77ab381c0d9865b", package = "gpui-ce-fonts" }
+gpui = { git = "https://github.com/gpui-ce/gpui-ce", rev = "5cac1478fea0a5f6f28ae4bc7df4b552dff8854b", package = "gpui-ce", default-features = false }
+gpui_platform = { git = "https://github.com/gpui-ce/gpui-ce", rev = "5cac1478fea0a5f6f28ae4bc7df4b552dff8854b", package = "gpui_ce_platform" }
+gpui_wgpu = { git = "https://github.com/gpui-ce/gpui-ce", rev = "5cac1478fea0a5f6f28ae4bc7df4b552dff8854b", package = "gpui_ce_wgpu", features = ["custom-gpu"] }
+gpui_fonts = { git = "https://github.com/gpui-ce/gpui-ce", rev = "5cac1478fea0a5f6f28ae4bc7df4b552dff8854b", package = "gpui-ce-fonts" }
 wgpu = "29.0.3"
 bytemuck = { version = "1", features = ["derive"] }
 swash = "0.2"
@@ -33,7 +33,7 @@ image = { version = "0.25", default-features = false, features = ["webp", "jpeg"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 # a desktop build: gpui-ce with everything it ships
-gpui = { git = "https://github.com/gpui-ce/gpui-ce", rev = "43dacc568497c615c55a1ea0f77ab381c0d9865b", package = "gpui-ce", default-features = true }
+gpui = { git = "https://github.com/gpui-ce/gpui-ce", rev = "5cac1478fea0a5f6f28ae4bc7df4b552dff8854b", package = "gpui-ce", default-features = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 web-sys = { version = "0.3", features = ["console", "Window", "Location", "History", "Document", "HtmlDocument", "Navigator", "EventTarget", "Storage", "MediaQueryList", "Worker", "WorkerOptions", "WorkerType", "MessageEvent", "Event", "Element", "Node", "HtmlElement", "HtmlMediaElement", "HtmlVideoElement", "ClipboardEvent", "DataTransfer", "HtmlInputElement", "HtmlTextAreaElement"] }
@@ -61,4 +61,4 @@ resvg = { path = "shims/resvg" }
 
 [dev-dependencies]
 # gpui's test window, for the module tests that need a real layout pass
-gpui = { git = "https://github.com/gpui-ce/gpui-ce", rev = "43dacc568497c615c55a1ea0f77ab381c0d9865b", package = "gpui-ce", features = ["test-support"] }
+gpui = { git = "https://github.com/gpui-ce/gpui-ce", rev = "5cac1478fea0a5f6f28ae4bc7df4b552dff8854b", package = "gpui-ce", features = ["test-support"] }
