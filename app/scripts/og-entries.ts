@@ -41,7 +41,7 @@ const drawOnly = process.argv.includes("--draw-only");
 const keepDir = resolve(app, flag("keep", ".og-loops"));
 mkdirSync(keepDir, { recursive: true });
 
-// one run at a time (scripts/og-entries.plist starts one hourly): a run still drawing keeps the lock
+// one run at a time, however they're started: a run still drawing keeps the lock
 const lock = join(keepDir, ".lock");
 const holder = existsSync(lock) ? Number(readFileSync(lock, "utf8")) : 0;
 if (holder && holder !== process.pid && running(holder)) {
