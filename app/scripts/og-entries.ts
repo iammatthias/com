@@ -16,7 +16,7 @@
 // needs blobs with pins (POST /blobs?pin=), BLOBS_WRITE_KEY (a blobs key with write scope) in
 // the environment or worker/.dev.vars, and wrangler logged in; drawing needs what og-loop.ts needs.
 
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -40,6 +40,24 @@ const dry = process.argv.includes("--dry");
 const drawOnly = process.argv.includes("--draw-only");
 const keepDir = resolve(app, flag("keep", ".og-loops"));
 mkdirSync(keepDir, { recursive: true });
+
+// one run at a time (scripts/og-entries.plist starts one hourly): a run still drawing keeps the lock
+const lock = join(keepDir, ".lock");
+const holder = existsSync(lock) ? Number(readFileSync(lock, "utf8")) : 0;
+if (holder && holder !== process.pid && running(holder)) {
+    console.log(`another run (pid ${holder}) is still going`);
+    process.exit(0);
+}
+writeFileSync(lock, String(process.pid));
+process.on("exit", () => rmSync(lock, { force: true }));
+function running(pid: number): boolean {
+    try {
+        process.kill(pid, 0);
+        return true;
+    } catch {
+        return false;
+    }
+}
 
 function writeKey(): string {
     if (process.env.BLOBS_WRITE_KEY) return process.env.BLOBS_WRITE_KEY;

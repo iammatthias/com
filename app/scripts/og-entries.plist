@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Draws and stores the social loop of any entry published or edited since the last run
+  (og-entries.ts), hourly while this Mac is awake. A run with nothing new fetches the sitemap and
+  each page's head and stops. Install, and remove:
+    cp app/scripts/og-entries.plist ~/Library/LaunchAgents/com.iammatthias.og-entries.plist
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.iammatthias.og-entries.plist
+    launchctl bootout gui/$(id -u)/com.iammatthias.og-entries
+  Its log: ~/Library/Logs/og-entries.log
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.iammatthias.og-entries</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>-lc</string>
+        <string>cd ~/Developer/iammatthias/com/app &amp;&amp; date &amp;&amp; bun scripts/og-entries.ts --jobs 2 &lt;/dev/null</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>3600</integer>
+    <key>LowPriorityIO</key>
+    <true/>
+    <key>Nice</key>
+    <integer>10</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/iammatthias/Library/Logs/og-entries.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/iammatthias/Library/Logs/og-entries.log</string>
+</dict>
+</plist>
