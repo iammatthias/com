@@ -11,8 +11,8 @@
 // pages, and the sig and card query in its og:image, so a loop matches its card by construction.
 // What KV names already is skipped: run it again after publishing and only new or edited entries
 // (their card, so their sig, changed) are drawn. A loop whose seam doesn't pass isn't stored.
-// Drawn loops are kept in --keep (default .og-loops/) as <sig>.mp4, so a rerun never draws one
-// twice; --draw-only stops there. Each is pinned in blobs under its KV key as it is stored. Storing
+// A drawn loop waits in --keep (default .og-loops/) as <sig>.mp4 until it is stored, so a rerun
+// never draws one twice; --draw-only stops there. Each is pinned in blobs under its KV key as it is stored. Storing
 // needs blobs with pins (POST /blobs?pin=), BLOBS_WRITE_KEY (a blobs key with write scope) in
 // the environment or worker/.dev.vars, and wrangler logged in; drawing needs what og-loop.ts needs.
 
@@ -157,6 +157,7 @@ async function store(e: Entry): Promise<void> {
     const got = meta.status === 201 || meta.status === 200 ? (JSON.parse(meta.body) as { cid?: string; mime?: string; pin?: string }) : null;
     if (!got?.cid || !got.mime?.startsWith("video/") || got.pin !== label) throw new Error(`blobs answered ${meta.status} ${meta.body.slice(0, 200)}`);
     await tried(`stored as ${got.cid}, but not named in KV`, () => wrangler(["kv", "key", "put", "--namespace-id", NAMESPACE, "--remote", label, got.cid!]));
+    rmSync(drawn(e), { force: true });
     console.log(`stored ${e.path} ${e.sig} → ${got.cid}`);
 }
 
