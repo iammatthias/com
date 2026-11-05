@@ -2,7 +2,7 @@
 import { blobURL, getAllSeries, getCollections, getEntries, getPosts, getSeries, getBlobMeta, type BlobMeta, type Collection, type Entry, type Post, type Series } from "./farfield";
 import { memo, type MemoOptions } from "./memo";
 import { isStampedSlug, unstampSlug, humanize } from "./slugs";
-import { extractBodyEmbeds } from "./embeds";
+import { extractBodyEmbeds, type BodyEmbed } from "./embeds";
 export { renderKey, seriesKeyFor } from "./render-key";
 
 function coalesce<T>(): MemoOptions<T> {
@@ -37,30 +37,15 @@ export interface ResolvedMedia {
     meta: BlobMeta | null;
 }
 
-export async function resolveBodyMedia(
-    body: string,
-): Promise<ResolvedMedia[]> {
-    const embeds = extractBodyEmbeds(body);
-    const expanded = (
-        await Promise.all(
-            embeds.map(async (e): Promise<{ cid: string; alt: string }[]> => {
-                if (e.scheme === "blob") return [{ cid: e.id, alt: e.alt }];
-                const series = await getSeries(e.id);
-                if (!series?.body) return [];
-                return extractBodyEmbeds(series.body)
-                    .filter((inner) => inner.scheme === "blob")
-                    .map((inner) => ({ cid: inner.id, alt: inner.alt }));
-            }),
-        )
-    ).flat();
-    const seen = new Set<string>();
-    const unique = expanded.filter((m) => {
-        if (seen.has(m.cid)) return false;
-        seen.add(m.cid);
-        return true;
-    });
-    const metas = await Promise.all(unique.map((m) => getBlobMeta(m.cid)));
-    return unique.map((m, i) => ({ ...m, meta: metas[i] }));
+export async function resolveEmbedMedia(embed: BodyEmbed): Promise<ResolvedMedia[]> {
+    const blobs =
+        embed.scheme === "blob"
+            ? [embed]
+            : extractBodyEmbeds((await getSeries(embed.id))?.body ?? "").filter(
+                  (inner) => inner.scheme === "blob",
+              );
+    const metas = await Promise.all(blobs.map((b) => getBlobMeta(b.id)));
+    return blobs.map((b, i) => ({ cid: b.id, alt: b.alt, meta: metas[i] }));
 }
 
 export interface PublicationData {

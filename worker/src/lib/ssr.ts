@@ -6,7 +6,8 @@ import { cachedDocBody } from "./doc-body-cache";
 import { buildToc } from "./toc";
 import { pageHref } from "./pagination";
 import { plainText, proseHtml } from "./markdown-text";
-import { resolveBodyMedia, loadAllFeedEntries, type ResolvedMedia } from "./farfield-loader";
+import { resolveEmbedMedia, loadAllFeedEntries, type ResolvedMedia } from "./farfield-loader";
+import { extractBodyEmbeds } from "./embeds";
 import { mediaSize } from "./media-size";
 import { deckColumns } from "./deck";
 import { STATIC_PAGES, SOCIAL_HREFS } from "../pages/static";
@@ -106,37 +107,31 @@ function card(item: AppItem, kind?: string): string {
     );
 }
 
-function feedMedia(media: ResolvedMedia[]): string {
-    if (!media.length) return "";
-    return (
-        `<div class="feed-media">` +
-        media
-            .map((m) => {
-                const mime = m.meta?.mime ?? "";
-                const label = m.alt ? ` aria-label="${a(m.alt)}"` : "";
-                const src = `https://blobs.farfield.systems/blobs/${m.cid}`;
-                if (mime.startsWith("video/")) {
-                    return `<figure><video controls preload="none" playsinline src="${a(src)}"${label}></video></figure>`;
-                }
-                if (mime.startsWith("audio/")) {
-                    return `<figure><audio controls preload="none" src="${a(src)}"${label}></audio></figure>`;
-                }
-                const { width, height } = mediaSize(m.meta);
-                return `<figure><img src="/img/${m.cid}?w=720" width="${width}" height="${height}" alt="${a(m.alt ?? "")}" loading="lazy" decoding="async"></figure>`;
-            })
-            .join("") +
-        `</div>`
-    );
+function figureHtml(m: ResolvedMedia): string {
+    const mime = m.meta?.mime ?? "";
+    const label = m.alt ? ` aria-label="${a(m.alt)}"` : "";
+    const src = `https://blobs.farfield.systems/blobs/${m.cid}`;
+    if (mime.startsWith("video/")) {
+        return `<figure><video controls preload="none" playsinline src="${a(src)}"${label}></video></figure>`;
+    }
+    if (mime.startsWith("audio/")) {
+        return `<figure><audio controls preload="none" src="${a(src)}"${label}></audio></figure>`;
+    }
+    const { width, height } = mediaSize(m.meta);
+    return `<figure><img src="/img/${m.cid}?w=720" width="${width}" height="${height}" alt="${a(m.alt ?? "")}" loading="lazy" decoding="async"></figure>`;
+}
+
+async function feedNote(body: string): Promise<string> {
+    const media = await Promise.all(extractBodyEmbeds(body).map(resolveEmbedMedia));
+    const note = proseHtml(body, media.map((ms) => ms.map(figureHtml).join("")));
+    return note ? `<div class="feed-note">${note}</div>` : "";
 }
 
 async function feedItem(post: Pick<AppPost, "rkey" | "body" | "createdAt">): Promise<string> {
-    const note = proseHtml(post.body);
-    const media = await resolveBodyMedia(post.body);
     return (
         `<li class="feed-item">` +
         `<a href="/feed/${a(post.rkey)}"><time datetime="${a(post.createdAt)}">${h(fmtDate(post.createdAt))}</time></a>` +
-        (note ? `<div class="feed-note">${note}</div>` : "") +
-        feedMedia(media) +
+        (await feedNote(post.body)) +
         `</li>`
     );
 }
@@ -454,8 +449,7 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
         case "post": {
             const p = route.post;
             const text = plainText(p.body);
-            const note = proseHtml(p.body);
-            const media = await resolveBodyMedia(p.body);
+            const note = await feedNote(p.body);
             const md = `/feed/${p.rkey}.md`;
             return {
                 head: {
@@ -470,9 +464,8 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                     `<article class="entry"><header class="entry-hero">` +
                     `<h1>${h(text.slice(0, 60).trim() || `Entry ${p.rkey}`)}</h1>` +
                     `<p class="dateline"><time datetime="${a(p.createdAt)}">${h(fmtDateLong(p.createdAt))}</time></p>` +
-                    (note ? `<div class="feed-note">${note}</div>` : "") +
                     `</header>` +
-                    feedMedia(media) +
+                    note +
                     colophon([
                         { label: "collection", value: "feed" },
                         { label: "id", value: p.rkey },

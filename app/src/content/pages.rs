@@ -1013,15 +1013,6 @@ pub(super) fn post_body(
     let key = format!("post:{}", post.rkey);
     let (parsed, ctx) = Prose::post(post).of(theme, nav, sel, key.clone(), window);
     let width = ctx.width;
-
-    let mut prose = Vec::new();
-    let mut figures = Vec::new();
-    for b in &parsed.blocks {
-        match b {
-            Block::Figure(f) => figures.push(f),
-            other => prose.push(other),
-        }
-    }
     let date = fmt_date(&post.created_at);
     let href = if post.href.is_empty() {
         format!("/feed/{}", post.rkey)
@@ -1050,37 +1041,11 @@ pub(super) fn post_body(
             .flex_col()
             .gap(px(14.))
             .when(single, |d| d.text_size(px(21.)).line_height(px(33.)))
-            .children(
-                prose
-                    .into_iter()
-                    .map(|b| render::block(b, &ctx, window, cx)),
-            ),
+            .children(parsed.blocks.iter().map(|b| match b {
+                Block::Figure(f) => media::figure(&f.src, &f.alt, width, single, &ctx),
+                other => render::block(other, &ctx, window, cx),
+            })),
     );
-    match figures.len() {
-        0 => {}
-        1 => {
-            col = col.child(media::figure(
-                &figures[0].src,
-                &figures[0].alt,
-                width,
-                single,
-                &ctx,
-            ))
-        }
-        _ => {
-            let col_w = (width - 10.) / 2.;
-            let tiles = figures
-                .iter()
-                .map(|f| {
-                    (
-                        media::aspect_of(&f.src, &ctx),
-                        media::figure(&f.src, &f.alt, col_w, false, &ctx),
-                    )
-                })
-                .collect();
-            col = col.child(media::two_columns(tiles, width, 10.));
-        }
-    }
     if single && !post.tags.is_empty() {
         col = col.child(tag_row(&post.tags, &key, nav, theme));
     }

@@ -1,5 +1,5 @@
 import { marked } from "marked";
-import { EMBED_PATTERN_SOURCE } from "./embeds";
+import { EMBED_PATTERN_SOURCE, fullEmbedRe } from "./embeds";
 import { extractRecipes, recipeText } from "./recipe";
 import { componentsToText } from "./doc-components/transform";
 
@@ -26,11 +26,13 @@ export function plainText(markdown: string): string {
         .trim();
 }
 
-export function proseHtml(markdown: string): string {
-    const prose = stripEmbeds(markdown);
-    return prose.trim()
-        ? transformAlerts(marked.parse(prose, { async: false }) as string)
-        : "";
+export function proseHtml(markdown: string, embeds: readonly string[] = []): string {
+    let n = 0;
+    const withSlots = markdown.replace(fullEmbedRe(), () => `<!--ffembed${n++}-->`);
+    const html = transformAlerts(marked.parse(withSlots, { async: false }) as string)
+        .replace(/<p>\s*<!--ffembed(\d+)-->\s*<\/p>/g, "<!--ffembed$1-->")
+        .replace(/<!--ffembed(\d+)-->/g, (_, i: string) => embeds[Number(i)] ?? "");
+    return html.trim();
 }
 
 const ALERT_BLOCKQUOTE_RE =
