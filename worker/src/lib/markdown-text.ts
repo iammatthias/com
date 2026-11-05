@@ -11,6 +11,16 @@ function stripEmbeds(markdown: string): string {
     return markdown.replace(freshEmbedRe(), "");
 }
 
+const TABLE_RULE = /^\s*\|?(\s*:?-+:?\s*\|)+\s*:?-*:?\s*$/;
+
+function tablesToText(markdown: string): string {
+    return markdown
+        .split("\n")
+        .filter((line) => !TABLE_RULE.test(line))
+        .map((line) => (/^\s*\|/.test(line) ? line.replace(/\|/g, " ") : line))
+        .join("\n");
+}
+
 export function plainText(markdown: string): string {
     const { body, blocks } = extractRecipes(markdown);
     const withRecipeWords = blocks.length
@@ -18,7 +28,7 @@ export function plainText(markdown: string): string {
               recipeText(blocks[Number(i)] ?? ""),
           )
         : body;
-    return stripEmbeds(componentsToText(withRecipeWords))
+    return stripEmbeds(tablesToText(componentsToText(withRecipeWords)))
         .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
         .replace(/[*_`]+/g, "")
         .replace(/[>#]+/g, " ")
@@ -54,15 +64,4 @@ export function transformAlerts(html: string): string {
             );
         },
     );
-}
-
-const NOTE_TITLE_MAX = 60;
-
-export function noteTitle(markdown: string, max = NOTE_TITLE_MAX): string {
-    const line =
-        stripEmbeds(markdown)
-            .split("\n")
-            .map((l) => plainText(l))
-            .find((l) => l.length > 0) ?? "";
-    return line.length > max ? `${line.slice(0, max).trimEnd()}…` : line || "Note";
 }

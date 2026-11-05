@@ -8,6 +8,7 @@ import { pageHref } from "./pagination";
 import { plainText, proseHtml } from "./markdown-text";
 import { resolveEmbedMedia, loadAllFeedEntries, type ResolvedMedia } from "./farfield-loader";
 import { extractBodyEmbeds } from "./embeds";
+import { noteTitle } from "./app-route";
 import { mediaSize } from "./media-size";
 import { deckColumns } from "./deck";
 import { STATIC_PAGES, SOCIAL_HREFS } from "../pages/static";
@@ -449,11 +450,12 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
         case "post": {
             const p = route.post;
             const text = plainText(p.body);
+            const title = noteTitle(p.body, p.createdAt);
             const note = await feedNote(p.body);
             const md = `/feed/${p.rkey}.md`;
             return {
                 head: {
-                    title: text.slice(0, 60).trim() || `Entry ${p.rkey}`,
+                    title,
                     description: text.slice(0, 180).trim() || "Feed entry.",
                     ogType: "article",
                     article: { publishedTime: p.createdAt, modifiedTime: p.updatedAt },
@@ -462,7 +464,7 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                 },
                 main:
                     `<article class="entry"><header class="entry-hero">` +
-                    `<h1>${h(text.slice(0, 60).trim() || `Entry ${p.rkey}`)}</h1>` +
+                    `<h1>${h(title)}</h1>` +
                     `<p class="dateline"><time datetime="${a(p.createdAt)}">${h(fmtDateLong(p.createdAt))}</time></p>` +
                     `</header>` +
                     note +

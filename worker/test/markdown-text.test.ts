@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { noteTitle, plainText, proseHtml } from "../src/lib/markdown-text";
+import { plainText, proseHtml } from "../src/lib/markdown-text";
 
 describe("plainText", () => {
     test("drops embeds and markup, keeps link text, collapses whitespace", () => {
@@ -17,23 +17,14 @@ describe("plainText", () => {
     test("blockquote and heading markers become word breaks", () => {
         expect(plainText("> quoted\n## Heading")).toBe("quoted Heading");
     });
-});
 
-describe("noteTitle", () => {
-    test("takes the first readable line, past any leading embed", () => {
-        expect(noteTitle("![](blob://abc)\n\nHello *world*, a note.\nSecond")).toBe(
-            "Hello world, a note.",
-        );
+    test("tables read as their cells, without pipes or divider rows", () => {
+        const md = "| Metric | Value |\n|---|:--:|\n| Rows | 365 |\n\nAfter.";
+        expect(plainText(md)).toBe("Metric Value Rows 365 After.");
     });
 
-    test("truncates at the limit and trims before the ellipsis", () => {
-        expect(noteTitle("x".repeat(80))).toBe(`${"x".repeat(60)}…`);
-        expect(noteTitle(`${"y".repeat(61)} zzz`, 20)).toBe(`${"y".repeat(20)}…`);
-    });
-
-    test("falls back to a label when nothing readable remains", () => {
-        expect(noteTitle("")).toBe("Note");
-        expect(noteTitle("![](blob://x)")).toBe("Note");
+    test("a thematic break and a pipe mid-sentence are left alone", () => {
+        expect(plainText("one | two\n\n---\n\nthree")).toBe("one | two --- three");
     });
 });
 
