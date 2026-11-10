@@ -281,6 +281,17 @@ pub enum PillFace {
     GlassOverText,
 }
 
+fn solid<E: Styled>(el: E, t: &Theme) -> E {
+    el.bg(t.veil(0.82)).border_1().border_color(t.edge())
+}
+
+fn veiled<E: Styled>(el: E, t: &Theme, veil: f32) -> E {
+    el.bg(t.veil(veil)).border_1().border_color(gpui::Rgba {
+        alpha: 0.7,
+        ..gpui::rgb(0xffffff)
+    })
+}
+
 /// A control on the plate: a rounded pill, `CONTROL_H` tall, its name in the script face. Over the engraving the
 /// plate draws it as glass, so it paints only its text; on plain paper it is a solid pill.
 pub fn pill(t: &Theme, face: PillFace) -> gpui::Div {
@@ -289,16 +300,9 @@ pub fn pill(t: &Theme, face: PillFace) -> gpui::Div {
         .items_center()
         .h(px(design::CONTROL_H))
         .px(px(18.))
-        .when(face == PillFace::Solid, |d| {
-            d.bg(t.veil(0.82)).border_1().border_color(t.edge())
-        })
+        .when(face == PillFace::Solid, |d| solid(d, t))
         // the glass lies under the page, so over a page's text it needs a veil of its own
-        .when(face == PillFace::GlassOverText, |d| {
-            d.bg(t.veil(0.8)).border_1().border_color(gpui::Rgba {
-                alpha: 0.7,
-                ..gpui::rgb(0xffffff)
-            })
-        })
+        .when(face == PillFace::GlassOverText, |d| veiled(d, t, 0.8))
         .rounded(px(design::CONTROL_RADIUS))
         .cursor_pointer()
         // the plate's own hand
@@ -379,20 +383,11 @@ pub fn drawer(
         .flex_col()
         .when(which.on_right(), |d| d.items_end())
         .when(!which.on_right(), |d| d.items_start())
-        .when(!on_glass, |d| {
-            d.bg(t.veil(0.82)).border_1().border_color(t.edge())
-        })
+        .when(!on_glass, |d| solid(d, &t))
         // over a page the text would show through the glass (drawn under it): veil it
         .when(
             on_glass && (over_text || (!p.on_home && anim.k > 0.001)),
-            |d| {
-                d.bg(t.veil(if anim.k > 0.001 { 1.0 } else { 0.8 }))
-                    .border_1()
-                    .border_color(gpui::Rgba {
-                        alpha: 0.7,
-                        ..gpui::rgb(0xffffff)
-                    })
-            },
+            |d| veiled(d, &t, if anim.k > 0.001 { 1.0 } else { 0.8 }),
         )
         .rounded(px(design::CONTROL_RADIUS))
         .overflow_hidden()
