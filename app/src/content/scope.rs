@@ -15,7 +15,7 @@ pub(super) struct PageScope {
     /// focus handles, running tasks (`state::slot`)
     pub slots: RefCell<HashMap<String, Box<dyn Any>>>,
     /// where each heading was painted, for the contents to jump to
-    pub toc: RefCell<HashMap<String, toc::Spot>>,
+    pub toc: RefCell<HashMap<usize, toc::Spot>>,
     /// where each image was last painted: (top, bottom) in window px
     pub near_places: RefCell<HashMap<String, (f32, f32)>>,
     /// whether the last render decoded each image

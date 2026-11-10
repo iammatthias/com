@@ -248,11 +248,11 @@ pub fn blocks(list: &[Block], ctx: &Ctx, window: &mut Window, cx: &mut App) -> V
 
 /// A vertical stack of blocks with the body's paragraph spacing.
 pub fn stack(list: &[Block], ctx: &Ctx, window: &mut Window, cx: &mut App) -> gpui::Div {
-    div()
-        .flex()
-        .flex_col()
-        .gap(px(18.))
-        .children(blocks(list, ctx, window, cx))
+    stacked(blocks(list, ctx, window, cx))
+}
+
+pub fn stacked(children: Vec<AnyElement>) -> gpui::Div {
+    div().flex().flex_col().gap(px(18.)).children(children)
 }
 
 pub fn block(b: &Block, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElement {
@@ -358,11 +358,7 @@ fn heading(level: u8, text: &Rich, ctx: &Ctx, window: &mut Window, cx: &mut App)
             .letter_spacing(px(0.9))
             .text_color(theme.muted),
     };
-    el.when(matches!(level, 2 | 3), |d| {
-        d.relative().child(super::toc::probe(&text.text))
-    })
-    .child(body)
-    .into_any_element()
+    el.child(body).into_any_element()
 }
 
 fn callout_mark(kind: CalloutKind) -> &'static str {

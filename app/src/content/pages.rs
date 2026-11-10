@@ -369,8 +369,10 @@ pub fn doc(
     if !contents.is_empty() {
         col = col.child(super::toc::view(&contents, &key, theme));
     }
+    let mut body = render::blocks(body, &ctx, window, cx);
+    super::toc::mark(&mut body, &contents);
     col = col
-        .child(render::stack(body, &ctx, window, cx))
+        .child(render::stacked(body))
         .child(div().pt(px(24.)).child(double_rule(theme, 64.)))
         .child(terrazzo_banner(&doc.rkey, &doc.cid, width, window, cx))
         .child(colophon(doc, &key, nav, theme, sel));
