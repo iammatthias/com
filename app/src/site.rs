@@ -19,6 +19,7 @@ use crate::theme::Theme;
 mod find;
 mod lettering;
 mod payloads;
+mod remote;
 mod reveal;
 pub mod signal;
 mod timeline;
@@ -28,6 +29,7 @@ use find::Find;
 pub use find::MAX_QUERY;
 use lettering::Lettering;
 use payloads::Payloads;
+use remote::Remote;
 use reveal::Reveal;
 use signal::pump;
 use timeline::Timeline;
@@ -54,7 +56,7 @@ pub struct Site {
     /// redirects followed since `go`
     redirect_hops: u8,
     page: Entity<Page>,
-    index: Option<Index>,
+    index: Remote<Index>,
     nav: Navigate,
     pub home: Home,
     /// the current page's own lettering for the frame
@@ -66,9 +68,6 @@ pub struct Site {
     /// it whenever nothing inside does (Find's input is the browser's, outside gpui)
     focus: gpui::FocusHandle,
     _fetch: Option<Task<()>>,
-    _index: Option<Task<()>>,
-    /// the index fetch spent its tries: the next reconnect asks again
-    index_gave_up: bool,
     timeline: Timeline,
     _listening: Vec<Task<()>>,
 }
@@ -157,7 +156,7 @@ impl Site {
                 let nav = nav.clone();
                 cx.new(|cx| Page::new(nav, cx))
             },
-            index: None,
+            index: Remote::Loading(Task::ready(())),
             home,
             payloads: Default::default(),
             find,
@@ -166,8 +165,6 @@ impl Site {
             reveal: Reveal::default(),
             nav,
             _fetch: None,
-            _index: None,
-            index_gave_up: false,
             timeline: Default::default(),
             _listening: listening,
         };
@@ -247,15 +244,12 @@ impl Site {
             self.apply(payload, cx);
             return;
         }
-        let fetch = http::get_json::<RoutePayload>(
-            cx.http_client(),
-            http::route_url(&path),
+        let url = http::route_url(&path);
+        self._fetch = Some(Self::get::<RoutePayload>(
+            url,
             Retry::BRIEF,
-            cx.background_executor().clone(),
-        );
-        self._fetch = Some(cx.spawn(async move |this, cx| {
-            let result = fetch.await;
-            let _ = this.update(cx, |site, cx| {
+            cx,
+            move |site, result, cx| {
                 match result {
                     Ok(payload) => {
                         site.payloads.remember(path, payload.clone());
@@ -268,8 +262,26 @@ impl Site {
                     }
                 }
                 cx.notify();
-            });
-        }));
+            },
+        ));
+    }
+
+    fn get<T: serde::de::DeserializeOwned + 'static>(
+        url: String,
+        retry: Retry,
+        cx: &mut Context<Self>,
+        then: impl FnOnce(&mut Self, anyhow::Result<T>, &mut Context<Self>) + 'static,
+    ) -> Task<()> {
+        let fetch = http::get_json::<T>(
+            cx.http_client(),
+            url,
+            retry,
+            cx.background_executor().clone(),
+        );
+        cx.spawn(async move |this, cx| {
+            let result = fetch.await;
+            let _ = this.update(cx, |site, cx| then(site, result, cx));
+        })
     }
 
     fn apply(&mut self, payload: RoutePayload, cx: &mut Context<Self>) {
@@ -323,17 +335,13 @@ impl Site {
         if !self.payloads.should_prefetch(&path) {
             return;
         }
-        let fetch = http::get_json::<RoutePayload>(
-            cx.http_client(),
+        let key = path.clone();
+        let task = Self::get::<RoutePayload>(
             http::route_url(&path),
             Retry::ONCE,
-            cx.background_executor().clone(),
+            cx,
+            move |site, result, _| site.payloads.prefetched(key, result.ok()),
         );
-        let key = path.clone();
-        let task = cx.spawn(async move |this, cx| {
-            let payload = fetch.await.ok();
-            let _ = this.update(cx, |site, _| site.payloads.prefetched(key, payload));
-        });
         self.payloads.prefetching(path, task);
     }
 
@@ -459,7 +467,7 @@ impl Site {
             over_column: design::controls_cover_column(window),
             plate: plate.as_ref(),
             semantic: self.find.hits_for(&self.home.query),
-            index: self.index.as_ref(),
+            index: self.index.ready(),
             nav: &self.nav,
             theme,
         };
@@ -581,7 +589,7 @@ impl Site {
             home: &self.home,
             timeline: &self.timeline.items,
             timeline_waiting: self.timeline.waiting(),
-            index: self.index.as_ref(),
+            index: self.index.ready(),
         })
     }
 
@@ -608,7 +616,7 @@ impl Site {
     /// needn't: the index letters the spiral without it. Diagrams and embeds see to their own.)
     fn reconnected(&mut self, cx: &mut Context<Self>) {
         self.retry_failed_page(cx);
-        if self.index.is_none() && self.index_gave_up {
+        if matches!(self.index, Remote::GaveUp) {
             self.fetch_index(cx);
         }
     }
@@ -625,27 +633,23 @@ impl Site {
         let url = format!("{}/api/app/index", route::origin());
         // the spiral is lettered from the index: rather than leave the plate on its placeholder
         // for good, a failed fetch is tried again
-        let fetch = http::get_json::<Index>(
-            cx.http_client(),
+        self.index = Remote::Loading(Self::get::<Index>(
             url,
             Retry::PATIENT,
-            cx.background_executor().clone(),
-        );
-        self._index = Some(cx.spawn(async move |this, cx| match fetch.await {
-            Ok(mut index) => {
-                index.prepare_search();
-                let _ = this.update(cx, |site, cx| {
-                    site.index = Some(index);
+            cx,
+            |site, result, cx| match result {
+                Ok(mut index) => {
+                    index.prepare_search();
+                    site.index = Remote::Ready(index);
                     site.retitle(cx);
                     cx.notify();
-                });
-            }
-            Err(e) => {
-                crate::console::warn(&format!("index: {e:#}"));
-                let _ = this.update(cx, |site, _| site.index_gave_up = true);
-            }
-        }));
-        self.index_gave_up = false;
+                }
+                Err(e) => {
+                    crate::console::warn(&format!("index: {e:#}"));
+                    site.index = Remote::GaveUp;
+                }
+            },
+        ));
     }
 }
 
@@ -834,7 +838,7 @@ impl Site {
         let mut wants_frame = false;
         if self.route == Route::Home {
             self.page.update(cx, |page, cx| page.hidden(cx));
-            if let Some(index) = self.index.as_ref() {
+            if let Some(index) = self.index.ready() {
                 root = root.child(home::list(index, &self.home, &self.nav, theme, window));
             }
         } else {

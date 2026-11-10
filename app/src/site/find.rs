@@ -89,7 +89,7 @@ impl Site {
             }
             Event::Submit => {
                 let by_meaning = self.find.hits_for(&self.home.query).unwrap_or_default();
-                let results = self.home.results(self.index.as_ref(), by_meaning);
+                let results = self.home.results(self.index.ready(), by_meaning);
                 let Some((_, href)) = results.into_iter().next() else {
                     return;
                 };
