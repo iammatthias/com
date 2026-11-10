@@ -68,4 +68,5 @@ export function serveFarfield(world: FarfieldWorld): { asked: string[] } {
 export function restoreFetch(): void {
     globalThis.fetch = realFetch;
     forgetMemo();
+    setRuntimeEnv(undefined);
 }

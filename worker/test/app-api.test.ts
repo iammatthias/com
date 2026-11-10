@@ -135,6 +135,17 @@ describe("resolveAppRoute", () => {
         expect(await resolveAppRoute("/posts/", "?x=1")).toEqual({ kind: "redirect", to: "/posts?x=1", status: 301 });
     });
 
+    test("the home page carries no data, and a hand-written page carries its markdown", async () => {
+        site();
+        expect(await resolveAppRoute("/")).toEqual({ kind: "home" });
+        const about = await resolveAppRoute("/about");
+        if (about.kind !== "page") throw new Error(`got ${about.kind}`);
+        expect([about.slug, about.title, about.markdown.split("\n")[0]]).toEqual(["about", "About", "# About"]);
+        const menu = await resolveAppRoute("/menu");
+        if (menu.kind !== "page") throw new Error(`got ${menu.kind}`);
+        expect([menu.slug, menu.markdown.includes("[posts](/posts)"), menu.markdown.includes("[recipes](/recipes)")]).toEqual(["menu", true, false]);
+    });
+
     test("drafts, unknown sections and pages past the end are not found", async () => {
         site();
         expect(await resolveAppRoute("/posts/hidden")).toEqual({ kind: "notfound" });
@@ -231,9 +242,10 @@ describe("resolveAppRoute", () => {
         expect(developers.markdownHref).toBe("/developers.md");
         expect(developers.quickstart.startsWith("# Search the site")).toBe(true);
         expect(developers.endpoints[0]).toEqual({
-            label: `GET ${API_OPERATIONS[0].path}`,
-            href: API_OPERATIONS[0].path,
-            description: API_OPERATIONS[0].description,
+            label: "GET /api/search-corpus.json",
+            href: "/api/search-corpus.json",
+            description:
+                "Every searchable item on the site (documents and feed posts) as compact text, each carrying its Farfield content hash (cid). Intended for building your own index; the site's own search embeds this locally in the browser.",
         });
         expect(developers.sections.map((s) => s.title)).toEqual([
             "HTTP endpoints",
