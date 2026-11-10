@@ -251,6 +251,10 @@ export const schema = new GraphQLSchema({
                         description: "Search terms.",
                     },
                     ...connectionArgs,
+                    first: {
+                        ...connectionArgs.first,
+                        description: `Items to return (default 20, max ${MAX_SEARCH_LIMIT}).`,
+                    },
                 },
                 resolve: async (_r, { query, first, after }) =>
                     connect(await searchContent(query, MAX_SEARCH_LIMIT), after, first),

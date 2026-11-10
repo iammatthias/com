@@ -78,9 +78,10 @@ describe("GraphQL search cap", () => {
         });
     });
 
-    test("the schema states the cap on search", () => {
-        expect(schema.getQueryType()!.getFields().search.description).toBe(
-            "Keyword search across titles, tags, and bodies, ranked by relevance. At most 50 hits in all.",
-        );
+    test("the schema states the cap on search, and documents keeps its own", () => {
+        const fields = schema.getQueryType()!.getFields();
+        expect(fields.search.description).toBe("Keyword search across titles, tags, and bodies, ranked by relevance. At most 50 hits in all.");
+        expect(fields.search.args.find((a) => a.name === "first")!.description).toBe("Items to return (default 20, max 50).");
+        expect(fields.documents.args.find((a) => a.name === "first")!.description).toBe("Items to return (default 20, max 100).");
     });
 });
