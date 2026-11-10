@@ -15,6 +15,57 @@ use crate::theme::Theme;
 /// the engraving between passes: colour plus ink amount, filterable everywhere including WebGL2
 const ENGRAVED_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
 
+pub(crate) fn upload(
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    label: &'static str,
+    format: wgpu::TextureFormat,
+    (width, height): (u32, u32),
+    levels: &[impl AsRef<[u8]>],
+) -> wgpu::TextureView {
+    let texel = format
+        .block_copy_size(None)
+        .expect("a format with one size of texel");
+    let texture = device.create_texture(&wgpu::TextureDescriptor {
+        label: Some(label),
+        size: wgpu::Extent3d {
+            width,
+            height,
+            depth_or_array_layers: 1,
+        },
+        mip_level_count: levels.len() as u32,
+        sample_count: 1,
+        dimension: wgpu::TextureDimension::D2,
+        format,
+        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+        view_formats: &[],
+    });
+    let (mut w, mut h) = (width, height);
+    for (level, data) in levels.iter().enumerate() {
+        queue.write_texture(
+            wgpu::TexelCopyTextureInfo {
+                texture: &texture,
+                mip_level: level as u32,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            data.as_ref(),
+            wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(w * texel),
+                rows_per_image: Some(h),
+            },
+            wgpu::Extent3d {
+                width: w,
+                height: h,
+                depth_or_array_layers: 1,
+            },
+        );
+        (w, h) = ((w / 2).max(1), (h / 2).max(1));
+    }
+    texture.create_view(&Default::default())
+}
+
 /// most device pixels the plate shades per frame (two full-screen passes)
 const PIXEL_BUDGET: f32 = 2.4e6;
 
@@ -185,40 +236,14 @@ impl Plate {
             context.texture_format(),
         );
         self.last_drawn = None;
-        let portrait = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("plate-portrait"),
-            size: wgpu::Extent3d {
-                width: PORTRAIT_SIDE,
-                height: PORTRAIT_SIDE,
-                depth_or_array_layers: 1,
-            },
-            mip_level_count: 1,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::R8Unorm,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        });
-        context.queue().write_texture(
-            wgpu::TexelCopyTextureInfo {
-                texture: &portrait,
-                mip_level: 0,
-                origin: wgpu::Origin3d::ZERO,
-                aspect: wgpu::TextureAspect::All,
-            },
-            PORTRAIT,
-            wgpu::TexelCopyBufferLayout {
-                offset: 0,
-                bytes_per_row: Some(PORTRAIT_SIDE),
-                rows_per_image: Some(PORTRAIT_SIDE),
-            },
-            wgpu::Extent3d {
-                width: PORTRAIT_SIDE,
-                height: PORTRAIT_SIDE,
-                depth_or_array_layers: 1,
-            },
+        let portrait = upload(
+            device,
+            context.queue(),
+            "plate-portrait",
+            wgpu::TextureFormat::R8Unorm,
+            (PORTRAIT_SIDE, PORTRAIT_SIDE),
+            &[PORTRAIT],
         );
-        let portrait = portrait.create_view(&Default::default());
         self.gpu = Some(Gpu {
             context: context.clone(),
             pipeline,
@@ -243,78 +268,22 @@ impl Plate {
         let device = gpu.context.device();
         let queue = gpu.context.queue();
         let a = &self.atlas;
-        let atlas = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("plate-atlas"),
-            size: wgpu::Extent3d {
-                width: a.width,
-                height: a.height,
-                depth_or_array_layers: 1,
-            },
-            mip_level_count: a.levels.len() as u32,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rg8Unorm,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        });
-        let (mut w, mut h) = (a.width, a.height);
-        for (level, data) in a.levels.iter().enumerate() {
-            queue.write_texture(
-                wgpu::TexelCopyTextureInfo {
-                    texture: &atlas,
-                    mip_level: level as u32,
-                    origin: wgpu::Origin3d::ZERO,
-                    aspect: wgpu::TextureAspect::All,
-                },
-                data,
-                wgpu::TexelCopyBufferLayout {
-                    offset: 0,
-                    bytes_per_row: Some(w * 2),
-                    rows_per_image: Some(h),
-                },
-                wgpu::Extent3d {
-                    width: w,
-                    height: h,
-                    depth_or_array_layers: 1,
-                },
-            );
-            (w, h) = ((w / 2).max(1), (h / 2).max(1));
-        }
-        let segs = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("plate-segments"),
-            size: wgpu::Extent3d {
-                width: a.segs_w,
-                height: a.segs_h,
-                depth_or_array_layers: 1,
-            },
-            mip_level_count: 1,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rgba8Unorm,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        });
-        queue.write_texture(
-            wgpu::TexelCopyTextureInfo {
-                texture: &segs,
-                mip_level: 0,
-                origin: wgpu::Origin3d::ZERO,
-                aspect: wgpu::TextureAspect::All,
-            },
-            &a.seg_table,
-            wgpu::TexelCopyBufferLayout {
-                offset: 0,
-                bytes_per_row: Some(a.segs_w * 4),
-                rows_per_image: Some(a.segs_h),
-            },
-            wgpu::Extent3d {
-                width: a.segs_w,
-                height: a.segs_h,
-                depth_or_array_layers: 1,
-            },
+        let atlas_view = upload(
+            device,
+            queue,
+            "plate-atlas",
+            wgpu::TextureFormat::Rg8Unorm,
+            (a.width, a.height),
+            &a.levels,
         );
-        let atlas_view = atlas.create_view(&Default::default());
-        let segs_view = segs.create_view(&Default::default());
+        let segs_view = upload(
+            device,
+            queue,
+            "plate-segments",
+            wgpu::TextureFormat::Rgba8Unorm,
+            (a.segs_w, a.segs_h),
+            &[&a.seg_table],
+        );
         gpu.bind_group = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("plate-bind-group"),
             layout: &gpu.layout,

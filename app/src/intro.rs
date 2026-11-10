@@ -511,44 +511,14 @@ impl Greeting {
         });
 
         let a = &self.atlas;
-        let texture = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("intro-atlas"),
-            size: wgpu::Extent3d {
-                width: a.width as u32,
-                height: a.height as u32,
-                depth_or_array_layers: 1,
-            },
-            mip_level_count: a.levels.len() as u32,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::R8Unorm,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        });
-        let (mut w, mut h) = (a.width as u32, a.height as u32);
-        for (level, data) in a.levels.iter().enumerate() {
-            queue.write_texture(
-                wgpu::TexelCopyTextureInfo {
-                    texture: &texture,
-                    mip_level: level as u32,
-                    origin: wgpu::Origin3d::ZERO,
-                    aspect: wgpu::TextureAspect::All,
-                },
-                data,
-                wgpu::TexelCopyBufferLayout {
-                    offset: 0,
-                    bytes_per_row: Some(w),
-                    rows_per_image: Some(h),
-                },
-                wgpu::Extent3d {
-                    width: w,
-                    height: h,
-                    depth_or_array_layers: 1,
-                },
-            );
-            (w, h) = ((w / 2).max(1), (h / 2).max(1));
-        }
-        let view = texture.create_view(&Default::default());
+        let view = crate::plate::upload_texture(
+            device,
+            queue,
+            "intro-atlas",
+            wgpu::TextureFormat::R8Unorm,
+            (a.width as u32, a.height as u32),
+            &a.levels,
+        );
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
             label: Some("intro-sampler"),
             address_mode_u: wgpu::AddressMode::ClampToEdge,

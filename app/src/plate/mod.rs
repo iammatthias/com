@@ -30,6 +30,7 @@ pub(crate) use atlas::mips;
 use atlas::{FONT, TitleAtlas};
 use frame::Frame;
 use geom::SUBJECT;
+pub(crate) use gpu::upload as upload_texture;
 use gpu::{Gpu, Uniforms};
 pub use greeting::Greeted;
 use greeting::{Greeting, Moment};
