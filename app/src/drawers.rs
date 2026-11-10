@@ -348,10 +348,11 @@ pub fn drawer(
         .rounded(px(design::CONTROL_RADIUS))
         .overflow_hidden()
         .text_color(t.ink)
-        .child(glass.element(crate::overlay::Redraw::Refresh))
         .child(header.w_full());
     if anim.k <= 0.001 {
-        return card.into_any_element();
+        return card
+            .child(glass.element(crate::overlay::Redraw::Refresh))
+            .into_any_element();
     }
     let card = card.w(px(anim.width));
 
