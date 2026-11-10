@@ -124,17 +124,25 @@ thread_local! {
 
 /// The lightbox is over the page.
 pub fn set_lightbox(on: bool) {
-    LIGHTBOX.set(on);
+    if LIGHTBOX.replace(on) != on {
+        crate::dom_video::wake();
+    }
 }
 
 /// A corner panel is open (or opening, or closing) over the page. True when that changed.
 pub fn set_panel(on: bool) -> bool {
-    PANEL.replace(on) != on
+    let changed = PANEL.replace(on) != on;
+    if changed {
+        crate::dom_video::wake();
+    }
+    changed
 }
 
 /// The page's text is up (it fades in once the frame has opened round it).
 pub fn set_page_shown(on: bool) {
-    PAGE_SHOWN.set(on);
+    if PAGE_SHOWN.replace(on) != on {
+        crate::dom_video::wake();
+    }
 }
 
 /// Something is in front of the page, or the page isn't up yet: page overlays stay hidden.

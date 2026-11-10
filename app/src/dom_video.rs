@@ -72,6 +72,7 @@ fn learned(src: &str, aspect: f32) {
 /// A new content render is starting: clips it doesn't place again will hide.
 pub fn begin_render() {
     CLIPS.with(|clips| clips.borrow_mut().begin());
+    wake();
 }
 
 pub fn turn_to(page: &str) {
@@ -114,6 +115,7 @@ pub fn hover(key: &str, on: bool) {
             e.hovered = on;
         }
     });
+    wake();
 }
 
 /// The reader clicked the figure: play if it isn't playing, pause if it is. Returns the new state.
@@ -124,6 +126,7 @@ pub fn toggle(key: &str) -> bool {
             e.user = Some(now);
         }
     });
+    wake();
     now
 }
 
@@ -138,7 +141,7 @@ pub fn playing(key: &str) -> bool {
     })
 }
 
-fn wake() {
+pub fn wake() {
     #[cfg(target_family = "wasm")]
     web::wake();
 }
@@ -152,6 +155,20 @@ mod web {
     use wasm_bindgen::closure::Closure;
 
     use super::{CLIPS, Mode, learned};
+
+    const WAKING_EVENTS: [&str; 11] = [
+        "loadedmetadata",
+        "loadeddata",
+        "canplay",
+        "playing",
+        "pause",
+        "waiting",
+        "stalled",
+        "seeked",
+        "emptied",
+        "resize",
+        "error",
+    ];
 
     pub struct Video {
         el: web_sys::HtmlVideoElement,
@@ -169,6 +186,8 @@ mod web {
     thread_local! {
         static LOOP: RefCell<Option<Closure<dyn FnMut()>>> = const { RefCell::new(None) };
         static RUNNING: Cell<bool> = const { Cell::new(false) };
+        static WOKEN: Cell<bool> = const { Cell::new(false) };
+        static WAKE: Closure<dyn FnMut()> = Closure::new(wake);
         static NOOP: Closure<dyn FnMut(JsValue)> = Closure::new(|_: JsValue| {});
         static QUERIES: RefCell<Vec<(&'static str, Option<web_sys::MediaQueryList>)>> = const { RefCell::new(Vec::new()) };
     }
@@ -179,10 +198,11 @@ mod web {
             let i = match q.iter().position(|(k, _)| *k == query) {
                 Some(i) => i,
                 None => {
-                    q.push((
-                        query,
-                        web_sys::window().and_then(|w| w.match_media(query).ok().flatten()),
-                    ));
+                    let list = web_sys::window().and_then(|w| w.match_media(query).ok().flatten());
+                    if let Some(list) = list.as_ref() {
+                        listen(list, "change");
+                    }
+                    q.push((query, list));
                     q.len() - 1
                 }
             };
@@ -190,7 +210,14 @@ mod web {
         })
     }
 
+    fn listen(target: &web_sys::EventTarget, event: &str) {
+        WAKE.with(|wake| {
+            let _ = target.add_event_listener_with_callback(event, wake.as_ref().unchecked_ref());
+        });
+    }
+
     pub fn wake() {
+        WOKEN.set(true);
         if RUNNING.replace(true) {
             return;
         }
@@ -211,7 +238,9 @@ mod web {
     }
 
     fn frame() {
-        if tick() {
+        WOKEN.set(false);
+        let unsettled = tick();
+        if unsettled || WOKEN.get() {
             request();
         } else {
             RUNNING.set(false);
@@ -238,6 +267,9 @@ mod web {
             el.set_poster(p);
         }
         el.set_attribute("style", "display:none").ok();
+        for event in WAKING_EVENTS {
+            listen(&el, event);
+        }
         doc.body()?.append_child(&el).ok()?;
         Some(Video {
             el,
@@ -270,9 +302,8 @@ mod web {
             in_view.sort_by(|a, b| b.0.total_cmp(&a.0));
             in_view.truncate(2);
 
-            let mut any = false;
+            let mut unsettled = false;
             for (key, placed, e) in clips.iter_mut() {
-                any = true;
                 let inset = e.rect.inset_within(&e.clip);
                 let alive = placed && !suppressed && inset.is_some() && e.rect.w > 1.;
                 let want = alive
@@ -287,25 +318,30 @@ mod web {
                         continue;
                     }
                     e.el = create(e.poster.as_deref(), e.mode);
+                    unsettled = true;
                 }
                 let Some(v) = e.el.as_mut() else { continue };
                 // a figure's clip loads even before it plays: its own size is the figure's shape
                 if (want || e.mode == Mode::Auto) && !v.src_set {
                     v.el.set_src(&e.src);
                     v.src_set = true;
+                    unsettled = true;
                 }
                 let (w, h) = (v.el.video_width(), v.el.video_height());
-                if e.mode == Mode::Auto && w > 0 && h > 0 {
+                let sized = w > 0 && h > 0;
+                if e.mode == Mode::Auto && sized {
                     learned(&e.src, w as f32 / h as f32);
                 }
                 let paused = v.el.paused();
                 if want && paused {
                     play(v);
+                    unsettled = true;
                 } else if !want && !paused {
                     v.el.pause().ok();
                     if e.mode == Mode::Live {
                         v.el.set_current_time(0.);
                     }
+                    unsettled = true;
                 }
                 let has_frame = v.el.ready_state() >= 2;
                 let visible = alive
@@ -334,9 +370,17 @@ mod web {
                 if css != v.css {
                     v.el.set_attribute("style", &css).ok();
                     v.css = css;
+                    unsettled = true;
                 }
+                let awaited = match e.mode {
+                    Mode::Auto => !sized || (alive && !has_frame),
+                    Mode::Live => want && !has_frame,
+                };
+                let loading = v.src_set
+                    && v.el.network_state() != web_sys::HtmlMediaElement::NETWORK_NO_SOURCE;
+                unsettled |= awaited && loading;
             }
-            any
+            unsettled
         })
     }
 }
