@@ -4,13 +4,11 @@
 //! bounds here (from a canvas probe in its prepaint) and this module keeps one muted, looping,
 //! inline `<video>` per clip in `document.body`, `position: absolute` (the page never scrolls; iOS won't paint fixed content under its toolbars) above the canvas with
 //! `pointer-events: none` (so hover and clicks still reach GPUI), clipped to the scroll
-//! viewport. A requestAnimationFrame loop applies placement and play state, and runs only
-//! while any clip is registered.
+//! viewport.
 //!
 //! Clips belong to the render that placed them. The page is a cached view: it only renders
 //! (and so only re-places its clips) when something changes. Each content render starts a new
-//! epoch; a clip not placed in the latest epoch is hidden, and a clip placed on another route
-//! is removed outright, which also covers going home (where content stops rendering).
+//! epoch; a clip not placed in the latest epoch is hidden.
 //!
 //! `prefers-reduced-motion` turns autoplay off: the figure shows its poster and a "play"
 //! that starts the clip. Live tiles (a still with motion behind it) play on hover where
@@ -19,7 +17,7 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-use crate::overlay::Rect;
+use crate::overlay::{Extent, Gate, Layer, Rect};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Mode {
@@ -33,8 +31,6 @@ struct Entry {
     src: String,
     poster: Option<String>,
     mode: Mode,
-    path: String,
-    epoch: u64,
     rect: Rect,
     clip: Rect,
     hovered: bool,
@@ -44,14 +40,8 @@ struct Entry {
     el: Option<web::Video>,
 }
 
-#[derive(Default)]
-struct Registry {
-    entries: HashMap<String, Entry>,
-    epoch: u64,
-}
-
 thread_local! {
-    static REG: RefCell<Registry> = RefCell::new(Registry::default());
+    static CLIPS: RefCell<Layer<Entry>> = RefCell::new(Layer::new(Gate::Page, Extent::Viewport));
     /// each clip's own width over height, by source, once its `<video>` has read it
     static ASPECTS: RefCell<HashMap<String, f32>> = RefCell::new(HashMap::new());
     static RESIZED: crate::site::signal::Signal<()> = const { crate::site::signal::Signal::new() };
@@ -81,21 +71,27 @@ fn learned(src: &str, aspect: f32) {
 
 /// A new content render is starting: clips it doesn't place again will hide.
 pub fn begin_render() {
-    REG.with(|r| r.borrow_mut().epoch += 1);
+    CLIPS.with(|clips| clips.borrow_mut().begin());
+}
+
+pub fn turn_to(page: &str) {
+    let gone = CLIPS.with(|clips| clips.borrow_mut().turn_to(page));
+    drop(gone);
+}
+
+pub fn clear() {
+    let gone = CLIPS.with(|clips| clips.borrow_mut().clear());
+    drop(gone);
 }
 
 /// Where a figure's clip is painted this render. `clip` is the visible part of the page.
 pub fn place(key: &str, src: &str, poster: Option<&str>, mode: Mode, rect: Rect, clip: Rect) {
-    let path = crate::route::current();
-    REG.with(|r| {
-        let mut r = r.borrow_mut();
-        let epoch = r.epoch;
-        let e = r.entries.entry(key.to_string()).or_insert_with(|| Entry {
-            src: src.to_string(),
-            poster: poster.map(str::to_string),
+    CLIPS.with(|clips| {
+        let mut clips = clips.borrow_mut();
+        let e = clips.place(key, || Entry {
+            src: String::new(),
+            poster: None,
             mode,
-            path: path.clone(),
-            epoch,
             rect,
             clip,
             hovered: false,
@@ -106,18 +102,15 @@ pub fn place(key: &str, src: &str, poster: Option<&str>, mode: Mode, rect: Rect,
         e.src = src.to_string();
         e.poster = poster.map(str::to_string);
         e.mode = mode;
-        e.path = path;
-        e.epoch = epoch;
         e.rect = rect;
         e.clip = clip;
     });
-    #[cfg(target_family = "wasm")]
-    web::ensure_loop();
+    wake();
 }
 
 pub fn hover(key: &str, on: bool) {
-    REG.with(|r| {
-        if let Some(e) = r.borrow_mut().entries.get_mut(key) {
+    CLIPS.with(|clips| {
+        if let Some(e) = clips.borrow_mut().get_mut(key) {
             e.hovered = on;
         }
     });
@@ -126,8 +119,8 @@ pub fn hover(key: &str, on: bool) {
 /// The reader clicked the figure: play if it isn't playing, pause if it is. Returns the new state.
 pub fn toggle(key: &str) -> bool {
     let now = !playing(key);
-    REG.with(|r| {
-        if let Some(e) = r.borrow_mut().entries.get_mut(key) {
+    CLIPS.with(|clips| {
+        if let Some(e) = clips.borrow_mut().get_mut(key) {
             e.user = Some(now);
         }
     });
@@ -137,12 +130,17 @@ pub fn toggle(key: &str) -> bool {
 /// Whether the clip is (meant to be) playing: what the figure's lettering should say.
 pub fn playing(key: &str) -> bool {
     let reduced = crate::route::reduced_motion();
-    REG.with(|r| {
-        r.borrow()
-            .entries
+    CLIPS.with(|clips| {
+        clips
+            .borrow()
             .get(key)
             .is_some_and(|e| e.user.unwrap_or(e.mode == Mode::Auto && !reduced))
     })
+}
+
+fn wake() {
+    #[cfg(target_family = "wasm")]
+    web::wake();
 }
 
 #[cfg(target_family = "wasm")]
@@ -153,7 +151,7 @@ mod web {
     use wasm_bindgen::JsValue;
     use wasm_bindgen::closure::Closure;
 
-    use super::{Mode, REG, learned};
+    use super::{CLIPS, Mode, learned};
 
     pub struct Video {
         el: web_sys::HtmlVideoElement,
@@ -172,7 +170,6 @@ mod web {
         static LOOP: RefCell<Option<Closure<dyn FnMut()>>> = const { RefCell::new(None) };
         static RUNNING: Cell<bool> = const { Cell::new(false) };
         static NOOP: Closure<dyn FnMut(JsValue)> = Closure::new(|_: JsValue| {});
-        /// each media query's list, made once: it stays live, so reading it each frame is enough
         static QUERIES: RefCell<Vec<(&'static str, Option<web_sys::MediaQueryList>)>> = const { RefCell::new(Vec::new()) };
     }
 
@@ -193,8 +190,8 @@ mod web {
         })
     }
 
-    pub fn ensure_loop() {
-        if RUNNING.with(|r| r.replace(true)) {
+    pub fn wake() {
+        if RUNNING.replace(true) {
             return;
         }
         LOOP.with(|l| {
@@ -217,7 +214,7 @@ mod web {
         if tick() {
             request();
         } else {
-            RUNNING.with(|r| r.set(false));
+            RUNNING.set(false);
         }
     }
 
@@ -257,34 +254,27 @@ mod web {
         }
     }
 
-    /// One frame: drop clips from other routes, then place, show and play the rest.
-    /// Returns whether there is anything left to look after.
     fn tick() -> bool {
-        let path = crate::route::current();
         let reduced = matches("(prefers-reduced-motion: reduce)");
         let hover = matches("(hover: hover) and (pointer: fine)");
-        REG.with(|r| {
-            let mut r = r.borrow_mut();
-            r.entries.retain(|_, e| e.path == path);
-            if r.entries.is_empty() {
-                return false;
-            }
-            let epoch = r.epoch;
-            let suppressed = crate::overlay::blocked();
+        CLIPS.with(|clips| {
+            let mut clips = clips.borrow_mut();
+            let suppressed = clips.gated();
             // on touch, the live tiles most in view play, two at most
-            let mut in_view: Vec<(f32, String)> = r
-                .entries
+            let mut in_view: Vec<(f32, String)> = clips
                 .iter()
-                .filter(|(_, e)| e.mode == Mode::Live && e.epoch == epoch)
-                .map(|(k, e)| (e.rect.visible_ratio(&e.clip), k.clone()))
+                .filter(|(_, placed, e)| e.mode == Mode::Live && *placed)
+                .map(|(k, _, e)| (e.rect.visible_ratio(&e.clip), k.to_string()))
                 .filter(|(ratio, _)| *ratio >= 0.6)
                 .collect();
             in_view.sort_by(|a, b| b.0.total_cmp(&a.0));
             in_view.truncate(2);
 
-            for (key, e) in r.entries.iter_mut() {
+            let mut any = false;
+            for (key, placed, e) in clips.iter_mut() {
+                any = true;
                 let inset = e.rect.inset_within(&e.clip);
-                let alive = e.epoch == epoch && !suppressed && inset.is_some() && e.rect.w > 1.;
+                let alive = placed && !suppressed && inset.is_some() && e.rect.w > 1.;
                 let want = alive
                     && match e.mode {
                         Mode::Auto => e.user.unwrap_or(!reduced),
@@ -346,7 +336,7 @@ mod web {
                     v.css = css;
                 }
             }
-            true
+            any
         })
     }
 }

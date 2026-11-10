@@ -98,6 +98,7 @@ impl Page {
 
     /// The page is off the screen (the plate shows alone): its selection goes with it.
     pub fn hidden(&mut self, cx: &mut Context<Self>) {
+        crate::dom_video::clear();
         self.selection.reset(cx);
     }
 
@@ -126,6 +127,7 @@ impl Render for Page {
             .update(cx, |images, cx| images.sweep(window, cx));
         // whatever is showing, a page that failed included: the last page's embeds go
         crate::dom_embed::begin_render(&self.path);
+        crate::dom_video::turn_to(&self.path);
         let body = match &self.load {
             Load::Loading => div().into_any_element(),
             Load::Failed => {

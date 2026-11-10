@@ -5,6 +5,7 @@
 //! fade with it).
 
 use std::cell::Cell;
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use gpui::prelude::*;
@@ -146,6 +147,151 @@ pub fn lightbox_open() -> bool {
     LIGHTBOX.get()
 }
 
+#[derive(Clone, Copy)]
+pub enum Gate {
+    Page,
+    Lightbox,
+}
+
+#[derive(Clone, Copy)]
+pub enum Extent {
+    Viewport,
+    BetweenControls,
+}
+
+struct Placed<T> {
+    page: String,
+    epoch: u64,
+    item: T,
+}
+
+pub struct Layer<T> {
+    gate: Gate,
+    extent: Extent,
+    page: String,
+    epoch: u64,
+    entries: HashMap<String, Placed<T>>,
+}
+
+impl<T> Layer<T> {
+    pub fn new(gate: Gate, extent: Extent) -> Self {
+        Self {
+            gate,
+            extent,
+            page: String::new(),
+            epoch: 0,
+            entries: HashMap::new(),
+        }
+    }
+
+    pub fn page(&self) -> &str {
+        &self.page
+    }
+
+    pub fn turn_to(&mut self, page: &str) -> Vec<(String, T)> {
+        if self.page != page {
+            self.page = page.to_string();
+        }
+        let (kept, gone): (HashMap<_, _>, HashMap<_, _>) = std::mem::take(&mut self.entries)
+            .into_iter()
+            .partition(|(_, placed)| placed.page == page);
+        self.entries = kept;
+        gone.into_iter()
+            .map(|(key, placed)| (key, placed.item))
+            .collect()
+    }
+
+    pub fn clear(&mut self) -> Vec<T> {
+        self.entries
+            .drain()
+            .map(|(_, placed)| placed.item)
+            .collect()
+    }
+
+    pub fn begin(&mut self) -> Vec<String> {
+        let dropped = self
+            .entries
+            .iter()
+            .filter(|(_, placed)| placed.epoch + 1 == self.epoch)
+            .map(|(key, _)| key.clone())
+            .collect();
+        self.epoch += 1;
+        dropped
+    }
+
+    pub fn place(&mut self, key: &str, new: impl FnOnce() -> T) -> &mut T {
+        let placed = self
+            .entries
+            .entry(key.to_string())
+            .or_insert_with(|| Placed {
+                page: String::new(),
+                epoch: 0,
+                item: new(),
+            });
+        placed.page.clone_from(&self.page);
+        placed.epoch = self.epoch;
+        &mut placed.item
+    }
+
+    pub fn get(&self, key: &str) -> Option<&T> {
+        self.entries.get(key).map(|placed| &placed.item)
+    }
+
+    pub fn get_mut(&mut self, key: &str) -> Option<&mut T> {
+        self.entries.get_mut(key).map(|placed| &mut placed.item)
+    }
+
+    pub fn keys(&self) -> impl Iterator<Item = &str> {
+        self.entries.keys().map(String::as_str)
+    }
+
+    #[cfg_attr(not(target_family = "wasm"), allow(dead_code))]
+    pub fn iter(&self) -> impl Iterator<Item = (&str, bool, &T)> {
+        self.entries
+            .iter()
+            .map(|(key, placed)| (key.as_str(), placed.epoch == self.epoch, &placed.item))
+    }
+
+    #[cfg_attr(not(target_family = "wasm"), allow(dead_code))]
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&str, bool, &mut T)> {
+        let epoch = self.epoch;
+        self.entries
+            .iter_mut()
+            .map(move |(key, placed)| (key.as_str(), placed.epoch == epoch, &mut placed.item))
+    }
+
+    pub fn gated(&self) -> bool {
+        match self.gate {
+            Gate::Page => blocked(),
+            Gate::Lightbox => lightbox_open(),
+        }
+    }
+
+    pub fn inset(&self, rect: Rect, clip: Rect) -> Option<[f32; 4]> {
+        rect.inset_within(&match self.extent {
+            Extent::Viewport => clip,
+            Extent::BetweenControls => between_controls(clip),
+        })
+    }
+}
+
+/// On a phone the column runs under the corner pills, which are drawn on the canvas: an
+/// element stops short of their bands rather than sit over them.
+fn between_controls(clip: Rect) -> Rect {
+    if !crate::route::narrow() {
+        return clip;
+    }
+    let [top, _, bottom, _] = crate::route::safe_insets();
+    let band = crate::design::INSET + crate::design::CONTROL_H + 8.0;
+    let y0 = clip.y.max(top + band);
+    let y1 = clip.y + clip.h - bottom - band;
+    Rect {
+        y: y0,
+        h: (y1 - y0).max(0.0),
+        ..clip
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -173,5 +319,61 @@ mod tests {
         };
         assert_eq!(below.inset_within(&clip), None);
         assert!((r.visible_ratio(&clip) - 250. / 300.).abs() < 1e-5);
+    }
+
+    fn sorted<T: Ord>(mut items: Vec<T>) -> Vec<T> {
+        items.sort();
+        items
+    }
+
+    fn placed_now(layer: &Layer<u8>) -> Vec<(String, bool, u8)> {
+        sorted(
+            layer
+                .iter()
+                .map(|(key, placed, item)| (key.to_string(), placed, *item))
+                .collect(),
+        )
+    }
+
+    #[test]
+    fn what_a_render_stops_placing_is_reported_once() {
+        let mut layer = Layer::new(Gate::Page, Extent::Viewport);
+        assert_eq!(layer.begin(), Vec::<String>::new());
+        layer.place("a", || 1);
+        layer.place("b", || 2);
+        assert_eq!(layer.begin(), Vec::<String>::new());
+        *layer.place("a", || 9) += 10;
+        assert_eq!(
+            placed_now(&layer),
+            [("a".to_string(), true, 11), ("b".to_string(), false, 2)]
+        );
+        assert_eq!(layer.begin(), ["b"]);
+        assert_eq!(layer.begin(), ["a"]);
+        assert_eq!(layer.begin(), Vec::<String>::new());
+        layer.place("b", || 7);
+        assert_eq!(
+            placed_now(&layer),
+            [("a".to_string(), false, 11), ("b".to_string(), true, 2)]
+        );
+    }
+
+    #[test]
+    fn another_page_takes_away_what_the_last_one_placed() {
+        let mut layer = Layer::new(Gate::Page, Extent::Viewport);
+        assert!(layer.turn_to("/posts/a").is_empty());
+        layer.place("clip-0", || 1);
+        layer.place("clip-1", || 2);
+        assert!(layer.turn_to("/posts/a").is_empty());
+        assert_eq!(layer.page(), "/posts/a");
+        assert_eq!(
+            sorted(layer.turn_to("/posts/b")),
+            [("clip-0".to_string(), 1), ("clip-1".to_string(), 2)]
+        );
+        layer.place("clip-0", || 3);
+        assert!(layer.turn_to("/posts/b").is_empty());
+        assert_eq!(sorted(layer.keys().collect()), ["clip-0"]);
+        assert_eq!(layer.get("clip-0"), Some(&3));
+        assert_eq!(layer.clear(), [3]);
+        assert_eq!(layer.keys().count(), 0);
     }
 }
