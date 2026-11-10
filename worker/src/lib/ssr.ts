@@ -13,7 +13,6 @@ import { mediaSize } from "./media-size";
 import { deckColumns } from "./deck";
 import { STATIC_PAGES, SOCIAL_HREFS } from "../pages/static";
 import { transformAlerts } from "./markdown-text";
-import { seriesTags } from "./cache";
 import { glassPick, type GlassPick } from "./glass";
 import { SITE_IDENTITY } from "./agent-surface";
 
@@ -23,29 +22,10 @@ import { SITE_IDENTITY } from "./agent-surface";
  * readers get the same content the app paints.
  */
 
-export type CachePolicy =
-    | { kind: "document" }
-    | { kind: "feed"; page?: number; edge: boolean; extraTags?: string[] }
-    | { kind: "home" }
-    | { kind: "now" }
-    | { kind: "static" }
-    | { kind: "none" };
-
-/**
- * /now lists the newest feed posts; /menu lists the publications. Every other
- * hand-written page changes only with a deploy, which purges `shell`.
- */
-export function pageCachePolicy(slug: string): CachePolicy {
-    if (slug === "now") return { kind: "now" };
-    if (slug === "menu") return { kind: "document" };
-    return { kind: "static" };
-}
-
 export interface SsrPage {
     head: PageHead;
     main: string;
     status: number;
-    cache: CachePolicy;
 }
 
 const h = escapeHtml;
@@ -222,7 +202,6 @@ async function nowPage(route: AppNowRoute, path: string): Promise<SsrPage> {
         head: staticHead("now", path),
         main: `<article class="prose">${relMe(buildToc(html).html)}</article>`,
         status: 200,
-        cache: pageCachePolicy("now"),
     };
 }
 
@@ -248,7 +227,6 @@ function resumePage(route: AppResumeRoute, path: string): SsrPage {
         head: staticHead("resume", path),
         main: `<article class="prose">${buildToc(html).html}</article>`,
         status: 200,
-        cache: pageCachePolicy("resume"),
     };
 }
 
@@ -273,7 +251,6 @@ function developersPage(route: AppDevelopersRoute, path: string): SsrPage {
             `<p class="meta"><a href="${a(route.markdownHref)}">this page as markdown</a></p></header>` +
             `<section class="prose">${buildToc(html).html}</section>`,
         status: 200,
-        cache: pageCachePolicy("developers"),
     };
 }
 
@@ -286,7 +263,6 @@ export function notFoundPage(path: string): SsrPage {
             `<p>Try the <a href="/">homepage</a>, browse <a href="/content">all content</a> or the <a href="/feed">feed</a>, or wander the <a href="/tags">tag index</a>.</p>` +
             `</article>`,
         status: 404,
-        cache: { kind: "none" },
     };
 }
 
@@ -331,7 +307,6 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                         .join("") +
                     `</section></div>`,
                 status: 200,
-                cache: { kind: "home" },
             };
         }
 
@@ -393,7 +368,6 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                 },
                 main,
                 status: 200,
-                cache: { kind: "document" },
             };
         }
 
@@ -420,7 +394,6 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                         ? `<p>No entries published yet.</p>`
                         : `<ul class="grid">${items.map((i) => card(i)).join("")}</ul>` + pagination(page, pages, base)),
                 status: 200,
-                cache: { kind: "document" },
             };
         }
 
@@ -441,7 +414,6 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                     (total === 0 ? `<p>Nothing recent.</p>` : `<ul class="feed">${items.join("")}</ul>`) +
                     pagination(page, pages, "/feed"),
                 status: 200,
-                cache: { kind: "feed", page, edge: true, extraTags: seriesTags(posts) },
             };
         }
 
@@ -475,7 +447,6 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                     ]) +
                     `</article>`,
                 status: 200,
-                cache: { kind: "feed", edge: true, extraTags: seriesTags([p]) },
             };
         }
 
@@ -495,7 +466,6 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                               .join("") +
                           `</ul>`),
                 status: 200,
-                cache: { kind: "document" },
             };
 
         case "tag": {
@@ -519,7 +489,6 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                     `<ul class="grid">${items.map((i) => card(i, i.section)).join("")}</ul>` +
                     pagination(page, pages, base),
                 status: 200,
-                cache: { kind: "document" },
             };
         }
 
@@ -543,7 +512,6 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                     `<ul class="grid">${items.map((i) => card(i, i.section)).join("")}</ul>` +
                     pagination(page, pages, "/content"),
                 status: 200,
-                cache: { kind: "document" },
             };
         }
 
@@ -553,7 +521,6 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
                 head: staticHead(page.slug, path),
                 main: `<article class="prose">${relMe(buildToc(markdownHtml(route.markdown)).html)}</article>`,
                 status: 200,
-                cache: pageCachePolicy(page.slug),
             };
         }
 

@@ -12,7 +12,7 @@ import { redirectDeps, resolveAppRoute } from "./lib/app-route";
 import { publicationSlugSet } from "./lib/farfield-loader";
 import { homepageMarkdown, notFoundMarkdown } from "./lib/agent-markdown";
 import { AGENT_LINKS, SECURITY_HEADERS, markdownByAgentOnly, wantsMarkdown } from "./lib/negotiate";
-import { EDGE_CACHE_HEADER, setShellCacheHeaders } from "./lib/cache";
+import { cachePolicyFor, EDGE_CACHE_HEADER, setShellCacheHeaders, type CachePolicy } from "./lib/cache";
 import { notFoundPage, renderRoute, type SsrPage } from "./lib/ssr";
 import { shellResponse } from "./lib/shell";
 import { ENTRY_LOOP_PATH } from "./lib/og-card";
@@ -166,7 +166,7 @@ function fetchShell(ctx: Ctx): Promise<Response> {
     return ctx.env.ASSETS.fetch(new Request(new URL("/", ctx.url)));
 }
 
-async function shellPage(ctx: Ctx, page: SsrPage, pending: Promise<Response> = fetchShell(ctx)): Promise<Response> {
+async function shellPage(ctx: Ctx, page: SsrPage, policy: CachePolicy, pending: Promise<Response> = fetchShell(ctx)): Promise<Response> {
     const shell = await pending;
     if (!shell.ok) {
         await shell.body?.cancel();
@@ -176,7 +176,7 @@ async function shellPage(ctx: Ctx, page: SsrPage, pending: Promise<Response> = f
         });
     }
     const res = await shellResponse(shell, page, ctx.request.method, ctx.url.pathname, ctx.url.origin);
-    setShellCacheHeaders(res, page);
+    setShellCacheHeaders(res, policy);
     return res;
 }
 
@@ -186,6 +186,7 @@ async function htmlRoute(ctx: Ctx, pathname: string): Promise<Response> {
     const dropShell = () => shell.then((r) => r.body?.cancel()).catch(() => undefined);
     shell.catch(() => undefined);
     let page: SsrPage;
+    let policy: CachePolicy;
     try {
         // handle() already looked for a redirect at the request's own path
         const route = await resolveAppRoute(pathname, ctx.url.search, { redirects: pathname !== ctx.url.pathname });
@@ -194,6 +195,7 @@ async function htmlRoute(ctx: Ctx, pathname: string): Promise<Response> {
             return redirect(route.to, route.status);
         }
         page = route.kind === "notfound" ? notFoundPage(pathname) : await renderRoute(route, pathname);
+        policy = cachePolicyFor(route);
     } catch (err) {
         console.error(`[html] ${pathname} failed:`, err);
         await dropShell();
@@ -202,7 +204,7 @@ async function htmlRoute(ctx: Ctx, pathname: string): Promise<Response> {
             headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
         });
     }
-    return shellPage(ctx, page, shell);
+    return shellPage(ctx, page, policy, shell);
 }
 
 async function dispatch(ctx: Ctx, pathname: string): Promise<Response> {
@@ -331,7 +333,7 @@ async function handle(request: Request, env: Env, exec: ExecutionContext): Promi
         });
     } else if (response.status === 404 && isRead && !contentType && !pathname.startsWith("/api/")) {
         await response.body?.cancel();
-        response = await shellPage(ctx, notFoundPage(pathname));
+        response = await shellPage(ctx, notFoundPage(pathname), cachePolicyFor({ kind: "notfound" }));
         if (!response.headers.has("Link")) response.headers.set("Link", AGENT_LINKS);
     }
 

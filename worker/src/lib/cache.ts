@@ -1,5 +1,5 @@
 import { DOCUMENTS_TAG, FEED_TAG } from "./revalidate";
-import type { CachePolicy } from "./ssr";
+import type { AppRoute } from "../app-api";
 interface CacheHintLike {
     lastModified?: Date;
     tags?: string[];
@@ -99,9 +99,47 @@ export function setDocumentPageCacheHeaders(
  */
 export const SHELL_TAG = "shell";
 
-export function setPageCacheHeaders(res: { headers: Headers }, page: { cache: CachePolicy }): void {
-    const extraTags = [SHELL_TAG];
-    switch (page.cache.kind) {
+export type CachePolicy =
+    | { kind: "document" }
+    | { kind: "feed"; page?: number; extraTags: string[] }
+    | { kind: "home" }
+    | { kind: "now" }
+    | { kind: "static" }
+    | { kind: "none" };
+
+/**
+ * /now lists the newest feed posts; /menu lists the publications. Every other
+ * hand-written page changes only with a deploy, which purges `shell`.
+ */
+export function cachePolicyFor(route: AppRoute): CachePolicy {
+    switch (route.kind) {
+        case "doc":
+        case "list":
+        case "tags":
+        case "tag":
+        case "content":
+        case "redirect":
+            return { kind: "document" };
+        case "home":
+        case "now":
+            return { kind: route.kind };
+        case "feed":
+            return { kind: "feed", page: route.page, extraTags: seriesTags(route.posts) };
+        case "post":
+            return { kind: "feed", extraTags: seriesTags([route.post]) };
+        case "page":
+            return route.slug === "menu" ? { kind: "document" } : { kind: "static" };
+        case "resume":
+        case "developers":
+            return { kind: "static" };
+        case "notfound":
+            return { kind: "none" };
+    }
+}
+
+export function setPageCacheHeaders(res: { headers: Headers }, policy: CachePolicy, { shell }: { shell: boolean }): void {
+    const extraTags = shell ? [SHELL_TAG] : [];
+    switch (policy.kind) {
         case "document":
             setDocumentPageCacheHeaders(res, extraTags);
             return;
@@ -117,16 +155,17 @@ export function setPageCacheHeaders(res: { headers: Headers }, page: { cache: Ca
                 res,
                 { tags: [FEED_TAG] },
                 {
-                    ...deepPageCacheOptions(page.cache.page ?? 1),
-                    edge: page.cache.edge,
-                    extraTags: [...(page.cache.extraTags ?? []), ...extraTags],
+                    ...deepPageCacheOptions(policy.page ?? 1),
+                    edge: true,
+                    extraTags: [...policy.extraTags, ...extraTags],
                 },
             );
             return;
         case "static":
-            setResponseCacheHeaders(res, undefined, { maxAge: 3600, swr: 86400, edge: true, extraTags });
+            setResponseCacheHeaders(res, undefined, { maxAge: 3600, swr: 86400, edge: true, extraTags: [SHELL_TAG] });
             return;
         case "none":
+            res.headers.set("Cache-Control", "public, max-age=0, s-maxage=60");
             return;
     }
 }
@@ -136,7 +175,7 @@ export function setPageCacheHeaders(res: { headers: Headers }, page: { cache: Ca
  * copy it kept, and never serves one stale. The edge keeps its own policy in EDGE_CACHE_HEADER,
  * which it reads ahead of Cache-Control and doesn't pass on.
  */
-export function setShellCacheHeaders(res: { headers: Headers }, page: { cache: CachePolicy }): void {
-    setPageCacheHeaders(res, page);
+export function setShellCacheHeaders(res: { headers: Headers }, policy: CachePolicy): void {
+    setPageCacheHeaders(res, policy, { shell: true });
     res.headers.set("Cache-Control", "no-cache");
 }

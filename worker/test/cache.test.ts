@@ -10,7 +10,7 @@ import {
 } from "../src/lib/cache";
 import { setRouteCacheHeaders } from "../src/routes/app";
 import type { AppRoute } from "../src/app-api";
-import type { CachePolicy } from "../src/lib/ssr";
+import type { CachePolicy } from "../src/lib/cache";
 
 function directives(value: string | null): Map<string, string> {
     const out = new Map<string, string>();
@@ -103,14 +103,14 @@ describe("pages across a deploy", () => {
     test("no page carries a Last-Modified, which a deploy wouldn't change", () => {
         for (const cache of [
             { kind: "document" },
-            { kind: "feed", edge: true },
-            { kind: "home", lastModified: new Date("2026-10-14T00:18:00Z") },
-            { kind: "now", lastModified: new Date("2026-10-14T00:18:00Z") },
+            { kind: "feed", extraTags: [] },
+            { kind: "home" },
+            { kind: "now" },
             { kind: "static" },
             { kind: "none" },
         ] as CachePolicy[]) {
             const response = new Response(null);
-            setPageCacheHeaders(response, { cache });
+            setPageCacheHeaders(response, cache, { shell: true });
             expect([cache.kind, response.headers.get("Last-Modified")]).toEqual([cache.kind, null]);
         }
     });
@@ -118,17 +118,17 @@ describe("pages across a deploy", () => {
     test("a browser asks before it shows a page it kept, and never serves one stale", () => {
         for (const kind of ["document", "home", "static", "none"] as const) {
             const response = new Response(null);
-            setShellCacheHeaders(response, { cache: { kind } });
+            setShellCacheHeaders(response, { kind });
             expect([kind, response.headers.get("Cache-Control")]).toEqual([kind, "no-cache"]);
         }
     });
 
     test("the edge keeps the page as long as it did", () => {
         const home = new Response(null);
-        setShellCacheHeaders(home, { cache: { kind: "home" } });
+        setShellCacheHeaders(home, { kind: "home" });
         expect(home.headers.get(EDGE_CACHE_HEADER)).toBe("public, max-age=60, stale-while-revalidate=86400, stale-if-error=604800");
         const post = new Response(null);
-        setShellCacheHeaders(post, { cache: { kind: "document" } });
+        setShellCacheHeaders(post, { kind: "document" });
         expect(post.headers.get(EDGE_CACHE_HEADER)).toBe("public, max-age=3600, stale-while-revalidate=86400, stale-if-error=604800");
     });
 });
@@ -150,7 +150,7 @@ describe("static pages at the edge", () => {
 
     test("not-found and uncached pages stay out of the edge", () => {
         const page = new Response(null);
-        setPageCacheHeaders(page, { cache: { kind: "none" } });
+        setPageCacheHeaders(page, { kind: "none" }, { shell: true });
         expect(page.headers.has(EDGE_CACHE_HEADER)).toBe(false);
         const route = new Response(null);
         setRouteCacheHeaders(route, { kind: "notfound" } as AppRoute);

@@ -4,18 +4,15 @@ import type { AppRoute, AppSsr } from "../app-api";
 import { IMG_WIDTHS } from "../app-api";
 import { appIndex, appTimeline, resolveAppRoute } from "../lib/app-route";
 import {
+    cachePolicyFor,
     setDocumentPageCacheHeaders,
     setPageCacheHeaders,
-    setResponseCacheHeaders,
-    deepPageCacheOptions,
     EDGE_CACHE_HEADER,
-    SHELL_TAG,
-    seriesTags,
 } from "../lib/cache";
 import { notFoundPage, renderRoute } from "../lib/ssr";
 import { headMeta } from "../lib/seo";
 import { quietImages, ssrMainHtml } from "../lib/shell";
-import { FEED_TAG, DOCUMENTS_TAG } from "../lib/revalidate";
+import { FEED_TAG } from "../lib/revalidate";
 import { jsonError } from "../lib/agent-http";
 import { getBlobMeta, blobURL } from "../lib/farfield-loader";
 import { readSecret, wsrvUrl } from "../lib/farfield";
@@ -38,48 +35,7 @@ export async function appJson(payload: unknown): Promise<Response> {
 
 /** Cache semantics of the HTML route the payload stands for, so one purge covers both. */
 export function setRouteCacheHeaders(response: Response, route: AppRoute): void {
-    switch (route.kind) {
-        case "doc":
-        case "list":
-        case "tags":
-        case "tag":
-        case "content":
-            setDocumentPageCacheHeaders(response);
-            return;
-        case "home":
-            setResponseCacheHeaders(response, { tags: [FEED_TAG] }, { edge: true, extraTags: [DOCUMENTS_TAG] });
-            return;
-        case "feed":
-            setResponseCacheHeaders(
-                response,
-                { tags: [FEED_TAG] },
-                { ...deepPageCacheOptions(route.page), edge: true, extraTags: seriesTags(route.posts) },
-            );
-            return;
-        case "post":
-            setResponseCacheHeaders(response, { tags: [FEED_TAG] }, { edge: true, extraTags: seriesTags([route.post]) });
-            return;
-        case "page":
-            if (route.slug === "menu") {
-                setDocumentPageCacheHeaders(response);
-            } else {
-                setResponseCacheHeaders(response, undefined, { maxAge: 3600, swr: 86400, edge: true, extraTags: [SHELL_TAG] });
-            }
-            return;
-        case "now":
-            setResponseCacheHeaders(response, { tags: [FEED_TAG] }, { edge: true, extraTags: [DOCUMENTS_TAG] });
-            return;
-        case "resume":
-        case "developers":
-            setResponseCacheHeaders(response, undefined, { maxAge: 3600, swr: 86400, edge: true, extraTags: [SHELL_TAG] });
-            return;
-        case "redirect":
-            setDocumentPageCacheHeaders(response);
-            return;
-        case "notfound":
-            response.headers.set("Cache-Control", "public, max-age=0, s-maxage=60");
-            return;
-    }
+    setPageCacheHeaders(response, cachePolicyFor(route), { shell: false });
 }
 
 /**
@@ -160,8 +116,7 @@ async function ssrHandler({ url }: Ctx): Promise<Response> {
         html: quietImages(ssrMainHtml(page)),
     };
     const response = await appJson(payload);
-    if (page.cache.kind === "none") response.headers.set("Cache-Control", "public, max-age=0, s-maxage=60");
-    else setPageCacheHeaders(response, page);
+    setPageCacheHeaders(response, cachePolicyFor(route), { shell: true });
     return response;
 }
 
