@@ -1,5 +1,15 @@
 import { extractBodyEmbeds } from "./embeds";
 
+export function seriesSlugs(body: string): string[] {
+    return [
+        ...new Set(
+            extractBodyEmbeds(body)
+                .filter((e) => e.scheme === "series")
+                .map((e) => e.id),
+        ),
+    ];
+}
+
 /**
  * A document's body can embed a series, whose contents live in a different
  * record. `![](series://slug)` stays byte-identical while that record is
@@ -7,14 +17,14 @@ import { extractBodyEmbeds } from "./embeds";
  * embedded series' cids have to ride along in the key.
  */
 export function seriesKeyFor(body: string, index: Map<string, string>): string {
-    const slugs = [
-        ...new Set(
-            extractBodyEmbeds(body)
-                .filter((e) => e.scheme === "series")
-                .map((e) => e.id),
-        ),
-    ].sort();
-    return slugs.map((slug) => `${slug}:${index.get(slug) ?? "missing"}`).join(",");
+    return seriesSlugs(body)
+        .sort()
+        .map((slug) => `${slug}:${index.get(slug) ?? "missing"}`)
+        .join(",");
+}
+
+export function withSeriesKey(cid: string, seriesKey: string): string {
+    return seriesKey ? `${cid}@${seriesKey}` : cid;
 }
 
 export function renderKey(doc: {

@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { IMG_WIDTHS } from "../src/app-api";
 import { snapWidth } from "../src/routes/app";
-import { renderKey, seriesKeyFor } from "../src/lib/render-key";
-import { appIndex, noteTitle, postRenderKey, resolveAppRoute } from "../src/lib/app-route";
+import { renderKey, seriesKeyFor, withSeriesKey } from "../src/lib/render-key";
+import { appIndex, noteTitle, resolveAppRoute } from "../src/lib/app-route";
 import { seriesTags } from "../src/lib/cache";
 import { API_OPERATIONS } from "../src/lib/agent-surface";
 import { toAppGlassPick } from "../src/lib/app-route";
@@ -267,8 +267,8 @@ describe("renderKey (com/src/lib/render-key.ts)", () => {
     });
 
     test("posts use com's feed renderId", () => {
-        expect(postRenderKey("bafy", "")).toBe("bafy");
-        expect(postRenderKey("bafy", "datamosh:cid-a")).toBe("bafy@datamosh:cid-a");
+        expect(withSeriesKey("bafy", "")).toBe("bafy");
+        expect(withSeriesKey("bafy", "datamosh:cid-a")).toBe("bafy@datamosh:cid-a");
     });
 
     test("feed payloads that embed a series carry the documents purge tag", () => {

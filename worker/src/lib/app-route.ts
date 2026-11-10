@@ -19,9 +19,9 @@ import {
     livePublications,
     loadAllFeedEntries,
     publicationSlugSet,
+    bodyRenderKey,
     renderKey,
-    seriesIndex,
-    seriesKeyFor,
+    seriesKeyOf,
     stampedHref,
     type DocumentData,
     type FeedEntryData,
@@ -29,7 +29,7 @@ import {
 } from "./farfield-loader";
 import { documentForRoute, documentsByTag, publishedDocs } from "./content-query";
 import { memo } from "./memo";
-import { extractBodyEmbeds } from "./embeds";
+import { seriesSlugs } from "./render-key";
 import { excerptOf } from "./agent-data";
 import { plainText } from "./markdown-text";
 import { readingTime } from "./toc";
@@ -125,13 +125,7 @@ function seriesLayout(slug: string, body: string): SeriesLayout {
 export async function collectMedia(
     body: string,
 ): Promise<{ media: AppMediaMap; series: AppSeriesMap }> {
-    const slugs = [
-        ...new Set(
-            extractBodyEmbeds(body)
-                .filter((e) => e.scheme === "series")
-                .map((e) => e.id),
-        ),
-    ];
+    const slugs = seriesSlugs(body);
     const series: AppSeriesMap = {};
     const bodies = [body];
     const loaded = await Promise.all(slugs.map((s) => getSeries(s).catch(() => null)));
@@ -164,26 +158,12 @@ export async function collectMedia(
     return { media, series };
 }
 
-/**
- * The series fingerprint com keys renders on: `slug:cid` for every embedded
- * series, "" when the body embeds none. A series edit changes this but not
- * the embedding record's cid.
- */
-export async function seriesKeyOf(body: string): Promise<string> {
-    return body.includes("series://") ? seriesKeyFor(body, await seriesIndex()) : "";
-}
-
-/** com's renderId for a feed post (feed/[rkey].md.ts): the cid, plus the series fingerprint when it embeds one. */
-export function postRenderKey(cid: string, seriesKey: string): string {
-    return seriesKey ? `${cid}@${seriesKey}` : cid;
-}
-
 export async function toAppPost(item: FeedEntryData): Promise<AppPost> {
-    const [{ media, series }, seriesKey] = await Promise.all([collectMedia(item.body), seriesKeyOf(item.body)]);
+    const [{ media, series }, renderKey] = await Promise.all([collectMedia(item.body), bodyRenderKey(item)]);
     return {
         rkey: item.rkey,
         cid: item.cid,
-        renderKey: postRenderKey(item.cid, seriesKey),
+        renderKey,
         href: `/feed/${item.rkey}`,
         body: item.body,
         createdAt: item.createdAt,

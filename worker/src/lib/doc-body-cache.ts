@@ -1,13 +1,7 @@
 import { renderFeedBody, renderMarkdownBody } from "./doc-render";
-import { seriesIndex, seriesKeyFor, type DocumentData } from "./farfield-loader";
+import { bodyRenderKey, type DocumentData } from "./farfield-loader";
 import { cachedRender } from "./render-cache";
 import { mapWithConcurrency } from "./http";
-
-async function bodyRenderKey(doc: Pick<DocumentData, "cid" | "body">): Promise<string> {
-    if (!doc.body.includes("series://")) return doc.cid;
-    const seriesKey = seriesKeyFor(doc.body, await seriesIndex());
-    return seriesKey ? `${doc.cid}@${seriesKey}` : doc.cid;
-}
 
 export async function cachedDocBody(doc: Pick<DocumentData, "cid" | "body">): Promise<string> {
     if (!doc.body) return "";

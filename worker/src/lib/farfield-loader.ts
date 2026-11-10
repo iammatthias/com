@@ -3,7 +3,8 @@ import { blobURL, getAllSeries, getCollections, getEntries, getPosts, getSeries,
 import { memo, type MemoOptions } from "./memo";
 import { isStampedSlug, unstampSlug, humanize } from "./slugs";
 import { extractBodyEmbeds, type BodyEmbed } from "./embeds";
-export { renderKey, seriesKeyFor } from "./render-key";
+import { seriesKeyFor, withSeriesKey } from "./render-key";
+export { renderKey } from "./render-key";
 
 function coalesce<T>(): MemoOptions<T> {
     return {
@@ -31,19 +32,32 @@ export async function seriesIndex(): Promise<Map<string, string>> {
     return new Map((await getAllSeries()).map((s: Series) => [s.slug, s.cid]));
 }
 
+/**
+ * The series fingerprint com keys renders on: `slug:cid` for every embedded
+ * series, "" when the body embeds none. A series edit changes this but not
+ * the embedding record's cid.
+ */
+export async function seriesKeyOf(body: string): Promise<string> {
+    return body.includes("series://") ? seriesKeyFor(body, await seriesIndex()) : "";
+}
+
+export async function bodyRenderKey(record: { cid: string; body: string }): Promise<string> {
+    return withSeriesKey(record.cid, await seriesKeyOf(record.body));
+}
+
 export interface ResolvedMedia {
     cid: string;
     alt: string;
     meta: BlobMeta | null;
 }
 
+export async function expandEmbed(embed: BodyEmbed): Promise<BodyEmbed[]> {
+    if (embed.scheme === "blob") return [embed];
+    return extractBodyEmbeds((await getSeries(embed.id))?.body ?? "").filter((inner) => inner.scheme === "blob");
+}
+
 export async function resolveEmbedMedia(embed: BodyEmbed): Promise<ResolvedMedia[]> {
-    const blobs =
-        embed.scheme === "blob"
-            ? [embed]
-            : extractBodyEmbeds((await getSeries(embed.id))?.body ?? "").filter(
-                  (inner) => inner.scheme === "blob",
-              );
+    const blobs = await expandEmbed(embed);
     const metas = await Promise.all(blobs.map((b) => getBlobMeta(b.id)));
     return blobs.map((b, i) => ({ cid: b.id, alt: b.alt, meta: metas[i] }));
 }

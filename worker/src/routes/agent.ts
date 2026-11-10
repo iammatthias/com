@@ -1,6 +1,6 @@
 import type { Ctx, Route } from "./context";
 import { notFound } from "./context";
-import { livePublications, loadAllFeedEntries, seriesIndex, seriesKeyFor, type DocumentData } from "../lib/farfield-loader";
+import { bodyRenderKey, livePublications, loadAllFeedEntries, type DocumentData } from "../lib/farfield-loader";
 import { feedCacheHint, setDocumentPageCacheHeaders, setResponseCacheHeaders } from "../lib/cache";
 import { publishedDocs, sectionForRoute, documentForRoute, documentsByTag } from "../lib/content-query";
 import { AGENT_CRAWLERS, AGENT_SKILLS, CONTENT_SIGNAL, SEARCH_ONLY_CRAWLERS, SITE_IDENTITY, SITE_ORIGIN } from "../lib/agent-surface";
@@ -184,9 +184,7 @@ async function feedEntryMd({ params }: Ctx): Promise<Response> {
     }
     const item = all.find((e) => e.rkey === params[0]);
     if (!item) return notFound();
-    const seriesKey = item.body.includes("series://") ? seriesKeyFor(item.body, await seriesIndex()) : "";
-    const renderId = seriesKey ? `${item.cid}@${seriesKey}` : item.cid;
-    const bodyMd = await cachedRender("feedmdbody", renderId, () => resolveEmbedsForMarkdown(item.body));
+    const bodyMd = await cachedRender("feedmdbody", await bodyRenderKey(item), () => resolveEmbedsForMarkdown(item.body));
     const response = markdownResponse(composeFeedEntryMarkdown(item, bodyMd, origin));
     setResponseCacheHeaders(
         response,

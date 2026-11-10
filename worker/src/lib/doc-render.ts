@@ -1,8 +1,8 @@
 
 import { marked } from "marked";
-import { blobURL, getBlobMeta, getSeries } from "./farfield-loader";
+import { blobURL, expandEmbed, getBlobMeta, getSeries } from "./farfield-loader";
 import { wsrvUrl, wsrvSrcSet, type BlobMeta } from "./farfield";
-import { BLOB_ID_SOURCE, fullEmbedRe } from "./embeds";
+import { BLOB_ID_SOURCE, fullEmbedRe, type BodyEmbed } from "./embeds";
 import { plainText, transformAlerts } from "./markdown-text";
 import { escapeAttr as attr } from "./format";
 import { mediaSize } from "./media-size";
@@ -308,8 +308,7 @@ export async function renderMarkdownBody(body: string): Promise<string> {
         "site",
         renderMarkdownBody,
     );
-    interface Embed { alt: string; scheme: "blob" | "series"; id: string }
-    const embeds: Embed[] = [];
+    const embeds: BodyEmbed[] = [];
     const preprocessed = components.source.replace(
         fullEmbedRe(),
         (_match, alt: string, scheme: string, id: string) => {
@@ -363,8 +362,7 @@ export async function renderFeedBody(
         "feed",
         (source) => renderFeedBody(source),
     );
-    interface Embed { alt: string; scheme: "blob" | "series"; id: string }
-    const embeds: Embed[] = [];
+    const embeds: BodyEmbed[] = [];
     const preprocessed = components.source.replace(
         fullEmbedRe(),
         (_match, alt: string, scheme: string, id: string) => {
@@ -386,14 +384,7 @@ export async function renderFeedBody(
     };
 
     const resolved = await Promise.all(
-        embeds.map(async (e): Promise<{ cid: string; alt: string }[]> => {
-            if (e.scheme === "blob") return [{ cid: e.id, alt: e.alt }];
-            const series = await getSeries(e.id);
-            if (!series?.body) return [];
-            return [...series.body.matchAll(
-                new RegExp(`!\\[([^\\]]*)\\]\\(${BLOB_ID_SOURCE}\\)`, "g"),
-            )].map((m) => ({ cid: m[2], alt: m[1] }));
-        }),
+        embeds.map(async (e) => (await expandEmbed(e)).map((b) => ({ cid: b.id, alt: b.alt }))),
     );
 
     let emitted = 0;
