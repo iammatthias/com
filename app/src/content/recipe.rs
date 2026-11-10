@@ -3,6 +3,7 @@
 //! `recipe-interactive.ts`. Pure Rust; the view lives in `recipe_view.rs`.
 
 use std::collections::{HashMap, HashSet};
+use std::rc::Rc;
 
 use serde_yaml::Value;
 
@@ -60,18 +61,35 @@ pub struct Row {
     pub cells: Vec<Cell>,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Placement {
+    pub step: usize,
+    pub col: usize,
+    pub row: usize,
+    pub rows: usize,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Blank {
+    pub row: usize,
+    pub col: usize,
+    pub cols: usize,
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct Grid {
     pub title: String,
     pub rows: Vec<Row>,
     pub width: usize,
+    pub steps: Vec<Placement>,
+    pub blanks: Vec<Blank>,
 }
 
 /// Everything the view needs, computed once per payload.
 #[derive(Clone, Debug, PartialEq)]
 pub enum RecipeBlock {
     Ok {
-        recipe: Recipe,
+        recipe: Rc<Recipe>,
         /// `None` when the DAG can't be laid out as grids; the view falls back to a list
         grids: Option<Vec<Grid>>,
         serves: u32,
@@ -110,7 +128,7 @@ pub fn block(src: &str) -> RecipeBlock {
                 .map(|i| i.note.as_deref().map(md::parse_inline))
                 .collect();
             RecipeBlock::Ok {
-                recipe,
+                recipe: Rc::new(recipe),
                 grids,
                 serves,
                 notes,
@@ -533,6 +551,8 @@ pub fn layout(rec: &Recipe) -> Result<Vec<Grid>, String> {
                 cells,
             });
         }
+        let steps = placements(&out, width);
+        let blanks = blanks(&out, width, &steps);
         grids.push(Grid {
             title: if roots.len() > 1 {
                 root.title.clone().unwrap_or_else(|| root.action.clone())
@@ -541,27 +561,34 @@ pub fn layout(rec: &Recipe) -> Result<Vec<Grid>, String> {
             },
             rows: out,
             width,
+            steps,
+            blanks,
         });
     }
     Ok(grids)
 }
 
-/// Step column/row placement for a grid, derived from its rows: `(step, col, row0, rows)`.
-pub fn placements(grid: &Grid) -> Vec<(usize, usize, usize, usize)> {
+/// Step column/row placement for a grid, derived from its rows.
+fn placements(rows: &[Row], width: usize) -> Vec<Placement> {
     // rebuild the column of each op cell by walking rows with coverage
-    let mut covered = vec![vec![false; grid.width]; grid.rows.len()];
+    let mut covered = vec![vec![false; width]; rows.len()];
     let mut out = Vec::new();
-    for (r, row) in grid.rows.iter().enumerate() {
+    for (r, row) in rows.iter().enumerate() {
         let mut c = 0;
         let mut cells = row.cells.iter();
-        while c < grid.width {
+        while c < width {
             if covered[r][c] {
                 c += 1;
                 continue;
             }
             match cells.next() {
                 Some(Cell::Op { step, row_span, .. }) => {
-                    out.push((*step, c, r, *row_span));
+                    out.push(Placement {
+                        step: *step,
+                        col: c,
+                        row: r,
+                        rows: *row_span,
+                    });
                     for k in 0..*row_span {
                         if r + k < covered.len() {
                             covered[r + k][c] = true;
@@ -571,6 +598,34 @@ pub fn placements(grid: &Grid) -> Vec<(usize, usize, usize, usize)> {
                 }
                 Some(Cell::Gap { col_span }) => c += col_span,
                 None => break,
+            }
+        }
+    }
+    out
+}
+
+fn blanks(rows: &[Row], width: usize, steps: &[Placement]) -> Vec<Blank> {
+    let mut out = Vec::new();
+    for (r, row) in rows.iter().enumerate() {
+        let mut c = 0;
+        for cell in &row.cells {
+            match cell {
+                Cell::Gap { col_span } => {
+                    while c < width
+                        && steps
+                            .iter()
+                            .any(|p| p.col == c && r >= p.row && r < p.row + p.rows)
+                    {
+                        c += 1;
+                    }
+                    out.push(Blank {
+                        row: r,
+                        col: c,
+                        cols: *col_span,
+                    });
+                    c += col_span;
+                }
+                Cell::Op { .. } => c += 1,
             }
         }
     }
@@ -841,12 +896,25 @@ mod tests {
                 vertical: true
             }
         );
-        let p = placements(g);
-        assert!(p.contains(&(0, 0, 0, 4)));
-        assert!(p.contains(&(1, 1, 0, 5)));
-        assert!(p.contains(&(6, 6, 0, 5)));
+        let at = |step, col, row, rows| Placement {
+            step,
+            col,
+            row,
+            rows,
+        };
+        assert!(g.steps.contains(&at(0, 0, 0, 4)));
+        assert!(g.steps.contains(&at(1, 1, 0, 5)));
+        assert!(g.steps.contains(&at(6, 6, 0, 5)));
         // the oil row has a gap under s1
         assert_eq!(g.rows[4].cells[0], Cell::Gap { col_span: 1 });
+        assert_eq!(
+            g.blanks,
+            vec![Blank {
+                row: 4,
+                col: 0,
+                cols: 1
+            }]
+        );
         match block(&fence(PIZZA)) {
             RecipeBlock::Ok { serves, .. } => assert_eq!(serves, 2),
             other => panic!("{other:?}"),
