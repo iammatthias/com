@@ -12,7 +12,7 @@ use gpui::px;
 use crate::api::{Navigate, RoutePayload};
 use crate::content;
 use crate::design;
-use crate::overlay::{Probe, Redraw};
+use crate::overlay::{Margins, Probe, Redraw, Stage};
 use crate::select::Selection;
 use crate::theme::{self, Theme};
 
@@ -33,6 +33,7 @@ pub struct Page {
     dark: Option<bool>,
     /// how far the text has faded up, 0..1
     shown: f32,
+    covered: bool,
     /// this page's decoded images; replaced (and so freed) when the next page loads
     images: Entity<NearCache>,
     /// the next route is loading; what's showing is the previous page
@@ -51,6 +52,7 @@ impl Page {
             probe: Probe::default(),
             dark: None,
             shown: 0.0,
+            covered: false,
             images: NearCache::new(cx),
             pending: false,
             selection: Selection::new(),
@@ -96,6 +98,16 @@ impl Page {
         }
     }
 
+    pub fn set_covered(&mut self, covered: bool, cx: &mut Context<Self>) {
+        if self.covered != covered {
+            self.covered = covered;
+            if covered {
+                crate::dom_embed::hide_all();
+            }
+            cx.notify();
+        }
+    }
+
     /// The page is off the screen (the plate shows alone): its selection goes with it.
     pub fn hidden(&mut self, cx: &mut Context<Self>) {
         crate::dom_video::clear();
@@ -126,8 +138,15 @@ impl Render for Page {
         self.images
             .update(cx, |images, cx| images.sweep(window, cx));
         // whatever is showing, a page that failed included: the last page's embeds go
-        crate::dom_embed::begin_render(&self.path);
-        crate::dom_video::turn_to(&self.path);
+        let stage = Stage {
+            hidden: self.covered || self.shown <= 0.99,
+            under_controls: design::controls_cover_column(window).then(|| {
+                let [top, _, bottom, _] = crate::route::safe_insets();
+                Margins { top, bottom }
+            }),
+        };
+        crate::dom_embed::begin_render(&self.path, stage);
+        crate::dom_video::turn_to(&self.path, stage);
         let body = match &self.load {
             Load::Loading => div().into_any_element(),
             Load::Failed => {
@@ -155,7 +174,6 @@ impl Render for Page {
                 content::view(payload, &self.nav, &theme, &self.selection, window, cx)
             }
         };
-        crate::overlay::set_page_shown(self.shown > 0.99);
         // how long building the page's element tree took, in the #perf log
         crate::mark(&format!(
             "page render {:.2}ms",

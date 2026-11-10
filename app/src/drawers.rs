@@ -311,6 +311,7 @@ pub fn pill(t: &Theme, face: PillFace) -> gpui::Div {
 pub struct PanelInputs<'a> {
     pub home: &'a Home,
     pub on_home: bool,
+    pub over_column: bool,
     pub plate: Option<&'a PlateState>,
     pub semantic: Option<&'a [crate::search::Hit]>,
     pub index: Option<&'a Index>,
@@ -331,7 +332,7 @@ pub fn drawer(
     let on_glass = !p.home.plain;
     // over a page's text (a phone, where the controls cover the column) the glass, drawn under
     // the page, needs a veil; elsewhere it floats in the margins, clear
-    let over_text = !p.on_home && crate::route::narrow();
+    let over_text = !p.on_home && p.over_column;
     let open = p.home.open == Some(which);
     let header = div()
         .id(("drawer-head", which.index()))

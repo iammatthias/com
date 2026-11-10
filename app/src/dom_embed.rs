@@ -15,7 +15,7 @@
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 
-use crate::overlay::{Extent, Gate, Layer, Rect};
+use crate::overlay::{Extent, Gate, Layer, Rect, Stage};
 
 /// A web component the site can host.
 pub struct Embed {
@@ -74,9 +74,10 @@ pub fn height(key: &str) -> Option<f32> {
 
 /// A content render of the payload for `path` begins: elements of other pages go, those the
 /// last render didn't place hide.
-pub fn begin_render(path: &str) {
+pub fn begin_render(path: &str, stage: Stage) {
     let (gone, dropped) = PLACED.with(|placed| {
         let mut placed = placed.borrow_mut();
+        placed.set_stage(stage);
         (placed.turn_to(path), placed.begin())
     });
     for (key, ()) in &gone {
@@ -131,8 +132,7 @@ pub fn place(
     );
 }
 
-/// Hide every element now (something has come in front of the page; overlay::blocked keeps them
-/// hidden until it goes).
+/// Hide every element now (something has come in front of the page).
 pub fn hide_all() {
     PLACED.with(|placed| {
         for key in placed.borrow().keys() {

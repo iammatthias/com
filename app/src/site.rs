@@ -460,6 +460,7 @@ impl Site {
         let inputs = drawers::PanelInputs {
             home: &self.home,
             on_home,
+            over_column: design::controls_cover_column(window),
             plate: plate.as_ref(),
             semantic: self.find.hits_for(&self.home.query),
             index: self.index.as_ref(),
@@ -660,12 +661,8 @@ impl Render for Site {
         }
         // a panel open (or opening, or closing) over the page: web components there step aside
         let covered = self.home.open.is_some() || self.drawers.any_shown();
-        if crate::overlay::set_panel(covered) {
-            if covered {
-                crate::dom_embed::hide_all();
-            }
-            self.page.update(cx, |_, cx| cx.notify());
-        }
+        self.page
+            .update(cx, |page, cx| page.set_covered(covered, cx));
         if self.greeting.is_some() {
             // the greeting is all there is: the plate under it takes no input yet
             return div()
@@ -681,7 +678,6 @@ impl Render for Site {
                 .into_any_element();
         }
 
-        route::set_narrow(f32::from(window.viewport_size().width) < design::NARROW_CONTROLS_W);
         let drawers_moving = self.drawers.step(self.home.open, window);
         let (view, revealing) = if self.home.plain {
             self.render_plain(&theme, window, cx)
@@ -919,7 +915,7 @@ impl Site {
             .on_click(cx.listener(|site, _, _, cx| site.go("/", Arrival::Link, cx)));
         let face = if self.home.plain {
             drawers::PillFace::Solid
-        } else if route::narrow() {
+        } else if design::controls_cover_column(window) {
             drawers::PillFace::GlassOverText
         } else {
             drawers::PillFace::Glass

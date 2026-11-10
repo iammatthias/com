@@ -25,19 +25,6 @@ impl Route {
     }
 }
 
-thread_local! {
-    static NARROW: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
-}
-
-/// A phone-width window (the reading column spans it), set each frame by the site.
-pub fn narrow() -> bool {
-    NARROW.get()
-}
-
-pub fn set_narrow(on: bool) {
-    NARROW.set(on);
-}
-
 /// Paths the site owns and opens in place; everything else leaves in a new tab.
 pub fn is_internal(href: &str) -> bool {
     // a backslash reads as a slash in a URL, so "/\\host" is protocol-relative too

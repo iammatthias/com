@@ -17,7 +17,7 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-use crate::overlay::{Extent, Gate, Layer, Rect};
+use crate::overlay::{Extent, Gate, Layer, Rect, Stage};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Mode {
@@ -75,9 +75,15 @@ pub fn begin_render() {
     wake();
 }
 
-pub fn turn_to(page: &str) {
-    let gone = CLIPS.with(|clips| clips.borrow_mut().turn_to(page));
+pub fn turn_to(page: &str, stage: Stage) {
+    let (changed, gone) = CLIPS.with(|clips| {
+        let mut clips = clips.borrow_mut();
+        (clips.set_stage(stage), clips.turn_to(page))
+    });
     drop(gone);
+    if changed {
+        wake();
+    }
 }
 
 pub fn clear() {

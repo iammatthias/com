@@ -118,8 +118,6 @@ impl Probe {
 
 thread_local! {
     static LIGHTBOX: Cell<bool> = const { Cell::new(false) };
-    static PANEL: Cell<bool> = const { Cell::new(false) };
-    static PAGE_SHOWN: Cell<bool> = const { Cell::new(true) };
 }
 
 /// The lightbox is over the page.
@@ -129,30 +127,21 @@ pub fn set_lightbox(on: bool) {
     }
 }
 
-/// A corner panel is open (or opening, or closing) over the page. True when that changed.
-pub fn set_panel(on: bool) -> bool {
-    let changed = PANEL.replace(on) != on;
-    if changed {
-        crate::dom_video::wake();
-    }
-    changed
-}
-
-/// The page's text is up (it fades in once the frame has opened round it).
-pub fn set_page_shown(on: bool) {
-    if PAGE_SHOWN.replace(on) != on {
-        crate::dom_video::wake();
-    }
-}
-
-/// Something is in front of the page, or the page isn't up yet: page overlays stay hidden.
-pub fn blocked() -> bool {
-    LIGHTBOX.get() || PANEL.get() || !PAGE_SHOWN.get()
-}
-
 /// The lightbox covers everything, the panels' own overlays (Find's input) included.
 pub fn lightbox_open() -> bool {
     LIGHTBOX.get()
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Stage {
+    pub hidden: bool,
+    pub under_controls: Option<Margins>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Margins {
+    pub top: f32,
+    pub bottom: f32,
 }
 
 #[derive(Clone, Copy)]
@@ -176,6 +165,7 @@ struct Placed<T> {
 pub struct Layer<T> {
     gate: Gate,
     extent: Extent,
+    stage: Stage,
     page: String,
     epoch: u64,
     entries: HashMap<String, Placed<T>>,
@@ -186,6 +176,7 @@ impl<T> Layer<T> {
         Self {
             gate,
             extent,
+            stage: Stage::default(),
             page: String::new(),
             epoch: 0,
             entries: HashMap::new(),
@@ -194,6 +185,10 @@ impl<T> Layer<T> {
 
     pub fn page(&self) -> &str {
         &self.page
+    }
+
+    pub fn set_stage(&mut self, stage: Stage) -> bool {
+        std::mem::replace(&mut self.stage, stage) != stage
     }
 
     pub fn turn_to(&mut self, page: &str) -> Vec<(String, T)> {
@@ -270,29 +265,25 @@ impl<T> Layer<T> {
 
     pub fn gated(&self) -> bool {
         match self.gate {
-            Gate::Page => blocked(),
+            Gate::Page => lightbox_open() || self.stage.hidden,
             Gate::Lightbox => lightbox_open(),
         }
     }
 
     pub fn inset(&self, rect: Rect, clip: Rect) -> Option<[f32; 4]> {
-        rect.inset_within(&match self.extent {
-            Extent::Viewport => clip,
-            Extent::BetweenControls => between_controls(clip),
+        rect.inset_within(&match (self.extent, self.stage.under_controls) {
+            (Extent::BetweenControls, Some(margins)) => between_controls(clip, margins),
+            _ => clip,
         })
     }
 }
 
 /// On a phone the column runs under the corner pills, which are drawn on the canvas: an
 /// element stops short of their bands rather than sit over them.
-fn between_controls(clip: Rect) -> Rect {
-    if !crate::route::narrow() {
-        return clip;
-    }
-    let [top, _, bottom, _] = crate::route::safe_insets();
+fn between_controls(clip: Rect, margins: Margins) -> Rect {
     let band = crate::design::INSET + crate::design::CONTROL_H + 8.0;
-    let y0 = clip.y.max(top + band);
-    let y1 = clip.y + clip.h - bottom - band;
+    let y0 = clip.y.max(margins.top + band);
+    let y1 = clip.y + clip.h - margins.bottom - band;
     Rect {
         y: y0,
         h: (y1 - y0).max(0.0),
@@ -363,6 +354,62 @@ mod tests {
             placed_now(&layer),
             [("a".to_string(), false, 11), ("b".to_string(), true, 2)]
         );
+    }
+
+    #[test]
+    fn a_hidden_page_gates_its_own_overlays_and_not_the_panels() {
+        let hidden = Stage {
+            hidden: true,
+            under_controls: None,
+        };
+        let mut page = Layer::<()>::new(Gate::Page, Extent::Viewport);
+        let mut panel = Layer::<()>::new(Gate::Lightbox, Extent::Viewport);
+        assert!(!page.gated() && !panel.gated());
+        assert!(page.set_stage(hidden));
+        assert!(!page.set_stage(hidden));
+        panel.set_stage(hidden);
+        assert!(page.gated() && !panel.gated());
+        assert!(page.set_stage(Stage::default()));
+        set_lightbox(true);
+        assert!(page.gated() && panel.gated());
+        set_lightbox(false);
+        assert!(!page.gated() && !panel.gated());
+    }
+
+    #[test]
+    fn under_the_corner_pills_an_element_stops_short_of_their_bands() {
+        let viewport = Rect {
+            x: 0.,
+            y: 0.,
+            w: 390.,
+            h: 800.,
+        };
+        let block = Rect {
+            x: 20.,
+            y: 100.,
+            w: 350.,
+            h: 700.,
+        };
+        let phone = Stage {
+            hidden: false,
+            under_controls: Some(Margins {
+                top: 47.,
+                bottom: 34.,
+            }),
+        };
+        let mut embeds = Layer::<()>::new(Gate::Page, Extent::BetweenControls);
+        let mut clips = Layer::<()>::new(Gate::Page, Extent::Viewport);
+        assert_eq!(embeds.inset(block, viewport), Some([0., 0., 0., 0.]));
+        embeds.set_stage(phone);
+        clips.set_stage(phone);
+        assert_eq!(embeds.inset(block, viewport), Some([11., 0., 98., 0.]));
+        assert_eq!(clips.inset(block, viewport), Some([0., 0., 0., 0.]));
+        let above = Rect {
+            y: 20.,
+            h: 80.,
+            ..block
+        };
+        assert_eq!(embeds.inset(above, viewport), None);
     }
 
     #[test]
