@@ -286,10 +286,9 @@ fn solid<E: Styled>(el: E, t: &Theme) -> E {
 }
 
 fn veiled<E: Styled>(el: E, t: &Theme, veil: f32) -> E {
-    el.bg(t.veil(veil)).border_1().border_color(gpui::Rgba {
-        alpha: 0.7,
-        ..gpui::rgb(0xffffff)
-    })
+    el.bg(t.veil(veil))
+        .border_1()
+        .border_color(crate::color::WHITE.alpha(0.7))
 }
 
 /// A control on the plate: a rounded pill, `CONTROL_H` tall, its name in the script face. Over the engraving the

@@ -13,7 +13,8 @@ site's titles as one spiralling line and frames each page.
   `Site` owns one), `MenuAnim`, `pill`, `drawer()` (the card, reading `PanelInputs`) with
   one body per panel (`menu_body`, `site_body`, `find_body`), and their widgets.
 - `design.rs` - design tokens: control/layout measures, breakpoints, `is_phone`, type sizes.
-- `theme.rs` - colours (paper, ink, accent, section stops), face names, light/dark choice.
+- `color.rs` - `oklch()`: OKLCH to sRGB `Rgba`, clamped to the gamut, and `WHITE`.
+- `theme.rs` - colours authored in OKLCH (paper, ink, accent, section stops), face names, light/dark choice.
 - `page.rs` - the scrolling reading column as a cached view, and the probe the plate frames.
 - `plate/` / `plate.wgsl` - the engraved spiral and page frame. `mod.rs` holds the `Plate` entity,
   its state, clocks, input and render, and the glass and frame probes.

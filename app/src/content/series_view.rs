@@ -78,10 +78,7 @@ fn live(still: &SeriesMedia, movie: &SeriesMedia, width: f32, ctx: &Ctx) -> AnyE
                 .rounded_full()
                 .bg(theme.veil(0.62))
                 .border_1()
-                .border_color(gpui::Rgba {
-                    alpha: 0.75,
-                    ..gpui::rgb(0xffffff)
-                })
+                .border_color(crate::color::WHITE.alpha(0.75))
                 .shadow_md()
                 .flex()
                 .items_center()

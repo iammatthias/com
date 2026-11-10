@@ -3,6 +3,7 @@ use gpui::{App, Bounds, WindowBounds, WindowOptions, px, size};
 
 mod api;
 mod browser;
+mod color;
 mod console;
 mod content;
 mod design;
