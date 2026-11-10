@@ -73,6 +73,11 @@ impl Site {
         cx.notify();
     }
 
+    fn clear_query(&mut self) {
+        self.home.query.clear();
+        crate::dom_input::clear();
+    }
+
     /// What the Find input reported.
     pub(super) fn on_find(&mut self, event: Event, window: &mut Window, cx: &mut Context<Self>) {
         match event {
@@ -85,7 +90,7 @@ impl Site {
                 if self.home.query.is_empty() {
                     self.open_panel(None, cx);
                 }
-                self.home.query.clear();
+                self.clear_query();
             }
             Event::Submit => {
                 let by_meaning = self.find.hits_for(&self.home.query).unwrap_or_default();
@@ -93,7 +98,7 @@ impl Site {
                 let Some((_, href)) = results.into_iter().next() else {
                     return;
                 };
-                self.home.query.clear();
+                self.clear_query();
                 // lettered now: a retitle still waiting would letter the spiral round the next page
                 self.find.settle = None;
                 self.retitle(cx);

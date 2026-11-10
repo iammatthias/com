@@ -40,16 +40,15 @@ pub fn subscribe() -> futures::channel::mpsc::UnboundedReceiver<Event> {
     rx
 }
 
-/// Where the field is painted this frame, and what it holds (the query, which the site may have
-/// changed, e.g. cleared after a search). `style` is the input's CSS: the site's ink and face.
-pub fn place(rect: Rect, clip: Rect, value: &str, placeholder: &str, max_len: usize, style: &str) {
+/// Where the field is painted this frame. `style` is the input's CSS: the site's ink and face.
+pub fn place(rect: Rect, clip: Rect, placeholder: &str, max_len: usize, style: &str) {
     let inset = PLACED.with(|placed| {
         let mut placed = placed.borrow_mut();
         placed.place(FIELD, || ());
         placed.inset(rect, clip).filter(|_| !placed.gated())
     });
     match inset {
-        Some(inset) => web::place(rect, inset, value, placeholder, max_len, style),
+        Some(inset) => web::place(rect, inset, placeholder, max_len, style),
         None => web::hide(),
     }
 }
@@ -70,6 +69,10 @@ pub fn focused() -> bool {
     web::focused()
 }
 
+pub fn clear() {
+    web::clear();
+}
+
 #[cfg(target_family = "wasm")]
 mod web {
     use super::Rect;
@@ -87,7 +90,6 @@ mod web {
             r: f32,
             b: f32,
             l: f32,
-            value: &str,
             placeholder: &str,
             max_len: u32,
             style: &str,
@@ -96,6 +98,8 @@ mod web {
         fn find_focus();
         #[wasm_bindgen(js_name = findFocused)]
         fn find_focused() -> bool;
+        #[wasm_bindgen(js_name = findClear)]
+        fn find_clear();
         #[wasm_bindgen(js_name = findHide)]
         fn find_hide();
         #[wasm_bindgen(js_name = findEvents)]
@@ -105,7 +109,6 @@ mod web {
     pub fn place(
         rect: Rect,
         [t, r, b, l]: [f32; 4],
-        value: &str,
         placeholder: &str,
         max_len: usize,
         style: &str,
@@ -119,7 +122,6 @@ mod web {
             r,
             b,
             l,
-            value,
             placeholder,
             max_len as u32,
             style,
@@ -130,6 +132,9 @@ mod web {
     }
     pub fn focused() -> bool {
         find_focused()
+    }
+    pub fn clear() {
+        find_clear();
     }
     pub fn hide() {
         find_hide();
@@ -146,11 +151,12 @@ mod web {
 #[cfg(not(target_family = "wasm"))]
 mod web {
     use super::Rect;
-    pub fn place(_: Rect, _: [f32; 4], _: &str, _: &str, _: usize, _: &str) {}
+    pub fn place(_: Rect, _: [f32; 4], _: &str, _: usize, _: &str) {}
     pub fn focus() {}
     pub fn focused() -> bool {
         false
     }
+    pub fn clear() {}
     pub fn hide() {}
     pub fn on_event(_: impl Fn(&str, String) + 'static) {}
 }
