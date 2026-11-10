@@ -4,7 +4,6 @@ use gpui::px;
 use gpui::{AnyElement, SharedString, div};
 
 use crate::api::{Item, Navigate, Paging, SectionRef, TagCount};
-use crate::design;
 use crate::theme::{self, Theme};
 
 use super::format::{clip, encode_segment, fmt_date_short, page_href};
@@ -25,7 +24,7 @@ fn entries(n: u32) -> String {
     format!("{n} {}", if n == 1 { "entry" } else { "entries" })
 }
 
-pub(super) fn heading(h: Heading, key: &str, nav: &Navigate, theme: &Theme) -> gpui::Div {
+fn heading(h: Heading, key: &str, nav: &Navigate, theme: &Theme) -> gpui::Div {
     let mut meta = div()
         .flex()
         .items_baseline()
@@ -67,34 +66,59 @@ pub(super) fn heading(h: Heading, key: &str, nav: &Navigate, theme: &Theme) -> g
 
 /// One entry in a listing, as @com's FeedCard: title, its section (in the section's colour),
 /// date, and the first lines of its description.
-fn card(i: usize, it: &Item, key: &str, kind: bool, nav: &Navigate, theme: &Theme) -> AnyElement {
-    let date = it.published_at.as_deref().map(fmt_date_short);
+pub(super) struct Card<'a> {
+    pub title: &'a str,
+    pub href: &'a str,
+    pub section: Option<&'a str>,
+    pub published_at: Option<&'a str>,
+    pub blurb: Option<&'a str>,
+}
+
+#[derive(Clone, Copy, PartialEq)]
+pub(super) enum CardSize {
+    Listing,
+    Related,
+}
+
+pub(super) fn card(
+    id: SharedString,
+    c: Card,
+    size: CardSize,
+    nav: &Navigate,
+    theme: &Theme,
+) -> AnyElement {
+    let listing = size == CardSize::Listing;
+    let (title_size, blurb_size, blurb_leading, blurb_chars) = if listing {
+        (22., 16., 24., 200)
+    } else {
+        (19., 15., 22., 160)
+    };
     div()
         .flex()
         .flex_col()
         .gap(px(2.))
-        .pb(px(14.))
-        .border_b_1()
-        .border_color(alpha(theme.rule, 0.6))
+        .when(listing, |d| {
+            d.pb(px(14.))
+                .border_b_1()
+                .border_color(alpha(theme.rule, 0.6))
+        })
         .child(
             div()
                 .flex()
-                .flex_wrap()
                 .items_baseline()
                 .justify_between()
-                .gap_x(px(18.))
-                .gap_y(px(2.))
+                .map(|d| {
+                    if listing {
+                        d.flex_wrap().gap_x(px(18.)).gap_y(px(2.))
+                    } else {
+                        d.gap(px(16.))
+                    }
+                })
                 .child(
-                    link(
-                        SharedString::from(format!("{key}:{i}")),
-                        &it.title,
-                        &it.href,
-                        nav,
-                        theme,
-                    )
-                    .italic()
-                    .text_size(px(22.))
-                    .line_height(px(30.)),
+                    link(id, c.title, c.href, nav, theme)
+                        .italic()
+                        .text_size(px(title_size))
+                        .when(listing, |d| d.line_height(px(30.))),
                 )
                 .child(
                     div()
@@ -102,33 +126,47 @@ fn card(i: usize, it: &Item, key: &str, kind: bool, nav: &Navigate, theme: &Them
                         .flex()
                         .items_baseline()
                         .gap(px(10.))
-                        .when(kind && !it.section.is_empty(), |d| {
-                            d.child(
-                                label(it.section.to_uppercase(), theme.section(&it.section))
-                                    .text_size(px(design::LABEL_SIZE)),
-                            )
+                        .when_some(c.section.filter(|s| !s.is_empty()), |d, s| {
+                            d.child(label(s.to_uppercase(), theme.section(s)))
                         })
-                        .when_some(date, |d, date| {
-                            d.child(
-                                label(date.to_uppercase(), theme.muted)
-                                    .text_size(px(design::LABEL_SIZE)),
-                            )
+                        .when_some(c.published_at.map(fmt_date_short), |d, date| {
+                            d.child(label(date.to_uppercase(), theme.muted))
                         }),
                 ),
         )
-        .when_some(
-            it.excerpt.clone().filter(|e| !e.trim().is_empty()),
-            |d, e| {
-                d.child(
-                    div()
-                        .text_size(px(16.))
-                        .line_height(px(24.))
-                        .text_color(theme.muted)
-                        .child(clip(&e, 200)),
-                )
-            },
-        )
+        .when_some(c.blurb.filter(|b| !b.trim().is_empty()), |d, b| {
+            d.child(
+                div()
+                    .text_size(px(blurb_size))
+                    .line_height(px(blurb_leading))
+                    .text_color(theme.muted)
+                    .child(clip(b, blurb_chars)),
+            )
+        })
         .into_any_element()
+}
+
+pub(super) fn frame(
+    h: Heading,
+    key: &str,
+    gap: f32,
+    empty: &str,
+    body: Vec<AnyElement>,
+    nav: &Navigate,
+    theme: &Theme,
+) -> gpui::Div {
+    column(theme)
+        .gap(px(gap))
+        .child(heading(h, key, nav, theme))
+        .when(body.is_empty(), |d| {
+            d.child(
+                div()
+                    .italic()
+                    .text_color(theme.muted)
+                    .child(empty.to_string()),
+            )
+        })
+        .children(body)
 }
 
 pub fn listing(
@@ -141,21 +179,27 @@ pub fn listing(
     theme: &Theme,
 ) -> AnyElement {
     let key = format!("list:{base}:{}", paging.page);
-    let mut col = column(theme)
-        .gap(px(14.))
-        .child(heading(h, &key, nav, theme));
-    if items.is_empty() {
-        col = col.child(
-            div()
-                .italic()
-                .text_color(theme.muted)
-                .child("No entries published yet."),
-        );
-    }
-    for (i, it) in items.iter().enumerate() {
-        col = col.child(card(i, it, &key, kind, nav, theme));
-    }
-    col.child(pagination(base, paging, &key, nav, theme))
+    let cards = items
+        .iter()
+        .enumerate()
+        .map(|(i, it)| {
+            card(
+                SharedString::from(format!("{key}:{i}")),
+                Card {
+                    title: &it.title,
+                    href: &it.href,
+                    section: kind.then_some(it.section.as_str()),
+                    published_at: it.published_at.as_deref(),
+                    blurb: it.excerpt.as_deref(),
+                },
+                CardSize::Listing,
+                nav,
+                theme,
+            )
+        })
+        .collect();
+    frame(h, &key, 14., "No entries published yet.", cards, nav, theme)
+        .child(pagination(base, paging, &key, nav, theme))
         .into_any_element()
 }
 
@@ -436,23 +480,38 @@ pub fn tags(tags: &[TagCount], nav: &Navigate, theme: &Theme) -> AnyElement {
             .child(format!("{} unique tags across the archive.", tags.len()))
             .into_any_element(),
     );
-    column(theme)
-        .gap(px(14.))
-        .child(heading(
-            Heading {
-                title: "Tags",
-                lede,
-                rss: None,
-                total: None,
-            },
-            "tags",
-            nav,
-            theme,
-        ))
-        .child(if tags.is_empty() {
-            div().italic().text_color(theme.muted).child("No tags yet.")
+    frame(
+        Heading {
+            title: "Tags",
+            lede,
+            rss: None,
+            total: None,
+        },
+        "tags",
+        14.,
+        "No tags yet.",
+        if tags.is_empty() {
+            Vec::new()
         } else {
-            cloud
-        })
-        .into_any_element()
+            vec![cloud.into_any_element()]
+        },
+        nav,
+        theme,
+    )
+    .into_any_element()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pages_listed_are_the_ends_and_the_current_with_its_neighbours() {
+        assert_eq!(
+            page_list(5, 9),
+            vec![Some(1), None, Some(4), Some(5), Some(6), None, Some(9)]
+        );
+        assert_eq!(page_list(1, 3), vec![Some(1), Some(2), Some(3)]);
+        assert_eq!(page_list(3, 4), vec![Some(1), Some(2), Some(3), Some(4)]);
+    }
 }

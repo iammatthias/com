@@ -8,7 +8,8 @@ use crate::design;
 use crate::select::{Join, Selection};
 use crate::theme::{self, Theme};
 
-use super::format::{clip, encode_segment, fmt_date, fmt_date_short};
+use super::format::{encode_segment, fmt_date};
+use super::listing::{Card, CardSize, card};
 use super::pages::{Prose, body_blocks, display_title};
 use super::render::{self, alpha, double_rule, hairline, label};
 use super::{column, link};
@@ -118,7 +119,18 @@ pub fn doc(
         .child(render::stacked(body))
         .child(div().pt(px(24.)).child(double_rule(theme, 64.)))
         .child(terrazzo_banner(&doc.rkey, &doc.cid, width, window, cx))
-        .child(colophon(doc, &key, nav, theme, sel));
+        .child(colophon(
+            Colophon {
+                section: &doc.section.name,
+                published_at: doc.published_at.as_deref(),
+                updated_at: doc.updated_at.as_deref(),
+                cid: &doc.cid,
+                href: &doc.href,
+            },
+            &key,
+            theme,
+            sel,
+        ));
     if !doc.related.is_empty() {
         col = col.child(related(&doc.related, &key, nav, theme));
     }
@@ -165,13 +177,15 @@ pub(super) fn terrazzo_banner(
         .into_any_element()
 }
 
-pub(super) fn colophon(
-    doc: &Doc,
-    key: &str,
-    nav: &Navigate,
-    theme: &Theme,
-    sel: &Selection,
-) -> AnyElement {
+pub(super) struct Colophon<'a> {
+    pub section: &'a str,
+    pub published_at: Option<&'a str>,
+    pub updated_at: Option<&'a str>,
+    pub cid: &'a str,
+    pub href: &'a str,
+}
+
+pub(super) fn colophon(c: Colophon, key: &str, theme: &Theme, sel: &Selection) -> AnyElement {
     let row = |k: &str, v: AnyElement| {
         div()
             .flex()
@@ -197,18 +211,18 @@ pub(super) fn colophon(
         .text_size(px(16.))
         .line_height(px(24.))
         .child(label("COLOPHON", theme.accent).pb(px(6.)));
-    if !doc.section.name.is_empty() {
-        col = col.child(row("Section", text(doc.section.name.clone())));
+    if !c.section.is_empty() {
+        col = col.child(row("Section", text(c.section.to_string())));
     }
-    if let Some(p) = doc.published_at.as_deref() {
+    if let Some(p) = c.published_at {
         col = col.child(row("Published", text(fmt_date(p))));
     }
-    if let Some(u) = doc.updated_at.as_deref() {
-        if Some(u.get(..10)) != doc.published_at.as_deref().map(|p| p.get(..10)) {
+    if let Some(u) = c.updated_at {
+        if Some(u.get(..10)) != c.published_at.map(|p| p.get(..10)) {
             col = col.child(row("Updated", text(fmt_date(u))));
         }
     }
-    if !doc.cid.is_empty() {
+    if !c.cid.is_empty() {
         col = col.child(row(
             "Record",
             div()
@@ -218,12 +232,12 @@ pub(super) fn colophon(
                 .whitespace_nowrap()
                 .overflow_hidden()
                 .text_ellipsis_middle()
-                .child(sel.text(doc.cid.clone()).join(Join::Tab))
+                .child(sel.text(c.cid.to_string()).join(Join::Tab))
                 .into_any_element(),
         ));
     }
-    if !doc.href.is_empty() {
-        let twin = format!("{}.md", doc.href.trim_end_matches('/'));
+    if !c.href.is_empty() {
+        let twin = format!("{}.md", c.href.trim_end_matches('/'));
         let accent = theme.accent;
         let open = twin.clone();
         col = col.child(row(
@@ -251,7 +265,6 @@ pub(super) fn colophon(
                 .into_any_element(),
         ));
     }
-    let _ = nav;
     col.into_any_element()
 }
 
@@ -265,63 +278,19 @@ fn related(items: &[RelatedRef], key: &str, nav: &Navigate, theme: &Theme) -> An
         .child(hairline(theme))
         .child(label("RELATED", theme.accent).pt(px(8.)))
         .children(items.iter().enumerate().map(|(i, r)| {
-            let kind = r.section.clone().unwrap_or_default();
-            div()
-                .flex()
-                .flex_col()
-                .gap(px(2.))
-                .child(
-                    div()
-                        .flex()
-                        .items_baseline()
-                        .justify_between()
-                        .gap(px(16.))
-                        .child(
-                            link(
-                                SharedString::from(format!("{key}:rel{i}")),
-                                &r.title,
-                                &r.href,
-                                nav,
-                                theme,
-                            )
-                            .italic()
-                            .text_size(px(19.)),
-                        )
-                        .child(
-                            div()
-                                .flex_none()
-                                .flex()
-                                .items_baseline()
-                                .gap(px(10.))
-                                .when(!kind.is_empty(), |d| {
-                                    d.child(
-                                        label(kind.to_uppercase(), theme.section(&kind))
-                                            .text_size(px(design::LABEL_SIZE)),
-                                    )
-                                })
-                                .when_some(
-                                    r.published_at.as_deref().map(fmt_date_short),
-                                    |d, date| {
-                                        d.child(
-                                            label(date.to_uppercase(), theme.muted)
-                                                .text_size(px(design::LABEL_SIZE)),
-                                        )
-                                    },
-                                ),
-                        ),
-                )
-                .when_some(
-                    r.description.clone().filter(|d| !d.trim().is_empty()),
-                    |d, desc| {
-                        d.child(
-                            div()
-                                .text_size(px(15.))
-                                .line_height(px(22.))
-                                .text_color(theme.muted)
-                                .child(clip(&desc, 160)),
-                        )
-                    },
-                )
+            card(
+                SharedString::from(format!("{key}:rel{i}")),
+                Card {
+                    title: &r.title,
+                    href: &r.href,
+                    section: r.section.as_deref(),
+                    published_at: r.published_at.as_deref(),
+                    blurb: r.description.as_deref(),
+                },
+                CardSize::Related,
+                nav,
+                theme,
+            )
         }))
         .into_any_element()
 }

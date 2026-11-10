@@ -3,14 +3,14 @@ use gpui::prelude::*;
 use gpui::px;
 use gpui::{AnyElement, App, SharedString, Window, div};
 
-use crate::api::{Doc, Navigate, Paging, Post, SectionRef};
+use crate::api::{Navigate, Paging, Post};
 use crate::design;
 use crate::select::Selection;
 use crate::theme::{self, Theme};
 
-use super::doc::{colophon, terrazzo_banner};
+use super::doc::{Colophon, colophon, terrazzo_banner};
 use super::format::{encode_segment, fmt_date};
-use super::listing::{Heading, heading};
+use super::listing::{Heading, frame};
 use super::pages::{Prose, measure};
 use super::render::{self, double_rule};
 use super::{column, link};
@@ -27,11 +27,7 @@ pub(super) fn post_body(
     let key = format!("post:{}", post.rkey);
     let (parsed, ctx) = Prose::post(post, single).of(theme, nav, sel, key.clone(), window);
     let date = fmt_date(&post.created_at);
-    let href = if post.href.is_empty() {
-        format!("/feed/{}", post.rkey)
-    } else {
-        post.href.clone()
-    };
+    let href = href(post);
 
     let mut col = div().flex().flex_col().gap(px(14.));
     col = col.child(
@@ -76,7 +72,16 @@ pub fn feed(
             .child("Short posts from iammatthias.")
             .into_any_element(),
     );
-    let mut col = column(theme).gap(px(26.)).child(heading(
+    // later pages arrive as the end of the list comes near
+    let (more, tail) = super::feed::extra(posts, paging);
+    let mut body = Vec::new();
+    for (i, p) in posts.iter().chain(more.iter().map(|p| &**p)).enumerate() {
+        if i > 0 {
+            body.push(double_rule(theme, 48.).into_any_element());
+        }
+        body.push(post_body(p, false, nav, theme, sel, window, cx));
+    }
+    frame(
         Heading {
             title: "Feed",
             lede,
@@ -84,26 +89,14 @@ pub fn feed(
             total: Some(paging.total),
         },
         "feed",
+        26.,
+        "Nothing recent.",
+        body,
         nav,
         theme,
-    ));
-    if posts.is_empty() {
-        col = col.child(
-            div()
-                .italic()
-                .text_color(theme.muted)
-                .child("Nothing recent."),
-        );
-    }
-    // later pages arrive as the end of the list comes near
-    let (more, tail) = super::feed::extra(posts, paging);
-    for (i, p) in posts.iter().chain(more.iter().map(|p| &**p)).enumerate() {
-        if i > 0 {
-            col = col.child(double_rule(theme, 48.));
-        }
-        col = col.child(post_body(p, false, nav, theme, sel, window, cx));
-    }
-    col.child(super::feed::tail(tail, theme)).into_any_element()
+    )
+    .child(super::feed::tail(tail, theme))
+    .into_any_element()
 }
 
 pub fn post(
@@ -133,29 +126,26 @@ pub fn post(
             cx,
         ))
         .child(colophon(
-            &Doc {
-                section: SectionRef {
-                    slug: "feed".into(),
-                    name: "Feed".into(),
-                    ..Default::default()
-                },
-                rkey: post.rkey.clone(),
-                cid: post.cid.clone(),
-                href: if post.href.is_empty() {
-                    format!("/feed/{}", post.rkey)
-                } else {
-                    post.href.clone()
-                },
-                published_at: Some(post.created_at.clone()),
-                updated_at: post.updated_at.clone(),
-                ..Default::default()
+            Colophon {
+                section: "Feed",
+                published_at: Some(&post.created_at),
+                updated_at: post.updated_at.as_deref(),
+                cid: &post.cid,
+                href: &href(post),
             },
             &format!("post:{}", post.rkey),
-            nav,
             theme,
             sel,
         ))
         .into_any_element()
+}
+
+fn href(post: &Post) -> String {
+    if post.href.is_empty() {
+        format!("/feed/{}", post.rkey)
+    } else {
+        post.href.clone()
+    }
 }
 
 /// Tags as quiet italic links: `ai · generative · photography`.
