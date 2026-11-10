@@ -11,7 +11,6 @@ function page(path: string): SsrPage {
         head: { title: "A page", description: "About it.", path },
         main: `<article><h1>A page</h1></article>`,
         status: 200,
-        cache: { kind: "static" },
     };
 }
 
