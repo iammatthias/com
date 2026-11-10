@@ -222,7 +222,7 @@ mod web {
 
     /// What the system keeps of the screen (notch, status bar, home indicator): top, right,
     /// bottom, left in css px. The canvas draws under it; controls stay clear of it.
-    /// Read a dozen times a frame: kept here until the viewport changes (as dom.js keeps its own).
+    /// Read a dozen times a frame: kept here until the viewport changes.
     pub fn safe_insets() -> [f32; 4] {
         if let Some(insets) = INSETS.get() {
             return insets;

@@ -377,14 +377,10 @@ function measureInsets() {
         if (covered > 0) insets[2] = Math.max(insets[2], covered);
     }
 }
-addEventListener("resize", () => (insets = null));
-addEventListener("orientationchange", () => (insets = null));
-// the toolbars collapsing and returning change what's free, without a window resize
-window.visualViewport?.addEventListener("resize", () => (insets = null));
 
 /** [top, right, bottom, left] css px of screen the system keeps for itself. */
 export function safeInsets() {
-    if (!insets) measureInsets();
+    measureInsets();
     return new Float32Array(insets);
 }
 
