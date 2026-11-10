@@ -135,6 +135,13 @@ pub mod debug {
         on
     }
 
+    pub fn slow() -> f32 {
+        thread_local! {
+            static SLOW: f32 = number("slow").map_or(1.0, |f| f.max(0.05));
+        }
+        SLOW.with(|s| *s)
+    }
+
     fn flag_in(hash: &str, name: &str) -> bool {
         hash.trim_start_matches('#').split('&').any(|p| p == name)
     }

@@ -432,10 +432,10 @@ enum Clock {
 
 impl Clock {
     fn from_hash() -> Self {
-        use crate::route::debug::number;
-        match (number("t"), number("slow")) {
-            (Some(t), _) => Clock::Frozen(t),
-            (None, f) => Clock::Slow(f.map_or(1.0, |f| f.max(0.05))),
+        use crate::route::debug;
+        match debug::number("t") {
+            Some(t) => Clock::Frozen(t),
+            None => Clock::Slow(debug::slow()),
         }
     }
 }
