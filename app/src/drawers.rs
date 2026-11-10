@@ -648,7 +648,6 @@ fn find_body(body: gpui::Div, p: &PanelInputs, cx: &mut Context<Site>) -> gpui::
     let (t, home, index) = (*p.theme, p.home, p.index);
     let focused = crate::dom_input::focused();
     // the field's box is drawn here; the text in it is a native input laid over it (dom_input)
-    let query = home.query.clone();
     let style = format!(
         "color:{ink};caret-color:{accent};font:400 15px/1.2 site-sans,system-ui,sans-serif;",
         ink = theme::Theme::css(t.ink),
@@ -672,7 +671,6 @@ fn find_body(body: gpui::Div, p: &PanelInputs, cx: &mut Context<Site>) -> gpui::
                             crate::dom_input::place(
                                 crate::overlay::Rect::from_bounds(bounds),
                                 crate::overlay::Rect::from_bounds(clip),
-                                &query,
                                 "pizza, agents, atproto…",
                                 crate::site::MAX_QUERY,
                                 &style,

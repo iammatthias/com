@@ -547,7 +547,7 @@ function findInput() {
     return find;
 }
 
-export function findPlace(x, y, w, h, t, r, b, l, value, placeholder, maxLen, style) {
+export function findPlace(x, y, w, h, t, r, b, l, placeholder, maxLen, style) {
     const el = findInput();
     if (el.dataset.style !== style) {
         const keep = { opacity: el.style.opacity, pointerEvents: el.style.pointerEvents };
@@ -555,9 +555,6 @@ export function findPlace(x, y, w, h, t, r, b, l, value, placeholder, maxLen, st
         Object.assign(el.style, keep);
         el.dataset.style = style;
     }
-    // the input holds the text being typed; the site only ever changes it by clearing it (after
-    // a search, or Escape), so that's the one value written back
-    if (value === "" && el.value !== "") el.value = "";
     el.placeholder = placeholder;
     el.maxLength = maxLen;
     const s = el.style;
@@ -575,6 +572,10 @@ export function findFocus() {
     // gpui's own handling of it, blurs gpui's hidden textarea and re-enters gpui mid-dispatch. A
     // microtask runs the moment gpui's listener returns, still within the same browser event.
     queueMicrotask(() => el.focus({ preventScroll: true }));
+}
+
+export function findClear() {
+    if (find) find.value = "";
 }
 
 export function findFocused() {
