@@ -192,7 +192,7 @@ impl Site {
     pub fn go(&mut self, path: &str, by: Arrival, cx: &mut Context<Self>) {
         let push = by == Arrival::Link;
         // going somewhere puts the menu away
-        self.home.open = None;
+        self.open_panel(None, cx);
         let route = Route::parse(path);
         // the same page: a link to it, or back/forward between its #anchors, which the page and
         // the browser see to (resetting the scroll and frame would lose the reader's place)
@@ -394,14 +394,10 @@ impl Site {
     fn site_key(&mut self, e: &gpui::KeyDownEvent, _: &mut Window, cx: &mut Context<Self>) {
         match e.keystroke.key.as_str() {
             "/" => {
-                self.home.open = Some(Drawer::Find);
-                self.focus_search(cx);
+                self.open_panel(Some(Drawer::Find), cx);
                 cx.stop_propagation();
             }
-            "escape" if self.home.open.is_some() => {
-                self.home.open = None;
-                cx.notify();
-            }
+            "escape" if self.home.open.is_some() => self.open_panel(None, cx),
             "escape" if self.route != Route::Home => self.go("/", Arrival::Link, cx),
             _ => {}
         }

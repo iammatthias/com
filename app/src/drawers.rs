@@ -7,7 +7,7 @@ use gpui::{AnyElement, Context, Window, div, px};
 use crate::api::{Index, Navigate};
 use crate::content;
 use crate::design;
-use crate::home::{Home, note_line};
+use crate::home::Home;
 use crate::prefs;
 use crate::site::Site;
 use crate::theme::{self, Choice, Theme};
@@ -355,16 +355,8 @@ pub fn drawer(
                 .child(if open { "–" } else { "+" }),
         )
         .on_click(cx.listener(move |site, _, _, cx| {
-            site.home.open = if site.home.open == Some(which) {
-                None
-            } else {
-                Some(which)
-            };
-            if which == Drawer::Find && site.home.open == Some(which) {
-                // focused within this tap, the only moment a phone will raise its keyboard for it
-                site.focus_search(cx);
-            }
-            cx.notify();
+            let closing = site.home.open == Some(which);
+            site.open_panel((!closing).then_some(which), cx);
         }));
 
     let insets = crate::route::safe_insets();
@@ -713,26 +705,7 @@ fn find_body(body: gpui::Div, p: &PanelInputs, cx: &mut Context<Site>) -> gpui::
         );
     }
     if !home.query.trim().is_empty() {
-        // what the words match first (titles and tags), then what the meaning finds, once each
-        let mut shown: Vec<(String, String)> = index
-            .map(|ix| {
-                home.matches(ix)
-                    .into_iter()
-                    .map(|it| (it.title.clone(), it.href.clone()))
-                    .collect()
-            })
-            .unwrap_or_default();
-        for h in p.semantic.unwrap_or_default() {
-            if shown.iter().any(|(_, href)| *href == h.href) {
-                continue;
-            }
-            // feed notes have no titles: name them by their words, or when a picture was posted
-            let title = index
-                .and_then(|ix| ix.feed.iter().find(|f| f.href == h.href))
-                .map(|f| note_line(&f.excerpt, &f.created_at))
-                .unwrap_or_else(|| h.title.clone());
-            shown.push((title, h.href.clone()));
-        }
+        let shown = home.results(index, p.semantic.unwrap_or_default());
         if shown.is_empty() {
             results = results.child(
                 div()
