@@ -1,0 +1,9 @@
+ingredients:
+  - item: A
+steps:
+  - id: x
+    in: [a, y]
+    do: one
+  - id: y
+    in: [x]
+    do: two

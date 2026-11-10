@@ -26,19 +26,58 @@ type Grid = { title: string; rows: Row[]; width: number };
 const AUTO_VERTICAL_MAX = 34;
 
 
+type Yaml = Record<string, unknown>;
+
+const mapping = (v: unknown): Yaml =>
+    v !== null && typeof v === "object" && !Array.isArray(v) ? (v as Yaml) : {};
+
+const sequence = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
+
+const text = (v: unknown): string | undefined => {
+    const s = typeof v === "string" ? v
+        : typeof v === "number" || typeof v === "boolean" ? String(v)
+        : undefined;
+    return s?.trim() ? s : undefined;
+};
+
+const flag = (v: unknown): boolean | undefined => (typeof v === "boolean" ? v : undefined);
+
+const inputs = (v: unknown): string[] =>
+    (Array.isArray(v) ? v.map(text) : [text(v)]).filter((s): s is string => s !== undefined);
+
 export function parseRecipe(src: string): Recipe {
-    const raw = parseYAML(src) ?? {};
+    const raw = mapping(parseYAML(src));
     const rec: Recipe = {
-        ...raw,
-        ingredients: (raw.ingredients ?? []).map((i: any) => ({ ...i })),
-        steps: (raw.steps ?? []).map((s: any) => ({ ...s, in: s.in ?? [] })),
+        yield: text(raw.yield),
+        time: text(raw.time),
+        source: text(raw.source),
+        sourceURL: text(raw.sourceURL),
+        notes: text(raw.notes),
+        ingredients: sequence(raw.ingredients).map(mapping).map((i) => ({
+            id: text(i.id) ?? "",
+            item: text(i.item) ?? "",
+            amount: text(i.amount),
+            note: text(i.note),
+            group: text(i.group),
+        })),
+        steps: sequence(raw.steps).map(mapping).map((s) => ({
+            id: text(s.id) ?? "",
+            in: inputs(s.in),
+            do: text(s.do) ?? "",
+            detail: text(s.detail),
+            for: text(s.for),
+            phase: text(s.phase),
+            prep: flag(s.prep) ?? false,
+            title: text(s.title),
+            vertical: flag(s.vertical),
+        })),
     };
     if (!rec.ingredients.length) throw new Error("recipe: no ingredients");
     if (!rec.steps.length) throw new Error("recipe: no steps");
 
     const taken = new Set<string>();
     rec.ingredients.forEach((ing, i) => {
-        if (!ing.item?.trim()) throw new Error(`recipe: ingredient ${i + 1} has no item`);
+        if (!ing.item) throw new Error(`recipe: ingredient ${i + 1} has no item`);
         let id = ing.id || slugify(ing.item) || `i${i + 1}`;
         const base = id;
         for (let n = 2; taken.has(id); n++) id = `${base}-${n}`;
@@ -46,7 +85,7 @@ export function parseRecipe(src: string): Recipe {
         ing.id = id;
     });
     rec.steps.forEach((st, i) => {
-        if (!st.do?.trim()) throw new Error(`recipe: step ${i + 1} has no \`do\``);
+        if (!st.do) throw new Error(`recipe: step ${i + 1} has no \`do\``);
         const id = st.id || `s${i + 1}`;
         if (taken.has(id)) throw new Error(`recipe: duplicate id "${id}"`);
         taken.add(id);

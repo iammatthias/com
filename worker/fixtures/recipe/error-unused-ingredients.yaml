@@ -1,0 +1,7 @@
+ingredients:
+  - item: Salt
+  - item: Pepper
+  - item: Basil
+steps:
+  - in: [salt]
+    do: Season

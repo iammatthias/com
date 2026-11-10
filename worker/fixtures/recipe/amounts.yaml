@@ -1,0 +1,27 @@
+yield: 4
+time: 1 h 20 min
+source: Grandma
+sourceURL: https://example.com/card
+notes: Keeps for a *week*.
+ingredients:
+  - item: Eggs
+    amount: 2
+  - item: Flour
+    amount: 1 1/2 cups
+  - item: Milk
+    amount: ¾ cup
+  - item: Garlic
+    amount: 2–3 cloves
+    note: minced
+  - item: Salt
+    amount: To taste
+  - item: Pepper
+    amount: "  "
+  - item: Butter
+    amount: 153 grams (1 cup plus 1 tbsp)
+    group: Topping
+steps:
+  - in: [eggs, flour, milk, garlic, salt, pepper, butter]
+    do: mix
+  - do: bake
+    for: 45

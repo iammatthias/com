@@ -1,0 +1,15 @@
+{
+    "recipe": {
+        "ingredients": [{ "id": "rice", "item": "Rice" }],
+        "steps": [{ "id": "s1", "in": ["rice"], "do": "Rinse" }]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 1,
+            "rows": [{ "ingredient": "rice", "cells": [{ "step": "s1", "rows": 1, "vertical": false }] }],
+            "placements": [{ "step": "s1", "col": 0, "row": 0, "rows": 1 }],
+            "blanks": []
+        }
+    ]
+}

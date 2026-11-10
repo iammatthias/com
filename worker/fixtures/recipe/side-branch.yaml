@@ -1,0 +1,12 @@
+ingredients:
+  - item: Butter
+  - item: Sugar
+  - item: Apple
+steps:
+  - in: [butter, sugar]
+    do: cream
+  - in: [apple]
+    do: peel
+  - do: slice
+  - in: [s1, s3]
+    do: combine

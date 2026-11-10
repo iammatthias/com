@@ -1,0 +1,28 @@
+{
+    "recipe": {
+        "ingredients": [
+            { "id": "tomato", "item": "Tomato", "group": "Sauce" },
+            { "id": "flour", "item": "Flour", "group": "Dough" }
+        ],
+        "steps": [
+            { "id": "s1", "in": ["tomato"], "do": "Simmer", "title": "Sauce", "phase": "Sauce" },
+            { "id": "s2", "in": ["flour"], "do": "Knead", "detail": "Knead until smooth.", "phase": "Dough" }
+        ]
+    },
+    "grids": [
+        {
+            "title": "Sauce",
+            "width": 1,
+            "rows": [{ "ingredient": "tomato", "cells": [{ "step": "s1", "rows": 1, "vertical": false }] }],
+            "placements": [{ "step": "s1", "col": 0, "row": 0, "rows": 1 }],
+            "blanks": []
+        },
+        {
+            "title": "Knead",
+            "width": 1,
+            "rows": [{ "ingredient": "flour", "cells": [{ "step": "s2", "rows": 1, "vertical": false }] }],
+            "placements": [{ "step": "s2", "col": 0, "row": 0, "rows": 1 }],
+            "blanks": []
+        }
+    ]
+}

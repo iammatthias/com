@@ -1,0 +1,14 @@
+ingredients:
+  - item: Tomato
+    group: Sauce
+  - item: Flour
+    group: Dough
+steps:
+  - in: [tomato]
+    do: Simmer
+    title: Sauce
+    phase: Sauce
+  - in: [flour]
+    do: Knead
+    detail: Knead until smooth.
+    phase: Dough

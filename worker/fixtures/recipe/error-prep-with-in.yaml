@@ -1,0 +1,6 @@
+ingredients:
+  - item: Salt
+steps:
+  - prep: true
+    in: [salt]
+    do: Warm the pan

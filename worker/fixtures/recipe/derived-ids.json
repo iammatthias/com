@@ -1,0 +1,41 @@
+{
+    "recipe": {
+        "ingredients": [
+            { "id": "egg", "item": "Egg" },
+            { "id": "egg-2", "item": "Egg" },
+            { "id": "i3", "item": "!!!" },
+            { "id": "creme-fraiche", "item": "Crème fraîche" },
+            { "id": "jalapeno", "item": "Jalapeño" },
+            { "id": "egg-3", "item": "Duck egg" }
+        ],
+        "steps": [
+            { "id": "s1", "in": ["egg", "egg-2", "i3", "creme-fraiche", "jalapeno", "egg-3"], "do": "whisk" },
+            { "id": "s2", "in": ["s1"], "do": "cook" }
+        ]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 2,
+            "rows": [
+                {
+                    "ingredient": "egg",
+                    "cells": [
+                        { "step": "s1", "rows": 6, "vertical": true },
+                        { "step": "s2", "rows": 6, "vertical": true }
+                    ]
+                },
+                { "ingredient": "egg-2", "cells": [] },
+                { "ingredient": "i3", "cells": [] },
+                { "ingredient": "creme-fraiche", "cells": [] },
+                { "ingredient": "jalapeno", "cells": [] },
+                { "ingredient": "egg-3", "cells": [] }
+            ],
+            "placements": [
+                { "step": "s1", "col": 0, "row": 0, "rows": 6 },
+                { "step": "s2", "col": 1, "row": 0, "rows": 6 }
+            ],
+            "blanks": []
+        }
+    ]
+}

@@ -1,0 +1,48 @@
+{
+    "recipe": {
+        "yield": "4",
+        "time": "1 h 20 min",
+        "source": "Grandma",
+        "sourceURL": "https://example.com/card",
+        "notes": "Keeps for a *week*.",
+        "ingredients": [
+            { "id": "eggs", "item": "Eggs", "amount": "2" },
+            { "id": "flour", "item": "Flour", "amount": "1 1/2 cups" },
+            { "id": "milk", "item": "Milk", "amount": "¾ cup" },
+            { "id": "garlic", "item": "Garlic", "amount": "2–3 cloves", "note": "minced" },
+            { "id": "salt", "item": "Salt", "amount": "To taste" },
+            { "id": "pepper", "item": "Pepper" },
+            { "id": "butter", "item": "Butter", "amount": "153 grams (1 cup plus 1 tbsp)", "group": "Topping" }
+        ],
+        "steps": [
+            { "id": "s1", "in": ["eggs", "flour", "milk", "garlic", "salt", "pepper", "butter"], "do": "mix" },
+            { "id": "s2", "in": ["s1"], "do": "bake", "for": "45" }
+        ]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 2,
+            "rows": [
+                {
+                    "ingredient": "eggs",
+                    "cells": [
+                        { "step": "s1", "rows": 7, "vertical": true },
+                        { "step": "s2", "rows": 7, "vertical": true }
+                    ]
+                },
+                { "ingredient": "flour", "cells": [] },
+                { "ingredient": "milk", "cells": [] },
+                { "ingredient": "garlic", "cells": [] },
+                { "ingredient": "salt", "cells": [] },
+                { "ingredient": "pepper", "cells": [] },
+                { "ingredient": "butter", "cells": [] }
+            ],
+            "placements": [
+                { "step": "s1", "col": 0, "row": 0, "rows": 7 },
+                { "step": "s2", "col": 1, "row": 0, "rows": 7 }
+            ],
+            "blanks": []
+        }
+    ]
+}

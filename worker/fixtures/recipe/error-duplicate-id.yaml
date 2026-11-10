@@ -1,0 +1,6 @@
+ingredients:
+  - item: Salt
+steps:
+  - id: salt
+    in: [salt]
+    do: Season

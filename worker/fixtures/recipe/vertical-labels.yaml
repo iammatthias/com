@@ -1,0 +1,18 @@
+ingredients:
+  - { id: a, item: A }
+  - { id: b, item: B }
+  - { id: c, item: C }
+  - { id: d, item: D }
+steps:
+  - in: [a]
+    do: Chop
+    vertical: true
+  - in: [s1, b]
+    do: "Rest 10–15 min, then shape it well"
+  - in: [s2, c]
+    do: Fold together until barely combined
+  - in: [s3, d]
+    do: Rest
+    vertical: false
+  - do: Bake
+    for: Bake until deep golden, 35 minutes.

@@ -1,0 +1,49 @@
+{
+    "recipe": {
+        "ingredients": [
+            { "id": "butter", "item": "Butter" },
+            { "id": "sugar", "item": "Sugar" },
+            { "id": "apple", "item": "Apple" }
+        ],
+        "steps": [
+            { "id": "s1", "in": ["butter", "sugar"], "do": "cream" },
+            { "id": "s2", "in": ["apple"], "do": "peel" },
+            { "id": "s3", "in": ["s2"], "do": "slice" },
+            { "id": "s4", "in": ["s1", "s3"], "do": "combine" }
+        ]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 3,
+            "rows": [
+                {
+                    "ingredient": "butter",
+                    "cells": [
+                        { "step": "s1", "rows": 2, "vertical": true },
+                        { "gap": 1 },
+                        { "step": "s4", "rows": 3, "vertical": true }
+                    ]
+                },
+                { "ingredient": "sugar", "cells": [{ "gap": 1 }] },
+                {
+                    "ingredient": "apple",
+                    "cells": [
+                        { "step": "s2", "rows": 1, "vertical": false },
+                        { "step": "s3", "rows": 1, "vertical": false }
+                    ]
+                }
+            ],
+            "placements": [
+                { "step": "s1", "col": 0, "row": 0, "rows": 2 },
+                { "step": "s4", "col": 2, "row": 0, "rows": 3 },
+                { "step": "s2", "col": 0, "row": 2, "rows": 1 },
+                { "step": "s3", "col": 1, "row": 2, "rows": 1 }
+            ],
+            "blanks": [
+                { "row": 0, "col": 1, "cols": 1 },
+                { "row": 1, "col": 1, "cols": 1 }
+            ]
+        }
+    ]
+}

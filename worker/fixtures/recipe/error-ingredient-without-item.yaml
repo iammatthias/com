@@ -1,0 +1,6 @@
+ingredients:
+  - item: Salt
+  - amount: 1 tsp
+steps:
+  - in: [salt]
+    do: Season
