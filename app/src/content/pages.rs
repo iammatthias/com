@@ -91,11 +91,12 @@ impl<'a> Prose<'a> {
 
 /// Reading column width for this window: `COLUMN_MAX_W`, or less on a narrow screen.
 pub fn measure(window: &Window) -> f32 {
-    // page.rs pads the scroller 48 px a side (22 on a phone); what's left is the column, capped
-    // at `COLUMN_MAX_W`
     let vw: f32 = f32::from(window.viewport_size().width);
-    let pad = if vw < design::PHONE_W { 44. } else { 96. };
-    (vw - pad).clamp(240., design::COLUMN_MAX_W)
+    (vw - 2. * page_gutter(window)).clamp(240., design::COLUMN_MAX_W)
+}
+
+pub fn page_gutter(window: &Window) -> f32 {
+    if design::is_phone(window) { 22. } else { 48. }
 }
 
 /// A page's title: Newsreader, large, the same on every kind of page (the script belongs to

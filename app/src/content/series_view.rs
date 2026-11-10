@@ -15,6 +15,8 @@ use super::series::{Capture, FlowPart, SeriesMedia, SeriesTree, Stanza, Triptych
 
 const GAP: f32 = 12.;
 
+const STACKED_W: f32 = 440.;
+
 pub fn view(tree: &SeriesTree, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElement {
     match tree {
         SeriesTree::Grid(caps) => grid(caps, ctx),
@@ -127,7 +129,7 @@ fn stanza(s: &Stanza, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElemen
                     .italic()
                     .text_size(px(20.))
                     .line_height(px(32.))
-                    .child(render::rich(r, ctx, window, cx))
+                    .child(render::rich(r, ctx))
                     .into_any_element(),
                 other => render::block(other, ctx, window, cx),
             }
@@ -149,7 +151,7 @@ fn stanza(s: &Stanza, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElemen
 
 fn triptych(parts: &[TriptychPart], ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElement {
     let theme = ctx.theme;
-    let narrow = ctx.width < 440.;
+    let narrow = ctx.width < STACKED_W;
     let img_w = if narrow {
         ctx.width
     } else {

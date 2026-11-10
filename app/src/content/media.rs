@@ -117,23 +117,17 @@ pub fn clip_probe(
     poster: Option<String>,
     mode: dom_video::Mode,
 ) -> impl IntoElement {
-    div().absolute().inset_0().child(
-        gpui::canvas(
-            move |bounds, window, _| {
-                let clip = window.content_mask().bounds;
-                dom_video::place(
-                    &key,
-                    &src,
-                    poster.as_deref(),
-                    mode,
-                    crate::overlay::Rect::from_bounds(bounds),
-                    crate::overlay::Rect::from_bounds(clip),
-                );
-            },
-            |_, _, _, _| {},
-        )
-        .size_full(),
-    )
+    super::on_paint(move |bounds, window, _| {
+        let clip = window.content_mask().bounds;
+        dom_video::place(
+            &key,
+            &src,
+            poster.as_deref(),
+            mode,
+            crate::overlay::Rect::from_bounds(bounds),
+            crate::overlay::Rect::from_bounds(clip),
+        );
+    })
 }
 
 /// Where the original bytes live (video/audio open this in a new tab).
@@ -165,6 +159,8 @@ fn kind(m: Option<&Media>) -> Kind {
 }
 
 const AUDIO_ASPECT: f32 = 4.;
+
+const NARROW_COLUMN_W: f32 = 600.;
 
 /// An image (or a video/audio stand-in) at `width`, height from the blob's aspect.
 pub fn figure(src: &MediaSrc, alt: &str, width: f32, caption: bool, ctx: &Ctx) -> AnyElement {
@@ -246,7 +242,7 @@ fn still(src: &MediaSrc, alt: &str, width: f32, m: Option<&Media>, ctx: &Ctx) ->
     let index = {
         let mut g = ctx.gallery.borrow_mut();
         g.push(lightbox::Item {
-            large: large_url(src, m, ctx.scale, ctx.width < 600.),
+            large: large_url(src, m, ctx.scale, ctx.width < NARROW_COLUMN_W),
             thumb: url,
             alt: alt.trim().to_string(),
             aspect,

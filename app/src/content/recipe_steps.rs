@@ -212,8 +212,6 @@ pub fn stage(
     rec: &Rc<Recipe>,
     details: &[super::md::Rich],
     ctx: &Ctx,
-    window: &mut Window,
-    cx: &mut App,
 ) -> Option<AnyElement> {
     let s = state::get::<RecipeState>(st);
     let i = s.active?;
@@ -264,7 +262,7 @@ pub fn stage(
             div()
                 .text_size(px(17.))
                 .line_height(px(26.))
-                .child(render::rich(&details[i], c, window, cx))
+                .child(render::rich(&details[i], c))
         }));
 
     if clock.total > 0 {

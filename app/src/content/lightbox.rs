@@ -64,6 +64,7 @@ pub(super) struct Open {
 
 const FOCUS: &str = "lightbox:focus";
 const SWIPE: f32 = 50.;
+const NARROW_W: f32 = 640.;
 
 fn focus_handle(cx: &mut App) -> FocusHandle {
     state::slot(FOCUS, || None::<FocusHandle>, |h| h.clone()).unwrap_or_else(|| {
@@ -151,7 +152,7 @@ pub fn overlay(theme: &Theme, window: &mut Window, cx: &mut App) -> Option<AnyEl
 
     let vp = window.viewport_size();
     let (vw, vh): (f32, f32) = (vp.width.into(), vp.height.into());
-    let narrow = vw < 640.;
+    let narrow = vw < NARROW_W;
     // room for the arrows at the sides and the caption beneath, in window pixels
     let side = if narrow { 12. } else { 72. };
     let below = 84.;

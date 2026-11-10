@@ -60,24 +60,18 @@ pub(super) struct Spot {
 }
 
 fn probe(n: usize) -> impl IntoElement {
-    div().absolute().inset_0().child(
-        gpui::canvas(
-            move |bounds, window, _| {
-                let spot = Spot {
-                    top: bounds.origin.y.into(),
-                    view_top: window.content_mask().bounds.origin.y.into(),
-                };
-                scope::with(
-                    |p| &p.toc,
-                    |s| {
-                        s.borrow_mut().insert(n, spot);
-                    },
-                );
+    super::on_paint(move |bounds, window, _| {
+        let spot = Spot {
+            top: bounds.origin.y.into(),
+            view_top: window.content_mask().bounds.origin.y.into(),
+        };
+        scope::with(
+            |p| &p.toc,
+            |s| {
+                s.borrow_mut().insert(n, spot);
             },
-            |_, _, _, _| {},
-        )
-        .size_full(),
-    )
+        );
+    })
 }
 
 pub fn mark(body: &mut [AnyElement], entries: &[Entry]) {

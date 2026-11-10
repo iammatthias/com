@@ -38,6 +38,7 @@ mod special;
 
 pub use format::{encode_segment, fmt_date_short};
 pub use media::parse_color;
+pub use pages::page_gutter;
 pub use render::label;
 mod scope;
 mod state;
@@ -124,6 +125,15 @@ fn body(
 pub fn forget_page() {
     scope::reset();
     cache::next_page();
+}
+
+pub fn on_paint(
+    f: impl FnOnce(gpui::Bounds<gpui::Pixels>, &mut Window, &mut App) + 'static,
+) -> gpui::Div {
+    div()
+        .absolute()
+        .inset_0()
+        .child(gpui::canvas(f, |_, _, _, _| {}).size_full())
 }
 
 /// The reading column every content page shares.
