@@ -22,7 +22,7 @@ import {
     type ContentItem,
 } from "./agent-data";
 import { resolveEmbedsForMarkdown } from "./markdown-view";
-import { SITE_ORIGIN, SECTION_SLUGS, EXAMPLE_DOC_PATH } from "./agent-surface";
+import { SITE_ORIGIN, SECTION_SLUGS, EXAMPLE_DOC_PATH, MAX_SEARCH_LIMIT } from "./agent-surface";
 
 const encodeCursor = (i: number) => btoa(`offset:${i}`);
 const decodeCursor = (c: string): number => {
@@ -90,8 +90,14 @@ const Document = new GraphQLObjectType({
         tags: {
             type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))),
         },
-        publishedAt: { type: new GraphQLNonNull(GraphQLString) },
-        updatedAt: { type: new GraphQLNonNull(GraphQLString) },
+        publishedAt: {
+            type: new GraphQLNonNull(GraphQLString),
+            resolve: (item: ContentItem) => item.published,
+        },
+        updatedAt: {
+            type: new GraphQLNonNull(GraphQLString),
+            resolve: (item: ContentItem) => item.updated,
+        },
         url: {
             type: new GraphQLNonNull(GraphQLString),
             description: "Canonical HTML URL.",
@@ -238,8 +244,7 @@ export const schema = new GraphQLSchema({
         fields: {
             search: {
                 type: new GraphQLNonNull(DocumentConnection),
-                description:
-                    "Keyword search across titles, tags, and bodies, ranked by relevance.",
+                description: `Keyword search across titles, tags, and bodies, ranked by relevance. At most ${MAX_SEARCH_LIMIT} hits in all.`,
                 args: {
                     query: {
                         type: new GraphQLNonNull(GraphQLString),
@@ -248,7 +253,7 @@ export const schema = new GraphQLSchema({
                     ...connectionArgs,
                 },
                 resolve: async (_r, { query, first, after }) =>
-                    connect(await searchContent(query, 100), after, first),
+                    connect(await searchContent(query, MAX_SEARCH_LIMIT), after, first),
             },
             documents: {
                 type: new GraphQLNonNull(DocumentConnection),

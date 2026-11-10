@@ -21,6 +21,8 @@ export const SECTION_SLUGS = [
     "experiments",
 ] as const;
 
+export const MAX_SEARCH_LIMIT = 50;
+
 export const EXAMPLE_DOC_PATH = "posts/1779066375000-farfield";
 
 export const CONTENT_SIGNAL = "search=yes, ai-input=yes, ai-train=no";
@@ -149,7 +151,7 @@ export const API_OPERATIONS: ApiOperation[] = [
                 name: "limit",
                 in: "query",
                 required: false,
-                schema: { type: "integer", minimum: 1, maximum: 50, default: 10 },
+                schema: { type: "integer", minimum: 1, maximum: MAX_SEARCH_LIMIT, default: 10 },
                 description: "Maximum number of hits.",
             },
         ],

@@ -1,7 +1,7 @@
 import type { Ctx, Route } from "./context";
 import { listContent, searchContent } from "../lib/agent-data";
 import { apiHeaders, jsonError } from "../lib/agent-http";
-import { API_OPERATIONS, SITE_ORIGIN } from "../lib/agent-surface";
+import { API_OPERATIONS, MAX_SEARCH_LIMIT, SITE_ORIGIN } from "../lib/agent-surface";
 import { glassPick } from "../lib/glass";
 import { buildSearchCorpus, SEARCH_DIMS, SEARCH_MODEL } from "../lib/search-corpus";
 import { loadAllFeedEntries } from "../lib/farfield-loader";
@@ -63,11 +63,11 @@ async function searchJson({ url }: Ctx): Promise<Response> {
     }
     const limitRaw = url.searchParams.get("limit");
     const limit = limitRaw ? Number(limitRaw) : 10;
-    if (!Number.isFinite(limit) || limit < 1 || limit > 50) {
+    if (!Number.isFinite(limit) || limit < 1 || limit > MAX_SEARCH_LIMIT) {
         return jsonError(
             400,
             "invalid_limit",
-            "The 'limit' parameter must be an integer between 1 and 50.",
+            `The 'limit' parameter must be an integer between 1 and ${MAX_SEARCH_LIMIT}.`,
             "Retry with limit omitted (defaults to 10) or within range.",
         );
     }

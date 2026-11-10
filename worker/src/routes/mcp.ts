@@ -1,10 +1,11 @@
 import type { Ctx, Route } from "./context";
-import { listContent, listSections, searchContent, getDocument, MAX_SEARCH_LIMIT } from "../lib/agent-data";
+import { listContent, listSections, searchContent, getDocument } from "../lib/agent-data";
 import { boundedInt, isJsonObject, isJsonRpcNotification } from "../lib/tool-args";
 import { composeDocumentMarkdown, resolveEmbedsForMarkdown } from "../lib/markdown-view";
 import {
     AGENT_SKILLS,
     EXAMPLE_DOC_PATH,
+    MAX_SEARCH_LIMIT,
     MCP_PROTOCOL_VERSION,
     MCP_SUPPORTED_PROTOCOL_VERSIONS,
     SECTION_SLUGS,

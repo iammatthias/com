@@ -7,7 +7,7 @@ import { plainText } from "./markdown-text";
 import { Lru } from "./lru";
 import { words } from "./text-fold";
 import { publishedDocs } from "./content-query";
-import { SITE_ORIGIN } from "./agent-surface";
+import { MAX_SEARCH_LIMIT, SITE_ORIGIN } from "./agent-surface";
 
 export interface ContentItem {
     title: string;
@@ -89,7 +89,6 @@ interface SearchHit extends ContentItem {
 const TITLE_MATCH_SCORE = 10;
 const TAG_MATCH_SCORE = 5;
 const MAX_BODY_MATCHES_COUNTED = 5;
-export const MAX_SEARCH_LIMIT = 50;
 
 export async function searchContent(
     query: string,
