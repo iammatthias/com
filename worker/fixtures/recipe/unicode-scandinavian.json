@@ -1,0 +1,15 @@
+{
+    "recipe": {
+        "ingredients": [{ "id": "smorrebrod", "item": "Smørrebrød" }],
+        "steps": [{ "id": "s1", "in": ["smorrebrod"], "do": "Butter" }]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 1,
+            "rows": [{ "ingredient": "smorrebrod", "cells": [{ "step": "s1", "rows": 1, "vertical": false }] }],
+            "placements": [{ "step": "s1", "col": 0, "row": 0, "rows": 1 }],
+            "blanks": []
+        }
+    ]
+}

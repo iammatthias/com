@@ -113,7 +113,7 @@ fn the_shared_recipe_corpus() {
         })
         .collect();
     cases.sort();
-    assert!(cases.len() >= 23, "only {} cases in {dir:?}", cases.len());
+    assert!(cases.len() >= 29, "only {} cases in {dir:?}", cases.len());
     let mut failed = Vec::new();
     for name in &cases {
         let src = std::fs::read_to_string(dir.join(format!("{name}.yaml"))).unwrap();

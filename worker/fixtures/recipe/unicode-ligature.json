@@ -1,0 +1,15 @@
+{
+    "recipe": {
+        "ingredients": [{ "id": "fig-jam", "item": "ﬁg jam" }],
+        "steps": [{ "id": "s1", "in": ["fig-jam"], "do": "Spread" }]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 1,
+            "rows": [{ "ingredient": "fig-jam", "cells": [{ "step": "s1", "rows": 1, "vertical": false }] }],
+            "placements": [{ "step": "s1", "col": 0, "row": 0, "rows": 1 }],
+            "blanks": []
+        }
+    ]
+}

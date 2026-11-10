@@ -1,0 +1,15 @@
+{
+    "recipe": {
+        "ingredients": [{ "id": "miso-paste", "item": "Ｍｉｓｏ paste" }],
+        "steps": [{ "id": "s1", "in": ["miso-paste"], "do": "Whisk" }]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 1,
+            "rows": [{ "ingredient": "miso-paste", "cells": [{ "step": "s1", "rows": 1, "vertical": false }] }],
+            "placements": [{ "step": "s1", "col": 0, "row": 0, "rows": 1 }],
+            "blanks": []
+        }
+    ]
+}

@@ -30,6 +30,7 @@ form_urlencoded = "1"
 # the same image crate gpui decodes with: frames for images drawn in-app (the terrazzo banner)
 # the formats the site serves: its images are WebP (and JPEG/PNG from elsewhere), GIFs animate
 image = { version = "0.25", default-features = false, features = ["webp", "jpeg", "png", "gif"] }
+unicode-normalization = "0.1.26"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 # a desktop build: gpui-ce with everything it ships

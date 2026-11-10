@@ -6,6 +6,8 @@ use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
 use serde_yaml::Value;
+use unicode_normalization::UnicodeNormalization;
+use unicode_normalization::char::is_combining_mark;
 
 use super::md::{self, Rich};
 
@@ -188,35 +190,39 @@ fn leads_with(detail: &str, label: &str) -> bool {
     !l.is_empty() && squash(detail).starts_with(&l)
 }
 
-pub fn slugify(s: &str) -> String {
+const UNDECOMPOSED: [(char, &str); 9] = [
+    ('ø', "o"),
+    ('æ', "ae"),
+    ('œ', "oe"),
+    ('ł', "l"),
+    ('đ', "d"),
+    ('ð', "d"),
+    ('þ', "th"),
+    ('ß', "ss"),
+    ('ı', "i"),
+];
+
+fn fold(s: &str) -> String {
     let mut out = String::new();
-    let mut dash = false;
-    for c in s.chars().flat_map(char::to_lowercase) {
-        let c = fold_char(c);
-        if c.is_ascii_lowercase() || c.is_ascii_digit() {
-            if dash && !out.is_empty() {
-                out.push('-');
-            }
-            dash = false;
-            out.push(c);
-        } else {
-            dash = true;
+    for c in s
+        .nfkd()
+        .filter(|&c| !is_combining_mark(c))
+        .flat_map(char::to_lowercase)
+    {
+        match UNDECOMPOSED.iter().find(|(k, _)| *k == c) {
+            Some((_, v)) => out.push_str(v),
+            None => out.push(c),
         }
     }
     out
 }
 
-fn fold_char(c: char) -> char {
-    match c {
-        'à' | 'á' | 'â' | 'ã' | 'ä' | 'å' => 'a',
-        'è' | 'é' | 'ê' | 'ë' => 'e',
-        'ì' | 'í' | 'î' | 'ï' => 'i',
-        'ò' | 'ó' | 'ô' | 'õ' | 'ö' => 'o',
-        'ù' | 'ú' | 'û' | 'ü' => 'u',
-        'ñ' => 'n',
-        'ç' => 'c',
-        other => other,
-    }
+pub fn slugify(s: &str) -> String {
+    fold(s)
+        .split(|c: char| !(c.is_ascii_lowercase() || c.is_ascii_digit()))
+        .filter(|w| !w.is_empty())
+        .collect::<Vec<_>>()
+        .join("-")
 }
 
 fn text_of(v: &Value) -> Option<String> {
@@ -975,5 +981,11 @@ mod tests {
     fn slugs() {
         assert_eq!(slugify("00 flour"), "00-flour");
         assert_eq!(slugify("Crème Fraîche!"), "creme-fraiche");
+        assert_eq!(slugify("Smørrebrød"), "smorrebrod");
+        assert_eq!(slugify("½ lemon"), "1-2-lemon");
+        assert_eq!(slugify("STRAẞE"), "strasse");
+        assert_eq!(slugify("Cre\u{300}me"), "creme");
+        assert_eq!(slugify("--Œuf ﬁ²--"), "oeuf-fi2");
+        assert_eq!(slugify("!!!"), "");
     }
 }

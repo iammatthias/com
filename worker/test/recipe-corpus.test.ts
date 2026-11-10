@@ -62,7 +62,7 @@ const sharedOnly = (expected: { grids?: { placements?: unknown; blanks?: unknown
 
 describe("the shared recipe corpus", () => {
     test("holds every case with an expectation beside it", () => {
-        expect(cases.length).toBeGreaterThanOrEqual(23);
+        expect(cases.length).toBeGreaterThanOrEqual(29);
         const expectations = readdirSync(dir).filter((f) => f.endsWith(".json")).sort();
         expect(expectations).toEqual(cases.map((c) => `${c}.json`).sort());
     });

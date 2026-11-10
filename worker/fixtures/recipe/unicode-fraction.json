@@ -1,0 +1,15 @@
+{
+    "recipe": {
+        "ingredients": [{ "id": "1-2-lemon", "item": "½ lemon" }],
+        "steps": [{ "id": "s1", "in": ["1-2-lemon"], "do": "Squeeze" }]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 1,
+            "rows": [{ "ingredient": "1-2-lemon", "cells": [{ "step": "s1", "rows": 1, "vertical": false }] }],
+            "placements": [{ "step": "s1", "col": 0, "row": 0, "rows": 1 }],
+            "blanks": []
+        }
+    ]
+}

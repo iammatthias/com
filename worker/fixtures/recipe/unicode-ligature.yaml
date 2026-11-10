@@ -1,0 +1,5 @@
+ingredients:
+  - item: ﬁg jam
+steps:
+  - in: [fig-jam]
+    do: Spread

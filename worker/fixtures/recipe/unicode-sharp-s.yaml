@@ -1,0 +1,5 @@
+ingredients:
+  - item: Straße
+steps:
+  - in: [strasse]
+    do: Fold

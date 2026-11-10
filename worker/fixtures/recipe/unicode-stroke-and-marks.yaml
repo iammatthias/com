@@ -1,0 +1,5 @@
+ingredients:
+  - item: Łódź cucumbers
+steps:
+  - in: [lodz-cucumbers]
+    do: Slice

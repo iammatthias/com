@@ -1,0 +1,15 @@
+{
+    "recipe": {
+        "ingredients": [{ "id": "strasse", "item": "Straße" }],
+        "steps": [{ "id": "s1", "in": ["strasse"], "do": "Fold" }]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 1,
+            "rows": [{ "ingredient": "strasse", "cells": [{ "step": "s1", "rows": 1, "vertical": false }] }],
+            "placements": [{ "step": "s1", "col": 0, "row": 0, "rows": 1 }],
+            "blanks": []
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+ingredients:
+  - item: Ｍｉｓｏ paste
+steps:
+  - in: [miso-paste]
+    do: Whisk
