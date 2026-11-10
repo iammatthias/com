@@ -187,7 +187,7 @@ async function toParagraphs(page) {
     await page.waitForTimeout(300);
     text = await page.evaluate(() => navigator.clipboard.readText());
     const typed = await page.evaluate(() => document.querySelector("input[aria-label='Find a title']")?.value);
-    check(typed.length > 2 && text === typed, `a copy inside the find box takes the box's text (${JSON.stringify(text.slice(0, 20))} for ${JSON.stringify(typed)})`);
+    check(typed === "pizza" && text === typed, `a copy inside the find box takes the box's text (${JSON.stringify(text.slice(0, 20))} for ${JSON.stringify(typed)})`);
     await page.keyboard.press("Escape");
     await page.keyboard.press("Escape");
     await page.waitForTimeout(500);
