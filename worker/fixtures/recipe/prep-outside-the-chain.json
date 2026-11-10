@@ -1,0 +1,34 @@
+{
+    "recipe": {
+        "ingredients": [
+            { "id": "flour", "item": "Flour" },
+            { "id": "water", "item": "Water" }
+        ],
+        "steps": [
+            { "id": "s1", "in": [], "do": "Preheat oven to 250°C", "prep": true },
+            { "id": "s2", "in": ["flour", "water"], "do": "mix" },
+            { "id": "s3", "in": ["s2"], "do": "bake", "for": "30 min" }
+        ]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 2,
+            "rows": [
+                {
+                    "ingredient": "flour",
+                    "cells": [
+                        { "step": "s2", "rows": 2, "vertical": true },
+                        { "step": "s3", "rows": 2, "vertical": true }
+                    ]
+                },
+                { "ingredient": "water", "cells": [] }
+            ],
+            "placements": [
+                { "step": "s2", "col": 0, "row": 0, "rows": 2 },
+                { "step": "s3", "col": 1, "row": 0, "rows": 2 }
+            ],
+            "blanks": []
+        }
+    ]
+}

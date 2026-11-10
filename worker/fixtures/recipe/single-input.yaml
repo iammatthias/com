@@ -1,0 +1,5 @@
+ingredients:
+  - item: Rice
+steps:
+  - in: rice
+    do: Rinse

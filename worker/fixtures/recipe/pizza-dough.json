@@ -1,0 +1,95 @@
+{
+    "recipe": {
+        "yield": "2 dough balls — two 12-in. pizzas",
+        "time": "25 min active · 5 h total",
+        "ingredients": [
+            { "id": "00-flour", "item": "00 flour", "amount": "153 grams (1 cup plus 1 tbsp)" },
+            { "id": "all-purpose-flour", "item": "all-purpose flour", "amount": "153 grams (1 cup plus 1 tbsp and 2 tsp)" },
+            { "id": "fine-sea-salt", "item": "fine sea salt", "amount": "8 grams (1 tsp)" },
+            { "id": "active-dry-yeast", "item": "active dry yeast", "amount": "2 grams (¾ tsp)" },
+            { "id": "extra-virgin-olive-oil", "item": "extra-virgin olive oil", "amount": "4 grams (1 tsp)", "note": "optional" }
+        ],
+        "steps": [
+            {
+                "id": "s1",
+                "in": ["00-flour", "all-purpose-flour", "fine-sea-salt", "active-dry-yeast"],
+                "do": "combine the 00 flour",
+                "detail": "In a large mixing bowl, combine the 00 flour, all-purpose flour, and fine sea salt. In a separate container, dissolve the active dry yeast in 200 grams of cold water."
+            },
+            {
+                "id": "s2",
+                "in": ["s1", "extra-virgin-olive-oil"],
+                "do": "pour the yeast mixture",
+                "detail": "Pour the yeast mixture into the flour mixture and mix by hand until a rough dough forms. Add the olive oil (if using) and continue to mix until fully incorporated."
+            },
+            {
+                "id": "s3",
+                "in": ["s2"],
+                "do": "knead the dough",
+                "for": "10–15 min",
+                "detail": "Knead the dough on a lightly floured surface for about 10-15 minutes until it becomes smooth and elastic. Divide the dough into 4 equal portions."
+            },
+            {
+                "id": "s4",
+                "in": ["s3"],
+                "do": "shape each portion",
+                "for": "2 h",
+                "detail": "Shape each portion into a ball and place them on a floured surface or tray. Place the dough balls in an oven with the light on and let rise for 2 hours."
+            },
+            {
+                "id": "s5",
+                "in": ["s4"],
+                "do": "transfer the dough balls",
+                "for": "1–2 h",
+                "detail": "Transfer the dough balls to the refrigerator and let them rest for 1-2 hours. Remove the dough from the refrigerator and let it come to room temperature before using (about 1 hour)."
+            },
+            {
+                "id": "s6",
+                "in": ["s5"],
+                "do": "preheat your pizza oven",
+                "detail": "Preheat your pizza oven outside to its highest setting. On a floured surface, stretch each dough ball into a 12-inch round, being careful not to deflate the edges."
+            },
+            {
+                "id": "s7",
+                "in": ["s6"],
+                "do": "top with your favorite",
+                "for": "6–8 min",
+                "detail": "Top with your favorite ingredients and bake one pizza at a time for 6-8 minutes, or until the crust is golden and the toppings are cooked."
+            }
+        ]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 7,
+            "rows": [
+                {
+                    "ingredient": "00-flour",
+                    "cells": [
+                        { "step": "s1", "rows": 4, "vertical": true },
+                        { "step": "s2", "rows": 5, "vertical": true },
+                        { "step": "s3", "rows": 5, "vertical": true },
+                        { "step": "s4", "rows": 5, "vertical": true },
+                        { "step": "s5", "rows": 5, "vertical": true },
+                        { "step": "s6", "rows": 5, "vertical": true },
+                        { "step": "s7", "rows": 5, "vertical": true }
+                    ]
+                },
+                { "ingredient": "all-purpose-flour", "cells": [] },
+                { "ingredient": "fine-sea-salt", "cells": [] },
+                { "ingredient": "active-dry-yeast", "cells": [] },
+                { "ingredient": "extra-virgin-olive-oil", "cells": [{ "gap": 1 }] }
+            ],
+            "placements": [
+                { "step": "s1", "col": 0, "row": 0, "rows": 4 },
+                { "step": "s2", "col": 1, "row": 0, "rows": 5 },
+                { "step": "s3", "col": 2, "row": 0, "rows": 5 },
+                { "step": "s4", "col": 3, "row": 0, "rows": 5 },
+                { "step": "s5", "col": 4, "row": 0, "rows": 5 },
+                { "step": "s6", "col": 5, "row": 0, "rows": 5 },
+                { "step": "s7", "col": 6, "row": 0, "rows": 5 }
+            ],
+            "blanks": [{ "row": 4, "col": 0, "cols": 1 }]
+        }
+    ]
+}

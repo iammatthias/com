@@ -1,0 +1,12 @@
+ingredients:
+  - item: Egg
+  - item: Egg
+  - item: "!!!"
+  - item: Crème fraîche
+  - item: Jalapeño
+  - id: egg
+    item: Duck egg
+steps:
+  - in: [egg, egg-2, i3, creme-fraiche, jalapeno, egg-3]
+    do: whisk
+  - do: cook

@@ -29,6 +29,8 @@ pub mod near;
 mod pages;
 mod post;
 mod recipe;
+#[cfg(test)]
+mod recipe_corpus;
 mod recipe_steps;
 mod recipe_view;
 mod render;

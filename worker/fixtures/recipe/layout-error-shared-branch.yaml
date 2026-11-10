@@ -1,0 +1,10 @@
+ingredients:
+  - item: A
+  - item: B
+steps:
+  - in: [a]
+    do: one
+  - in: [s1, b]
+    do: two
+  - in: [s1, s2]
+    do: three

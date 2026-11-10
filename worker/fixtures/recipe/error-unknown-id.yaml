@@ -1,0 +1,5 @@
+ingredients:
+  - item: Salt
+steps:
+  - in: [salt, sugar]
+    do: Season

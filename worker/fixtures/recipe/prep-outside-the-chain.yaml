@@ -1,0 +1,10 @@
+ingredients:
+  - item: Flour
+  - item: Water
+steps:
+  - prep: true
+    do: Preheat oven to 250°C
+  - in: [flour, water]
+    do: mix
+  - do: bake
+    for: 30 min

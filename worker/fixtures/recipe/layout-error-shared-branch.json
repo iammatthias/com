@@ -1,0 +1,14 @@
+{
+    "recipe": {
+        "ingredients": [
+            { "id": "a", "item": "A" },
+            { "id": "b", "item": "B" }
+        ],
+        "steps": [
+            { "id": "s1", "in": ["a"], "do": "one" },
+            { "id": "s2", "in": ["s1", "b"], "do": "two" },
+            { "id": "s3", "in": ["s1", "s2"], "do": "three" }
+        ]
+    },
+    "layoutError": "recipe: \"s1\" feeds two branches of the same grid"
+}

@@ -1,0 +1,7 @@
+ingredients:
+  - item: Salt
+steps:
+  - in: [salt]
+    do: Season
+  - in: [s1]
+    for: 5 min

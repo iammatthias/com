@@ -1,0 +1,50 @@
+{
+    "recipe": {
+        "ingredients": [
+            { "id": "a", "item": "A" },
+            { "id": "b", "item": "B" },
+            { "id": "c", "item": "C" },
+            { "id": "d", "item": "D" }
+        ],
+        "steps": [
+            { "id": "s1", "in": ["a"], "do": "Chop", "vertical": true },
+            { "id": "s2", "in": ["s1", "b"], "do": "Rest 10–15 min, then shape it well" },
+            { "id": "s3", "in": ["s2", "c"], "do": "Fold together until barely combined" },
+            { "id": "s4", "in": ["s3", "d"], "do": "Rest", "vertical": false },
+            { "id": "s5", "in": ["s4"], "do": "Bake", "for": "Bake until deep golden, 35 minutes." }
+        ]
+    },
+    "grids": [
+        {
+            "title": "",
+            "width": 5,
+            "rows": [
+                {
+                    "ingredient": "a",
+                    "cells": [
+                        { "step": "s1", "rows": 1, "vertical": true },
+                        { "step": "s2", "rows": 2, "vertical": true },
+                        { "step": "s3", "rows": 3, "vertical": false },
+                        { "step": "s4", "rows": 4, "vertical": false },
+                        { "step": "s5", "rows": 4, "vertical": false }
+                    ]
+                },
+                { "ingredient": "b", "cells": [{ "gap": 1 }] },
+                { "ingredient": "c", "cells": [{ "gap": 2 }] },
+                { "ingredient": "d", "cells": [{ "gap": 3 }] }
+            ],
+            "placements": [
+                { "step": "s1", "col": 0, "row": 0, "rows": 1 },
+                { "step": "s2", "col": 1, "row": 0, "rows": 2 },
+                { "step": "s3", "col": 2, "row": 0, "rows": 3 },
+                { "step": "s4", "col": 3, "row": 0, "rows": 4 },
+                { "step": "s5", "col": 4, "row": 0, "rows": 4 }
+            ],
+            "blanks": [
+                { "row": 1, "col": 0, "cols": 1 },
+                { "row": 2, "col": 0, "cols": 2 },
+                { "row": 3, "col": 0, "cols": 3 }
+            ]
+        }
+    ]
+}
