@@ -3,8 +3,7 @@ import {
     unstampSlug,
     type DocumentData,
 } from "./farfield-loader";
-import { plainText } from "./markdown-text";
-import { Lru } from "./lru";
+import { bodyText, excerptOf } from "./summary";
 import { words } from "./text-fold";
 import { publishedDocs } from "./content-query";
 import { MAX_SEARCH_LIMIT, SITE_ORIGIN } from "./agent-surface";
@@ -20,22 +19,6 @@ export interface ContentItem {
     cid: string;
     url: string;
     markdownUrl: string;
-}
-
-/** Bounded: every edit is a new cid, so an unbounded map only grows. */
-const plainTextByCid = new Lru<string, string>(500);
-
-function bodyText(d: DocumentData): string {
-    let text = plainTextByCid.get(d.cid);
-    if (text === undefined) {
-        text = plainText(d.body);
-        plainTextByCid.set(d.cid, text);
-    }
-    return text;
-}
-
-export function excerptOf(d: DocumentData): string {
-    return d.description || bodyText(d).slice(0, 200).trim();
 }
 
 function toItem(d: DocumentData): ContentItem {

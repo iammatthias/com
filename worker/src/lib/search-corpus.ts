@@ -1,5 +1,5 @@
 
-import { plainText } from "./markdown-text";
+import { bodyText, snippet, summarize } from "./summary";
 import type { DocumentData, FeedEntryData } from "./farfield-loader";
 
 export { SEARCH_DIMS, SEARCH_MODEL } from "./search-model";
@@ -13,7 +13,7 @@ interface SearchCorpusItem {
 }
 
 function docText(d: DocumentData): string {
-    const lead = plainText(d.body).slice(0, 600);
+    const lead = summarize(d, "searchText");
     return [d.title, d.description, lead].filter(Boolean).join(" — ");
 }
 
@@ -30,16 +30,16 @@ export function buildSearchCorpus(
             text: docText(d),
         })),
         ...feed.flatMap((f) => {
-            const text = plainText(f.body);
+            const text = bodyText(f);
             // a note that is only pictures has no words to find it by; the empty string embeds
             // to one vector that lands near every query
             if (!text) return [];
             return {
                 href: `/feed/${f.rkey}`,
-                title: text.slice(0, 80),
+                title: snippet(text, "searchTitle"),
                 kind: "feed",
                 cid: f.cid,
-                text: text.slice(0, 600),
+                text: snippet(text, "searchText"),
             };
         }),
     ];

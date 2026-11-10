@@ -30,8 +30,7 @@ import {
 import { documentForRoute, documentsByTag, publishedDocs } from "./content-query";
 import { memo } from "./memo";
 import { seriesSlugs } from "./render-key";
-import { excerptOf } from "./agent-data";
-import { plainText } from "./markdown-text";
+import { docDescription, excerptOf, noteTitle, summarize } from "./summary";
 import { readingTime } from "./toc";
 import { getPage, parsePageParam, PAGE_SIZE } from "./pagination";
 import { redirectFor, type RedirectDeps } from "./redirects";
@@ -174,31 +173,8 @@ export async function toAppPost(item: FeedEntryData): Promise<AppPost> {
     };
 }
 
-export function feedExcerpt(body: string): string {
-    return plainText(body).slice(0, 200).trim();
-}
-
 /** Entries per page of the timeline: a screenful of spiral at a time. */
 export const TIMELINE_PAGE = 40;
-
-/** A feed note named by its first words, or, a picture alone, by when it was posted. */
-export function noteTitle(body: string, createdAt: string): string {
-    const words = plainText(body).replace(/\s+/g, " ").trim();
-    if (!words) {
-        const d = new Date(createdAt);
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const date = Number.isNaN(d.getTime())
-            ? createdAt.slice(0, 10)
-            : `${d.getUTCDate()} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
-        return `Photograph, ${date}`;
-    }
-    // a phrase, not a paragraph: the first sentence, or its first words
-    const first = words.split(/(?<=[.!?])\s/)[0];
-    if (first.length <= 44) return first.replace(/[.!?]$/, "");
-    const cut = words.slice(0, 44);
-    const sp = cut.lastIndexOf(" ");
-    return `${sp > 20 ? cut.slice(0, sp) : cut}…`;
-}
 
 /** Every document and feed note, newest first, one page at a time. */
 export async function appTimeline(page: number): Promise<AppTimeline> {
@@ -207,7 +183,7 @@ export async function appTimeline(page: number): Promise<AppTimeline> {
         const [docs, feed] = await Promise.all([publishedDocs(), loadAllFeedEntries()]);
         const merged: AppTimelineItem[] = [
             ...docs.map((d) => ({ title: d.title, href: d.href, kind: d.collection, at: d.publishedAt ?? "" })),
-            ...feed.map((f) => ({ title: noteTitle(f.body, f.createdAt), href: `/feed/${f.rkey}`, kind: "feed", at: f.createdAt })),
+            ...feed.map((f) => ({ title: noteTitle(f), href: `/feed/${f.rkey}`, kind: "feed", at: f.createdAt })),
         ];
         merged.sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
         return merged;
@@ -237,7 +213,7 @@ export async function appIndex(): Promise<AppIndex> {
             (f): AppFeedSummary => ({
                 rkey: f.rkey,
                 href: `/feed/${f.rkey}`,
-                excerpt: feedExcerpt(f.body),
+                excerpt: summarize(f, "excerpt"),
                 createdAt: f.createdAt,
             }),
         ),
@@ -274,7 +250,7 @@ async function docRoute(pub: string, slug: string): Promise<AppRoute> {
         publishedAt: doc.publishedAt,
         updatedAt: doc.updatedAt,
         tags: doc.tags,
-        description: doc.description || plainText(doc.body).slice(0, 180).trim(),
+        description: docDescription(doc),
         readingMinutes: readingTime(doc.body).minutes,
         markdown: doc.body,
         media,

@@ -19,7 +19,7 @@ import { DOCUMENTS_TAG, FEED_TAG } from "../lib/revalidate";
 import { latest } from "../lib/format";
 import { FEED_ENVELOPE, renderFeedBody, RSS_ITEM_CAP } from "../lib/doc-render";
 import { docFeedItems } from "../lib/doc-body-cache";
-import { plainText } from "../lib/markdown-text";
+import { summarize } from "../lib/summary";
 import { rssResponse, rssXml } from "../lib/rss";
 import { RSS_XSL } from "../static-assets";
 import { STATIC_PAGES } from "../pages/static";
@@ -347,7 +347,7 @@ async function feedRss(): Promise<Response> {
                 const content = await renderFeedBody(item.body, { maxImages: 6, moreUrl: canonical });
                 const thumb = content.match(/<img src="([^"]+)"/)?.[1];
                 return {
-                    description: plainText(item.body).slice(0, 180),
+                    description: summarize(item, "rssDescription"),
                     content,
                     link: `/feed/${item.rkey}`,
                     pubDate: new Date(item.createdAt),

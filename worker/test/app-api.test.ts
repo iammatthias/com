@@ -2,7 +2,8 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { IMG_WIDTHS } from "../src/app-api";
 import { snapWidth } from "../src/routes/app";
 import { renderKey, seriesKeyFor, withSeriesKey } from "../src/lib/render-key";
-import { appIndex, noteTitle, resolveAppRoute } from "../src/lib/app-route";
+import { appIndex, resolveAppRoute } from "../src/lib/app-route";
+import { noteTitle } from "../src/lib/summary";
 import { seriesTags } from "../src/lib/cache";
 import { API_OPERATIONS } from "../src/lib/agent-surface";
 import { toAppGlassPick } from "../src/lib/app-route";
@@ -352,11 +353,11 @@ describe("/img width presets", () => {
 
 describe("timeline note titles", () => {
     test("a picture alone is named by its date", () => {
-        expect(noteTitle("![](blob://x)", "2026-10-09T15:31:11Z")).toBe("Photograph, 9 Oct 2026");
+        expect(noteTitle({ cid: "bafytitlepic", body: "![](blob://x)", createdAt: "2026-10-09T15:31:11Z" })).toBe("Photograph, 9 Oct 2026");
     });
     test("a note is its first sentence, or its first words", () => {
-        expect(noteTitle("California skies are hard to beat. More words follow here.", "2026-01-01T00:00:00Z")).toBe("California skies are hard to beat");
-        const long = noteTitle("Once upon a time, in the long long ago of the early internet, there were forums", "2026-01-01T00:00:00Z");
+        expect(noteTitle({ cid: "bafytitleskies", body: "California skies are hard to beat. More words follow here.", createdAt: "2026-01-01T00:00:00Z" })).toBe("California skies are hard to beat");
+        const long = noteTitle({ cid: "bafytitlelong", body: "Once upon a time, in the long long ago of the early internet, there were forums", createdAt: "2026-01-01T00:00:00Z" });
         expect(long.endsWith("…")).toBe(true);
         expect(long.length).toBeLessThanOrEqual(45);
     });

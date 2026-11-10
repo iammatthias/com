@@ -5,10 +5,10 @@ import { escapeAttr, escapeHtml, fmtDate, fmtDateLong } from "./format";
 import { cachedDocBody } from "./doc-body-cache";
 import { buildToc } from "./toc";
 import { pageHref } from "./pagination";
-import { plainText, proseHtml } from "./markdown-text";
+import { proseHtml } from "./markdown-text";
 import { resolveEmbedMedia, loadAllFeedEntries, type ResolvedMedia } from "./farfield-loader";
 import { extractBodyEmbeds } from "./embeds";
-import { noteTitle } from "./app-route";
+import { noteTitle, summarize } from "./summary";
 import { mediaSize } from "./media-size";
 import { deckColumns } from "./deck";
 import { STATIC_PAGES, SOCIAL_HREFS } from "../pages/static";
@@ -447,14 +447,13 @@ export async function renderRoute(route: AppRoute, path: string): Promise<SsrPag
 
         case "post": {
             const p = route.post;
-            const text = plainText(p.body);
-            const title = noteTitle(p.body, p.createdAt);
+            const title = noteTitle(p);
             const note = await feedNote(p.body);
             const md = `/feed/${p.rkey}.md`;
             return {
                 head: {
                     title,
-                    description: text.slice(0, 180).trim() || "Feed entry.",
+                    description: summarize(p, "postDescription"),
                     ogType: "article",
                     article: { publishedTime: p.createdAt, modifiedTime: p.updatedAt },
                     markdownHref: md,

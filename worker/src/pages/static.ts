@@ -2,7 +2,7 @@ import { SITE_IDENTITY, SITE_ORIGIN, AGENT_SKILLS, AGENT_RESOURCES, API_OPERATIO
 import { SOCIAL_LINKS } from "../lib/identity";
 import { loadAllFeedEntries, livePublications } from "../lib/farfield-loader";
 import { publishedDocs } from "../lib/content-query";
-import { plainText } from "../lib/markdown-text";
+import { summarize } from "../lib/summary";
 import { fmtDate } from "../lib/format";
 import { versioningMarkdown } from "../lib/deprecation";
 import { developersMarkdown } from "../lib/agent-markdown";
@@ -284,7 +284,7 @@ const now: StaticPage = {
         const updates = feed.length
             ? feed
                   .map((f) => {
-                      const text = plainText(f.body).slice(0, 140).trim();
+                      const text = summarize(f, "nowUpdate");
                       return `- [${fmtDate(f.createdAt)}](/feed/${f.rkey})${text ? `: ${text}` : ""}`;
                   })
                   .join("\n")

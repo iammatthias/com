@@ -6,7 +6,7 @@ import type {
     FeedEntryData,
     PublicationData,
 } from "./farfield-loader";
-import { plainText } from "./markdown-text";
+import { summarize } from "./summary";
 import { componentsToMarkdown } from "./doc-components/transform";
 
 async function replaceAsync(
@@ -146,11 +146,8 @@ export function feedIndexMarkdown(
         "",
     ];
     for (const item of items) {
-        const snippet =
-            plainText(item.body).slice(0, 100).replace(/[[\]]/g, "").trim() ||
-            "(media)";
         lines.push(
-            `- ${item.createdAt.slice(0, 10)} [${snippet}](${origin}/feed/${item.rkey}.md)`,
+            `- ${item.createdAt.slice(0, 10)} [${summarize(item, "feedIndexLink")}](${origin}/feed/${item.rkey}.md)`,
         );
     }
     lines.push("");
