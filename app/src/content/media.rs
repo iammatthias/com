@@ -152,7 +152,7 @@ fn plate_color(m: Option<&Media>, ctx: &Ctx) -> Rgba {
 pub fn figure(src: &MediaSrc, alt: &str, width: f32, caption: bool, ctx: &Ctx) -> AnyElement {
     let m = meta(src, ctx);
     if m.is_some_and(|m| m.is_video() || m.is_audio()) {
-        return moving(src, alt, width, ctx);
+        return moving(src, alt, width, caption, ctx);
     }
     let aspect = m.map(Media::aspect).unwrap_or(4. / 3.);
     let height = (width / aspect).round();
@@ -211,12 +211,12 @@ pub fn figure(src: &MediaSrc, alt: &str, width: f32, caption: bool, ctx: &Ctx) -
 /// Moving media. Video plays as a DOM `<video>` laid over the canvas (`video`, and
 /// `dom_video`); audio can't play on the canvas yet: its poster (or the dominant colour) with a
 /// lettered "play" that opens the original in a new tab.
-pub fn moving(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
+pub fn moving(src: &MediaSrc, alt: &str, width: f32, caption: bool, ctx: &Ctx) -> AnyElement {
     let theme = ctx.theme;
     let m = meta(src, ctx);
     let audio = m.is_some_and(Media::is_audio);
     if !audio {
-        return video(src, alt, width, ctx);
+        return video(src, alt, width, caption, ctx);
     }
     let aspect = if audio {
         4.
@@ -272,7 +272,7 @@ pub fn moving(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
                 .hover_style(move |s| s.border_1().border_color(accent))
                 .on_click(move |_, _, _| crate::route::open_external(&url)),
         )
-        .when(!alt.trim().is_empty(), |d| {
+        .when(caption && !alt.trim().is_empty(), |d| {
             d.child(
                 div()
                     .w(px(width))
@@ -290,7 +290,7 @@ pub fn moving(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
 /// A clip, playing in place: the poster (or the dominant colour) on the canvas, with a real
 /// `<video>` laid over it by `dom_video`. Muted and looping, it starts by itself unless the
 /// reader prefers reduced motion; then a lettered "play" starts it. A click plays or pauses.
-pub fn video(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
+pub fn video(src: &MediaSrc, alt: &str, width: f32, caption: bool, ctx: &Ctx) -> AnyElement {
     let theme = ctx.theme;
     let m = meta(src, ctx);
     // the clip's own shape once its <video> has read it; until then blobs' size, or a guess
@@ -357,7 +357,7 @@ pub fn video(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
                     window.refresh();
                 }),
         )
-        .when(!alt.trim().is_empty(), |d| {
+        .when(caption && !alt.trim().is_empty(), |d| {
             d.child(
                 div()
                     .w(px(width))

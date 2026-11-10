@@ -18,7 +18,6 @@ use crate::theme::{self, Theme};
 
 use super::cache::{self, Parsed};
 use super::md::Block;
-use super::media;
 use super::render::{self, Ctx, alpha, double_rule, hairline, label};
 use super::{column, link};
 
@@ -32,6 +31,7 @@ struct Prose<'a> {
     markdown: &'a str,
     media: &'a HashMap<String, Media>,
     series: &'a HashMap<String, Series>,
+    captions: bool,
 }
 
 impl<'a> Prose<'a> {
@@ -41,15 +41,17 @@ impl<'a> Prose<'a> {
             markdown: &doc.markdown,
             media: &doc.media,
             series: &doc.series,
+            captions: true,
         }
     }
 
-    fn post(post: &'a Post) -> Self {
+    fn post(post: &'a Post, single: bool) -> Self {
         Self {
             identity: None,
             markdown: &post.body,
             media: &post.media,
             series: &post.series,
+            captions: single,
         }
     }
 
@@ -60,6 +62,7 @@ impl<'a> Prose<'a> {
             markdown,
             media: &NO_MEDIA,
             series: &NO_SERIES,
+            captions: true,
         }
     }
 
@@ -81,6 +84,7 @@ impl<'a> Prose<'a> {
             parsed.clone(),
             measure(window),
             window.scale_factor(),
+            self.captions,
             key,
         );
         (parsed, ctx)
@@ -1011,8 +1015,7 @@ pub(super) fn post_body(
     cx: &mut App,
 ) -> AnyElement {
     let key = format!("post:{}", post.rkey);
-    let (parsed, ctx) = Prose::post(post).of(theme, nav, sel, key.clone(), window);
-    let width = ctx.width;
+    let (parsed, ctx) = Prose::post(post, single).of(theme, nav, sel, key.clone(), window);
     let date = fmt_date(&post.created_at);
     let href = if post.href.is_empty() {
         format!("/feed/{}", post.rkey)
@@ -1041,10 +1044,7 @@ pub(super) fn post_body(
             .flex_col()
             .gap(px(14.))
             .when(single, |d| d.text_size(px(21.)).line_height(px(33.)))
-            .children(parsed.blocks.iter().map(|b| match b {
-                Block::Figure(f) => media::figure(&f.src, &f.alt, width, single, &ctx),
-                other => render::block(other, &ctx, window, cx),
-            })),
+            .children(render::blocks(&parsed.blocks, &ctx, window, cx)),
     );
     if single && !post.tags.is_empty() {
         col = col.child(tag_row(&post.tags, &key, nav, theme));

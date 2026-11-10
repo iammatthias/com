@@ -36,6 +36,7 @@ pub struct Ctx<'a> {
     /// reading column width in px
     pub width: f32,
     pub scale: f32,
+    pub captions: bool,
     /// unique per payload (doc cid, post rkey…): prefixes element ids and view state keys
     pub key: SharedString,
     /// every image figure rendered so far, for the lightbox to step through
@@ -53,6 +54,7 @@ impl<'a> Ctx<'a> {
         parsed: Rc<Parsed>,
         width: f32,
         scale: f32,
+        captions: bool,
         key: impl Into<SharedString>,
     ) -> Self {
         Self {
@@ -63,6 +65,7 @@ impl<'a> Ctx<'a> {
             parsed,
             width,
             scale,
+            captions,
             key: key.into(),
             gallery: Default::default(),
             n: Cell::new(0),
@@ -87,6 +90,7 @@ impl<'a> Ctx<'a> {
             parsed: self.parsed.clone(),
             width,
             scale: self.scale,
+            captions: self.captions,
             key: self.key.clone(),
             gallery: self.gallery.clone(),
             n: Cell::new(self.n.get()),
@@ -297,7 +301,7 @@ pub fn block(b: &Block, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElem
             .py(px(10.))
             .child(double_rule(theme, 160.))
             .into_any_element(),
-        Block::Figure(f) => media::figure(&f.src, &f.alt, ctx.width, true, ctx),
+        Block::Figure(f) => media::figure(&f.src, &f.alt, ctx.width, ctx.captions, ctx),
         Block::Series(slug) => match ctx.parsed.series.get(slug) {
             Some(tree) => series_view::view(tree, ctx, window, cx),
             None => muted_note(&format!("The series “{slug}” is missing."), ctx),

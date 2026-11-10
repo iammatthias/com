@@ -107,7 +107,7 @@ fn flow(parts: &[FlowPart], ctx: &Ctx, window: &mut Window, cx: &mut App) -> Any
         .flex_col()
         .gap(px(18.))
         .children(parts.iter().map(|p| match p {
-            FlowPart::Media(m) => media::figure(&m.src, &m.alt, ctx.width, true, ctx),
+            FlowPart::Media(m) => media::figure(&m.src, &m.alt, ctx.width, ctx.captions, ctx),
             FlowPart::Text(blocks) => render::stack(blocks, ctx, window, cx).into_any_element(),
         }))
         .into_any_element()
