@@ -107,7 +107,6 @@ describe("pages across a deploy", () => {
             { kind: "home", lastModified: new Date("2026-10-14T00:18:00Z") },
             { kind: "now", lastModified: new Date("2026-10-14T00:18:00Z") },
             { kind: "static" },
-            { kind: "long" },
             { kind: "none" },
         ] as CachePolicy[]) {
             const response = new Response(null);
@@ -135,12 +134,6 @@ describe("pages across a deploy", () => {
 });
 
 describe("static pages at the edge", () => {
-    test("the long page kind opts in to the edge", () => {
-        const response = new Response(null);
-        setPageCacheHeaders(response, { cache: { kind: "long" } });
-        expect(directives(response.headers.get(EDGE_CACHE_HEADER)).get("max-age")).toBe("86400");
-    });
-
     test("page, resume and developers payloads opt in, tagged shell", () => {
         const routes = [
             { kind: "page", slug: "about" },

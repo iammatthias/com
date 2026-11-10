@@ -126,9 +126,6 @@ export function setPageCacheHeaders(res: { headers: Headers }, page: { cache: Ca
         case "static":
             setResponseCacheHeaders(res, undefined, { maxAge: 3600, swr: 86400, edge: true, extraTags });
             return;
-        case "long":
-            setResponseCacheHeaders(res, undefined, { maxAge: 86400, swr: 604800, edge: true, extraTags });
-            return;
         case "none":
             return;
     }

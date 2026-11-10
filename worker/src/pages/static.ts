@@ -5,6 +5,7 @@ import { publishedDocs } from "../lib/content-query";
 import { plainText } from "../lib/markdown-text";
 import { fmtDate } from "../lib/format";
 import { versioningMarkdown } from "../lib/deprecation";
+import { developersMarkdown } from "../lib/agent-markdown";
 
 /**
  * The old site's hand-written Astro pages, as markdown. The copy is carried
@@ -189,28 +190,7 @@ const developers: StaticPage = {
         "JSON endpoints, an MCP server, markdown twins, and the full iammatthias.com corpus in one file. Public, free, and no key required.",
     markdownHref: "/developers.md",
     faq: DEVELOPERS_FAQ,
-    markdown: async () => {
-        const [endpointsNote, ...rest] = developersSections();
-        return `# ${DEVELOPERS_HEADING}
-
-${DEVELOPERS_LEDE}
-
-[this page as markdown](/developers.md)
-
-## Quickstart
-
-\`\`\`bash
-${DEVELOPERS_QUICKSTART}
-\`\`\`
-
-## HTTP endpoints
-
-${API_OPERATIONS.map((op) => `- \`GET ${op.path}\`: ${op.description}`).join("\n")}
-
-${endpointsNote.body}
-
-${rest.map((sec) => `## ${sec.title}\n\n${sec.body}\n`).join("\n")}`;
-    },
+    markdown: developersMarkdown,
 };
 
 export const RESUME = [

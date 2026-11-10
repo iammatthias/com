@@ -29,7 +29,6 @@ export type CachePolicy =
     | { kind: "home" }
     | { kind: "now" }
     | { kind: "static" }
-    | { kind: "long" }
     | { kind: "none" };
 
 /**
@@ -206,7 +205,6 @@ function staticHead(slug: string, path: string): PageHead {
 
 /** com/src/pages/now.astro: bio, working on, recent updates as real feed cards, find me. */
 async function nowPage(route: AppNowRoute, path: string): Promise<SsrPage> {
-    const all = await loadAllFeedEntries().catch(() => []);
     const items = await Promise.all(route.recent.map(feedItem));
     const html =
         `<h1>${h(route.title)}</h1>` +
