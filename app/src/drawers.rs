@@ -1,6 +1,3 @@
-//! The controls on the plate's corners: the panels (menu, site, find), each a pill that opens
-//! into a card, the small widgets inside them, and the pill the home button shares.
-
 use gpui::prelude::*;
 use gpui::{AnyElement, Context, Window, div, px};
 
@@ -12,8 +9,6 @@ use crate::prefs;
 use crate::site::Site;
 use crate::theme::{self, Choice, Theme};
 
-/// The panels on the plate's corners: where to go (top right), the plate's controls (bottom
-/// left), and search (bottom right). Home sits top left.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Drawer {
     Menu,
@@ -37,17 +32,14 @@ impl Drawer {
             Drawer::Find => "find",
         }
     }
-    /// opens upward from the bottom of the screen
     pub fn from_bottom(self) -> bool {
         self != Drawer::Menu
     }
-    /// on the right-hand side
     pub fn on_right(self) -> bool {
         self != Drawer::Site
     }
 }
 
-/// What the site panel shows about the plate right now.
 #[derive(Clone)]
 pub struct PlateState {
     pub zoom: u32,
@@ -68,7 +60,6 @@ fn field(name: &str, theme: &Theme, body: impl IntoElement) -> impl IntoElement 
         .child(body)
 }
 
-/// A bordered button in the display face.
 fn button(id: impl Into<gpui::ElementId>, text: &str, theme: &Theme) -> gpui::Stateful<gpui::Div> {
     let t = *theme;
     div()
@@ -86,7 +77,6 @@ fn button(id: impl Into<gpui::ElementId>, text: &str, theme: &Theme) -> gpui::St
         .child(text.to_string())
 }
 
-/// A row of mutually exclusive buttons, pressed one inked.
 fn segmented<T: Clone + PartialEq + 'static>(
     id: &'static str,
     options: &[(&'static str, T)],
@@ -128,9 +118,6 @@ fn segmented<T: Clone + PartialEq + 'static>(
         .into_any_element()
 }
 
-/// A panel between closed and open: `k` eases 0 → 1, and the card grows from its closed
-/// pill to `open_w` × (header + the body's natural height), the body laid out at full width
-/// throughout so nothing reflows as it opens.
 pub struct MenuAnim {
     pub k: f32,
     pub width: f32,
@@ -142,17 +129,11 @@ pub struct MenuAnim {
 
 const DRAWERS: usize = Drawer::ALL.len();
 
-/// The panels' motion: each one's openness, eased toward open or closed, and the measures its
-/// card grows between.
 pub struct Drawers {
     k: [f32; DRAWERS],
-    /// when they last moved
     at: web_time::Instant,
-    /// each panel body's natural size, measured as it opens
     body: [crate::overlay::Probe; DRAWERS],
-    /// each closed pill's width
     closed_w: [f32; DRAWERS],
-    /// each panel, drawn by the plate as a pane of glass
     glass: [crate::overlay::Probe; DRAWERS],
 }
 
@@ -169,12 +150,9 @@ impl Default for Drawers {
 }
 
 impl Drawers {
-    /// Ease each panel toward open (the one `open`) or closed, and put its glass where this
-    /// frame draws it.
     pub fn step(&mut self, open: Option<Drawer>, window: &Window) -> bool {
         let mut moving = false;
         let now = web_time::Instant::now();
-        // `#slowui`: a tenth of the speed, to see the motion frame by frame
         let pace = if crate::browser::debug::slow_ui() {
             0.1
         } else {
@@ -229,7 +207,6 @@ impl Drawers {
         let closed = self.closed_w[i];
         MenuAnim {
             k,
-            // the width arrives early, so the body is revealed along its length, never cut at the side
             width: closed + (open_w - closed) * (k * 2.2).min(1.0),
             open_w,
             body_h: self.body[i]
@@ -246,13 +223,10 @@ impl Drawers {
         }
     }
 
-    /// A panel is open, opening or closing.
     pub fn any_shown(&self) -> bool {
         self.k.iter().any(|k| *k > 0.001)
     }
 
-    /// On a phone an open panel spans the width: the other controls step aside (and leave no
-    /// glass) until it closes.
     pub fn crowded(&self, window: &Window) -> Option<Drawer> {
         if !design::is_phone(window) {
             return None;
@@ -264,20 +238,15 @@ impl Drawers {
         &self.glass[which.index()]
     }
 
-    /// Every panel's glass, in `Drawer::ALL` order.
     pub fn panes(&self) -> &[crate::overlay::Probe] {
         &self.glass
     }
 }
 
-/// What a pill is drawn on.
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum PillFace {
-    /// Plain paper.
     Solid,
-    /// The engraving.
     Glass,
-    /// The engraving, with a page's text under it.
     GlassOverText,
 }
 
@@ -291,8 +260,6 @@ fn veiled<E: Styled>(el: E, t: &Theme, veil: f32) -> E {
         .border_color(crate::color::WHITE.alpha(0.7))
 }
 
-/// A control on the plate: a rounded pill, `CONTROL_H` tall, its name in the script face. Over the engraving the
-/// plate draws it as glass, so it paints only its text; on plain paper it is a solid pill.
 pub fn pill(t: &Theme, face: PillFace) -> gpui::Div {
     div()
         .flex()
@@ -300,17 +267,14 @@ pub fn pill(t: &Theme, face: PillFace) -> gpui::Div {
         .h(px(design::CONTROL_H))
         .px(px(18.))
         .when(face == PillFace::Solid, |d| solid(d, t))
-        // the glass lies under the page, so over a page's text it needs a veil of its own
         .when(face == PillFace::GlassOverText, |d| veiled(d, t, 0.8))
         .rounded(px(design::CONTROL_RADIUS))
         .cursor_pointer()
-        // the plate's own hand
         .font_family(theme::SCRIPT)
         .text_size(px(design::SCRIPT_BUTTON_SIZE))
         .text_color(t.ink)
 }
 
-/// What every panel reads to draw itself.
 pub struct PanelInputs<'a> {
     pub home: &'a Home,
     pub on_home: bool,
@@ -322,7 +286,6 @@ pub struct PanelInputs<'a> {
     pub theme: &'a Theme,
 }
 
-/// One panel in a corner: its header (name and +/−), and while it opens or is open, its body.
 pub fn drawer(
     which: Drawer,
     p: &PanelInputs,
@@ -331,10 +294,7 @@ pub fn drawer(
     cx: &mut Context<Site>,
 ) -> AnyElement {
     let t = *p.theme;
-    // glass needs the plate under it: over plain paper it is a solid pill
     let on_glass = !p.home.plain;
-    // over a page's text (a phone, where the controls cover the column) the glass, drawn under
-    // the page, needs a veil; elsewhere it floats in the margins, clear
     let over_text = !p.on_home && p.over_column;
     let open = p.home.open == Some(which);
     let header = div()
@@ -377,13 +337,10 @@ pub fn drawer(
         .when(which.on_right(), |d| d.right(px(design::INSET)))
         .when(!which.on_right(), |d| d.left(px(design::INSET)))
         .flex()
-        // the name and its +/− head the panel: from a bottom corner the panel grows upward and
-        // the header rides its top edge
         .flex_col()
         .when(which.on_right(), |d| d.items_end())
         .when(!which.on_right(), |d| d.items_start())
         .when(!on_glass, |d| solid(d, &t))
-        // over a page the text would show through the glass (drawn under it): veil it
         .when(
             on_glass && (over_text || (!p.on_home && anim.k > 0.001)),
             |d| veiled(d, &t, if anim.k > 0.001 { 1.0 } else { 0.8 }),
@@ -436,12 +393,8 @@ pub fn drawer(
         .into_any_element()
 }
 
-/// Where to go: the whole site, grouped as @com's /menu groups it (the first, unnamed group is
-/// home, which has its own button), then elsewhere.
 fn menu_body(body: gpui::Div, p: &PanelInputs) -> gpui::Div {
     let (t, index, nav) = (*p.theme, p.index, p.nav);
-    // each group as a line of an index: its name in the label's small capitals on the left,
-    // its places in the reading serif on the right, wrapping under themselves
     let link_row = |key: &'static str, i: usize, label: &str, href: &str| {
         content::link((key, i), label, href, nav, &t)
             .font_family(theme::BODY)
@@ -487,11 +440,8 @@ fn menu_body(body: gpui::Div, p: &PanelInputs) -> gpui::Div {
     body.child(list)
 }
 
-/// The plate's controls, the sections, and the theme.
 fn site_body(mut body: gpui::Div, p: &PanelInputs, cx: &mut Context<Site>) -> gpui::Div {
     let (t, home, index) = (*p.theme, p.home, p.index);
-    // View: the engraving (the spiral on the home page, the line framing every page), or plain
-    // paper (the index as a list, pages without the shader)
     body = body.child(field(
         "View",
         &t,
@@ -594,7 +544,6 @@ fn site_body(mut body: gpui::Div, p: &PanelInputs, cx: &mut Context<Site>) -> gp
             .gap(px(6.))
             .children(sections.into_iter().enumerate().map(|(i, (name, slug))| {
                 let pressed = slug == home.section;
-                // each section in its colour, as its titles are written on the plate
                 let hue = slug.as_deref().map(|s| t.section(s)).unwrap_or(t.ink);
                 div()
                     .id(("section", i))
@@ -643,11 +592,9 @@ fn site_body(mut body: gpui::Div, p: &PanelInputs, cx: &mut Context<Site>) -> gp
     ))
 }
 
-/// Find a title: a focusable field that reads keystrokes itself; matches open in place.
 fn find_body(body: gpui::Div, p: &PanelInputs, cx: &mut Context<Site>) -> gpui::Div {
     let (t, home, index) = (*p.theme, p.home, p.index);
     let focused = crate::dom_input::focused();
-    // the field's box is drawn here; the text in it is a native input laid over it (dom_input)
     let style = format!(
         "color:{ink};caret-color:{accent};font:400 15px/1.2 site-sans,system-ui,sans-serif;",
         ink = theme::Theme::css(t.ink),
@@ -683,7 +630,6 @@ fn find_body(body: gpui::Div, p: &PanelInputs, cx: &mut Context<Site>) -> gpui::
             )
             .on_click(cx.listener(|site, _, _, cx| site.focus_search(cx))),
     );
-    // a steady room for results, so the panel doesn't jump as they come and go
     let mut results = div().h(px(8. * 26. + 4.)).flex().flex_col();
     if home.query.trim().is_empty() {
         results = results.child(

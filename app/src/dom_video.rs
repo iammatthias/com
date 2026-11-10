@@ -1,19 +1,3 @@
-//! Video the canvas can't draw: a real `<video>` laid over the canvas where a figure is painted.
-//!
-//! GPUI has no video decoder on the web, so a figure that holds a clip reports its painted
-//! bounds here (from a canvas probe in its prepaint) and this module keeps one muted, looping,
-//! inline `<video>` per clip in `document.body`, `position: absolute` (the page never scrolls; iOS won't paint fixed content under its toolbars) above the canvas with
-//! `pointer-events: none` (so hover and clicks still reach GPUI), clipped to the scroll
-//! viewport.
-//!
-//! Clips belong to the render that placed them. The page is a cached view: it only renders
-//! (and so only re-places its clips) when something changes. Each content render starts a new
-//! epoch; a clip not placed in the latest epoch is hidden.
-//!
-//! `prefers-reduced-motion` turns autoplay off: the figure shows its poster and a "play"
-//! that starts the clip. Live tiles (a still with motion behind it) play on hover where
-//! there is hover, and while well in view (at most two) where there isn't.
-
 use std::cell::RefCell;
 use std::collections::HashMap;
 
@@ -21,9 +5,7 @@ use crate::overlay::{Extent, Gate, Layer, Rect, Stage};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Mode {
-    /// the clip is the figure: plays by itself (unless motion is reduced)
     Auto,
-    /// a still with motion behind it: plays while hovered (or in view on touch)
     Live,
 }
 
@@ -34,7 +16,6 @@ struct Entry {
     rect: Rect,
     clip: Rect,
     hovered: bool,
-    /// the reader's own play/pause, overriding autoplay
     user: Option<bool>,
     #[cfg(target_family = "wasm")]
     el: Option<web::Video>,
@@ -42,17 +23,14 @@ struct Entry {
 
 thread_local! {
     static CLIPS: RefCell<Layer<Entry>> = RefCell::new(Layer::new(Gate::Page, Extent::Viewport));
-    /// each clip's own width over height, by source, once its `<video>` has read it
     static ASPECTS: RefCell<HashMap<String, f32>> = RefCell::new(HashMap::new());
     static RESIZED: crate::site::signal::Signal<()> = const { crate::site::signal::Signal::new() };
 }
 
-/// A signal whenever a clip's own size comes in, so its figure takes that shape.
 pub fn subscribe() -> futures::channel::mpsc::UnboundedReceiver<()> {
     RESIZED.with(|r| r.subscribe())
 }
 
-/// The clip's width over height, from the video itself, once it is known.
 pub fn aspect(src: &str) -> Option<f32> {
     ASPECTS.with(|a| a.borrow().get(src).copied())
 }
@@ -69,7 +47,6 @@ fn learned(src: &str, aspect: f32) {
     }
 }
 
-/// A new content render is starting: clips it doesn't place again will hide.
 pub fn begin_render() {
     CLIPS.with(|clips| clips.borrow_mut().begin());
     wake();
@@ -91,7 +68,6 @@ pub fn clear() {
     drop(gone);
 }
 
-/// Where a figure's clip is painted this render. `clip` is the visible part of the page.
 pub fn place(key: &str, src: &str, poster: Option<&str>, mode: Mode, rect: Rect, clip: Rect) {
     CLIPS.with(|clips| {
         let mut clips = clips.borrow_mut();
@@ -124,7 +100,6 @@ pub fn hover(key: &str, on: bool) {
     wake();
 }
 
-/// The reader clicked the figure: play if it isn't playing, pause if it is. Returns the new state.
 pub fn toggle(key: &str) -> bool {
     let now = !playing(key);
     CLIPS.with(|clips| {
@@ -136,7 +111,6 @@ pub fn toggle(key: &str) -> bool {
     now
 }
 
-/// Whether the clip is (meant to be) playing: what the figure's lettering should say.
 pub fn playing(key: &str) -> bool {
     let reduced = crate::browser::reduced_motion();
     CLIPS.with(|clips| {
@@ -301,7 +275,6 @@ mod web {
         CLIPS.with(|clips| {
             let mut clips = clips.borrow_mut();
             let suppressed = clips.gated();
-            // on touch, the live tiles most in view play, two at most
             let mut in_view: Vec<(f32, String)> = clips
                 .iter()
                 .filter(|(_, placed, e)| e.mode == Mode::Live && *placed)
@@ -330,7 +303,6 @@ mod web {
                     unsettled = true;
                 }
                 let Some(v) = e.el.as_mut() else { continue };
-                // a figure's clip loads even before it plays: its own size is the figure's shape
                 if (want || e.mode == Mode::Auto) && !v.src_set {
                     v.el.set_src(&e.src);
                     v.src_set = true;
@@ -355,20 +327,15 @@ mod web {
                 let has_frame = v.el.ready_state() >= 2;
                 let visible = alive
                     && match e.mode {
-                        // the clip is the picture: there once it has a frame to show
                         Mode::Auto => v.src_set && has_frame,
-                        // the still stays until the motion is actually running
                         Mode::Live => want && has_frame && !paused,
                     };
-                // a clip that is the figure is never cropped: its box can be a guess (blobs may not
-                // know a video's size), so it letterboxes. A live tile fills its still's frame.
                 let fit = match e.mode {
                     Mode::Auto => "contain",
                     Mode::Live => "cover",
                 };
                 let css = match (visible, inset) {
                     (true, Some([t, rt, b, l])) => format!(
-                        // moved by transform, not left/top: scrolling then never asks the browser for layout
                         "position:absolute;left:0;top:0;transform:translate3d({:.1}px,{:.1}px,0);will-change:transform;width:{:.1}px;height:{:.1}px;object-fit:{fit};\
                          pointer-events:none;z-index:2;margin:0;border:0;background:transparent;\
                          clip-path:inset({t:.1}px {rt:.1}px {b:.1}px {l:.1}px)",

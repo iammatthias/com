@@ -1,13 +1,7 @@
-// Taps on a phone: a still page takes every tap, and a tap 2.5s or more after a flick lands.
-// (A tap while the page still coasts only stops it, as on iOS: not checked here.)
-//
-//   bun taps.mjs [base-url]
-
 import { base, open, check, done, path } from "./lib.mjs";
 
 const POST = "/posts/1789494942000-own-the-means-of-cognition";
 const { browser, page } = await open("phone");
-// a flick, as touch-type pointer events on the canvas (what gpui reads)
 const fling = () =>
     page.evaluate(async () => {
         const c = document.querySelector("canvas");

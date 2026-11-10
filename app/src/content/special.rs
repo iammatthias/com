@@ -1,5 +1,3 @@
-//! Pages @com builds from its own components rather than prose: now, resume, developers.
-
 use gpui::prelude::*;
 
 use gpui::px;
@@ -24,10 +22,6 @@ fn mono(text: impl Into<SharedString>, theme: &Theme) -> gpui::Div {
         .text_color(alpha(theme.ink, 0.85))
         .child(text.into())
 }
-
-// ---------------------------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------------------------
 
 pub fn now(
     n: &Now,
@@ -96,8 +90,6 @@ pub fn now(
     col.into_any_element()
 }
 
-// ---------------------------------------------------------------------------------------------
-
 pub fn resume(
     title: &str,
     sections: &[ResumeSection],
@@ -158,8 +150,6 @@ pub fn resume(
     col.into_any_element()
 }
 
-// ---------------------------------------------------------------------------------------------
-
 pub fn developers(
     d: &Developers,
     nav: &Navigate,
@@ -204,7 +194,6 @@ pub fn developers(
                 .border_1()
                 .border_color(theme.edge())
                 .overflow_hidden()
-                // one line per row, wrapped inside the box: long commands never widen the column
                 .children(d.quickstart.trim_end().lines().map(|l| {
                     mono(l.to_string(), theme)
                         .w_full()
@@ -240,7 +229,6 @@ pub fn developers(
             );
         }
     }
-    // the first section is the note that follows the endpoint list on @com
     for (i, s) in d.sections.iter().enumerate() {
         if i > 0 || d.endpoints.is_empty() {
             col = col.child(section_label(&s.title, theme));

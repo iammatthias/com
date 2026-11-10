@@ -1,14 +1,8 @@
-// Runs the browser's search worker (app/search/search-worker.js, the shipped file) under bun:
-// ternlight's wasm is initialised from node_modules once, the worker's `./tern_engine.js` import
-// is pointed at that same module (the one edit to a temp copy of the file), `self` and `fetch` are
-// stand-ins, and the corpus and baked vectors are whatever the caller hands in. Used by
-// scripts/search-eval.ts and test/search-worker.test.ts.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-// SEARCH_WORKER=<path> runs another copy of the file, for a before-and-after look at one query
 export const WORKER_FILE = process.env.SEARCH_WORKER ?? join(import.meta.dir, "..", "..", "app", "search", "search-worker.js");
 const PKG_WEB = join(import.meta.dir, "..", "node_modules", "@ternlight", "base", "pkg-web");
 const ENGINE_IMPORT = 'from "./tern_engine.js"';
@@ -38,7 +32,6 @@ type Tern = {
 let tern: Tern | undefined;
 let modules = 0;
 
-/** The ternlight engine the worker will share, initialised once per process. */
 export async function engine(): Promise<Tern> {
     if (tern) return tern;
     tern = (await import(join(PKG_WEB, "tern_engine.js"))) as Tern;
@@ -54,11 +47,6 @@ export function sha256(s: string): string {
     return createHash("sha256").update(s).digest("hex");
 }
 
-/**
- * Vectors for every corpus item under `model`, cached on disk by hash of (model, text) so a change
- * to what gets embedded can never pick up a stale vector. Returns the shape /api/search-vectors.json
- * serves, keyed by cid as the worker expects.
- */
 export async function bakedVectors(
     items: CorpusItem[],
     model: string,
@@ -88,11 +76,6 @@ export interface WorkerHandle {
     errors: string[];
 }
 
-/**
- * Load a fresh instance of the worker file against this corpus and this vectors file (null for a
- * 404, as a Worker with no baked vectors answers). Each call gets its own module instance, so its
- * own index; the wasm engine is shared.
- */
 export async function loadWorker(
     corpus: { items: CorpusItem[] },
     vectors: { model: string; dims: number; vectors: Record<string, string> } | null,
@@ -125,9 +108,6 @@ export async function loadWorker(
             }
         },
     };
-    // the worker reads `self` and `fetch` as globals when a message arrives, so each handle
-    // installs its own around a dispatch and puts fetch back after; several handles can then
-    // live in one process, and other tests keep their own fetch
     const dispatch = async (data: unknown) => {
         (globalThis as { self?: unknown }).self = self;
         const previous = globalThis.fetch;
@@ -139,9 +119,6 @@ export async function loadWorker(
         }
     };
     (globalThis as { self?: unknown }).self = self;
-    // the shipped file, with its one import pointed at the engine initialised above; a new copy
-    // per handle so bun loads it again instead of returning the cached module, each in a new
-    // directory because bun remembers a directory's listing between imports
     const source = readFileSync(WORKER_FILE, "utf8");
     if (source.split(ENGINE_IMPORT).length !== 2) throw new Error(`${WORKER_FILE} should import the engine exactly once with ${ENGINE_IMPORT}`);
     const dir = join(tmpdir(), "com-search-harness", `${process.pid}.${++modules}`);

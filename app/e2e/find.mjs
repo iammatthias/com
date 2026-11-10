@@ -1,8 +1,3 @@
-// Find: the native input takes the keyboard (from its pill on a phone, from "/" anywhere on a
-// desktop), Enter opens the first result, and closing hands the keys back to gpui.
-//
-//   bun find.mjs [base-url]
-
 import { base, open, check, done, focusName, path } from "./lib.mjs";
 
 const POST = "/posts/1789494942000-own-the-means-of-cognition";
@@ -19,7 +14,6 @@ const PIZZA = "/posts/1731475962422-shitposting-towards-a-pizza-oven";
     await page.keyboard.press("Escape");
     await page.keyboard.press("Escape");
     await page.waitForTimeout(500);
-    // the plate beside the column: the middle of a post may be a figure, which opens its lightbox
     await page.mouse.click(120, 400);
     await page.waitForTimeout(300);
     await page.keyboard.press("Slash");
@@ -39,7 +33,6 @@ const PIZZA = "/posts/1731475962422-shitposting-towards-a-pizza-oven";
     await browser.close();
 }
 {
-    // the lightbox is a modal over everything, the Find panel's input included
     const { browser, page, errors } = await open("desktop");
     const field = () => page.evaluate(() => {
         const el = document.querySelector("input[aria-label='Find a title']");

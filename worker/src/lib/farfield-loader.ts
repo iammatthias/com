@@ -32,11 +32,6 @@ export async function seriesIndex(): Promise<Map<string, string>> {
     return new Map((await getAllSeries()).map((s: Series) => [s.slug, s.cid]));
 }
 
-/**
- * The series fingerprint com keys renders on: `slug:cid` for every embedded
- * series, "" when the body embeds none. A series edit changes this but not
- * the embedding record's cid.
- */
 export async function seriesKeyOf(body: string): Promise<string> {
     return body.includes("series://") ? seriesKeyFor(body, await seriesIndex()) : "";
 }

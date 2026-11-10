@@ -1,6 +1,3 @@
-//! What the plate is lettered with: a page's own details round the page; on the home spiral the
-//! whole timeline, or the index's titles when narrowed to a section or a search.
-
 use crate::api::{Index, TimelineItem};
 use crate::home::{self, Home};
 use crate::plate::{Mark, Title};
@@ -10,13 +7,10 @@ pub enum Lettering {
     Page(Vec<Title>),
     Timeline(Vec<Title>),
     Index(Vec<Title>),
-    /// nothing to letter yet: what's lettered stays
     Wait,
 }
 
 impl Lettering {
-    /// The titles, and whether the plate writes them from the centre out (the timeline, on the
-    /// home spiral); `None` to keep what's lettered.
     pub fn into_titles(self, on_home: bool) -> Option<(Vec<Title>, bool)> {
         match self {
             Lettering::Timeline(t) => Some((t, on_home)),
@@ -26,14 +20,11 @@ impl Lettering {
     }
 }
 
-/// Everything the lettering is decided from.
 pub struct Sources<'a> {
     pub route: &'a Route,
-    /// the current page's own lettering for the frame, once it has arrived
     pub page: Option<&'a [Title]>,
     pub home: &'a Home,
     pub timeline: &'a [TimelineItem],
-    /// the timeline's first page is still to come (and none has failed)
     pub timeline_waiting: bool,
     pub index: Option<&'a Index>,
 }
@@ -46,8 +37,6 @@ pub fn lettering(s: &Sources) -> Lettering {
     if !narrowed && !s.timeline.is_empty() {
         return Lettering::Timeline(timeline_titles(s.timeline));
     }
-    // the home spiral is the timeline: while it's on its way, keep what's lettered (an index
-    // ordering would only be thrown away, and lettering costs a frame)
     if *s.route == Route::Home && !narrowed && s.timeline_waiting {
         return Lettering::Wait;
     }
@@ -63,7 +52,6 @@ pub fn lettering(s: &Sources) -> Lettering {
     })
 }
 
-/// The whole timeline, newest first, every kind in its colour and the years marked.
 fn timeline_titles(timeline: &[TimelineItem]) -> Vec<Title> {
     let mut out = Vec::with_capacity(timeline.len() + 8);
     let mut year = "";
@@ -86,8 +74,6 @@ fn timeline_titles(timeline: &[TimelineItem]) -> Vec<Title> {
     out
 }
 
-/// The spiral's titles narrowed to what the search matches (by `home::matches_query`), each
-/// with the heading it sits under.
 fn filter_titles(all: Vec<Title>, index: &Index, q: &str) -> Vec<Title> {
     let hits: std::collections::HashSet<&str> = index
         .items
@@ -137,7 +123,6 @@ mod tests {
         titles.into_iter().map(|t| t.label).collect()
     }
 
-    /// A search narrows the spiral to the index's matches (by title or tag), each under its heading.
     #[test]
     fn search_narrows_the_spiral() {
         let index = index();
@@ -148,8 +133,6 @@ mod tests {
         assert_eq!(narrowed("github"), ["Nothing matches github"]);
     }
 
-    /// Whatever asks (a retitle, or the plate made mid-query), a typed search letters the home
-    /// spiral with the index's matches, not the timeline and not the whole index.
     #[test]
     fn a_search_letters_the_spiral_with_its_matches() {
         let index = index();

@@ -35,13 +35,11 @@ export interface Redirect {
 
 export function trailingSlashRedirect(pathname: string): string | null {
     if (pathname === "/" || !pathname.endsWith("/")) return null;
-    // a leading "//" would make the Location protocol-relative: another host
     return pathname.replace(/^\/+/, "/").replace(/\/+$/, "") || "/";
 }
 
 const PROBE_ORIGIN = "https://same-origin.invalid";
 
-/** `to` as a same-origin path (with its query and fragment), or null when it would leave the site. */
 export function sameOriginPath(to: string): string | null {
     let target: URL;
     try {
@@ -85,7 +83,6 @@ export async function stampedRedirect(
     }
 }
 
-/** Onchain Analytics is a post now; its sessions are fragments of it (as on com). */
 export const ONCHAIN_ANALYTICS_POST = "/experiments/1791937789859-onchain-analytics";
 
 export function legacyRedirect(pathname: string): string | null {
@@ -102,12 +99,6 @@ export function legacyRedirect(pathname: string): string | null {
     return null;
 }
 
-/**
- * The redirect table, in the order the old middleware and page routes
- * applied it. `pathname` is the raw URL path; `search` (with its "?") is
- * carried onto the target except for the page-level legacy redirects,
- * which, like Astro.redirect, drop it.
- */
 export async function redirectFor(
     pathname: string,
     search: string,

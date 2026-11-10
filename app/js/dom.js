@@ -1,32 +1,18 @@
-// The DOM around the canvas: what agents, screen readers and share sheets read.
-// The app draws everything people see; this keeps the document underneath it true.
-
-// This build's own files sit beside this one (<build>/snippets/<crate>/js/dom.js, under /b/<id>/
-// once deployed, worker/scripts/scope-build.ts): code loaded later comes from the build the
-// page booted with, not whatever a deploy has put at the site's root since.
 const BUILD = new URL("../../../", import.meta.url);
-/** The url of `path` (e.g. "search/search-worker.js") in this page's build. */
 export function buildUrl(path) {
     return new URL(path, BUILD).href;
 }
 
-/** `f` whenever the network may be back: online again, or the tab looked at again (a phone's
- *  radio sleeps under a hidden tab). */
 export function onReconnect(f) {
     addEventListener("online", f);
     document.addEventListener("visibilitychange", () => document.hidden || f());
 }
 
-const buildModules = new Map(); // path -> import promise
-// a browser keeps a failed module import for its URL: a retry asks under a new one
+const buildModules = new Map();
 const buildModuleTries = new Map();
-// the waits before asking again for a module that didn't load, then it's forgotten
 const MODULE_RETRY_MS = [400, 1600];
 
 let buildGoneChecked = false;
-/** A deploy dropped the build this page booted with (a tab open across more deploys than
- *  ci-build.sh keeps) when one of its files under /b/<id>/ is a 404: only the new page can draw
- *  what it named. One reload a session, so a build that's missing for good can't loop. */
 async function reloadIfBuildGone(url) {
     if (buildGoneChecked || !/^\/b\/[0-9a-f]{16}\//.test(new URL(url).pathname)) return;
     buildGoneChecked = true;
@@ -34,7 +20,6 @@ async function reloadIfBuildGone(url) {
         if (sessionStorage.getItem("burin.gone")) return;
         if ((await fetch(url, { method: "HEAD", cache: "no-store" })).status !== 404) return;
         sessionStorage.setItem("burin.gone", "1");
-        // past the browser's cache, which may hand a reload the page it has
         await (await fetch(location.href, { cache: "reload" })).arrayBuffer();
     } catch {
         return;
@@ -42,9 +27,6 @@ async function reloadIfBuildGone(url) {
     location.reload();
 }
 
-/** The module at `path` in this build, imported once; one that never loads isn't kept, so the
- *  next ask starts over. A retry is a fresh fetch only for a module that imports nothing (a
- *  failed dependency stays failed in Chromium and WebKit): diagrams/build.ts checks its own. */
 function buildModule(path) {
     let m = buildModules.get(path);
     if (m) return m;
@@ -56,7 +38,6 @@ function buildModule(path) {
                 const url = buildUrl(path);
                 return await import(tries ? `${url}?retry=${tries}` : url);
             } catch (e) {
-                // the one error that's the network's, not the module's: worth another try later
                 if (attempt >= MODULE_RETRY_MS.length) {
                     reloadIfBuildGone(buildUrl(path));
                     throw Object.assign(e instanceof Error ? e : new Error(String(e)), { code: "load" });
@@ -70,10 +51,6 @@ function buildModule(path) {
     return m;
 }
 
-// After an in-app navigation, bring the head (title, description, canonical, Open Graph)
-// and the server-rendered page under the canvas (<main id="ssr">) up to date. Only the
-// newest navigation's reply lands: an earlier one answering late would describe a page the
-// reader has already left.
 let syncSeq = 0;
 const pathOf = (s) => s.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
 const samePath = (a, b) => pathOf(a) === pathOf(b);
@@ -124,7 +101,6 @@ function setLink(rel, href) {
     el.setAttribute("href", href);
 }
 
-// WebMCP: the same four tools com registers, for agents driving a browser.
 export function registerWebMcp() {
     const ctx = document.modelContext ?? navigator.modelContext ?? null;
     if (!ctx || typeof ctx.registerTool !== "function") return;
@@ -212,11 +188,9 @@ export function registerWebMcp() {
         },
         async execute({ path }) {
             const clean = String(path ?? "").replace(/^https?:\/\/[^/]+/, "").replace(/^[/\\]+|\.md$/g, "");
-            // only ever a page of this site, however the path is written
             if (new URL(`/${clean}`, location.origin).origin !== location.origin) return failure(`"${path}" isn't a path on this site.`);
             const res = await fetch(`/${clean}.md`, { method: "HEAD" });
             if (!res.ok) return failure(`No entry at "${clean}". Use search_site or list_content to find a valid path.`);
-            // in place, without a reload: the app follows history like back/forward
             history.pushState(null, "", `/${clean}`);
             dispatchEvent(new PopStateEvent("popstate"));
             return text(`Navigating to /${clean}.`);
@@ -224,10 +198,6 @@ export function registerWebMcp() {
     });
 }
 
-// Touch on the canvas, read directly: gpui turns a one-finger drag into scrolling and has no
-// pinch yet, but the plate wants drag to pan and pinch to zoom. Reports, in CSS px:
-//   onGesture("pan", dx, dy, 0) · onGesture("pinch", factor, cx, cy) · onGesture("touch", n, 0, 0)
-// where "touch" carries how many fingers are down (0 when the last lifts).
 export function installTouchGestures(onGesture) {
     const pts = new Map();
     let lastMid = null;
@@ -272,17 +242,12 @@ export function installTouchGestures(onGesture) {
     installTapThroughFling();
 }
 
-// A touch that lands while a flick is still coasting only stops the scroll (gpui's recognizer,
-// as on iOS), and gpui lets a flick coast until it is down to 10 px/s, long after the page looks
-// still. So a tap a second or two after scrolling did nothing. Here, a tap that caught a flick
-// already slow enough to read as stopped is played again once the scroll has halted: the first
-// stops it, the replay is the tap. One that catches a fast scroll still only stops it.
 function installTapThroughFling() {
-    const SLOP = 8; // gpui's touch_slop, css px
-    const DECAY = 0.998; // gpui's iOS scroll physics, per ms
-    const STILL = 200; // px/s below which a coasting page reads as stopped (~3 px a frame)
-    let fling = null; // { at, speed } of the last release that would coast
-    const down = new Map(); // pointerId -> { x, y, at, caught, samples }
+    const SLOP = 8;
+    const DECAY = 0.998;
+    const STILL = 200;
+    let fling = null;
+    const down = new Map();
     const opts = { capture: true, passive: true };
     const residual = (now) => (fling ? fling.speed * Math.pow(DECAY, now - fling.at) : 0);
     addEventListener("pointerdown", (e) => {
@@ -304,7 +269,6 @@ function installTapThroughFling() {
         const now = performance.now();
         const moved = Math.hypot(e.clientX - d.x, e.clientY - d.y);
         if (moved > SLOP) {
-            // a pan: how fast it left the finger, as gpui will set it coasting
             const recent = d.samples.filter(([t]) => now - t < 100);
             const [t0, x0, y0] = recent[0] ?? d.samples[0];
             const dt = Math.max(now - t0, 1) / 1000;
@@ -316,7 +280,6 @@ function installTapThroughFling() {
         const canvas = document.querySelector("canvas");
         if (!canvas) return;
         const x = e.clientX, y = e.clientY;
-        // after gpui has handled this release (it stopped the scroll), tap again where it was
         setTimeout(() => {
             const id = 7000 + Math.floor(Math.random() * 1000);
             for (const type of ["pointerdown", "pointerup"]) {
@@ -329,17 +292,9 @@ function installTapThroughFling() {
     addEventListener("pointercancel", (e) => down.delete(e.pointerId), opts);
 }
 
-// ---- diagrams: pele, loaded on the first page that has one, each kind's drawing when it's needed ----
-// the face diagrams set in, sent once by the app and kept for a retried import
 let diagramFont = null;
 
-/**
- * Render a diagram `source` (Mermaid syntax) for the canvas: `done(key, width, height, cssWidth, cssHeight,
- * rgba, error)` gets its pixels (device px, RGBA) and the size to draw them at, or an error
- * as "code: message".
- */
 export function renderDiagram(key, source, themeJson, maxWidth, dpr, font, done) {
-    // a copy: the bytes arrive as a view of wasm memory, which a later growth detaches
     if (font && font.length) diagramFont = font.slice();
     buildModule("diagrams/diagrams.js")
         .then(async (m) => {
@@ -350,12 +305,9 @@ export function renderDiagram(key, source, themeJson, maxWidth, dpr, font, done)
             return m.render(render, source, JSON.parse(themeJson), maxWidth, dpr);
         })
         .then((r) => done(key, r.width, r.height, r.cssWidth, r.cssHeight, r.rgba, ""))
-        // pele's own errors carry a code (syntax, semantic, unsupported-diagram, limit), and a
-        // module that didn't load is "load"; anything else went wrong drawing it
         .catch((e) => done(key, 0, 0, 0, 0, new Uint8Array(0), `${(e && e.code) || "render"}: ${(e && e.message) || e}`));
 }
 
-// ---- safe areas: the notch, status bar and home indicator, which the canvas now draws under ----
 let insets = null;
 function measureInsets() {
     let probe = document.getElementById("safe-probe");
@@ -369,8 +321,6 @@ function measureInsets() {
     }
     const cs = getComputedStyle(probe);
     insets = [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].map((v) => parseFloat(v) || 0);
-    // the canvas reaches under the browser's own toolbars; what they cover at the bottom is
-    // kept clear like the home indicator
     const canvas = document.querySelector("canvas");
     if (canvas) {
         const covered = canvas.getBoundingClientRect().bottom - window.innerHeight;
@@ -378,26 +328,21 @@ function measureInsets() {
     }
 }
 
-/** [top, right, bottom, left] css px of screen the system keeps for itself. */
 export function safeInsets() {
     measureInsets();
     return new Float32Array(insets);
 }
 
-// ---- embeds: web components laid over the canvas (src/dom_embed.rs) ----
-const embeds = new Map(); // key -> { host, el }
+const embeds = new Map();
 let embedHeightCb = null;
 
 export function embedHeights(cb) {
     embedHeightCb = cb;
-    // the site's own sans for them, by a name a face installed on the device can't shadow
     const faces = document.createElement("style");
     faces.textContent =
         `@font-face{font-family:site-sans;src:url(/fonts-v1/Inter.ttf);font-weight:100 900;font-style:normal}` +
         `@font-face{font-family:site-sans;src:url(/fonts-v1/Inter-Italic.ttf);font-weight:100 900;font-style:italic}`;
     document.head.appendChild(faces);
-    // a component scrolling itself into view (a #fragment it opens) scrolls the document under
-    // the canvas; the document stays put and the page scrolls by as much instead
     addEventListener("scroll", () => {
         const dx = scrollX, dy = scrollY;
         if (!dx && !dy) return;
@@ -406,33 +351,25 @@ export function embedHeights(cb) {
     }, { passive: true });
 }
 
-/** Scroll the page on the canvas by css px, as a wheel would. */
 function scrollPageBy(dx, dy) {
     const canvas = document.querySelector("canvas");
     canvas?.dispatchEvent(new WheelEvent("wheel", { deltaX: dx, deltaY: dy, deltaMode: 0, clientX: innerWidth / 2, clientY: innerHeight / 2, bubbles: true, cancelable: true }));
 }
 
 function embedAttrs(el, attrsJson) {
-    // never an inline handler: a post's props are text, not script
     for (const [k, v] of JSON.parse(attrsJson)) if (!/^on/i.test(k)) el.setAttribute(k, v);
 }
 
-/** Import `e`'s module and put its element in its host; one that never loads is tried again
- *  once the network may be back. */
 function embedLoad(key, e) {
     e.failed = false;
     buildModule(e.module).then(() => {
         if (embeds.get(key) !== e) return;
         const el = document.createElement(e.tag);
-        // the document never scrolls (the page is on the canvas), so a component bringing itself
-        // into view (ff-tuner's pager) moves the canvas instead, up as well as down
         el.scrollIntoView = () => scrollPageBy(0, el.getBoundingClientRect().top - (insets?.[0] ?? 0));
         embedAttrs(el, e.attrs);
         el.style.display = "block";
         e.host.appendChild(el);
         e.el = el;
-        // hidden by visibility, it still lays out: the column keeps room for its real height
-        // (0 until it has content: the room set aside for it stays until then)
         new ResizeObserver(() => {
             const h = e.host.getBoundingClientRect().height;
             if (h > 0 && embedHeightCb) embedHeightCb(key, h);
@@ -451,7 +388,6 @@ export function embedPlace(key, tag, module, attrsJson, style, x, y, w, t, r, b,
     if (!e) {
         const host = document.createElement("div");
         host.style.cssText = "position:absolute;left:0;top:0;z-index:2;will-change:transform;touch-action:none;";
-        // scrolling over the component scrolls the page, which lives on the canvas
         host.addEventListener(
             "wheel",
             (ev) => {
@@ -462,8 +398,6 @@ export function embedPlace(key, tag, module, attrsJson, style, x, y, w, t, r, b,
             },
             { passive: false },
         );
-        // and a finger dragged over it scrolls the page too (gpui reads touch pointers on the
-        // canvas); the component still gets them, so its own taps and controls work
         for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel"]) {
             host.addEventListener(
                 type,
@@ -511,7 +445,6 @@ export function embedRemove(key) {
     }
 }
 
-// ---- "Find a title": a real <input> over the canvas (src/dom_input.rs) ----
 let find = null;
 let findCb = null;
 const FIND_BASE =
@@ -530,8 +463,6 @@ function findInput() {
     find.autocomplete = "off";
     find.spellcheck = false;
     find.enterKeyHint = "search";
-    // hidden is transparent and click-through, not visibility:hidden: a hidden element can't take
-    // focus, and the tap that opens Find focuses it before its first placement
     find.style.cssText = FIND_BASE + "opacity:0;pointer-events:none;";
     find.addEventListener("input", () => findCb && findCb("text", find.value));
     find.addEventListener("keydown", (e) => {
@@ -568,9 +499,6 @@ export function findPlace(x, y, w, h, t, r, b, l, placeholder, maxLen, style) {
 
 export function findFocus() {
     const el = findInput();
-    // A phone raises its keyboard only for focus given inside the tap, but focusing here, inside
-    // gpui's own handling of it, blurs gpui's hidden textarea and re-enters gpui mid-dispatch. A
-    // microtask runs the moment gpui's listener returns, still within the same browser event.
     queueMicrotask(() => el.focus({ preventScroll: true }));
 }
 
@@ -588,9 +516,6 @@ export function findHide() {
     find.style.pointerEvents = "none";
     if (document.activeElement === find) {
         find.blur();
-        // gpui hears keys only through its hidden textarea: hand it the focus back, so "/" and
-        // Escape keep working without a click on the canvas first. This runs inside gpui's render,
-        // so the focus waits for a microtask as in findFocus.
         queueMicrotask(() => document.querySelector("body > textarea")?.focus({ preventScroll: true }));
     }
 }

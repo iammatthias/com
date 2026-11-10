@@ -1,7 +1,3 @@
-/**
- * A bounded map that drops the least recently used entry. Module-level instances
- * outlive requests, so they may only hold plain data, never I/O objects.
- */
 export class Lru<K, V> {
     private readonly map = new Map<K, V>();
 
@@ -10,7 +6,6 @@ export class Lru<K, V> {
     get(key: K): V | undefined {
         const value = this.map.get(key);
         if (value === undefined) return undefined;
-        // re-insert: Map order is the eviction order
         this.map.delete(key);
         this.map.set(key, value);
         return value;

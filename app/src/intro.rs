@@ -1,7 +1,3 @@
-//! First-visit greeting: written in script on the plate, then reeled into the point the plate's
-//! line is drawn out of. The plate draws it into its own engraving (plate/gpu.rs), so the
-//! greeting is under the same paper, grain and glass as everything after it.
-
 use std::borrow::Cow;
 
 use gpui_wgpu::WgpuContextHandle;
@@ -11,37 +7,22 @@ use swash::shape::ShapeContext;
 use swash::zeno::{Format, Vector};
 use web_time::Instant;
 
-/// The greeting, a line each: the first leads, large; the others follow, smaller.
 pub const LINES: [&str; 2] = [
     "Hi, I am Matthias.",
     "I\u{2019}m so glad you\u{2019}re here.",
 ];
-/// how large the following lines are against the first
 const FOLLOW: f32 = 0.6;
 
-/// atlas px per em: large enough that the text block is never magnified
 const FONT: f32 = 128.0;
 const PAD: usize = 8;
-/// seconds before the pen touches the paper, and how long it writes
 const WRITE_AT: f32 = 0.45;
-/// the pen writes each line in a beat plus its share of this, longer lines taking longer,
-/// with a breath after each line (the lead's longer)
 const WRITE_BEAT: f32 = 0.3;
 const WRITE_SHARE: f32 = 3.2;
 const BREATHS: [f32; 2] = [0.5, 0.3];
-/// seconds the finished greeting rests before it falls: long enough to read the last line
 const REST: f32 = 0.9;
-/// the lines lift onto the spiral one at a time, the lead first (it's already in the band the
-/// spiral sits in, and curls up in place; the next then wraps round it instead of landing on
-/// it): a line's points set off over LIFT_STAGGER, its end first, the next line LIFT_NEXT after
 const LIFT_STAGGER: f32 = 0.35;
 const LIFT_NEXT: f32 = 0.5;
-/// keep in step with intro.wgsl: the last of the sentence is reeled in REEL_AT + REEL after
-/// it starts to lift
 const FALL: f32 = 1.0 + 1.5;
-/// how far into the fall the plate's pen sets off: once the last of the sentence is on the turn
-/// where the words thin into the line, so the line comes out of the point under a hairline, not
-/// under words, and is there before the last of them goes in (intro.wgsl's REEL_AT + REEL * 0.72)
 const DRAW_FROM: f32 = 1.0 + 1.5 * 0.72;
 
 #[repr(C)]
@@ -59,8 +40,6 @@ struct Uniforms {
     fall_t0: f32,
     sink: f32,
     ink: [f32; 4],
-    /// the plate's line: its turns' spacing and the words' size on it (device px per atlas px),
-    /// the rest padding the struct
     coil: [f32; 4],
 }
 
@@ -71,35 +50,23 @@ struct Vertex {
     side: f32,
     pa: [f32; 2],
     gap: f32,
-    /// the row's size against the lead line
     k: f32,
-    /// seconds into the fall this point lifts off the block
     at: f32,
 }
 
-/// The greeting shaped and rasterized once into a single-row coverage atlas.
 struct Atlas {
     width: usize,
     height: usize,
-    /// mip chain, level 0 first
     levels: Vec<Vec<u8>>,
-    /// text length in atlas px
     len: f32,
-    /// band centre: the middle of the x-height
     yc: f32,
-    /// word gaps as [start, end) in atlas px, where rows may break, and whether a line ends there
     spaces: Vec<(f32, f32, bool)>,
-    /// which atlas columns carry ink: a row is centred on its ink, not its advances (the
-    /// script's swash capitals and the side padding would pull it off true)
     inked: Vec<bool>,
-    /// the pen's schedule: for each line, [start, end) in atlas px and [from, to) in seconds
     pen: Vec<(f32, f32, f32, f32)>,
-    /// seconds the whole greeting takes to write
     write_for: f32,
 }
 
 impl Atlas {
-    /// Where the pen is at `t` seconds after it touches the paper, atlas px.
     fn head(&self, t: f32) -> f32 {
         let mut head = 0.0;
         for &(a, b, t0, t1) in &self.pen {
@@ -107,14 +74,12 @@ impl Atlas {
                 break;
             }
             let x = ((t - t0) / (t1 - t0)).clamp(0.0, 1.0);
-            // a hand's pace: easing into and out of each line, steady through the middle
             let e = 0.5 * x + 0.5 * x * x * (3.0 - 2.0 * x);
             head = a + (b - a) * e;
         }
         head
     }
 
-    /// Seconds into the fall the point `u` atlas px along the text lifts off the block.
     fn lift_at(&self, u: f32) -> f32 {
         let line = self
             .pen
@@ -157,7 +122,6 @@ impl Atlas {
         let mut shape = ShapeContext::new();
         let mut shaper = shape.builder(font).size(FONT).build();
         let text = LINES.join(" ");
-        // the gaps where one line ends and the next begins
         let mut ends = Vec::new();
         for (i, line) in LINES.iter().enumerate().take(LINES.len() - 1) {
             let before: usize = LINES[..i].iter().map(|l| l.split(' ').count()).sum();
@@ -180,7 +144,6 @@ impl Atlas {
 
         let asc = metrics.ascent.ceil();
         let desc = metrics.descent.abs().ceil();
-        // this hand's strokes overhang their advances (a final `g` sweeps well past its box)
         let side = PAD + (FONT * 0.5) as usize;
         let width = pen.ceil() as usize + side * 2;
         let height = (asc + desc) as usize + PAD * 2;
@@ -209,7 +172,6 @@ impl Atlas {
                     }
                     let src = img.data[(row * p.width as i32 + col) as usize];
                     let dst = &mut data[dy as usize * width + dx as usize];
-                    // script strokes overlap where letters join: keep the stronger coverage
                     *dst = (*dst).max(src);
                 }
             }
@@ -243,7 +205,6 @@ impl Atlas {
         )
     }
 
-    /// The middle of the ink in [a, b) atlas px (the middle of the span if it has none).
     fn ink_mid(&self, a: f32, b: f32) -> f32 {
         let cols = (a.max(0.0) as usize)..(b.ceil() as usize).min(self.inked.len());
         let first = cols.clone().find(|&x| self.inked[x]);
@@ -262,8 +223,6 @@ impl Atlas {
         self
     }
 
-    /// The greeting's rows as [start, end) in atlas px with their line's size: each line on a
-    /// row of its own, wrapped (greedily, at word gaps) only if it's wider than `max` screen px.
     fn rows(&self, max: f32, s_a: f32) -> Vec<(f32, f32, f32)> {
         let mut rows = Vec::new();
         let mut start = 0.0;
@@ -292,7 +251,6 @@ impl Atlas {
     }
 }
 
-/// Everything about the layout that depends on the viewport.
 struct Layout {
     size: gpui::Size<gpui::DevicePixels>,
     uniforms: Uniforms,
@@ -300,8 +258,6 @@ struct Layout {
 }
 
 impl Layout {
-    /// Laid out for the plate's engraving: `size` device px at `dpr`, its spiral starting `lift`
-    /// device px above the middle, its turns `d` device px apart, lettered at `em` device px.
     fn new(
         atlas: &Atlas,
         size: gpui::Size<gpui::DevicePixels>,
@@ -313,13 +269,9 @@ impl Layout {
         let (w, h) = (size.width.0 as f32, size.height.0 as f32);
         let css_w = w / dpr;
 
-        // the text block: the lead line sized to the viewport, the others smaller beneath it,
-        // each row centred; a breath between the lead and what follows
         let font_css = (css_w / 11.0).clamp(34.0, 76.0);
         let s_a = font_css * dpr / FONT;
         let rows = atlas.rows((css_w * 0.86).min(1100.0) * dpr, s_a);
-        // the lead set close, the follow lines given air (script needs room for its loops), and a
-        // pause of white between them
         let lead_h = font_css * 1.2 * dpr;
         let follow_h = font_css * FOLLOW * 1.75 * dpr;
         let breath = font_css * 0.3 * dpr;
@@ -333,11 +285,8 @@ impl Layout {
             ys.push(y + h * 0.5);
             y += h;
         }
-        // a touch above the middle: the optical centre
         let mid = y * 0.5 + h * 0.03;
         let ys: Vec<f32> = ys.into_iter().map(|v| v - mid).collect();
-        // where along the text block a point of the line sits, and its row's size; each row
-        // centred on its ink
         let mids: Vec<f32> = rows.iter().map(|&(a, b, _)| atlas.ink_mid(a, b)).collect();
         let place = |at: f32| -> ([f32; 2], f32) {
             for (i, &(a, b, k)) in rows.iter().enumerate() {
@@ -345,7 +294,6 @@ impl Layout {
                     let at = at.clamp(a, b);
                     return ([(at - mids[i]) * s_a * k, ys[i]], k);
                 }
-                // a break gap folds onto the start of the next row
                 if at < rows[i + 1].0 {
                     let (na, _, nk) = rows[i + 1];
                     return ([(na - mids[i + 1]) * s_a * nk, ys[i + 1]], nk);
@@ -354,17 +302,14 @@ impl Layout {
             unreachable!()
         };
 
-        // the words go in where the plate's spiral starts (y down from the middle)
         let sink = -lift;
 
-        // one strip along the sentence
         let mut us = Vec::new();
         let mut u = 0.0;
         while u < atlas.len {
             us.push(u);
             u += 2.0;
         }
-        // exact row ends, so the page edge of every row is a vertex
         for &(a, b, _) in &rows {
             us.push(a);
             us.push(b);
@@ -398,13 +343,11 @@ impl Layout {
             atlas_h: atlas.height as f32,
             atlas_w: atlas.width as f32,
             head: 0.0,
-            // the plate's stroke on bare paper (tone 0.06), so the handoff has no seam
             hair: 0.0976 * d,
             text_len: atlas.len,
             fall_t0: WRITE_AT + atlas.write_for + REST,
             sink,
             ink: [0.0; 4],
-            // on the plate's line the words are written at the plate's own size
             coil: [d, em / FONT, 0.0, 0.0],
         };
         Self {
@@ -423,8 +366,6 @@ struct Gpu {
     vertices: Option<(wgpu::Buffer, u32)>,
 }
 
-/// Debug clock from the URL hash, for looking at a moment of the motion: `#t=5.2` freezes it
-/// there (the greeting then never hands over), `#slow=4` stretches it.
 enum Clock {
     Frozen(f32),
     Slow(f32),
@@ -459,7 +400,6 @@ impl Greeting {
         }
     }
 
-    /// Seconds into the greeting.
     fn t(&self) -> f32 {
         match self.clock {
             Clock::Frozen(t) => t,
@@ -467,22 +407,18 @@ impl Greeting {
         }
     }
 
-    /// The greeting is written and resting: a still moment for heavy work to go unnoticed.
     pub fn resting(&self) -> bool {
         self.t() > WRITE_AT + self.atlas.write_for + 0.1
     }
 
-    /// The coil is closing on its point: the plate's line sets off out of it.
     pub fn drawing_out(&self) -> bool {
         self.after(DRAW_FROM)
     }
 
-    /// The greeting has wound into its point and is gone.
     pub fn done(&self) -> bool {
         self.after(FALL)
     }
 
-    /// More than `secs` into the fall (never, on a frozen clock).
     fn after(&self, secs: f32) -> bool {
         !matches!(self.clock, Clock::Frozen(_))
             && self.t() > WRITE_AT + self.atlas.write_for + REST + secs
@@ -600,7 +536,6 @@ impl Greeting {
                 module: &shader,
                 entry_point: Some("fs_main"),
                 compilation_options: Default::default(),
-                // over the engraving's colour, adding to its ink amount (what the optics read)
                 targets: &[Some(wgpu::ColorTargetState {
                     format,
                     blend: Some(wgpu::BlendState::ALPHA_BLENDING),
@@ -623,9 +558,6 @@ impl Greeting {
         self.layout = None;
     }
 
-    /// Ready the greeting for the plate's engraving pass: `format` and `size` are that pass's
-    /// target at `dpr`, the spiral starts `lift` device px above the middle with its turns `d`
-    /// apart and its titles at `em` px, written in `ink`.
     #[allow(clippy::too_many_arguments)]
     pub fn prepare(
         &mut self,
@@ -669,7 +601,6 @@ impl Greeting {
             .write_buffer(&gpu.uniforms, 0, bytemuck::bytes_of(u));
     }
 
-    /// Draw the greeting into the plate's engraving pass (after `prepare` this frame).
     pub fn record(&self, pass: &mut wgpu::RenderPass<'_>) {
         let Some(gpu) = self.gpu.as_ref() else { return };
         let Some((buffer, count)) = gpu.vertices.as_ref() else {

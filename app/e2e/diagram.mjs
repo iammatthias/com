@@ -1,10 +1,3 @@
-// Diagrams in the app come from modules imported on first need (diagrams.js, then the kind's
-// own): two cut fetches of each aren't final, the page asks again by itself under fresh URLs
-// and draws; a kind's module that never loads leaves the source on the page, with one warning.
-// diagram-engines.mjs covers the same loader in WebKit and Firefox.
-//
-//   bun diagram.mjs [base-url] [screenshot-dir]
-
 import { base, open, check, done } from "./lib.mjs";
 
 const POST = "/posts/1775137360175-i-got-a-common-turtle";
@@ -17,8 +10,6 @@ async function visit(name, cut) {
     const warned = [];
     page.on("console", (m) => m.text().startsWith("diagram:") && warned.push(m.text().slice(0, 120)));
     await context.route(/\/diagrams\/\w+\.js/, (r) => {
-        // a deployed build HEADs a module that failed, to tell a dropped build from a cut fetch
-        // (dom.js reloadIfBuildGone): that isn't an ask for the module
         if (r.request().method() === "HEAD") return r.continue();
         const module = new URL(r.request().url()).pathname.match(/(\w+)\.js$/)[1];
         asked[module] = (asked[module] ?? 0) + 1;

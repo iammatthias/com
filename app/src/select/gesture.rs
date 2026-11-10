@@ -1,12 +1,8 @@
-//! The one state machine. A pure reducer: the gpui shell turns events into `Input`, calls
-//! `step`, and applies the `Effects`. Nothing here calls out, so a step can never re-enter.
-
 use gpui::{MouseButton, Pixels, Point, TouchPhase, px};
 
 use super::model::{Granularity, Ordinal, Origin, Pos, Span};
 use super::registry::Hit;
 
-/// How far a press may travel and still be a click.
 const SLOP: Pixels = px(4.);
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -18,15 +14,12 @@ pub enum End {
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Gesture {
     Idle,
-    /// The left button is down on text. A move past the slop turns it into a drag.
     Pressed {
         at: Point<Pixels>,
         hit: Hit,
         dragging: bool,
     },
-    /// A claimed long press: the finger extends the word selection until it lifts.
     LongPressing,
-    /// A finger on a handle, moving that end of the selection.
     Handle(End),
 }
 
@@ -37,15 +30,11 @@ pub enum Input {
         button: MouseButton,
         clicks: usize,
         shift: bool,
-        /// where the press landed, if on a block that nothing covers
         hit: Option<Hit>,
     },
     Move {
         at: Point<Pixels>,
-        /// the block nearest the pointer (None only with an empty document)
         hit: Option<Hit>,
-        /// the left button is still down; false means the press was lost without an Up (the
-        /// browser cancelled the pointer)
         held: bool,
     },
     Up {
@@ -57,7 +46,6 @@ pub enum Input {
     },
     HandleDrag {
         phase: TouchPhase,
-        /// the handle under the finger when the drag started
         end: Option<End>,
         hit: Option<Hit>,
     },
@@ -69,16 +57,10 @@ pub enum Input {
 
 #[derive(Default, Debug, PartialEq, Eq)]
 pub struct Effects {
-    /// the painted selection differs: notify the views that paint it
     pub changed: bool,
-    /// `window.prevent_default()`: claim the long press or touch drag being offered
     pub claim: bool,
-    /// `cx.stop_propagation()`: the keystroke was ours, or the release ended a drag and is no
-    /// click for whatever holds the text
     pub consume: bool,
-    /// write the selection to the clipboard
     pub copy: bool,
-    /// a click (not a drag) released on this link: follow it
     pub link: Option<(Ordinal, usize)>,
 }
 
@@ -111,7 +93,6 @@ pub fn step(gesture: &mut Gesture, sel: &mut Option<Span>, input: Input) -> Effe
                         s.focus = hit.group(s.granularity);
                         true
                     }
-                    // a caret: nothing to see, but a shift-click extends from it
                     (false, 1) => {
                         *sel = Some(Span::new(
                             (hit.pos, hit.pos),
@@ -209,7 +190,6 @@ pub fn step(gesture: &mut Gesture, sel: &mut Option<Span>, input: Input) -> Effe
         Input::HandleDrag { phase, end, hit } => match phase {
             TouchPhase::Started => {
                 if let (Some(end), Some(s)) = (end, sel.as_mut()) {
-                    // from here the ends move one character at a time, whichever way they cross
                     let (start, stop) = s.span();
                     let (fixed, moving) = match end {
                         End::Start => (stop, start),

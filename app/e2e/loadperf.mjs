@@ -1,8 +1,3 @@
-// Load profile: how long until the app is up and the plate is drawn, on a throttled
-// "phone" (4x CPU, ~10Mbps, 40ms) and unthrottled, with what was fetched when.
-//
-//   bun loadperf.mjs [base-url] [runs] [path]
-
 import { chromium } from "playwright";
 
 const base = process.argv[2] ?? "http://127.0.0.1:8795";

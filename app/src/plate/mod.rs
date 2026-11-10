@@ -1,8 +1,3 @@
-//! The Burin plate: the site's index engraved as one spiralling line. A WGSL
-//! pass into an offscreen target that GPUI paints as a surface; titles live in
-//! a script atlas, and hover/click are hit-tested against the same geometry the
-//! shader draws.
-
 use std::f32::consts::{PI, TAU};
 
 use gpui::prelude::*;
@@ -38,14 +33,10 @@ use input::Touches;
 use reveal::Reveal;
 pub use title::{Mark, Title};
 
-/// how large the titles are written on the plate, in css px (the em of the script)
 const SCRIPT_EM: f32 = 20.0;
-/// on a phone
 const SCRIPT_EM_PHONE: f32 = 18.0;
-/// the spiral's start above the portrait's centre, in units of the shorter screen side
 pub const LIFT: f32 = 0.06;
 
-/// the plate's resting controls (the artifact's defaults); the panel is gone, the seed varies the rest
 struct Controls {
     em: f32,
     bias: f32,
@@ -68,10 +59,8 @@ const CONTROLS: Controls = Controls {
     haze: 0.3,
 };
 
-/// most panes of glass the plate draws
 const PANES: usize = 4;
 
-/// Everything the seed decides, drawn in the artifact's order so a seed means the same plate.
 #[derive(Clone, Copy)]
 struct Deal {
     wph: [f32; 4],
@@ -120,7 +109,7 @@ impl Deal {
             r.next() * TAU,
             r.next() * TAU,
         ];
-        let _ = r.next(); // the artifact draws a direction it then overwrites
+        let _ = r.next();
         let ab_freq = 2.0 + (r.next() * 4.0).floor();
         let ab_dir = [r.next() * 2.0 - 1.0, 0.0];
         Self {
@@ -144,7 +133,6 @@ impl Deal {
     }
 }
 
-/// pan and zoom, in device px about the centre
 #[derive(Clone, Copy)]
 struct View {
     x: f32,
@@ -162,44 +150,32 @@ pub struct Plate {
     gpu: Option<Gpu>,
     target: Option<WgpuRenderTarget>,
     nav: Navigate,
-    // clocks: T drives drift and morph, C the slow breathing of each control
     t: f32,
-    /// where each flare is along the line, in turns (NaN until the plate has a size)
     flares: [f32; 3],
-    /// how far out each flare was found last frame (the next search starts there, so it keeps
-    /// to the same stretch of line where the line folds back on itself)
     flare_r: std::cell::Cell<[f32; 3]>,
     c: f32,
     last: Instant,
     reveal: Reveal,
-    /// titles start at the first lettered turn (see set_anchored)
     anchored: bool,
     view: View,
     pointer: Option<Point<Pixels>>,
-    /// the pointer is over the plate itself, not a panel, page or control on top of it
     over: bool,
     drag: Option<(Point<Pixels>, f32)>,
     hover: Option<usize>,
     hold_until: Option<Instant>,
     motion: bool,
-    // the breathing values of warp and disp, needed by the hit test too
     e_warp: f32,
     e_disp: f32,
-    // last frame's geometry, for hit testing
     dpr: f32,
     w: f32,
     h: f32,
     dark: bool,
     frame: Frame,
-    /// the controls floating on the plate
     panes: Vec<Probe>,
     waiting: bool,
-    /// what the last rendered frame was drawn with, so an unchanged frame isn't drawn again
     last_drawn: Option<(Uniforms, gpui::Size<gpui::DevicePixels>)>,
-    /// debug switches from the URL hash: `lite` drops the optics, `half` renders at half resolution
     lite: bool,
     half: bool,
-    /// the first-visit greeting, written on the plate until it winds into the line's start
     greeting: Greeting<crate::intro::Greeting>,
 }
 
@@ -255,8 +231,6 @@ impl Plate {
         }
     }
 
-    /// The script's weight on this plate: the seed's hand, a light pen around the font's raw
-    /// strokes. Drawn apart from the artifact's deal so seeds keep meaning the same plate.
     fn pen_weight(&self) -> f32 {
         let h = self.seed.wrapping_mul(0x9E37_79B1).rotate_right(13);
         270.0 + (h % 6) as f32 * 16.0
@@ -266,7 +240,6 @@ impl Plate {
         self.seed
     }
 
-    /// Deal a new plate from another seed: warp, morph, optics and flares all change.
     pub fn reseed(&mut self, seed: u32) {
         self.seed = seed;
         self.deal = Deal::new(seed);
@@ -274,14 +247,12 @@ impl Plate {
         self.c = 0.0;
     }
 
-    /// The title under the pointer, if it links somewhere.
     pub fn hovered_href(&self) -> Option<String> {
         self.hover
             .and_then(|i| self.atlas.segs.get(i))
             .and_then(|s| s.title.href.clone())
     }
 
-    /// A page is loading: the line quickens until it arrives.
     pub fn set_waiting(&mut self, waiting: bool) {
         self.waiting = waiting;
     }
@@ -295,7 +266,6 @@ impl Plate {
     }
 
     pub fn set_titles(&mut self, titles: Vec<Title>) {
-        // links, colours and headings too: the same words in another section are another atlas
         if titles == self.titles {
             return;
         }
@@ -305,8 +275,6 @@ impl Plate {
         self.hover = None;
     }
 
-    /// The controls to draw as panes of glass (at most four): the plate refracts, frosts and
-    /// lights the engraving under where each probe says its control was painted.
     pub fn set_panes(&mut self, panes: &[Probe]) {
         if panes.len() > PANES {
             crate::limits::reached("glass panes (4): the rest are drawn without glass");
@@ -314,7 +282,6 @@ impl Plate {
         self.panes = panes.iter().take(PANES).cloned().collect();
     }
 
-    /// Pane rectangles in plate device px (y up): centre.xy, half-size.xy; zero where empty.
     fn pane_uniforms(&self) -> [[f32; 4]; PANES] {
         let mut out = [[0.0; 4]; PANES];
         let d = self.dpr;
@@ -328,18 +295,14 @@ impl Plate {
         out
     }
 
-    /// Frame the reading column the probe measures, or `None` to wind back into the spiral.
     pub fn set_frame(&mut self, page: Option<Probe>) {
         self.frame.set(page);
     }
 
-    /// A new page is on its way: don't call the frame open until it has re-measured.
     pub fn unsettle(&mut self) {
         self.frame.unsettle();
     }
 
-    /// Whether the plate is moving and needs the next frame. A settled page frame doesn't:
-    /// it is redrawn only when something changes (scrolling, resizing, theme).
     pub fn animating(&self) -> bool {
         let transitioning =
             self.frame.moving() || self.reveal.moving() || self.greeting.active().is_some();
@@ -348,29 +311,22 @@ impl Plate {
         transitioning || home_motion
     }
 
-    /// How far the line has wound out round the page, eased 0..1.
     pub fn frame_progress(&self) -> f32 {
         self.frame.progress()
     }
 
-    /// The line has finished winding out and sits exactly round the column: content may show.
     pub fn frame_open(&self) -> bool {
         self.frame.open()
     }
 
-    /// the core the line winds around, plate device px (y up): centre.xy, half-size.xy
     fn core(&self) -> [f32; 4] {
         self.frame.core(self.dpr, self.w, self.h, self.lift())
     }
 
-    /// Line spacing in css px, set from the size of the script: titles are written at
-    /// SCRIPT_EM css px (SCRIPT_EM_PHONE on a phone), and the spacing follows from where the
-    /// atlas puts the x-height (XH_BAND of a turn).
     fn spacing(&self) -> f32 {
         self.script_em() * self.atlas.font_ref / (FONT * CONTROLS.em)
     }
 
-    /// The em the titles are written at, css px.
     fn script_em(&self) -> f32 {
         if self.w / self.dpr < crate::design::PLATE_SMALL_W {
             SCRIPT_EM_PHONE
@@ -379,14 +335,10 @@ impl Plate {
         }
     }
 
-    /// How far above the middle the spiral starts, device px: out of the portrait's forehead
-    /// on the home plate, back to the middle as the line frames a page.
     fn lift(&self) -> f32 {
         LIFT * self.w.min(self.h) * (1.0 - self.frame_progress())
     }
 
-    /// Greet a first visit: the greeting is written on the plate, then winds into the point
-    /// its line is drawn out of.
     pub fn greet(&mut self) {
         self.greeting.begin(crate::intro::Greeting::new());
         self.reveal.emerge();
@@ -396,7 +348,6 @@ impl Plate {
         self.greeting.being_written()
     }
 
-    /// Stop greeting now (plain paper was chosen): the line draws out as if it had finished.
     pub fn end_greeting(&mut self, cx: &mut Context<Self>) {
         if let Some(told) = self.greeting.end() {
             self.reveal.start_pen();
@@ -404,7 +355,6 @@ impl Plate {
         }
     }
 
-    /// Tell the site where the greeting has got to, and hand over to the pen when it's done.
     fn follow_greeting(&mut self, cx: &mut Context<Self>) {
         let Some(greeting) = self.greeting.active() else {
             return;
@@ -421,24 +371,16 @@ impl Plate {
         }
     }
 
-    /// How present the controls should be: they arrive with the plate as it rises after the
-    /// greeting, and are simply there otherwise.
     pub fn chrome(&self) -> f32 {
         self.reveal.chrome()
     }
 
-    /// Write the titles from their start at the first lettered turn (the timeline, newest at
-    /// the centre), rather than from wherever the seed drops into them.
     pub fn set_anchored(&mut self, on: bool) {
         self.anchored = on;
     }
 
-    /// Atlas px into the titles where the spiral's lettering begins.
     fn text_start(&self) -> f32 {
         if self.anchored {
-            // the newest title is the first one seen from the centre: the text starts on the first
-            // turn clear of the portrait (and of the six bare turns), so none of it is spent
-            // under the face; before it (a negative place in the text) the line stays bare
             let d = self.spacing() * self.dpr;
             let sc = self.atlas.font_ref / (d * CONTROLS.em);
             let tc = self.face_clear_turn().max(6.0);
@@ -448,10 +390,6 @@ impl Plate {
         }
     }
 
-    /// Where the timeline's lettering starts, in line spacings from the spiral's start: round the
-    /// oval the shader keeps titles out of (plate.wgsl morph_at), midway between its reach to the
-    /// side (where each turn begins) and its reach to the brow and chin, so the newest title sits
-    /// close by the face and only a little of the text is left under its top and bottom.
     fn face_clear_turn(&self) -> f32 {
         let d = self.spacing() * self.dpr;
         let mn = self.w.min(self.h);
@@ -461,10 +399,7 @@ impl Plate {
         0.5 * (side + tall) / d
     }
 
-    /// How many titles the lettering in view needs (with room to pan), judged by the titles
-    /// it has: 0 when it has enough or isn't the timeline.
     pub fn titles_wanted(&self) -> usize {
-        // the atlas holds no more: more titles would only be cut off again
         if !self.wants_more() || self.atlas.full {
             return 0;
         }
@@ -472,7 +407,6 @@ impl Plate {
         ((self.reach() / per.max(1.0)) * 1.3).ceil() as usize
     }
 
-    /// Atlas px of titles the lettering in view reaches.
     fn reach(&self) -> f32 {
         let d = self.spacing() * self.dpr;
         let sc = self.atlas.font_ref / (d * CONTROLS.em);
@@ -489,8 +423,6 @@ impl Plate {
         PI * d * tc * tc * sc + self.text_start()
     }
 
-    /// How many of `labels` (in order) the lettering in view would reach, with room to pan or
-    /// zoom out, judged from their lengths before any is set; None before the plate has a size.
     pub fn titles_to_fill<'a>(&self, labels: impl Iterator<Item = &'a str>) -> Option<usize> {
         if self.w <= 0.0 {
             return None;
@@ -502,14 +434,12 @@ impl Plate {
             if px > want {
                 break;
             }
-            // a script letter is a little under half an em; each title has an em of lead each side
             px += l.chars().count() as f32 * FONT * 0.45 + FONT * 1.3;
             n += 1;
         }
         Some(n)
     }
 
-    /// The lettering visible now reaches near the end of the titles it has: more should come.
     fn wants_more(&self) -> bool {
         if !self.anchored || self.w <= 0.0 || self.frame.has_page() {
             return false;
@@ -517,8 +447,6 @@ impl Plate {
         self.reach() > self.atlas.text_len * 0.8
     }
 
-    /// How far along the spiral the pen has drawn, device px of arc; None when there is no pen
-    /// or it has drawn the whole line.
     fn pen_arc(&self) -> Option<f32> {
         let ease = self.reveal.pen()?;
         let d = self.spacing() * self.dpr;
@@ -526,10 +454,7 @@ impl Plate {
         Some(PI * r * r / d)
     }
 
-    /// Advance the clocks: drift and breathing pause while a title is under the pointer.
     fn tick(&mut self) {
-        // waiting blank for a pen with no greeting on it: hold still, so after one frame it costs
-        // nothing (under a greeting the grain and glass keep moving)
         if self.reveal.waiting_for_pen() && self.greeting.active().is_none() {
             self.last = Instant::now();
             return;
@@ -555,7 +480,6 @@ impl Plate {
             let speed = CONTROLS.speed * (0.35 + 0.65 * ease(41.0, self.deal.osc[0]));
             self.e_warp = CONTROLS.warp * (0.35 + 0.65 * ease(29.0, self.deal.osc[1]));
             self.e_disp = CONTROLS.disp * (0.35 + 0.65 * ease(53.0, self.deal.osc[2]));
-            // waiting on a page: the drift runs several times faster, a visible "working"
             let quicken = if self.waiting { 6.0 } else { 1.0 };
             self.t += dt * speed * 0.9 * quicken;
             self.move_flares(dt);
@@ -565,7 +489,6 @@ impl Plate {
         }
     }
 
-    /// The first turn a light may ride: clear of the portrait (where the tone folds the line).
     fn first_flare_turn(&self) -> f32 {
         let mn = self.w.min(self.h);
         ((SUBJECT * 1.25 * mn + self.lift()) / (self.spacing() * self.dpr)).max(4.0)
@@ -573,8 +496,6 @@ impl Plate {
             + 4.0 * self.frame_progress()
     }
 
-    /// The lights ride the line: each glides along it at a steady pace (some outward, some in),
-    /// starting over from the other end once it leaves the screen.
     fn move_flares(&mut self, dt: f32) {
         if self.w <= 0.0 {
             return;
@@ -582,7 +503,6 @@ impl Plate {
         let d = self.spacing() * self.dpr;
         let core = self.core();
         let perimeter = 4.0 * (core[2] + core[3]);
-        // the farthest turn on screen, and the first one clear of the face
         let reach = (self.w.hypot(self.h) * 0.5 / self.view.z
             + self.view.x.hypot(self.view.y) / self.view.z)
             / d
@@ -596,7 +516,6 @@ impl Plate {
                 self.flares[i] = (radius * mn / d).floor().max(first.ceil()) + phase / TAU;
             }
             let p = self.flares[i];
-            // an unhurried pace along the line: ~8 css px a second, whatever the turn's length
             let along = TAU * d * (p + 0.5) + perimeter;
             let next = p + dir.signum() * dt * 8.0 * self.dpr / along.max(1.0);
             self.flares[i] = if next > reach {
@@ -606,7 +525,6 @@ impl Plate {
             } else {
                 next
             };
-            // a wrap starts the search afresh
             if (self.flares[i] - next).abs() > 0.5 {
                 found[i] = f32::NAN;
             }
@@ -614,8 +532,6 @@ impl Plate {
         self.flare_r.set(found);
     }
 
-    /// A light for the shader: where it is on the plate (device px from the spiral's start),
-    /// its pulse's phase and its hue.
     fn flare_uniform(&self, i: usize) -> [f32; 4] {
         let [_, _, phase, hue] = self.deal.fl[i];
         let p = if self.flares[i].is_nan() {
@@ -636,7 +552,6 @@ impl Render for Plate {
         let theme = Theme::of(window, cx);
         self.draw(window, &theme);
         self.follow_greeting(cx);
-        // asked after drawing: the draw is what finds the frame has a new column to wind to
         if self.animating() {
             window.request_animation_frame();
         }
@@ -666,7 +581,6 @@ impl Render for Plate {
                     .text_color(theme.accent)
                     .flex()
                     .gap(px(5.))
-                    // the reading face has no arrows; the mono face does
                     .child(
                         div()
                             .font_family(theme::MONO)

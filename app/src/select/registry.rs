@@ -1,7 +1,3 @@
-//! What one real render of a scope saw: every selectable block in document order, with the
-//! geometry to hit-test it and the rects to highlight it. Rebuilt on each real render and kept
-//! across replayed (cached) frames, whose geometry did not move.
-
 use std::ops::Range;
 use std::rc::Rc;
 
@@ -11,17 +7,12 @@ use gpui::{
 
 use super::model::{Fingerprint, Granularity, Join, Ordinal, Pos, Span};
 
-/// A block's geometry, in window coordinates. `TextLayout` implements it; tests use a grid.
 pub trait BlockGeometry {
     fn bounds(&self) -> Bounds<Pixels>;
     fn len(&self) -> usize;
-    /// The caret closest to a point inside `bounds`.
     fn caret(&self, p: Point<Pixels>) -> usize;
-    /// The glyph under a point: None off the text, including beside a short wrapped line.
     fn glyph(&self, p: Point<Pixels>) -> Option<usize>;
-    /// The word or hard line under a point inside `bounds`.
     fn group(&self, p: Point<Pixels>, kind: TextSelectionKind) -> Range<usize>;
-    /// One rect per visual line the byte range covers.
     fn rects(&self, range: Range<usize>) -> Vec<Bounds<Pixels>>;
     fn text(&self) -> String;
 }
@@ -34,14 +25,10 @@ pub struct Block<G> {
     pub join: Join,
     pub links: Rc<[Range<usize>]>,
     pub on_link: Option<OnLink>,
-    /// the text as given, when it was given as a string: a truncated block copies whole as this
     pub source: Option<SharedString>,
-    /// the element's hitbox: a press counts only where nothing drawn over the page covers it
     pub hitbox: Option<Hitbox>,
 }
 
-/// Where a point landed in a block: the caret, and the groups a double click or long press
-/// would take, so the reducer never has to ask for geometry.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Hit {
     pub pos: Pos,
@@ -79,15 +66,12 @@ impl<G: BlockGeometry> Registry<G> {
         self.building = Some(Vec::with_capacity(self.blocks.len()));
     }
 
-    /// Registers a block prepainting inside the scope. Outside one (deferred or anchored
-    /// content that prepaints after the scope committed) nothing is registered.
     pub fn push(&mut self, block: Block<G>) -> Option<Ordinal> {
         let building = self.building.as_mut()?;
         building.push(block);
         Some(Ordinal(building.len() as u32 - 1))
     }
 
-    /// Swaps the new render in. False when a selection's ends no longer name the same text.
     pub fn commit(&mut self, selection: Option<&Span>) -> bool {
         let Some(fresh) = self.building.take() else {
             return true;
@@ -120,14 +104,12 @@ impl<G: BlockGeometry> Registry<G> {
         self.blocks.get(o.0 as usize)
     }
 
-    /// The block under `p`, or the closest one by rect distance (document order breaks ties).
     pub fn nearest(&self, p: Point<Pixels>) -> Option<Ordinal> {
         let mut best: Option<(f32, usize)> = None;
         for (i, b) in self.blocks.iter().enumerate() {
             let r = b.geometry.bounds();
             let dx = f32::from((r.left() - p.x).max(p.x - r.right()).max(px(0.)));
             let dy = f32::from((r.top() - p.y).max(p.y - r.bottom()).max(px(0.)));
-            // a point beside a line belongs to that line, not to a nearer block in another row
             let d = dy * 4. + dx;
             if best.is_none_or(|(bd, _)| d < bd) {
                 best = Some((d, i));
@@ -136,8 +118,6 @@ impl<G: BlockGeometry> Registry<G> {
         best.map(|(_, i)| Ordinal(i as u32))
     }
 
-    /// The closest caret in block `o` to `p`, which may lie outside the block: above it is its
-    /// start, below it its end, beside it the nearer edge of that line.
     pub fn caret_at(&self, o: Ordinal, p: Point<Pixels>) -> Pos {
         let g = &self.blocks[o.0 as usize].geometry;
         let r = g.bounds();
@@ -155,7 +135,6 @@ impl<G: BlockGeometry> Registry<G> {
         Point::new(p.x.max(r.left()).min(r.right() - px(0.01)), p.y)
     }
 
-    /// Everything the reducer needs to know about a point in block `o`.
     pub fn hit(&self, o: Ordinal, p: Point<Pixels>) -> Hit {
         let b = &self.blocks[o.0 as usize];
         let g = &b.geometry;
@@ -173,8 +152,6 @@ impl<G: BlockGeometry> Registry<G> {
         } else {
             (pos, pos)
         };
-        // a link is what the pointer is on, not the nearest caret: the right half of its last
-        // character is still the link, and the right half of the character before it is not
         let link = g
             .glyph(p)
             .and_then(|byte| b.links.iter().position(|l| l.contains(&byte)));
@@ -186,7 +163,6 @@ impl<G: BlockGeometry> Registry<G> {
         }
     }
 
-    /// The whole document, for select-all.
     pub fn whole(&self) -> Option<(Pos, Pos)> {
         let last = self.blocks.last()?;
         Some((
@@ -199,7 +175,6 @@ impl<G: BlockGeometry> Registry<G> {
         self.blocks[o.0 as usize].geometry.rects(range)
     }
 
-    /// Every highlight rect of a span, in document order.
     pub fn span_rects(&self, span: &Span) -> Vec<Bounds<Pixels>> {
         let (s, e) = span.span();
         let mut out = Vec::new();
@@ -214,8 +189,6 @@ impl<G: BlockGeometry> Registry<G> {
         out
     }
 
-    /// The selection as plain text: each block's selected bytes, joined by what each block
-    /// puts before itself.
     pub fn text(&self, span: &Span) -> String {
         let (s, e) = span.span();
         let mut out = String::new();
@@ -226,10 +199,8 @@ impl<G: BlockGeometry> Registry<G> {
             };
             let shaped = b.geometry.text();
             let piece = match (span.range_in(Ordinal(i), shaped.len()), &b.source) {
-                // the whole of a truncated block is the text it was given, not the shaped prefix
                 (Some(r), Some(source)) if r == (0..shaped.len()) => source.as_ref(),
                 (Some(r), _) => shaped.get(r).unwrap_or(""),
-                // an empty block inside the span keeps its join: an empty table cell is a tab
                 (None, _) if shaped.is_empty() && s.block.0 < i && i < e.block.0 => "",
                 (None, _) => continue,
             };
@@ -243,7 +214,6 @@ impl<G: BlockGeometry> Registry<G> {
     }
 }
 
-/// A prepainted `TextLayout`: measured, with bounds, in window coordinates.
 pub struct Live {
     pub layout: TextLayout,
     pub bounds: Bounds<Pixels>,
@@ -297,7 +267,6 @@ impl BlockGeometry for Live {
 
 #[cfg(test)]
 pub(super) mod grid {
-    //! A monospace grid of `cell` px squares, one block per line of text, for tests.
     use super::*;
     use gpui::{point, size};
 
@@ -392,12 +361,10 @@ mod tests {
 
     #[test]
     fn nearest_prefers_the_block_beside_the_point_over_a_closer_corner() {
-        // lines at y 100, 130, 160 of 10px height; a point in the right margin of the 2nd
         let r = registry(&["one two", "three four five", "six"]);
         assert_eq!(r.nearest(at(400., 135.)), Some(Ordinal(1)));
         assert_eq!(r.nearest(at(120., 50.)), Some(Ordinal(0)));
         assert_eq!(r.nearest(at(120., 500.)), Some(Ordinal(2)));
-        // in the gap just under line 0 (ends at 110): line 0
         assert_eq!(r.nearest(at(120., 112.)), Some(Ordinal(0)));
     }
 
@@ -429,11 +396,8 @@ mod tests {
         b.links = Rc::from(vec![4..8]);
         r.push(b);
         r.commit(None);
-        // the right half of the link's last character (byte 7, whose caret rounds to 8)
         assert_eq!(r.hit(Ordinal(0), at(178., 105.)).link, Some(0));
-        // the right half of the space before it (byte 3, whose caret rounds to 4)
         assert_eq!(r.hit(Ordinal(0), at(138., 105.)).link, None);
-        // beside the line, past its end
         assert_eq!(r.hit(Ordinal(0), at(260., 105.)).link, None);
     }
 

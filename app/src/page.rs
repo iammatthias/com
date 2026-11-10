@@ -1,7 +1,3 @@
-//! A content page: the scrolling reading column, and the probe the plate
-//! frames. Rendered as a cached view, so the plate can animate every frame without
-//! the article being laid out again.
-
 use gpui::prelude::*;
 use gpui::{Context, Entity, ScrollHandle, Window, div};
 
@@ -19,26 +15,20 @@ use crate::theme::{self, Theme};
 pub enum Load {
     Loading,
     Ready(RoutePayload),
-    /// it didn't load (why is in the console)
     Failed,
 }
 
 pub struct Page {
     pub load: Load,
-    /// the path `load` is for (the address moves on before the next one is in)
     path: String,
     nav: Navigate,
     scroll: ScrollHandle,
     pub probe: Probe,
     dark: Option<bool>,
-    /// how far the text has faded up, 0..1
     shown: f32,
     covered: bool,
-    /// this page's decoded images; replaced (and so freed) when the next page loads
     images: Entity<NearCache>,
-    /// the next route is loading; what's showing is the previous page
     pending: bool,
-    /// the text the reader has selected, if any; cleared when the path changes
     selection: Selection,
 }
 
@@ -59,24 +49,18 @@ impl Page {
         }
     }
 
-    /// A new route is on its way. The current page stays up until it arrives, so the frame
-    /// never stands empty; `ready()` turns false until then.
     pub fn loading(&mut self, cx: &mut Context<Self>) {
         self.pending = true;
         cx.notify();
     }
 
-    /// The route on its way went elsewhere (a redirect off the site): what's showing stays.
     pub fn keep(&mut self, cx: &mut Context<Self>) {
         self.pending = false;
         cx.notify();
     }
 
-    /// The new route's content: swap it in at the top, with a fresh image cache
-    /// (a phone can't hold every gallery it has seen).
     pub fn set(&mut self, load: Load, cx: &mut Context<Self>) {
         self.load = load;
-        // Site sets a payload only for the route the address now shows
         self.path = crate::route::current();
         self.pending = false;
         self.images = NearCache::new(cx);
@@ -85,12 +69,10 @@ impl Page {
         cx.notify();
     }
 
-    /// Some page is showing (the current one, or the last while the next loads).
     pub fn has_content(&self) -> bool {
         matches!(self.load, Load::Ready(_) | Load::Failed)
     }
 
-    /// Fade the text: re-renders (breaking the cache) only while the value moves.
     pub fn set_shown(&mut self, shown: f32, cx: &mut Context<Self>) {
         if (shown - self.shown).abs() > 0.001 {
             self.shown = shown;
@@ -108,7 +90,6 @@ impl Page {
         }
     }
 
-    /// The page is off the screen (the plate shows alone): its selection goes with it.
     pub fn hidden(&mut self, cx: &mut Context<Self>) {
         crate::dom_video::clear();
         self.selection.reset(cx);
@@ -118,7 +99,6 @@ impl Page {
         !self.pending && !matches!(self.load, Load::Loading)
     }
 
-    /// Re-render when the system switches between light and dark.
     pub fn follow_appearance(&mut self, dark: bool, cx: &mut Context<Self>) {
         if self.dark != Some(dark) {
             self.dark = Some(dark);
@@ -137,7 +117,6 @@ impl Render for Page {
         near::watch(cx.weak_entity(), window);
         self.images
             .update(cx, |images, cx| images.sweep(window, cx));
-        // whatever is showing, a page that failed included: the last page's embeds go
         let stage = Stage {
             hidden: self.covered || self.shown <= 0.99,
             under_controls: design::controls_cover_column(window).then(|| {
@@ -174,13 +153,10 @@ impl Render for Page {
                 content::view(payload, &self.nav, &theme, &self.selection, window, cx)
             }
         };
-        // how long building the page's element tree took, in the #perf log
         crate::mark(&format!(
             "page render {:.2}ms",
             started.elapsed().as_secs_f64() * 1e3
         ));
-        // clear of the controls, with air between them and the page (the frame round it comes
-        // down with it), and of the status bar and notch the canvas reaches under
         let top = if design::is_phone(window) {
             108.0
         } else {

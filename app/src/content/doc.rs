@@ -34,8 +34,6 @@ pub fn doc(
         .reading_minutes
         .unwrap_or_else(|| (parsed.words as f32 / 230.).ceil().max(1.) as u32);
 
-    // the header: where it was published (in that section's colour) and when, the title, the
-    // standfirst, its tags; then one hairline, the contents, and the text
     let mut kicker = div()
         .flex()
         .flex_wrap()
@@ -146,8 +144,6 @@ pub fn doc(
     col.into_any_element()
 }
 
-/// The record's terrazzo, as @com draws it at the foot of every record: seeded by
-/// `<rkey>:<cid>`, so each keeps the pattern it had there.
 pub(super) fn terrazzo_banner(
     rkey: &str,
     cid: &str,
@@ -269,7 +265,6 @@ pub(super) fn colophon(c: Colophon, key: &str, theme: &Theme, sel: &Selection) -
 }
 
 fn related(items: &[RelatedRef], key: &str, nav: &Navigate, theme: &Theme) -> AnyElement {
-    // as @com's cards: title, kind in its colour, date, the first lines of the description
     div()
         .flex()
         .flex_col()
@@ -347,7 +342,6 @@ fn prev_next(
         .into_any_element()
 }
 
-/// Tags as small rounded chips: `# ai`.
 fn tag_chips(tags: &[String], key: &str, nav: &Navigate, theme: &Theme) -> AnyElement {
     let mut row = div().flex().flex_wrap().gap(px(6.));
     for (i, t) in tags.iter().enumerate() {

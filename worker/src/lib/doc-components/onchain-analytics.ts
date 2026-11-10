@@ -6,7 +6,6 @@ const CONTRACT_URL =
 const LINK_TEXT = "Read the onchain analytics contract on Basescan";
 const BLOBS = "https://blobs.farfield.systems/blobs/";
 
-/** The contract's finished record, every log one JSONL line (com's lib/doc-components/onchain-analytics.ts). */
 function recordUrl(src: string | undefined): string | null {
     if (!src) return null;
     return src.startsWith("blob://") ? BLOBS + src.slice("blob://".length) : src.startsWith("https://") ? src : "";
@@ -18,7 +17,6 @@ export const onchainAnalytics: DocComponent = {
     render(props): string {
         const record = recordUrl(props.src);
         const download = record ? ` · <a href="${escapeAttr(record)}" rel="noopener">Download the record as JSONL</a>` : "";
-        // only the links, as for the tuner: the app hosts the live element over its canvas
         return `<div class="ff-onchain-analytics"><p class="ff-onchain-analytics-fallback"><a href="${CONTRACT_URL}" rel="noopener">${LINK_TEXT}</a>${download}</p></div>`;
     },
 

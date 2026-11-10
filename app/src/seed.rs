@@ -1,9 +1,3 @@
-//! The visitor's seed, as the artifact deals it: hashed from the browser and the moment
-//! they arrived, so every visit draws its own plate, and the root of every random choice
-//! the plate makes. `#s<hex>` in the URL replays a plate. A first-party cookie remembers
-//! only that the greeting has been written for them.
-
-/// FNV-1a over UTF-16 code units, as the old site and the artifact hash strings.
 pub fn hash(s: &str) -> u32 {
     let mut h: u32 = 0x811c9dc5;
     for unit in s.encode_utf16() {
@@ -13,7 +7,6 @@ pub fn hash(s: &str) -> u32 {
     h
 }
 
-/// mulberry32: a small, fast, seedable stream of floats in [0, 1).
 pub struct Rng(u32);
 
 impl Rng {
@@ -34,11 +27,9 @@ impl Rng {
     }
 }
 
-/// What the cookie remembers about this visitor.
 #[derive(Clone, Copy, Debug)]
 pub struct Visitor {
     pub seed: u32,
-    /// the greeting has already been written for them once
     pub seen_intro: bool,
 }
 
@@ -69,7 +60,6 @@ pub fn visitor() -> Visitor {
         if k != COOKIE {
             return None;
         }
-        // `1`, or the older `<seed>.<seen>` from when the cookie kept the seed too
         let seen = v.rsplit('.').next().unwrap_or(v);
         Some(seen == "1")
     });
@@ -93,7 +83,6 @@ pub fn visitor() -> Visitor {
     }
 }
 
-/// Remember whether the intro has played (the seed is never stored).
 #[cfg(target_family = "wasm")]
 pub fn remember(seen_intro: bool) {
     use wasm_bindgen::JsCast as _;
@@ -119,7 +108,6 @@ mod tests {
 
     #[test]
     fn fnv_matches_js() {
-        // reference values from the JS implementation (Math.imul, >>> 0)
         assert_eq!(hash(""), 0x811c9dc5);
         assert_eq!(hash("a"), 0xe40c292c);
         assert_eq!(hash("foobar"), 0xbf9cf968);

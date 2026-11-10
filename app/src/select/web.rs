@@ -1,15 +1,8 @@
-//! The browser's own copy paths. Edit > Copy fires a `copy` event on the focused element (gpui's
-//! hidden IME textarea), which a document-level listener answers with the selection. No DOM
-//! element is ever focused or given a DOM selection: gpui's keyboard lives on that textarea.
-
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::Closure;
 
 use super::scope::Selection;
 
-/// The selection a copy command should take, unless a DOM field (an app's own input) has the
-/// focus and a selection of its own: that copy is the field's. gpui's IME textarea is always
-/// empty, so it never claims one.
 fn selected_text(document: &web_sys::Document) -> Option<String> {
     let focused = document.active_element()?;
     let field_selected = |start: Option<u32>, end: Option<u32>| start != end;
@@ -30,8 +23,6 @@ pub fn install() {
     let Some(document) = web_sys::window().and_then(|w| w.document()) else {
         return;
     };
-    // a cancelled beforecopy is what enables the Copy menu item while nothing in the DOM is
-    // selected
     let doc = document.clone();
     let before = Closure::<dyn FnMut(web_sys::Event)>::new(move |e: web_sys::Event| {
         if selected_text(&doc).is_some() {
@@ -60,14 +51,12 @@ pub fn install() {
     copy.forget();
 }
 
-/// `navigator.clipboard` exists only on a secure origin (and a test may take it away).
 pub fn has_clipboard_api() -> bool {
     web_sys::window().is_some_and(|w| {
         js_sys::Reflect::get(&w.navigator(), &"clipboard".into()).is_ok_and(|v| !v.is_undefined())
     })
 }
 
-/// The browser's copy command, which fires the `copy` event the listener above answers.
 pub fn copy_by_command() {
     let document = web_sys::window()
         .and_then(|w| w.document())
@@ -77,8 +66,6 @@ pub fn copy_by_command() {
     }
 }
 
-/// The selection's geometry as JSON, for browser tests that cannot read the canvas: the text,
-/// its highlight rects, and where the Copy pill was drawn (null when it wasn't).
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn selection_debug() -> String {
     let Some(scope) = Selection::active() else {

@@ -1,8 +1,3 @@
-// The boot's retry (index.html __bootFailed), in Chrome and WebKit: other origins' failures
-// never reload the page or show. A missing app file's quiet retries are boot-retry.mjs's.
-//
-//   bun boot.mjs [base-url]
-
 import { base, open, check, done } from "./lib.mjs";
 
 const state = (page) =>
@@ -31,7 +26,6 @@ for (const kind of ["desktop", "phone"]) {
         kind,
         "foreign throw",
         async (ctx) => {
-            // the beacon's own host: the one other origin the site's CSP lets run, so this is real live too
             await ctx.route(/cloudflareinsights\.com/, (r) => r.fulfill({ contentType: "text/javascript", body: 'throw new TypeError("Failed to fetch");' }));
             await ctx.addInitScript(() =>
                 document.addEventListener("readystatechange", () => {

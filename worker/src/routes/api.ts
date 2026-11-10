@@ -13,8 +13,6 @@ import { purgeTags } from "../lib/edge-purge";
 import { getContentCache } from "../lib/runtime-env";
 import { assetResponse, etagFor } from "../lib/http";
 
-/** Ported from com/src/pages/api/*. */
-
 async function contentJson({ url }: Ctx): Promise<Response> {
     const section = url.searchParams.get("section") ?? undefined;
     const tag = url.searchParams.get("tag") ?? undefined;
@@ -97,7 +95,6 @@ async function searchCorpusJson(): Promise<Response> {
     ]);
     const body = JSON.stringify({ items: buildSearchCorpus(docs, feed) });
     if (failed > 0) {
-        // a partial corpus serves this request only: no ETag, nothing cached
         return new Response(body, {
             status: failed === 2 ? 503 : 200,
             headers: { "Content-Type": "application/json", "Cache-Control": "no-store", [EDGE_CACHE_HEADER]: "no-store" },
@@ -106,8 +103,6 @@ async function searchCorpusJson(): Promise<Response> {
     const response = new Response(body, {
         headers: { "Content-Type": "application/json", ETag: await etagFor(body) },
     });
-    // Unlike com (which bypassed the edge here), cached at the edge and purged
-    // with the documents/feed-entries tags; the ETag makes client revalidation a 304.
     setResponseCacheHeaders(
         response,
         { lastModified: docs.length ? new Date(docs[0].publishedAt) : new Date(), tags: [DOCUMENTS_TAG] },
@@ -118,12 +113,6 @@ async function searchCorpusJson(): Promise<Response> {
 
 export const SEARCH_VECTORS_KV_KEY = "search-vectors:v1";
 
-/**
- * The old site embedded the corpus with ternlight at build time. That model
- * (~7 MB of wasm) does not belong in the Worker, so the vectors are built
- * offline (scripts/build-search-vectors.ts) and stored in CONTENT_CACHE.
- * Without them this serves the same empty shape the old dev server did.
- */
 async function searchVectorsJson(): Promise<Response> {
     const kv = await getContentCache();
     const stored = kv ? await kv.get(SEARCH_VECTORS_KV_KEY, "text").catch(() => null) : null;

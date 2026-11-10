@@ -1,7 +1,3 @@
-//! Mermaid-syntax diagrams, drawn by pele in the browser (themed to the paper, set in Inter),
-//! rasterized there, and shown on the canvas as an image. Each source is asked for once per
-//! theme and width; the page redraws when its pixels arrive.
-
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -18,29 +14,21 @@ pub enum Diagram {
         width: f32,
         height: f32,
     },
-    /// drawn as its source instead
     Failed,
 }
 
-/// most diagrams kept drawn (each a full raster)
 const KEEP: usize = 24;
 
 thread_local! {
     static DIAGRAMS: RefCell<HashMap<u64, Diagram>> = RefCell::new(HashMap::new());
-    /// the order they were asked for, oldest first, to let the oldest go
     static ORDER: RefCell<std::collections::VecDeque<u64>> = RefCell::new(Default::default());
-    /// images let go, for the page to free from the GPU on its next render
     static EVICTED: RefCell<Vec<Arc<RenderImage>>> = RefCell::new(Vec::new());
-    /// the font has crossed to the browser (it is only read on the first diagram)
     static FONT_SENT: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
-    /// failed because their code didn't load, not their source
     static LOAD_FAILED: RefCell<std::collections::HashSet<u64>> = RefCell::new(Default::default());
-    /// retry_failed_loads listens for the network coming back
     static RECONNECT_HEARD: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
     static READY: crate::site::signal::Signal<()> = const { crate::site::signal::Signal::new() };
 }
 
-/// A signal for every diagram that finishes, so the page can redraw.
 pub fn subscribe() -> futures::channel::mpsc::UnboundedReceiver<()> {
     READY.with(|r| r.subscribe())
 }
@@ -55,7 +43,6 @@ fn key(source: &str, dark: bool, width: f32, dpr: f32) -> u64 {
     h.finish()
 }
 
-/// Images let go since the last call, to hand to `drop_image`.
 pub fn take_evicted() -> Vec<Arc<RenderImage>> {
     EVICTED.with(|e| std::mem::take(&mut *e.borrow_mut()))
 }
@@ -70,7 +57,6 @@ fn hex(c: Rgba) -> String {
     )
 }
 
-/// What's known for `k`, or None after marking it on its way (the caller then asks for it).
 fn begin(k: u64) -> Option<Diagram> {
     if let Some(d) = DIAGRAMS.with(|m| m.borrow().get(&k).cloned()) {
         return Some(d);
@@ -91,7 +77,6 @@ fn begin(k: u64) -> Option<Diagram> {
     None
 }
 
-/// The diagram for `source` at `width` css px: drawn, on its way (asked for now if new), or failed.
 pub fn get(source: &str, theme: &Theme, width: f32, dpr: f32) -> Diagram {
     let dpr = dpr.clamp(1.0, 2.0);
     let k = key(source, theme.dark, width, dpr);
@@ -112,7 +97,6 @@ pub fn get(source: &str, theme: &Theme, width: f32, dpr: f32) -> Diagram {
 }
 
 fn finish(k: u64, d: Diagram) {
-    // a diagram let go while it was drawing stays let go
     if DIAGRAMS.with(|m| !m.borrow().contains_key(&k)) {
         return;
     }
@@ -126,10 +110,8 @@ mod web {
     use wasm_bindgen::closure::Closure;
     use wasm_bindgen::prelude::wasm_bindgen;
 
-    /// How dom.js's renderDiagram starts the error of a module that didn't load (its `code`).
     const LOAD_ERROR: &str = "load:";
 
-    /// `k`'s code didn't load: asked for again once the network may be back.
     fn load_failed(k: u64) {
         LOAD_FAILED.with(|f| f.borrow_mut().insert(k));
         if !RECONNECT_HEARD.replace(true) {
@@ -137,7 +119,6 @@ mod web {
         }
     }
 
-    /// Forget every diagram whose code didn't load, so the page's next render asks for it again.
     fn retry_failed_loads() {
         let failed = LOAD_FAILED.with(|f| std::mem::take(&mut *f.borrow_mut()));
         if failed.is_empty() {
@@ -162,7 +143,6 @@ mod web {
         );
     }
 
-    /// The callback the browser hands the pixels (or an error) back through.
     fn received() -> wasm_bindgen::JsValue {
         Closure::once_into_js(
             move |key: String,
@@ -174,10 +154,7 @@ mod web {
                   error: String| {
                 let Ok(k) = key.parse::<u64>() else { return };
                 if !error.is_empty() || w == 0 || h == 0 {
-                    // the page shows the source instead; why is for the console
                     web_sys::console::warn_1(&format!("diagram: {error}").into());
-                    // its code didn't arrive (not its source at fault): the source meanwhile, and
-                    // another try once the network is back
                     if error.starts_with(LOAD_ERROR) {
                         load_failed(k);
                     }
@@ -186,7 +163,7 @@ mod web {
                 }
                 let mut px = rgba.to_vec();
                 for p in px.chunks_exact_mut(4) {
-                    p.swap(0, 2); // RGBA → the BGRA gpui draws
+                    p.swap(0, 2);
                 }
                 let Some(buffer) = image::RgbaImage::from_raw(w, h, px) else {
                     web_sys::console::warn_1(&"diagram: bad pixel buffer".into());
@@ -209,7 +186,6 @@ mod web {
     pub fn render(k: u64, source: &str, palette: &str, width: f32, dpr: f32) {
         use wasm_bindgen::JsCast as _;
         let done = received();
-        // Inter for the diagrams' text, sent once: the browser keeps it after the first
         let font: &[u8] = if FONT_SENT.replace(true) {
             &[]
         } else {

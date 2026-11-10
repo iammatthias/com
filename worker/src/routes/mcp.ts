@@ -15,8 +15,6 @@ import {
 } from "../lib/agent-surface";
 import { homepageMarkdown, developersMarkdown, authMarkdown, pricingMarkdown } from "../lib/agent-markdown";
 
-/** Ported from com/src/pages/mcp.ts, plus protocol negotiation, batches, and SSE replies. */
-
 const RESOURCES = [
     {
         uri: `${SITE_ORIGIN}/index.md`,
@@ -222,7 +220,6 @@ async function callTool(name: string, args: Record<string, unknown>) {
     }
 }
 
-/** Echo the client's version when we speak it; otherwise offer our latest (spec: lifecycle/version negotiation). */
 export function negotiateProtocol(requested: unknown): string {
     return typeof requested === "string" &&
         (MCP_SUPPORTED_PROTOCOL_VERSIONS as readonly string[]).includes(requested)
@@ -345,7 +342,6 @@ export async function mcpPost({ request }: Ctx): Promise<Response> {
     if (messages.length === 0) {
         return reply(rpcError(null, -32600, "Invalid request: empty batch"), accept);
     }
-    // each message may load content: a batch is bounded like any other request
     if (messages.length > MAX_BATCH) {
         return reply(rpcError(null, -32600, `Invalid request: a batch holds at most ${MAX_BATCH} messages`), accept);
     }
@@ -397,7 +393,6 @@ export function mcpGet({ request }: Ctx): Response {
     );
 }
 
-/** Sessions are stateless; a DELETE is acknowledged so clients can close cleanly. */
 function mcpDelete(): Response {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
 }

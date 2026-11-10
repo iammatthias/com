@@ -1,7 +1,3 @@
-//! URL ⇄ route, and the browser history the canvas otherwise knows nothing about.
-
-/// The route families the site serves. Anything the app does not recognise is still
-/// handed to the Worker, which knows every redirect and fallback.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Route {
     Home,
@@ -25,18 +21,12 @@ impl Route {
     }
 }
 
-/// Paths the site owns and opens in place; everything else leaves in a new tab.
 pub fn is_internal(href: &str) -> bool {
-    // a backslash reads as a slash in a URL, so "/\\host" is protocol-relative too
     let relative = href.starts_with('/') && !href.starts_with("//") && !href.contains('\\');
     let ours = relative || site_path(href).is_some();
     ours && !is_document(&to_path(href))
 }
 
-/// What a new tab may be opened on: a web page or a mail address, or a link with no scheme at
-/// all (a document of ours, a protocol-relative one). Control characters never qualify, and
-/// the ends are trimmed first: a browser strips both, which would turn ` java\tscript:` back
-/// into a script.
 pub fn is_openable(href: &str) -> bool {
     if href.chars().any(char::is_control) {
         return false;
@@ -53,8 +43,6 @@ pub fn is_openable(href: &str) -> bool {
     !has_scheme || ["http", "https", "mailto"].contains(&scheme.to_ascii_lowercase().as_str())
 }
 
-/// The path of an absolute URL on this site (this origin or iammatthias.com), if it is one.
-/// The host must end where the path begins: `iammatthias.com.example` is someone else.
 fn site_path(href: &str) -> Option<String> {
     let origin = origin();
     for prefix in [
@@ -81,8 +69,6 @@ fn site_path(href: &str) -> Option<String> {
     None
 }
 
-/// A file the Worker serves beside the pages (markdown twins, feeds, llms.txt, the agent
-/// surface, images): the browser opens it, the app doesn't route to it.
 pub fn is_document(path: &str) -> bool {
     let path = path.split(['?', '#']).next().unwrap_or(path);
     const FILES: [&str; 9] = [
@@ -99,7 +85,6 @@ pub fn is_document(path: &str) -> bool {
     FILES.iter().any(|ext| path.ends_with(ext)) || ROOTS.iter().any(|root| path.starts_with(root))
 }
 
-/// An internal href as a site path: `https://iammatthias.com/posts/x` → `/posts/x`.
 pub fn to_path(href: &str) -> String {
     site_path(href).unwrap_or_else(|| href.to_string())
 }
@@ -117,7 +102,6 @@ mod web {
         fn on_reconnect_js(f: &js_sys::Function);
     }
 
-    /// Bring the head and the server-rendered page under the canvas up to date with `path`.
     pub fn sync_document(path: &str) {
         sync_document_js(path);
     }
@@ -135,8 +119,6 @@ mod web {
         loc.pathname().unwrap_or_else(|_| "/".into())
     }
 
-    /// How many of the site's own views lie behind this one (kept in the history entry's
-    /// state): 0 when the visitor arrived here from elsewhere.
     pub fn depth() -> u32 {
         web_sys::window()
             .and_then(|w| w.history().ok())
@@ -160,7 +142,6 @@ mod web {
         }
     }
 
-    /// The browser's back, within the site.
     pub fn back() {
         if let Some(history) = web_sys::window().and_then(|w| w.history().ok()) {
             let _ = history.back();
@@ -178,12 +159,10 @@ mod web {
             return;
         }
         if let Some(w) = web_sys::window() {
-            // noopener: the new tab gets no handle on this one
             let _ = w.open_with_url_and_target_and_features(href, "_blank", "noopener,noreferrer");
         }
     }
 
-    /// Calls `f` with the new path whenever the browser's back/forward moves us.
     pub fn on_popstate(f: impl Fn(String) + 'static) {
         use wasm_bindgen::JsCast as _;
         use wasm_bindgen::closure::Closure;
@@ -195,7 +174,6 @@ mod web {
         cb.forget();
     }
 
-    /// `f` when the network may be back (dom.js's onReconnect, which the embeds use too).
     pub fn on_reconnect(f: impl Fn() + 'static) {
         use wasm_bindgen::JsCast as _;
         use wasm_bindgen::closure::Closure;
@@ -251,7 +229,6 @@ mod tests {
         assert!(is_internal("/posts/x"));
         assert!(is_internal("https://iammatthias.com/art"));
         assert!(!is_internal("//cdn.example.com/x"));
-        // a browser reads "\\" as "/": this one is another host
         assert!(!is_internal("/\\evil.example"));
         assert!(!is_internal("https://example.com"));
         assert!(!is_internal("/rss.xml"));

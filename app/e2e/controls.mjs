@@ -1,8 +1,3 @@
-// The top-left pill: arrived on a page from elsewhere it's "home" alone; come through the site
-// it's "home | back", each half its own target. Desktop and phone.
-//
-//   bun controls.mjs [base-url] [shot-dir]
-
 import { base, open, check, done, path } from "./lib.mjs";
 
 const POST = "/posts/1789494942000-own-the-means-of-cognition";
@@ -13,7 +8,6 @@ for (const kind of ["desktop", "phone"]) {
     const { browser, page, errors } = await open(kind);
     const tap = (x, y) => (kind === "phone" ? page.touchscreen.tap(x, y) : page.mouse.click(x, y));
     const { width, height } = page.viewportSize();
-    // a page reached inside the site, from About: Find, then Enter (so back and home differ)
     const through = async () => {
         await page.goto(base + "/about");
         await page.waitForTimeout(kind === "phone" ? 11000 : 9000);
@@ -25,7 +19,6 @@ for (const kind of ["desktop", "phone"]) {
         await page.keyboard.press("Enter");
         await page.waitForTimeout(6000);
     };
-    // the pill sits INSET from the corner; its halves are ~70px wide each
     const y = 36;
 
     await page.goto(base + POST);

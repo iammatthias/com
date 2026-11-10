@@ -1,7 +1,3 @@
-//! The home page's state (the section, the open panel, plain paper, the query) and, on plain
-//! paper, the index as a page: @com's deck, then everything by year as plain script links.
-//! The panels themselves are in `drawers`.
-
 use gpui::prelude::*;
 use gpui::{AnyElement, SharedString, div, px};
 
@@ -15,11 +11,8 @@ use crate::theme::{self, Theme};
 #[derive(Clone, Default)]
 pub struct Home {
     pub section: Option<String>,
-    /// the panel that's open, if any (one at a time)
     pub open: Option<Drawer>,
-    /// no shader anywhere: plain paper pages and the list for an index
     pub plain: bool,
-    /// what's typed in "Find a title"
     pub query: String,
 }
 
@@ -28,19 +21,16 @@ impl Home {
         Self {
             section: None,
             open: None,
-            // plain paper (and the index as a list); the old separate list view counts as plain
             plain: prefs::get("engraving").as_deref() == Some("off")
                 || prefs::get("view").as_deref() == Some("list"),
             query: String::new(),
         }
     }
 
-    /// Narrowed to a section or a search: the index letters the spiral, not the timeline.
     pub fn narrowed(&self) -> bool {
         self.section.is_some() || !self.query.trim().is_empty()
     }
 
-    /// Titles matching the query, in index order.
     pub fn matches<'a>(&self, index: &'a Index) -> Vec<&'a Item> {
         let q = self.query.trim().to_lowercase();
         if q.is_empty() {
@@ -76,7 +66,6 @@ impl Home {
     }
 }
 
-/// The one rule every search on the site uses: the lowercased query in the title or a tag.
 pub fn matches_query(item: &Item, q_lower: &str) -> bool {
     if q_lower.is_empty() {
         return true;
@@ -90,13 +79,10 @@ pub fn matches_query(item: &Item, q_lower: &str) -> bool {
     }
 }
 
-/// @com's home, as a deck: the Glass photograph in its arch, the introduction, and a panel
-/// for each collection, freshest first. (The feed's notes run in the list below, by date.)
 fn deck(index: &Index, nav: &Navigate, t: &Theme, window: &gpui::Window) -> AnyElement {
     let t = *t;
     let mut col = div().w_full().flex().flex_col().gap(px(36.));
 
-    // the hero: a 6:7 window with a round top, tinted with the photograph's own colour
     if let Some(pick) = index.glass_pick.as_ref() {
         let vh = f32::from(window.viewport_size().height);
         let vw = f32::from(window.viewport_size().width);
@@ -147,7 +133,6 @@ fn deck(index: &Index, nav: &Navigate, t: &Theme, window: &gpui::Window) -> AnyE
                         .border_color(tint)
                         .bg(tint)
                         .overflow_hidden()
-                        // the image carries the arch itself: clipping doesn't follow rounded corners
                         .child(crate::content::media::picture(
                             pick.image.clone(),
                             move |i| {
@@ -162,7 +147,6 @@ fn deck(index: &Index, nav: &Navigate, t: &Theme, window: &gpui::Window) -> AnyE
         );
     }
 
-    // the introduction
     let mut intro = index
         .intro
         .split("\n\n")
@@ -190,7 +174,6 @@ fn deck(index: &Index, nav: &Navigate, t: &Theme, window: &gpui::Window) -> AnyE
         );
     }
 
-    // a panel per collection, the most recently added to first
     let latest = |slug: &str| {
         index
             .items
@@ -266,7 +249,6 @@ fn deck(index: &Index, nav: &Navigate, t: &Theme, window: &gpui::Window) -> AnyE
     col.child(panels).into_any_element()
 }
 
-/// A feed note's line in the list: its first words, or what it is when it's only pictures.
 fn note_title(excerpt: &str) -> String {
     let words = excerpt.split_whitespace().collect::<Vec<_>>().join(" ");
     if words.is_empty() {
@@ -279,7 +261,6 @@ fn note_title(excerpt: &str) -> String {
     format!("{}…", cut.rsplit_once(' ').map(|(a, _)| a).unwrap_or(&cut))
 }
 
-/// A feed note as one line: its first words, or for a picture alone, when it was posted.
 pub fn note_line(excerpt: &str, created_at: &str) -> String {
     if excerpt.split_whitespace().next().is_some() {
         note_title(excerpt)
@@ -288,7 +269,6 @@ pub fn note_line(excerpt: &str, created_at: &str) -> String {
     }
 }
 
-/// A deck column's head: its name as a link, and how many it holds.
 fn column_head(
     name: &str,
     count: usize,
@@ -341,7 +321,6 @@ pub fn list(
         .flex()
         .flex_col()
         .gap(px(28.));
-    // @com's home first (unless narrowed to a section or a search), then everything by year
     if home.section.is_none() && q.is_empty() {
         col = col.child(deck(index, nav, theme, window)).child(
             div().pt(px(12.)).child(
@@ -354,8 +333,6 @@ pub fn list(
         );
     }
     let mut any = false;
-    // newest first across every section and the feed's notes, in years, each marked with
-    // where it was published, in that section's colour
     struct Entry {
         title: String,
         href: String,

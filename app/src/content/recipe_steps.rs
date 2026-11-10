@@ -1,11 +1,3 @@
-//! Step mode for a recipe, ported from the old site's `recipe-interactive.ts`: pick a step (in
-//! the grid or the method) and the grid dims to that step's cell and the rows it combines, a
-//! stage above the grid reads the step out, Back/Next/Exit (and ←/→/Esc) move through them,
-//! and a step with a duration gets a countdown with start/pause and reset.
-//!
-//! The clock only asks for redraws while it runs: a small task notifies the page a few times
-//! a second and is dropped (cancelling it) when the clock stops.
-
 use std::rc::Rc;
 
 use gpui::prelude::*;
@@ -19,14 +11,10 @@ use super::recipe_view::RecipeState;
 use super::render::{self, Ctx, alpha, label};
 use super::state;
 
-/// A countdown for the active step.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Clock {
-    /// the step's full duration, seconds (0: the step has none)
     pub total: u32,
-    /// seconds left when it last stopped
     pub left: f32,
-    /// running since
     pub since: Option<web_time::Instant>,
 }
 
@@ -56,7 +44,6 @@ impl Clock {
     }
 }
 
-/// `m:ss`, or `h:mm:ss` past the hour, rounding up so a fresh minute reads whole.
 pub fn fmt_clock(secs: f32) -> String {
     let n = secs.max(0.).ceil() as u32;
     let (h, m, s) = (n / 3600, n / 60 % 60, n % 60);
@@ -75,7 +62,6 @@ fn tick_key(state: &ElementId) -> String {
     format!("{state}:tick")
 }
 
-/// The recipe's focus handle: step mode listens for its keys there.
 pub fn focus_handle(state: &ElementId, cx: &mut App) -> FocusHandle {
     let key = focus_key(state);
     if let Some(h) = state::slot(&key, || None::<FocusHandle>, |h| h.clone()) {
@@ -86,7 +72,6 @@ pub fn focus_handle(state: &ElementId, cx: &mut App) -> FocusHandle {
     h
 }
 
-/// Move to step `i` (clamped), or out of step mode with `None`. The clock re-arms for the new step.
 pub fn go(st: &ElementId, rec: &Recipe, i: Option<usize>, window: &mut Window, cx: &mut App) {
     let n = rec.steps.len();
     let i = i.map(|i| i.min(n.saturating_sub(1)));
@@ -104,7 +89,6 @@ pub fn go(st: &ElementId, rec: &Recipe, i: Option<usize>, window: &mut Window, c
     }
 }
 
-/// Click on a step: into step mode there, or out if it is already the one shown.
 pub fn pick(st: &ElementId, rec: &Recipe, i: usize, window: &mut Window, cx: &mut App) {
     let active = state::get::<RecipeState>(st).active;
     go(
@@ -121,7 +105,6 @@ fn start_pause(st: &ElementId, window: &mut Window, cx: &mut App) {
     state::update::<RecipeState>(st, window, |s| {
         let c = &mut s.clock;
         if c.rang() {
-            // rung out: the next press starts it again from the top
             *c = Clock::for_secs(Some(c.total));
         }
         match c.since.take() {
@@ -137,13 +120,11 @@ fn start_pause(st: &ElementId, window: &mut Window, cx: &mut App) {
         let route = crate::route::current();
         let task = cx.spawn(async move |cx| {
             loop {
-                // wake as the face next changes: just past the next whole second left
                 let left = state::get::<RecipeState>(&st2).clock.remaining().max(0.);
                 let wait = (left.fract() + 0.02).clamp(0.02, 1.02);
                 cx.background_executor()
                     .timer(std::time::Duration::from_secs_f32(wait))
                     .await;
-                // the reader went elsewhere: the page this would redraw isn't the recipe any more
                 if crate::route::current() != route {
                     break;
                 }
@@ -171,7 +152,6 @@ fn reset(st: &ElementId, window: &mut Window) {
     });
 }
 
-/// ←/→ step, Esc leaves. Attached to the recipe's root, which holds focus in step mode.
 pub fn keys(
     st: &ElementId,
     rec: &Rc<Recipe>,
@@ -206,7 +186,6 @@ fn control(id: ElementId, text: &str, ctx: &Ctx) -> gpui::Stateful<gpui::Div> {
         .child(text.to_string())
 }
 
-/// The stage above the grid while a step is shown.
 pub fn stage(
     st: &ElementId,
     rec: &Rc<Recipe>,

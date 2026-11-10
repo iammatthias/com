@@ -1,17 +1,9 @@
-// A deployed page loads only its own build's code (/b/<id>/, worker/scripts/scope-build.ts), so
-// a deploy while it's open can't hand it another build's: every script, wasm and worker it asks
-// for, through boot, a diagram and a search, is under the /b/<id>/ its page names. Only
-// trunk serve (port 8080), which builds no /b/, is let off.
-//
-//   bun skew.mjs [base-url]
-
 import { base, open, check, done } from "./lib.mjs";
 
 const { browser, context, page } = await open("desktop");
 const code = [];
 context.on("request", (r) => {
     const { origin, pathname } = new URL(r.url());
-    // /cdn-cgi/ is Cloudflare's own, not the site's
     if (origin === new URL(base).origin && !pathname.startsWith("/cdn-cgi/") && /\.(js|mjs|wasm)$/.test(pathname)) code.push(pathname);
 });
 await page.goto(base + "/posts/1775137360175-i-got-a-common-turtle");

@@ -4,10 +4,6 @@ export function retryDelayMs(attempt: number, retryAfter: string | null, capMs: 
     return Math.min(requested, capMs);
 }
 
-/**
- * How long the next attempt may run, if one fits: a retry waits `delayMs`, then gets what is
- * left of `budgetMs` (at most `attemptMs`); null once less than `minAttemptMs` would remain.
- */
 export function nextAttemptMs(
     elapsedMs: number,
     delayMs: number,

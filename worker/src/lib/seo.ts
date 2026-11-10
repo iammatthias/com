@@ -2,8 +2,6 @@ import { SITE_IDENTITY, SITE_ORIGIN } from "./agent-surface";
 import { AUTHOR, SOCIAL_LINKS } from "./identity";
 import { escapeAttr } from "./format";
 
-/** Ported from com/src/layouts/BaseLayout.astro and components/Schema.astro. */
-
 export interface Breadcrumb {
     label: string;
     href?: string;
@@ -14,7 +12,6 @@ export interface PageHead {
     description?: string;
     ogImage?: string;
     ogType?: "website" | "article";
-    /** Site-relative path used for canonical and og:url. */
     path: string;
     noindex?: boolean;
     breadcrumbs?: Breadcrumb[];
@@ -27,8 +24,6 @@ export interface PageHead {
 
 export const SITE_NAME = "iammatthias";
 const OG_ORIGIN = "https://og.iammatthias.com";
-/** The home plate looping (app/scripts/og-loop.ts), kept for a year under its versioned path, so
- *  a new look is a new -v path: the home's clip, and any page's that has no loop of its own. */
 export const OG_VIDEO = { url: `${SITE_ORIGIN}/og-v1/loop.mp4`, path: "/og-v1/loop.mp4", type: "video/mp4", width: 1200, height: 630 };
 
 export function fullTitle(head: PageHead): string {
@@ -133,12 +128,9 @@ function jsonLd(head: PageHead, canonical: string, title: string, description: s
     );
 }
 
-/** The resolved values behind <title>, the description, canonical and og:* tags. */
 export interface HeadMeta {
-    /** The full <title> text. */
     title: string;
     description: string;
-    /** Absolute canonical URL (also og:url). */
     canonical: string;
     noindex: boolean;
     ogTitle: string;
@@ -146,7 +138,6 @@ export interface HeadMeta {
     ogType: "website" | "article";
 }
 
-/** `card`: the page's social card (lib/og-card.ts), when there is one; else the old og.iammatthias.com image. */
 export function headMeta(head: PageHead, card?: string): HeadMeta {
     const ogImage = card ?? head.ogImage ?? "/";
     return {
@@ -160,8 +151,6 @@ export function headMeta(head: PageHead, card?: string): HeadMeta {
     };
 }
 
-/** Everything BaseLayout put in <head>, minus charset/viewport (the shell has them). `video`: the
- *  page's own loop (lib/og-card.ts cardVideoUrl), else the shared one. */
 export function headHtml(head: PageHead, card?: string, video = OG_VIDEO.url): string {
     const { description, canonical, ogImage: ogImageURL, ogTitle } = headMeta(head, card);
     const a = escapeAttr;

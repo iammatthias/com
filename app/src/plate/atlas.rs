@@ -1,6 +1,3 @@
-//! The titles in script: shaped, rasterized to signed distance and laid end to end in an RG8
-//! atlas with its segment table, all on the CPU, ready for the plate to upload.
-
 use swash::FontRef;
 use swash::scale::{Render as Raster, ScaleContext, Source};
 use swash::shape::ShapeContext;
@@ -8,7 +5,6 @@ use swash::zeno::{Format, Vector};
 
 use super::{Mark, Title};
 
-// atlas metrics, as the artifact draws them
 pub(super) const FONT: f32 = 40.0;
 pub(super) const PAD: f32 = 10.0;
 pub(super) const HAIR: f32 = 5.0 * FONT / 52.0;
@@ -16,9 +12,7 @@ const TRACK: f32 = 0.01 * FONT;
 const XH_BAND: f32 = 0.44;
 const MAX_TEXT: usize = 131_000;
 const MAX_ROW: usize = 4096;
-/// atlas px of signed distance the lettering's field holds either side of the outline
 pub(super) const SPREAD: f32 = 8.0;
-/// the script's pen radius at its raw weight, in atlas px (its full stop is a 5.4px dot at 52px, weight 300)
 const PEN_RAW: f32 = 2.52 * FONT / 52.0;
 
 pub(super) struct Seg {
@@ -27,18 +21,15 @@ pub(super) struct Seg {
     pub(super) x1: f32,
 }
 
-/// Every title shaped in script and laid end to end, joined by hairlines, wrapped into rows.
 pub(super) struct TitleAtlas {
     pub(super) width: u32,
     pub(super) height: u32,
-    /// RG8 mip chain: R = all lettering and joins, G = section headings
     pub(super) levels: Vec<Vec<u8>>,
     pub(super) segs_w: u32,
     pub(super) segs_h: u32,
     pub(super) seg_table: Vec<u8>,
     pub(super) segs: Vec<Seg>,
     pub(super) text_len: f32,
-    /// some titles didn't fit in MAX_TEXT and were left off
     pub(super) full: bool,
     pub(super) row_w: f32,
     pub(super) stride: f32,
@@ -60,8 +51,6 @@ impl TitleAtlas {
             titles.to_vec()
         };
         let font = FontRef::from_index(crate::fonts::script(), 0).expect("script face");
-        // measured from the letters themselves, as the artifact does: declared metrics are
-        // generous in this hand (a 95% ascent) and would leave the rows half empty
         let (xh, _) = ink_extent(font, "xxxx");
         let xh = if xh > 0.0 { xh } else { FONT * 0.45 };
         let font_ref = xh / XH_BAND;
@@ -72,7 +61,6 @@ impl TitleAtlas {
         let row_c = asc - 2.0 - xh * 0.5;
         let lead = FONT * 0.6;
 
-        // shape every title, place it with lead-in and lead-out hairlines
         let mut shape = ShapeContext::new();
         let mut placed: Vec<(Seg, f32, f32, Vec<(u16, f32)>)> = Vec::new();
         let mut x = 0.0f32;
@@ -92,7 +80,6 @@ impl TitleAtlas {
             let t0 = x + lead;
             let t1 = t0 + pen;
             let x1 = ((t1 + lead) / 2.0).ceil() * 2.0;
-            // the strip is full: a title past its end would wrap over the first ones
             if x1 as usize > MAX_TEXT && !placed.is_empty() {
                 break;
             }
@@ -104,13 +91,8 @@ impl TitleAtlas {
         let rows = text_len.div_ceil(row_w);
         let stride_px = stride as usize;
 
-        // one long strip, wrapping at text_len so the spiral's seam is seamless. R holds the
-        // lettering as signed distance (128 the outline, inside higher; 0 is far outside), so
-        // the shader can set the pen; G the colour code
-        // (written straight into its rows: a position along the strip is a row and a column)
         let (w, h) = (row_w, rows * stride_px);
         let mut level0 = vec![0u8; w * h * 2];
-        // where a strip column starts in the rows, and how far down one pixel is
         let column = |x: i64| -> usize {
             let x = x.rem_euclid(text_len as i64) as usize;
             let (r, col) = (x / row_w, x % row_w);
@@ -126,8 +108,6 @@ impl TitleAtlas {
         let enc = |d: f32| (128.0 + d * (127.0 / SPREAD)).round().clamp(0.0, 255.0) as u8;
         let mut scale = ScaleContext::new();
         let mut scaler = scale.builder(font).size(FONT).hint(false).build();
-        // each glyph's distance field once per quarter-pixel offset, stamped wherever it recurs:
-        // the union of shapes is the max of their signed distances
         let mut sprites: std::collections::HashMap<(u16, u8), Option<Sprite>> =
             std::collections::HashMap::new();
         let mut sdf = Sdf::default();
@@ -145,7 +125,6 @@ impl TitleAtlas {
                 let Some(sp) = sprite else { continue };
                 let ox = gx.floor() as i64 + sp.left;
                 let oy = base.round() as i64 - sp.top;
-                // the rows of the sprite that land inside the strip's height
                 let (r0, r1) = (
                     (-oy).max(0) as usize,
                     ((stride_px as i64 - oy).min(sp.h as i64)).max(0) as usize,
@@ -166,11 +145,8 @@ impl TitleAtlas {
                     }
                 }
             }
-            // colour, over the whole span of the title (`Mark::code`). Read unfiltered, so neighbours
-            // never blend into another colour
             let code = seg.title.mark.code();
             if code > 0 {
-                // the shader reads it from the row's middle only (unfiltered): a few rows will do
                 let mid = (PAD + row_h * 0.5) as usize;
                 for xi in t0.floor() as i64..t1.ceil() as i64 {
                     let base_i = column(xi);
@@ -179,7 +155,6 @@ impl TitleAtlas {
                     }
                 }
             }
-            // the hairline that runs in to the title and out of it: its distance is exact
             let reach = HAIR * 0.5 + SPREAD + 1.0;
             for (a, b) in [
                 (seg.x0 - 1.0, t0 + FONT * 0.05),
@@ -196,7 +171,6 @@ impl TitleAtlas {
             }
         }
 
-        // the segment table: for every atlas column, the [start, end) of the title it belongs to
         let segs: Vec<Seg> = placed.into_iter().map(|(s, ..)| s).collect();
         let mut seg_table = vec![0u8; row_w * rows * 4];
         let mut si = 0;
@@ -239,7 +213,6 @@ impl TitleAtlas {
     }
 }
 
-/// How far `text`'s ink rises above the baseline and falls below it, in atlas px.
 fn ink_extent(font: FontRef, text: &str) -> (f32, f32) {
     let mut scale = ScaleContext::new();
     let mut scaler = scale.builder(font).size(FONT).hint(false).build();
@@ -255,14 +228,12 @@ fn ink_extent(font: FontRef, text: &str) -> (f32, f32) {
     (up, down)
 }
 
-/// One glyph's lettering as signed distance, padded by SPREAD so it carries its whole field.
 struct Sprite {
     left: i64,
     top: i64,
     w: usize,
     h: usize,
     data: Vec<u8>,
-    /// for each column, the rows [from, to) that carry any field (the rest is zero)
     spans: Vec<(usize, usize)>,
 }
 
@@ -313,17 +284,12 @@ impl Sprite {
     }
 }
 
-/// Scratch for turning coverage into signed distance: nearest-seed vectors propagated in two
-/// passes (8SSEDT), once toward the ink and once toward the paper. Exact enough within the
-/// SPREAD the shader reads, and linear in the pixels with a small constant.
 #[derive(Default)]
 struct Sdf {
     near: Vec<(i16, i16)>,
 }
 
 impl Sdf {
-    /// Rewrite the R channel of an RG band from coverage to distance: 128 is the outline,
-    /// higher is inside, `SPREAD` atlas px either way spans the full byte.
     fn encode(&mut self, band: &mut [u8], w: usize, h: usize) {
         let to_ink = self.field(band, w, h, |c| c >= 128);
         let to_paper = self.field(band, w, h, |c| c < 128);
@@ -342,8 +308,6 @@ impl Sdf {
         }
     }
 
-    /// Distance from each pixel to the nearest pixel whose coverage passes `seed`, capped a
-    /// little past SPREAD. Sprites are padded past SPREAD, so the border needn't be visited.
     fn field(&mut self, band: &[u8], w: usize, h: usize, seed: impl Fn(u8) -> bool) -> Vec<f32> {
         const FAR: i32 = 64;
         let n = w * h;
@@ -360,7 +324,6 @@ impl Sdf {
         fn d2(x: i32, y: i32) -> i32 {
             x * x + y * y
         }
-        // try neighbour `j` (at offset ox, oy from i) as a better route to a seed
         #[inline(always)]
         fn try_from(near: &mut [(i16, i16)], i: usize, j: usize, ox: i32, oy: i32) {
             let o = near[j];
@@ -411,8 +374,6 @@ impl Sdf {
     }
 }
 
-/// The script's pen thickness relative to its raw strokes, by weight (linear between the
-/// font's own stops: Thin 0.6×, Light 1×, Regular 1.55×, Black 2.5×).
 fn pen_factor(weight: f32) -> f32 {
     if weight < 270.0 {
         0.6 + (weight - 100.0) / 170.0 * 0.4
@@ -423,17 +384,12 @@ fn pen_factor(weight: f32) -> f32 {
     }
 }
 
-/// Atlas px to add to the outline for a pen of `weight` (the atlas is cut at weight 300).
 pub(super) fn pen_offset(weight: f32) -> f32 {
     PEN_RAW * (pen_factor(weight) - pen_factor(300.0))
 }
 
-/// Mip levels the lettering is ever read at: the plate zooms out to 0.35, where an atlas pixel
-/// is at most ~9 screen pixels' worth, so level 4 is the smallest the shader samples.
 const ATLAS_LEVELS: usize = 5;
 
-/// A box-filtered mip chain of an 8-bit image with `channels` interleaved, level 0 first, down
-/// to 1×1 or `max_levels` levels, whichever comes first.
 pub(crate) fn mips(
     level0: Vec<u8>,
     mut w: usize,
@@ -497,7 +453,6 @@ mod atlas_cost {
         eprintln!("mips alone {:?}", t.elapsed());
     }
 
-    /// More titles than the strip holds: the ones past its end are left off, not wrapped over the first.
     #[test]
     fn overflow_is_left_off() {
         let titles: Vec<super::Title> = (0..400)

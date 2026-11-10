@@ -1,7 +1,3 @@
-//! View-local state (open disclosures, recipe serves and struck ingredients, hovered links),
-//! keyed by the element id that owns it. Lives outside GPUI's element-state map so it
-//! survives however the site view chooses to re-render; a change asks the window to redraw.
-
 use gpui::{ElementId, Window};
 
 use super::scope;
@@ -10,7 +6,6 @@ fn key(id: &ElementId) -> String {
     id.to_string()
 }
 
-/// The current value for `id`, or `T::default()` if nothing has been set.
 pub fn get<T: Clone + Default + 'static>(id: &ElementId) -> T {
     scope::with(
         |p| &p.state,
@@ -25,12 +20,9 @@ pub fn get<T: Clone + Default + 'static>(id: &ElementId) -> T {
 }
 
 thread_local! {
-    /// The view the page renders in, so work finishing outside a render can redraw just it.
     static PAGE_VIEW: std::cell::Cell<Option<gpui::EntityId>> = const { std::cell::Cell::new(None) };
 }
 
-/// The value kept under `key` (things that are neither `Clone` nor comparable: focus handles,
-/// running tasks), made by `init` on first use. `f` must not reach for another slot.
 pub fn slot<T: 'static, R>(key: &str, init: impl FnOnce() -> T, f: impl FnOnce(&mut T) -> R) -> R {
     scope::with(
         |p| &p.slots,
@@ -46,19 +38,15 @@ pub fn slot<T: 'static, R>(key: &str, init: impl FnOnce() -> T, f: impl FnOnce(&
     )
 }
 
-/// Forget what is kept under `key` (dropping a task cancels it).
 pub fn clear_slot(key: &str) {
     let old = scope::with(|p| &p.slots, |s| s.borrow_mut().remove(key));
     drop(old);
 }
 
-/// Remember which view is rendering the page (called at the top of each content render).
 pub fn set_page_view(id: gpui::EntityId) {
     PAGE_VIEW.with(|v| v.set(Some(id)));
 }
 
-/// Ask the page to render again from outside a render pass: a timer tick, a fetch landing.
-/// The page is a cached view, so only notifying it (or refreshing the window) redraws it.
 pub fn redraw_page(cx: &mut gpui::App) {
     use gpui::AppContext as _;
     match PAGE_VIEW.with(|v| v.get()) {
@@ -67,7 +55,6 @@ pub fn redraw_page(cx: &mut gpui::App) {
     }
 }
 
-/// Change the value for `id` and redraw if it actually changed.
 pub fn update<T: Clone + Default + PartialEq + 'static>(
     id: &ElementId,
     window: &mut Window,

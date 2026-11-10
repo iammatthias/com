@@ -16,12 +16,6 @@ import { transformAlerts } from "./markdown-text";
 import { glassPick, type GlassPick } from "./glass";
 import { SITE_IDENTITY } from "./agent-surface";
 
-/**
- * Server-rendered semantic HTML for every human route. It sits in the
- * document under the GPUI canvas so crawlers, no-JS clients, and screen
- * readers get the same content the app paints.
- */
-
 export interface SsrPage {
     head: PageHead;
     main: string;
@@ -34,7 +28,6 @@ const a = escapeAttr;
 const WSRV_BLOB =
     /https:\/\/wsrv\.nl\/\?url=https%3A%2F%2Fblobs\.farfield\.systems%2Fblobs%2F([a-z0-9-]+)&(?:amp;)?w=(\d+)&(?:amp;)?q=\d+&(?:amp;)?output=webp/g;
 
-/** Point rendered images at the same-origin /img proxy the app also uses, so both share one cache. */
 export function sameOriginImages(html: string): string {
     return html.replace(WSRV_BLOB, (_m, cid: string, w: string) => `/img/${cid}?w=${w}`);
 }
@@ -145,7 +138,6 @@ export function markdownHtml(md: string): string {
     return transformAlerts(marked.parse(md, { async: false }) as string);
 }
 
-/** com/src/components/GlassArch.astro: the home hero, an arch-framed Glass photograph. */
 function glassArch(pick: GlassPick | null): string {
     const tint = pick?.prominentColor
         ? ` style="background: ${a(pick.prominentColor)}; border-color: ${a(pick.prominentColor)}"`
@@ -168,7 +160,6 @@ function glassArch(pick: GlassPick | null): string {
     return `<figure class="hero"><div class="arch-frame"><div class="arch-window"${tint}>${img}</div></div>${caption}</figure>`;
 }
 
-/** The head every hand-written page carries, from its STATIC_PAGES entry. */
 function staticHead(slug: string, path: string): PageHead {
     const page = STATIC_PAGES[slug];
     return {
@@ -183,7 +174,6 @@ function staticHead(slug: string, path: string): PageHead {
     };
 }
 
-/** com/src/pages/now.astro: bio, working on, recent updates as real feed cards, find me. */
 async function nowPage(route: AppNowRoute, path: string): Promise<SsrPage> {
     const items = await Promise.all(route.recent.map(feedItem));
     const html =
@@ -205,7 +195,6 @@ async function nowPage(route: AppNowRoute, path: string): Promise<SsrPage> {
     };
 }
 
-/** com/src/pages/resume.astro: one <dl> of company / date / position per section. */
 function resumePage(route: AppResumeRoute, path: string): SsrPage {
     const html =
         `<h1>${h(route.title)}</h1>` +
@@ -230,7 +219,6 @@ function resumePage(route: AppResumeRoute, path: string): SsrPage {
     };
 }
 
-/** com/src/pages/developers.astro: header, quickstart, the endpoint <dl>, then the prose sections. */
 function developersPage(route: AppDevelopersRoute, path: string): SsrPage {
     const [endpointsNote, ...rest] = route.sections;
     const section = (title: string, inner: string) => `<section><h2>${h(title)}</h2>${inner}</section>`;

@@ -1,8 +1,3 @@
-// A clip's figure takes the clip's own shape: the overlay <video> is drawn at the video's
-// width over height, so nothing of it is cropped or letterboxed, whatever blobs knows of it.
-//
-//   bun video-shape.mjs [base-url] [post-path]
-
 import { base, open, check, done } from "./lib.mjs";
 
 const POST = process.argv[3] || "/posts/1793118574479-this-is-your-sign";

@@ -1,19 +1,14 @@
-//! The block tree markdown parses into.
-
 use std::ops::Range;
 
 use super::super::recipe::RecipeBlock;
 
-/// Inline styling for one run of text.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Marks {
     pub em: bool,
     pub strong: bool,
     pub code: bool,
     pub strike: bool,
-    /// footnote reference marker
     pub note: bool,
-    /// index into `Rich::links`
     pub link: Option<u16>,
 }
 
@@ -23,7 +18,6 @@ impl Marks {
     }
 }
 
-/// A run of styled text: one string, contiguous non-overlapping spans that cover all of it.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Rich {
     pub text: String,
@@ -58,14 +52,12 @@ impl Rich {
         self.text.trim().is_empty()
     }
 
-    /// Trim leading/trailing whitespace while keeping spans aligned.
     pub fn trimmed(&self) -> Rich {
         let start = self.text.len() - self.text.trim_start().len();
         let end = self.text.trim_end().len().max(start);
         self.slice(start..end)
     }
 
-    /// The sub-run covering `range` (byte offsets on char boundaries), links kept.
     pub fn slice(&self, range: Range<usize>) -> Rich {
         let mut out = Rich {
             links: self.links.clone(),
@@ -81,7 +73,6 @@ impl Rich {
         out
     }
 
-    /// True when every non-blank run is emphasised (a stanza's trailing `*note*`).
     pub fn all_em(&self) -> bool {
         !self.is_blank()
             && self
@@ -131,12 +122,9 @@ pub enum Align {
     Right,
 }
 
-/// Where a figure's bytes come from.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum MediaSrc {
-    /// `blob://<cid>`: served through the Worker's `/img/{cid}`
     Blob(String),
-    /// an absolute URL; `cid` when it is a Farfield blob URL (so the media meta still applies)
     Url { url: String, cid: Option<String> },
 }
 
@@ -226,7 +214,6 @@ pub enum Block {
         label: String,
         body: Vec<Block>,
     },
-    /// a web component the browser draws over the page (see dom_embed)
     Embed {
         name: String,
         props: Vec<(String, String)>,
@@ -238,6 +225,5 @@ pub enum Block {
 
 #[derive(Clone, Copy, Debug, Default)]
 pub struct ParseOptions {
-    /// stanzas keep their line breaks: a soft break becomes `\n` rather than a space
     pub keep_line_breaks: bool,
 }

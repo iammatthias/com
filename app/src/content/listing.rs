@@ -11,8 +11,6 @@ use super::pages::script_title;
 use super::render::{alpha, hairline, label};
 use super::{column, link};
 
-/// What sits over a listing, as @com's page header: the title, a line about it, and its
-/// feed and count.
 pub struct Heading<'a> {
     pub title: &'a str,
     pub lede: Option<AnyElement>,
@@ -64,8 +62,6 @@ fn heading(h: Heading, key: &str, nav: &Navigate, theme: &Theme) -> gpui::Div {
         .child(div().pt(px(4.)).child(hairline(theme)))
 }
 
-/// One entry in a listing, as @com's FeedCard: title, its section (in the section's colour),
-/// date, and the first lines of its description.
 pub(super) struct Card<'a> {
     pub title: &'a str,
     pub href: &'a str,
@@ -203,7 +199,6 @@ pub fn listing(
         .into_any_element()
 }
 
-/// @com's page list: the first, the last, and the current page with its neighbours.
 fn page_list(current: u32, last: u32) -> Vec<Option<u32>> {
     let mut include: Vec<u32> = vec![1, last, current];
     for i in current.saturating_sub(1)..=current + 1 {
@@ -334,7 +329,6 @@ pub fn section_listing(
     )
 }
 
-/// @com's /content: every entry, newest first, with where it was published.
 pub fn content_listing(
     items: &[Item],
     sections: &[crate::api::Section],
@@ -343,7 +337,6 @@ pub fn content_listing(
     theme: &Theme,
 ) -> AnyElement {
     let total = paging.total;
-    // publications with nothing in them yet aren't worth a link
     let sections: Vec<&crate::api::Section> = sections.iter().filter(|s| s.count > 0).collect();
     let lede = (total > 0).then(|| {
         let mut line = div()
@@ -393,7 +386,6 @@ pub fn content_listing(
     )
 }
 
-/// A tag's entries, under the tag index.
 pub fn tag_listing(
     tag: &str,
     items: &[Item],
@@ -430,7 +422,6 @@ pub fn tag_listing(
 
 pub fn tags(tags: &[TagCount], nav: &Navigate, theme: &Theme) -> AnyElement {
     let max = tags.iter().map(|t| t.count).max().unwrap_or(1).max(1) as f32;
-    // by frequency, then name, as @com orders them
     let mut sorted: Vec<&TagCount> = tags.iter().collect();
     sorted.sort_by(|a, b| b.count.cmp(&a.count).then_with(|| a.tag.cmp(&b.tag)));
     let mut cloud = div()

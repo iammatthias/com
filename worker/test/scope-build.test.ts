@@ -7,7 +7,6 @@ const GLUE = "com-76947940fab458ee";
 const SNIPPET = "snippets/com-2116b26e2323790f/js/dom.js";
 const PAGE = `<link rel="modulepreload" href="/${GLUE}.js"><link rel="modulepreload" href="/${SNIPPET}"><link rel="preload" href="/${GLUE}_bg.wasm"><script type="module">import init from '/${GLUE}.js'; init({ module_or_path: '/${GLUE}_bg.wasm' });</script><link rel="icon" href="/favicon.svg">`;
 
-/** A release build as trunk leaves it, with `diagram` as its flowchart module. */
 function build(diagram = "export const render = 1;", page = PAGE): string {
     const dist = mkdtempSync(join(tmpdir(), "scope-build-"));
     const files: Record<string, string> = {

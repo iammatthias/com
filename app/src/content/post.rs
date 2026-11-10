@@ -72,7 +72,6 @@ pub fn feed(
             .child("Short posts from iammatthias.")
             .into_any_element(),
     );
-    // later pages arrive as the end of the list comes near
     let (more, tail) = super::feed::extra(posts, paging);
     let mut body = Vec::new();
     for (i, p) in posts.iter().chain(more.iter().map(|p| &**p)).enumerate() {
@@ -148,7 +147,6 @@ fn href(post: &Post) -> String {
     }
 }
 
-/// Tags as quiet italic links: `ai · generative · photography`.
 fn tag_row(tags: &[String], key: &str, nav: &Navigate, theme: &Theme) -> AnyElement {
     let mut row = div()
         .flex()

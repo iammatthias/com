@@ -10,12 +10,6 @@ export function seriesSlugs(body: string): string[] {
     ];
 }
 
-/**
- * A document's body can embed a series, whose contents live in a different
- * record. `![](series://slug)` stays byte-identical while that record is
- * rewritten, so the document's own cid cannot detect the change — the
- * embedded series' cids have to ride along in the key.
- */
 export function seriesKeyFor(body: string, index: Map<string, string>): string {
     return seriesSlugs(body)
         .sort()

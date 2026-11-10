@@ -1,14 +1,3 @@
-// Scores the Find panel's results against scripts/search-eval.queries.json.
-//
-//   bun scripts/search-eval.ts [origin] [--set tune|holdout|all] [--topk N] [--refresh] [--fidelity] [--dump] [--show "query" [--top N]]
-//
-// The list scored is the one the panel shows: index items whose lowercased title or tag contains
-// the lowercased query (home::matches_query, in index order), then the worker's hits with those
-// removed, eight in all. The worker is the shipped app/search/search-worker.js, run under bun by
-// search-harness.ts. The corpus is composed here by this tree's buildSearchCorpus from the raw
-// documents and feed entries (fetched once from the Worker's app API and cached under the OS temp
-// dir; --refresh refetches), so a change to what gets embedded is what gets scored. --fidelity
-// compares that composition with the corpus the origin serves. --show prints one query's list.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -46,7 +35,6 @@ const value = (name: string) => {
 };
 const origin = (args.find((a) => a.startsWith("http")) ?? "http://127.0.0.1:8796").replace(/\/$/, "");
 const set = value("--set") ?? "tune";
-// how many hits the panel asks the worker for (site.rs); --topk N tries another number
 const TOP_K = Number(value("--topk") ?? 6);
 const SHOWN = 8;
 const cacheDir = join(tmpdir(), "com-search-eval");
@@ -66,8 +54,6 @@ async function fetchRaw(): Promise<Raw> {
     for (const item of index.items) {
         const { doc } = await getJson<{ doc: Record<string, any> }>(route(item.href));
         const body = doc.markdown ?? "";
-        // a document with no description of its own is served with the body's first 180 characters
-        // in its place (app-route's docPayload); the raw record has none
         const derived = plainText(body).slice(0, 180).trim();
         docs.push({
             collection: doc.section.slug,
@@ -103,14 +89,12 @@ async function raw(): Promise<Raw> {
     return data;
 }
 
-/** home::matches_query: the lowercased query inside the title or any tag, index order. */
 function lexical(items: IndexItem[], query: string): IndexItem[] {
     const q = query.trim().toLowerCase();
     if (!q) return [];
     return items.filter((i) => i.title.toLowerCase().includes(q) || i.tags.some((t) => t.toLowerCase().includes(q)));
 }
 
-/** The panel's list: what the words match, then what the meaning finds, once each, eight in all. */
 function panel(items: IndexItem[], query: string, hits: Hit[]): string[] {
     const shown = lexical(items, query).map((i) => i.href);
     for (const h of hits) if (!shown.includes(h.href)) shown.push(h.href);

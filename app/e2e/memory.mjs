@@ -1,8 +1,3 @@
-// Memory on a phone-sized tour: wasm linear memory (it never shrinks, so this is the
-// high-water mark) and the JS heap after each stop.
-//
-//   bun memory.mjs [chromium|webkit] [base-url]
-
 import { chromium, webkit, devices } from "playwright";
 
 const engineName = process.argv[2] ?? "chromium";
@@ -26,7 +21,6 @@ async function report(label) {
     console.log(label.padEnd(28), "wasm", mb(m.wasm).padStart(8), "  js", mb(m.js).padStart(8));
 }
 
-// in-app navigation, the way a reader moves: pushState + popstate
 async function go(path, ms = 5000) {
     await page.evaluate((p) => {
         history.pushState(null, "", p);

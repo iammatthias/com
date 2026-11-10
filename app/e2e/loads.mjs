@@ -1,12 +1,3 @@
-// What a page loads after boot recovers from a flaky network by itself: an embed whose module's
-// first two fetches are cut still appears; search still answers when its worker's script is cut
-// once and the corpus first comes back 503 (a partial corpus, which must not be kept); a click
-// whose page is cut twice still lands; and what gave up (a page, a diagram's code) tries again
-// when the browser is back online. diagram.mjs and diagram-engines.mjs cover diagrams, embed-reads.mjs
-// the embeds' own reads.
-//
-//   bun loads.mjs [base-url]
-
 import { base, open, check, done, path, cut } from "./lib.mjs";
 
 const EMBED = "/posts/1788199665000-whats-the-frequency-kenneth";
@@ -57,7 +48,6 @@ for (const kind of ["desktop", "phone"]) {
     const { browser, context, page } = await open("desktop");
     const warned = [];
     page.on("console", (m) => m.text().startsWith("diagram:") && warned.push(m.text().slice(0, 80)));
-    // the document's own fetch sets the title too: only the app's should here
     await cut(context, /\/api\/app\/ssr/, Infinity);
     const route = await cut(context, /\/api\/app\/route\?path=(%2F|\/)posts/, 2);
     const flowchart = await cut(context, /\/diagrams\/flowchart\.js(\?|$)/, 0);

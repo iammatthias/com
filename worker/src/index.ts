@@ -32,28 +32,15 @@ const ROUTES: Route[] = [
     apiFallbackRoute,
 ];
 
-/** A release build's code (worker/scripts/scope-build.ts): a new build never writes a URL an old one
- *  used, and a deploy carries the two builds before it (worker/scripts/ci-build.sh). */
 const HASHED_ASSET = /^\/b\/[0-9a-f]{16}\//;
-/** Files whose URL changes when they do: the versioned faces and the social loop (og:video). */
 const IMMUTABLE_ASSET = /^\/(?:fonts|og)-v\d+\//;
 const KEPT_FOR_A_YEAR = "public, max-age=31536000, immutable";
 
-/**
- * com's _headers puts this Link on every asset response, and the asset-config
- * redirects (e.g. /sitemap-index.xml) carry it too; every redirect here does.
- */
 function redirect(to: string, status: 301 | 302): Response {
-    // every Location is built from the request path: never let one point off-site
     const location = sameOriginPath(to) ?? "/";
     return new Response(null, { status, headers: { Location: location, Link: AGENT_LINKS } });
 }
 
-/**
- * Responses the old site served from its asset layer (public/ or prerendered),
- * which com/public/_headers stamps with the discovery Link. HTML and markdown
- * get it below regardless of path.
- */
 const ASSET_LINK_PATH =
     /^\/(?:robots\.txt|favicon\.svg|rss\.xml\.xsl|openapi\.json|schema\.graphql|api\/search-vectors\.json|\.well-known\/(?:atproto-did|api-catalog|oauth-protected-resource|.+\.json))$/;
 
@@ -68,10 +55,8 @@ function decodeParams(m: RegExpMatchArray): string[] {
     });
 }
 
-/** Negotiated on Accept only: varying on User-Agent would split the edge cache per browser. */
 const NEGOTIATED_VARY = "Accept, Accept-Encoding";
 
-/** Markdown picked by User-Agent alone is this agent's copy: no shared cache may keep it. */
 function keepPrivate(res: Response): void {
     res.headers.set("Cache-Control", "private, max-age=300");
     res.headers.set(EDGE_CACHE_HEADER, "no-store");
@@ -81,11 +66,6 @@ function withoutBody(res: Response): Response {
     return new Response(null, { status: res.status, statusText: res.statusText, headers: res.headers });
 }
 
-/**
- * A file kept for a year, answered from the whole of it as the asset layer sent it: a HEAD gets
- * its headers, and a Range the slice it asks for (a video's player asks in ranges; Safari's won't
- * play without them), marked so the edge never keeps the slice in place of the whole.
- */
 async function kept(ctx: Ctx, asset: Response): Promise<Response> {
     const method = ctx.request.method;
     const res = new Response(method === "HEAD" ? null : asset.body, asset);
@@ -104,7 +84,6 @@ async function kept(ctx: Ctx, asset: Response): Promise<Response> {
     if (want.kind === "whole") return new Response(whole, res);
     const headers = new Headers(res.headers);
     headers.set(EDGE_CACHE_HEADER, "no-store");
-    // the slice is of the decoded body: no encoding the runtime would apply again
     headers.delete("Content-Encoding");
     if (want.kind === "none") {
         headers.set("Content-Range", `bytes */${whole.byteLength}`);
@@ -116,11 +95,6 @@ async function kept(ctx: Ctx, asset: Response): Promise<Response> {
     return new Response(whole.slice(want.start, want.end + 1), { status: 206, headers });
 }
 
-/**
- * The blob a page's loop is pinned as in Farfield's blobs (ogv:v1:<sig>, pinned by
- * app/scripts/og-entries.ts), kept in KV once known. A pin can move to a new blob, so a lookup is
- * kept an hour; no pin yet is asked about again next time.
- */
 async function loopCid(ctx: Ctx, sig: string): Promise<string | null> {
     const label = `ogv:v1:${sig}`;
     const known = await ctx.env.CONTENT_CACHE?.get(label, { cacheTtl: 300 });
@@ -144,11 +118,6 @@ async function loopCid(ctx: Ctx, sig: string): Promise<string | null> {
     }
 }
 
-/**
- * A page's own social loop: the blob its card's sig is pinned as. Until it is drawn, or while
- * blobs can't answer, the shared loop stands in, kept only briefly so the page's own replaces it
- * once it's there.
- */
 async function entryLoop(ctx: Ctx, sig: string): Promise<Response> {
     const cid = await loopCid(ctx, sig);
     if (cid) {
@@ -181,14 +150,12 @@ async function shellPage(ctx: Ctx, page: SsrPage, policy: CachePolicy, pending: 
 }
 
 async function htmlRoute(ctx: Ctx, pathname: string): Promise<Response> {
-    // the shell downloads while the page renders
     const shell = fetchShell(ctx);
     const dropShell = () => shell.then((r) => r.body?.cancel()).catch(() => undefined);
     shell.catch(() => undefined);
     let page: SsrPage;
     let policy: CachePolicy;
     try {
-        // handle() already looked for a redirect at the request's own path
         const route = await resolveAppRoute(pathname, ctx.url.search, { redirects: pathname !== ctx.url.pathname });
         if (route.kind === "redirect") {
             await dropShell();
@@ -224,13 +191,9 @@ async function dispatch(ctx: Ctx, pathname: string): Promise<Response> {
 
     if (/\.[a-z0-9]+$/i.test(pathname) && !pathname.endsWith(".html")) {
         const immutable = HASHED_ASSET.test(pathname) || IMMUTABLE_ASSET.test(pathname);
-        // a file the browser keeps for a year is fetched whole: a plain GET, never a HEAD, a range or a
-        // conditional request, whose bodiless answer the edge would otherwise keep in its place
         const asset = await ctx.env.ASSETS.fetch(immutable ? new Request(ctx.url, { method: "GET" }) : ctx.request);
         if (asset.status < 400) return immutable ? kept(ctx, asset) : asset;
         await asset.body?.cancel();
-        // a build's file or a face that isn't there: no page to render, and nothing for the edge
-        // to keep in place of the file a deploy will add
         if (immutable) {
             return new Response("Not found", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store", [EDGE_CACHE_HEADER]: "no-store" } });
         }
@@ -249,13 +212,11 @@ async function handle(request: Request, env: Env, exec: ExecutionContext): Promi
     bindExecution(exec);
 
     if (HASHED_ASSET.test(pathname) || IMMUTABLE_ASSET.test(pathname) || pathname.startsWith("/img/")) {
-        // their own edge policy stands (no finish()), but they get the security headers
         const res = await dispatch(ctx, pathname);
         return secure(new Response(res.body, res));
     }
     const loop = isRead ? pathname.match(ENTRY_LOOP_PATH) : null;
     if (loop) return secure(await entryLoop(ctx, loop[1]));
-    // the social card's own page (app/card), for the og Worker's browser: files, never a route
     if (pathname.startsWith("/card/")) {
         const res = await env.ASSETS.fetch(request);
         return finish(new Response(res.body, res));
@@ -355,10 +316,8 @@ function finish(response: Response): Response {
     return response;
 }
 
-/** The site's own address; anywhere else (a staging subdomain, a preview) stays out of search. */
 const PRODUCTION_HOSTS = new Set(["iammatthias.com"]);
 
-/** The site's other names, each sent to the same path on the apex. */
 const REDIRECT_HOSTS = new Set(["www.iammatthias.com", "next.iammatthias.com", "iam.contact"]);
 
 function toApex(request: Request): Response | null {
@@ -369,7 +328,6 @@ function toApex(request: Request): Response | null {
 
 function offTheRecord(request: Request, response: Response): Response {
     const production = PRODUCTION_HOSTS.has(new URL(request.url).hostname);
-    // a HEAD answer has no body: the edge must never keep it as the answer to a GET
     if (production && request.method !== "HEAD") return response;
     const out = new Response(response.body, response);
     if (!production) out.headers.set("X-Robots-Tag", "noindex, nofollow");

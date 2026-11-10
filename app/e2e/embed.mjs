@@ -1,8 +1,3 @@
-// A post with a web component (dom_embed): the element appears over the column at its own
-// height, and wheel or a finger dragged over it still scrolls the page. Screenshots into <out>/.
-//
-//   bun embed.mjs <out-dir> [base-url] [path]
-
 import { chromium, webkit, devices } from "playwright";
 
 const out = process.argv[2] ?? "shots/embed";
@@ -31,8 +26,6 @@ for (const kind of ["desktop", "phone"]) {
             return { shown: h.style.visibility === "visible", top: Math.round(r.top), height: Math.round(r.height), tag: h.firstElementChild?.tagName };
         });
     const { width, height } = page.viewportSize();
-    // one finger dragging at x, as touch-type pointer events (what gpui reads; WebKit can't
-    // synthesize real touches) sent to whatever is under the finger, the component included
     const swipe = (x, y0, y1) =>
         page.evaluate(async ([x, y0, y1]) => {
             const target = document.elementFromPoint(x, y0) ?? document.querySelector("canvas");
@@ -49,12 +42,11 @@ for (const kind of ["desktop", "phone"]) {
 
     const first = await host();
     console.log(kind, "on arrival", JSON.stringify(first));
-    // down until the component is in view
     for (let i = 0; i < 160; i++) {
         const h = await host();
         if (h && h.top < height * 0.6) {
             if (h.top > 0) break;
-            await scroll(width / 2, height * 0.3, -60); // past it: back a little
+            await scroll(width / 2, height * 0.3, -60);
         } else {
             await scroll(width / 2, height * 0.7, h && h.top < height * 1.5 ? 80 : 300);
         }
@@ -68,7 +60,6 @@ for (const kind of ["desktop", "phone"]) {
     if (!at?.shown) {
         problems.push(`${kind}: component never shown`);
     } else {
-        // scroll with the pointer over the component itself
         const y = Math.min(Math.max(at.top + 30, 40), height - 40);
         await scroll(width / 2, y, phone ? 60 : 200);
         await page.waitForTimeout(800);

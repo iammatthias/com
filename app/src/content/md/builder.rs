@@ -1,5 +1,3 @@
-//! pulldown's event stream → the block tree.
-
 use pulldown_cmark::{Alignment, BlockQuoteKind, CodeBlockKind, Event, HeadingLevel, Tag, TagEnd};
 
 use super::super::recipe;
@@ -54,7 +52,6 @@ pub(super) struct Builder {
     strong: u8,
     strike: u8,
     link_stack: Vec<Option<u16>>,
-    /// inside an image: collecting its alt text
     image: Option<(String, String)>,
     code: Option<(String, String)>,
     html: Option<String>,
@@ -439,8 +436,6 @@ impl Builder {
         }
     }
 
-    /// An image inside a paragraph splits it: text before, the figure, text after.
-    /// Inside headings and table cells it reads as its alt text.
     fn image_done(&mut self, dest: String, alt: String) {
         let in_para = self
             .inline
@@ -496,7 +491,6 @@ impl Builder {
     pub(super) fn finish(mut self) -> Vec<Block> {
         self.flush_inline();
         while self.stack.len() > 1 {
-            // unbalanced (shouldn't happen with pulldown); fold into root
             let frame = self.stack.pop().expect("more than one frame");
             if let Frame::Quote(_, body) | Frame::Item(_, body) | Frame::Footnote(_, body) = frame {
                 for b in body {
@@ -598,7 +592,6 @@ mod tests {
         assert!(marks_of("gone").strike);
         assert_eq!(marks_of("a link").link, Some(0));
         assert_eq!(p.links, vec!["/posts/x".to_string()]);
-        // spans are contiguous and cover the whole string
         let mut at = 0;
         for (r, _) in &p.spans {
             assert_eq!(r.start, at);

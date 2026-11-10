@@ -214,8 +214,6 @@ const connectionArgs = {
 const COST_NOTE =
     "Cost model: each connection returns at most 100 items (`first` is clamped). Field resolution is O(1) except `Document.body`, which resolves image embeds per document — request it only for documents you intend to read. Limits: a query document of at most 8 KB and 10 top-level fields (aliases count); larger ones are refused with QUERY_TOO_LARGE. Rate limits are Cloudflare's edge defaults, advertised on REST responses via the RateLimit header; there is no per-client quota or API key.";
 
-/** The IBM GraphQL cost directives, declared so clients and scanners can read the cost model
- * (https://ibm.github.io/graphql-specs/cost-spec.html); the limits are enforced in routes/graphql.ts. */
 const costDirective = new GraphQLDirective({
     name: "cost",
     description: "The relative cost of resolving this field or type.",

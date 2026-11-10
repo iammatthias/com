@@ -1,8 +1,3 @@
-// What a selection drag costs on the longest essay, against scrolling: Page::render time per re-render
-// (from the #perf log) and the frame interval (requestAnimationFrame) over a 3 s drag, versus
-// the same 3 s of scrolling. Not in the gate: a number to read, not a check.
-//
-//   bun select-cost.mjs [base-url]
 import { base, open } from "./lib.mjs";
 
 const POST = "/posts/1788199665000-whats-the-frequency-kenneth";
@@ -43,7 +38,6 @@ const frames = async (f) => {
     });
 };
 
-// 3 s of drag at pointer-move rate: 180 moves 16 ms apart, sweeping down and back
 renders = [];
 const dragFrames = await frames(async () => {
     await page.mouse.move(400, 250);
@@ -62,7 +56,6 @@ summary("drag: Page::render ms per re-render", dragRenders);
 summary("drag: frame interval ms", dragFrames);
 console.log(`drag: ${dragRenders.length} re-renders in 3 s`);
 
-// the same 3 s scrolling, for scale
 await page.mouse.click(270, 400);
 await page.waitForTimeout(300);
 renders = [];

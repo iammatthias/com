@@ -1,10 +1,3 @@
-// The diagram loader in every engine, through dom.js's own renderDiagram (Firefox can't run the
-// app headless, so this drives the loader without it): a module whose first two fetches are
-// cut still draws, and one that never loads ends as a "load:" error, which diagram.rs shows as
-// the source.
-//
-//   bun diagram-engines.mjs [base-url]
-
 import { chromium, firefox, webkit } from "playwright";
 import { base, check, done } from "./lib.mjs";
 

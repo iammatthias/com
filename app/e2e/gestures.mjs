@@ -7,7 +7,6 @@ const errs = [];
 p.on("pageerror", (e) => errs.push(String(e)));
 await p.goto("http://127.0.0.1:8080/");
 await p.waitForTimeout(6000);
-// still the drift so frames compare cleanly
 await p.screenshot({ path: "shots/g-0-start.png" });
 const fingers = (tracks, steps = 14) => p.evaluate(async ([tracks, steps]) => {
   const c = document.querySelector("canvas");
@@ -19,10 +18,10 @@ const fingers = (tracks, steps = 14) => p.evaluate(async ([tracks, steps]) => {
   }
   tracks.forEach((t, i) => ev("pointerup", i + 1, t[2], t[3]));
 }, [tracks, steps]);
-await fingers([[200, 400, 320, 300]]);            // drag right and up
+await fingers([[200, 400, 320, 300]]);
 await p.waitForTimeout(800);
 await p.screenshot({ path: "shots/g-1-dragged.png" });
-await fingers([[170, 330, 90, 250], [230, 330, 310, 410]]); // pinch out
+await fingers([[170, 330, 90, 250], [230, 330, 310, 410]]);
 await p.waitForTimeout(800);
 await p.screenshot({ path: "shots/g-2-pinched.png" });
 console.log(errs.length ? errs : "no errors");

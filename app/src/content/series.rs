@@ -1,7 +1,3 @@
-//! `![](series://slug)` → a series tree: grid tiles (stills, videos, still+video "live"
-//! pairs), a flow of images and prose, or the phosphene triptych. Ported from the block
-//! splitting in `doc-render.ts` and `series-captures.ts`. Pure Rust.
-
 use std::collections::HashMap;
 
 use crate::api::{Media, SeriesLayout};
@@ -33,7 +29,6 @@ pub enum FlowPart {
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Stanza {
     pub lines: Vec<Block>,
-    /// the trailing `*…*` paragraph, set as a small note
     pub note: Option<Rich>,
 }
 
@@ -61,7 +56,6 @@ enum Raw {
     Text(String),
 }
 
-/// One whole-block embed: `![alt](blob://cid)` or `![alt](https://…/blobs/cid)`.
 fn embed(block: &str) -> Option<SeriesMedia> {
     let rest = block.strip_prefix("![")?;
     let close = rest.find("](")?;
@@ -129,7 +123,6 @@ pub fn group_captures(items: Vec<SeriesMedia>, media: &HashMap<String, Media>) -
     out
 }
 
-/// A stanza: `>` stripped, line breaks kept, a trailing all-italic paragraph lifted as a note.
 pub fn stanza(raw: &str) -> Stanza {
     let inner: String = raw
         .lines()
@@ -275,7 +268,6 @@ mod tests {
     #[test]
     fn phosphene_triptych() {
         let md = include_str!("fixtures/real-phosphene.md");
-        // the twin inlines the series after the prose; take from the first image on
         let start = md.find("![](https://blobs").unwrap();
         let end = md.find("\n---\n\n## Related").unwrap();
         let tree = build(

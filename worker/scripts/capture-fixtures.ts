@@ -1,5 +1,3 @@
-// Capture the app API contract fixtures from a running `wrangler dev`.
-// Usage: bun scripts/capture-fixtures.ts [origin]   (default http://127.0.0.1:8796)
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 

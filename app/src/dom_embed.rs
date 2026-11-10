@@ -1,38 +1,19 @@
-//! Web components the canvas can't draw: an `<ff-*>` block in a post (a CONET station's
-//! recording, and any component @com publishes the same way) is a real element laid over the canvas where the
-//! block is painted, as the clips in dom_video are.
-//!
-//! The block reserves room in the column (the element's measured height once it has one) and a
-//! probe reports where it's painted each render; the element is imported once from its module,
-//! placed there (out of view too, hidden, so it's measured before the reader arrives), and
-//! clipped to the visible column. It takes pointer input itself; wheel
-//! scrolling over it is handed to the page. Elements not placed in the last render hide; leaving
-//! the page removes them; an open corner panel hides them so they never cover it.
-//!
-//! To add a component: an entry in `EMBEDS`, and its module as assets/embeds/<component>.js,
-//! defining the custom element of the same name. The post's own attributes are the element's.
-
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 
 use crate::overlay::{Extent, Gate, Layer, Rect, Stage};
 
-/// A web component the site can host.
 pub struct Embed {
-    /// the `<ff-*>` name in a post, and the custom element its module defines
     pub component: &'static str,
-    /// room kept for it until it reports its height
     pub height: f32,
 }
 
 pub const EMBEDS: &[Embed] = &[
     Embed {
-        // a finished CONET station's recording, paged from its JSONL blob (com/public/embeds)
         component: "ff-tuner",
         height: 520.0,
     },
     Embed {
-        // the analytics contract's finished record, read from its JSONL blob (com/public/embeds)
         component: "ff-onchain-analytics",
         height: 900.0,
     },
@@ -46,12 +27,10 @@ thread_local! {
     static PLACED: RefCell<Layer<()>> =
         RefCell::new(Layer::new(Gate::Page, Extent::BetweenControls));
     static HEIGHTS: RefCell<HashMap<String, f32>> = RefCell::new(HashMap::new());
-    /// embeds keyed so far this render, so each gets its own key in page order
     static COUNT: Cell<usize> = const { Cell::new(0) };
     static RESIZED: crate::site::signal::Signal<()> = const { crate::site::signal::Signal::new() };
 }
 
-/// A signal whenever an element's height changes, so the page lays out again.
 pub fn subscribe() -> futures::channel::mpsc::UnboundedReceiver<()> {
     let rx = RESIZED.with(|r| r.subscribe());
     web::on_height(|key, h| {
@@ -67,13 +46,10 @@ pub fn subscribe() -> futures::channel::mpsc::UnboundedReceiver<()> {
     rx
 }
 
-/// The element's measured height, css px.
 pub fn height(key: &str) -> Option<f32> {
     HEIGHTS.with(|m| m.borrow().get(key).copied())
 }
 
-/// A content render of the payload for `path` begins: elements of other pages go, those the
-/// last render didn't place hide.
 pub fn begin_render(path: &str, stage: Stage) {
     let (gone, dropped) = PLACED.with(|placed| {
         let mut placed = placed.borrow_mut();
@@ -83,7 +59,6 @@ pub fn begin_render(path: &str, stage: Stage) {
     for (key, ()) in &gone {
         web::remove(key);
     }
-    // keys begin with their page's path (`next_key`)
     let prefix = format!("{path}#");
     HEIGHTS.with(|m| m.borrow_mut().retain(|key, _| key.starts_with(&prefix)));
     COUNT.set(0);
@@ -92,16 +67,12 @@ pub fn begin_render(path: &str, stage: Stage) {
     }
 }
 
-/// The key for the next embed this render draws.
 pub fn next_key(component: &str) -> String {
     let n = COUNT.get();
     COUNT.set(n + 1);
     PLACED.with(|placed| format!("{}#{component}-{n}", placed.borrow().page()))
 }
 
-/// Where the block for `key` is painted this render; `clip` is the visible part of the page.
-/// `props` are the post's own attributes on the component, passed through.
-/// `style` is the host's CSS: the page's tones, which the components read.
 pub fn place(
     key: &str,
     embed: &Embed,
@@ -116,8 +87,6 @@ pub fn place(
         (placed.inset(rect, clip), placed.gated())
     });
     let attrs = serde_json::to_string(props).unwrap_or_else(|_| "[]".into());
-    // placed (and so measured) even out of view, so the column has its real height before the
-    // reader reaches it; shown only where it's visible
     let shown = inset.is_some() && !gated;
     let module = format!("embeds/{}.js", embed.component);
     web::place(
@@ -132,7 +101,6 @@ pub fn place(
     );
 }
 
-/// Hide every element now (something has come in front of the page).
 pub fn hide_all() {
     PLACED.with(|placed| {
         for key in placed.borrow().keys() {

@@ -1,6 +1,3 @@
-//! The Worker's files and JSON, fetched and decoded the one way every caller wants them, and
-//! tried again as patiently as each caller can wait.
-
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -10,8 +7,6 @@ use serde::de::DeserializeOwned;
 
 use crate::route;
 
-/// How a failed fetch is tried again: after the nth failure, a wait of `first` doubled n-1
-/// times (at most `cap`), until `tries` have failed.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Retry {
     pub tries: u32,
@@ -20,26 +15,22 @@ pub struct Retry {
 }
 
 impl Retry {
-    /// one try: what fails is the caller's to handle (a prefetch, the feed's own "Try again")
     pub const ONCE: Retry = Retry {
         tries: 1,
         first: Duration::ZERO,
         cap: Duration::ZERO,
     };
-    /// a face, or the page a reader asked for: a dropped request or two, then say so
     pub const BRIEF: Retry = Retry {
         tries: 3,
         first: Duration::from_millis(400),
         cap: Duration::from_secs(2),
     };
-    /// what letters the spiral (the index, the timeline): no one is waiting on it, so keep at it
     pub const PATIENT: Retry = Retry {
         tries: 8,
         first: Duration::from_millis(800),
         cap: Duration::from_secs(15),
     };
 
-    /// The wait after `failures` failed tries, or None once they're spent.
     pub fn wait(&self, failures: u32) -> Option<Duration> {
         (failures < self.tries).then(|| {
             self.first
@@ -49,8 +40,6 @@ impl Retry {
     }
 }
 
-/// GET `url`'s body, tried again per `retry` when the network or the server fails (a 4xx is
-/// the request's own fault: final, but for a timeout or a rate limit).
 pub async fn get_bytes(
     client: Arc<dyn HttpClient>,
     url: String,
@@ -77,7 +66,6 @@ pub async fn get_bytes(
     }
 }
 
-/// GET `url` and decode its JSON, tried again per `retry`.
 pub async fn get_json<T: DeserializeOwned>(
     client: Arc<dyn HttpClient>,
     url: String,
@@ -89,12 +77,10 @@ pub async fn get_json<T: DeserializeOwned>(
     )?)
 }
 
-/// Where the Worker answers for a site path.
 pub fn route_url(path: &str) -> String {
     format!("{}/api/app/route?path={}", route::origin(), encode(path))
 }
 
-/// Percent-encode a path for use as a query value: each segment as a tag's, the `/`s kept.
 fn encode(path: &str) -> String {
     path.split('/')
         .map(crate::content::encode_segment)

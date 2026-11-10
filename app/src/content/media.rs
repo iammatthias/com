@@ -1,5 +1,3 @@
-//! Figures, video/audio stand-ins, and the image width presets.
-
 use gpui::prelude::*;
 
 use gpui::px;
@@ -15,7 +13,6 @@ use super::lightbox;
 use super::md::MediaSrc;
 use super::render::{Ctx, alpha, label};
 
-/// `make()`'s URL for `source` on this page, chosen the first time it's drawn.
 fn chosen_url(ctx: &Ctx, source: &str, make: impl FnOnce() -> String) -> String {
     super::scope::with(
         |p| &p.chosen,
@@ -32,11 +29,8 @@ fn chosen_url(ctx: &Ctx, source: &str, make: impl FnOnce() -> String) -> String 
     )
 }
 
-/// Widths the Worker's image proxy is asked for; one per device-pixel bucket.
 pub const PRESETS: [u32; 4] = [480, 720, 960, 1280];
 
-/// The smallest preset at least as wide as the slot in device pixels. Density stops at 2×:
-/// a 3× phone can't tell, and every decoded image is held in memory while its page is up.
 pub fn preset(css_width: f32, scale: f32) -> u32 {
     let want = (css_width * scale.clamp(1., 2.)).ceil() as u32;
     PRESETS
@@ -46,7 +40,6 @@ pub fn preset(css_width: f32, scale: f32) -> u32 {
         .unwrap_or(PRESETS[PRESETS.len() - 1])
 }
 
-/// `#rrggbb` / `#rgb` / `rgb(r, g, b)` → a colour for the placeholder plate.
 pub fn parse_color(s: &str) -> Option<Rgba> {
     let s = s.trim();
     if let Some(hex) = s.strip_prefix('#') {
@@ -80,7 +73,6 @@ pub fn meta<'a>(src: &MediaSrc, ctx: &'a Ctx) -> Option<&'a Media> {
     src.cid().and_then(|c| ctx.media.get(c))
 }
 
-/// The URL to fetch for a still at `css_width`.
 pub fn still_url(src: &MediaSrc, media: Option<&Media>, css_width: f32, scale: f32) -> String {
     match src {
         MediaSrc::Blob(cid) => api::img_url(cid, preset(css_width, scale), media),
@@ -88,7 +80,6 @@ pub fn still_url(src: &MediaSrc, media: Option<&Media>, css_width: f32, scale: f
     }
 }
 
-/// The lightbox's copy: 1280 wide on a phone, else 1920 or 2560 by device pixel ratio.
 pub fn large_url(src: &MediaSrc, media: Option<&Media>, scale: f32, phone: bool) -> String {
     match src {
         MediaSrc::Blob(cid) => api::img_url(cid, lightbox::large_width(scale, phone), media),
@@ -96,8 +87,6 @@ pub fn large_url(src: &MediaSrc, media: Option<&Media>, scale: f32, phone: bool)
     }
 }
 
-/// The image at `url`, drawn by `style`. When a wsrv.nl resize doesn't load (Safari's fetches to
-/// it fail outright at times), the same image through the Worker takes its place.
 pub fn picture(url: String, style: impl Fn(Img) -> Img + Clone + 'static) -> Img {
     let local = api::local(&url);
     let fallback_style = style.clone();
@@ -109,8 +98,6 @@ pub fn picture(url: String, style: impl Fn(Img) -> Img + Clone + 'static) -> Img
     })
 }
 
-/// An invisible probe filling its parent that tells `dom_video` where the clip `key` is
-/// painted this render, clipped to what of the page is visible.
 pub fn clip_probe(
     key: String,
     src: String,
@@ -130,7 +117,6 @@ pub fn clip_probe(
     })
 }
 
-/// Where the original bytes live (video/audio open this in a new tab).
 pub fn original_url(src: &MediaSrc) -> String {
     match src {
         MediaSrc::Blob(cid) => api::blob_url(cid),
@@ -162,7 +148,6 @@ const AUDIO_ASPECT: f32 = 4.;
 
 const NARROW_COLUMN_W: f32 = 600.;
 
-/// An image (or a video/audio stand-in) at `width`, height from the blob's aspect.
 pub fn figure(src: &MediaSrc, alt: &str, width: f32, caption: bool, ctx: &Ctx) -> AnyElement {
     let m = meta(src, ctx);
     let plate = match kind(m) {
@@ -238,7 +223,6 @@ fn still(src: &MediaSrc, alt: &str, width: f32, m: Option<&Media>, ctx: &Ctx) ->
     });
     let probe_key = format!("{}:{}", ctx.key, original_url(src));
     let shown = Some(url.clone()).filter(|_| super::near::near(&probe_key));
-    // every image opens in the lightbox, stepping through the payload's others
     let index = {
         let mut g = ctx.gallery.borrow_mut();
         g.push(lightbox::Item {
@@ -258,8 +242,6 @@ fn still(src: &MediaSrc, alt: &str, width: f32, m: Option<&Media>, ctx: &Ctx) ->
         .on_click(move |_, window, cx| lightbox::open(&gallery, index, window, cx))
 }
 
-/// Audio can't play on the canvas yet: its poster (or the dominant colour) with a lettered
-/// "play" that opens the original in a new tab.
 fn audio(src: &MediaSrc, width: f32, m: Option<&Media>, ctx: &Ctx) -> Stateful<Div> {
     let url = original_url(src);
     let accent = ctx.theme.accent;
@@ -278,11 +260,7 @@ fn audio(src: &MediaSrc, width: f32, m: Option<&Media>, ctx: &Ctx) -> Stateful<D
     .on_click(move |_, _, _| crate::route::open_external(&url))
 }
 
-/// A clip, playing in place: the poster (or the dominant colour) on the canvas, with a real
-/// `<video>` laid over it by `dom_video`. Muted and looping, it starts by itself unless the
-/// reader prefers reduced motion; then a lettered "play" starts it. A click plays or pauses.
 fn video(src: &MediaSrc, width: f32, m: Option<&Media>, ctx: &Ctx) -> Stateful<Div> {
-    // the clip's own shape once its <video> has read it; until then blobs' size, or a guess
     let aspect = dom_video::aspect(&original_url(src))
         .or_else(|| m.and_then(Media::known_aspect))
         .unwrap_or(16. / 9.);
@@ -300,7 +278,6 @@ fn video(src: &MediaSrc, width: f32, m: Option<&Media>, ctx: &Ctx) -> Stateful<D
             poster,
             dom_video::Mode::Auto,
         ))
-        // only seen while the clip isn't drawn over it: before it starts, or with motion reduced
         .when(!playing, |d| {
             d.child(play_badge("MOVING PICTURE", ctx.theme))
         })
@@ -310,7 +287,6 @@ fn video(src: &MediaSrc, width: f32, m: Option<&Media>, ctx: &Ctx) -> Stateful<D
         })
 }
 
-/// Two balanced columns of tiles (a masonry the way the old CSS columns read).
 pub fn two_columns(items: Vec<(f32, AnyElement)>, width: f32, gap: f32) -> AnyElement {
     let col_w = (width - gap) / 2.;
     let mut left: Vec<AnyElement> = Vec::new();

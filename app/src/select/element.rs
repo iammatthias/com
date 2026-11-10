@@ -1,8 +1,3 @@
-//! One selectable block: a `StyledText` in a layout node of its own, so its `TextLayout` is
-//! measured and prepainted (a text child of a block div is folded into the parent's inline
-//! paragraph and never gets bounds). It paints its own highlight under its glyphs and owns
-//! its links, so a click and a drag have one owner.
-
 use std::cell::Cell;
 use std::ops::Range;
 use std::rc::Rc;
@@ -33,7 +28,6 @@ pub struct Prepainted {
     ordinal: Option<Ordinal>,
     scope: Option<Selection>,
     hitbox: Hitbox,
-    /// one hitbox per visual line of each link
     links: Vec<(usize, Hitbox)>,
 }
 
@@ -50,8 +44,6 @@ impl Selectable {
         }
     }
 
-    /// `ranges` are byte ranges of the text. A click (press and release without a drag) in one
-    /// calls `f` with its index; a drag that starts on one selects.
     pub fn links(
         mut self,
         ranges: Vec<Range<usize>>,
@@ -62,7 +54,6 @@ impl Selectable {
         self
     }
 
-    /// `Some(index)` when the pointer enters a link, `None` when it leaves.
     pub fn on_link_hover(
         mut self,
         f: impl Fn(Option<usize>, &mut Window, &mut App) + 'static,
@@ -71,7 +62,6 @@ impl Selectable {
         self
     }
 
-    /// What copied text puts between this block and the one before it.
     pub fn join(mut self, join: Join) -> Self {
         self.join = join;
         self
@@ -98,8 +88,6 @@ impl Element for Selectable {
         cx: &mut App,
     ) -> (LayoutId, ()) {
         let text = self.text.request_layout(window, cx);
-        // a block node with no inline content of its own: the parent's paragraph collector
-        // takes it as a flow child and never folds the text beneath into its own paragraph
         let style = Style {
             display: Display::Block,
             ..Default::default()
@@ -129,7 +117,6 @@ impl Element for Selectable {
             }
         }
         let scope = Selection::current();
-        // the scope follows links, so outside one they are dead
         debug_assert!(
             scope.is_some() || self.links.is_empty(),
             "a Selectable with links is prepainting outside a SelectionScope"
@@ -178,7 +165,6 @@ impl Element for Selectable {
             }
         }
         self.text.paint(window, cx);
-        // the later request wins: links over the block's I-beam
         window.set_cursor_style(CursorStyle::IBeam, &prepaint.hitbox);
         for (_, hitbox) in &prepaint.links {
             window.set_cursor_style(CursorStyle::PointingHand, hitbox);
@@ -232,7 +218,6 @@ mod tests {
         });
         let bounds = layout.bounds();
         assert!(bounds.size.width > px(0.));
-        // the test text system shapes widths but never wraps: wrapping is probe 2, on screen
         assert_eq!(bounds.size, size(px(200.), layout.line_height()));
         let rects = layout.line_layouts()[0].selection_bounds(0..TEXT.len(), layout.line_height());
         assert_eq!(rects.len(), 1, "{rects:?}");
@@ -265,6 +250,7 @@ mod tests {
         assert!(live.rects(0..0).is_empty());
     }
 
+    #[cfg(debug_assertions)]
     #[gpui::test]
     fn a_selectable_with_links_outside_a_scope_is_a_bug(cx: &mut TestAppContext) {
         let cx = cx.add_empty_window();

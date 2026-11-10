@@ -1,16 +1,8 @@
-// Semantic search over the site, off the main thread: ternlight (a 384-dim BitNet
-// sentence embedder in wasm), a folded-title boost, a match of the query's words
-// against each item's text, and a floor under which nothing is returned. Grew from
-// com/src/scripts/search-worker.ts: baked vectors when the model matches, local
-// embeds (cached in IndexedDB by cid) for anything newer. worker/scripts/search-eval.ts
-// scores this file against a graded query set.
-
 import init, { embed } from "./tern_engine.js";
 
 const SEARCH_MODEL = "@ternlight/base@0.1";
 const SEARCH_DIMS = 384;
 
-/** `load()`, asked again after each wait while it fails. */
 async function patiently(load, waits = [800, 3200]) {
     for (let i = 0; ; i++) {
         try {
@@ -22,8 +14,6 @@ async function patiently(load, waits = [800, 3200]) {
     }
 }
 
-/** What `load` resolves to, kept once it does; a failure is forgotten, so the next message
- *  starts over rather than inheriting it. */
 function kept(load) {
     let p = null;
     return () =>
@@ -41,11 +31,6 @@ function fold(s) {
     return s.normalize("NFKD").replace(/\p{M}+/gu, "").toLowerCase().replace(UNDECOMPOSED_RE, (c) => UNDECOMPOSED[c]);
 }
 
-/**
- * The query's words, folded: each as a pattern for the word or a longer word starting with it,
- * weighted by how rare it is across `texts` (a word in every item says nothing), and all of
- * them as one whole-word phrase.
- */
 function terms(q, texts) {
     const words = fold(q)
         .split(/[^a-z0-9]+/)
@@ -64,7 +49,6 @@ function terms(q, texts) {
     };
 }
 
-/** How much the words of `text` say the query: the phrase itself 1, every word 0.67, a part of them less. */
 function wordsBonus({ each, total, phrase }, text) {
     if (each.length === 0 || total === 0) return 0;
     if (phrase.test(text)) return 1;
@@ -122,7 +106,6 @@ function dbReplace(db, entries, staleKeys) {
 async function buildIndex() {
     const [, corpus, prebuilt] = await Promise.all([
         ensureEngine(),
-        // a 503 is a partial corpus (worker/src/routes/api.ts): an index of it would be kept
         patiently(() =>
             fetch("/api/search-corpus.json").then((r) => {
                 if (!r.ok) throw new Error(`search corpus: ${r.status}`);
@@ -169,8 +152,6 @@ async function buildIndex() {
     }
     const folded = items.map((item) => {
         const text = fold(item.text);
-        // a note of a word or two embeds near everything (the empty string embeds nearest of all),
-        // so its cosine counts for less; eight words and up count in full
         const weight = Math.min(1, text.split(/[^a-z0-9]+/).filter(Boolean).length / 8);
         return { title: fold(item.title), text, weight };
     });
@@ -204,8 +185,6 @@ self.onmessage = async (event) => {
                 return { href: item.href, title: item.title, kind: item.kind, score: dot };
             });
             scored.sort((a, b) => b.score - a.score);
-            // below this nothing on the site answers: on a graded query set every relevant hit
-            // scored 0.225 or more and nine tenths of the hits for off-site queries less than 0.24
             const hits = scored.filter((h) => h.score >= 0.22).slice(0, msg.topK);
             self.postMessage(JSON.stringify({ type: "results", id: msg.id, hits }));
         }

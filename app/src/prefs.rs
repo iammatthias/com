@@ -1,6 +1,3 @@
-//! Small per-visitor conveniences (the chosen view, the chosen paper), kept in
-//! localStorage. Nothing here is needed for the site to work; every read can fail.
-
 const PREFIX: &str = "burin.";
 
 #[cfg(target_family = "wasm")]

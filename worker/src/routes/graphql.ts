@@ -12,8 +12,6 @@ import {
 } from "graphql";
 import { schema } from "../lib/graphql-schema";
 
-/** Ported from com/src/pages/graphql.ts and schema.graphql.ts. */
-
 const CORS = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "content-type",
@@ -31,11 +29,9 @@ function json(payload: unknown, status = 200) {
     });
 }
 
-/** Every top-level field (alias) resolves on its own: bounded so one request can't fan out without end. */
 const MAX_QUERY_LENGTH = 8 * 1024;
 const MAX_ROOT_FIELDS = 10;
 
-/** Fields at the operation's root, through fragments; spreads of unknown fragments count nothing. */
 function rootFieldCount(doc: DocumentNode, operationName?: string): number {
     const ops = doc.definitions.filter((d): d is OperationDefinitionNode => d.kind === Kind.OPERATION_DEFINITION);
     const op = operationName ? ops.find((o) => o.name?.value === operationName) : ops[0];
@@ -58,7 +54,6 @@ function rootFieldCount(doc: DocumentNode, operationName?: string): number {
     return count(op.selectionSet);
 }
 
-/** Why `query` is refused before it runs, or null. A syntax error is left to graphql() to report. */
 export function queryLimitError(query: string, operationName?: string): string | null {
     if (query.length > MAX_QUERY_LENGTH) return `The query is longer than ${MAX_QUERY_LENGTH} characters.`;
     let doc: DocumentNode;

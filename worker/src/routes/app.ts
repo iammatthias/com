@@ -19,9 +19,6 @@ import { readSecret, wsrvUrl } from "../lib/farfield";
 import { ARCH_WIDTHS } from "../lib/images";
 import { etagFor } from "../lib/http";
 
-/** Data API for the GPUI app: plain same-origin GETs, no headers. See src/app-api.ts. */
-
-/** With an ETag, so the app's revalidations are answered 304 (index.ts) */
 export async function appJson(payload: unknown): Promise<Response> {
     const body = JSON.stringify(payload);
     return new Response(body, {
@@ -33,21 +30,14 @@ export async function appJson(payload: unknown): Promise<Response> {
     });
 }
 
-/** Cache semantics of the HTML route the payload stands for, so one purge covers both. */
 export function setRouteCacheHeaders(response: Response, route: AppRoute): void {
     setPageCacheHeaders(response, cachePolicyFor(route), { shell: false });
 }
 
-/**
- * The page preloads the index (and, on the home page, the first timeline page) alongside the app's own download;
- * a minute of browser freshness lets the app use those copies however long it took to start
- * (the edge's own policy, in Cloudflare-CDN-Cache-Control, is unchanged).
- */
 function browserFresh(response: Response): void {
     response.headers.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
 }
 
-/** GET /api/app/timeline?page=N */
 async function timelineHandler({ url }: Ctx): Promise<Response> {
     const response = await appJson(await appTimeline(Number(url.searchParams.get("page") ?? "1")));
     setDocumentPageCacheHeaders(response, [FEED_TAG]);
@@ -81,12 +71,10 @@ async function routeHandler({ url }: Ctx): Promise<Response> {
     const route = await resolveAppRoute(target.pathname, target.search);
     const response = await appJson(route);
     setRouteCacheHeaders(response, route);
-    // a deep link preloads its own payload (lib/shell.ts): let the app use that copy
     if (route.kind !== "notfound" && route.kind !== "redirect") browserFresh(response);
     return response;
 }
 
-/** GET /api/app/ssr?path= : the hidden SSR DOM for a path, built by the same code as the HTML route. */
 async function ssrHandler({ url }: Ctx): Promise<Response> {
     const target = pathParam(url, "ssr");
     if (target instanceof Response) return target;
@@ -112,7 +100,6 @@ async function ssrHandler({ url }: Ctx): Promise<Response> {
             url: meta.canonical,
             type: meta.ogType,
         },
-        // hidden under the app, as in the shell: its images must not download on every navigation
         html: quietImages(ssrMainHtml(page)),
     };
     const response = await appJson(payload);
@@ -139,7 +126,6 @@ function imgHeaders(extra: HeadersInit = {}): Headers {
     return h;
 }
 
-/** A miss or an upstream failure is not content-addressed: nothing may keep it. */
 function imgError(status: 404 | 502): Response {
     const h = imgHeaders();
     h.set("Cache-Control", "no-store");
@@ -147,10 +133,8 @@ function imgError(status: 404 | 502): Response {
     return new Response(null, { status, headers: h });
 }
 
-/** Raw blobs (SVG among them) open as documents on this origin: no script, no fetches. */
 const RAW_BLOB_CSP = "default-src 'none'; sandbox";
 
-/** how long an upstream may take to answer with headers; the body streams on past it */
 const UPSTREAM_HEADERS_MS = 8000;
 
 async function fetchHeadersWithin(url: string, init: RequestInit): Promise<Response> {
@@ -163,11 +147,6 @@ async function fetchHeadersWithin(url: string, init: RequestInit): Promise<Respo
     }
 }
 
-/**
- * The blob as stored. `fallback` marks a resize request that ended here because the blob's
- * meta or wsrv.nl was unavailable: that answer is kept briefly, not for a year, so the resize
- * is tried again soon.
- */
 export async function proxyBlob(cid: string, request: Request, fallback = false): Promise<Response> {
     const headers: Record<string, string> = { "User-Agent": "iammatthias.com/1.0 (+https://iammatthias.com)" };
     const range = request.headers.get("range");
@@ -198,15 +177,9 @@ export async function proxyBlob(cid: string, request: Request, fallback = false)
     return new Response(upstream.body, { status: upstream.status, headers: out });
 }
 
-/**
- * GET /api/app/glass-image?src=<wsrv url> : the home hero's Glass photograph, for when the app's
- * own fetch of it from wsrv.nl fails (Safari's does at times; media::picture falls back here).
- * Only a wsrv.nl resize of a Glass CDN image, at one of the arch widths, is proxied.
- */
 const GLASS_CDN_HOST = "cdn.glass.photo";
 const GLASS_FORMATS = new Set(["webp", "jpg", "avif"]);
 
-/** The wsrv.nl URL to fetch for `src`, rebuilt from its checked parts; null when it isn't a Glass pick. */
 export function glassImageUpstream(src: string): string | null {
     let outer: URL;
     let inner: URL;
@@ -225,12 +198,10 @@ export function glassImageUpstream(src: string): string | null {
     return wsrvUrl(inner.toString(), width, { format: format as "webp" | "jpg" | "avif" });
 }
 
-/** `target` as a raster image, or null (with the reason logged) when it isn't one. */
 async function fetchImage(target: string): Promise<{ body: ReadableStream; type: string } | null> {
     let upstream: Response;
     try {
         upstream = await fetch(target, {
-            // a failure is never kept: cacheTtl alone would hold it for the day
             cf: { cacheEverything: true, cacheTtlByStatus: { "200-299": 86400, "300-599": -1 } },
             signal: AbortSignal.timeout(8000),
         } as RequestInit);
@@ -251,8 +222,6 @@ async function fetchImage(target: string): Promise<{ body: ReadableStream; type:
 async function glassImageHandler({ url }: Ctx): Promise<Response> {
     const target = glassImageUpstream(url.searchParams.get("src") ?? "");
     if (!target) return new Response(null, { status: 400 });
-    // wsrv.nl turns some Worker requests away (Cloudflare error 1106): then the Glass original,
-    // larger and a JPEG, but the photograph
     const image = (await fetchImage(target)) ?? (await fetchImage(new URL(target).searchParams.get("url")!));
     if (!image) return new Response(null, { status: 502, headers: { "Cache-Control": "no-store" } });
     return new Response(image.body, {
@@ -263,12 +232,6 @@ async function glassImageHandler({ url }: Ctx): Promise<Response> {
     });
 }
 
-/**
- * GET /img/<cid>?w=<width>[&f=webp|jpg|png|avif]
- * Images are resized by wsrv.nl (width snapped up to IMG_WIDTHS, default
- * 1920); video, audio, and other blobs stream from blobs.farfield.systems
- * with Range passthrough. A cid is a content hash, so everything is immutable.
- */
 async function imgHandler({ request, url, params, exec }: Ctx): Promise<Response> {
     const cid = params[0];
     if (!CID_RE.test(cid)) return imgError(404);
@@ -277,14 +240,12 @@ async function imgHandler({ request, url, params, exec }: Ctx): Promise<Response
     const width = snapWidth(url.searchParams.get("w"));
     const f = url.searchParams.get("f") ?? "webp";
     const format = (FORMATS.has(f) ? f : "webp") as "webp" | "jpg" | "avif";
-    // only a raster's resize is ever stored under this key, so a hit needs no meta lookup
     const cacheKey = new Request(`${url.origin}/img/${cid}?w=${width}&f=${format}`);
     const cache = (globalThis as { caches?: { default?: Cache } }).caches?.default;
     const hit = cache ? await cache.match(cacheKey).catch(() => undefined) : undefined;
     if (hit) return request.method === "HEAD" ? new Response(null, hit) : hit;
 
     const meta = await getBlobMeta(cid);
-    // no meta: unknown whether this is a raster, so the blob itself stands in for now
     if (!meta) return proxyBlob(cid, request, true);
     const isRaster = meta.mime.startsWith("image/") && meta.mime !== "image/svg+xml" && meta.mime !== "image/gif";
     if (!isRaster) return proxyBlob(cid, request);
@@ -325,7 +286,6 @@ export const appRoutes: Route[] = [
     { methods: GET, pattern: /^\/api\/app\/route$/, handler: routeHandler },
     { methods: GET, pattern: /^\/api\/app\/timeline$/, handler: timelineHandler },
     { methods: GET, pattern: /^\/api\/app\/ssr$/, handler: ssrHandler },
-    // the same artwork under /api/app, which the app (and its dev proxy) fetch from
     { methods: GET, pattern: /^\/api\/app\/glass-image$/, handler: glassImageHandler },
     { methods: GET, pattern: /^\/api\/app\/.*$/, handler: appMissing },
     { methods: GET, pattern: /^\/img\/([^/]+)$/, handler: imgHandler },

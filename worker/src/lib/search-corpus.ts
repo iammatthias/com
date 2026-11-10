@@ -31,8 +31,6 @@ export function buildSearchCorpus(
         })),
         ...feed.flatMap((f) => {
             const text = bodyText(f);
-            // a note that is only pictures has no words to find it by; the empty string embeds
-            // to one vector that lands near every query
             if (!text) return [];
             return {
                 href: `/feed/${f.rkey}`,

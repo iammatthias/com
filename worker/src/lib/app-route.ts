@@ -58,9 +58,7 @@ export const redirectDeps: RedirectDeps = {
     stampedHref,
 };
 
-/** com's home feed column. */
 export const LATEST_FEED_COUNT = 3;
-/** com's home waits this long for glass.photo before drawing an empty arch. */
 const GLASS_TIMEOUT_MS = 1000;
 const GLASS_PROFILE = SOCIAL_LINKS.find((l) => l.name === "Glass")?.url ?? "https://glass.photo/iam";
 
@@ -68,7 +66,6 @@ export function toAppGlassPick(pick: GlassPick | null): AppGlassPick | null {
     if (!pick) return null;
     return {
         href: pick.shareUrl ?? GLASS_PROFILE,
-        // straight from wsrv.nl in the browser; the app falls back to /api/app/glass-image
         image: pick.src,
         width: pick.width,
         height: pick.height,
@@ -173,12 +170,9 @@ export async function toAppPost(item: FeedEntryData): Promise<AppPost> {
     };
 }
 
-/** Entries per page of the timeline: a screenful of spiral at a time. */
 export const TIMELINE_PAGE = 40;
 
-/** Every document and feed note, newest first, one page at a time. */
 export async function appTimeline(page: number): Promise<AppTimeline> {
-    // merged and sorted once a minute, shared by every page asked for meanwhile
     const all = await memo("app-timeline", async () => {
         const [docs, feed] = await Promise.all([publishedDocs(), loadAllFeedEntries()]);
         const merged: AppTimelineItem[] = [
@@ -208,7 +202,6 @@ export async function appIndex(): Promise<AppIndex> {
             .filter((p) => (counts.get(p.slug) ?? 0) > 0)
             .map((p) => toSection(p, counts.get(p.slug) ?? 0)),
         items: docs.map(toAppItem),
-        // every note (the list runs them by date with everything else); each is a few words
         feed: feed.map(
             (f): AppFeedSummary => ({
                 rkey: f.rkey,
@@ -280,12 +273,6 @@ function decodeSegment(s: string): string | null {
     }
 }
 
-/**
- * Resolve a human-facing URL path to the app payload. Mirrors the old
- * Astro route table: static pages win over dynamic ones, and dynamic
- * segments win over rest parameters.
- */
-/** `redirects: false` when the caller has already run redirectFor on this path. */
 export async function resolveAppRoute(
     pathname: string,
     search = "",

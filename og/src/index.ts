@@ -2,17 +2,6 @@ import puppeteer, { type Browser } from "@cloudflare/puppeteer";
 import { CARD_VERSION, cardQuery, specFromQuery, verifyCard, type CardSpec } from "../../worker/src/lib/og-card";
 import { drawGate } from "./draw-gate";
 
-/**
- * Social cards for com-next. GET /og/<sig>.jpg?kind&eyebrow&title&description&seed (the site
- * Worker writes these URLs into og:image, signed, and forwards them here through its OG
- * binding): the card is drawn once by the site's card page (app/card/card.html, the plate's own
- * shaders in WebGL2) in Browser Run, then kept in KV and the edge cache under its signature.
- * A changed title or description is a new signature, so a new card; an unchanged one is never
- * drawn twice. Crawlers don't wait long: a card not yet drawn gets a short try, then the home
- * card while it finishes in the background. An hourly sweep draws every page's card ahead of
- * time, from the site's own sitemap and og:image tags.
- */
-
 interface Env {
     BROWSER: Fetcher;
     SITE: Fetcher;
@@ -21,22 +10,17 @@ interface Env {
     OG_SIGNING_KEY: string;
 }
 
-// JPEG: the grain is noise a PNG can barely compress (a card ran ~1 MB as PNG). Quality 72 keeps
-// the grain and the type clean at a fraction of the size
 const JPEG_QUALITY = 72;
 const IMAGE_HEADERS = {
     "Content-Type": "image/jpeg",
     "Cache-Control": "public, max-age=31536000, immutable",
-    // each edge keeps its own copy (the site Worker would otherwise mark it no-store)
     "Cloudflare-CDN-Cache-Control": "public, max-age=31536000, immutable",
     "X-Content-Type-Options": "nosniff",
     "Access-Control-Allow-Origin": "*",
 };
 const kvKey = (sig: string) => `og:${CARD_VERSION}:${sig}`;
 const FALLBACK_KEY = `og:${CARD_VERSION}:fallback`;
-/** how long a crawler's request may wait on a first drawing */
 const INLINE_BUDGET_MS = 9000;
-/** cards one sweep draws at most (it runs hourly; a first sweep spreads over a few) */
 const SWEEP_LIMIT = 40;
 
 async function draw(browser: Browser, origin: string, spec: CardSpec): Promise<ArrayBuffer> {
@@ -70,7 +54,6 @@ async function drawOne(env: Env, spec: CardSpec, sig: string): Promise<ArrayBuff
 
 const timeout = (ms: number) => new Promise<null>((resolve) => setTimeout(() => resolve(null), ms));
 
-/** The home card for now (briefly, so the real one takes over once drawn), or 503 before any card exists. */
 async function fallbackResponse(request: Request, env: Env): Promise<Response> {
     const fallback = await env.CONTENT_CACHE.get(FALLBACK_KEY, "arrayBuffer");
     if (!fallback) return new Response("The card is still being drawn.", { status: 503, headers: { "Retry-After": "30", "Cache-Control": "no-store" } });
@@ -87,7 +70,6 @@ async function serve(request: Request, env: Env, ctx: ExecutionContext): Promise
     const spec = specFromQuery(url.searchParams);
     if (!(await verifyCard(spec, sig, env.OG_SIGNING_KEY))) return new Response("Not found.", { status: 404 });
 
-    // the edge first, keyed by the signed URL alone (the query is fixed by the signature)
     const cacheKey = new Request(`${url.origin}/og/${sig}.jpg`);
     const edge = await caches.default.match(cacheKey);
     if (edge) return edge;
@@ -99,8 +81,6 @@ async function serve(request: Request, env: Env, ctx: ExecutionContext): Promise
         return res;
     }
 
-    // not drawn yet, and nobody else is on it: a short try; past that, the home card now and
-    // the real one shortly
     const gate = await drawGate(env.CONTENT_CACHE, sig, Date.now());
     if (gate !== "draw") {
         console.warn(`[og] ${gate}: ${sig} gets the home card`);
@@ -123,13 +103,11 @@ async function fingerprint(text: string): Promise<string> {
     return [...digest.slice(0, 16)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-/** Every page's card URL, read from the site itself: its sitemap, then each page's og:image. */
 async function siteCards(env: Env, sitemap: string): Promise<string[]> {
     const site = (path: string, accept: string) => env.SITE.fetch(new Request(`${env.SITE_ORIGIN}${path}`, { headers: { Accept: accept } }));
     const paths = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname);
     const cards = new Set<string>();
     const queue = ["/", ...paths];
-    // a few at a time: page HTML is cheap, and the site shouldn't see a burst
     for (let i = 0; i < queue.length; i += 6) {
         const batch = await Promise.all(
             queue.slice(i, i + 6).map(async (path) => {
@@ -147,9 +125,7 @@ async function siteCards(env: Env, sitemap: string): Promise<string[]> {
     return [...cards];
 }
 
-/** Draw the cards not yet kept, in one browser, home first (it is everyone's fallback). */
 async function sweep(env: Env, limit = SWEEP_LIMIT): Promise<{ total: number; drawn: number; failed: number; left: number; unchanged?: true }> {
-    // the sitemap carries every page and its lastmod: unchanged since a complete sweep, nothing to do
     const sitemap = await (await env.SITE.fetch(new Request(`${env.SITE_ORIGIN}/sitemap.xml`, { headers: { Accept: "application/xml" } }))).text();
     const print = await fingerprint(sitemap);
     if ((await env.CONTENT_CACHE.get(SWEPT_KEY)) === print) return { total: 0, drawn: 0, failed: 0, left: 0, unchanged: true };
@@ -199,9 +175,6 @@ function authorized(request: Request, env: Env): boolean {
 export default {
     async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
         const url = new URL(request.url);
-        // POST /og/sweep (bearer: the signing key): draw what's missing now, e.g. after a deploy.
-        // A few at a time (?limit=, default 6): a response has to come back within ~100 s, so a
-        // caller loops until `left` is 0; the hourly cron draws more per run
         if (url.pathname === "/og/sweep" && request.method === "POST") {
             if (!authorized(request, env)) return new Response("Unauthorized.", { status: 401 });
             const limit = Math.min(Math.max(Number(url.searchParams.get("limit")) || 6, 1), 12);

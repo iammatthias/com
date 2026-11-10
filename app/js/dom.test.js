@@ -1,4 +1,3 @@
-// Run from app/: `bun test js/`. A stub of the little DOM dom.js touches stands in for a browser.
 import { beforeEach, describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -51,7 +50,6 @@ beforeEach(async () => {
         ResizeObserver: class {
             observe() {}
         },
-        // each reply is released by the test, so late answers can be played out of order
         fetch: (url) =>
             new Promise((resolve) => {
                 const path = decodeURIComponent(new URL(url, "https://x.test").searchParams.get("path"));
@@ -115,7 +113,6 @@ describe("syncDocument", () => {
 
 describe("embeds", () => {
     const place = (key, module, attrs) => dom.embedPlace(key, "x-embed", module, JSON.stringify(attrs), "", 0, 0, 100, 0, 0, 0, 0, true);
-    // the elements placed so far, in order: each host holds its component once its module loaded
     const components = () => document.body.children.map((host) => host.children[0]);
     const until = async (ready) => {
         for (let i = 0; i < 200 && !ready(); i++) await settle();

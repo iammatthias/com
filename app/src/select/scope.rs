@@ -1,7 +1,3 @@
-//! The `Selection` handle an app keeps per document, and the `SelectionScope` element that wraps
-//! the document: it collects the blocks each render, owns the pointer and touch listeners, and
-//! draws the touch handles and the Copy pill.
-
 use std::cell::RefCell;
 use std::rc::{Rc, Weak};
 
@@ -18,7 +14,6 @@ use super::gesture::{Effects, End, Gesture, Input, step};
 use super::model::{Ordinal, Origin, Span, effective_click_count};
 use super::registry::{Hit, Live, Registry};
 
-/// Colours the app supplies: a selection colour is a theme decision.
 #[derive(Clone)]
 pub struct SelectionStyle {
     pub highlight: Hsla,
@@ -28,13 +23,9 @@ pub struct SelectionStyle {
     pub copy_label: SharedString,
 }
 
-/// A touch handle's knob radius, and how far above a finger on a knob the text is sampled.
 const KNOB: Pixels = px(7.);
 const HANDLE_LIFT: Pixels = px(22.);
-/// A finger-sized square round each knob.
 const HANDLE_HIT: Pixels = px(44.);
-/// How far above the selection's first line the Copy pill sits, or below its last line (past
-/// the handle's knob) when there is no room above.
 const PILL_LIFT: Pixels = px(40.);
 const PILL_DROP: Pixels = px(22.);
 
@@ -45,10 +36,8 @@ pub(super) struct ScopeState {
     gesture: Gesture,
     pub style: Option<SelectionStyle>,
     last_click: Option<Point<Pixels>>,
-    /// the views whose paint drew a block: who to notify when the selection changes
     pub views: Vec<EntityId>,
     handles: [Option<Hitbox>; 2],
-    /// where the Copy pill was drawn this render, if it was
     pub pill: Option<Point<Pixels>>,
 }
 
@@ -57,7 +46,6 @@ impl ScopeState {
         step(&mut self.gesture, &mut self.selection, input)
     }
 
-    /// The press landed on this block, and nothing drawn over the page covers it there.
     fn press_hit(&self, p: Point<Pixels>, window: &Window) -> Option<Hit> {
         let i = self
             .registry
@@ -72,8 +60,6 @@ impl ScopeState {
         Some(self.registry.hit(o, p))
     }
 
-    /// The handle under the finger. Round a short selection both finger-sized hitboxes overlap,
-    /// so the nearer knob wins.
     fn handle_under(&self, window: &Window) -> Option<End> {
         let at = window.mouse_position();
         let distance = |h: &Hitbox| {
@@ -99,13 +85,11 @@ impl ScopeState {
     }
 }
 
-/// One selection per document. A cheap handle: keep it in the view that renders the document.
 #[derive(Clone)]
 pub struct Selection(pub(super) Rc<RefCell<ScopeState>>);
 
 thread_local! {
     static SCOPES: RefCell<Vec<Weak<RefCell<ScopeState>>>> = const { RefCell::new(Vec::new()) };
-    /// the scope whose children are prepainting right now
     static CURRENT: RefCell<Option<Selection>> = const { RefCell::new(None) };
 }
 
@@ -136,7 +120,6 @@ impl Selection {
         Self(state)
     }
 
-    /// Wraps a document. A changed `key` clears the selection: pass what identifies the content.
     pub fn scope(
         &self,
         key: impl Into<SharedString>,
@@ -167,7 +150,6 @@ impl Selection {
         Some(s.registry.text(span))
     }
 
-    /// The highlight rects of the selection, in window coordinates, in document order.
     pub fn rects(&self) -> Vec<Bounds<Pixels>> {
         let s = self.0.borrow();
         match s.selection.as_ref().filter(|s| !s.is_empty()) {
@@ -190,9 +172,6 @@ impl Selection {
         }
     }
 
-    /// The document is off the screen: forget it, so a keystroke cannot select or copy what is
-    /// no longer drawn. The scope cannot tell on its own, since a cached view replays without
-    /// prepainting, so the app says so from where it stops drawing the document.
     pub fn reset(&self, cx: &mut App) {
         {
             let mut s = self.0.borrow_mut();
@@ -207,18 +186,14 @@ impl Selection {
         self.clear(cx);
     }
 
-    /// Where the Copy pill is drawn, when it is.
     pub(super) fn pill(&self) -> Option<Point<Pixels>> {
         self.0.borrow().pill
     }
 
-    /// The scope whose children are prepainting right now.
     pub(super) fn current() -> Option<Selection> {
         CURRENT.with(|c| c.borrow().clone())
     }
 
-    /// The scope a keystroke or a copy command belongs to: the one with a selection, else the
-    /// one with a document in it.
     pub(super) fn active() -> Option<Selection> {
         let live: Vec<Selection> = SCOPES.with(|s| {
             s.borrow()
@@ -246,8 +221,6 @@ impl Selection {
         self.apply(fx, window, cx);
     }
 
-    /// The state borrow is dropped before this runs: links, notifications and the clipboard
-    /// may all re-enter the scope.
     fn apply(&self, fx: Effects, window: &mut Window, cx: &mut App) {
         if fx.claim {
             window.prevent_default();
@@ -301,9 +274,6 @@ impl Selection {
     }
 }
 
-/// gpui's web clipboard throws through wasm when `navigator.clipboard` is missing (a plain http
-/// origin): there the browser's own copy command, answered by the module's `copy` listener,
-/// writes instead.
 fn write_clipboard(text: String, cx: &mut App) {
     #[cfg(target_family = "wasm")]
     if !super::web::has_clipboard_api() {
@@ -318,18 +288,14 @@ pub struct SelectionScope {
     key: SharedString,
     child: AnyElement,
     style: SelectionStyle,
-    /// how far down from the window's top the Copy pill may sit: what the app draws over the
-    /// document's top edge
     clearance: Pixels,
 }
 
 pub struct ScopePrepaint {
-    /// the touch handles' stems and knobs, start then end
     handles: Option<[(Bounds<Pixels>, Bounds<Pixels>); 2]>,
 }
 
 impl SelectionScope {
-    /// Keeps the Copy pill below `top`: the controls the app draws over the document.
     pub fn pill_clearance(mut self, top: Pixels) -> Self {
         self.clearance = top;
         self
@@ -432,7 +398,6 @@ impl Element for SelectionScope {
         }
         let (first, last) = (*first, *last);
         drop(s);
-        // a deferred element is prepainted where it is drawn, but laid out here
         let mut pill = self.pill();
         let pill_size = pill.layout_as_root(
             size(AvailableSpace::MaxContent, AvailableSpace::MaxContent),
@@ -440,8 +405,6 @@ impl Element for SelectionScope {
             cx,
         );
         let viewport = window.viewport_size();
-        // above the first line; below the last when that would sit under the app's controls or
-        // off the top; failing both, just under the controls, over the text
         let above = first.top() - PILL_LIFT;
         let below = last.bottom() + PILL_DROP;
         let (y, beside) = if above >= self.clearance {
@@ -530,7 +493,6 @@ impl Element for SelectionScope {
             let end = (e.phase == TouchPhase::Started)
                 .then(|| s.handle_under(window))
                 .flatten();
-            // the finger sits on the knob under the line: sample the text above it
             let at = point(e.position.x, e.position.y - HANDLE_LIFT);
             Some(Input::HandleDrag {
                 phase: e.phase,

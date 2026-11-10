@@ -1,7 +1,3 @@
-//! ```` ```recipe ```` fences: YAML → a validated DAG → the "cooking for engineers" grid.
-//! A straight port of the Astro site's `recipe.ts` (parse + layout) and the scaling half of
-//! `recipe-interactive.ts`. Pure Rust; the view lives in `recipe_view.rs`.
-
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
@@ -44,7 +40,6 @@ pub struct Recipe {
     pub steps: Vec<Step>,
 }
 
-/// One grid cell to the right of an ingredient: a step spanning rows, or an empty gap.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Cell {
     Op {
@@ -87,15 +82,12 @@ pub struct Grid {
     pub blanks: Vec<Blank>,
 }
 
-/// Everything the view needs, computed once per payload.
 #[derive(Clone, Debug, PartialEq)]
 pub enum RecipeBlock {
     Ok {
         recipe: Rc<Recipe>,
-        /// `None` when the DAG can't be laid out as grids; the view falls back to a list
         grids: Option<Vec<Grid>>,
         serves: u32,
-        /// rendered inline markdown, parsed once
         notes: Option<Rich>,
         details: Vec<Rich>,
         ingredient_notes: Vec<Option<Rich>>,
@@ -145,8 +137,6 @@ pub fn block(src: &str) -> RecipeBlock {
     }
 }
 
-/// The method line for a step: detail when it already leads with the action, otherwise
-/// **action** + detail (the bolding happens in the view via the returned split).
 fn step_text(st: &Step) -> Rich {
     match st.detail.as_deref() {
         None => md::parse_inline(&st.action),
@@ -390,7 +380,6 @@ pub fn parse(src: &str) -> Result<Recipe, String> {
         return Err(format!("recipe: no step uses {}", orphans.join(", ")));
     }
 
-    // cycle check
     let step_at: HashMap<&str, usize> = rec
         .steps
         .iter()
@@ -574,9 +563,7 @@ pub fn layout(rec: &Recipe) -> Result<Vec<Grid>, String> {
     Ok(grids)
 }
 
-/// Step column/row placement for a grid, derived from its rows.
 fn placements(rows: &[Row], width: usize) -> Vec<Placement> {
-    // rebuild the column of each op cell by walking rows with coverage
     let mut covered = vec![vec![false; width]; rows.len()];
     let mut out = Vec::new();
     for (r, row) in rows.iter().enumerate() {
@@ -638,9 +625,6 @@ fn blanks(rows: &[Row], width: usize, steps: &[Placement]) -> Vec<Blank> {
     out
 }
 
-// ---------------------------------------------------------------------------------------------
-// serves scaling (recipe-interactive.ts)
-
 const VULGAR: [(char, f64); 9] = [
     ('⅛', 1. / 8.),
     ('¼', 1. / 4.),
@@ -657,7 +641,6 @@ fn vulgar(c: char) -> Option<f64> {
     VULGAR.iter().find(|(g, _)| *g == c).map(|(_, v)| *v)
 }
 
-/// Read one quantity token from the front of `s`: `1 1/2`, `3/4`, `1½`, `½`, `2.5`, `12`.
 fn take_qty(s: &str) -> Option<(f64, usize)> {
     let b: Vec<char> = s.chars().collect();
     let mut i = 0;
@@ -670,7 +653,6 @@ fn take_qty(s: &str) -> Option<(f64, usize)> {
     };
     let whole = digits(&mut i);
     let byte_len = |n: usize| b[..n].iter().map(|c| c.len_utf8()).sum::<usize>();
-    // vulgar glyph
     if i < b.len() {
         if let Some(v) = vulgar(b[i]) {
             let w: f64 = whole.parse().unwrap_or(0.);
@@ -680,7 +662,6 @@ fn take_qty(s: &str) -> Option<(f64, usize)> {
     if whole.is_empty() {
         return None;
     }
-    // mixed "1 1/2"
     if i + 1 < b.len() && b[i] == ' ' && b[i + 1].is_ascii_digit() {
         let mut j = i + 1;
         let n = digits(&mut j);
@@ -694,7 +675,6 @@ fn take_qty(s: &str) -> Option<(f64, usize)> {
             }
         }
     }
-    // fraction "3/4"
     if i < b.len() && b[i] == '/' {
         let mut k = i + 1;
         let d = digits(&mut k);
@@ -705,7 +685,6 @@ fn take_qty(s: &str) -> Option<(f64, usize)> {
             ));
         }
     }
-    // decimal
     if i + 1 < b.len() && b[i] == '.' && b[i + 1].is_ascii_digit() {
         let mut k = i + 1;
         let frac = digits(&mut k);
@@ -746,7 +725,6 @@ pub fn fmt_qty(v: f64) -> String {
 }
 
 fn fix_units(rest: &str, qty: f64) -> String {
-    // only the unit right after the number agrees with it: "1 cup (8 tbsp)" not "(1 cups …)"
     const UNITS: [&str; 8] = [
         "tablespoon",
         "teaspoon",
@@ -781,7 +759,6 @@ fn fix_units(rest: &str, qty: f64) -> String {
     rest.to_string()
 }
 
-/// Scale an amount like `1½ cups` or `2–3 cloves` by `f`; `None` if it has no leading number.
 pub fn scale_amount(base: &str, f: f64) -> Option<String> {
     let (a, len) = take_qty(base)?;
     let mut rest = &base[len..];
@@ -801,7 +778,6 @@ pub fn scale_amount(base: &str, f: f64) -> Option<String> {
     Some(qty + &fix_units(rest, b.unwrap_or(a) * f))
 }
 
-/// The yield line scaled: the first number (or range) multiplied.
 pub fn scale_yield(base: &str, f: f64) -> String {
     let Some(start) = base.find(|c: char| c.is_ascii_digit()) else {
         return base.to_string();
@@ -832,7 +808,6 @@ pub fn scale_yield(base: &str, f: f64) -> String {
     format!("{}{num}{}", &base[..start], &tail[consumed..]).replace("1 servings", "1 serving")
 }
 
-/// Label for a serves button: `3`, `1½`.
 pub fn serves_label(serves: u32, f: f64) -> String {
     let n = serves as f64 * f;
     if n.fract() == 0. {
@@ -841,8 +816,6 @@ pub fn serves_label(serves: u32, f: f64) -> String {
         format!("{}½", n.floor() as i64)
     }
 }
-
-/// `"10–15 min"` → seconds (upper bound), for the step timer later.
 
 pub fn duration_secs(f: &str) -> Option<u32> {
     let lower = f.to_ascii_lowercase();
@@ -893,7 +866,6 @@ mod tests {
         let g = &grids[0];
         assert_eq!(g.rows.len(), 5);
         assert_eq!(g.width, 7);
-        // s1 spans the four dry ingredients, s2 spans all five
         assert_eq!(
             g.rows[0].cells[0],
             Cell::Op {
@@ -911,7 +883,6 @@ mod tests {
         assert!(g.steps.contains(&at(0, 0, 0, 4)));
         assert!(g.steps.contains(&at(1, 1, 0, 5)));
         assert!(g.steps.contains(&at(6, 6, 0, 5)));
-        // the oil row has a gap under s1
         assert_eq!(g.rows[4].cells[0], Cell::Gap { col_span: 1 });
         assert_eq!(
             g.blanks,

@@ -1,12 +1,3 @@
-//! Markdown → a small block tree. Pure Rust (no gpui) so it can be unit-tested on the host
-//! and parsed once per payload; `render` turns the tree into elements every frame.
-//!
-//! Ported behaviour from the Astro site's `doc-render.ts`:
-//! - `<ff-*>` components are lifted out before parsing (outside code), like `extractDocComponents`
-//! - `![alt](blob://cid)` / `![](series://slug)` embeds become figures and series blocks
-//! - ```` ```recipe ```` fences become recipe blocks, ```` ```mermaid ```` a labelled source block
-//! - `> [!NOTE]` style alerts become callouts
-
 mod builder;
 mod pre;
 mod types;
@@ -17,7 +8,6 @@ use builder::Builder;
 use pre::{extract_components, normalize_alerts};
 pub use types::*;
 
-/// Parse a markdown body into blocks.
 pub fn parse(markdown: &str) -> Vec<Block> {
     parse_with(markdown, ParseOptions::default())
 }
@@ -37,7 +27,6 @@ pub fn parse_with(markdown: &str, opts: ParseOptions) -> Vec<Block> {
     b.finish()
 }
 
-/// One paragraph's worth of inline markdown as a single run (recipe notes, step details).
 pub fn parse_inline(s: &str) -> Rich {
     let mut out = Rich::default();
     for block in parse(s) {
@@ -60,7 +49,6 @@ pub fn parse_inline(s: &str) -> Rich {
     }
 }
 
-/// Plain text of a block tree, for excerpts and reading-time estimates.
 pub fn plain_text(blocks: &[Block]) -> String {
     fn walk(blocks: &[Block], out: &mut String) {
         for b in blocks {

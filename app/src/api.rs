@@ -1,7 +1,3 @@
-//! The app's read-only data contract with the `com` Worker: `/api/app/index` and
-//! `/api/app/route?path=`. Mirrors `worker/src/app-api.ts`; fields the Worker may
-//! omit default rather than fail, so a slightly older or newer Worker still loads.
-
 use std::collections::HashMap;
 
 use serde::Deserialize;
@@ -13,17 +9,12 @@ pub struct Index {
     pub items: Vec<Item>,
     pub feed: Vec<FeedRef>,
     pub elsewhere: Vec<Link>,
-    /// @com's site menu, grouped as its /menu page shows it
     pub menu: Vec<MenuGroup>,
-    /// the three newest feed posts, whole, for the home deck's feed column
     pub latest_feed: Vec<Post>,
-    /// the home deck's hero photograph, from Glass
     pub glass_pick: Option<GlassPick>,
-    /// the home deck's introduction, markdown
     pub intro: String,
 }
 
-/// GET /api/app/timeline?page=N: every document and feed note, newest first.
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(default)]
 pub struct Timeline {
@@ -38,7 +29,6 @@ pub struct Timeline {
 pub struct TimelineItem {
     pub title: String,
     pub href: String,
-    /// the publication's slug, or "feed"
     pub kind: String,
     pub at: String,
 }
@@ -81,7 +71,6 @@ pub struct Section {
     pub count: u32,
 }
 
-/// One published document as it appears in listings and on the spiral.
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Item {
@@ -92,13 +81,11 @@ pub struct Item {
     pub excerpt: Option<String>,
     pub tags: Vec<String>,
     pub cid: Option<String>,
-    /// the title and tags lowercased, made once when the index arrives (Find matches every frame)
     #[serde(skip)]
     pub lower: Option<(String, Vec<String>)>,
 }
 
 impl Index {
-    /// Lowercase every item's title and tags ahead of searching them.
     pub fn prepare_search(&mut self) {
         for i in &mut self.items {
             i.lower = Some((
@@ -123,7 +110,6 @@ pub struct FeedRef {
 pub struct Link {
     pub label: String,
     pub href: String,
-    /// a handle shown beside the name (Now's "Find me")
     pub username: Option<String>,
 }
 
@@ -152,7 +138,6 @@ impl Media {
         self.known_aspect().unwrap_or(4.0 / 3.0)
     }
 
-    /// Width over height, when blobs measured it (it doesn't for video).
     pub fn known_aspect(&self) -> Option<f32> {
         match (self.width, self.height) {
             (Some(w), Some(h)) if w > 0 && h > 0 => Some(w as f32 / h as f32),
@@ -168,7 +153,6 @@ impl Media {
         self.mime.starts_with("audio/")
     }
 
-    /// A still image wsrv.nl can resize: not a vector, and not a GIF, which would stop moving.
     pub fn is_raster(&self) -> bool {
         self.mime.starts_with("image/") && self.mime != "image/svg+xml" && self.mime != "image/gif"
     }
@@ -204,7 +188,6 @@ pub struct Doc {
     pub tags: Vec<String>,
     pub description: Option<String>,
     pub reading_minutes: Option<u32>,
-    /// raw body markdown as stored: `<ff-*>` tags, `blob://`, `series://`, ```recipe fences
     pub markdown: String,
     pub media: HashMap<String, Media>,
     pub series: HashMap<String, Series>,
@@ -245,8 +228,6 @@ pub struct TagCount {
     pub count: u32,
 }
 
-/// Where a paged listing stands: this page (1-based), how many there are, how many entries in
-/// all (a section's listing leaves it out).
 #[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq)]
 #[serde(default)]
 pub struct Paging {
@@ -255,7 +236,6 @@ pub struct Paging {
     pub total: u32,
 }
 
-/// Everything one URL needs, discriminated on `kind`.
 #[derive(Clone, Debug, Deserialize)]
 #[serde(tag = "kind", rename_all = "lowercase")]
 pub enum RoutePayload {
@@ -321,8 +301,6 @@ pub enum RoutePayload {
 }
 
 impl RoutePayload {
-    /// What the page is called: the document title and the frame's heading are made from it.
-    /// None for home and a redirect, which have no page of their own.
     pub fn name(&self) -> Option<&str> {
         Some(match self {
             RoutePayload::Doc { doc } => &doc.title,
@@ -393,16 +371,11 @@ pub struct DevSection {
     pub body: String,
 }
 
-/// How rendered content asks the site to go somewhere: same-tab for our own paths,
-/// a new tab for anything off-site.
 pub type Navigate = std::rc::Rc<dyn Fn(String, &mut gpui::Window, &mut gpui::App)>;
 
 const BLOBS: &str = "https://blobs.farfield.systems/blobs/";
 const WSRV: &str = "https://wsrv.nl/?";
 
-/// A still `width` wide. A raster is resized by wsrv.nl straight from the browser (it turns
-/// Workers away); anything else, or what isn't known, goes through the Worker, which decides.
-/// `local` is the way back when wsrv.nl doesn't answer.
 pub fn img_url(cid: &str, width: u32, media: Option<&Media>) -> String {
     if !media.is_some_and(Media::is_raster) {
         return local_img_url(cid, width);
@@ -420,8 +393,6 @@ fn local_img_url(cid: &str, width: u32) -> String {
     format!("{}/img/{cid}?w={width}", crate::route::origin())
 }
 
-/// The same image through the Worker, for a wsrv.nl URL (a blob's resize, or the home's Glass
-/// photograph); None for any other URL, which has no other way to it.
 pub fn local(url: &str) -> Option<String> {
     let query = url.strip_prefix(WSRV)?;
     let pairs: HashMap<String, String> = form_urlencoded::parse(query.as_bytes())
@@ -497,8 +468,6 @@ mod tests {
         );
     }
 
-    /// `paging` is flattened into variants of an internally tagged enum: the Worker's recorded
-    /// listings must still fill it.
     #[test]
     fn listings_read_their_paging() {
         let dir =

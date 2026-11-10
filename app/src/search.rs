@@ -1,7 +1,3 @@
-//! Semantic search, off the main thread: a module Web Worker (assets/search) runs
-//! ternlight over the site's corpus and answers queries with ranked hits. Results
-//! come back as JSON strings through a channel the Site listens on.
-
 use serde::Deserialize;
 
 #[derive(Clone, Debug, Deserialize)]
@@ -28,13 +24,10 @@ extern "C" {
 pub struct Search {
     #[cfg(target_family = "wasm")]
     worker: Option<web_sys::Worker>,
-    /// the worker's script didn't load: the next message starts another (a new worker has its
-    /// own module map, so an import that failed in the last one is fetched again)
     #[cfg(target_family = "wasm")]
     dead: std::rc::Rc<std::cell::Cell<bool>>,
     #[cfg(target_family = "wasm")]
     on_reply: std::rc::Rc<dyn Fn(Reply)>,
-    /// workers started after the first: a script that keeps failing isn't asked for forever
     #[cfg(target_family = "wasm")]
     respawns: u32,
     next_id: u32,
@@ -42,7 +35,6 @@ pub struct Search {
 }
 
 impl Search {
-    /// Start the worker; every reply is handed to `on_reply` as it arrives.
     pub fn start(on_reply: impl Fn(Reply) + 'static) -> Self {
         #[cfg(target_family = "wasm")]
         {
@@ -99,7 +91,6 @@ impl Search {
         self.worker = Some(w);
     }
 
-    /// Load the model and the index ahead of the first query.
     pub fn warm(&mut self) {
         if self.warmed {
             return;
@@ -108,7 +99,6 @@ impl Search {
         self.post(WARM);
     }
 
-    /// Ask for the top hits; replies carry the returned id so stale answers can be dropped.
     pub fn query(&mut self, text: &str, top_k: u32) -> u32 {
         self.warm();
         self.next_id += 1;
@@ -146,6 +136,5 @@ impl Search {
 }
 
 const WARM: &str = r#"{"type":"warm"}"#;
-/// workers started again after their script failed to load, at most
 #[cfg(target_family = "wasm")]
 const RESPAWNS: u32 = 3;

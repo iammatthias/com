@@ -1,10 +1,3 @@
-//! A document's table of contents, as the old site built it (`DocArticle.astro`, `toc.ts`):
-//! its h2/h3 headings when there are at least two, except in the art publication.
-//!
-//! A heading reports where it is painted (the probe `mark` lays over it); a contents link
-//! scrolls the page there. The page's scroll handle belongs to `page.rs`, so the jump is a
-//! synthetic scroll-wheel event of exactly the right size, dispatched once the click is done.
-
 use gpui::prelude::*;
 use gpui::{
     AnyElement, App, Modifiers, PlatformInput, ScrollDelta, ScrollWheelEvent, SharedString,
@@ -25,10 +18,8 @@ pub struct Entry {
     pub block: usize,
 }
 
-/// Publications whose documents never get contents (as on the old site).
 const NO_TOC: [&str; 1] = ["art"];
 
-/// The contents for a document's top-level blocks, or nothing if it doesn't merit any.
 pub fn entries(blocks: &[Block], section: &str) -> Vec<Entry> {
     if NO_TOC.contains(&section) {
         return Vec::new();
@@ -53,9 +44,7 @@ pub fn entries(blocks: &[Block], section: &str) -> Vec<Entry> {
 
 #[derive(Clone, Copy)]
 pub(super) struct Spot {
-    /// the heading's top in window pixels, this render
     top: f32,
-    /// the top of what is visible of the page
     view_top: f32,
 }
 
@@ -101,7 +90,6 @@ fn jump(n: usize, window: &mut Window, cx: &mut App) {
     });
 }
 
-/// The contents list: small capitals heading, one line per h2, h3s indented beneath.
 pub fn view(entries: &[Entry], key: &str, theme: &Theme) -> AnyElement {
     let accent = theme.accent;
     let ink = theme.ink;

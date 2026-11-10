@@ -1,7 +1,3 @@
-//! The plate is written out more than once: its shader (plate.wgsl), its CPU mirrors here, the
-//! social card's copy of both (card/card.js), and its palette in every page the browser draws
-//! before the app does. These tests read those copies and fail when one drifts from the Rust.
-
 use super::atlas::{FONT, SPREAD};
 use super::geom::{FACE_CLEAR, SUBJECT};
 use super::gpu::Uniforms;
@@ -13,7 +9,6 @@ fn read(path: &str) -> String {
     std::fs::read_to_string(&full).unwrap_or_else(|e| panic!("{full}: {e}"))
 }
 
-/// The number after `name =` (or `name:`) in `src`, the first time it's set.
 fn number(src: &str, name: &str) -> f32 {
     for sep in [" = ", ": f32 = ", ": "] {
         let key = format!("{name}{sep}");
@@ -60,7 +55,6 @@ fn the_card_agrees_with_the_plate() {
     );
 }
 
-/// The lines between `open` and the next line starting `close`, trimmed, comments dropped.
 fn block<'a>(src: &'a str, open: &str, close: &str) -> Vec<&'a str> {
     let at = src.find(open).unwrap_or_else(|| panic!("{open} not found"));
     src[at + open.len()..]
@@ -72,7 +66,6 @@ fn block<'a>(src: &'a str, open: &str, close: &str) -> Vec<&'a str> {
         .collect()
 }
 
-/// plate.wgsl's `struct U`, in order: each field and the vec4 slot it starts at.
 fn shader_slots() -> (Vec<(String, usize)>, usize) {
     let wgsl = read("src/plate.wgsl");
     let mut at = 0;
@@ -141,7 +134,6 @@ fn hex(c: gpui::Rgba) -> String {
 fn every_page_drawn_before_the_app_uses_the_theme() {
     let light = Theme::for_appearance(gpui::WindowAppearance::Light);
     let dark = Theme::for_appearance(gpui::WindowAppearance::Dark);
-    // the paper: the page's own background, and the browser chrome's tint
     let pages = [
         ("index.html", read("index.html")),
         ("seo.ts", read("../worker/src/lib/seo.ts")),
@@ -153,7 +145,6 @@ fn every_page_drawn_before_the_app_uses_the_theme() {
         }
     }
     let shell = read("../worker/src/lib/shell.ts").to_lowercase();
-    // the plain page's text and links
     for c in [
         hex(light.ink),
         hex(dark.ink),

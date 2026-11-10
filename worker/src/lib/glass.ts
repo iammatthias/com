@@ -8,7 +8,6 @@ export interface GlassPick {
     width: number;
     height: number;
     alt: string;
-    /** The post's own description on Glass, null when blank. */
     description: string | null;
     prominentColor: string | null;
     seriesTitle: string | null;
@@ -60,7 +59,6 @@ async function fetchGlassPosts(): Promise<GlassPost[]> {
             return (await hit.json()) as GlassPost[];
         }
     }
-    /** Past its TTL, the cached window still beats an empty arch. */
     const stale = async (): Promise<GlassPost[]> => {
         try {
             return hit ? ((await hit.json()) as GlassPost[]) : [];

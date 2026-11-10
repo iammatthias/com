@@ -1,10 +1,8 @@
 export const DOCUMENTS_TAG = "documents";
 export const FEED_TAG = "feed-entries";
-/** lib/cache.ts SHELL_TAG: every HTML page and its /api/app/ssr twin */
 const SHELL_TAG = "shell";
 
 export type ContentEvent = {
-    /** "deploy": a new build is live, so every page's HTML (which names the build's files) goes */
     kind: "entry" | "series" | "collection" | "post" | "deploy";
     slug?: string;
 };

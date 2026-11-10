@@ -1,10 +1,3 @@
-// Builds assets/diagrams: diagrams.js (theme, raster, and which kind a source is) and one module
-// per kind of diagram, pele's core with that one kind. Each file imports nothing: a browser
-// keeps a failed import for its URL, and also a failed module another one imports, so only a
-// file with no imports of its own can be asked for again under a new URL and load.
-//
-//   bun build.ts
-
 import { mkdirSync, readdirSync, rmSync, writeFileSync, copyFileSync } from "node:fs";
 import { join } from "node:path";
 

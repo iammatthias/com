@@ -1,13 +1,3 @@
-// The site's icons, drawn from the plate: the home-screen and install icons are the card page's
-// bare spiral (card/card.html?kind=icon) shrunk in the browser; the favicon, too small for an
-// engraving to read, is the same spiral as a vector of a few bold turns.
-//
-//   trunk serve   (or any origin serving app/dist)
-//   node scripts/icons.mjs [origin]
-//
-// Writes assets/icons/: icon-512.png, icon-192.png, apple-touch-icon.png (180), favicon.svg,
-// favicon.ico (32 and 16).
-
 import { chromium } from "../e2e/node_modules/playwright/index.mjs";
 import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -17,7 +7,6 @@ const origin = (process.argv[2] ?? "http://127.0.0.1:8080").replace(/\/$/, "");
 const out = join(dirname(fileURLToPath(import.meta.url)), "../assets/icons");
 const PAPER = "#F4EFE4", INK = "#1B1814";
 
-// an Archimedean spiral from the centre out, as the plate's line runs
 function spiralPath(turns, step, c) {
     const pts = [];
     for (let i = 0; i <= turns * 48; i++) {
@@ -34,7 +23,6 @@ const favicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
 </svg>
 `;
 
-// a PNG-in-ICO container: one directory entry per size
 function ico(pngs) {
     const head = Buffer.alloc(6 + 16 * pngs.length);
     head.writeUInt16LE(1, 2);
@@ -61,7 +49,6 @@ const error = await page.evaluate(() => window.__cardError);
 if (error) throw new Error(`card: ${error}`);
 const master = await page.locator("#card").screenshot();
 
-// shrink in halves, then to size: one big step would alias the line away
 const shrink = (src, size) =>
     page.evaluate(
         async ({ src, size }) => {
@@ -97,7 +84,6 @@ for (const [name, size] of [["icon-512.png", 512], ["icon-192.png", 192], ["appl
 
 writeFileSync(join(out, "favicon.svg"), favicon);
 await page.setViewportSize({ width: 32, height: 32 });
-// the .ico has no colour scheme to follow: the light tile, always
 const favUrl = `data:image/svg+xml;base64,${Buffer.from(favicon.replace(/@media[^{]*\{[^}]*}[^}]*}}/, "")).toString("base64")}`;
 const raster = async (size) => {
     await page.setContent(`<img src="${favUrl}" width="${size}" height="${size}" style="display:block">`);

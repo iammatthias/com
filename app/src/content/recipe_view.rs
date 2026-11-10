@@ -1,7 +1,3 @@
-//! The recipe grid: ingredients down the left, each step a merged cell to the right of
-//! everything it combines, read left to right toward the finished dish. Serves ×½/×1/×2
-//! rescales amounts; clicking an ingredient strikes it off.
-
 use std::collections::HashSet;
 use std::rc::Rc;
 
@@ -17,12 +13,10 @@ use super::recipe_steps;
 use super::render::{self, Ctx, alpha, hairline, label};
 use super::state;
 
-/// `factor` 0 means unset (×1).
 #[derive(Clone, Default, PartialEq)]
 pub struct RecipeState {
     factor: f64,
     struck: HashSet<usize>,
-    /// the step shown in step mode
     pub active: Option<usize>,
     pub clock: super::recipe_steps::Clock,
 }
@@ -82,7 +76,6 @@ pub fn view(block: &RecipeBlock, ctx: &Ctx, window: &mut Window, cx: &mut App) -
         .flex_col()
         .gap(px(18.));
 
-    // yield · time · serves
     let mut meta = div()
         .flex()
         .flex_wrap()
@@ -251,7 +244,6 @@ fn grid(
     let width = ctx.width.max(cols as f32 * min_col);
     let line = alpha(theme.rule, 0.9);
 
-    // step mode: the active step's cell and the rows it combines stay lit, the rest dims
     let hot_rows = active
         .and_then(|a| g.steps.iter().find(|p| p.step == a))
         .map(|p| p.row..p.row + p.rows);
@@ -374,7 +366,6 @@ fn grid(
                 .into_any_element(),
         );
     }
-    // the open cells under shorter branches keep the row's baseline rule
     for b in &g.blanks {
         cells.push(
             div()
@@ -404,7 +395,6 @@ fn grid(
         })
         .child({
             let id = ctx.id("grid");
-            // in step mode, bring the step shown into view once each time it changes
             let follow = format!("{id}:follow");
             let seen = state::slot(&follow, || None::<usize>, |f| *f);
             if seen != active {

@@ -1,25 +1,18 @@
-//! usvg as the site builds it (see Cargo.toml).
-
 #[cfg(not(target_family = "wasm"))]
 pub use usvg_real::*;
 
 #[cfg(target_family = "wasm")]
 pub use web::*;
 
-/// On the web: the types gpui-ce names, and a parser that declines every document.
 #[cfg(target_family = "wasm")]
 mod web {
     pub use fontdb;
 
-    /// A font request (never made: nothing is parsed).
     pub struct Font;
 
-    /// gpui-ce's font callbacks, kept but never called. Held as `Kept`, not `Fn`, so their bodies
-    /// (and the emoji regex one of them reaches) aren't linked in.
     pub type FontSelectionFn<'a> = Box<dyn Kept + 'a>;
     pub type FallbackSelectionFn<'a> = Box<dyn Kept + 'a>;
 
-    /// Anything that can be held: no methods, so a kept callback's body is never reachable.
     pub trait Kept: Send + Sync {}
     impl<T: Send + Sync> Kept for T {}
 
@@ -82,7 +75,6 @@ mod web {
     #[derive(Debug)]
     pub enum Error {
         InvalidSize,
-        /// This build draws SVG with the browser, not here.
         Unsupported,
     }
 

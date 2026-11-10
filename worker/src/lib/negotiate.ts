@@ -1,12 +1,5 @@
 import { AGENT_CRAWLERS } from "./agent-surface";
 
-/** Ported from com/src/middleware.ts. */
-
-/**
- * Same policy as the old site, plus what the GPUI shell needs:
- * 'wasm-unsafe-eval' to instantiate the app, blob: workers and images,
- * and same-origin fetch for /api/app/* and /img/*.
- */
 export const CSP = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://static.cloudflareinsights.com",
@@ -67,10 +60,6 @@ export function prefersMarkdown(accept: string | null): boolean {
 
 const AGENT_UA = new RegExp(`(${AGENT_CRAWLERS.join("|")})`, "i");
 
-/**
- * Markdown chosen by the User-Agent alone. Caches key on Accept, not User-Agent, so such a
- * response must stay out of shared caches: a browser sending the same Accept would get it.
- */
 export function markdownByAgentOnly(request: Request): boolean {
     return (
         !prefersMarkdown(request.headers.get("accept")) &&

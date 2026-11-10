@@ -91,7 +91,6 @@ export interface BlobMeta {
 
 const HARD_TTL_SECONDS = 24 * 60 * 60;
 const SWR_SECONDS = 60 * 60;
-/** How long a copy checked upstream is trusted without checking again. */
 const FRESH_MS = 30_000;
 
 const IMMUTABLE_URL_RE =
@@ -154,15 +153,9 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const MAX_FETCH_RETRIES = 3;
 const MAX_RETRY_WAIT_MS = 2_000;
-/** Per attempt; a timeout fails the attempt like a network error does. */
 const UPSTREAM_TIMEOUT_MS = 5_000;
-/** Every attempt and wait together: the most an outage adds to a page with nothing stale to show. */
 const UPSTREAM_BUDGET_MS = 8_000;
 
-/**
- * `retries: false` when the caller holds a stale copy: one attempt, and on failure the
- * caller serves that copy at once instead of holding the page through an outage.
- */
 async function fetchWithRetry(
     input: string,
     init: RequestInit,
@@ -177,7 +170,6 @@ async function fetchWithRetry(
     const start = Date.now();
     let timeout = Math.min(UPSTREAM_TIMEOUT_MS, UPSTREAM_BUDGET_MS);
     for (let attempt = 0; ; attempt++) {
-        // the next attempt's timeout after `delay`, or null when no retry is left or fits
         const next = (delay: number) =>
             retries && attempt < MAX_FETCH_RETRIES
                 ? nextAttemptMs(Date.now() - start, delay, UPSTREAM_BUDGET_MS, UPSTREAM_TIMEOUT_MS)
@@ -247,7 +239,6 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
         }
     }
 
-    // a copy this young is served as is: bursts of renders share one upstream check
     if (
         cached &&
         cached.ok &&
@@ -286,7 +277,6 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
         if (fallback) return fallback;
         throw err;
     }
-    // whatever fetchWithRetry would have retried: with a stale copy it gave up after one try
     if (RETRYABLE_STATUS.has(res.status) || res.status >= 500) {
         const fallback = lastGood();
         if (fallback) {
@@ -307,7 +297,6 @@ async function cachedFetch(url: string, drafts = false): Promise<Response> {
     if (res.ok) {
         let body: ArrayBuffer;
         try {
-            // the attempt's timeout covers the body too
             body = await res.clone().arrayBuffer();
         } catch (err) {
             await discardBody(res);
@@ -416,10 +405,6 @@ export function blobURL(cid: string): string {
     return `${BLOBS}/blobs/${cid}`;
 }
 
-/**
- * A blob's meta never changes (the cid is its hash): resolved copies are kept across
- * requests. Only found ones: a miss may be a blob not uploaded yet.
- */
 const blobMetaByCid = new Lru<string, BlobMeta>(500);
 
 export async function getBlobMeta(cid: string): Promise<BlobMeta | null> {

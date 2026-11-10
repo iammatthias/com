@@ -1,17 +1,12 @@
-/// The debug switches in the address (ARCHITECTURE.md, "Debug flags").
 pub mod debug {
-    /// `#name` among the hash's `&`-joined flags.
     pub fn flag(name: &str) -> bool {
         flag_in(&super::web::hash(), name)
     }
 
-    /// A `#name=value` number in the hash (`#z=6&px=-400&py=200` starts the plate there).
     pub fn number(name: &str) -> Option<f32> {
         number_in(&super::web::hash(), name)
     }
 
-    /// `#slowui`: the panels move at a tenth of their speed. Read every frame, so it's kept until
-    /// the hash changes.
     pub fn slow_ui() -> bool {
         thread_local! {
             static SLOW: std::cell::Cell<Option<bool>> = const { std::cell::Cell::new(None) };
@@ -21,7 +16,6 @@ pub mod debug {
             return on;
         }
         let on = flag("slowui");
-        // the first read listens for changes from then on
         if !WATCHING.replace(true) {
             super::on_hashchange(|| SLOW.set(None));
         }
@@ -65,15 +59,11 @@ pub mod debug {
     }
 }
 
-/// A touch gesture on the page (CSS px).
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[cfg_attr(not(target_family = "wasm"), allow(dead_code))]
 pub enum Gesture {
-    /// how many fingers are down now
     Touch { fingers: u32 },
-    /// the fingers' midpoint moved by this much
     Pan { dx: f32, dy: f32 },
-    /// the fingers spread by this factor about (x, y)
     Pinch { factor: f32, x: f32, y: f32 },
 }
 
@@ -94,8 +84,6 @@ mod web {
         );
     }
 
-    /// Touch gestures on the page. dom.js sends ("touch", fingers) · ("pan", dx, dy) ·
-    /// ("pinch", factor, x, y); anything else is dropped here.
     pub fn on_touch_gesture(f: impl Fn(super::Gesture) + 'static) {
         use super::Gesture;
         let cb = wasm_bindgen::closure::Closure::<dyn Fn(String, f64, f64, f64)>::new(
@@ -117,9 +105,6 @@ mod web {
         cb.forget();
     }
 
-    /// What the system keeps of the screen (notch, status bar, home indicator): top, right,
-    /// bottom, left in css px. The canvas draws under it; controls stay clear of it.
-    /// Read a dozen times a frame: kept here until the viewport changes.
     pub fn safe_insets() -> [f32; 4] {
         if let Some(insets) = INSETS.get() {
             return insets;
@@ -141,7 +126,6 @@ mod web {
         static WATCHING: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
     }
 
-    /// Forget the insets whenever what's free of the system's chrome may have changed.
     fn watch_viewport() {
         use wasm_bindgen::JsCast as _;
         use wasm_bindgen::closure::Closure;
@@ -155,7 +139,6 @@ mod web {
         let f = cb.as_ref().unchecked_ref();
         let _ = window.add_event_listener_with_callback("resize", f);
         let _ = window.add_event_listener_with_callback("orientationchange", f);
-        // the toolbars collapsing and returning, without a window resize
         if let Some(vv) = js_sys::Reflect::get(&window, &"visualViewport".into())
             .ok()
             .and_then(|v| v.dyn_into::<web_sys::EventTarget>().ok())
@@ -165,7 +148,6 @@ mod web {
         cb.forget();
     }
 
-    /// Offer agents the site's WebMCP tools.
     pub fn register_web_mcp() {
         register_web_mcp_js();
     }
@@ -176,7 +158,6 @@ mod web {
             .unwrap_or_default()
     }
 
-    /// The visitor asked their system for less motion.
     pub fn reduced_motion() -> bool {
         web_sys::window()
             .and_then(|w| {
@@ -187,7 +168,6 @@ mod web {
             .is_some_and(|m| m.matches())
     }
 
-    /// Calls `f` whenever the address's hash changes.
     pub fn on_hashchange(f: impl Fn() + 'static) {
         use wasm_bindgen::JsCast as _;
         use wasm_bindgen::closure::Closure;
@@ -199,8 +179,6 @@ mod web {
         cb.forget();
     }
 
-    /// The app can't start (a face or the window failed): leave the server-rendered page in
-    /// view, as index.html does when there's no WebGPU, and keep its failure notes quiet.
     pub fn plain_page() {
         let Some(w) = web_sys::window() else { return };
         let _ = js_sys::Reflect::set(&w, &"__noGpu".into(), &JsValue::TRUE);

@@ -4,8 +4,6 @@ import { AGENT_RESOURCES, AGENT_SKILLS, API_OPERATIONS, SITE_IDENTITY, SITE_ORIG
 import { markdownResponse } from "../lib/agent-http";
 import { assetResponse } from "../lib/http";
 
-/** Ported from com/src/pages/.well-known/* and openapi.json.ts. */
-
 const JSON_HEADERS = {
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "public, max-age=3600",
@@ -276,7 +274,6 @@ export function openapiSpec(): Response {
     return json(spec);
 }
 
-/** com/public/.well-known/atproto-did, byte for byte: the handle's DID plus a newline, no Content-Type. */
 export const ATPROTO_DID = "did:plc:p5xem22ammiafn5kxonaksfa\n";
 
 const GET = ["GET", "HEAD"];

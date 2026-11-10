@@ -1,8 +1,3 @@
-// Diagrams for the canvas: pele draws a ```mermaid fence as SVG, set in the site's own Inter
-// and coloured from the theme, and the SVG is rasterized to pixels. Built by build.ts to
-// assets/diagrams/diagrams.js and imported only when a page has a diagram; pele's drawing for
-// each kind is its own module (assets/diagrams/<kind>.js), imported by dom.js once `kind` names it.
-
 import { detectType } from "pele/core";
 
 let fontCss = "";
@@ -15,8 +10,6 @@ function base64(bytes) {
     return btoa(s);
 }
 
-/** The interface face, from the app's own bytes: pele measures labels with it, and every
- *  diagram carries it inline (an SVG drawn as an image can't reach the page's fonts). */
 export function setFont(bytes) {
     if (fontReady) return fontReady;
     const face = new FontFace("Inter", bytes.slice().buffer);
@@ -26,8 +19,6 @@ export function setFont(bytes) {
     return fontReady;
 }
 
-/** theme: { paper, ink, muted, rule, accent, stops: [5] } as #rrggbb, as pele's variables
- *  (every one: the defaults of the rest are fixed colours that ignore dark paper). */
 function themeCss(t) {
     const vars = {
         bg: t.paper,
@@ -48,20 +39,12 @@ function themeCss(t) {
     return `svg{${Object.entries(vars).map(([k, v]) => `--pele-${k}:${v}`).join(";")}}`;
 }
 
-/** The kind of diagram `source` is (its module's name), or null. */
 export function kind(source) {
     return detectType(source);
 }
 
-/**
- * Render `source` with `pele` (its kind's module's render) and rasterize it no wider than `maxWidth` css px, shrunk only if pele's
- * layout for that width still overflows (never enlarged, so every label is one size), at `dpr`
- * device px each. Resolves { width, height, cssWidth, cssHeight, rgba }.
- */
 export async function render(pele, source, theme, maxWidth, dpr) {
     await fontReady;
-    // laid out for the column: a wide flowchart turns top to bottom in a narrow one rather
-    // than shrinking past reading; no links or images, since the pixels can't follow them
     const { svg, width: natW, height: natH } = pele(source, {
         fontFamily: "Inter",
         fontSize: 14,

@@ -7,11 +7,6 @@ import { fmtDate } from "../lib/format";
 import { versioningMarkdown } from "../lib/deprecation";
 import { developersMarkdown } from "../lib/agent-markdown";
 
-/**
- * The old site's hand-written Astro pages, as markdown. The copy is carried
- * over verbatim; only the markup changed. The same markdown feeds the SSR
- * HTML under the canvas, the app's `page` route, and the `.md` twins.
- */
 export interface StaticPage {
     slug: string;
     title: string;
@@ -119,7 +114,6 @@ export const DEVELOPERS_FAQ = [
     },
 ];
 
-/** The /developers page's pieces, shared by the app's `developers` payload, the SSR HTML, and this markdown. */
 export const DEVELOPERS_HEADING = "iammatthias.com developer documentation";
 
 export const DEVELOPERS_LEDE =
@@ -141,7 +135,6 @@ export function developersEndpoints(): Array<{ label: string; href: string; desc
     return API_OPERATIONS.map((op) => ({ label: `GET ${op.path}`, href: op.path, description: op.description }));
 }
 
-/** Every section after the endpoint list, in com's order; Versioning and FAQ are the twin's additions. */
 export function developersSections(): Array<{ title: string; body: string }> {
     return [
         {
@@ -252,7 +245,6 @@ const resume: StaticPage = {
 
 export const NOW_RECENT_LIMIT = 5;
 
-/** com now.astro's bio section, one paragraph per line of copy. */
 export const NOW_BIO = `Hi, I am Matthias.
 
 I'm a photographer who builds software. Most of what I build is for me, and some of it turns out to be useful for other people too.
@@ -267,7 +259,6 @@ export const NOW_WORKING = `- Solutions Engineer @ Stablecore
 
 export const NOW_FIND_ME = socials.map((l) => ({ label: l.name, href: l.url, username: l.username }));
 
-/** com index.astro's home intro (its <h1> and paragraph), as two markdown paragraphs. */
 export const HOME_INTRO = `Hi, I am Matthias.
 
 This is my cozy corner on the web. A collection of photographs, projects, recipes, and notes.`;

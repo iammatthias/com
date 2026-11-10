@@ -1,12 +1,3 @@
-//! The lightbox: any figure's image, large, over a paper veil that covers the whole window.
-//! Ported from the old site's `Lightbox.astro`: counter, prev/next, ←/→/Esc, close, swipe,
-//! and a click on the veil closes it.
-//!
-//! The page is a scrolling, cached view, so the overlay is `deferred` (painted after
-//! everything else) and `anchored` to the window's origin to escape the scroll container.
-//! Its geometry is the window's, not the column's: window sizes are raw pixels, while type
-//! and controls still go through the content scale.
-
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -23,22 +14,16 @@ use gpui::px;
 use super::render::label;
 use super::{scope, state};
 
-/// One image the lightbox can show.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Item {
-    /// the big one (1920 or 2560 wide)
     pub large: String,
-    /// what the page already loaded, shown while the big one arrives
     pub thumb: String,
     pub alt: String,
     pub aspect: f32,
 }
 
-/// The images of one rendered payload, in reading order. Filled while the page renders.
 pub type Gallery = Rc<RefCell<Vec<Item>>>;
 
-/// The width asked of the image proxy for the lightbox, by device pixel ratio and room:
-/// a phone's screen is under 1280 device px across at 2×, and the decode is held in memory.
 pub fn large_width(dpr: f32, phone: bool) -> u32 {
     if phone {
         1280
@@ -50,13 +35,10 @@ pub fn large_width(dpr: f32, phone: bool) -> u32 {
 }
 
 pub(super) struct Open {
-    /// the route it was opened on: navigating away closes it, home included (which keeps the
-    /// last page up without a new payload, so the page scope isn't reset)
     path: String,
     items: Vec<Item>,
     index: usize,
     press: Option<Point<Pixels>>,
-    /// horizontal travel of the current swipe or trackpad gesture
     swipe: f32,
     swiped: bool,
     last_wheel: Option<web_time::Instant>,
@@ -78,7 +60,6 @@ fn focus_handle(cx: &mut App) -> FocusHandle {
     })
 }
 
-/// Open the lightbox on image `index` of `gallery`.
 pub fn open(gallery: &Gallery, index: usize, window: &mut Window, cx: &mut App) {
     let items = gallery.borrow().clone();
     if items.is_empty() {
@@ -125,7 +106,6 @@ fn step(by: isize, window: &mut Window) {
     window.refresh();
 }
 
-/// The overlay, if the lightbox is open on this route.
 pub fn overlay(theme: &Theme, window: &mut Window, cx: &mut App) -> Option<AnyElement> {
     let here = crate::route::current();
     let (item, index, count, neighbours) = scope::with(
@@ -153,7 +133,6 @@ pub fn overlay(theme: &Theme, window: &mut Window, cx: &mut App) -> Option<AnyEl
     let vp = window.viewport_size();
     let (vw, vh): (f32, f32) = (vp.width.into(), vp.height.into());
     let narrow = vw < NARROW_W;
-    // room for the arrows at the sides and the caption beneath, in window pixels
     let side = if narrow { 12. } else { 72. };
     let below = 84.;
     let top = 56.;
@@ -206,7 +185,6 @@ pub fn overlay(theme: &Theme, window: &mut Window, cx: &mut App) -> Option<AnyEl
         .bg(theme.paper)
         .font_family(theme::BODY)
         .text_color(ink)
-        // a modal: every key is the lightbox's while it's open ("/" doesn't open Find behind it)
         .on_key_down(|e: &KeyDownEvent, window, cx| {
             match e.keystroke.key.as_str() {
                 "left" => step(-1, window),
@@ -227,7 +205,6 @@ pub fn overlay(theme: &Theme, window: &mut Window, cx: &mut App) -> Option<AnyEl
                     let mut o = o.borrow_mut();
                     let Some(open) = o.as_mut() else { return };
                     let now = web_time::Instant::now();
-                    // a new gesture: touch start, or a pause in the wheel
                     let fresh = matches!(e.touch_phase, TouchPhase::Started)
                         || open
                             .last_wheel
@@ -242,7 +219,6 @@ pub fn overlay(theme: &Theme, window: &mut Window, cx: &mut App) -> Option<AnyEl
                     }
                     if !open.swiped && open.swipe.abs() >= SWIPE {
                         open.swiped = true;
-                        // content follows the finger: dragging it left (negative) brings the next one
                         go = if open.swipe < 0. { 1 } else { -1 };
                     }
                     if matches!(e.touch_phase, TouchPhase::Ended) {
@@ -279,12 +255,10 @@ pub fn overlay(theme: &Theme, window: &mut Window, cx: &mut App) -> Option<AnyEl
                 }
                 cx.stop_propagation();
             } else if dx.abs() < 6. && dy.abs() < 6. && !image_rect.contains(&e.position) {
-                // a click on the veil itself closes, as the dialog's backdrop did
                 close(window);
                 cx.stop_propagation();
             }
         })
-        // the image, with the page's own copy under it while the large one loads
         .child(
             div()
                 .absolute()
@@ -296,7 +270,6 @@ pub fn overlay(theme: &Theme, window: &mut Window, cx: &mut App) -> Option<AnyEl
                     super::media::picture(item.large.clone(), |i| {
                         i.size_full().object_fit(ObjectFit::Contain)
                     })
-                    // an id gives the image the state it needs to show its stand-in while loading
                     .id(gpui::SharedString::from(format!("lightbox:img:{index}")))
                     .with_loading(move || {
                         img(thumb.clone())
@@ -306,7 +279,6 @@ pub fn overlay(theme: &Theme, window: &mut Window, cx: &mut App) -> Option<AnyEl
                     }),
                 ),
         )
-        // neighbours load in the background so stepping is instant
         .children(neighbours.into_iter().map(|u| {
             div()
                 .absolute()

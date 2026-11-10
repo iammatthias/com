@@ -1,21 +1,13 @@
-//! Paper and ink from the artifact, accents from @com: light and dark.
-
 use gpui::{App, Global, Rgba, Window, WindowAppearance};
 
 use crate::color::{Oklch, oklch};
 
-/// headings in the reading column
 pub const DISPLAY: &str = "Newsreader";
-/// reading text
 pub const BODY: &str = "Newsreader";
-/// the interface: labels, the panels' controls and small metadata
 pub const SANS: &str = "Inter";
-/// titles in hand: Apple's hello script
 pub const SCRIPT: &str = "Macintosh Skeletal";
 pub const MONO: &str = "Lilex";
 
-/// Faces to reach for when the one in use has no glyph (arrows, shapes and dingbats live in
-/// Noto Sans Symbols 2). Set at each root; every text below inherits it.
 pub fn with_fallbacks<E: gpui::Styled>(mut e: E) -> E {
     e.text_style().font_fallbacks = Some(gpui::FontFallbacks::from_fonts(vec![
         SANS.into(),
@@ -24,7 +16,6 @@ pub fn with_fallbacks<E: gpui::Styled>(mut e: E) -> E {
     e
 }
 
-/// A section's colour, 1–5 into `Theme::stops` (0: plain ink).
 pub fn section_hue(slug: &str) -> u8 {
     match slug {
         "posts" => 1,
@@ -37,7 +28,6 @@ pub fn section_hue(slug: &str) -> u8 {
 }
 
 impl Theme {
-    /// How selected text is shown: a wash of the accent, ink-on-paper for the phone's Copy pill.
     pub fn selection(&self) -> crate::select::SelectionStyle {
         let hsla = gpui::rgb_to_hsla;
         crate::select::SelectionStyle {
@@ -52,7 +42,6 @@ impl Theme {
         }
     }
 
-    /// The colour of a section (its stop), or ink.
     pub fn section(&self, slug: &str) -> Rgba {
         match section_hue(slug) {
             0 => self.ink,
@@ -61,7 +50,6 @@ impl Theme {
     }
 }
 
-/// The visitor's choice of paper: follow the system, or keep it light or dark.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Choice {
     #[default]
@@ -114,7 +102,6 @@ const DARK: Inks = Inks {
     rule: oklch(0.32, 0.014, 76.4),
 };
 
-// warm paper, every stop held at 4.9:1 or better against it
 const LIGHT: Inks = Inks {
     paper: oklch(0.953, 0.016, 86.4),
     ink: oklch(0.211, 0.009, 75.1),
@@ -135,16 +122,13 @@ pub struct Theme {
     pub dark: bool,
     pub paper: Rgba,
     pub ink: Rgba,
-    /// @com's blue, for links under the pointer, labels and the plate's headings
     pub accent: Rgba,
-    /// @com's five selection stops (blue, green, ochre, terracotta, plum): sections' colours
     pub stops: [Rgba; 5],
     pub muted: Rgba,
     pub rule: Rgba,
 }
 
 impl Theme {
-    /// The theme in force: the visitor's choice, else the system's appearance.
     pub fn of(window: &Window, cx: &App) -> Self {
         match cx.try_global::<Choice>().copied().unwrap_or_default() {
             Choice::Light => Self::for_appearance(WindowAppearance::Light),
@@ -170,7 +154,6 @@ impl Theme {
         }
     }
 
-    /// the hairline round a control on the plate: ink, barely there
     pub fn edge(&self) -> Rgba {
         Rgba {
             alpha: if self.dark { 0.22 } else { 0.16 },
@@ -178,7 +161,6 @@ impl Theme {
         }
     }
 
-    /// paper at the given opacity, for panels that sit on the plate
     pub fn veil(&self, alpha: f32) -> Rgba {
         Rgba {
             alpha,
@@ -186,7 +168,6 @@ impl Theme {
         }
     }
 
-    /// a token as a CSS colour, for elements the browser draws over the canvas
     pub fn css(c: Rgba) -> String {
         let b = |v: f32| (v.clamp(0.0, 1.0) * 255.0).round();
         format!(
@@ -198,7 +179,6 @@ impl Theme {
         )
     }
 
-    /// a token as shader uniform: sRGB components, opaque
     pub fn uniform(c: Rgba) -> [f32; 4] {
         [c.color.red, c.color.green, c.color.blue, 1.0]
     }

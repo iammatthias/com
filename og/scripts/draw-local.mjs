@@ -1,12 +1,3 @@
-// Draw every page's social card on this machine (headless Chromium, the same card page in
-// WebGL2) and put the ones the og Worker doesn't have yet into its KV, so Browser Run only
-// ever draws new or changed pages, on demand. Costs nothing on Cloudflare but the uploads.
-//
-//   bun og/scripts/draw-local.mjs [site-origin] [--dry-run]
-//
-// Card URLs are read from the live site (its sitemap, then each page's og:image), so the
-// signatures are exactly the ones the og Worker will be asked for.
-
 import { chromium } from "../../app/e2e/node_modules/playwright/index.mjs";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, writeFileSync } from "node:fs";
@@ -16,8 +7,8 @@ import { fileURLToPath } from "node:url";
 
 const origin = (process.argv.find((a) => a.startsWith("http")) ?? "https://iammatthias.com").replace(/\/$/, "");
 const dryRun = process.argv.includes("--dry-run");
-const VERSION = "v2"; // worker/src/lib/og-card.ts CARD_VERSION
-const QUALITY = 72; // og/src/index.ts JPEG_QUALITY
+const VERSION = "v2";
+const QUALITY = 72;
 const here = dirname(fileURLToPath(import.meta.url));
 const wrangler = join(here, "../node_modules/.bin/wrangler");
 const ogDir = join(here, "..");
@@ -29,10 +20,9 @@ const text = async (path, accept = "text/html") => {
     return res.text();
 };
 
-// 1. every card URL the site hands out
 const sitemap = await text("/sitemap.xml", "application/xml");
 const paths = ["/", ...new Set([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname))];
-const cards = new Map(); // sig -> card url
+const cards = new Map();
 for (let i = 0; i < paths.length; i += 8) {
     await Promise.all(
         paths.slice(i, i + 8).map(async (p) => {
@@ -49,13 +39,11 @@ for (let i = 0; i < paths.length; i += 8) {
 }
 console.log(`${paths.length} pages, ${cards.size} distinct cards`);
 
-// 2. the ones not kept yet
 const kept = new Set(JSON.parse(kv("key", "list", "--prefix", `og:${VERSION}:`)).map((k) => k.name));
 const todo = [...cards].filter(([sig]) => !kept.has(`og:${VERSION}:${sig}`));
 console.log(`${kept.size} kept, ${todo.length} to draw`);
 if (dryRun || !todo.length) process.exit(0);
 
-// 3. draw them, four at a time
 const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
 const context = await browser.newContext({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
 const drawn = [];
@@ -85,7 +73,6 @@ for (let i = 0; i < todo.length; i += 4) {
 await browser.close();
 console.log(`\ndrawn ${drawn.length}, failed ${failed}`);
 
-// 4. into KV, in bulk (a hundred at a time keeps each upload small)
 const dir = mkdtempSync(join(tmpdir(), "og-cards-"));
 for (let i = 0; i < drawn.length; i += 100) {
     const file = join(dir, `batch-${i}.json`);

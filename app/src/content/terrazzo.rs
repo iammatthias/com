@@ -1,8 +1,3 @@
-//! The terrazzo banner at the foot of a record, ported from @com (`src/scripts/terrazzo.ts`):
-//! the same palettes, styles, random streams and draw order, so a record keeps its pattern.
-//! Seeded by `hash("<rkey>:<cid>")`. Rasterized once into an image (chips are polygons,
-//! filled with zeno) rather than painted as hundreds of paths on every frame.
-
 use std::cell::RefCell;
 use std::sync::Arc;
 
@@ -12,28 +7,28 @@ use swash::zeno::{Command, Mask, PathBuilder};
 const PALETTES: [&[&str]; 8] = [
     &[
         "#f1ece1", "#1a1a1a", "#8b3a2f", "#cb6a4f", "#5a5247", "#a6a097", "#d4c8a8",
-    ], // Bianco
+    ],
     &[
         "#e8f0e6", "#2d4a3e", "#5a8c7e", "#a8c8b8", "#f4a896", "#1a1a1a", "#d9c9a8",
-    ], // Mint
+    ],
     &[
         "#f6e6e0", "#7a3a3a", "#d9847c", "#3a2a28", "#c9a89a", "#e8c9a8", "#a06864",
-    ], // Rose
+    ],
     &[
         "#e8e6e2", "#1a1a1a", "#3a3a3a", "#6c6c6a", "#a0a09c", "#bcbab5",
-    ], // Carbon
+    ],
     &[
         "#f4ead8", "#2d6e3e", "#f2a83b", "#d94f3e", "#1a3a4a", "#8c5a3e", "#e8d9a8",
-    ], // Tropic
+    ],
     &[
         "#1a1a1a", "#f1ece1", "#cb6a4f", "#5a8c7e", "#d4c8a8", "#7a7a7a", "#3a3a3a",
-    ], // Ink
+    ],
     &[
         "#efe7d6", "#a82a1f", "#1a1a1a", "#e8a878", "#5a3a2a", "#d9c9a8",
-    ], // Rosso
+    ],
     &[
         "#e6eef0", "#0e3a4a", "#3a8ca0", "#a8d0d8", "#1a1a1a", "#d9c9a8", "#cb6a4f",
-    ], // Acqua
+    ],
 ];
 
 #[derive(Clone, Copy)]
@@ -56,7 +51,7 @@ const STYLES: [Style; 5] = [
         sides: 6.0,
         chaos: 55.0,
         size_bias: 2.2,
-    }, // Venetian
+    },
     Style {
         palladiana: true,
         density: 110.0,
@@ -65,7 +60,7 @@ const STYLES: [Style; 5] = [
         sides: 6.0,
         chaos: 35.0,
         size_bias: 2.5,
-    }, // Palladiana
+    },
     Style {
         palladiana: false,
         density: 460.0,
@@ -74,7 +69,7 @@ const STYLES: [Style; 5] = [
         sides: 6.0,
         chaos: 50.0,
         size_bias: 1.5,
-    }, // Micro
+    },
     Style {
         palladiana: false,
         density: 200.0,
@@ -83,7 +78,7 @@ const STYLES: [Style; 5] = [
         sides: 4.0,
         chaos: 78.0,
         size_bias: 2.0,
-    }, // Shards
+    },
     Style {
         palladiana: false,
         density: 130.0,
@@ -92,10 +87,9 @@ const STYLES: [Style; 5] = [
         sides: 9.0,
         chaos: 22.0,
         size_bias: 1.8,
-    }, // Pebble
+    },
 ];
 
-/// mulberry32 in full precision, so a seed draws exactly what it draws in JS.
 struct Rng(u32);
 
 impl Rng {
@@ -186,7 +180,6 @@ fn hsl_to_rgb([h, s, l]: Rgb) -> Rgb {
         hue2rgb(p, q, h - 1.0 / 3.0),
     ]
 }
-/// linear → 8-bit sRGB, as @com's `cssColor`
 fn css([r, g, b]: Rgb) -> [u8; 3] {
     let to = |c: f64| (to_srgb(c) * 255.0).round().clamp(0.0, 255.0) as u8;
     [to(r), to(g), to(b)]
@@ -223,7 +216,6 @@ fn chip_verts(c: &Chip, rng: &mut Rng) -> Vec<(f64, f64)> {
         .collect()
 }
 
-/// BGRA pixels, `w`×`h`, opaque.
 struct Canvas {
     w: usize,
     h: usize,
@@ -258,7 +250,6 @@ impl Canvas {
     }
 }
 
-/// The banner for `seed` at `width`×`height` css px, drawn at `ratio` device px each.
 fn paint(seed: u32, width: f64, height: f64, ratio: f64) -> Canvas {
     let (w, h) = (
         (width * ratio).round().max(1.0) as usize,
@@ -276,7 +267,6 @@ fn paint(seed: u32, width: f64, height: f64, ratio: f64) -> Canvas {
         h,
         px: [g8[2], g8[1], g8[0], 255].repeat(w * h),
     };
-    // css px → device px, y up in the pattern's space
     let at = |x: f64, y: f64| {
         [
             ((x + aspect / 2.0) * height * ratio) as f32,
@@ -331,7 +321,6 @@ fn paint(seed: u32, width: f64, height: f64, ratio: f64) -> Canvas {
             });
         }
     }
-    // largest first, as the JS sort (stable, descending radius)
     chips.sort_by(|a, b| b.r.partial_cmp(&a.r).unwrap_or(std::cmp::Ordering::Equal));
 
     let mut path: Vec<Command> = Vec::new();
@@ -348,7 +337,6 @@ fn paint(seed: u32, width: f64, height: f64, ratio: f64) -> Canvas {
         canvas.fill(&path, color);
     }
 
-    // grit: specks of the ground, darkened
     let grit = 200 + (rng.next() * 400.0).floor() as usize;
     let speck = css(ground.map(|c| to_linear(c) * 0.55));
     for _ in 0..grit {
@@ -361,12 +349,9 @@ fn paint(seed: u32, width: f64, height: f64, ratio: f64) -> Canvas {
 }
 
 thread_local! {
-    /// the last few banners drawn, by seed and size
     static CACHE: RefCell<Vec<((u32, u32, u32), Arc<RenderImage>)>> = const { RefCell::new(Vec::new()) };
 }
 
-/// The banner image for a record: drawn on first use, then kept while it's among the last few.
-/// Returns the evicted image too, so the caller can free its GPU copy.
 pub fn banner(
     seed: u32,
     width: f32,

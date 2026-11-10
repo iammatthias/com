@@ -1,7 +1,3 @@
-//! Dev fixtures: hand-written constructs plus real `.md` twins from iammatthias.com, turned
-//! into route payloads (`payload("doc")` etc.; see `NAMES`), built only for the tests, which
-//! check that every one builds and that the Worker's own fixtures parse.
-
 use std::collections::HashMap;
 
 use serde::Deserialize;
@@ -36,7 +32,6 @@ pub const NAMES: &[&str] = &[
     "notfound",
 ];
 
-/// Real image sizes for the blobs the twins reference (read from their PNG headers).
 const DIMS: &[(&str, u32, u32)] = &[
     (
         "bafkreiavvwfjgkzycmpjq7nwy4k6emexihbans65nu7reveu5hk2but2im",
@@ -168,7 +163,6 @@ struct Front {
     html: String,
 }
 
-/// A `.md` twin → (front matter, body without the repeated title or the Related appendix, related).
 fn twin(md: &str) -> (Front, String, Vec<RelatedRef>) {
     let mut front = Front::default();
     let mut body = md;
@@ -251,7 +245,6 @@ fn doc_from(md: &str, media: HashMap<String, Media>) -> Doc {
     }
 }
 
-/// Split a blob-URL body into blocks and swap the series body in behind `series://slug`.
 fn with_series(mut doc: Doc, slug: &str, layout: SeriesLayout) -> Doc {
     let start = doc
         .markdown
@@ -499,7 +492,6 @@ mod tests {
         );
     }
 
-    /// The Worker's recorded payloads deserialize and parse without panicking.
     #[test]
     fn worker_fixtures_parse() {
         let dir =

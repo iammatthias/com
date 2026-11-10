@@ -1,32 +1,17 @@
-// A page whose build is gone boots anyway, in Chrome and WebKit, without ever saying it failed:
-// a page the browser kept from before a deploy, a deploy still landing, and a diagram whose build
-// was dropped after the page booted. Only a site that's really down says so, and "Try again"
-// then recovers.
-//
-// A proxy in front of the build stands in for the edge. It hands out the page with a
-// Last-Modified that a deploy doesn't change and answers a matching If-Modified-Since with a 304,
-// as the edge did for the home page, so the browser's own cache keeps the page it has.
-//
-//   bun boot-retry.mjs [base-url]
-
 import { base, open, check, done } from "./lib.mjs";
 
 const LAST_MODIFIED = "Wed, 14 Oct 2026 00:18:00 GMT";
 const GONE = "0000000000000000";
 const OLD = "1111111111111111";
 const NEW = "2222222222222222";
-// what the boot screen says once it has given up
 const FAILED = "The site didn't answer. The connection may have dropped.";
 
-// the page as a build `id` names its code (null: as served). `live` is the /b/ the served page
-// names, deployed; trunk serve builds none and names the build's own paths at the root.
 function scoped(html, id, live) {
     if (!id) return html;
     if (live) return html.replaceAll(`/b/${live}/`, `/b/${id}/`);
     return html.replaceAll(`"/com-`, `"/b/${id}/com-`).replaceAll(`'/com-`, `'/b/${id}/com-`).replaceAll(`"/snippets/`, `"/b/${id}/snippets/`);
 }
 
-/** `site.page(n)` is the build the nth page (from 0) names; `site.gone(path, served)` is a file no build has. */
 function proxy(site) {
     const served = { pages: 0, code: [], live: null };
     const server = Bun.serve({
@@ -66,7 +51,6 @@ async function run(kind, site, path, wait, expect) {
     const { browser, context, page } = await open(kind, { greeted: false });
     const p = proxy(site);
     await context.addCookies([{ name: "burin", value: "1", url: p.url }]);
-    // whatever the boot screen says when it gives up, across every reload
     await context.addInitScript(() =>
         new MutationObserver(() => {
             const b = document.getElementById("boot");

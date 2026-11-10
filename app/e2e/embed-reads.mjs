@@ -1,14 +1,3 @@
-// The embeds read their own records (@com's ff-tuner.js and ff-onchain-analytics.js, mirrored as
-// is) and retry those reads themselves: cut twice, the read still lands; cut for good, the
-// element says so, and its Try again works once the network does. The analytics read is held to
-// its record's counts, its session deep link opens that session, and no page asks conet.fm or
-// sepolia.base.org for anything or trips the CSP. The tuner's pager below a page brings the next
-// page's top into view, as it does on @com (the document doesn't scroll here: the canvas does). loads.mjs covers the app's import of the
-// modules. The tuner reads once it's near the screen, so it's scrolled to (Chromium only; WebKit
-// can't wheel). Text is read whole (textContent): the host is hidden until it's in view.
-//
-//   bun embed-reads.mjs [base-url]
-
 import { base, open, check, done, cut, path } from "./lib.mjs";
 
 const EMBEDS = [
@@ -85,7 +74,6 @@ for (const embed of EMBEDS) {
                 check(before.top < -500 && after.page === "6–10 of 869" && after.top > -40 && after.top < 200, `the pager below a page brings the next one's top into view (${JSON.stringify({ before, after })})`);
             }
             if (embed.name === "analytics" && n === 0) {
-                // table cells run together in textContent: compared without spaces
                 const t = s.text.replace(/\s+/g, "");
                 const counts = ["205 unique sessions", "between July 2024 and November 2024", "/ 769", "/onchain-analytics 167", "starting-a-spice-company 54", "/art 37", "/posts 32", "zoomOpen 14", "zoomClose 13", "share 1"];
                 const missing = counts.filter((c) => !t.includes(c.replace(/\s+/g, "")));

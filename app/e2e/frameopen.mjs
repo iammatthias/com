@@ -1,8 +1,3 @@
-// Frame times while a post's frame winds open: the column re-lays out each frame it grows.
-// Prints p50/p95/max frame interval and long frames over the 6 s after the canvas appears.
-//
-//   bun frameopen.mjs [base] [cpu-throttle] [runs]
-
 import { chromium } from "playwright";
 
 const base = process.argv[2] ?? "http://127.0.0.1:8080";

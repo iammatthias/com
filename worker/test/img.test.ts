@@ -6,7 +6,6 @@ const imgRoute = appRoutes.find((r) => r.pattern.test("/img/abc"))!;
 const IMMUTABLE = "public, max-age=31536000, immutable";
 const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
 
-// each test its own cid: a found meta is kept across requests
 let n = 0;
 const freshCid = () => `bafy${String(++n).padStart(20, "0")}`;
 
@@ -16,7 +15,6 @@ afterEach(() => {
     globalThis.fetch = realFetch;
 });
 
-/** blobs.farfield.systems and wsrv.nl, as the handler sees them */
 function upstreams(meta: Response | (() => Response), blob: Response | (() => Response), wsrv: Upstream) {
     const pick = (r: Response | (() => Response)) => (typeof r === "function" ? r() : r.clone());
     globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {

@@ -1,19 +1,3 @@
-//! Route payloads → GPUI elements. Each route kind gets its own native layout;
-//! the plate draws the frame around whatever this returns.
-//!
-//! - `md`: markdown → block tree (pure, tested), `recipe` and `series` likewise
-//! - `cache`: one parse per payload
-//! - `render`, `media`, `series_view`, `recipe_view`, `recipe_steps`: blocks → elements
-//! - the per-route layouts: `doc`, `listing` (and tags), `post` (and the feed), `pages` (plain
-//!   pages, 404, and the prose and titles the others share); `special`: now, resume, developers
-//! - `format`: dates, path segments and clipped text, for the whole site
-//! - `feed`: the feed's endless scroll; `toc`: a document's contents
-//! - `lightbox`: a figure's image over the whole window
-//! - `terrazzo`: a record's banner; `diagram`: Mermaid syntax, drawn by pele in the browser
-//! - `near`: images decoded only near the screen; `state`: view-local state by element id
-//! - `scope`: everything the page showing keeps outside GPUI, dropped together on the next payload
-//! - `fixtures` (tests only): payloads built from hand-written and real markdown
-
 mod cache;
 pub mod diagram;
 mod doc;
@@ -57,7 +41,6 @@ use crate::design;
 use crate::select::Selection;
 use crate::theme::{self, Theme};
 
-/// The page body for a route. `nav` opens site paths in place and anything else in a new tab.
 pub fn view(
     payload: &RoutePayload,
     nav: &Navigate,
@@ -122,8 +105,6 @@ fn body(
     }
 }
 
-/// A new page is in: let go of what the last one kept outside GPUI (`scope`), and let its
-/// parsed trees age out of the cache.
 pub fn forget_page() {
     scope::reset();
     cache::next_page();
@@ -138,7 +119,6 @@ pub fn on_paint(
         .child(gpui::canvas(f, |_, _, _, _| {}).size_full())
 }
 
-/// The reading column every content page shares.
 pub fn column(theme: &Theme) -> gpui::Div {
     div()
         .w_full()
@@ -163,7 +143,6 @@ pub fn heading(text: &str, theme: &Theme) -> impl IntoElement {
         .child(text.to_string())
 }
 
-/// A text link: the accent on hover, same-tab for site paths.
 pub fn link(
     id: impl Into<gpui::ElementId>,
     label: &str,

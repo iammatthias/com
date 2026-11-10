@@ -27,7 +27,6 @@ function canonical(link: string, site: string): string {
     return url.href;
 }
 
-/** Same document shape @astrojs/rss produced for the old site. */
 export function rssXml(opts: {
     title: string;
     description: string;

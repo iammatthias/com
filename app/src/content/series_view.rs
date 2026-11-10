@@ -1,6 +1,3 @@
-//! Series layouts: the tile grid (with still+video "live" tiles), the flow of images and
-//! prose, and the phosphene triptych (photo · poem · dreamed image).
-
 use gpui::prelude::*;
 
 use gpui::px;
@@ -44,9 +41,6 @@ fn grid(caps: &[Capture], ctx: &Ctx) -> AnyElement {
     media::two_columns(tiles, ctx.width, GAP)
 }
 
-/// A still that has motion behind it: the photograph, and the clip laid over it while the
-/// tile is hovered (or, without hover, while it is well in view). The lettered "live" plays
-/// or stops the motion by hand, which is how it moves with reduced motion.
 fn live(still: &SeriesMedia, movie: &SeriesMedia, width: f32, ctx: &Ctx) -> AnyElement {
     let theme = ctx.theme;
     let url = media::original_url(&movie.src);
@@ -71,8 +65,6 @@ fn live(still: &SeriesMedia, movie: &SeriesMedia, width: f32, ctx: &Ctx) -> AnyE
                 .absolute()
                 .top(px(10.))
                 .left(px(10.))
-                // the controls' glass, in miniature: the photograph shows through a frosted
-                // paper pill with a bright rim, the word in the plate's hand
                 .h(px(28.))
                 .px(px(12.))
                 .rounded_full()

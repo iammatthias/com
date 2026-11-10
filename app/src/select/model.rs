@@ -1,16 +1,10 @@
-//! The selection in text space: a block's place in the document and a byte offset into it.
-//! Nothing here knows about the screen, so scrolling, re-rendering and resizing need no
-//! bookkeeping. Pure: unit-tested without a window.
-
 use std::ops::Range;
 
 use gpui::{Pixels, Point, px};
 
-/// Where a block sits in a scope's document order, for one render of one content key.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Ordinal(pub u32);
 
-/// A caret between characters. Ordering is (block, byte); the byte is a char boundary.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Pos {
     pub block: Ordinal,
@@ -23,7 +17,6 @@ impl Pos {
     }
 }
 
-/// What a drag snaps to: set by the click count or a long press.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Granularity {
     Char,
@@ -31,15 +24,12 @@ pub enum Granularity {
     Block,
 }
 
-/// A touch selection shows handles and a Copy pill; a pointer selection shows neither.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Origin {
     Pointer,
     Touch,
 }
 
-/// Both ends are groups (a word, a block, or a collapsed caret) so a word or block drag keeps
-/// the whole original word or block selected whichever way the pointer goes.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Span {
     pub anchor: (Pos, Pos),
@@ -58,7 +48,6 @@ impl Span {
         }
     }
 
-    /// The selected [start, end).
     pub fn span(&self) -> (Pos, Pos) {
         (
             self.anchor.0.min(self.focus.0),
@@ -71,7 +60,6 @@ impl Span {
         s >= e
     }
 
-    /// The selected bytes of `block`, whose text is `len` bytes long. Two comparisons.
     pub fn range_in(&self, block: Ordinal, len: usize) -> Option<Range<usize>> {
         let (s, e) = self.span();
         if block < s.block || block > e.block {
@@ -87,7 +75,6 @@ impl Span {
     }
 }
 
-/// What goes between a block and the one before it in copied text.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
 pub enum Join {
     #[default]
@@ -110,8 +97,6 @@ impl Join {
     }
 }
 
-/// A cheap identity for a block's text: its length and its first and last eight bytes. Enough
-/// to notice a block changing under a selection without hashing whole paragraphs each frame.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Fingerprint {
     len: usize,
@@ -135,8 +120,6 @@ impl Fingerprint {
     }
 }
 
-/// A platform's click count only means a double or triple click when the clicks land near
-/// each other (after editable_text's `apply_click`).
 pub fn effective_click_count(
     count: usize,
     at: Point<Pixels>,

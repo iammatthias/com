@@ -1,7 +1,3 @@
-//! Block tree → GPUI elements. Book typography: Newsreader body with generous leading and
-//! display heads, Inter for small tracked labels, the accent blue for links and marks,
-//! hairline rules instead of boxes.
-
 use std::cell::Cell;
 use std::collections::HashMap;
 use std::ops::Range;
@@ -24,22 +20,16 @@ use super::cache::Parsed;
 use super::md::{Align, Block, CalloutKind, Footnote, ListItem, Rich};
 use super::{media, recipe_view, series_view, state};
 
-/// Everything a block needs while rendering one payload.
 pub struct Ctx<'a> {
     pub theme: &'a Theme,
     pub nav: &'a Navigate,
-    /// the page's selection: every run of text registers with it
     pub sel: Selection,
     pub media: &'a HashMap<String, Media>,
-    /// the tree being drawn, for the series it embeds
     pub parsed: Rc<Parsed>,
-    /// reading column width in px
     pub width: f32,
     pub scale: f32,
     pub captions: bool,
-    /// unique per payload (doc cid, post rkey…): prefixes element ids and view state keys
     pub key: SharedString,
-    /// every image figure rendered so far, for the lightbox to step through
     pub gallery: super::lightbox::Gallery,
     n: Cell<usize>,
     depth: Cell<u8>,
@@ -73,14 +63,12 @@ impl<'a> Ctx<'a> {
         }
     }
 
-    /// A fresh element id, stable across frames as long as the tree renders in the same order.
     pub fn id(&self, tag: &str) -> ElementId {
         let n = self.n.get();
         self.n.set(n + 1);
         ElementId::Name(format!("{}:{tag}{n}", self.key).into())
     }
 
-    /// The same context narrowed to a sub-column (series panels, table cells).
     pub fn with_width<R>(&self, width: f32, f: impl FnOnce(&Ctx) -> R) -> R {
         let inner = Ctx {
             theme: self.theme,
@@ -110,8 +98,6 @@ pub fn alpha(c: Rgba, a: f32) -> Rgba {
     Rgba { alpha: a, ..c }
 }
 
-/// The site's one small label: Inter, medium, tracked capitals (pass the text already in caps
-/// or let the caller decide), for eyebrows, metadata and the panels' field names.
 pub fn label(text: impl IntoElement, color: Rgba) -> gpui::Div {
     div()
         .font_family(theme::SANS)
@@ -123,7 +109,6 @@ pub fn label(text: impl IntoElement, color: Rgba) -> gpui::Div {
         .child(text)
 }
 
-/// A pair of hairlines, the plate's own rule.
 pub fn double_rule(theme: &Theme, width: f32) -> gpui::Div {
     div()
         .w(px(width))
@@ -138,9 +123,6 @@ pub fn double_rule(theme: &Theme, width: f32) -> gpui::Div {
 pub fn hairline(theme: &Theme) -> gpui::Div {
     div().w_full().h(px(1.)).bg(theme.rule)
 }
-
-// ---------------------------------------------------------------------------------------------
-// inline text
 
 struct Runs {
     highlights: Vec<(Range<usize>, HighlightStyle)>,
@@ -196,12 +178,10 @@ fn styled_runs(r: &Rich, theme: &Theme, hovered: Option<u16>) -> Runs {
     s
 }
 
-/// A run of rich text: emphasis, small-caps strong, mono code, links that navigate.
 pub fn rich(r: &Rich, ctx: &Ctx) -> AnyElement {
     rich_joined(r, ctx, Join::Paragraph)
 }
 
-/// `rich`, with what copied text puts before this run.
 fn rich_joined(r: &Rich, ctx: &Ctx, join: Join) -> AnyElement {
     if r.text.is_empty() {
         return div().into_any_element();
@@ -238,14 +218,10 @@ fn rich_joined(r: &Rich, ctx: &Ctx, join: Join) -> AnyElement {
     .into_any_element()
 }
 
-// ---------------------------------------------------------------------------------------------
-// blocks
-
 pub fn blocks(list: &[Block], ctx: &Ctx, window: &mut Window, cx: &mut App) -> Vec<AnyElement> {
     list.iter().map(|b| block(b, ctx, window, cx)).collect()
 }
 
-/// A vertical stack of blocks with the body's paragraph spacing.
 pub fn stack(list: &[Block], ctx: &Ctx, window: &mut Window, cx: &mut App) -> gpui::Div {
     stacked(blocks(list, ctx, window, cx))
 }
@@ -356,7 +332,6 @@ fn heading(level: u8, text: &Rich, ctx: &Ctx) -> AnyElement {
     let theme = ctx.theme;
     let body = rich(text, ctx);
     let el = match level {
-        // a scale off the 19px body: 30 · 24 · 20 italic · tracked label
         1 => div()
             .pt(px(20.))
             .font_family(theme::DISPLAY)
@@ -528,7 +503,6 @@ pub(super) fn code_block(code: &str, tag: Option<&str>, diagram: bool, ctx: &Ctx
                 }),
         )
         .child({
-            // Lilex at 14px advances about 8.4px a character
             let longest = code.lines().map(|l| l.chars().count()).max().unwrap_or(0) as f32;
             hscroll(
                 id,
@@ -552,16 +526,9 @@ pub(super) fn code_block(code: &str, tag: Option<&str>, diagram: bool, ctx: &Ctx
         .into_any_element()
 }
 
-/// How far a wide block has been slid sideways, design px.
 #[derive(Clone, Copy, Default, PartialEq)]
 struct Slide(f32);
 
-/// A block wider than the column (recipe grids, tables, code) slides sideways inside it.
-///
-/// The page's own scroller turns sideways wheel and pan deltas into vertical scrolling, so a
-/// nested GPUI scroll container would move both at once. This keeps its own offset instead:
-/// sideways gestures over it slide it (and stop there), vertical ones pass on to the page.
-/// A hairline under it shows how much there is and where the view sits.
 pub fn hscroll(
     id: ElementId,
     view_w: f32,
@@ -621,7 +588,6 @@ pub fn hscroll(
         .into_any_element()
 }
 
-/// Slide a wide block so the span `x0..x1` (design px) is in view, if it isn't already.
 pub fn reveal_in_slide(
     id: &ElementId,
     x0: f32,
@@ -639,8 +605,6 @@ pub fn reveal_in_slide(
     state::update::<Slide>(id, window, |o| o.0 = to);
 }
 
-/// A diagram, drawn: asked for once the page is at full size (its width settles
-/// then), shown as soon as its pixels arrive, its source in the meantime or if it can't be drawn.
 fn diagram(src: &str, ctx: &Ctx) -> AnyElement {
     use super::diagram::{self, Diagram};
     let state = diagram::get(src, ctx.theme, ctx.width, ctx.scale);
@@ -663,7 +627,6 @@ fn diagram(src: &str, ctx: &Ctx) -> AnyElement {
     }
 }
 
-/// pele's playground with the diagram loaded: its source, form-urlencoded, in the fragment.
 pub fn pele_playground(src: &str) -> String {
     format!(
         "https://pele.run/playground#source={}",
@@ -677,7 +640,6 @@ fn table(aligns: &[Align], head: &[Rich], rows: &[Vec<Rich>], ctx: &Ctx) -> AnyE
         .len()
         .max(rows.iter().map(Vec::len).max().unwrap_or(0))
         .max(1);
-    // each column is at least as wide as its longest unbreakable word (hashes, addresses)
     let widths: Vec<f32> = (0..cols)
         .map(|i| {
             let cells = head
@@ -709,7 +671,6 @@ fn table(aligns: &[Align], head: &[Rich], rows: &[Vec<Rich>], ctx: &Ctx) -> AnyE
             Align::Center => el.text_center(),
             _ => el,
         };
-        // copied, a row is a line of tab-separated cells, and an empty cell keeps its tab
         let join = if i == 0 { Join::Line } else { Join::Tab };
         el.child(ctx.with_width(col_w - 16., |c| match r {
             Some(r) if !r.text.is_empty() => rich_joined(r, c, join),
@@ -720,7 +681,6 @@ fn table(aligns: &[Align], head: &[Rich], rows: &[Vec<Rich>], ctx: &Ctx) -> AnyE
     if !head.is_empty() {
         let mut row = div()
             .flex()
-            // the label style, as every other heading-in-small on the site
             .font_family(theme::SANS)
             .font_weight(gpui::FontWeight::MEDIUM)
             .text_size(px(12.))
@@ -755,7 +715,6 @@ fn table(aligns: &[Align], head: &[Rich], rows: &[Vec<Rich>], ctx: &Ctx) -> AnyE
         .into_any_element()
 }
 
-/// Rough width of the longest run without a break opportunity, in px at table sizes.
 fn longest_word_px(r: &Rich) -> f32 {
     let mut best = 0f32;
     for (range, m) in &r.spans {
@@ -811,7 +770,6 @@ fn reveal(
         .into_any_element()
 }
 
-/// A component that lives elsewhere (wallets, iframes): a lettered card that links out.
 fn link_out(title: &str, text: &str, cta: &str, href: &str, ctx: &Ctx) -> AnyElement {
     let theme = ctx.theme;
     div()
@@ -896,8 +854,6 @@ mod tests {
     }
 }
 
-/// Room in the column for a web component, at its measured height, and a probe telling
-/// `dom_embed` where it's painted.
 fn embed_block(
     embed: &'static crate::dom_embed::Embed,
     props: &[(String, String)],
@@ -905,8 +861,6 @@ fn embed_block(
 ) -> AnyElement {
     use crate::dom_embed;
     let key = dom_embed::next_key(embed.component);
-    // the room kept is a floor: a component loading (a line of text) or giving up is shorter
-    // than what it grows into, and the column shouldn't shrink under the reader and grow back
     let height = dom_embed::height(&key).map_or(embed.height, |h| h.max(embed.height));
     let props = props.to_vec();
     let t = &ctx.theme;

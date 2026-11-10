@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 
-// Ported from com/scripts/agent-check.mjs. The Worker renders everything
-// on demand, so this only runs against a live origin (default: wrangler dev).
-//   node scripts/agent-check.mjs [--url http://127.0.0.1:8796]
-
 const args = process.argv.slice(2);
 const urlFlag = args.indexOf("--url");
 const ORIGIN = (urlFlag >= 0 ? args[urlFlag + 1] : "http://127.0.0.1:8796").replace(/\/$/, "");
@@ -453,7 +449,6 @@ if (ORIGIN) {
     } else ok("Vary: Accept on .md");
 }
 
-// com-next additions: the shell, the app API, and the is-agentic follow-ups.
 {
     const card = await get("/.well-known/mcp/server-card.json");
     try {
@@ -480,7 +475,6 @@ if (ORIGIN) {
     if (did.status === 200 && /^did:plc:[a-z0-9]+\n$/.test(didBody)) ok("/.well-known/atproto-did");
     else fail("/.well-known/atproto-did", `status ${did.status} ${JSON.stringify(didBody.slice(0, 60))}`);
 
-    // com/public/_headers stamps the discovery Link on every asset; redirects carry it too.
     for (const path of ["/robots.txt", "/favicon.svg", "/rss.xml.xsl", "/openapi.json", "/schema.graphql", "/api/search-vectors.json", "/.well-known/api-catalog", "/.well-known/ai-catalog.json", "/.well-known/atproto-did", "/feed/"]) {
         const res = await fetch(ORIGIN + path, { method: "HEAD", redirect: "manual" });
         if ((res.headers.get("link") ?? "").includes('</llms.txt>; rel="describedby"')) ok(`Link on ${path}`);
@@ -520,7 +514,6 @@ if (ORIGIN) {
     const dev = await get("/developers");
     if (!/id="versioning"/.test(dev.body)) fail("/developers versioning note", "no #versioning section");
     else ok("/developers versioning note");
-    // com never published dated sunset commitments; the note must not invent any.
     if (/Sunset|Deprecation header|\b20\d\d-\d\d-\d\d\b/.test(dev.body.match(/id="versioning"[\s\S]*?(?=<h2|$)/)?.[0] ?? "")) {
         fail("/developers versioning note", "mentions sunset headers or dates");
     } else ok("/developers versioning note is undated");

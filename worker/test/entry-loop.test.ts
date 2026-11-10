@@ -24,7 +24,6 @@ afterEach(() => {
     globalThis.fetch = realFetch;
     put.length = 0;
 });
-/** blobs as the Worker meets it: the pin lookup answers `pin` (null: no such pin), any other ask the blob */
 function blobsAnswer(status: number, body: string, headers: Record<string, string> = {}, pin: string | null = null): { asked: Request[] } {
     const asked: Request[] = [];
     globalThis.fetch = (async (input: RequestInfo, init?: RequestInit) => {

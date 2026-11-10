@@ -1,7 +1,3 @@
-//! The feed scrolls on without end: a probe under the last post watches for the bottom of
-//! the page coming near and fetches the next page of posts, which are appended here (the
-//! route's own payload stays as it arrived).
-
 use std::rc::Rc;
 
 use gpui::prelude::*;
@@ -14,15 +10,10 @@ use gpui::px;
 use super::render::{double_rule, label};
 use super::{scope, state};
 
-/// How close (in window pixels) the end of the list must come before the next page is asked for.
 const AHEAD: f32 = 900.;
 
 pub(super) struct More {
-    /// which listing this continues (the first post of the page it started from), so a page
-    /// landing after the reader has left is dropped
     from: String,
-    /// every post already shown (the route's own page, then each page added), so a page that
-    /// shifted under a new post never repeats one
     seen: std::collections::HashSet<String>,
     posts: Vec<Rc<Post>>,
     next: u32,
@@ -31,7 +22,6 @@ pub(super) struct More {
     failed: bool,
 }
 
-/// Where the list stands below the posts it has.
 pub enum Tail {
     Loading,
     Failed,
@@ -39,7 +29,6 @@ pub enum Tail {
     End,
 }
 
-/// The posts loaded after the route's own page, and where the list stands.
 pub fn extra(posts: &[Post], paging: &Paging) -> (Vec<Rc<Post>>, Tail) {
     let Paging { page, pages, .. } = *paging;
     scope::with(
@@ -69,7 +58,6 @@ pub fn extra(posts: &[Post], paging: &Paging) -> (Vec<Rc<Post>>, Tail) {
     )
 }
 
-/// Fetch the next page now (unless one is already on its way or there are no more).
 fn fetch(cx: &mut App) {
     let next = scope::with(
         |p| &p.more,
@@ -99,7 +87,7 @@ fn fetch(cx: &mut App) {
             |m| {
                 let mut m = m.borrow_mut();
                 let Some(m) = m.as_mut().filter(|m| m.from == from) else {
-                    return; // the reader has moved on to another listing
+                    return;
                 };
                 m.loading = false;
                 match result {
@@ -122,8 +110,6 @@ fn fetch(cx: &mut App) {
     .detach();
 }
 
-/// What sits under the last post: a probe that asks for more as the end nears, and a word
-/// on where the list stands.
 pub fn tail(tail: Tail, theme: &Theme) -> AnyElement {
     let probe = super::on_paint(|bounds, window, cx| {
         let top: f32 = bounds.origin.y.into();

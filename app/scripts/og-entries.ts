@@ -1,24 +1,3 @@
-// Every entry's own social loop: its card (title, section, seed) over the flowing plate, drawn by
-// og-loop.ts and pinned in Farfield's blobs as ogv:v1:<sig>. The Worker serves it at
-// /og-video/v1/<sig>.mp4, the address each entry's og:video names, finding the blob by that pin,
-// and sends the shared loop for an entry not drawn yet. A loop is an ~70 s render, too slow to
-// draw when a link is first shared, so they are drawn here, ahead of time: on the homelab, in the
-// image og-render.Dockerfile builds, or by hand.
-//
-//   bun scripts/og-entries.ts [--site https://iammatthias.com] [--jobs 3] [--only <path>] [--dry]
-//                             [--keep <dir>] [--draw-only]
-//
-// Which entries, and their cards, come from the live site: each page in the sitemap but the tag
-// pages, and the sig and card query in its og:image, so a loop matches its card by construction.
-// An entry already pinned is skipped: run it again after publishing and only new or edited entries
-// (their card, so their sig, changed) are drawn. A loop whose seam doesn't pass isn't stored.
-// A drawn loop waits in --keep (default .og-loops/) as <sig>.mp4 until it is stored, so a rerun
-// never draws one twice; --draw-only stops there.
-//
-// From the environment: BLOBS_URL (default https://blobs.farfield.systems; the homelab's own
-// address there), and to store, a blobs key with write scope as BLOBS_WRITE_KEY or BLOBS_API_KEY
-// (on a Mac, BLOBS_WRITE_KEY in worker/.dev.vars will do). Drawing needs what og-loop.ts needs.
-
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -42,7 +21,6 @@ const drawOnly = process.argv.includes("--draw-only");
 const keepDir = resolve(app, flag("keep", ".og-loops"));
 mkdirSync(keepDir, { recursive: true });
 
-// one run at a time, however they're started: a run still drawing keeps the lock
 const lock = join(keepDir, ".lock");
 const holder = existsSync(lock) ? Number(readFileSync(lock, "utf8")) : 0;
 if (holder && holder !== process.pid && running(holder)) {
@@ -90,7 +68,6 @@ for (const path of paths) {
     const e = await entry(path);
     if (e) entries.push(e);
 }
-// blobs' keyless pin lookup, four at a time (it shares blobs' public limit of 600 a minute)
 async function pinned(e: Entry): Promise<boolean> {
     return tried("pin lookup", async () => {
         const res = await fetch(`${BLOBS}/pins/${PREFIX}${e.sig}`, { headers: { "User-Agent": UA } });
@@ -136,8 +113,6 @@ async function draw(e: Entry): Promise<boolean> {
     return ok;
 }
 
-// Four tries, waiting longer each time: blobs drops the odd call (a reset connection, a 5xx).
-// Every step is safe to repeat: the same bytes are the same cid, and pinning is idempotent.
 async function tried<T>(what: string, step: () => Promise<T> | T): Promise<T> {
     for (let tries = 1; ; tries++) {
         try {
@@ -149,8 +124,6 @@ async function tried<T>(what: string, step: () => Promise<T> | T): Promise<T> {
     }
 }
 
-// pinned as it's stored, so the Worker can find it and blobs' hygiene counts it used ("Delete
-// unused" passes it over); an answer without the pin isn't taken as stored
 async function store(e: Entry): Promise<void> {
     const label = PREFIX + e.sig;
     const meta = await tried("blobs", async () => {

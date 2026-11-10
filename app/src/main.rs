@@ -27,7 +27,6 @@ mod select;
 mod site;
 mod theme;
 
-/// Linear memory in bytes, for watching growth from the page (`wasmBindings.wasm_memory_bytes()`).
 #[cfg(target_family = "wasm")]
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn wasm_memory_bytes() -> f64 {
@@ -44,13 +43,11 @@ fn main() {
     gpui_platform::web_init();
     mark(&format!("wasm main (t=0), build {BUILD}"));
     let app = gpui_platform::application().run(|cx: &mut App| {
-        // the faces first (fetched beside the app on the web), then the window
         #[cfg(target_family = "wasm")]
         {
             let client = cx.http_client();
             let origin = route::origin();
             cx.spawn(async move |cx| {
-                // one dropped request shouldn't cost the site its faces
                 let gets = fonts::FILES.iter().map(|name| {
                     let url = format!("{origin}{}/{name}", fonts::DIR);
                     http::get_bytes(
@@ -61,13 +58,11 @@ fn main() {
                     )
                 });
                 let got = futures::future::join_all(gets).await;
-                // without a required face the app can't letter anything: the plain page instead
                 let mut faces = Vec::with_capacity(got.len());
                 for (name, face) in fonts::FILES.iter().zip(got) {
                     match face {
                         Ok(bytes) => faces.push(Some(bytes)),
                         Err(e) if *name == fonts::OPTIONAL => {
-                            // a warning, not an error: the page's error overlay is for failures
                             console::warn(&format!("fonts: {e:#}; going without"));
                             faces.push(None);
                         }
@@ -86,8 +81,6 @@ fn main() {
         #[cfg(not(target_family = "wasm"))]
         start(cx);
     });
-    // on the web `run` returns at once, and the app lives only as long as its handle: the page
-    // keeps it until it's torn down (natively `run` returns at shutdown)
     std::mem::forget(app);
 }
 
@@ -97,12 +90,8 @@ thread_local! {
     static PERF: bool = crate::browser::debug::flag("perf");
 }
 
-/// Which build this is (in the #perf log). Its bytes are part of the wasm, so bumping it gives the
-/// build new hashed file names under a new /b/<id>/: the way out if an edge ever keeps a bad copy
-/// of one.
 const BUILD: &str = "2026-10-14.2";
 
-/// A startup timing, in ms since the app began, logged to the console with `#perf` in the URL.
 pub fn mark(what: &str) {
     #[cfg(target_family = "wasm")]
     if PERF.with(|p| *p) {
@@ -128,7 +117,6 @@ fn start(cx: &mut App) {
         WindowOptions::new().window_bounds(Some(WindowBounds::Windowed(bounds))),
         |window, cx| cx.new(|cx| site::Site::new(window, cx)),
     );
-    // no surface to draw on (an adapter that went away, a device refused): the plain page
     if let Err(e) = opened {
         crate::browser::plain_page();
         console::warn(&format!("failed to open window: {e:#}"));
@@ -140,9 +128,6 @@ fn start(cx: &mut App) {
 
 #[cfg(test)]
 mod build_guards {
-    /// shims/wgpu keeps WebGL (wgpu-core, wgpu-hal: ~1.1MB) out of the web build. If gpui-ce moves
-    /// to a wgpu the stand-in no longer matches, Cargo stops using it and WebGL comes back
-    /// silently; this says so.
     #[test]
     fn web_build_has_no_webgl() {
         let out = std::process::Command::new(env!("CARGO"))
@@ -165,8 +150,6 @@ mod build_guards {
         );
     }
 
-    /// shims/usvg and shims/resvg keep gpui's SVG renderer out of the web build (the browser draws
-    /// the site's SVG); the real parser's XML reader showing up means they stopped applying.
     #[test]
     fn web_build_has_no_svg_renderer() {
         let out = std::process::Command::new(env!("CARGO"))

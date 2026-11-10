@@ -1,36 +1,24 @@
-//! How the plate comes up: rising in place from its first frame on screen, or drawn out of the
-//! point where the intro's greeting fell, a pen running along the spiral with the plate rising
-//! behind it.
-
 use web_time::Instant;
 
-/// seconds for the plate to come up out of the intro's bare spiral
 const REVEAL_FOR: f32 = 2.6;
-/// seconds for the pen to draw the line out from the spiral's start to past the corners
 const DRAW_OUT: f32 = 3.6;
 
-/// Seconds since `at`, stretched by the greeting's own `#slow=` (so the two can be looked at
-/// as one motion).
 fn since(at: Instant) -> f32 {
     at.elapsed().as_secs_f32() / crate::browser::debug::slow()
 }
 
-/// Seconds since the pen started (0 while it waits).
 fn secs_since(pen: Option<Instant>) -> f32 {
     pen.map_or(0.0, since)
 }
 
 #[derive(Clone, Copy)]
 enum Entrance {
-    /// rising in place since `born`
     Rise { born: Instant },
-    /// drawn out of a point by a pen that started at `pen` (None while the greeting still falls)
     Point { pen: Option<Instant> },
 }
 
 pub(super) struct Reveal {
     entrance: Entrance,
-    /// drawn at least once
     shown: bool,
 }
 
@@ -44,8 +32,6 @@ impl Reveal {
         }
     }
 
-    /// The plate is on screen for the first time at `now` (it may be engraved ahead of time):
-    /// it rises from here. True only the first time.
     pub fn first_draw(&mut self, now: Instant) -> bool {
         if self.shown {
             return false;
@@ -57,7 +43,6 @@ impl Reveal {
         true
     }
 
-    /// Draw the line out of a point instead of rising in place (a pen already running keeps on).
     pub fn emerge(&mut self) {
         if let Entrance::Rise { .. } = self.entrance {
             self.entrance = Entrance::Point { pen: None };
@@ -70,14 +55,10 @@ impl Reveal {
         }
     }
 
-    /// Blank under the greeting, the pen not yet started.
     pub fn waiting_for_pen(&self) -> bool {
         matches!(self.entrance, Entrance::Point { pen: None })
     }
 
-    /// How far out the pen has drawn, eased 0..1: quickest out of the point, so the line is there
-    /// the moment the greeting has wound into it, easing into the corners; None when there is no
-    /// pen or it has finished.
     pub fn pen(&self) -> Option<f32> {
         let Entrance::Point { pen } = self.entrance else {
             return None;
@@ -86,10 +67,7 @@ impl Reveal {
         (x < 1.0).then(|| 1.0 - (1.0 - x) * (1.0 - x))
     }
 
-    /// How far the plate has risen, eased 0..1.
     pub fn progress(&self) -> f32 {
-        // drawn out of a point, the plate rises as the pen reaches the screen's edges (eased, it
-        // covers the screen in the first quarter of its run)
         let t = match self.entrance {
             Entrance::Rise { born } => since(born),
             Entrance::Point { pen } => secs_since(pen) - DRAW_OUT * 0.22,
@@ -98,8 +76,6 @@ impl Reveal {
         x * x * (3.0 - 2.0 * x)
     }
 
-    /// How present the controls should be: they arrive with the plate as it rises out of a
-    /// point, and are simply there otherwise.
     pub fn chrome(&self) -> f32 {
         if let Entrance::Rise { .. } = self.entrance {
             return 1.0;
@@ -108,7 +84,6 @@ impl Reveal {
         x * x * (3.0 - 2.0 * x)
     }
 
-    /// Still coming up.
     pub fn moving(&self) -> bool {
         !self.shown || self.progress() < 1.0 || self.pen().is_some()
     }

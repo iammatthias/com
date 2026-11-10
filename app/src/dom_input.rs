@@ -1,21 +1,11 @@
-//! "Find a title" is a real `<input>` laid over the canvas where the field is drawn: the browser
-//! gives it what a canvas can't, i.e. the caret, selection, paste, autocorrect, IME and a phone's
-//! keyboard. The field's box is drawn on the canvas; the input sits in it, transparent, and its
-//! text is the query. It is focused inside the tap that opens Find (a phone raises its keyboard
-//! only for focus given within a tap), placed at each paint, and hidden when Find is closed.
-
 use std::cell::RefCell;
 
 use crate::overlay::{Extent, Gate, Layer, Rect};
 use crate::site::signal::Signal;
 
-/// What the input tells the site.
 pub enum Event {
-    /// the text changed (typed, pasted, composed, autocorrected)
     Text(String),
-    /// Enter: open the first result
     Submit,
-    /// Escape: clear the query, or close Find when it's already empty
     Escape,
 }
 
@@ -26,7 +16,6 @@ thread_local! {
 
 const FIELD: &str = "find";
 
-/// The input's events, for the site to apply.
 pub fn subscribe() -> futures::channel::mpsc::UnboundedReceiver<Event> {
     let rx = EVENTS.with(Signal::subscribe);
     web::on_event(|kind, text| {
@@ -40,7 +29,6 @@ pub fn subscribe() -> futures::channel::mpsc::UnboundedReceiver<Event> {
     rx
 }
 
-/// Where the field is painted this frame. `style` is the input's CSS: the site's ink and face.
 pub fn place(rect: Rect, clip: Rect, placeholder: &str, max_len: usize, style: &str) {
     let inset = PLACED.with(|placed| {
         let mut placed = placed.borrow_mut();
@@ -53,14 +41,12 @@ pub fn place(rect: Rect, clip: Rect, placeholder: &str, max_len: usize, style: &
     }
 }
 
-/// A render of the controls begins: a field not painted since the last one (Find closed) goes.
 pub fn begin_render() {
     if !PLACED.with(|placed| placed.borrow_mut().begin()).is_empty() {
         web::hide();
     }
 }
 
-/// Focus the field now (call from the tap or key that opens Find).
 pub fn focus() {
     web::focus();
 }

@@ -27,7 +27,6 @@ interface BodyRecord {
     body: string;
 }
 
-/** Bounded: every edit is a new cid, so an unbounded map only grows. */
 const plainTextByCid = new Lru<string, string>(500);
 
 export function bodyText(record: BodyRecord): string {
@@ -61,7 +60,6 @@ export function docDescription(doc: BodyRecord & { description: string }): strin
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-/** A feed note named by its first words, or, a picture alone, by when it was posted. */
 export function noteTitle(record: BodyRecord & { createdAt: string }): string {
     const words = bodyText(record);
     if (!words) {
@@ -71,7 +69,6 @@ export function noteTitle(record: BodyRecord & { createdAt: string }): string {
             : `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
         return `Photograph, ${date}`;
     }
-    // a phrase, not a paragraph: the first sentence, or its first words
     const first = words.split(/(?<=[.!?])\s/)[0];
     const { length } = SUMMARIES.noteTitle;
     if (first.length <= length) return first.replace(/[.!?]$/, "");

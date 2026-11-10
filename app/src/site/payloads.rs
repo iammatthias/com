@@ -1,6 +1,3 @@
-//! Route payloads already fetched, kept by path to revisit without a wait, and the prefetches a
-//! hovered title starts ahead of its click.
-
 use std::collections::{HashMap, HashSet, VecDeque};
 
 use gpui::Task;
@@ -8,23 +5,18 @@ use gpui::Task;
 use crate::api::RoutePayload;
 use crate::limits;
 
-/// Pages kept to revisit without a fetch; past it the oldest goes.
 const MAX_KEPT: usize = 32;
 const KEPT_REACHED: &str = "pages kept (32): the oldest goes";
-/// Prefetches in flight at once; past it a hover waits for a later one.
 const MAX_IN_FLIGHT: usize = 4;
 const IN_FLIGHT_REACHED: &str = "prefetches in flight (4): the next waits for a later hover";
-/// Failed prefetches remembered; past it they are all forgotten and tried again.
 const MAX_FAILED: usize = 32;
 const FAILED_REACHED: &str = "failed prefetches remembered (32): all are tried again";
 
 #[derive(Default)]
 pub struct Payloads {
     kept: HashMap<String, RoutePayload>,
-    /// when each kept page arrived, oldest first
     order: VecDeque<String>,
     in_flight: HashMap<String, Task<()>>,
-    /// not tried again from a hover (a hovered title asks every render)
     failed: HashSet<String>,
 }
 
@@ -45,7 +37,6 @@ impl Payloads {
         }
     }
 
-    /// A hover may fetch this path now: it isn't here, on its way, or known to fail, and there's room.
     pub fn should_prefetch(&self, path: &str) -> bool {
         if self.kept.contains_key(path)
             || self.in_flight.contains_key(path)
@@ -83,7 +74,6 @@ impl Payloads {
 mod tests {
     use super::*;
 
-    /// The console names each limit with the number it is set to.
     #[test]
     fn each_limit_reports_its_own_number() {
         for (max, what) in [

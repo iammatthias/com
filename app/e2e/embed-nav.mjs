@@ -1,8 +1,3 @@
-// Leaving a post with a web component in-app: while the next page loads, the post still showing
-// keeps its element (not removed and reloaded); once the next page is in, the element is gone.
-//
-//   bun embed-nav.mjs [base-url]
-
 import { base, open, check, done } from "./lib.mjs";
 
 const POST = "/posts/1788199665000-whats-the-frequency-kenneth";
@@ -28,7 +23,6 @@ for (const kind of ["desktop", "phone"]) {
         document.querySelector("ff-tuner").__marked = true;
     });
 
-    // hold the next page's payload, so the post stays up while it loads
     let release;
     let intercepted = 0;
     const held = new Promise((r) => (release = r));
@@ -51,7 +45,6 @@ for (const kind of ["desktop", "phone"]) {
     const after = await tuner();
     check(after.count === 0, `${kind}: once the next page is in, the tuner is gone (${JSON.stringify(after)})`);
 
-    // the same, when the next page fails to load
     await page.unroute((url) => url.pathname === "/api/app/route");
     await page.goto(base + POST);
     await page.waitForTimeout(9000);

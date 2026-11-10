@@ -13,7 +13,7 @@ await go("/posts/1789494942000-own-the-means-of-cognition");
 await seq("a-in", [80, 250, 450, 700, 1000, 1500]);
 await go("/recipes/1710031406664-pizza-dough");
 await seq("b-next", [80, 250, 450, 700, 1000]);
-await p.touchscreen.tap(50, 34); // Close
+await p.touchscreen.tap(50, 34);
 await seq("c-close", [120, 350, 650, 1000, 1500]);
 console.log(errs.length ? errs : "no errors");
 await b.close();

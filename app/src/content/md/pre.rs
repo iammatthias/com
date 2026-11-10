@@ -1,9 +1,4 @@
-//! What's done to the source before pulldown sees it.
-
 use std::ops::Range;
-
-// GFM alerts: `> [!NOTE] text` on one line is accepted by the old site; pulldown wants the
-// marker alone on its line, so split it.
 
 pub(super) fn normalize_alerts(src: &str) -> String {
     let mut out = String::with_capacity(src.len() + 16);
@@ -38,9 +33,6 @@ pub(super) fn normalize_alerts(src: &str) -> String {
     out
 }
 
-// ---------------------------------------------------------------------------------------------
-// `<ff-*>` components, lifted out before markdown parsing (outside code), as `transform.ts`.
-
 #[derive(Clone, Debug, PartialEq)]
 pub struct Component {
     pub name: String,
@@ -59,7 +51,6 @@ impl Component {
 
 pub(super) const PLACEHOLDER: &str = "<!--ffcomp:";
 
-/// Replace `<ff-…>…</ff-…>` with `<!--ffcomp:N-->` paragraphs, returning the found tags.
 pub fn extract_components(body: &str) -> (String, Vec<Component>) {
     let masked = mask_code(body);
     let mut found = Vec::new();
@@ -77,7 +68,6 @@ pub fn extract_components(body: &str) -> (String, Vec<Component>) {
             j += 1;
         }
         let name = &masked[name_start..j];
-        // the opening tag runs to the first `>` not inside quotes
         let mut k = j;
         let mut quote: Option<u8> = None;
         while k < bytes.len() {
@@ -172,7 +162,6 @@ fn parse_attrs(raw: &str) -> Vec<(String, String)> {
     out
 }
 
-/// Blank out fenced and inline code (keeping byte offsets) so tags inside code are ignored.
 fn mask_code(src: &str) -> String {
     let mut out: Vec<u8> = src.as_bytes().to_vec();
     let blank = |out: &mut Vec<u8>, r: Range<usize>| {
@@ -182,7 +171,6 @@ fn mask_code(src: &str) -> String {
             }
         }
     };
-    // fenced blocks
     let mut pos = 0;
     let mut fence: Option<(usize, &str)> = None;
     for line in src.split_inclusive('\n') {
@@ -204,7 +192,6 @@ fn mask_code(src: &str) -> String {
         }
         pos += line.len();
     }
-    // inline code spans on one line
     let s = String::from_utf8(out.clone()).unwrap_or_default();
     let mut i = 0;
     let bytes = s.as_bytes();
@@ -224,7 +211,6 @@ fn mask_code(src: &str) -> String {
     String::from_utf8(out).unwrap_or_else(|_| src.to_string())
 }
 
-/// Text of an HTML fragment: tags dropped, `<br>` and block ends as newlines, entities decoded.
 pub fn strip_html(html: &str) -> String {
     let mut out = String::new();
     let mut rest = html;

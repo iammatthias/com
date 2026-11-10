@@ -1,5 +1,3 @@
-//! The root view: the plate (greeting a first visit), then the site at whatever URL we were opened on.
-
 use std::rc::Rc;
 
 use gpui::prelude::*;
@@ -34,45 +32,35 @@ use reveal::Reveal;
 use signal::pump;
 use timeline::Timeline;
 
-/// How the reader came to a path.
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Arrival {
-    /// A link, a key or the home pill: a new history entry.
     Link,
-    /// Back or forward: the browser has already moved through history.
     History,
 }
 
 pub struct Site {
     visitor: Visitor,
-    /// the home button, drawn by the plate as a pane of glass (the panels hold their own)
     home_glass: crate::overlay::Probe,
     drawers: Drawers,
     greeting: Option<Subscription>,
     plate: Option<Entity<Plate>>,
     route: Route,
-    /// `go` pushed a history entry for this route (there is one to go back from)
     pushed: bool,
-    /// redirects followed since `go`
     redirect_hops: u8,
     page: Entity<Page>,
     index: Remote<Index>,
     nav: Navigate,
     pub home: Home,
-    /// the current page's own lettering for the frame
     page_titles: Option<Vec<Title>>,
     reveal: Reveal,
     payloads: Payloads,
     find: Find,
-    /// the site's own focus: keys reach `site_key` only along gpui's focus path, so the root holds
-    /// it whenever nothing inside does (Find's input is the browser's, outside gpui)
     focus: gpui::FocusHandle,
     _fetch: Option<Task<()>>,
     timeline: Timeline,
     _listening: Vec<Task<()>>,
 }
 
-/// Redirects followed for one visit to a path before the page gives up.
 const MAX_REDIRECTS: u8 = 5;
 
 impl Site {
@@ -80,14 +68,11 @@ impl Site {
         let visitor = seed::visitor();
         seed::remember(visitor.seen_intro);
         let home = Home::restore();
-        // plain paper has no shader at all, so no greeting either; reduced motion skips it too
         let greet = !home.plain && !crate::browser::reduced_motion() && !visitor.seen_intro;
 
         crate::browser::register_web_mcp();
 
         let weak = cx.weak_entity();
-        // navigation always runs after the current event: a link may be clicked from inside
-        // another view's update (the plate's, the page's), and going somewhere updates them too
         let nav: Navigate = Rc::new(move |href: String, window: &mut Window, cx: &mut App| {
             if route::is_internal(&href) {
                 let path = route::to_path(&href);
@@ -100,7 +85,6 @@ impl Site {
             }
         });
 
-        // back/forward arrive outside GPUI, like the search worker's replies
         let (tx, history) = futures::channel::mpsc::unbounded::<String>();
         route::on_popstate(move |path| {
             let _ = tx.unbounded_send(path);
@@ -123,23 +107,19 @@ impl Site {
             pump(window, cx, replies, |site, reply, _, cx| {
                 site.on_search_reply(reply, cx)
             }),
-            // "Find a title" is a native input over the canvas: what it reports, the site applies
             pump(
                 window,
                 cx,
                 crate::dom_input::subscribe(),
                 |site, event, window, cx| site.on_find(event, window, cx),
             ),
-            // a diagram drawn in the browser: the page shows it
             pump(
                 window,
                 cx,
                 crate::content::diagram::subscribe(),
                 redraw_page,
             ),
-            // a web component in the page changed height: the column makes room
             pump(window, cx, crate::dom_embed::subscribe(), redraw_page),
-            // a clip read its own size: its figure takes that shape
             pump(window, cx, crate::dom_video::subscribe(), redraw_page),
         ];
 
@@ -168,7 +148,6 @@ impl Site {
             timeline: Default::default(),
             _listening: listening,
         };
-        // the home page is the plate and the index: it has no route payload to wait for
         if site.route != Route::Home {
             let path = site.route.path().to_string();
             site.fetch(path, cx);
@@ -185,21 +164,15 @@ impl Site {
         site
     }
 
-    /// Open a site path, recording it in history unless back/forward brought the reader here.
     pub fn go(&mut self, path: &str, by: Arrival, cx: &mut Context<Self>) {
         let push = by == Arrival::Link;
-        // going somewhere puts the menu away
         self.open_panel(None, cx);
         let route = Route::parse(path);
-        // the same page: a link to it, or back/forward between its #anchors, which the page and
-        // the browser see to (resetting the scroll and frame would lose the reader's place)
         if route == self.route {
-            // unless it didn't load: asking for it again is how the reader tries again
             self.retry_failed_page(cx);
             return;
         }
         if push {
-            // the address keeps its #fragment, for what on the page it names
             match path.split_once('#') {
                 Some((_, frag)) if !frag.is_empty() => {
                     route::push(&format!("{}#{frag}", route.path()))
@@ -217,7 +190,6 @@ impl Site {
             plate.update(cx, |plate, _| plate.unsettle());
         }
         if self.route == Route::Home {
-            // keep the last page: it shrinks back into the spiral with the frame
             self.retitle(cx);
         } else {
             self.page.update(cx, |page, cx| page.loading(cx));
@@ -227,18 +199,15 @@ impl Site {
     }
 
     fn fetch(&mut self, path: String, cx: &mut Context<Self>) {
-        // a #fragment is the page's own business (a component may open what it names)
         let path = match path.split_once('#') {
             Some((p, _)) => p.to_string(),
             None => path,
         };
-        // home is the plate: there's nothing to ask the Worker for
         if Route::parse(&path) == Route::Home {
             self._fetch = None;
             self.apply(RoutePayload::Home, cx);
             return;
         }
-        // already here (a page seen before, or prefetched from a hover): no wait at all
         if let Some(payload) = self.payloads.get(&path) {
             self._fetch = None;
             self.apply(payload, cx);
@@ -256,7 +225,6 @@ impl Site {
                         site.apply(payload, cx);
                     }
                     Err(e) => {
-                        // why is for the console; the page says it plainly
                         crate::console::warn(&format!("page {path}: {e:#}"));
                         site.page.update(cx, |page, cx| page.set(Load::Failed, cx))
                     }
@@ -289,12 +257,10 @@ impl Site {
             RoutePayload::Redirect { to, .. } => {
                 if !route::is_internal(&to) {
                     route::open_external(&to);
-                    // it opened in a new tab: this one goes back to where it was
                     self.page.update(cx, |page, cx| page.keep(cx));
                     if std::mem::take(&mut self.pushed) {
                         route::back();
                     } else {
-                        // opened on the redirect (or come back to it): nowhere behind it, so home
                         route::replace("/");
                         route::sync_document("/");
                         self.route = Route::Home;
@@ -303,7 +269,6 @@ impl Site {
                     cx.notify();
                     return;
                 }
-                // redirects that lead round in a circle (cached, they'd recurse without end)
                 self.redirect_hops += 1;
                 if self.redirect_hops > MAX_REDIRECTS {
                     crate::console::warn(&format!("page: too many redirects, last to {to}"));
@@ -313,7 +278,6 @@ impl Site {
                 }
                 let to = route::to_path(&to);
                 route::replace(&to);
-                // the document under the canvas follows to the new address
                 route::sync_document(&to);
                 self.route = Route::parse(&to);
                 self.fetch(to, cx);
@@ -330,7 +294,6 @@ impl Site {
         cx.notify();
     }
 
-    /// Fetch a page ahead of the click (a title under the pointer on the spiral).
     fn prefetch(&mut self, path: String, cx: &mut Context<Self>) {
         if !self.payloads.should_prefetch(&path) {
             return;
@@ -345,9 +308,6 @@ impl Site {
         self.payloads.prefetching(path, task);
     }
 
-    // ---- the site panel's controls ----
-
-    /// Plain paper everywhere (no shader), or the engraving back on.
     pub fn set_plain(&mut self, plain: bool, cx: &mut Context<Self>) {
         self.home.plain = plain;
         prefs::set("engraving", if plain { "off" } else { "on" });
@@ -357,7 +317,6 @@ impl Site {
         cx.notify();
     }
 
-    /// Zoom the home plate about the middle; 0 resets the view.
     pub fn plate_zoom(&mut self, factor: f32, cx: &mut Context<Self>) {
         if let Some(plate) = self.plate.as_ref() {
             plate.update(cx, |plate, _| {
@@ -371,7 +330,6 @@ impl Site {
         cx.notify();
     }
 
-    /// A fresh seed: a new plate for the rest of this visit.
     pub fn new_plate(&mut self, cx: &mut Context<Self>) {
         let seed = seed::hash(&format!(
             "{:08x}|{}|{}",
@@ -398,7 +356,6 @@ impl Site {
         cx.notify();
     }
 
-    /// Keys anywhere on the site: "/" opens the find panel in "Find a title", Escape closes it.
     fn site_key(&mut self, e: &gpui::KeyDownEvent, _: &mut Window, cx: &mut Context<Self>) {
         match e.keystroke.key.as_str() {
             "/" => {
@@ -411,10 +368,8 @@ impl Site {
         }
     }
 
-    /// Where the greeting on the plate has got to.
     fn on_greeted(&mut self, greeted: &Greeted, cx: &mut Context<Self>) {
         match greeted {
-            // the plate is lettered while the greeting rests, so that work goes unseen
             Greeted::Resting => self.retitle(cx),
             Greeted::Done => {
                 self.greeting = None;
@@ -424,7 +379,6 @@ impl Site {
         }
     }
 
-    /// The plate, lettered as `retitle` would, the first time it's needed.
     fn ensure_plate(&mut self, cx: &mut Context<Self>) -> Entity<Plate> {
         if self.plate.is_none() {
             let (titles, anchored) = self
@@ -485,15 +439,12 @@ impl Site {
         out
     }
 
-    /// Narrow the plate and the list to one section, or show everything.
     pub fn pick_section(&mut self, section: Option<String>, cx: &mut Context<Self>) {
         self.home.section = section;
         self.retitle(cx);
         cx.notify();
     }
 
-    /// Fetch the pages of the timeline the view needs, together; the spiral is re-lettered
-    /// once, when they're all here.
     fn fetch_timeline(&mut self, cx: &mut Context<Self>) {
         let Some(pages) = self.timeline.pages_to_fetch() else {
             return;
@@ -532,7 +483,6 @@ impl Site {
                 cx.background_executor().timer(wait).await;
                 let _ = this.update(cx, |site, cx| {
                     site.timeline.task = None;
-                    // nothing at all yet: nobody else will ask again
                     if site.timeline.items.is_empty() {
                         site.fetch_timeline(cx);
                     }
@@ -545,15 +495,11 @@ impl Site {
         ));
         if !arrived.any {
             if self.timeline.items.is_empty() {
-                // no timeline to be had: the index letters the spiral instead
                 self.retitle(cx);
                 cx.notify();
             }
             return;
         }
-        // letter once, with as much as the view needs: if what's here falls short and there's
-        // more, fetch it first (each re-lettering costs a frame); only the home spiral letters
-        // the timeline, so a page waits until it's needed
         let need = self
             .plate
             .as_ref()
@@ -593,9 +539,7 @@ impl Site {
         })
     }
 
-    /// Letter the plate anew from what's here now.
     fn retitle(&mut self, cx: &mut Context<Self>) {
-        // lettering the plate is heavy: not while the greeting is still being written
         let Some(plate) = self.plate.as_ref() else {
             return;
         };
@@ -612,8 +556,6 @@ impl Site {
         });
     }
 
-    /// The network may be back: the page and the index try again if they gave up. (The timeline
-    /// needn't: the index letters the spiral without it. Diagrams and embeds see to their own.)
     fn reconnected(&mut self, cx: &mut Context<Self>) {
         self.retry_failed_page(cx);
         if matches!(self.index, Remote::GaveUp) {
@@ -621,7 +563,6 @@ impl Site {
         }
     }
 
-    /// Ask again for the page showing, if it didn't load.
     fn retry_failed_page(&mut self, cx: &mut Context<Self>) {
         if matches!(self.page.read(cx).load, Load::Failed) {
             self.page.update(cx, |page, cx| page.loading(cx));
@@ -631,8 +572,6 @@ impl Site {
 
     fn fetch_index(&mut self, cx: &mut Context<Self>) {
         let url = format!("{}/api/app/index", route::origin());
-        // the spiral is lettered from the index: rather than leave the plate on its placeholder
-        // for good, a failed fetch is tried again
         self.index = Remote::Loading(Self::get::<Index>(
             url,
             Retry::PATIENT,
@@ -659,12 +598,10 @@ impl Render for Site {
         if window.focused(cx).is_none() {
             window.focus(&self.focus, cx);
         }
-        // a panel open (or opening, or closing) over the page: web components there step aside
         let covered = self.home.open.is_some() || self.drawers.any_shown();
         self.page
             .update(cx, |page, cx| page.set_covered(covered, cx));
         if self.greeting.is_some() {
-            // the greeting is all there is: the plate under it takes no input yet
             return div()
                 .size_full()
                 .relative()
@@ -682,7 +619,6 @@ impl Render for Site {
         let (view, revealing) = if self.home.plain {
             self.render_plain(&theme, window, cx)
         } else {
-            // the home and menu controls float on the plate as glass
             if let Some(plate) = self.plate.as_ref() {
                 let glass: Vec<_> = std::iter::once(&self.home_glass)
                     .chain(self.drawers.panes())
@@ -706,7 +642,6 @@ impl Render for Site {
 }
 
 impl Site {
-    /// The root every view but the greeting draws into.
     fn root(&self, theme: &Theme, cx: &mut Context<Self>) -> gpui::Stateful<gpui::Div> {
         crate::theme::with_fallbacks(div())
             .id("site")
@@ -718,7 +653,6 @@ impl Site {
             .on_key_down(cx.listener(Self::site_key))
     }
 
-    /// The home spiral, with the last page shrinking back into it.
     fn render_home(
         &mut self,
         theme: &Theme,
@@ -726,7 +660,6 @@ impl Site {
         cx: &mut Context<Self>,
     ) -> gpui::AnyElement {
         let plate = &self.ensure_plate(cx);
-        // the lettering in view is running out: bring as many pages as it needs
         let wanted = plate.read(cx).titles_wanted();
         if wanted > 0 {
             self.timeline
@@ -768,17 +701,13 @@ impl Site {
             .into_any_element()
     }
 
-    /// A page, framed by the line.
     fn render_page(
         &mut self,
         theme: &Theme,
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> (gpui::AnyElement, bool) {
-        // the line winds out from the spiral to frame the reading column, and follows it as it scrolls
         let plate = &self.ensure_plate(cx);
-        // the frame opens with the content, never ahead of it: until the page has arrived the plate
-        // stays as it was (the spiral coming from home, the last frame coming from another page)
         let probe = self.page.read(cx).probe.clone();
         let page_ready = self.page.read(cx).ready();
         let framed = plate.read(cx).frame_progress() > 0.5;
@@ -787,7 +716,6 @@ impl Site {
         } else {
             plate.update(cx, |plate, _| plate.set_frame(None));
         }
-        // while the page is on its way the line quickens: the tap was heard
         plate.update(cx, |plate, _| plate.set_waiting(!page_ready));
         let open = plate.read(cx).frame_open();
         let progress = plate.read(cx).frame_progress();
@@ -796,9 +724,6 @@ impl Site {
         self.page
             .update(cx, |page, cx| page.follow_appearance(theme.dark, cx));
 
-        // the column is laid out once, at its own size (so the frame can measure it and nothing
-        // is laid out again while the line winds out round it); the text waits for the line to
-        // open round it, then fades up
         let step = self.reveal.page(
             web_time::Instant::now(),
             reveal::Page {
@@ -827,7 +752,6 @@ impl Site {
         (view, step.wants_frame)
     }
 
-    /// No shader: the index as a list, pages as plain paper columns.
     fn render_plain(
         &mut self,
         theme: &Theme,
@@ -865,7 +789,6 @@ impl Site {
 }
 
 impl Site {
-    /// The controls, faded in as the plate rises after the greeting (absent until they start).
     fn chrome_k(&self, cx: &App) -> f32 {
         self.plate
             .as_ref()
@@ -883,11 +806,6 @@ impl Site {
         fill(div().absolute().inset_0().opacity(k)).into_any_element()
     }
 
-    /// Top left: the way out of a page. Come through the site, it's one pill with two halves,
-    /// home, then back (the browser's back: the view they left, spiral or list, is as they left
-    /// it); arrived from elsewhere there is nothing to go back to, so it's home alone. On a
-    /// phone an open panel spans the width, so it steps aside (and leaves no glass) until the
-    /// panel closes.
     fn home_button(
         &self,
         theme: &Theme,
@@ -895,12 +813,10 @@ impl Site {
         cx: &mut Context<Self>,
     ) -> Option<gpui::AnyElement> {
         let t = *theme;
-        // the home page has no way out to show (and its lettering already names the site)
         if self.drawers.crowded(window).is_some() || self.route == Route::Home {
             self.home_glass.clear();
             return None;
         }
-        // each half a full-height target of its own, the pill's padding moved onto them
         let half = |id: &'static str, label: &'static str| {
             div()
                 .id(id)
@@ -947,7 +863,6 @@ impl Site {
     }
 }
 
-/// The document title: the page's name (a tag's with its `#`, the developer docs' in full).
 fn title_for(payload: &RoutePayload) -> String {
     let Some(name) = payload.name() else {
         return "iammatthias.com".into();
@@ -965,7 +880,6 @@ fn title_for(payload: &RoutePayload) -> String {
 mod tests {
     use super::{RoutePayload, Title, title_for};
 
-    /// Each kind of page's document title, and the heading its frame is lettered with.
     #[test]
     fn names_each_kind_of_page() {
         use crate::content::fixtures::{NAMES, payload};

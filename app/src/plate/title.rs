@@ -1,5 +1,3 @@
-//! What the plate writes: the titles of the index, or of one page's frame.
-
 use crate::api::Index;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -9,18 +7,14 @@ pub struct Title {
     pub mark: Mark,
 }
 
-/// What a title is: a heading, or a title in its section's colour or plain ink.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Mark {
     Ink,
-    /// one of @com's selection stops, 1–5 (`theme::section_hue`)
     Section(u8),
-    /// a year, a section's name, a page's place: lettered in the accent
     Heading,
 }
 
 impl Mark {
-    /// A title of this section: in its stop, or ink if it has none.
     pub fn of_section(slug: &str) -> Mark {
         match crate::theme::section_hue(slug) {
             0 => Mark::Ink,
@@ -28,8 +22,6 @@ impl Mark {
         }
     }
 
-    /// The atlas's colour code, which the shader reads: 255 a heading (the accent), 40·stop a
-    /// section's, 0 plain ink.
     pub(super) fn code(self) -> u8 {
         match self {
             Mark::Ink => 0,
@@ -40,8 +32,6 @@ impl Mark {
 }
 
 impl Title {
-    /// What a page's frame is lettered with: where it sits, what it is, and its neighbours.
-    /// It is headed with the page's name, except a doc's, which sits under its section's.
     pub fn for_page(payload: &crate::api::RoutePayload) -> Vec<Title> {
         use crate::api::RoutePayload as P;
         use Mark::{Heading, Ink};
@@ -117,9 +107,7 @@ impl Title {
         out
     }
 
-    /// The index, or just one section of it.
     pub fn from_index_in(index: &Index, only: Option<&str>) -> Vec<Title> {
-        // newest first across every section, marked off by year, each title in its section's colour
         let mut items: Vec<_> = index
             .items
             .iter()

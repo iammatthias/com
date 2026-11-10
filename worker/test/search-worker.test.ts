@@ -73,7 +73,6 @@ describe("search-worker.js", () => {
         expect(worker.errors).toEqual([]);
     });
 
-    // "pizza" is in the title (+0.15) and the word is in the text (+0.3)
     const bonusesOnly = 0.15 + 0.3;
 
     test("takes baked vectors under its own model key: all zeros leave only the title and words bonuses", async () => {

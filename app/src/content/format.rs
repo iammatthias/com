@@ -13,7 +13,6 @@ const MONTHS: [&str; 12] = [
     "December",
 ];
 
-/// `2026-10-02T02:01:14Z` → `2 October 2026`.
 pub fn fmt_date(iso: &str) -> String {
     let d = iso.get(..10).unwrap_or(iso);
     let mut parts = d.split('-');
@@ -29,7 +28,6 @@ pub fn fmt_date(iso: &str) -> String {
     }
 }
 
-/// `2026-10-02…` → `2 Oct 2026` for list margins.
 pub fn fmt_date_short(iso: &str) -> String {
     let long = fmt_date(iso);
     let mut words: Vec<String> = long.split(' ').map(str::to_string).collect();
@@ -39,8 +37,6 @@ pub fn fmt_date_short(iso: &str) -> String {
     words.join(" ")
 }
 
-/// Percent-encode one path segment (tags may carry spaces or punctuation). `site::encode`
-/// encodes a whole path with it, segment by segment.
 pub fn encode_segment(s: &str) -> String {
     let mut out = String::with_capacity(s.len());
     for b in s.bytes() {
@@ -54,7 +50,6 @@ pub fn encode_segment(s: &str) -> String {
     out
 }
 
-/// At most `n` characters, cut at a word with an ellipsis.
 pub(super) fn clip(s: &str, n: usize) -> String {
     let s = s.trim();
     if s.chars().count() <= n {

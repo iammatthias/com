@@ -1,17 +1,9 @@
-// A post's photographs come resized from wsrv.nl in the browser (it turns the Worker away), and
-// when wsrv.nl doesn't answer (Safari's fetches to it fail at times) the same photographs come
-// through the Worker instead. The home's Glass photograph does the same through its proxy.
-//
-//   bun images.mjs [base-url]
-
 import { base, open, check, done, cut } from "./lib.mjs";
 
 const SERIES = "/art/1791519648658-datamosh";
 
-/** Every image response the page gets while it settles: [host, path, status, type]. */
 async function images(kind, to, { refuse = false } = {}) {
     const { browser, context, page } = await open(kind);
-    // the list view, where the home shows its Glass photograph
     await page.addInitScript(() => localStorage.setItem("burin.view", "list"));
     const wsrv = refuse ? await cut(context, /^https:\/\/wsrv\.nl\//, Infinity) : null;
     const seen = [];

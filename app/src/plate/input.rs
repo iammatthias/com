@@ -1,7 +1,3 @@
-//! Pointing at the plate: hover and click on its titles, and on the home spiral, pan and zoom by
-//! drag, wheel, trackpad, pinch and fingers. Round a page the plate is a frame and leaves all of
-//! these to the text.
-
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -11,19 +7,15 @@ use web_time::Instant;
 
 use super::{Plate, View};
 
-/// Touch gestures read straight from the browser, drained by the plate each frame.
 #[derive(Default)]
 pub(super) struct Touches {
     fingers: u32,
-    /// when the last finger lifted: a flick's momentum scrolls keep arriving for a moment
     lifted: Option<Instant>,
     pan: (f32, f32),
-    /// accumulated zoom factor and where (CSS px)
     pinch: Option<(f32, f32, f32)>,
 }
 
 impl Touches {
-    /// Gestures from the browser from now on, gathered until the plate drains them.
     pub fn listen() -> Rc<RefCell<Self>> {
         let touches = Rc::new(RefCell::new(Self::default()));
         let sink = touches.clone();
@@ -52,9 +44,6 @@ impl Touches {
 }
 
 impl Plate {
-    // ---- controls the site panel drives ----
-
-    /// Zoom about the middle of the window.
     pub fn zoom_by(&mut self, factor: f32) {
         let mid = gpui::point(px(self.w / self.dpr / 2.0), px(self.h / self.dpr / 2.0));
         self.zoom_at(mid, factor);
@@ -72,8 +61,6 @@ impl Plate {
         (self.view.z * 100.0).round() as u32
     }
 
-    /// Fingers on the glass: drag pans the spiral, pinch zooms it (only on the home plate;
-    /// on a page the same touches scroll the text).
     pub(super) fn apply_touches(&mut self) {
         let (pan, pinch) = {
             let mut t = self.touches.borrow_mut();
@@ -92,7 +79,6 @@ impl Plate {
         }
     }
 
-    /// A finger is down, or just lifted (its flick's scroll momentum is still arriving).
     pub(super) fn touching(&self) -> bool {
         let t = self.touches.borrow();
         t.fingers > 0 || t.lifted.is_some_and(|l| l.elapsed().as_millis() < 900)
@@ -114,11 +100,8 @@ impl Plate {
         };
     }
 
-    /// The plate's own pointer, wheel and pinch handling, on its root element.
     pub(super) fn input(&self, root: Stateful<Div>, cx: &mut Context<Self>) -> Stateful<Div> {
         root.when(self.hover.is_some(), |d| d.cursor_pointer())
-            // hovered only where nothing sits on top of the plate: leaving it for a panel or the
-            // page puts any title tooltip away
             .on_hover(cx.listener(|this, over: &bool, _, cx| {
                 this.over = *over;
                 if !*over && this.hover.take().is_some() {
@@ -138,7 +121,6 @@ impl Plate {
                 }
                 this.pointer = Some(e.position);
                 let dragging = this.drag.is_some_and(|(_, m)| m > 5.0);
-                // a title under a panel, the page or a control isn't the one being pointed at
                 let was = this.hover;
                 this.hover = if dragging || !this.over {
                     None
@@ -148,8 +130,6 @@ impl Plate {
                 if this.hover.is_some() {
                     this.hold_until = Some(Instant::now() + std::time::Duration::from_millis(1200));
                 }
-                // nothing pointed at before or now (the usual move): no re-render of the whole
-                // tree for it (a tooltip that's showing follows the pointer, so that still draws)
                 if was.is_none() && this.hover.is_none() && this.drag.is_none() {
                     return;
                 }
@@ -165,8 +145,6 @@ impl Plate {
                 MouseButton::Left,
                 cx.listener(|this, e: &gpui::MouseUpEvent, window, cx| {
                     let moved = this.drag.take().map(|(_, m)| m).unwrap_or(0.0);
-                    // a double click resets the view, on its release (round a page the plate is a frame:
-                    // no panning or resetting)
                     if moved <= 5.0 && e.click_count == 2 && !this.frame.on_page() {
                         this.view = View {
                             x: 0.0,
@@ -185,26 +163,21 @@ impl Plate {
                 }),
             )
             .on_scroll_wheel(cx.listener(|this, e: &gpui::ScrollWheelEvent, _, cx| {
-                // round a page the wheel scrolls the text, never the plate
                 if this.frame.on_page() {
                     return;
                 }
-                // fingers are read directly (apply_touches); the scrolls gpui makes from them are ignored
                 if this.touching() {
                     return;
                 }
                 match e.delta {
-                    // a trackpad pinch arrives as ctrl+scroll: zoom about the pointer
                     ScrollDelta::Pixels(p) if e.modifiers.control => {
                         this.zoom_at(e.position, (f32::from(p.y) * 0.012).exp());
                     }
-                    // a trackpad's two-finger scroll pans freely, both axes at once
                     ScrollDelta::Pixels(p) => {
                         this.view.x += f32::from(p.x) * this.dpr;
                         this.view.y -= f32::from(p.y) * this.dpr;
                         this.hover = None;
                     }
-                    // a notched mouse wheel only goes one way: it zooms
                     ScrollDelta::Lines(l) => {
                         this.zoom_at(e.position, (l.y * 20.0 * 0.0018).exp());
                     }

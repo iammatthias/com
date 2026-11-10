@@ -1,6 +1,3 @@
-//! Parse once per payload, not every frame: block trees (with their recipes and series
-//! already laid out) cached by a hash of what produced them.
-
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -16,17 +13,13 @@ pub struct Parsed {
     pub words: usize,
 }
 
-/// Trees kept before those of earlier pages go. The page in view keeps all of its own (a feed
-/// scrolled far has more than this, and losing them would mean parsing every post every render).
 const CAP: usize = 32;
 
 thread_local! {
-    /// each tree with the page it was last used on
     static CACHE: RefCell<HashMap<u64, (u64, Rc<Parsed>)>> = RefCell::new(HashMap::new());
     static PAGE: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
 }
 
-/// A new page is in: what the last one parsed may now be let go.
 pub fn next_page() {
     PAGE.set(PAGE.get() + 1);
 }
@@ -38,12 +31,6 @@ fn fnv(h: &mut u64, bytes: &[u8]) {
     }
 }
 
-/// The tree for `markdown` (and any series it embeds), parsed on first sight.
-///
-/// `identity` is the record's cid when it has one. The Worker's `renderKey` is the cid plus
-/// the cids of the series the body embeds (`worker/src/lib/render-key.ts`); the app gets the
-/// series bodies rather than their cids, so it hashes those instead, which changes exactly
-/// when they would. Without an identity (feed posts, plain pages) the markdown itself is hashed.
 pub fn parsed(
     identity: Option<&str>,
     markdown: &str,
@@ -64,7 +51,6 @@ pub fn parsed(
         fnv(&mut h, s.as_bytes());
         fnv(&mut h, series[s].body.as_bytes());
     }
-    // media kinds change how series group (still + video pairs), so they are part of the key
     let mut kinds: Vec<(&String, &String)> = media.iter().map(|(cid, m)| (cid, &m.mime)).collect();
     kinds.sort();
     for (cid, mime) in kinds {

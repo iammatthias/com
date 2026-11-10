@@ -1,9 +1,7 @@
-// What the checks share: the two browsers the site is held to, and a verdict that fails the run.
 import { chromium, webkit, devices } from "playwright";
 
 export const base = (process.argv.find((a) => a.startsWith("http")) ?? "http://127.0.0.1:8080").replace(/\/$/, "");
 
-// real-GPU Chrome (WebGPU), and WebKit as an iPhone
 export async function open(kind, { greeted = true, ...options } = {}) {
     const phone = kind === "phone";
     const browser = phone
@@ -33,8 +31,6 @@ export function done() {
 export const focusName = (page) => page.evaluate(() => document.activeElement?.getAttribute("aria-label") ?? document.activeElement?.tagName);
 export const path = (page) => new URL(page.url()).pathname;
 
-/** Fail the first `n` requests matching `re` (Infinity: every one); `asked` counts them all, and
- *  `n` can be changed as the check goes. `fail` answers a cut request (default: the network drops it). */
 export async function cut(context, re, n, fail = (r) => r.abort("failed")) {
     const c = { n, asked: 0 };
     await context.route(re, (r) => (++c.asked <= c.n ? fail(r) : r.continue()));

@@ -1,5 +1,3 @@
-//! Plain pages and the 404, and what every layout shares: a body of prose, the column's width, titles.
-
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::LazyLock;
@@ -22,9 +20,7 @@ use super::{column, link};
 static NO_MEDIA: LazyLock<HashMap<String, Media>> = LazyLock::new(HashMap::new);
 static NO_SERIES: LazyLock<HashMap<String, Series>> = LazyLock::new(HashMap::new);
 
-/// A body of markdown and what it draws from.
 pub(super) struct Prose<'a> {
-    /// the record's cid, when it has one (see `cache::parsed`)
     identity: Option<&'a str>,
     markdown: &'a str,
     media: &'a HashMap<String, Media>,
@@ -53,7 +49,6 @@ impl<'a> Prose<'a> {
         }
     }
 
-    /// Markdown with no media or series of its own.
     pub(super) fn text(markdown: &'a str) -> Self {
         Self {
             identity: None,
@@ -64,7 +59,6 @@ impl<'a> Prose<'a> {
         }
     }
 
-    /// Its tree (parsed once per payload), and a context drawing it across the reading column.
     pub(super) fn of(
         self,
         theme: &'a Theme,
@@ -89,7 +83,6 @@ impl<'a> Prose<'a> {
     }
 }
 
-/// Reading column width for this window: `COLUMN_MAX_W`, or less on a narrow screen.
 pub fn measure(window: &Window) -> f32 {
     let vw: f32 = f32::from(window.viewport_size().width);
     (vw - 2. * page_gutter(window)).clamp(240., design::COLUMN_MAX_W)
@@ -99,8 +92,6 @@ pub fn page_gutter(window: &Window) -> f32 {
     if design::is_phone(window) { 22. } else { 48. }
 }
 
-/// A page's title: Newsreader, large, the same on every kind of page (the script belongs to
-/// the plate).
 fn title(theme: &Theme) -> gpui::Div {
     div()
         .font_family(theme::DISPLAY)
@@ -110,7 +101,6 @@ fn title(theme: &Theme) -> gpui::Div {
         .text_color(theme.ink)
 }
 
-/// A document's title, selectable with its body.
 pub(super) fn display_title(text: &str, theme: &Theme, sel: &Selection) -> gpui::Div {
     title(theme).child(sel.text(text.to_string()))
 }
@@ -119,7 +109,6 @@ pub(super) fn script_title(text: &str, theme: &Theme) -> gpui::Div {
     title(theme).child(text.to_string())
 }
 
-/// Drop a leading `# Title` that repeats the document title (the twins carry one).
 pub(super) fn body_blocks<'a>(blocks: &'a [Block], title: &str) -> &'a [Block] {
     match blocks.first() {
         Some(Block::Heading { level: 1, text })
@@ -131,7 +120,6 @@ pub(super) fn body_blocks<'a>(blocks: &'a [Block], title: &str) -> &'a [Block] {
     }
 }
 
-/// A run of markdown laid out as the reading column lays out a page body.
 pub(super) fn markdown(
     md: &str,
     key: &str,
@@ -193,7 +181,6 @@ pub fn not_found(nav: &Navigate, theme: &Theme) -> AnyElement {
                 .child("That page doesn't exist — or it moved during the redesign."),
         )
         .child({
-            // words and links in one wrapping line; punctuation rides on the link before it
             let with = |l: AnyElement, after: &str| {
                 div()
                     .flex()

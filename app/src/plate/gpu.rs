@@ -1,6 +1,3 @@
-//! The plate on the GPU: its pipelines and textures, the uniforms packed each frame, and the
-//! two passes (engrave, then optics) into the target GPUI paints.
-
 use std::borrow::Cow;
 
 use gpui::{Window, size};
@@ -12,7 +9,6 @@ use super::geom::{PORTRAIT, PORTRAIT_SIDE};
 use super::{CONTROLS, PANES, Plate};
 use crate::theme::Theme;
 
-/// the engraving between passes: colour plus ink amount, filterable everywhere including WebGL2
 const ENGRAVED_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
 
 pub(crate) fn upload(
@@ -66,11 +62,8 @@ pub(crate) fn upload(
     texture.create_view(&Default::default())
 }
 
-/// most device pixels the plate shades per frame (two full-screen passes)
 const PIXEL_BUDGET: f32 = 2.4e6;
 
-/// the pen's arc when there's no pen, past any turn on screen: the shader draws the whole line
-/// (card.js sends the same)
 const WHOLE_LINE: f32 = 1e12;
 
 #[repr(C)]
@@ -97,7 +90,6 @@ pub(super) struct Uniforms {
     paper: [f32; 4],
     accent: [f32; 4],
     panes: [[f32; 4]; PANES],
-    /// the panes' corner radius (device px), the spiral's lift (device px, y up), the pen's arc, _
     glass: [f32; 4],
     stops: [[f32; 4]; 5],
 }
@@ -108,7 +100,6 @@ pub(super) struct Gpu {
     optics: wgpu::RenderPipeline,
     layout: wgpu::BindGroupLayout,
     engraved_layout: wgpu::BindGroupLayout,
-    /// the engraving pass's target and the optics pass's view of it
     engraved: Option<(
         gpui::Size<gpui::DevicePixels>,
         wgpu::TextureView,
@@ -313,7 +304,6 @@ impl Plate {
         self.atlas_dirty = false;
         crate::mark("atlas uploaded");
         self.last_drawn = None;
-        // the GPU has its own copy now; the CPU one is rebuilt only if the device is ever lost
         self.atlas.levels = Vec::new();
         self.atlas.seg_table = Vec::new();
     }
@@ -336,11 +326,8 @@ impl Plate {
         if self.atlas_dirty {
             self.upload_atlas();
         }
-        // render scale: device pixels up to a budget, so a large retina window stays interactive;
-        // the surface is scaled up to the window by GPUI
         let viewport = window.viewport_size();
         let css_px = f32::from(viewport.width) * f32::from(viewport.height);
-        // phones get a smaller budget: their GPUs are slower and their pixels denser
         let pixel_budget = if f32::from(viewport.width) < crate::design::PHONE_W {
             PIXEL_BUDGET * 0.35
         } else {
@@ -402,13 +389,10 @@ impl Plate {
                 crate::design::CONTROL_RADIUS * dpr,
                 self.lift(),
                 self.pen_arc().unwrap_or(WHOLE_LINE),
-                // the optics from the first frame for a visitor greeted on the plate; else they
-                // rise with it
                 if self.greeting.happened() { 1.0 } else { 0.0 },
             ],
             stops: theme.stops.map(Theme::uniform),
         };
-        // nothing moved since the last frame (a settled page frame, a still plate): keep the last image
         let unchanged = self.greeting.active().is_none()
             && self.last_drawn.as_ref().is_some_and(|(last, size)| {
                 *size == tsize && bytemuck::bytes_of(last) == bytemuck::bytes_of(&u)
@@ -490,7 +474,6 @@ impl Plate {
                 pass.set_bind_group(1, group, &[]);
             }
             pass.draw(0..3, 0..1);
-            // the greeting is written into the engraving, so the optics fall on it too
             if second.is_none()
                 && let Some(greeting) = self.greeting.active()
             {

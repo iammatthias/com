@@ -12,7 +12,6 @@ interface CacheHeaderOptions {
     edge?: boolean;
 }
 
-/** The feedEntries collection's cache hint in com: newest entry's createdAt, tagged feed-entries. */
 export function feedCacheHint(items: ReadonlyArray<{ createdAt: string }>): Required<CacheHintLike> {
     return {
         lastModified: items.length ? new Date(items[0].createdAt) : new Date(),
@@ -20,10 +19,6 @@ export function feedCacheHint(items: ReadonlyArray<{ createdAt: string }>): Requ
     };
 }
 
-/**
- * A `series` webhook purges `documents` only, so a feed payload that embeds a
- * series has to carry that tag or it would outlive the series edit.
- */
 export function seriesTags(posts: ReadonlyArray<{ body: string }>): string[] {
     return posts.some((p) => p.body.includes("series://")) ? [DOCUMENTS_TAG] : [];
 }
@@ -92,11 +87,6 @@ export function setDocumentPageCacheHeaders(
     });
 }
 
-/**
- * HTML pages (and their /api/app/ssr twins) are rendered by this Worker's own
- * code, so a deploy can change them: they always carry `shell` alongside the
- * content tags of what they embed.
- */
 export const SHELL_TAG = "shell";
 
 export type CachePolicy =
@@ -107,10 +97,6 @@ export type CachePolicy =
     | { kind: "static" }
     | { kind: "none" };
 
-/**
- * /now lists the newest feed posts; /menu lists the publications. Every other
- * hand-written page changes only with a deploy, which purges `shell`.
- */
 export function cachePolicyFor(route: AppRoute): CachePolicy {
     switch (route.kind) {
         case "doc":
@@ -143,9 +129,6 @@ export function setPageCacheHeaders(res: { headers: Headers }, policy: CachePoli
         case "document":
             setDocumentPageCacheHeaders(res, extraTags);
             return;
-        // No Last-Modified: the newest post's date outlives a deploy, so the edge would answer a
-        // browser's If-Modified-Since with a 304 and it would boot the page it had, naming a
-        // build that may be gone.
         case "home":
         case "now":
             setResponseCacheHeaders(res, { tags: [FEED_TAG] }, { edge: true, extraTags: [DOCUMENTS_TAG, ...extraTags] });
@@ -170,11 +153,6 @@ export function setPageCacheHeaders(res: { headers: Headers }, policy: CachePoli
     }
 }
 
-/**
- * The page itself names the build its code is under (/b/<id>/): a browser asks before it shows a
- * copy it kept, and never serves one stale. The edge keeps its own policy in EDGE_CACHE_HEADER,
- * which it reads ahead of Cache-Control and doesn't pass on.
- */
 export function setShellCacheHeaders(res: { headers: Headers }, policy: CachePolicy): void {
     setPageCacheHeaders(res, policy, { shell: true });
     res.headers.set("Cache-Control", "no-cache");

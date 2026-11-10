@@ -1,8 +1,3 @@
-// Every kind of page, on a desktop and a phone: a screenshot of each into <out>/, and any
-// console errors. Run before and after a refactor and compare the folders.
-//
-//   bun sweep.mjs <out-dir> [base-url] [desktop|phone|both]
-
 import { chromium, webkit, devices } from "playwright";
 
 const out = process.argv[2] ?? "shots/sweep";
@@ -49,7 +44,6 @@ async function run(kind) {
     const problems = [];
     for (const [name, path, opts] of ROUTES) {
         const page = await context.newPage();
-        // the 404 route answers 404 on purpose; anything else that does is a problem
         page.on("response", (r) => { if (r.status() === 404 && name !== "404") problems.push(`${name}: 404 ${r.url()}`); });
         page.on("console", (m) => {
             if (name === "404" && /status of 404/.test(m.text())) return;
