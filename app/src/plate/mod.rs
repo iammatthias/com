@@ -21,6 +21,7 @@ mod contract;
 mod frame;
 mod geom;
 mod gpu;
+mod greeting;
 mod input;
 mod reveal;
 mod title;
@@ -29,7 +30,10 @@ pub(crate) use atlas::mips;
 use atlas::{FONT, TitleAtlas};
 use frame::Frame;
 use geom::SUBJECT;
+pub(crate) use gpu::upload as upload_texture;
 use gpu::{Gpu, Uniforms};
+pub use greeting::Greeted;
+use greeting::{Greeting, Moment};
 use input::Touches;
 use reveal::Reveal;
 pub use title::{Mark, Title};
@@ -196,18 +200,7 @@ pub struct Plate {
     lite: bool,
     half: bool,
     /// the first-visit greeting, written on the plate until it winds into the line's start
-    greeting: Option<crate::intro::Greeting>,
-    /// greeted (the optics are whole from the first frame), and told the site it's resting
-    greeted: bool,
-    rest_told: bool,
-}
-
-/// What the greeting tells the site.
-pub enum Greeted {
-    /// written and resting: heavy work now goes unnoticed
-    Resting,
-    /// wound into the point the line is drawing out of
-    Done,
+    greeting: Greeting<crate::intro::Greeting>,
 }
 
 impl gpui::EventEmitter<Greeted> for Plate {}
@@ -235,16 +228,16 @@ impl Plate {
             reveal: Reveal::new(),
             anchored: false,
             view: View {
-                x: crate::route::debug::number("px").unwrap_or(0.0),
-                y: crate::route::debug::number("py").unwrap_or(0.0),
-                z: crate::route::debug::number("z").map_or(1.0, |z| z.clamp(0.35, 14.0)),
+                x: crate::browser::debug::number("px").unwrap_or(0.0),
+                y: crate::browser::debug::number("py").unwrap_or(0.0),
+                z: crate::browser::debug::number("z").map_or(1.0, |z| z.clamp(0.35, 14.0)),
             },
             pointer: None,
             over: false,
             drag: None,
             hover: None,
             hold_until: None,
-            motion: !crate::route::reduced_motion()
+            motion: !crate::browser::reduced_motion()
                 && crate::prefs::get("motion").as_deref() != Some("off"),
             e_warp: 0.0,
             e_disp: 0.0,
@@ -256,11 +249,9 @@ impl Plate {
             panes: Vec::new(),
             waiting: false,
             last_drawn: None,
-            lite: crate::route::debug::flag("lite"),
-            half: crate::route::debug::flag("half"),
-            greeting: None,
-            greeted: false,
-            rest_told: false,
+            lite: crate::browser::debug::flag("lite"),
+            half: crate::browser::debug::flag("half"),
+            greeting: Greeting::Never,
         }
     }
 
@@ -350,7 +341,8 @@ impl Plate {
     /// Whether the plate is moving and needs the next frame. A settled page frame doesn't:
     /// it is redrawn only when something changes (scrolling, resizing, theme).
     pub fn animating(&self) -> bool {
-        let transitioning = self.frame.moving() || self.reveal.moving() || self.greeting.is_some();
+        let transitioning =
+            self.frame.moving() || self.reveal.moving() || self.greeting.active().is_some();
         let home_motion =
             (!self.frame.has_page() && (self.motion || self.touching())) || self.waiting;
         transitioning || home_motion
@@ -396,34 +388,36 @@ impl Plate {
     /// Greet a first visit: the greeting is written on the plate, then winds into the point
     /// its line is drawn out of.
     pub fn greet(&mut self) {
-        self.greeting = Some(crate::intro::Greeting::new());
-        self.greeted = true;
-        self.rest_told = false;
+        self.greeting.begin(crate::intro::Greeting::new());
         self.reveal.emerge();
     }
 
+    pub fn writing_greeting(&self) -> bool {
+        self.greeting.being_written()
+    }
+
     /// Stop greeting now (plain paper was chosen): the line draws out as if it had finished.
-    pub fn end_greeting(&mut self) {
-        if self.greeting.take().is_some() {
+    pub fn end_greeting(&mut self, cx: &mut Context<Self>) {
+        if let Some(told) = self.greeting.end() {
             self.reveal.start_pen();
+            cx.emit(told);
         }
     }
 
     /// Tell the site where the greeting has got to, and hand over to the pen when it's done.
     fn follow_greeting(&mut self, cx: &mut Context<Self>) {
-        let Some(greeting) = self.greeting.as_ref() else {
+        let Some(greeting) = self.greeting.active() else {
             return;
         };
-        if !self.rest_told && greeting.resting() {
-            self.rest_told = true;
-            cx.emit(Greeted::Resting);
-        }
+        let moment = Moment {
+            resting: greeting.resting(),
+            done: greeting.done(),
+        };
         if greeting.drawing_out() {
             self.reveal.start_pen();
         }
-        if greeting.done() {
-            self.greeting = None;
-            cx.emit(Greeted::Done);
+        for told in self.greeting.follow(moment).into_iter().flatten() {
+            cx.emit(told);
         }
     }
 
@@ -536,7 +530,7 @@ impl Plate {
     fn tick(&mut self) {
         // waiting blank for a pen with no greeting on it: hold still, so after one frame it costs
         // nothing (under a greeting the grain and glass keep moving)
-        if self.reveal.waiting_for_pen() && self.greeting.is_none() {
+        if self.reveal.waiting_for_pen() && self.greeting.active().is_none() {
             self.last = Instant::now();
             return;
         }

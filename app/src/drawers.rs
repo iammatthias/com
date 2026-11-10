@@ -7,7 +7,7 @@ use gpui::{AnyElement, Context, Window, div, px};
 use crate::api::{Index, Navigate};
 use crate::content;
 use crate::design;
-use crate::home::{Home, note_line};
+use crate::home::Home;
 use crate::prefs;
 use crate::site::Site;
 use crate::theme::{self, Choice, Theme};
@@ -171,10 +171,11 @@ impl Default for Drawers {
 impl Drawers {
     /// Ease each panel toward open (the one `open`) or closed, and put its glass where this
     /// frame draws it.
-    pub fn step(&mut self, open: Option<Drawer>, window: &mut Window) {
+    pub fn step(&mut self, open: Option<Drawer>, window: &Window) -> bool {
+        let mut moving = false;
         let now = web_time::Instant::now();
         // `#slowui`: a tenth of the speed, to see the motion frame by frame
-        let pace = if crate::route::debug::slow_ui() {
+        let pace = if crate::browser::debug::slow_ui() {
             0.1
         } else {
             1.0
@@ -183,7 +184,7 @@ impl Drawers {
         self.at = now;
         let vp = window.viewport_size();
         let (vw, vh) = (f32::from(vp.width), f32::from(vp.height));
-        let insets = crate::route::safe_insets();
+        let insets = crate::browser::safe_insets();
         for which in Drawer::ALL {
             let i = which.index();
             let target = if open == Some(which) { 1.0 } else { 0.0 };
@@ -191,7 +192,7 @@ impl Drawers {
                 self.k[i] = target;
             } else {
                 self.k[i] += (target - self.k[i]) * (1.0 - (-dt * 13.0).exp());
-                window.request_animation_frame();
+                moving = true;
             }
             if self.k[i] <= 0.001 {
                 if let Some(b) = self.glass[i].bounds() {
@@ -216,6 +217,7 @@ impl Drawers {
                 gpui::size(px(a.width), px(h)),
             ));
         }
+        moving
     }
 
     pub fn anim(&self, which: Drawer, window: &Window) -> MenuAnim {
@@ -236,8 +238,8 @@ impl Drawers {
                 .unwrap_or(420.0),
             max_body_h: (vh
                 - 88.0
-                - crate::route::safe_insets()[0]
-                - crate::route::safe_insets()[2])
+                - crate::browser::safe_insets()[0]
+                - crate::browser::safe_insets()[2])
                 .min(640.0)
                 .max(160.0),
             body: self.body[i].clone(),
@@ -279,6 +281,17 @@ pub enum PillFace {
     GlassOverText,
 }
 
+fn solid<E: Styled>(el: E, t: &Theme) -> E {
+    el.bg(t.veil(0.82)).border_1().border_color(t.edge())
+}
+
+fn veiled<E: Styled>(el: E, t: &Theme, veil: f32) -> E {
+    el.bg(t.veil(veil)).border_1().border_color(gpui::Rgba {
+        alpha: 0.7,
+        ..gpui::rgb(0xffffff)
+    })
+}
+
 /// A control on the plate: a rounded pill, `CONTROL_H` tall, its name in the script face. Over the engraving the
 /// plate draws it as glass, so it paints only its text; on plain paper it is a solid pill.
 pub fn pill(t: &Theme, face: PillFace) -> gpui::Div {
@@ -287,16 +300,9 @@ pub fn pill(t: &Theme, face: PillFace) -> gpui::Div {
         .items_center()
         .h(px(design::CONTROL_H))
         .px(px(18.))
-        .when(face == PillFace::Solid, |d| {
-            d.bg(t.veil(0.82)).border_1().border_color(t.edge())
-        })
+        .when(face == PillFace::Solid, |d| solid(d, t))
         // the glass lies under the page, so over a page's text it needs a veil of its own
-        .when(face == PillFace::GlassOverText, |d| {
-            d.bg(t.veil(0.8)).border_1().border_color(gpui::Rgba {
-                alpha: 0.7,
-                ..gpui::rgb(0xffffff)
-            })
-        })
+        .when(face == PillFace::GlassOverText, |d| veiled(d, t, 0.8))
         .rounded(px(design::CONTROL_RADIUS))
         .cursor_pointer()
         // the plate's own hand
@@ -309,6 +315,7 @@ pub fn pill(t: &Theme, face: PillFace) -> gpui::Div {
 pub struct PanelInputs<'a> {
     pub home: &'a Home,
     pub on_home: bool,
+    pub over_column: bool,
     pub plate: Option<&'a PlateState>,
     pub semantic: Option<&'a [crate::search::Hit]>,
     pub index: Option<&'a Index>,
@@ -329,7 +336,7 @@ pub fn drawer(
     let on_glass = !p.home.plain;
     // over a page's text (a phone, where the controls cover the column) the glass, drawn under
     // the page, needs a veil; elsewhere it floats in the margins, clear
-    let over_text = !p.on_home && crate::route::narrow();
+    let over_text = !p.on_home && p.over_column;
     let open = p.home.open == Some(which);
     let header = div()
         .id(("drawer-head", which.index()))
@@ -352,19 +359,11 @@ pub fn drawer(
                 .child(if open { "–" } else { "+" }),
         )
         .on_click(cx.listener(move |site, _, _, cx| {
-            site.home.open = if site.home.open == Some(which) {
-                None
-            } else {
-                Some(which)
-            };
-            if which == Drawer::Find && site.home.open == Some(which) {
-                // focused within this tap, the only moment a phone will raise its keyboard for it
-                site.focus_search(cx);
-            }
-            cx.notify();
+            let closing = site.home.open == Some(which);
+            site.open_panel((!closing).then_some(which), cx);
         }));
 
-    let insets = crate::route::safe_insets();
+    let insets = crate::browser::safe_insets();
     let card = div()
         .id(("drawer", which.index()))
         .occlude()
@@ -384,20 +383,11 @@ pub fn drawer(
         .flex_col()
         .when(which.on_right(), |d| d.items_end())
         .when(!which.on_right(), |d| d.items_start())
-        .when(!on_glass, |d| {
-            d.bg(t.veil(0.82)).border_1().border_color(t.edge())
-        })
+        .when(!on_glass, |d| solid(d, &t))
         // over a page the text would show through the glass (drawn under it): veil it
         .when(
             on_glass && (over_text || (!p.on_home && anim.k > 0.001)),
-            |d| {
-                d.bg(t.veil(if anim.k > 0.001 { 1.0 } else { 0.8 }))
-                    .border_1()
-                    .border_color(gpui::Rgba {
-                        alpha: 0.7,
-                        ..gpui::rgb(0xffffff)
-                    })
-            },
+            |d| veiled(d, &t, if anim.k > 0.001 { 1.0 } else { 0.8 }),
         )
         .rounded(px(design::CONTROL_RADIUS))
         .overflow_hidden()
@@ -710,26 +700,7 @@ fn find_body(body: gpui::Div, p: &PanelInputs, cx: &mut Context<Site>) -> gpui::
         );
     }
     if !home.query.trim().is_empty() {
-        // what the words match first (titles and tags), then what the meaning finds, once each
-        let mut shown: Vec<(String, String)> = index
-            .map(|ix| {
-                home.matches(ix)
-                    .into_iter()
-                    .map(|it| (it.title.clone(), it.href.clone()))
-                    .collect()
-            })
-            .unwrap_or_default();
-        for h in p.semantic.unwrap_or_default() {
-            if shown.iter().any(|(_, href)| *href == h.href) {
-                continue;
-            }
-            // feed notes have no titles: name them by their words, or when a picture was posted
-            let title = index
-                .and_then(|ix| ix.feed.iter().find(|f| f.href == h.href))
-                .map(|f| note_line(&f.excerpt, &f.created_at))
-                .unwrap_or_else(|| h.title.clone());
-            shown.push((title, h.href.clone()));
-        }
+        let shown = home.results(index, p.semantic.unwrap_or_default());
         if shown.is_empty() {
             results = results.child(
                 div()

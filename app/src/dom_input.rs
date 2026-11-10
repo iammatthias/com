@@ -4,9 +4,9 @@
 //! text is the query. It is focused inside the tap that opens Find (a phone raises its keyboard
 //! only for focus given within a tap), placed at each paint, and hidden when Find is closed.
 
-use std::cell::Cell;
+use std::cell::RefCell;
 
-use crate::overlay::Rect;
+use crate::overlay::{Extent, Gate, Layer, Rect};
 use crate::site::signal::Signal;
 
 /// What the input tells the site.
@@ -21,10 +21,10 @@ pub enum Event {
 
 thread_local! {
     static EVENTS: Signal<Event> = const { Signal::new() };
-    /// the field was painted since the last render (painting follows rendering)
-    static PLACED: Cell<bool> = const { Cell::new(false) };
-    static SHOWN: Cell<bool> = const { Cell::new(false) };
+    static PLACED: RefCell<Layer<()>> = RefCell::new(Layer::new(Gate::Lightbox, Extent::Viewport));
 }
+
+const FIELD: &str = "find";
 
 /// The input's events, for the site to apply.
 pub fn subscribe() -> futures::channel::mpsc::UnboundedReceiver<Event> {
@@ -43,23 +43,21 @@ pub fn subscribe() -> futures::channel::mpsc::UnboundedReceiver<Event> {
 /// Where the field is painted this frame, and what it holds (the query, which the site may have
 /// changed, e.g. cleared after a search). `style` is the input's CSS: the site's ink and face.
 pub fn place(rect: Rect, clip: Rect, value: &str, placeholder: &str, max_len: usize, style: &str) {
-    PLACED.set(true);
-    match rect
-        .inset_within(&clip)
-        .filter(|_| !crate::overlay::lightbox_open())
-    {
-        Some(inset) => {
-            SHOWN.set(true);
-            web::place(rect, inset, value, placeholder, max_len, style)
-        }
-        None => hide(),
+    let inset = PLACED.with(|placed| {
+        let mut placed = placed.borrow_mut();
+        placed.place(FIELD, || ());
+        placed.inset(rect, clip).filter(|_| !placed.gated())
+    });
+    match inset {
+        Some(inset) => web::place(rect, inset, value, placeholder, max_len, style),
+        None => web::hide(),
     }
 }
 
 /// A render of the controls begins: a field not painted since the last one (Find closed) goes.
 pub fn begin_render() {
-    if !PLACED.replace(false) && SHOWN.get() {
-        hide();
+    if !PLACED.with(|placed| placed.borrow_mut().begin()).is_empty() {
+        web::hide();
     }
 }
 
@@ -70,12 +68,6 @@ pub fn focus() {
 
 pub fn focused() -> bool {
     web::focused()
-}
-
-/// The input goes away and gives up the keyboard.
-pub fn hide() {
-    SHOWN.set(false);
-    web::hide();
 }
 
 #[cfg(target_family = "wasm")]

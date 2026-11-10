@@ -13,8 +13,5 @@ pub fn reached(what: &'static str) {
     if !SEEN.with(|s| s.borrow_mut().insert(what)) {
         return;
     }
-    #[cfg(target_family = "wasm")]
-    web_sys::console::warn_1(&format!("limit reached: {what}").into());
-    #[cfg(not(target_family = "wasm"))]
-    eprintln!("limit reached: {what}");
+    crate::console::warn(&format!("limit reached: {what}"));
 }

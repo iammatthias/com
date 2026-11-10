@@ -45,6 +45,10 @@ pub fn is_phone(window: &Window) -> bool {
     f32::from(window.viewport_size().width) < PHONE_W
 }
 
+pub fn controls_cover_column(window: &Window) -> bool {
+    f32::from(window.viewport_size().width) < NARROW_CONTROLS_W
+}
+
 // ---- type ----
 
 /// The small label: Inter, medium, tracked capitals (`content::label`).

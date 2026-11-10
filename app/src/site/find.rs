@@ -8,6 +8,7 @@ use gpui::{Context, Task, Window};
 
 use super::Site;
 use crate::dom_input::Event;
+use crate::drawers::Drawer;
 use crate::search::{Hit, Reply, Search};
 
 /// Longest Find query, characters; typing past it is ignored.
@@ -64,6 +65,14 @@ impl Site {
         cx.notify();
     }
 
+    pub fn open_panel(&mut self, panel: Option<Drawer>, cx: &mut Context<Self>) {
+        self.home.open = panel;
+        if panel == Some(Drawer::Find) {
+            self.focus_search(cx);
+        }
+        cx.notify();
+    }
+
     /// What the Find input reported.
     pub(super) fn on_find(&mut self, event: Event, window: &mut Window, cx: &mut Context<Self>) {
         match event {
@@ -74,23 +83,16 @@ impl Site {
             }
             Event::Escape => {
                 if self.home.query.is_empty() {
-                    self.home.open = None;
+                    self.open_panel(None, cx);
                 }
                 self.home.query.clear();
             }
             Event::Submit => {
-                // the first result shown: a title or tag match, else the best by meaning
-                let by_meaning = self
-                    .find
-                    .hits_for(&self.home.query)
-                    .and_then(|h| h.first())
-                    .map(|h| h.href.clone());
-                let first = self
-                    .index
-                    .as_ref()
-                    .and_then(|i| self.home.matches(i).first().map(|it| it.href.clone()))
-                    .or(by_meaning);
-                let Some(href) = first else { return };
+                let by_meaning = self.find.hits_for(&self.home.query).unwrap_or_default();
+                let results = self.home.results(self.index.ready(), by_meaning);
+                let Some((_, href)) = results.into_iter().next() else {
+                    return;
+                };
                 self.home.query.clear();
                 // lettered now: a retitle still waiting would letter the spiral round the next page
                 self.find.settle = None;
@@ -134,9 +136,7 @@ impl Site {
                 }
             }
             Reply::Error { message, .. } => {
-                #[cfg(target_family = "wasm")]
-                web_sys::console::warn_1(&format!("search: {message}").into());
-                let _ = message;
+                crate::console::warn(&format!("search: {message}"));
             }
             _ => {}
         }

@@ -15,7 +15,7 @@
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 
-use crate::overlay::Rect;
+use crate::overlay::{Extent, Gate, Layer, Rect, Stage};
 
 /// A web component the site can host.
 pub struct Embed {
@@ -42,18 +42,10 @@ pub fn lookup(component: &str) -> Option<&'static Embed> {
     EMBEDS.iter().find(|e| e.component == component)
 }
 
-struct Entry {
-    epoch: u64,
-    path: String,
-}
-
 thread_local! {
-    static ENTRIES: RefCell<HashMap<String, Entry>> = RefCell::new(HashMap::new());
+    static PLACED: RefCell<Layer<()>> =
+        RefCell::new(Layer::new(Gate::Page, Extent::BetweenControls));
     static HEIGHTS: RefCell<HashMap<String, f32>> = RefCell::new(HashMap::new());
-    static EPOCH: Cell<u64> = const { Cell::new(0) };
-    /// the path of the payload being drawn: the address moves on before the next payload is
-    /// in, and the page showing until then keeps its own elements
-    static PAGE: RefCell<String> = const { RefCell::new(String::new()) };
     /// embeds keyed so far this render, so each gets its own key in page order
     static COUNT: Cell<usize> = const { Cell::new(0) };
     static RESIZED: crate::site::signal::Signal<()> = const { crate::site::signal::Signal::new() };
@@ -82,32 +74,29 @@ pub fn height(key: &str) -> Option<f32> {
 
 /// A content render of the payload for `path` begins: elements of other pages go, those the
 /// last render didn't place hide.
-pub fn begin_render(path: &str) {
-    PAGE.with(|p| {
-        if *p.borrow() != path {
-            *p.borrow_mut() = path.to_string();
-        }
+pub fn begin_render(path: &str, stage: Stage) {
+    let (gone, dropped) = PLACED.with(|placed| {
+        let mut placed = placed.borrow_mut();
+        placed.set_stage(stage);
+        (placed.turn_to(path), placed.begin())
     });
-    sweep();
+    for (key, ()) in &gone {
+        web::remove(key);
+    }
+    // keys begin with their page's path (`next_key`)
+    let prefix = format!("{path}#");
+    HEIGHTS.with(|m| m.borrow_mut().retain(|key, _| key.starts_with(&prefix)));
     COUNT.set(0);
-    let now = EPOCH.with(|e| {
-        e.set(e.get() + 1);
-        e.get()
-    });
-    ENTRIES.with(|m| {
-        for (key, e) in m.borrow().iter() {
-            if e.epoch + 1 < now {
-                web::hide(key);
-            }
-        }
-    });
+    for key in &dropped {
+        web::hide(key);
+    }
 }
 
 /// The key for the next embed this render draws.
 pub fn next_key(component: &str) -> String {
     let n = COUNT.get();
     COUNT.set(n + 1);
-    PAGE.with(|p| format!("{}#{component}-{n}", p.borrow()))
+    PLACED.with(|placed| format!("{}#{component}-{n}", placed.borrow().page()))
 }
 
 /// Where the block for `key` is painted this render; `clip` is the visible part of the page.
@@ -121,17 +110,15 @@ pub fn place(
     rect: Rect,
     clip: Rect,
 ) {
-    let path = PAGE.with(|p| p.borrow().clone());
-    let epoch = EPOCH.with(|e| e.get());
-    ENTRIES.with(|m| {
-        m.borrow_mut()
-            .insert(key.to_string(), Entry { epoch, path })
+    let (inset, gated) = PLACED.with(|placed| {
+        let mut placed = placed.borrow_mut();
+        placed.place(key, || ());
+        (placed.inset(rect, clip), placed.gated())
     });
-    let inset = rect.inset_within(&clip_controls(clip));
     let attrs = serde_json::to_string(props).unwrap_or_else(|_| "[]".into());
     // placed (and so measured) even out of view, so the column has its real height before the
     // reader reaches it; shown only where it's visible
-    let shown = inset.is_some() && !crate::overlay::blocked();
+    let shown = inset.is_some() && !gated;
     let module = format!("embeds/{}.js", embed.component);
     web::place(
         key,
@@ -145,48 +132,13 @@ pub fn place(
     );
 }
 
-/// Remove every element placed on another page, and its measured height.
-fn sweep() {
-    let here = PAGE.with(|p| p.borrow().clone());
-    ENTRIES.with(|m| {
-        m.borrow_mut().retain(|key, e| {
-            let keep = e.path == here;
-            if !keep {
-                web::remove(key);
-            }
-            keep
-        })
-    });
-    // keys begin with their page's path (`next_key`)
-    let prefix = format!("{here}#");
-    HEIGHTS.with(|m| m.borrow_mut().retain(|key, _| key.starts_with(&prefix)));
-}
-
-/// Hide every element now (something has come in front of the page; overlay::blocked keeps them
-/// hidden until it goes).
+/// Hide every element now (something has come in front of the page).
 pub fn hide_all() {
-    ENTRIES.with(|m| {
-        for key in m.borrow().keys() {
+    PLACED.with(|placed| {
+        for key in placed.borrow().keys() {
             web::hide(key)
         }
     });
-}
-
-/// On a phone the column runs under the corner pills, which are drawn on the canvas: an
-/// element stops short of their bands rather than sit over them.
-fn clip_controls(clip: Rect) -> Rect {
-    if !crate::route::narrow() {
-        return clip;
-    }
-    let [top, _, bottom, _] = crate::route::safe_insets();
-    let band = crate::design::INSET + crate::design::CONTROL_H + 8.0;
-    let y0 = clip.y.max(top + band);
-    let y1 = clip.y + clip.h - bottom - band;
-    Rect {
-        y: y0,
-        h: (y1 - y0).max(0.0),
-        ..clip
-    }
 }
 
 #[cfg(target_family = "wasm")]

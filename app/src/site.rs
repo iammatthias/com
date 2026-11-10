@@ -19,6 +19,8 @@ use crate::theme::Theme;
 mod find;
 mod lettering;
 mod payloads;
+mod remote;
+mod reveal;
 pub mod signal;
 mod timeline;
 
@@ -27,6 +29,8 @@ use find::Find;
 pub use find::MAX_QUERY;
 use lettering::Lettering;
 use payloads::Payloads;
+use remote::Remote;
+use reveal::Reveal;
 use signal::pump;
 use timeline::Timeline;
 
@@ -44,11 +48,7 @@ pub struct Site {
     /// the home button, drawn by the plate as a pane of glass (the panels hold their own)
     home_glass: crate::overlay::Probe,
     drawers: Drawers,
-    /// the greeting, and the watch on its frames that hands it over to the plate
-    /// a first visit is being greeted on the plate
     greeting: Option<Subscription>,
-    /// the greeting is resting: the plate may be lettered now without stuttering it
-    greeting_rested: bool,
     plate: Option<Entity<Plate>>,
     route: Route,
     /// `go` pushed a history entry for this route (there is one to go back from)
@@ -56,23 +56,18 @@ pub struct Site {
     /// redirects followed since `go`
     redirect_hops: u8,
     page: Entity<Page>,
-    index: Option<Index>,
+    index: Remote<Index>,
     nav: Navigate,
     pub home: Home,
     /// the current page's own lettering for the frame
     page_titles: Option<Vec<Title>>,
-    /// when the page's text began to appear: only once it has loaded and the frame has opened round it
-    content_since: Option<web_time::Instant>,
-    ready_since: Option<web_time::Instant>,
+    reveal: Reveal,
     payloads: Payloads,
     find: Find,
     /// the site's own focus: keys reach `site_key` only along gpui's focus path, so the root holds
     /// it whenever nothing inside does (Find's input is the browser's, outside gpui)
     focus: gpui::FocusHandle,
     _fetch: Option<Task<()>>,
-    _index: Option<Task<()>>,
-    /// the index fetch spent its tries: the next reconnect asks again
-    index_gave_up: bool,
     timeline: Timeline,
     _listening: Vec<Task<()>>,
 }
@@ -86,9 +81,9 @@ impl Site {
         seed::remember(visitor.seen_intro);
         let home = Home::restore();
         // plain paper has no shader at all, so no greeting either; reduced motion skips it too
-        let greet = !home.plain && !route::reduced_motion() && !visitor.seen_intro;
+        let greet = !home.plain && !crate::browser::reduced_motion() && !visitor.seen_intro;
 
-        route::register_web_mcp();
+        crate::browser::register_web_mcp();
 
         let weak = cx.weak_entity();
         // navigation always runs after the current event: a link may be clicked from inside
@@ -153,7 +148,6 @@ impl Site {
             home_glass: Default::default(),
             drawers: Default::default(),
             greeting: None,
-            greeting_rested: false,
             plate: None,
             route: Route::parse(&route::current()),
             pushed: false,
@@ -162,18 +156,15 @@ impl Site {
                 let nav = nav.clone();
                 cx.new(|cx| Page::new(nav, cx))
             },
-            index: None,
+            index: Remote::Loading(Task::ready(())),
             home,
             payloads: Default::default(),
             find,
             focus: cx.focus_handle(),
             page_titles: None,
-            content_since: None,
-            ready_since: None,
+            reveal: Reveal::default(),
             nav,
             _fetch: None,
-            _index: None,
-            index_gave_up: false,
             timeline: Default::default(),
             _listening: listening,
         };
@@ -198,7 +189,7 @@ impl Site {
     pub fn go(&mut self, path: &str, by: Arrival, cx: &mut Context<Self>) {
         let push = by == Arrival::Link;
         // going somewhere puts the menu away
-        self.home.open = None;
+        self.open_panel(None, cx);
         let route = Route::parse(path);
         // the same page: a link to it, or back/forward between its #anchors, which the page and
         // the browser see to (resetting the scroll and frame would lose the reader's place)
@@ -221,8 +212,7 @@ impl Site {
         route::sync_document(route.path());
         self.route = route;
         self.page_titles = None;
-        self.content_since = None;
-        self.ready_since = None;
+        self.reveal.reset();
         if let Some(plate) = self.plate.as_ref() {
             plate.update(cx, |plate, _| plate.unsettle());
         }
@@ -254,15 +244,12 @@ impl Site {
             self.apply(payload, cx);
             return;
         }
-        let fetch = http::get_json::<RoutePayload>(
-            cx.http_client(),
-            http::route_url(&path),
+        let url = http::route_url(&path);
+        self._fetch = Some(Self::get::<RoutePayload>(
+            url,
             Retry::BRIEF,
-            cx.background_executor().clone(),
-        );
-        self._fetch = Some(cx.spawn(async move |this, cx| {
-            let result = fetch.await;
-            let _ = this.update(cx, |site, cx| {
+            cx,
+            move |site, result, cx| {
                 match result {
                     Ok(payload) => {
                         site.payloads.remember(path, payload.clone());
@@ -270,14 +257,31 @@ impl Site {
                     }
                     Err(e) => {
                         // why is for the console; the page says it plainly
-                        #[cfg(target_family = "wasm")]
-                        web_sys::console::warn_1(&format!("page {path}: {e:#}").into());
+                        crate::console::warn(&format!("page {path}: {e:#}"));
                         site.page.update(cx, |page, cx| page.set(Load::Failed, cx))
                     }
                 }
                 cx.notify();
-            });
-        }));
+            },
+        ));
+    }
+
+    fn get<T: serde::de::DeserializeOwned + 'static>(
+        url: String,
+        retry: Retry,
+        cx: &mut Context<Self>,
+        then: impl FnOnce(&mut Self, anyhow::Result<T>, &mut Context<Self>) + 'static,
+    ) -> Task<()> {
+        let fetch = http::get_json::<T>(
+            cx.http_client(),
+            url,
+            retry,
+            cx.background_executor().clone(),
+        );
+        cx.spawn(async move |this, cx| {
+            let result = fetch.await;
+            let _ = this.update(cx, |site, cx| then(site, result, cx));
+        })
     }
 
     fn apply(&mut self, payload: RoutePayload, cx: &mut Context<Self>) {
@@ -302,10 +306,7 @@ impl Site {
                 // redirects that lead round in a circle (cached, they'd recurse without end)
                 self.redirect_hops += 1;
                 if self.redirect_hops > MAX_REDIRECTS {
-                    #[cfg(target_family = "wasm")]
-                    web_sys::console::warn_1(
-                        &format!("page: too many redirects, last to {to}").into(),
-                    );
+                    crate::console::warn(&format!("page: too many redirects, last to {to}"));
                     self.page.update(cx, |page, cx| page.set(Load::Failed, cx));
                     cx.notify();
                     return;
@@ -334,17 +335,13 @@ impl Site {
         if !self.payloads.should_prefetch(&path) {
             return;
         }
-        let fetch = http::get_json::<RoutePayload>(
-            cx.http_client(),
+        let key = path.clone();
+        let task = Self::get::<RoutePayload>(
             http::route_url(&path),
             Retry::ONCE,
-            cx.background_executor().clone(),
+            cx,
+            move |site, result, _| site.payloads.prefetched(key, result.ok()),
         );
-        let key = path.clone();
-        let task = cx.spawn(async move |this, cx| {
-            let payload = fetch.await.ok();
-            let _ = this.update(cx, |site, _| site.payloads.prefetched(key, payload));
-        });
         self.payloads.prefetching(path, task);
     }
 
@@ -354,11 +351,8 @@ impl Site {
     pub fn set_plain(&mut self, plain: bool, cx: &mut Context<Self>) {
         self.home.plain = plain;
         prefs::set("engraving", if plain { "off" } else { "on" });
-        if plain && self.greeting.take().is_some() {
-            if let Some(plate) = self.plate.as_ref() {
-                plate.update(cx, |plate, _| plate.end_greeting());
-            }
-            seed::remember(true);
+        if let Some(plate) = self.plate.as_ref().filter(|_| plain) {
+            plate.update(cx, |plate, cx| plate.end_greeting(cx));
         }
         cx.notify();
     }
@@ -408,14 +402,10 @@ impl Site {
     fn site_key(&mut self, e: &gpui::KeyDownEvent, _: &mut Window, cx: &mut Context<Self>) {
         match e.keystroke.key.as_str() {
             "/" => {
-                self.home.open = Some(Drawer::Find);
-                self.focus_search(cx);
+                self.open_panel(Some(Drawer::Find), cx);
                 cx.stop_propagation();
             }
-            "escape" if self.home.open.is_some() => {
-                self.home.open = None;
-                cx.notify();
-            }
+            "escape" if self.home.open.is_some() => self.open_panel(None, cx),
             "escape" if self.route != Route::Home => self.go("/", Arrival::Link, cx),
             _ => {}
         }
@@ -425,10 +415,7 @@ impl Site {
     fn on_greeted(&mut self, greeted: &Greeted, cx: &mut Context<Self>) {
         match greeted {
             // the plate is lettered while the greeting rests, so that work goes unseen
-            Greeted::Resting => {
-                self.greeting_rested = true;
-                self.retitle(cx);
-            }
+            Greeted::Resting => self.retitle(cx),
             Greeted::Done => {
                 self.greeting = None;
                 seed::remember(true);
@@ -477,9 +464,10 @@ impl Site {
         let inputs = drawers::PanelInputs {
             home: &self.home,
             on_home,
+            over_column: design::controls_cover_column(window),
             plate: plate.as_ref(),
             semantic: self.find.hits_for(&self.home.query),
-            index: self.index.as_ref(),
+            index: self.index.ready(),
             nav: &self.nav,
             theme,
         };
@@ -537,7 +525,9 @@ impl Site {
         self.timeline.task = None;
         let arrived = self.timeline.arrived(got);
         if let Some(wait) = arrived.retry {
-            eprintln!("timeline: a page failed; trying again in {wait:?}");
+            crate::console::warn(&format!(
+                "timeline: a page failed; trying again in {wait:?}"
+            ));
             self.timeline.task = Some(cx.spawn(async move |this, cx| {
                 cx.background_executor().timer(wait).await;
                 let _ = this.update(cx, |site, cx| {
@@ -599,19 +589,19 @@ impl Site {
             home: &self.home,
             timeline: &self.timeline.items,
             timeline_waiting: self.timeline.waiting(),
-            index: self.index.as_ref(),
+            index: self.index.ready(),
         })
     }
 
     /// Letter the plate anew from what's here now.
     fn retitle(&mut self, cx: &mut Context<Self>) {
         // lettering the plate is heavy: not while the greeting is still being written
-        if self.greeting.is_some() && !self.greeting_rested {
-            return;
-        }
         let Some(plate) = self.plate.as_ref() else {
             return;
         };
+        if plate.read(cx).writing_greeting() {
+            return;
+        }
         let Some((titles, anchored)) = self.lettering().into_titles(self.route == Route::Home)
         else {
             return;
@@ -626,7 +616,7 @@ impl Site {
     /// needn't: the index letters the spiral without it. Diagrams and embeds see to their own.)
     fn reconnected(&mut self, cx: &mut Context<Self>) {
         self.retry_failed_page(cx);
-        if self.index.is_none() && self.index_gave_up {
+        if matches!(self.index, Remote::GaveUp) {
             self.fetch_index(cx);
         }
     }
@@ -643,27 +633,23 @@ impl Site {
         let url = format!("{}/api/app/index", route::origin());
         // the spiral is lettered from the index: rather than leave the plate on its placeholder
         // for good, a failed fetch is tried again
-        let fetch = http::get_json::<Index>(
-            cx.http_client(),
+        self.index = Remote::Loading(Self::get::<Index>(
             url,
             Retry::PATIENT,
-            cx.background_executor().clone(),
-        );
-        self._index = Some(cx.spawn(async move |this, cx| match fetch.await {
-            Ok(mut index) => {
-                index.prepare_search();
-                let _ = this.update(cx, |site, cx| {
-                    site.index = Some(index);
+            cx,
+            |site, result, cx| match result {
+                Ok(mut index) => {
+                    index.prepare_search();
+                    site.index = Remote::Ready(index);
                     site.retitle(cx);
                     cx.notify();
-                });
-            }
-            Err(e) => {
-                eprintln!("index: {e:#}");
-                let _ = this.update(cx, |site, _| site.index_gave_up = true);
-            }
-        }));
-        self.index_gave_up = false;
+                }
+                Err(e) => {
+                    crate::console::warn(&format!("index: {e:#}"));
+                    site.index = Remote::GaveUp;
+                }
+            },
+        ));
     }
 }
 
@@ -675,12 +661,8 @@ impl Render for Site {
         }
         // a panel open (or opening, or closing) over the page: web components there step aside
         let covered = self.home.open.is_some() || self.drawers.any_shown();
-        if crate::overlay::set_panel(covered) {
-            if covered {
-                crate::dom_embed::hide_all();
-            }
-            self.page.update(cx, |_, cx| cx.notify());
-        }
+        self.page
+            .update(cx, |page, cx| page.set_covered(covered, cx));
         if self.greeting.is_some() {
             // the greeting is all there is: the plate under it takes no input yet
             return div()
@@ -696,34 +678,30 @@ impl Render for Site {
                 .into_any_element();
         }
 
-        route::set_narrow(f32::from(window.viewport_size().width) < design::NARROW_CONTROLS_W);
-        self.drawers.step(self.home.open, window);
-        if self.home.plain {
-            return self.render_plain(&theme, window, cx);
-        }
-        // the home and menu controls float on the plate as glass
-        if let Some(plate) = self.plate.as_ref() {
-            let glass: Vec<_> = std::iter::once(&self.home_glass)
-                .chain(self.drawers.panes())
-                .cloned()
-                .collect();
-            plate.update(cx, |plate, _| plate.set_panes(&glass));
-        }
-
-        // drive frames from the root (redraw tracking always reaches it) while anything moves;
-        // a settled page asks for none, and redraws only on input, so reading costs nothing
-        let fading = self
-            .content_since
-            .is_some_and(|s| s.elapsed().as_secs_f32() < CONTENT_FADE);
-        let loading_page = self.route != Route::Home && !self.page.read(cx).ready();
-        if self.plate.as_ref().is_none_or(|p| p.read(cx).animating()) || fading || loading_page {
+        let drawers_moving = self.drawers.step(self.home.open, window);
+        let (view, revealing) = if self.home.plain {
+            self.render_plain(&theme, window, cx)
+        } else {
+            // the home and menu controls float on the plate as glass
+            if let Some(plate) = self.plate.as_ref() {
+                let glass: Vec<_> = std::iter::once(&self.home_glass)
+                    .chain(self.drawers.panes())
+                    .cloned()
+                    .collect();
+                plate.update(cx, |plate, _| plate.set_panes(&glass));
+            }
+            let plate_moving = self.plate.as_ref().is_none_or(|p| p.read(cx).animating());
+            let (view, revealing) = if self.route == Route::Home {
+                (self.render_home(&theme, window, cx), false)
+            } else {
+                self.render_page(&theme, window, cx)
+            };
+            (view, plate_moving || revealing)
+        };
+        if drawers_moving || revealing {
             window.request_animation_frame();
         }
-
-        if self.route == Route::Home {
-            return self.render_home(&theme, window, cx);
-        }
-        self.render_page(&theme, window, cx)
+        view
     }
 }
 
@@ -767,11 +745,8 @@ impl Site {
         }
         let progress = plate.read(cx).frame_progress();
         let plate = plate.clone();
-        let leaving = (progress > 0.01).then(|| {
-            // the text goes first, in the first stretch of the unwind, then the line winds home
-            self.page.update(cx, |page, cx| {
-                page.set_shown(((progress - 0.6) / 0.4).clamp(0.0, 1.0), cx)
-            });
+        let leaving = Reveal::leaving(progress).map(|shown| {
+            self.page.update(cx, |page, cx| page.set_shown(shown, cx));
             div().absolute().inset_0().child(
                 self.page
                     .clone()
@@ -799,7 +774,7 @@ impl Site {
         theme: &Theme,
         window: &mut Window,
         cx: &mut Context<Self>,
-    ) -> gpui::AnyElement {
+    ) -> (gpui::AnyElement, bool) {
         // the line winds out from the spiral to frame the reading column, and follows it as it scrolls
         let plate = &self.ensure_plate(cx);
         // the frame opens with the content, never ahead of it: until the page has arrived the plate
@@ -824,37 +799,20 @@ impl Site {
         // the column is laid out once, at its own size (so the frame can measure it and nothing
         // is laid out again while the line winds out round it); the text waits for the line to
         // open round it, then fades up
-        let ready = self.page.read(cx).ready();
-        if !ready {
-            self.content_since = None;
-            self.ready_since = None;
-        } else {
-            let ready_since = *self.ready_since.get_or_insert_with(web_time::Instant::now);
-            if ready_since.elapsed().as_secs_f32() < 1.7 {
-                window.request_animation_frame();
-            }
-            // never hold a page back for long, even if the frame can't settle
-            let waited = ready_since.elapsed().as_secs_f32() > 1.6;
-            if (open || waited) && self.content_since.is_none() {
-                self.content_since = Some(web_time::Instant::now());
-            }
-        }
-        // between pages the last one stays up until the next replaces it in place (same column
-        // width, so only the frame's top and bottom move)
-        let keeping_last = !ready && self.page.read(cx).has_content() && progress > 0.5;
-        let fade = self
-            .content_since
-            .map_or(0.0, |s| (s.elapsed().as_secs_f32() / CONTENT_FADE).min(1.0));
-        let shown = if keeping_last {
-            1.0
-        } else if ready {
-            fade
-        } else {
-            0.0
-        };
-        self.page.update(cx, |page, cx| page.set_shown(shown, cx));
+        let step = self.reveal.page(
+            web_time::Instant::now(),
+            reveal::Page {
+                ready: page_ready,
+                has_content: self.page.read(cx).has_content(),
+                frame_open: open,
+                frame_progress: progress,
+            },
+        );
+        self.page
+            .update(cx, |page, cx| page.set_shown(step.shown, cx));
 
-        self.root(theme, cx)
+        let view = self
+            .root(theme, cx)
             .child(div().absolute().inset_0().child(plate))
             .child(
                 div().absolute().inset_0().child(
@@ -865,7 +823,8 @@ impl Site {
             )
             .children(self.home_button(theme, window, cx))
             .children(self.drawer_cards(false, theme, window, cx))
-            .into_any_element()
+            .into_any_element();
+        (view, step.wants_frame)
     }
 
     /// No shader: the index as a list, pages as plain paper columns.
@@ -874,20 +833,19 @@ impl Site {
         theme: &Theme,
         window: &mut Window,
         cx: &mut Context<Self>,
-    ) -> gpui::AnyElement {
+    ) -> (gpui::AnyElement, bool) {
         let mut root = self.root(theme, cx);
+        let mut wants_frame = false;
         if self.route == Route::Home {
             self.page.update(cx, |page, cx| page.hidden(cx));
-            if let Some(index) = self.index.as_ref() {
+            if let Some(index) = self.index.ready() {
                 root = root.child(home::list(index, &self.home, &self.nav, theme, window));
             }
         } else {
-            let ready = self.page.read(cx).ready();
-            if !ready {
-                window.request_animation_frame();
-            }
+            let step = Reveal::plain(self.page.read(cx).ready());
+            wants_frame = step.wants_frame;
             self.page.update(cx, |page, cx| {
-                page.set_shown(if ready { 1.0 } else { 0.0 }, cx);
+                page.set_shown(step.shown, cx);
                 page.follow_appearance(theme.dark, cx);
             });
             root = root.child(
@@ -898,9 +856,11 @@ impl Site {
                 ),
             );
         }
-        root.children(self.home_button(theme, window, cx))
+        let view = root
+            .children(self.home_button(theme, window, cx))
             .children(self.drawer_cards(self.route == Route::Home, theme, window, cx))
-            .into_any_element()
+            .into_any_element();
+        (view, wants_frame)
     }
 }
 
@@ -955,7 +915,7 @@ impl Site {
             .on_click(cx.listener(|site, _, _, cx| site.go("/", Arrival::Link, cx)));
         let face = if self.home.plain {
             drawers::PillFace::Solid
-        } else if route::narrow() {
+        } else if design::controls_cover_column(window) {
             drawers::PillFace::GlassOverText
         } else {
             drawers::PillFace::Glass
@@ -979,16 +939,13 @@ impl Site {
                 .id("home-button")
                 .occlude()
                 .absolute()
-                .top(gpui::px(design::INSET + route::safe_insets()[0]))
+                .top(gpui::px(design::INSET + crate::browser::safe_insets()[0]))
                 .left(gpui::px(design::INSET))
                 .child(pill)
                 .into_any_element(),
         )
     }
 }
-
-/// How long a page's text takes to fade up once the frame has opened round it, seconds.
-const CONTENT_FADE: f32 = 0.3;
 
 /// The document title: the page's name (a tag's with its `#`, the developer docs' in full).
 fn title_for(payload: &RoutePayload) -> String {

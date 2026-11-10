@@ -9,6 +9,7 @@ use crate::api::{Index, Item, Navigate};
 use crate::content;
 use crate::drawers::Drawer;
 use crate::prefs;
+use crate::search::Hit;
 use crate::theme::{self, Theme};
 
 #[derive(Clone, Default)]
@@ -50,6 +51,28 @@ impl Home {
             .iter()
             .filter(|i| matches_query(i, &q))
             .collect()
+    }
+
+    pub fn results(&self, index: Option<&Index>, by_meaning: &[Hit]) -> Vec<(String, String)> {
+        let mut found: Vec<(String, String)> = index
+            .map(|ix| {
+                self.matches(ix)
+                    .into_iter()
+                    .map(|it| (it.title.clone(), it.href.clone()))
+                    .collect()
+            })
+            .unwrap_or_default();
+        for hit in by_meaning {
+            if found.iter().any(|(_, href)| *href == hit.href) {
+                continue;
+            }
+            let title = index
+                .and_then(|ix| ix.feed.iter().find(|f| f.href == hit.href))
+                .map(|f| note_line(&f.excerpt, &f.created_at))
+                .unwrap_or_else(|| hit.title.clone());
+            found.push((title, hit.href.clone()));
+        }
+        found
     }
 }
 
@@ -470,8 +493,55 @@ pub fn list(
         .bg(t.paper)
         .overflow_y_scroll()
         .px(px(20.))
-        .pt(px(84. + crate::route::safe_insets()[0]))
+        .pt(px(84. + crate::browser::safe_insets()[0]))
         .pb(px(60.))
         .child(col)
         .into_any_element()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn find_lists_title_and_tag_matches_then_what_the_meaning_adds() {
+        let mut index: Index = serde_json::from_str(
+            r#"{"items": [
+                {"title": "Glass", "href": "/posts/glass", "section": "posts", "tags": ["Photography"]},
+                {"title": "Pizza Dough", "href": "/recipes/dough", "section": "recipes"}
+            ], "feed": [{"rkey": "3k", "href": "/feed/3k", "excerpt": "  A walk by   the river ", "createdAt": "2024-05-01T10:00:00Z"}]}"#,
+        )
+        .unwrap();
+        index.prepare_search();
+        let hit = |href: &str, title: &str| Hit {
+            href: href.into(),
+            title: title.into(),
+        };
+        let by_meaning = [
+            hit("/posts/glass", "Glass"),
+            hit("/feed/3k", "feed"),
+            hit("/art/kiln", "Kiln"),
+        ];
+        let home = Home {
+            query: " photo".into(),
+            ..Default::default()
+        };
+        let pair = |title: &str, href: &str| (title.to_string(), href.to_string());
+        assert_eq!(
+            home.results(Some(&index), &by_meaning),
+            [
+                pair("Glass", "/posts/glass"),
+                pair("A walk by the river", "/feed/3k"),
+                pair("Kiln", "/art/kiln"),
+            ]
+        );
+        assert_eq!(
+            home.results(None, &by_meaning[1..]),
+            [pair("feed", "/feed/3k"), pair("Kiln", "/art/kiln")]
+        );
+        assert_eq!(
+            home.results(Some(&index), &[]),
+            [pair("Glass", "/posts/glass")]
+        );
+    }
 }

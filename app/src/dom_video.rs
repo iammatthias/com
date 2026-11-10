@@ -4,13 +4,11 @@
 //! bounds here (from a canvas probe in its prepaint) and this module keeps one muted, looping,
 //! inline `<video>` per clip in `document.body`, `position: absolute` (the page never scrolls; iOS won't paint fixed content under its toolbars) above the canvas with
 //! `pointer-events: none` (so hover and clicks still reach GPUI), clipped to the scroll
-//! viewport. A requestAnimationFrame loop applies placement and play state, and runs only
-//! while any clip is registered.
+//! viewport.
 //!
 //! Clips belong to the render that placed them. The page is a cached view: it only renders
 //! (and so only re-places its clips) when something changes. Each content render starts a new
-//! epoch; a clip not placed in the latest epoch is hidden, and a clip placed on another route
-//! is removed outright, which also covers going home (where content stops rendering).
+//! epoch; a clip not placed in the latest epoch is hidden.
 //!
 //! `prefers-reduced-motion` turns autoplay off: the figure shows its poster and a "play"
 //! that starts the clip. Live tiles (a still with motion behind it) play on hover where
@@ -19,7 +17,7 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-use crate::overlay::Rect;
+use crate::overlay::{Extent, Gate, Layer, Rect, Stage};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Mode {
@@ -33,8 +31,6 @@ struct Entry {
     src: String,
     poster: Option<String>,
     mode: Mode,
-    path: String,
-    epoch: u64,
     rect: Rect,
     clip: Rect,
     hovered: bool,
@@ -44,14 +40,8 @@ struct Entry {
     el: Option<web::Video>,
 }
 
-#[derive(Default)]
-struct Registry {
-    entries: HashMap<String, Entry>,
-    epoch: u64,
-}
-
 thread_local! {
-    static REG: RefCell<Registry> = RefCell::new(Registry::default());
+    static CLIPS: RefCell<Layer<Entry>> = RefCell::new(Layer::new(Gate::Page, Extent::Viewport));
     /// each clip's own width over height, by source, once its `<video>` has read it
     static ASPECTS: RefCell<HashMap<String, f32>> = RefCell::new(HashMap::new());
     static RESIZED: crate::site::signal::Signal<()> = const { crate::site::signal::Signal::new() };
@@ -81,21 +71,34 @@ fn learned(src: &str, aspect: f32) {
 
 /// A new content render is starting: clips it doesn't place again will hide.
 pub fn begin_render() {
-    REG.with(|r| r.borrow_mut().epoch += 1);
+    CLIPS.with(|clips| clips.borrow_mut().begin());
+    wake();
+}
+
+pub fn turn_to(page: &str, stage: Stage) {
+    let (changed, gone) = CLIPS.with(|clips| {
+        let mut clips = clips.borrow_mut();
+        (clips.set_stage(stage), clips.turn_to(page))
+    });
+    drop(gone);
+    if changed {
+        wake();
+    }
+}
+
+pub fn clear() {
+    let gone = CLIPS.with(|clips| clips.borrow_mut().clear());
+    drop(gone);
 }
 
 /// Where a figure's clip is painted this render. `clip` is the visible part of the page.
 pub fn place(key: &str, src: &str, poster: Option<&str>, mode: Mode, rect: Rect, clip: Rect) {
-    let path = crate::route::current();
-    REG.with(|r| {
-        let mut r = r.borrow_mut();
-        let epoch = r.epoch;
-        let e = r.entries.entry(key.to_string()).or_insert_with(|| Entry {
-            src: src.to_string(),
-            poster: poster.map(str::to_string),
+    CLIPS.with(|clips| {
+        let mut clips = clips.borrow_mut();
+        let e = clips.place(key, || Entry {
+            src: String::new(),
+            poster: None,
             mode,
-            path: path.clone(),
-            epoch,
             rect,
             clip,
             hovered: false,
@@ -106,43 +109,47 @@ pub fn place(key: &str, src: &str, poster: Option<&str>, mode: Mode, rect: Rect,
         e.src = src.to_string();
         e.poster = poster.map(str::to_string);
         e.mode = mode;
-        e.path = path;
-        e.epoch = epoch;
         e.rect = rect;
         e.clip = clip;
     });
-    #[cfg(target_family = "wasm")]
-    web::ensure_loop();
+    wake();
 }
 
 pub fn hover(key: &str, on: bool) {
-    REG.with(|r| {
-        if let Some(e) = r.borrow_mut().entries.get_mut(key) {
+    CLIPS.with(|clips| {
+        if let Some(e) = clips.borrow_mut().get_mut(key) {
             e.hovered = on;
         }
     });
+    wake();
 }
 
 /// The reader clicked the figure: play if it isn't playing, pause if it is. Returns the new state.
 pub fn toggle(key: &str) -> bool {
     let now = !playing(key);
-    REG.with(|r| {
-        if let Some(e) = r.borrow_mut().entries.get_mut(key) {
+    CLIPS.with(|clips| {
+        if let Some(e) = clips.borrow_mut().get_mut(key) {
             e.user = Some(now);
         }
     });
+    wake();
     now
 }
 
 /// Whether the clip is (meant to be) playing: what the figure's lettering should say.
 pub fn playing(key: &str) -> bool {
-    let reduced = crate::route::reduced_motion();
-    REG.with(|r| {
-        r.borrow()
-            .entries
+    let reduced = crate::browser::reduced_motion();
+    CLIPS.with(|clips| {
+        clips
+            .borrow()
             .get(key)
             .is_some_and(|e| e.user.unwrap_or(e.mode == Mode::Auto && !reduced))
     })
+}
+
+pub fn wake() {
+    #[cfg(target_family = "wasm")]
+    web::wake();
 }
 
 #[cfg(target_family = "wasm")]
@@ -153,7 +160,21 @@ mod web {
     use wasm_bindgen::JsValue;
     use wasm_bindgen::closure::Closure;
 
-    use super::{Mode, REG, learned};
+    use super::{CLIPS, Mode, learned};
+
+    const WAKING_EVENTS: [&str; 11] = [
+        "loadedmetadata",
+        "loadeddata",
+        "canplay",
+        "playing",
+        "pause",
+        "waiting",
+        "stalled",
+        "seeked",
+        "emptied",
+        "resize",
+        "error",
+    ];
 
     pub struct Video {
         el: web_sys::HtmlVideoElement,
@@ -171,8 +192,9 @@ mod web {
     thread_local! {
         static LOOP: RefCell<Option<Closure<dyn FnMut()>>> = const { RefCell::new(None) };
         static RUNNING: Cell<bool> = const { Cell::new(false) };
+        static WOKEN: Cell<bool> = const { Cell::new(false) };
+        static WAKE: Closure<dyn FnMut()> = Closure::new(wake);
         static NOOP: Closure<dyn FnMut(JsValue)> = Closure::new(|_: JsValue| {});
-        /// each media query's list, made once: it stays live, so reading it each frame is enough
         static QUERIES: RefCell<Vec<(&'static str, Option<web_sys::MediaQueryList>)>> = const { RefCell::new(Vec::new()) };
     }
 
@@ -182,10 +204,11 @@ mod web {
             let i = match q.iter().position(|(k, _)| *k == query) {
                 Some(i) => i,
                 None => {
-                    q.push((
-                        query,
-                        web_sys::window().and_then(|w| w.match_media(query).ok().flatten()),
-                    ));
+                    let list = web_sys::window().and_then(|w| w.match_media(query).ok().flatten());
+                    if let Some(list) = list.as_ref() {
+                        listen(list, "change");
+                    }
+                    q.push((query, list));
                     q.len() - 1
                 }
             };
@@ -193,13 +216,23 @@ mod web {
         })
     }
 
-    pub fn ensure_loop() {
-        if RUNNING.with(|r| r.replace(true)) {
+    fn listen(target: &web_sys::EventTarget, event: &str) {
+        WAKE.with(|wake| {
+            let _ = target.add_event_listener_with_callback(event, wake.as_ref().unchecked_ref());
+        });
+    }
+
+    pub fn wake() {
+        WOKEN.set(true);
+        if RUNNING.replace(true) {
             return;
         }
         LOOP.with(|l| {
             if l.borrow().is_none() {
                 *l.borrow_mut() = Some(Closure::new(frame));
+                if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+                    listen(&document, "visibilitychange");
+                }
             }
         });
         request();
@@ -214,10 +247,12 @@ mod web {
     }
 
     fn frame() {
-        if tick() {
+        WOKEN.set(false);
+        let unsettled = tick();
+        if unsettled || WOKEN.get() {
             request();
         } else {
-            RUNNING.with(|r| r.set(false));
+            RUNNING.set(false);
         }
     }
 
@@ -241,6 +276,9 @@ mod web {
             el.set_poster(p);
         }
         el.set_attribute("style", "display:none").ok();
+        for event in WAKING_EVENTS {
+            listen(&el, event);
+        }
         doc.body()?.append_child(&el).ok()?;
         Some(Video {
             el,
@@ -257,34 +295,26 @@ mod web {
         }
     }
 
-    /// One frame: drop clips from other routes, then place, show and play the rest.
-    /// Returns whether there is anything left to look after.
     fn tick() -> bool {
-        let path = crate::route::current();
         let reduced = matches("(prefers-reduced-motion: reduce)");
         let hover = matches("(hover: hover) and (pointer: fine)");
-        REG.with(|r| {
-            let mut r = r.borrow_mut();
-            r.entries.retain(|_, e| e.path == path);
-            if r.entries.is_empty() {
-                return false;
-            }
-            let epoch = r.epoch;
-            let suppressed = crate::overlay::blocked();
+        CLIPS.with(|clips| {
+            let mut clips = clips.borrow_mut();
+            let suppressed = clips.gated();
             // on touch, the live tiles most in view play, two at most
-            let mut in_view: Vec<(f32, String)> = r
-                .entries
+            let mut in_view: Vec<(f32, String)> = clips
                 .iter()
-                .filter(|(_, e)| e.mode == Mode::Live && e.epoch == epoch)
-                .map(|(k, e)| (e.rect.visible_ratio(&e.clip), k.clone()))
+                .filter(|(_, placed, e)| e.mode == Mode::Live && *placed)
+                .map(|(k, _, e)| (e.rect.visible_ratio(&e.clip), k.to_string()))
                 .filter(|(ratio, _)| *ratio >= 0.6)
                 .collect();
             in_view.sort_by(|a, b| b.0.total_cmp(&a.0));
             in_view.truncate(2);
 
-            for (key, e) in r.entries.iter_mut() {
+            let mut unsettled = false;
+            for (key, placed, e) in clips.iter_mut() {
                 let inset = e.rect.inset_within(&e.clip);
-                let alive = e.epoch == epoch && !suppressed && inset.is_some() && e.rect.w > 1.;
+                let alive = placed && !suppressed && inset.is_some() && e.rect.w > 1.;
                 let want = alive
                     && match e.mode {
                         Mode::Auto => e.user.unwrap_or(!reduced),
@@ -297,25 +327,30 @@ mod web {
                         continue;
                     }
                     e.el = create(e.poster.as_deref(), e.mode);
+                    unsettled = true;
                 }
                 let Some(v) = e.el.as_mut() else { continue };
                 // a figure's clip loads even before it plays: its own size is the figure's shape
                 if (want || e.mode == Mode::Auto) && !v.src_set {
                     v.el.set_src(&e.src);
                     v.src_set = true;
+                    unsettled = true;
                 }
                 let (w, h) = (v.el.video_width(), v.el.video_height());
-                if e.mode == Mode::Auto && w > 0 && h > 0 {
+                let sized = w > 0 && h > 0;
+                if e.mode == Mode::Auto && sized {
                     learned(&e.src, w as f32 / h as f32);
                 }
                 let paused = v.el.paused();
                 if want && paused {
                     play(v);
+                    unsettled = true;
                 } else if !want && !paused {
                     v.el.pause().ok();
                     if e.mode == Mode::Live {
                         v.el.set_current_time(0.);
                     }
+                    unsettled = true;
                 }
                 let has_frame = v.el.ready_state() >= 2;
                 let visible = alive
@@ -344,9 +379,17 @@ mod web {
                 if css != v.css {
                     v.el.set_attribute("style", &css).ok();
                     v.css = css;
+                    unsettled = true;
                 }
+                let awaited = match e.mode {
+                    Mode::Auto => !sized || (alive && !has_frame),
+                    Mode::Live => want && !has_frame,
+                };
+                let loading = v.src_set
+                    && v.el.network_state() != web_sys::HtmlMediaElement::NETWORK_NO_SOURCE;
+                unsettled |= awaited && loading;
             }
-            true
+            unsettled
         })
     }
 }
