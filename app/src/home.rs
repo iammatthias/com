@@ -493,7 +493,7 @@ pub fn list(
         .bg(t.paper)
         .overflow_y_scroll()
         .px(px(20.))
-        .pt(px(84. + crate::route::safe_insets()[0]))
+        .pt(px(84. + crate::browser::safe_insets()[0]))
         .pb(px(60.))
         .child(col)
         .into_any_element()

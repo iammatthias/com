@@ -27,8 +27,8 @@ impl Touches {
     pub fn listen() -> Rc<RefCell<Self>> {
         let touches = Rc::new(RefCell::new(Self::default()));
         let sink = touches.clone();
-        crate::route::on_touch_gesture(move |gesture| {
-            use crate::route::Gesture;
+        crate::browser::on_touch_gesture(move |gesture| {
+            use crate::browser::Gesture;
             let mut t = sink.borrow_mut();
             match gesture {
                 Gesture::Touch { fingers } => {

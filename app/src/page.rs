@@ -141,7 +141,7 @@ impl Render for Page {
         let stage = Stage {
             hidden: self.covered || self.shown <= 0.99,
             under_controls: design::controls_cover_column(window).then(|| {
-                let [top, _, bottom, _] = crate::route::safe_insets();
+                let [top, _, bottom, _] = crate::browser::safe_insets();
                 Margins { top, bottom }
             }),
         };
@@ -185,7 +185,7 @@ impl Render for Page {
             108.0
         } else {
             112.0
-        } + crate::route::safe_insets()[0];
+        } + crate::browser::safe_insets()[0];
         crate::theme::with_fallbacks(div())
             .size_full()
             .image_cache(self.images.clone())
@@ -202,7 +202,7 @@ impl Render for Page {
                     .track_scroll(&self.scroll)
                     .px(gpui::px(if design::is_phone(window) { 22.0 } else { 48.0 }))
                     .pt(gpui::px(top))
-                    .pb(gpui::px(120. + crate::route::safe_insets()[2]))
+                    .pb(gpui::px(120. + crate::browser::safe_insets()[2]))
                     .child(
                         div()
                             .relative()

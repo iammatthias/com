@@ -12,7 +12,7 @@ const DRAW_OUT: f32 = 3.6;
 /// Seconds since `at`, stretched by the greeting's own `#slow=` (so the two can be looked at
 /// as one motion).
 fn since(at: Instant) -> f32 {
-    at.elapsed().as_secs_f32() / crate::route::debug::slow()
+    at.elapsed().as_secs_f32() / crate::browser::debug::slow()
 }
 
 /// Seconds since the pen started (0 while it waits).

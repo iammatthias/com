@@ -175,7 +175,7 @@ impl Drawers {
         let mut moving = false;
         let now = web_time::Instant::now();
         // `#slowui`: a tenth of the speed, to see the motion frame by frame
-        let pace = if crate::route::debug::slow_ui() {
+        let pace = if crate::browser::debug::slow_ui() {
             0.1
         } else {
             1.0
@@ -184,7 +184,7 @@ impl Drawers {
         self.at = now;
         let vp = window.viewport_size();
         let (vw, vh) = (f32::from(vp.width), f32::from(vp.height));
-        let insets = crate::route::safe_insets();
+        let insets = crate::browser::safe_insets();
         for which in Drawer::ALL {
             let i = which.index();
             let target = if open == Some(which) { 1.0 } else { 0.0 };
@@ -238,8 +238,8 @@ impl Drawers {
                 .unwrap_or(420.0),
             max_body_h: (vh
                 - 88.0
-                - crate::route::safe_insets()[0]
-                - crate::route::safe_insets()[2])
+                - crate::browser::safe_insets()[0]
+                - crate::browser::safe_insets()[2])
                 .min(640.0)
                 .max(160.0),
             body: self.body[i].clone(),
@@ -363,7 +363,7 @@ pub fn drawer(
             site.open_panel((!closing).then_some(which), cx);
         }));
 
-    let insets = crate::route::safe_insets();
+    let insets = crate::browser::safe_insets();
     let card = div()
         .id(("drawer", which.index()))
         .occlude()

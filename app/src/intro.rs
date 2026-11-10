@@ -432,7 +432,7 @@ enum Clock {
 
 impl Clock {
     fn from_hash() -> Self {
-        use crate::route::debug;
+        use crate::browser::debug;
         match debug::number("t") {
             Some(t) => Clock::Frozen(t),
             None => Clock::Slow(debug::slow()),

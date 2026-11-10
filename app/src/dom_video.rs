@@ -138,7 +138,7 @@ pub fn toggle(key: &str) -> bool {
 
 /// Whether the clip is (meant to be) playing: what the figure's lettering should say.
 pub fn playing(key: &str) -> bool {
-    let reduced = crate::route::reduced_motion();
+    let reduced = crate::browser::reduced_motion();
     CLIPS.with(|clips| {
         clips
             .borrow()

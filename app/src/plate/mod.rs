@@ -228,16 +228,16 @@ impl Plate {
             reveal: Reveal::new(),
             anchored: false,
             view: View {
-                x: crate::route::debug::number("px").unwrap_or(0.0),
-                y: crate::route::debug::number("py").unwrap_or(0.0),
-                z: crate::route::debug::number("z").map_or(1.0, |z| z.clamp(0.35, 14.0)),
+                x: crate::browser::debug::number("px").unwrap_or(0.0),
+                y: crate::browser::debug::number("py").unwrap_or(0.0),
+                z: crate::browser::debug::number("z").map_or(1.0, |z| z.clamp(0.35, 14.0)),
             },
             pointer: None,
             over: false,
             drag: None,
             hover: None,
             hold_until: None,
-            motion: !crate::route::reduced_motion()
+            motion: !crate::browser::reduced_motion()
                 && crate::prefs::get("motion").as_deref() != Some("off"),
             e_warp: 0.0,
             e_disp: 0.0,
@@ -249,8 +249,8 @@ impl Plate {
             panes: Vec::new(),
             waiting: false,
             last_drawn: None,
-            lite: crate::route::debug::flag("lite"),
-            half: crate::route::debug::flag("half"),
+            lite: crate::browser::debug::flag("lite"),
+            half: crate::browser::debug::flag("half"),
             greeting: Greeting::Never,
         }
     }

@@ -81,9 +81,9 @@ impl Site {
         seed::remember(visitor.seen_intro);
         let home = Home::restore();
         // plain paper has no shader at all, so no greeting either; reduced motion skips it too
-        let greet = !home.plain && !route::reduced_motion() && !visitor.seen_intro;
+        let greet = !home.plain && !crate::browser::reduced_motion() && !visitor.seen_intro;
 
-        route::register_web_mcp();
+        crate::browser::register_web_mcp();
 
         let weak = cx.weak_entity();
         // navigation always runs after the current event: a link may be clicked from inside
@@ -939,7 +939,7 @@ impl Site {
                 .id("home-button")
                 .occlude()
                 .absolute()
-                .top(gpui::px(design::INSET + route::safe_insets()[0]))
+                .top(gpui::px(design::INSET + crate::browser::safe_insets()[0]))
                 .left(gpui::px(design::INSET))
                 .child(pill)
                 .into_any_element(),

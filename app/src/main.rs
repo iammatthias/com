@@ -2,6 +2,7 @@ use gpui::prelude::*;
 use gpui::{App, Bounds, WindowBounds, WindowOptions, px, size};
 
 mod api;
+mod browser;
 mod console;
 mod content;
 mod design;
@@ -70,7 +71,7 @@ fn main() {
                             faces.push(None);
                         }
                         Err(e) => {
-                            route::plain_page();
+                            crate::browser::plain_page();
                             console::warn(&format!("fonts: {e:#}"));
                             return;
                         }
@@ -92,7 +93,7 @@ fn main() {
 #[cfg(target_family = "wasm")]
 thread_local! {
     static START: f64 = js_sys::Date::now();
-    static PERF: bool = route::debug::flag("perf");
+    static PERF: bool = crate::browser::debug::flag("perf");
 }
 
 /// Which build this is (in the #perf log). Its bytes are part of the wasm, so bumping it gives the
@@ -114,7 +115,7 @@ fn start(cx: &mut App) {
     mark("fonts fetched");
     select::init(cx);
     if let Err(e) = cx.text_system().add_fonts(fonts::all()) {
-        route::plain_page();
+        crate::browser::plain_page();
         console::warn(&format!("font load failed: {e:#}"));
         return;
     }
@@ -128,7 +129,7 @@ fn start(cx: &mut App) {
     );
     // no surface to draw on (an adapter that went away, a device refused): the plain page
     if let Err(e) = opened {
-        route::plain_page();
+        crate::browser::plain_page();
         console::warn(&format!("failed to open window: {e:#}"));
         return;
     }
