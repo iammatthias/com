@@ -2,6 +2,7 @@ use gpui::prelude::*;
 use gpui::{App, Bounds, WindowBounds, WindowOptions, px, size};
 
 mod api;
+mod console;
 mod content;
 mod design;
 mod dom_embed;
@@ -65,14 +66,12 @@ fn main() {
                         Ok(bytes) => faces.push(Some(bytes)),
                         Err(e) if *name == fonts::OPTIONAL => {
                             // a warning, not an error: the page's error overlay is for failures
-                            web_sys::console::warn_1(
-                                &format!("fonts: {e:#}; going without").into(),
-                            );
+                            console::warn(&format!("fonts: {e:#}; going without"));
                             faces.push(None);
                         }
                         Err(e) => {
                             route::plain_page();
-                            eprintln!("fonts: {e:#}");
+                            console::warn(&format!("fonts: {e:#}"));
                             return;
                         }
                     }
@@ -116,7 +115,7 @@ fn start(cx: &mut App) {
     select::init(cx);
     if let Err(e) = cx.text_system().add_fonts(fonts::all()) {
         route::plain_page();
-        eprintln!("font load failed: {e:#}");
+        console::warn(&format!("font load failed: {e:#}"));
         return;
     }
     cx.set_global(theme::Choice::from_key(
@@ -130,7 +129,7 @@ fn start(cx: &mut App) {
     // no surface to draw on (an adapter that went away, a device refused): the plain page
     if let Err(e) = opened {
         route::plain_page();
-        eprintln!("failed to open window: {e:#}");
+        console::warn(&format!("failed to open window: {e:#}"));
         return;
     }
     mark("window open");

@@ -134,9 +134,7 @@ impl Site {
                 }
             }
             Reply::Error { message, .. } => {
-                #[cfg(target_family = "wasm")]
-                web_sys::console::warn_1(&format!("search: {message}").into());
-                let _ = message;
+                crate::console::warn(&format!("search: {message}"));
             }
             _ => {}
         }

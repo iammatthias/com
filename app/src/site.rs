@@ -270,8 +270,7 @@ impl Site {
                     }
                     Err(e) => {
                         // why is for the console; the page says it plainly
-                        #[cfg(target_family = "wasm")]
-                        web_sys::console::warn_1(&format!("page {path}: {e:#}").into());
+                        crate::console::warn(&format!("page {path}: {e:#}"));
                         site.page.update(cx, |page, cx| page.set(Load::Failed, cx))
                     }
                 }
@@ -302,10 +301,7 @@ impl Site {
                 // redirects that lead round in a circle (cached, they'd recurse without end)
                 self.redirect_hops += 1;
                 if self.redirect_hops > MAX_REDIRECTS {
-                    #[cfg(target_family = "wasm")]
-                    web_sys::console::warn_1(
-                        &format!("page: too many redirects, last to {to}").into(),
-                    );
+                    crate::console::warn(&format!("page: too many redirects, last to {to}"));
                     self.page.update(cx, |page, cx| page.set(Load::Failed, cx));
                     cx.notify();
                     return;
@@ -537,7 +533,9 @@ impl Site {
         self.timeline.task = None;
         let arrived = self.timeline.arrived(got);
         if let Some(wait) = arrived.retry {
-            eprintln!("timeline: a page failed; trying again in {wait:?}");
+            crate::console::warn(&format!(
+                "timeline: a page failed; trying again in {wait:?}"
+            ));
             self.timeline.task = Some(cx.spawn(async move |this, cx| {
                 cx.background_executor().timer(wait).await;
                 let _ = this.update(cx, |site, cx| {
@@ -659,7 +657,7 @@ impl Site {
                 });
             }
             Err(e) => {
-                eprintln!("index: {e:#}");
+                crate::console::warn(&format!("index: {e:#}"));
                 let _ = this.update(cx, |site, _| site.index_gave_up = true);
             }
         }));
