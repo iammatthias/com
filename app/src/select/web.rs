@@ -98,10 +98,9 @@ pub fn selection_debug() -> String {
         .pill()
         .map(|p| format!("[{},{}]", f32::from(p.x), f32::from(p.y)))
         .unwrap_or_else(|| "null".into());
-    let text = scope.selected_text().unwrap_or_default();
-    let escaped: String = text.chars().flat_map(|c| c.escape_default()).collect();
+    let text = serde_json::Value::String(scope.selected_text().unwrap_or_default());
     format!(
-        "{{\"text\":\"{escaped}\",\"rects\":[{}],\"pill\":{pill}}}",
+        "{{\"text\":{text},\"rects\":[{}],\"pill\":{pill}}}",
         rects.iter().map(rect).collect::<Vec<_>>().join(",")
     )
 }
