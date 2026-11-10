@@ -230,6 +230,9 @@ mod web {
         LOOP.with(|l| {
             if l.borrow().is_none() {
                 *l.borrow_mut() = Some(Closure::new(frame));
+                if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+                    listen(&document, "visibilitychange");
+                }
             }
         });
         request();
