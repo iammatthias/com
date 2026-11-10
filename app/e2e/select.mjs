@@ -145,7 +145,7 @@ async function toParagraphs(page) {
         check(text !== "sentinel" && text.length > 10, `a drag from a link selects: ${JSON.stringify(text.slice(0, 30))}`);
         await stays("a drag from a link does not follow it");
         // the right half of the link's last character: its nearest caret is past the link
-        const opened = context.waitForEvent("page", { timeout: 5000 }).then(() => true, () => false);
+        const opened = context.waitForEvent("page", { timeout: 5000 }).then((tab) => tab.close().then(() => true), () => false);
         const moved = page.waitForURL((u) => new URL(u).pathname !== POST, { timeout: 5000 }).then(() => true, () => false);
         await page.mouse.click(r, link.y);
         const went = await Promise.all([opened, moved]);
