@@ -22,15 +22,21 @@ site's titles as one spiralling line and frames each page.
     segment table on the CPU; `mips`, which the intro's atlas uses too.
   - `geom.rs` - the shader's geometry mirrored on the CPU: `hit`, `line_at`, `point_on_line`,
     the portrait's tone.
-  - `gpu.rs` - pipelines, atlas upload, the per-frame `Uniforms` and the two draw passes.
+  - `gpu.rs` - pipelines, one `upload` for every texture, the per-frame `Uniforms` and the two draw passes.
+  - `greeting.rs` - `Greeting`: the first-visit greeting's states, owned by the plate, and the `Greeted` event `Site` reacts to.
 - `intro.rs` / `intro.wgsl` - the first-visit greeting that becomes the line.
 - `api.rs` - serde types for the Worker's index, timeline and route payloads.
-- `route.rs` - URL to `Route`, history, document title, safe-area insets, JS bridges.
+- `site/` - `Site`'s parts as typed models with their own tests: `reveal.rs` (when a page's text shows), `remote.rs` (a fetch that loads, arrives or gives up), `timeline.rs`, `find.rs`, `lettering.rs`, `payloads.rs`, `signal.rs`.
+- `route.rs` - URL to `Route`, history, document title.
+- `browser.rs` - the browser beyond routing: safe-area insets, touch gestures, reduced motion, hashchange, WebMCP, the plain page, `#debug`/`#slow`.
+- `console.rs` - `warn`: the browser console on the web, stderr natively.
 - `search.rs` - the semantic search Web Worker (`/search/search-worker.js`) and its replies.
 - `seed.rs` - the visitor's seed (`Rng`), and the cookie that remembers the intro was seen.
 - `prefs.rs` - localStorage preferences (theme, engraving, motion).
 - `fonts.rs` - the font files: fetched from `fonts::DIR` on the web, built in natively.
+- `overlay.rs` - `Layer`, the one registry every DOM overlay uses (which page owns an element, where it's placed, when it's hidden), and the `Stage` a page hands it.
 - `dom_video.rs` - real `<video>` elements laid over the canvas where a clip is painted.
+- `dom_input.rs` - Find's real `<input>`, for its caret, IME, paste and the phone keyboard.
 - `dom_embed.rs` - web components (`<ff-tuner>`, `<ff-onchain-analytics>`) laid over the column the same way, at their measured height. Add one with an entry in `EMBEDS` and its module as `assets/embeds/<component>.js` (copies of @com's, kept in step by hand; a module that imports nothing, so a failed load can be retried).
 - Code loaded after boot (diagrams, embeds, the search worker) is named with dom.js's `buildUrl` and imported with its `buildModule`: from the page's own build under `/b/<id>/` (worker/README.md), retried under a fresh URL.
 - `content/` - route payload to elements; its module map is at the top of `content/mod.rs`.
@@ -43,7 +49,7 @@ site's titles as one spiralling line and frames each page.
 4. `Site::apply` sets the document title (`title_for`), the frame's lettering
    (`Title::for_page`), and hands the payload to `Page` (`Load::Ready`).
 5. `Page::render` calls `content::view`, whose `body()` dispatches each variant to a renderer
-   in `content/pages.rs` or `content/special.rs`; markdown goes through `md` -> `cache` -> `render`.
+   in `content/doc.rs`, `listing.rs`, `post.rs`, `pages.rs` or `special.rs`; markdown goes through `md` -> `cache` -> `render`.
 
 The home route has no payload: it is the plate (or, on plain paper, `home::list`).
 
@@ -72,7 +78,7 @@ Colours and faces are in `src/theme.rs`.
 
 1. Worker: add the kind to `worker/src/app-api.ts` and answer it from `/api/app/route`.
 2. `api.rs`: add a `RoutePayload` variant (serde `kind` tag; default every optional field).
-3. `content/`: write the renderer (in `pages.rs`, `special.rs`, or a new module) and add the
+3. `content/`: write the renderer (in `doc.rs`, `listing.rs`, `post.rs`, `special.rs`, or a new module) and add the
    arm in `content/mod.rs` `body()`.
 4. `api.rs` `RoutePayload::name`: what the page is called, which `site.rs` `title_for` (the
    document title) and `plate/title.rs` `Title::for_page` (the frame's lettering) are made from.
