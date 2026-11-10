@@ -1,6 +1,8 @@
 //! Paper and ink from the artifact, accents from @com: light and dark.
 
-use gpui::{App, Global, Rgba, Window, WindowAppearance, rgb};
+use gpui::{App, Global, Rgba, Window, WindowAppearance};
+
+use crate::color::{Oklch, oklch};
 
 /// headings in the reading column
 pub const DISPLAY: &str = "Newsreader";
@@ -88,6 +90,46 @@ impl Choice {
     }
 }
 
+struct Inks {
+    paper: Oklch,
+    ink: Oklch,
+    accent: Oklch,
+    stops: [Oklch; 5],
+    muted: Oklch,
+    rule: Oklch,
+}
+
+const DARK: Inks = Inks {
+    paper: oklch(0.185, 0.008, 67.3),
+    ink: oklch(0.936, 0.02, 84.6),
+    accent: oklch(0.813, 0.093, 263.6),
+    stops: [
+        oklch(0.789, 0.094, 263.5),
+        oklch(0.8, 0.108, 157.2),
+        oklch(0.829, 0.112, 84.2),
+        oklch(0.782, 0.11, 42.2),
+        oklch(0.798, 0.114, 317.0),
+    ],
+    muted: oklch(0.69, 0.023, 79.0),
+    rule: oklch(0.32, 0.014, 76.4),
+};
+
+// warm paper, every stop held at 4.9:1 or better against it
+const LIGHT: Inks = Inks {
+    paper: oklch(0.953, 0.016, 86.4),
+    ink: oklch(0.211, 0.009, 75.1),
+    accent: oklch(0.483, 0.18, 262.2),
+    stops: [
+        oklch(0.512, 0.151, 265.4),
+        oklch(0.5, 0.107, 156.2),
+        oklch(0.518, 0.1036, 78.9),
+        oklch(0.53, 0.141, 38.5),
+        oklch(0.528, 0.153, 313.6),
+    ],
+    muted: oklch(0.486, 0.021, 78.1),
+    rule: oklch(0.86, 0.024, 82.1),
+};
+
 #[derive(Clone, Copy, Debug)]
 pub struct Theme {
     pub dark: bool,
@@ -116,39 +158,15 @@ impl Theme {
             appearance,
             WindowAppearance::Dark | WindowAppearance::VibrantDark
         );
-        if dark {
-            Self {
-                dark,
-                paper: rgb(0x15120F),
-                ink: rgb(0xF0E9DB),
-                accent: rgb(0xA3C2FF),
-                stops: [
-                    rgb(0x9BBAF7),
-                    rgb(0x7FD3A2),
-                    rgb(0xE9C16E),
-                    rgb(0xF4A07F),
-                    rgb(0xDBA6EE),
-                ],
-                muted: rgb(0xA39A8C),
-                rule: rgb(0x37322B),
-            }
-        } else {
-            Self {
-                dark,
-                // warm paper, every stop held at 4.9:1 or better against it
-                paper: rgb(0xF4EFE4),
-                ink: rgb(0x1B1814),
-                accent: rgb(0x1F55C2),
-                stops: [
-                    rgb(0x3C60BC),
-                    rgb(0x1F7549),
-                    rgb(0x88600C),
-                    rgb(0xAD4826),
-                    rgb(0x8A4BA8),
-                ],
-                muted: rgb(0x665E52),
-                rule: rgb(0xD9D0C0),
-            }
+        let inks = if dark { &DARK } else { &LIGHT };
+        Self {
+            dark,
+            paper: inks.paper.rgba(),
+            ink: inks.ink.rgba(),
+            accent: inks.accent.rgba(),
+            stops: inks.stops.map(Oklch::rgba),
+            muted: inks.muted.rgba(),
+            rule: inks.rule.rgba(),
         }
     }
 
@@ -183,5 +201,68 @@ impl Theme {
     /// a token as shader uniform: sRGB components, opaque
     pub fn uniform(c: Rgba) -> [f32; 4] {
         [c.color.red, c.color.green, c.color.blue, 1.0]
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::color::{WHITE, hex, in_gamut};
+
+    fn quantized(t: Theme) -> [u32; 10] {
+        let [s1, s2, s3, s4, s5] = t.stops.map(hex);
+        [
+            hex(t.paper),
+            hex(t.ink),
+            hex(t.accent),
+            s1,
+            s2,
+            s3,
+            s4,
+            s5,
+            hex(t.muted),
+            hex(t.rule),
+        ]
+    }
+
+    #[test]
+    fn dark_oklch_tokens_render_the_hex_the_site_shipped() {
+        assert_eq!(
+            quantized(Theme::for_appearance(WindowAppearance::Dark)),
+            [
+                0x15120F, 0xF0E9DB, 0xA3C2FF, 0x9BBAF7, 0x7FD3A2, 0xE9C16E, 0xF4A07F, 0xDBA6EE,
+                0xA39A8C, 0x37322B,
+            ]
+        );
+    }
+
+    #[test]
+    fn light_oklch_tokens_render_the_hex_the_site_shipped() {
+        assert_eq!(
+            quantized(Theme::for_appearance(WindowAppearance::Light)),
+            [
+                0xF4EFE4, 0x1B1814, 0x1F55C2, 0x3C60BC, 0x1F7549, 0x88600C, 0xAD4826, 0x8A4BA8,
+                0x665E52, 0xD9D0C0,
+            ]
+        );
+    }
+
+    #[test]
+    fn every_token_sits_inside_srgb_without_clamping() {
+        for inks in [&DARK, &LIGHT] {
+            let all = [
+                inks.paper,
+                inks.ink,
+                inks.accent,
+                inks.muted,
+                inks.rule,
+                WHITE,
+            ]
+            .into_iter()
+            .chain(inks.stops);
+            for c in all {
+                assert!(in_gamut(c), "{c:?} leaves sRGB");
+            }
+        }
     }
 }
