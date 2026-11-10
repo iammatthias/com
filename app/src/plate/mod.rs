@@ -21,6 +21,7 @@ mod contract;
 mod frame;
 mod geom;
 mod gpu;
+mod greeting;
 mod input;
 mod reveal;
 mod title;
@@ -30,6 +31,8 @@ use atlas::{FONT, TitleAtlas};
 use frame::Frame;
 use geom::SUBJECT;
 use gpu::{Gpu, Uniforms};
+pub use greeting::Greeted;
+use greeting::{Greeting, Moment};
 use input::Touches;
 use reveal::Reveal;
 pub use title::{Mark, Title};
@@ -196,18 +199,7 @@ pub struct Plate {
     lite: bool,
     half: bool,
     /// the first-visit greeting, written on the plate until it winds into the line's start
-    greeting: Option<crate::intro::Greeting>,
-    /// greeted (the optics are whole from the first frame), and told the site it's resting
-    greeted: bool,
-    rest_told: bool,
-}
-
-/// What the greeting tells the site.
-pub enum Greeted {
-    /// written and resting: heavy work now goes unnoticed
-    Resting,
-    /// wound into the point the line is drawing out of
-    Done,
+    greeting: Greeting<crate::intro::Greeting>,
 }
 
 impl gpui::EventEmitter<Greeted> for Plate {}
@@ -258,9 +250,7 @@ impl Plate {
             last_drawn: None,
             lite: crate::route::debug::flag("lite"),
             half: crate::route::debug::flag("half"),
-            greeting: None,
-            greeted: false,
-            rest_told: false,
+            greeting: Greeting::Never,
         }
     }
 
@@ -350,7 +340,8 @@ impl Plate {
     /// Whether the plate is moving and needs the next frame. A settled page frame doesn't:
     /// it is redrawn only when something changes (scrolling, resizing, theme).
     pub fn animating(&self) -> bool {
-        let transitioning = self.frame.moving() || self.reveal.moving() || self.greeting.is_some();
+        let transitioning =
+            self.frame.moving() || self.reveal.moving() || self.greeting.active().is_some();
         let home_motion =
             (!self.frame.has_page() && (self.motion || self.touching())) || self.waiting;
         transitioning || home_motion
@@ -396,34 +387,36 @@ impl Plate {
     /// Greet a first visit: the greeting is written on the plate, then winds into the point
     /// its line is drawn out of.
     pub fn greet(&mut self) {
-        self.greeting = Some(crate::intro::Greeting::new());
-        self.greeted = true;
-        self.rest_told = false;
+        self.greeting.begin(crate::intro::Greeting::new());
         self.reveal.emerge();
     }
 
+    pub fn writing_greeting(&self) -> bool {
+        self.greeting.being_written()
+    }
+
     /// Stop greeting now (plain paper was chosen): the line draws out as if it had finished.
-    pub fn end_greeting(&mut self) {
-        if self.greeting.take().is_some() {
+    pub fn end_greeting(&mut self, cx: &mut Context<Self>) {
+        if let Some(told) = self.greeting.end() {
             self.reveal.start_pen();
+            cx.emit(told);
         }
     }
 
     /// Tell the site where the greeting has got to, and hand over to the pen when it's done.
     fn follow_greeting(&mut self, cx: &mut Context<Self>) {
-        let Some(greeting) = self.greeting.as_ref() else {
+        let Some(greeting) = self.greeting.active() else {
             return;
         };
-        if !self.rest_told && greeting.resting() {
-            self.rest_told = true;
-            cx.emit(Greeted::Resting);
-        }
+        let moment = Moment {
+            resting: greeting.resting(),
+            done: greeting.done(),
+        };
         if greeting.drawing_out() {
             self.reveal.start_pen();
         }
-        if greeting.done() {
-            self.greeting = None;
-            cx.emit(Greeted::Done);
+        for told in self.greeting.follow(moment).into_iter().flatten() {
+            cx.emit(told);
         }
     }
 
@@ -536,7 +529,7 @@ impl Plate {
     fn tick(&mut self) {
         // waiting blank for a pen with no greeting on it: hold still, so after one frame it costs
         // nothing (under a greeting the grain and glass keep moving)
-        if self.reveal.waiting_for_pen() && self.greeting.is_none() {
+        if self.reveal.waiting_for_pen() && self.greeting.active().is_none() {
             self.last = Instant::now();
             return;
         }

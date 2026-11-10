@@ -46,11 +46,7 @@ pub struct Site {
     /// the home button, drawn by the plate as a pane of glass (the panels hold their own)
     home_glass: crate::overlay::Probe,
     drawers: Drawers,
-    /// the greeting, and the watch on its frames that hands it over to the plate
-    /// a first visit is being greeted on the plate
     greeting: Option<Subscription>,
-    /// the greeting is resting: the plate may be lettered now without stuttering it
-    greeting_rested: bool,
     plate: Option<Entity<Plate>>,
     route: Route,
     /// `go` pushed a history entry for this route (there is one to go back from)
@@ -153,7 +149,6 @@ impl Site {
             home_glass: Default::default(),
             drawers: Default::default(),
             greeting: None,
-            greeting_rested: false,
             plate: None,
             route: Route::parse(&route::current()),
             pushed: false,
@@ -348,11 +343,8 @@ impl Site {
     pub fn set_plain(&mut self, plain: bool, cx: &mut Context<Self>) {
         self.home.plain = plain;
         prefs::set("engraving", if plain { "off" } else { "on" });
-        if plain && self.greeting.take().is_some() {
-            if let Some(plate) = self.plate.as_ref() {
-                plate.update(cx, |plate, _| plate.end_greeting());
-            }
-            seed::remember(true);
+        if let Some(plate) = self.plate.as_ref().filter(|_| plain) {
+            plate.update(cx, |plate, cx| plate.end_greeting(cx));
         }
         cx.notify();
     }
@@ -419,10 +411,7 @@ impl Site {
     fn on_greeted(&mut self, greeted: &Greeted, cx: &mut Context<Self>) {
         match greeted {
             // the plate is lettered while the greeting rests, so that work goes unseen
-            Greeted::Resting => {
-                self.greeting_rested = true;
-                self.retitle(cx);
-            }
+            Greeted::Resting => self.retitle(cx),
             Greeted::Done => {
                 self.greeting = None;
                 seed::remember(true);
@@ -602,12 +591,12 @@ impl Site {
     /// Letter the plate anew from what's here now.
     fn retitle(&mut self, cx: &mut Context<Self>) {
         // lettering the plate is heavy: not while the greeting is still being written
-        if self.greeting.is_some() && !self.greeting_rested {
-            return;
-        }
         let Some(plate) = self.plate.as_ref() else {
             return;
         };
+        if plate.read(cx).writing_greeting() {
+            return;
+        }
         let Some((titles, anchored)) = self.lettering().into_titles(self.route == Route::Home)
         else {
             return;

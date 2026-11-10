@@ -435,12 +435,12 @@ impl Plate {
                 self.pen_arc().unwrap_or(WHOLE_LINE),
                 // the optics from the first frame for a visitor greeted on the plate; else they
                 // rise with it
-                if self.greeted { 1.0 } else { 0.0 },
+                if self.greeting.happened() { 1.0 } else { 0.0 },
             ],
             stops: theme.stops.map(Theme::uniform),
         };
         // nothing moved since the last frame (a settled page frame, a still plate): keep the last image
-        let unchanged = self.greeting.is_none()
+        let unchanged = self.greeting.active().is_none()
             && self.last_drawn.as_ref().is_some_and(|(last, size)| {
                 *size == tsize && bytemuck::bytes_of(last) == bytemuck::bytes_of(&u)
             });
@@ -478,7 +478,7 @@ impl Plate {
             gpu.engraved = Some((tsize, view, group));
         }
         let (lift, d, em) = (self.lift(), self.spacing() * dpr, self.script_em() * dpr);
-        if let Some(greeting) = self.greeting.as_mut() {
+        if let Some(greeting) = self.greeting.active_mut() {
             greeting.prepare(&context, ENGRAVED_FORMAT, tsize, dpr, lift, d, em, u.ink);
         }
         let gpu = self.gpu.as_ref().expect("checked at the top of draw");
@@ -523,7 +523,7 @@ impl Plate {
             pass.draw(0..3, 0..1);
             // the greeting is written into the engraving, so the optics fall on it too
             if second.is_none()
-                && let Some(greeting) = self.greeting.as_ref()
+                && let Some(greeting) = self.greeting.active()
             {
                 greeting.record(&mut pass);
             }
