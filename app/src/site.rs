@@ -19,6 +19,7 @@ use crate::theme::Theme;
 mod find;
 mod lettering;
 mod payloads;
+mod reveal;
 pub mod signal;
 mod timeline;
 
@@ -27,6 +28,7 @@ use find::Find;
 pub use find::MAX_QUERY;
 use lettering::Lettering;
 use payloads::Payloads;
+use reveal::Reveal;
 use signal::pump;
 use timeline::Timeline;
 
@@ -61,9 +63,7 @@ pub struct Site {
     pub home: Home,
     /// the current page's own lettering for the frame
     page_titles: Option<Vec<Title>>,
-    /// when the page's text began to appear: only once it has loaded and the frame has opened round it
-    content_since: Option<web_time::Instant>,
-    ready_since: Option<web_time::Instant>,
+    reveal: Reveal,
     payloads: Payloads,
     find: Find,
     /// the site's own focus: keys reach `site_key` only along gpui's focus path, so the root holds
@@ -168,8 +168,7 @@ impl Site {
             find,
             focus: cx.focus_handle(),
             page_titles: None,
-            content_since: None,
-            ready_since: None,
+            reveal: Reveal::default(),
             nav,
             _fetch: None,
             _index: None,
@@ -221,8 +220,7 @@ impl Site {
         route::sync_document(route.path());
         self.route = route;
         self.page_titles = None;
-        self.content_since = None;
-        self.ready_since = None;
+        self.reveal.reset();
         if let Some(plate) = self.plate.as_ref() {
             plate.update(cx, |plate, _| plate.unsettle());
         }
@@ -695,33 +693,30 @@ impl Render for Site {
         }
 
         route::set_narrow(f32::from(window.viewport_size().width) < design::NARROW_CONTROLS_W);
-        self.drawers.step(self.home.open, window);
-        if self.home.plain {
-            return self.render_plain(&theme, window, cx);
-        }
-        // the home and menu controls float on the plate as glass
-        if let Some(plate) = self.plate.as_ref() {
-            let glass: Vec<_> = std::iter::once(&self.home_glass)
-                .chain(self.drawers.panes())
-                .cloned()
-                .collect();
-            plate.update(cx, |plate, _| plate.set_panes(&glass));
-        }
-
-        // drive frames from the root (redraw tracking always reaches it) while anything moves;
-        // a settled page asks for none, and redraws only on input, so reading costs nothing
-        let fading = self
-            .content_since
-            .is_some_and(|s| s.elapsed().as_secs_f32() < CONTENT_FADE);
-        let loading_page = self.route != Route::Home && !self.page.read(cx).ready();
-        if self.plate.as_ref().is_none_or(|p| p.read(cx).animating()) || fading || loading_page {
+        let drawers_moving = self.drawers.step(self.home.open, window);
+        let (view, revealing) = if self.home.plain {
+            self.render_plain(&theme, window, cx)
+        } else {
+            // the home and menu controls float on the plate as glass
+            if let Some(plate) = self.plate.as_ref() {
+                let glass: Vec<_> = std::iter::once(&self.home_glass)
+                    .chain(self.drawers.panes())
+                    .cloned()
+                    .collect();
+                plate.update(cx, |plate, _| plate.set_panes(&glass));
+            }
+            let plate_moving = self.plate.as_ref().is_none_or(|p| p.read(cx).animating());
+            let (view, revealing) = if self.route == Route::Home {
+                (self.render_home(&theme, window, cx), false)
+            } else {
+                self.render_page(&theme, window, cx)
+            };
+            (view, plate_moving || revealing)
+        };
+        if drawers_moving || revealing {
             window.request_animation_frame();
         }
-
-        if self.route == Route::Home {
-            return self.render_home(&theme, window, cx);
-        }
-        self.render_page(&theme, window, cx)
+        view
     }
 }
 
@@ -765,11 +760,8 @@ impl Site {
         }
         let progress = plate.read(cx).frame_progress();
         let plate = plate.clone();
-        let leaving = (progress > 0.01).then(|| {
-            // the text goes first, in the first stretch of the unwind, then the line winds home
-            self.page.update(cx, |page, cx| {
-                page.set_shown(((progress - 0.6) / 0.4).clamp(0.0, 1.0), cx)
-            });
+        let leaving = Reveal::leaving(progress).map(|shown| {
+            self.page.update(cx, |page, cx| page.set_shown(shown, cx));
             div().absolute().inset_0().child(
                 self.page
                     .clone()
@@ -797,7 +789,7 @@ impl Site {
         theme: &Theme,
         window: &mut Window,
         cx: &mut Context<Self>,
-    ) -> gpui::AnyElement {
+    ) -> (gpui::AnyElement, bool) {
         // the line winds out from the spiral to frame the reading column, and follows it as it scrolls
         let plate = &self.ensure_plate(cx);
         // the frame opens with the content, never ahead of it: until the page has arrived the plate
@@ -822,37 +814,20 @@ impl Site {
         // the column is laid out once, at its own size (so the frame can measure it and nothing
         // is laid out again while the line winds out round it); the text waits for the line to
         // open round it, then fades up
-        let ready = self.page.read(cx).ready();
-        if !ready {
-            self.content_since = None;
-            self.ready_since = None;
-        } else {
-            let ready_since = *self.ready_since.get_or_insert_with(web_time::Instant::now);
-            if ready_since.elapsed().as_secs_f32() < 1.7 {
-                window.request_animation_frame();
-            }
-            // never hold a page back for long, even if the frame can't settle
-            let waited = ready_since.elapsed().as_secs_f32() > 1.6;
-            if (open || waited) && self.content_since.is_none() {
-                self.content_since = Some(web_time::Instant::now());
-            }
-        }
-        // between pages the last one stays up until the next replaces it in place (same column
-        // width, so only the frame's top and bottom move)
-        let keeping_last = !ready && self.page.read(cx).has_content() && progress > 0.5;
-        let fade = self
-            .content_since
-            .map_or(0.0, |s| (s.elapsed().as_secs_f32() / CONTENT_FADE).min(1.0));
-        let shown = if keeping_last {
-            1.0
-        } else if ready {
-            fade
-        } else {
-            0.0
-        };
-        self.page.update(cx, |page, cx| page.set_shown(shown, cx));
+        let step = self.reveal.page(
+            web_time::Instant::now(),
+            reveal::Page {
+                ready: page_ready,
+                has_content: self.page.read(cx).has_content(),
+                frame_open: open,
+                frame_progress: progress,
+            },
+        );
+        self.page
+            .update(cx, |page, cx| page.set_shown(step.shown, cx));
 
-        self.root(theme, cx)
+        let view = self
+            .root(theme, cx)
             .child(div().absolute().inset_0().child(plate))
             .child(
                 div().absolute().inset_0().child(
@@ -863,7 +838,8 @@ impl Site {
             )
             .children(self.home_button(theme, window, cx))
             .children(self.drawer_cards(false, theme, window, cx))
-            .into_any_element()
+            .into_any_element();
+        (view, step.wants_frame)
     }
 
     /// No shader: the index as a list, pages as plain paper columns.
@@ -872,20 +848,19 @@ impl Site {
         theme: &Theme,
         window: &mut Window,
         cx: &mut Context<Self>,
-    ) -> gpui::AnyElement {
+    ) -> (gpui::AnyElement, bool) {
         let mut root = self.root(theme, cx);
+        let mut wants_frame = false;
         if self.route == Route::Home {
             self.page.update(cx, |page, cx| page.hidden(cx));
             if let Some(index) = self.index.as_ref() {
                 root = root.child(home::list(index, &self.home, &self.nav, theme, window));
             }
         } else {
-            let ready = self.page.read(cx).ready();
-            if !ready {
-                window.request_animation_frame();
-            }
+            let step = Reveal::plain(self.page.read(cx).ready());
+            wants_frame = step.wants_frame;
             self.page.update(cx, |page, cx| {
-                page.set_shown(if ready { 1.0 } else { 0.0 }, cx);
+                page.set_shown(step.shown, cx);
                 page.follow_appearance(theme.dark, cx);
             });
             root = root.child(
@@ -896,9 +871,11 @@ impl Site {
                 ),
             );
         }
-        root.children(self.home_button(theme, window, cx))
+        let view = root
+            .children(self.home_button(theme, window, cx))
             .children(self.drawer_cards(self.route == Route::Home, theme, window, cx))
-            .into_any_element()
+            .into_any_element();
+        (view, wants_frame)
     }
 }
 
@@ -984,9 +961,6 @@ impl Site {
         )
     }
 }
-
-/// How long a page's text takes to fade up once the frame has opened round it, seconds.
-const CONTENT_FADE: f32 = 0.3;
 
 /// The document title: the page's name (a tag's with its `#`, the developer docs' in full).
 fn title_for(payload: &RoutePayload) -> String {

@@ -171,7 +171,8 @@ impl Default for Drawers {
 impl Drawers {
     /// Ease each panel toward open (the one `open`) or closed, and put its glass where this
     /// frame draws it.
-    pub fn step(&mut self, open: Option<Drawer>, window: &mut Window) {
+    pub fn step(&mut self, open: Option<Drawer>, window: &Window) -> bool {
+        let mut moving = false;
         let now = web_time::Instant::now();
         // `#slowui`: a tenth of the speed, to see the motion frame by frame
         let pace = if crate::route::debug::slow_ui() {
@@ -191,7 +192,7 @@ impl Drawers {
                 self.k[i] = target;
             } else {
                 self.k[i] += (target - self.k[i]) * (1.0 - (-dt * 13.0).exp());
-                window.request_animation_frame();
+                moving = true;
             }
             if self.k[i] <= 0.001 {
                 if let Some(b) = self.glass[i].bounds() {
@@ -216,6 +217,7 @@ impl Drawers {
                 gpui::size(px(a.width), px(h)),
             ));
         }
+        moving
     }
 
     pub fn anim(&self, which: Drawer, window: &Window) -> MenuAnim {
