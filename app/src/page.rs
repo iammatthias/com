@@ -180,7 +180,7 @@ impl Render for Page {
                     .flex_1()
                     .overflow_y_scroll()
                     .track_scroll(&self.scroll)
-                    .px(gpui::px(if design::is_phone(window) { 22.0 } else { 48.0 }))
+                    .px(gpui::px(content::page_gutter(window)))
                     .pt(gpui::px(top))
                     .pb(gpui::px(120. + crate::route::safe_insets()[2]))
                     .child(

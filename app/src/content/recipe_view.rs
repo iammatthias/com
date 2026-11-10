@@ -3,6 +3,7 @@
 //! rescales amounts; clicking an ingredient strikes it off.
 
 use std::collections::HashSet;
+use std::rc::Rc;
 
 use gpui::prelude::*;
 
@@ -121,7 +122,7 @@ pub fn view(block: &RecipeBlock, ctx: &Ctx, window: &mut Window, cx: &mut App) -
 
     match grids {
         Some(grids) => {
-            if let Some(stage) = recipe_steps::stage(&state, recipe, details, ctx, window, cx) {
+            if let Some(stage) = recipe_steps::stage(&state, recipe, details, ctx) {
                 col = col.child(stage);
             }
             for g in grids {
@@ -135,14 +136,13 @@ pub fn view(block: &RecipeBlock, ctx: &Ctx, window: &mut Window, cx: &mut App) -
                     &state,
                     ctx,
                     window,
-                    cx,
                 ));
             }
         }
         None => col = col.child(ingredient_list(recipe, factor, &struck, &state, ctx)),
     }
 
-    col = col.child(method(recipe, details, active, &state, ctx, window, cx));
+    col = col.child(method(recipe, details, active, &state, ctx));
     if let Some(n) = notes {
         col = col.child(
             div()
@@ -150,7 +150,7 @@ pub fn view(block: &RecipeBlock, ctx: &Ctx, window: &mut Window, cx: &mut App) -
                 .text_size(px(17.))
                 .line_height(px(27.))
                 .text_color(theme.muted)
-                .child(render::rich(n, ctx, window, cx)),
+                .child(render::rich(n, ctx)),
         );
     }
     if let Some(label_text) = recipe.source.as_deref().or(recipe.source_url.as_deref()) {
@@ -235,15 +235,14 @@ fn toggle_struck(state: &ElementId, i: usize, window: &mut Window) {
 #[allow(clippy::too_many_arguments)]
 fn grid(
     g: &Grid,
-    rec: &Recipe,
+    rec: &Rc<Recipe>,
     ingredient_notes: &[Option<super::md::Rich>],
     factor: f64,
     struck: &HashSet<usize>,
     active: Option<usize>,
     state: &ElementId,
     ctx: &Ctx,
-    _window: &mut Window,
-    _cx: &mut App,
+    window: &mut Window,
 ) -> AnyElement {
     let theme = ctx.theme;
     let ing_span = 2u16;
@@ -254,8 +253,8 @@ fn grid(
 
     // step mode: the active step's cell and the rows it combines stay lit, the rest dims
     let hot_rows = active
-        .and_then(|a| recipe::placements(g).into_iter().find(|(s, ..)| *s == a))
-        .map(|(_, _, r0, n)| r0..r0 + n);
+        .and_then(|a| g.steps.iter().find(|p| p.step == a))
+        .map(|p| p.row..p.row + p.rows);
     let dim = active.is_some();
     let mut cells: Vec<AnyElement> = Vec::new();
     for (r, row) in g.rows.iter().enumerate() {
@@ -322,7 +321,13 @@ fn grid(
                 .into_any_element(),
         );
     }
-    for (step, c, r0, n) in recipe::placements(g) {
+    for &recipe::Placement {
+        step,
+        col,
+        row,
+        rows,
+    } in &g.steps
+    {
         let st = &rec.steps[step];
         let hot = active == Some(step);
         let (state_c, rec_c) = (state.clone(), rec.clone());
@@ -337,9 +342,9 @@ fn grid(
                 .on_click(move |_, window, cx| {
                     recipe_steps::pick(&state_c, &rec_c, step, window, cx)
                 })
-                .row_start(r0 as i16 + 1)
-                .row_span(n.max(1) as u16)
-                .col_start(c as i16 + 1 + ing_span as i16)
+                .row_start(row as i16 + 1)
+                .row_span(rows.max(1) as u16)
+                .col_start(col as i16 + 1 + ing_span as i16)
                 .px(px(7.))
                 .py(px(6.))
                 .border_b_1()
@@ -370,33 +375,16 @@ fn grid(
         );
     }
     // the open cells under shorter branches keep the row's baseline rule
-    for (r, row) in g.rows.iter().enumerate() {
-        let mut c = 0u16;
-        let covered: Vec<(usize, usize, usize, usize)> = recipe::placements(g);
-        for cell in &row.cells {
-            if let recipe::Cell::Gap { col_span } = cell {
-                // find the first uncovered column at or after c
-                while (c as usize) < g.width
-                    && covered
-                        .iter()
-                        .any(|(_, cc, r0, n)| *cc == c as usize && r >= *r0 && r < r0 + n)
-                {
-                    c += 1;
-                }
-                cells.push(
-                    div()
-                        .row_start(r as i16 + 1)
-                        .col_start(c as i16 + 1 + ing_span as i16)
-                        .col_span(*col_span as u16)
-                        .border_b_1()
-                        .border_color(alpha(line, 0.5))
-                        .into_any_element(),
-                );
-                c += *col_span as u16;
-            } else {
-                c += 1;
-            }
-        }
+    for b in &g.blanks {
+        cells.push(
+            div()
+                .row_start(b.row as i16 + 1)
+                .col_start(b.col as i16 + 1 + ing_span as i16)
+                .col_span(b.cols as u16)
+                .border_b_1()
+                .border_color(alpha(line, 0.5))
+                .into_any_element(),
+        );
     }
 
     let grid_el = div()
@@ -421,12 +409,10 @@ fn grid(
             let seen = state::slot(&follow, || None::<usize>, |f| *f);
             if seen != active {
                 state::slot(&follow, || None::<usize>, |f| *f = active);
-                if let Some((_, c, ..)) =
-                    active.and_then(|a| recipe::placements(g).into_iter().find(|(s, ..)| *s == a))
-                {
+                if let Some(p) = active.and_then(|a| g.steps.iter().find(|p| p.step == a)) {
                     let col_w = width / cols as f32;
-                    let x0 = (c as f32 + ing_span as f32) * col_w;
-                    render::reveal_in_slide(&id, x0, x0 + col_w, ctx.width, width + 1., _window);
+                    let x0 = (p.col as f32 + ing_span as f32) * col_w;
+                    render::reveal_in_slide(&id, x0, x0 + col_w, ctx.width, width + 1., window);
                 }
             }
             render::hscroll(id, ctx.width, width + 1., grid_el, theme)
@@ -479,13 +465,11 @@ fn ingredient_list(
 }
 
 fn method(
-    rec: &Recipe,
+    rec: &Rc<Recipe>,
     details: &[super::md::Rich],
     active: Option<usize>,
     state: &ElementId,
     ctx: &Ctx,
-    window: &mut Window,
-    cx: &mut App,
 ) -> AnyElement {
     let theme = ctx.theme;
     let mut col = div()
@@ -512,42 +496,36 @@ fn method(
         let hot = active == Some(i);
         let (state_c, rec_c) = (state.clone(), rec.clone());
         let accent = theme.accent;
+        let id = ctx.id("step");
+        let row = render::gutter_row(
+            ctx,
+            30.,
+            div().text_color(theme.accent).child(format!("{}.", i + 1)),
+            |c| {
+                div()
+                    .flex()
+                    .flex_col()
+                    .child(render::rich(&details[i], c))
+                    .when_some(st.duration.clone(), |d, f| {
+                        d.child(
+                            div()
+                                .font_family(theme::MONO)
+                                .text_size(px(12.))
+                                .line_height(px(18.))
+                                .text_color(theme.accent)
+                                .child(f),
+                        )
+                    })
+                    .into_any_element()
+            },
+        );
         col = col.child(
-            div()
-                .id(ctx.id("step"))
+            row.id(id)
                 .cursor_pointer()
-                .flex()
                 .hover_style(move |s| s.bg(alpha(accent, 0.04)))
                 .when(hot, |d| d.bg(alpha(accent, 0.08)))
                 .when(active.is_some() && !hot, |d| d.opacity(0.55))
-                .on_click(move |_, window, cx| recipe_steps::pick(&state_c, &rec_c, i, window, cx))
-                .child(
-                    div()
-                        .w(px(30.))
-                        .flex_none()
-                        .text_color(theme.accent)
-                        .child(format!("{}.", i + 1)),
-                )
-                .child(
-                    div()
-                        .flex_1()
-                        .min_w_0()
-                        .flex()
-                        .flex_col()
-                        .child(ctx.with_width(ctx.width - 30., |c| {
-                            render::rich(&details[i], c, window, cx)
-                        }))
-                        .when_some(st.duration.clone(), |d, f| {
-                            d.child(
-                                div()
-                                    .font_family(theme::MONO)
-                                    .text_size(px(12.))
-                                    .line_height(px(18.))
-                                    .text_color(theme.accent)
-                                    .child(f),
-                            )
-                        }),
-                ),
+                .on_click(move |_, window, cx| recipe_steps::pick(&state_c, &rec_c, i, window, cx)),
         );
     }
     col.into_any_element()

@@ -10,7 +10,7 @@ use std::sync::Arc;
 use gpui::prelude::*;
 use gpui::{
     AnyElement, App, Entity, ImageCache, ImageCacheError, RenderImage, Resource,
-    RetainAllImageCache, WeakEntity, Window, div,
+    RetainAllImageCache, WeakEntity, Window,
 };
 
 use super::scope;
@@ -53,38 +53,28 @@ pub fn near(key: &str) -> bool {
 
 /// Fills its (relative) parent and records where the image `key` lands.
 pub fn probe(key: String) -> AnyElement {
-    div()
-        .absolute()
-        .inset_0()
-        .child(
-            gpui::canvas(
-                move |bounds, window, _| {
-                    let (top, bottom) = (f32::from(bounds.top()), f32::from(bounds.bottom()));
-                    scope::with(
-                        |s| &s.near_places,
-                        |p| p.borrow_mut().insert(key.clone(), (top, bottom)),
-                    );
-                    let vh: f32 = window.viewport_size().height.into();
-                    let now = is_near(top, bottom, vh);
-                    let decided =
-                        scope::with(|s| &s.near_decided, |d| d.borrow().get(&key).copied());
-                    if decided != Some(now) && !PENDING.get() {
-                        PENDING.set(true);
-                        window.on_next_frame(|_, cx| {
-                            PENDING.set(false);
-                            VIEW.with(|v| {
-                                if let Some(f) = v.borrow().as_ref() {
-                                    f(cx);
-                                }
-                            });
-                        });
+    super::on_paint(move |bounds, window, _| {
+        let (top, bottom) = (f32::from(bounds.top()), f32::from(bounds.bottom()));
+        scope::with(
+            |s| &s.near_places,
+            |p| p.borrow_mut().insert(key.clone(), (top, bottom)),
+        );
+        let vh: f32 = window.viewport_size().height.into();
+        let now = is_near(top, bottom, vh);
+        let decided = scope::with(|s| &s.near_decided, |d| d.borrow().get(&key).copied());
+        if decided != Some(now) && !PENDING.get() {
+            PENDING.set(true);
+            window.on_next_frame(|_, cx| {
+                PENDING.set(false);
+                VIEW.with(|v| {
+                    if let Some(f) = v.borrow().as_ref() {
+                        f(cx);
                     }
-                },
-                |_, _, _, _| {},
-            )
-            .size_full(),
-        )
-        .into_any_element()
+                });
+            });
+        }
+    })
+    .into_any_element()
 }
 
 /// The page's image cache: what a render's layout doesn't ask for is dropped at the next render.

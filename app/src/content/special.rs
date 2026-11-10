@@ -9,9 +9,9 @@ use crate::api::{Developers, Navigate, Now, ResumeSection};
 use crate::select::Selection;
 use crate::theme::{self, Theme};
 
-use super::pages;
 use super::render::{alpha, double_rule, hairline, label};
 use super::{column, link};
+use super::{pages, post};
 
 fn section_label(text: &str, theme: &Theme) -> gpui::Div {
     label(text.to_uppercase(), theme.accent).pt(px(10.))
@@ -66,7 +66,7 @@ pub fn now(
             if i > 0 {
                 col = col.child(double_rule(theme, 48.));
             }
-            col = col.child(pages::post_body(p, false, nav, theme, sel, window, cx));
+            col = col.child(post::post_body(p, false, nav, theme, sel, window, cx));
         }
         col = col.child(
             link("now:feed", "All updates →", "/feed", nav, theme)

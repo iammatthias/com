@@ -125,20 +125,14 @@ fn fetch(cx: &mut App) {
 /// What sits under the last post: a probe that asks for more as the end nears, and a word
 /// on where the list stands.
 pub fn tail(tail: Tail, theme: &Theme) -> AnyElement {
-    let probe = div().absolute().inset_0().child(
-        gpui::canvas(
-            |bounds, window, cx| {
-                let top: f32 = bounds.origin.y.into();
-                let view = window.content_mask().bounds;
-                let bottom: f32 = (view.origin.y + view.size.height).into();
-                if top < bottom + AHEAD {
-                    fetch(cx);
-                }
-            },
-            |_, _, _, _| {},
-        )
-        .size_full(),
-    );
+    let probe = super::on_paint(|bounds, window, cx| {
+        let top: f32 = bounds.origin.y.into();
+        let view = window.content_mask().bounds;
+        let bottom: f32 = (view.origin.y + view.size.height).into();
+        if top < bottom + AHEAD {
+            fetch(cx);
+        }
+    });
     let accent = theme.accent;
     let note = match tail {
         Tail::Loading | Tail::More => div()

@@ -1,7 +1,7 @@
 //! A document's table of contents, as the old site built it (`DocArticle.astro`, `toc.ts`):
 //! its h2/h3 headings when there are at least two, except in the art publication.
 //!
-//! A heading reports where it is painted (a probe in `render::heading`); a contents link
+//! A heading reports where it is painted (the probe `mark` lays over it); a contents link
 //! scrolls the page there. The page's scroll handle belongs to `page.rs`, so the jump is a
 //! synthetic scroll-wheel event of exactly the right size, dispatched once the click is done.
 
@@ -22,6 +22,7 @@ use super::scope;
 pub struct Entry {
     pub level: u8,
     pub text: String,
+    pub block: usize,
 }
 
 /// Publications whose documents never get contents (as on the old site).
@@ -34,13 +35,15 @@ pub fn entries(blocks: &[Block], section: &str) -> Vec<Entry> {
     }
     let out: Vec<Entry> = blocks
         .iter()
-        .filter_map(|b| match b {
+        .enumerate()
+        .filter_map(|(block, b)| match b {
             Block::Heading {
                 level: level @ (2 | 3),
                 text,
             } if !text.text.trim().is_empty() => Some(Entry {
                 level: *level,
                 text: text.text.trim().to_string(),
+                block,
             }),
             _ => None,
         })
@@ -56,32 +59,34 @@ pub(super) struct Spot {
     view_top: f32,
 }
 
-/// An invisible probe for a heading: remembers where it was painted this render.
-pub fn probe(text: &str) -> impl IntoElement {
-    let text = text.trim().to_string();
-    div().absolute().inset_0().child(
-        gpui::canvas(
-            move |bounds, window, _| {
-                let spot = Spot {
-                    top: bounds.origin.y.into(),
-                    view_top: window.content_mask().bounds.origin.y.into(),
-                };
-                scope::with(
-                    |p| &p.toc,
-                    |s| {
-                        s.borrow_mut().insert(text.clone(), spot);
-                    },
-                );
+fn probe(n: usize) -> impl IntoElement {
+    super::on_paint(move |bounds, window, _| {
+        let spot = Spot {
+            top: bounds.origin.y.into(),
+            view_top: window.content_mask().bounds.origin.y.into(),
+        };
+        scope::with(
+            |p| &p.toc,
+            |s| {
+                s.borrow_mut().insert(n, spot);
             },
-            |_, _, _, _| {},
-        )
-        .size_full(),
-    )
+        );
+    })
 }
 
-/// Scroll the page so the heading `text` sits just under the top of the view.
-fn jump(text: &str, window: &mut Window, cx: &mut App) {
-    let Some(spot) = scope::with(|p| &p.toc, |s| s.borrow().get(text).copied()) else {
+pub fn mark(body: &mut [AnyElement], entries: &[Entry]) {
+    for (n, e) in entries.iter().enumerate() {
+        let heading = std::mem::replace(&mut body[e.block], div().into_any_element());
+        body[e.block] = div()
+            .relative()
+            .child(heading)
+            .child(probe(n))
+            .into_any_element();
+    }
+}
+
+fn jump(n: usize, window: &mut Window, cx: &mut App) {
+    let Some(spot) = scope::with(|p| &p.toc, |s| s.borrow().get(&n).copied()) else {
         return;
     };
     let by = spot.top - (spot.view_top + 24.);
@@ -111,7 +116,6 @@ pub fn view(entries: &[Entry], key: &str, theme: &Theme) -> AnyElement {
         .bg(alpha(theme.ink, if theme.dark { 0.05 } else { 0.035 }))
         .child(label("CONTENTS", theme.muted).pb(px(6.)))
         .children(entries.iter().enumerate().map(|(i, e)| {
-            let text = e.text.clone();
             let top = e.level <= 2;
             if top {
                 n += 1;
@@ -140,7 +144,7 @@ pub fn view(entries: &[Entry], key: &str, theme: &Theme) -> AnyElement {
                     )
                 })
                 .child(e.text.clone())
-                .on_click(move |_, window, cx| jump(&text, window, cx))
+                .on_click(move |_, window, cx| jump(i, window, cx))
         }))
         .into_any_element()
 }
@@ -156,5 +160,25 @@ mod tests {
         assert_eq!(entries(&blocks, "posts").len(), 2);
         assert!(entries(&blocks, "art").is_empty());
         assert!(entries(&md::parse("## Only\n"), "posts").is_empty());
+    }
+
+    #[test]
+    fn same_titled_headings_are_told_apart_by_where_they_sit() {
+        let blocks = md::parse("## Notes\n\none\n\n## Notes\n\ntwo\n");
+        assert_eq!(
+            entries(&blocks, "posts"),
+            vec![
+                Entry {
+                    level: 2,
+                    text: "Notes".into(),
+                    block: 0
+                },
+                Entry {
+                    level: 2,
+                    text: "Notes".into(),
+                    block: 2
+                },
+            ]
+        );
     }
 }

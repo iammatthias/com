@@ -6,6 +6,8 @@
 //! The clock only asks for redraws while it runs: a small task notifies the page a few times
 //! a second and is dropped (cancelling it) when the clock stops.
 
+use std::rc::Rc;
+
 use gpui::prelude::*;
 use gpui::{AnyElement, App, ElementId, FocusHandle, KeyDownEvent, Window, div};
 
@@ -172,7 +174,7 @@ fn reset(st: &ElementId, window: &mut Window) {
 /// ←/→ step, Esc leaves. Attached to the recipe's root, which holds focus in step mode.
 pub fn keys(
     st: &ElementId,
-    rec: &Recipe,
+    rec: &Rc<Recipe>,
 ) -> impl Fn(&KeyDownEvent, &mut Window, &mut App) + 'static {
     let st = st.clone();
     let rec = rec.clone();
@@ -207,11 +209,9 @@ fn control(id: ElementId, text: &str, ctx: &Ctx) -> gpui::Stateful<gpui::Div> {
 /// The stage above the grid while a step is shown.
 pub fn stage(
     st: &ElementId,
-    rec: &Recipe,
+    rec: &Rc<Recipe>,
     details: &[super::md::Rich],
     ctx: &Ctx,
-    window: &mut Window,
-    cx: &mut App,
 ) -> Option<AnyElement> {
     let s = state::get::<RecipeState>(st);
     let i = s.active?;
@@ -262,7 +262,7 @@ pub fn stage(
             div()
                 .text_size(px(17.))
                 .line_height(px(26.))
-                .child(render::rich(&details[i], c, window, cx))
+                .child(render::rich(&details[i], c))
         }));
 
     if clock.total > 0 {

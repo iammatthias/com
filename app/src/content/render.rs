@@ -36,6 +36,7 @@ pub struct Ctx<'a> {
     /// reading column width in px
     pub width: f32,
     pub scale: f32,
+    pub captions: bool,
     /// unique per payload (doc cid, post rkey…): prefixes element ids and view state keys
     pub key: SharedString,
     /// every image figure rendered so far, for the lightbox to step through
@@ -53,6 +54,7 @@ impl<'a> Ctx<'a> {
         parsed: Rc<Parsed>,
         width: f32,
         scale: f32,
+        captions: bool,
         key: impl Into<SharedString>,
     ) -> Self {
         Self {
@@ -63,6 +65,7 @@ impl<'a> Ctx<'a> {
             parsed,
             width,
             scale,
+            captions,
             key: key.into(),
             gallery: Default::default(),
             n: Cell::new(0),
@@ -87,6 +90,7 @@ impl<'a> Ctx<'a> {
             parsed: self.parsed.clone(),
             width,
             scale: self.scale,
+            captions: self.captions,
             key: self.key.clone(),
             gallery: self.gallery.clone(),
             n: Cell::new(self.n.get()),
@@ -193,16 +197,15 @@ fn styled_runs(r: &Rich, theme: &Theme, hovered: Option<u16>) -> Runs {
 }
 
 /// A run of rich text: emphasis, small-caps strong, mono code, links that navigate.
-pub fn rich(r: &Rich, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElement {
-    rich_joined(r, ctx, Join::Paragraph, window, cx)
+pub fn rich(r: &Rich, ctx: &Ctx) -> AnyElement {
+    rich_joined(r, ctx, Join::Paragraph)
 }
 
 /// `rich`, with what copied text puts before this run.
-fn rich_joined(r: &Rich, ctx: &Ctx, join: Join, window: &mut Window, cx: &mut App) -> AnyElement {
+fn rich_joined(r: &Rich, ctx: &Ctx, join: Join) -> AnyElement {
     if r.text.is_empty() {
         return div().into_any_element();
     }
-    let _ = (window, cx);
     let hover_id = ctx.id("t");
     let s = styled_runs(r, ctx.theme, state::get::<Option<u16>>(&hover_id));
     let text = ctx
@@ -244,24 +247,22 @@ pub fn blocks(list: &[Block], ctx: &Ctx, window: &mut Window, cx: &mut App) -> V
 
 /// A vertical stack of blocks with the body's paragraph spacing.
 pub fn stack(list: &[Block], ctx: &Ctx, window: &mut Window, cx: &mut App) -> gpui::Div {
-    div()
-        .flex()
-        .flex_col()
-        .gap(px(18.))
-        .children(blocks(list, ctx, window, cx))
+    stacked(blocks(list, ctx, window, cx))
+}
+
+pub fn stacked(children: Vec<AnyElement>) -> gpui::Div {
+    div().flex().flex_col().gap(px(18.)).children(children)
 }
 
 pub fn block(b: &Block, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElement {
     let theme = ctx.theme;
     match b {
-        Block::Heading { level, text } => heading(*level, text, ctx, window, cx),
-        Block::Para(r) => div().child(rich(r, ctx, window, cx)).into_any_element(),
-        Block::Quote(body) => div()
-            .pl(px(22.))
+        Block::Heading { level, text } => heading(*level, text, ctx),
+        Block::Para(r) => div().child(rich(r, ctx)).into_any_element(),
+        Block::Quote(body) => inset(ctx, 0., 22., |c| stack(body, c, window, cx))
             .border_l_1()
             .border_color(theme.rule)
             .italic()
-            .child(ctx.with_width(ctx.width - 22., |c| stack(body, c, window, cx)))
             .into_any_element(),
         Block::Callout { kind, body } => callout(*kind, body, ctx, window, cx),
         Block::List { start, items } => list(*start, items, ctx, window, cx),
@@ -292,12 +293,12 @@ pub fn block(b: &Block, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElem
             )
             .into_any_element(),
         Block::Recipe(r) => recipe_view::view(r, ctx, window, cx),
-        Block::Table { aligns, head, rows } => table(aligns, head, rows, ctx, window, cx),
+        Block::Table { aligns, head, rows } => table(aligns, head, rows, ctx),
         Block::Rule => div()
             .py(px(10.))
             .child(double_rule(theme, 160.))
             .into_any_element(),
-        Block::Figure(f) => media::figure(&f.src, &f.alt, ctx.width, true, ctx),
+        Block::Figure(f) => media::figure(&f.src, &f.alt, ctx.width, ctx.captions, ctx),
         Block::Series(slug) => match ctx.parsed.series.get(slug) {
             Some(tree) => series_view::view(tree, ctx, window, cx),
             None => muted_note(&format!("The series “{slug}” is missing."), ctx),
@@ -322,9 +323,38 @@ pub fn block(b: &Block, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElem
     }
 }
 
-fn heading(level: u8, text: &Rich, ctx: &Ctx, window: &mut Window, cx: &mut App) -> AnyElement {
+fn inset<R: IntoElement>(
+    ctx: &Ctx,
+    margin: f32,
+    pad: f32,
+    body: impl FnOnce(&Ctx) -> R,
+) -> gpui::Div {
+    div()
+        .ml(px(margin))
+        .pl(px(pad))
+        .child(ctx.with_width(ctx.width - margin - pad, body))
+}
+
+pub fn gutter_row(
+    ctx: &Ctx,
+    width: f32,
+    marker: impl IntoElement,
+    body: impl FnOnce(&Ctx) -> AnyElement,
+) -> gpui::Div {
+    div()
+        .flex()
+        .child(div().w(px(width)).flex_none().child(marker))
+        .child(
+            div()
+                .flex_1()
+                .min_w_0()
+                .child(ctx.with_width(ctx.width - width, body)),
+        )
+}
+
+fn heading(level: u8, text: &Rich, ctx: &Ctx) -> AnyElement {
     let theme = ctx.theme;
-    let body = rich(text, ctx, window, cx);
+    let body = rich(text, ctx);
     let el = match level {
         // a scale off the 19px body: 30 · 24 · 20 italic · tracked label
         1 => div()
@@ -354,11 +384,7 @@ fn heading(level: u8, text: &Rich, ctx: &Ctx, window: &mut Window, cx: &mut App)
             .letter_spacing(px(0.9))
             .text_color(theme.muted),
     };
-    el.when(matches!(level, 2 | 3), |d| {
-        d.relative().child(super::toc::probe(&text.text))
-    })
-    .child(body)
-    .into_any_element()
+    el.child(body).into_any_element()
 }
 
 fn callout_mark(kind: CalloutKind) -> &'static str {
@@ -379,28 +405,28 @@ fn callout(
     cx: &mut App,
 ) -> AnyElement {
     let theme = ctx.theme;
-    div()
-        .pl(px(20.))
-        .border_l_1()
-        .border_color(alpha(theme.accent, 0.7))
+    let mark = div()
         .flex()
-        .flex_col()
-        .gap(px(6.))
+        .items_baseline()
+        .gap(px(8.))
         .child(
             div()
-                .flex()
-                .items_baseline()
-                .gap(px(8.))
-                .child(
-                    div()
-                        .text_color(theme.accent)
-                        .text_size(px(20.))
-                        .child(callout_mark(kind)),
-                )
-                .child(label(kind.label(), theme.accent)),
+                .text_color(theme.accent)
+                .text_size(px(20.))
+                .child(callout_mark(kind)),
         )
-        .child(ctx.with_width(ctx.width - 20., |c| stack(body, c, window, cx)))
-        .into_any_element()
+        .child(label(kind.label(), theme.accent));
+    inset(ctx, 0., 20., |c| {
+        div()
+            .flex()
+            .flex_col()
+            .gap(px(6.))
+            .child(mark)
+            .child(stack(body, c, window, cx))
+    })
+    .border_l_1()
+    .border_color(alpha(theme.accent, 0.7))
+    .into_any_element()
 }
 
 fn list(
@@ -413,7 +439,6 @@ fn list(
     let theme = ctx.theme;
     let depth = ctx.depth.get();
     ctx.depth.set(depth + 1);
-    let gutter = 30.;
     let rows: Vec<AnyElement> = items
         .iter()
         .enumerate()
@@ -451,32 +476,21 @@ fn list(
                     })
                     .into_any_element(),
             };
-            let body = ctx.with_width(ctx.width - gutter, |c| {
-                div()
-                    .flex()
-                    .flex_col()
-                    .gap(px(8.))
-                    .children(blocks(&item.body, c, window, cx))
-            });
-            div()
-                .flex()
-                .child(
+            gutter_row(
+                ctx,
+                30.,
+                div().flex().justify_end().pr(px(10.)).child(marker),
+                |c| {
                     div()
-                        .w(px(gutter))
-                        .flex_none()
                         .flex()
-                        .justify_end()
-                        .pr(px(10.))
-                        .child(marker),
-                )
-                .child(
-                    div()
-                        .flex_1()
-                        .min_w_0()
-                        .when(item.task == Some(true), |d| d.text_color(theme.muted))
-                        .child(body),
-                )
-                .into_any_element()
+                        .flex_col()
+                        .gap(px(8.))
+                        .children(blocks(&item.body, c, window, cx))
+                        .into_any_element()
+                },
+            )
+            .when(item.task == Some(true), |d| d.text_color(theme.muted))
+            .into_any_element()
         })
         .collect();
     ctx.depth.set(depth);
@@ -657,14 +671,7 @@ pub fn pele_playground(src: &str) -> String {
     )
 }
 
-fn table(
-    aligns: &[Align],
-    head: &[Rich],
-    rows: &[Vec<Rich>],
-    ctx: &Ctx,
-    window: &mut Window,
-    cx: &mut App,
-) -> AnyElement {
+fn table(aligns: &[Align], head: &[Rich], rows: &[Vec<Rich>], ctx: &Ctx) -> AnyElement {
     let theme = ctx.theme;
     let cols = head
         .len()
@@ -689,7 +696,7 @@ fn table(
     };
     let widths: Vec<f32> = widths.iter().map(|w| (w * stretch).floor()).collect();
     let width: f32 = widths.iter().sum();
-    let cell = |r: Option<&Rich>, i: usize, window: &mut Window, cx: &mut App| {
+    let cell = |r: Option<&Rich>, i: usize| {
         let col_w = widths[i];
         let el = div()
             .w(px(col_w))
@@ -705,7 +712,7 @@ fn table(
         // copied, a row is a line of tab-separated cells, and an empty cell keeps its tab
         let join = if i == 0 { Join::Line } else { Join::Tab };
         el.child(ctx.with_width(col_w - 16., |c| match r {
-            Some(r) if !r.text.is_empty() => rich_joined(r, c, join, window, cx),
+            Some(r) if !r.text.is_empty() => rich_joined(r, c, join),
             _ => c.sel.text("").join(join).into_any_element(),
         }))
     };
@@ -723,7 +730,7 @@ fn table(
             .border_b_1()
             .border_color(theme.rule);
         for i in 0..cols {
-            row = row.child(cell(head.get(i), i, window, cx));
+            row = row.child(cell(head.get(i), i));
         }
         grid = grid.child(row);
     }
@@ -736,7 +743,7 @@ fn table(
                 d.border_b_1().border_color(alpha(theme.rule, 0.6))
             });
         for i in 0..cols {
-            row = row.child(cell(r.get(i), i, window, cx));
+            row = row.child(cell(r.get(i), i));
         }
         grid = grid.child(row);
     }
@@ -796,12 +803,9 @@ fn reveal(
         .child(header)
         .when(is_open, |d| {
             d.child(
-                div()
-                    .ml(px(6.))
-                    .pl(px(18.))
+                inset(ctx, 6., 18., |c| stack(body, c, window, cx))
                     .border_l_1()
-                    .border_color(theme.rule)
-                    .child(ctx.with_width(ctx.width - 24., |c| stack(body, c, window, cx))),
+                    .border_color(theme.rule),
             )
         })
         .into_any_element()
@@ -860,27 +864,21 @@ fn footnotes(notes: &[Footnote], ctx: &Ctx, window: &mut Window, cx: &mut App) -
         .line_height(px(25.))
         .child(div().w(px(120.)).h(px(1.)).bg(theme.rule))
         .children(notes.iter().map(|n| {
-            div()
-                .flex()
-                .child(
+            gutter_row(
+                ctx,
+                30.,
+                div()
+                    .text_color(theme.accent)
+                    .child(format!("{}.", n.number)),
+                |c| {
                     div()
-                        .w(px(30.))
-                        .flex_none()
-                        .text_color(theme.accent)
-                        .child(format!("{}.", n.number)),
-                )
-                .child(
-                    div()
-                        .flex_1()
-                        .min_w_0()
-                        .child(ctx.with_width(ctx.width - 30., |c| {
-                            div()
-                                .flex()
-                                .flex_col()
-                                .gap(px(6.))
-                                .children(blocks(&n.body, c, window, cx))
-                        })),
-                )
+                        .flex()
+                        .flex_col()
+                        .gap(px(6.))
+                        .children(blocks(&n.body, c, window, cx))
+                        .into_any_element()
+                },
+            )
         }))
         .into_any_element()
 }
@@ -923,25 +921,17 @@ fn embed_block(
         .relative()
         .w(px(ctx.width))
         .h(gpui::px(height))
-        .child(
-            div().absolute().inset_0().child(
-                gpui::canvas(
-                    move |bounds, window, _| {
-                        let clip = window.content_mask().bounds;
-                        let rect = crate::overlay::Rect::from_bounds(bounds);
-                        dom_embed::place(
-                            &key,
-                            embed,
-                            &props,
-                            &style,
-                            rect,
-                            crate::overlay::Rect::from_bounds(clip),
-                        );
-                    },
-                    |_, _, _, _| {},
-                )
-                .size_full(),
-            ),
-        )
+        .child(super::on_paint(move |bounds, window, _| {
+            let clip = window.content_mask().bounds;
+            let rect = crate::overlay::Rect::from_bounds(bounds);
+            dom_embed::place(
+                &key,
+                embed,
+                &props,
+                &style,
+                rect,
+                crate::overlay::Rect::from_bounds(clip),
+            );
+        }))
         .into_any_element()
 }

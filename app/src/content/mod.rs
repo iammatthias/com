@@ -4,7 +4,9 @@
 //! - `md`: markdown → block tree (pure, tested), `recipe` and `series` likewise
 //! - `cache`: one parse per payload
 //! - `render`, `media`, `series_view`, `recipe_view`, `recipe_steps`: blocks → elements
-//! - `pages`: the per-route layouts; `special`: now, resume, developers
+//! - the per-route layouts: `doc`, `listing` (and tags), `post` (and the feed), `pages` (plain
+//!   pages, 404, and the prose and titles the others share); `special`: now, resume, developers
+//! - `format`: dates, path segments and clipped text, for the whole site
 //! - `feed`: the feed's endless scroll; `toc`: a document's contents
 //! - `lightbox`: a figure's image over the whole window
 //! - `terrazzo`: a record's banner; `diagram`: Mermaid syntax, drawn by pele in the browser
@@ -14,14 +16,18 @@
 
 mod cache;
 pub mod diagram;
+mod doc;
 mod feed;
 #[cfg(test)]
 pub(crate) mod fixtures;
+mod format;
 mod lightbox;
+mod listing;
 mod md;
 pub mod media;
 pub mod near;
 mod pages;
+mod post;
 mod recipe;
 mod recipe_steps;
 mod recipe_view;
@@ -30,8 +36,9 @@ mod series;
 mod series_view;
 mod special;
 
+pub use format::{encode_segment, fmt_date_short};
 pub use media::parse_color;
-pub use pages::{encode_segment, fmt_date_short};
+pub use pages::page_gutter;
 pub use render::label;
 mod scope;
 mod state;
@@ -81,7 +88,7 @@ fn body(
     cx: &mut App,
 ) -> AnyElement {
     match payload {
-        RoutePayload::Doc { doc } => pages::doc(doc, nav, theme, sel, window, cx),
+        RoutePayload::Doc { doc } => doc::doc(doc, nav, theme, sel, window, cx),
         RoutePayload::Page {
             slug,
             title,
@@ -91,20 +98,20 @@ fn body(
             section,
             items,
             paging,
-        } => pages::section_listing(section, items, paging, nav, theme),
+        } => listing::section_listing(section, items, paging, nav, theme),
         RoutePayload::Content {
             items,
             paging,
             sections,
-        } => pages::content_listing(items, sections, paging, nav, theme),
+        } => listing::content_listing(items, sections, paging, nav, theme),
         RoutePayload::Tag { tag, items, paging } => {
-            pages::tag_listing(tag, items, paging, nav, theme)
+            listing::tag_listing(tag, items, paging, nav, theme)
         }
-        RoutePayload::Tags { tags, .. } => pages::tags(tags, nav, theme),
+        RoutePayload::Tags { tags, .. } => listing::tags(tags, nav, theme),
         RoutePayload::Feed { posts, paging } => {
-            pages::feed(posts, paging, nav, theme, sel, window, cx)
+            post::feed(posts, paging, nav, theme, sel, window, cx)
         }
-        RoutePayload::Post { post } => pages::post(post, nav, theme, sel, window, cx),
+        RoutePayload::Post { post } => post::post(post, nav, theme, sel, window, cx),
         RoutePayload::Now(n) => special::now(n, nav, theme, sel, window, cx),
         RoutePayload::Resume { title, sections } => special::resume(title, sections, nav, theme),
         RoutePayload::Developers(d) => special::developers(d, nav, theme, sel, window, cx),
@@ -118,6 +125,15 @@ fn body(
 pub fn forget_page() {
     scope::reset();
     cache::next_page();
+}
+
+pub fn on_paint(
+    f: impl FnOnce(gpui::Bounds<gpui::Pixels>, &mut Window, &mut App) + 'static,
+) -> gpui::Div {
+    div()
+        .absolute()
+        .inset_0()
+        .child(gpui::canvas(f, |_, _, _, _| {}).size_full())
 }
 
 /// The reading column every content page shares.

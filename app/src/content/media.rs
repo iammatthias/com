@@ -3,11 +3,13 @@
 use gpui::prelude::*;
 
 use gpui::px;
-use gpui::{AnyElement, Img, ObjectFit, Rgba, StyledImage, div, img, rgb};
+use gpui::{
+    AnyElement, Div, ElementId, Img, ObjectFit, Rgba, Stateful, StyledImage, div, img, rgb,
+};
 
 use crate::api::{self, Media};
 use crate::dom_video;
-use crate::theme;
+use crate::theme::{self, Theme};
 
 use super::lightbox;
 use super::md::MediaSrc;
@@ -115,23 +117,17 @@ pub fn clip_probe(
     poster: Option<String>,
     mode: dom_video::Mode,
 ) -> impl IntoElement {
-    div().absolute().inset_0().child(
-        gpui::canvas(
-            move |bounds, window, _| {
-                let clip = window.content_mask().bounds;
-                dom_video::place(
-                    &key,
-                    &src,
-                    poster.as_deref(),
-                    mode,
-                    crate::overlay::Rect::from_bounds(bounds),
-                    crate::overlay::Rect::from_bounds(clip),
-                );
-            },
-            |_, _, _, _| {},
-        )
-        .size_full(),
-    )
+    super::on_paint(move |bounds, window, _| {
+        let clip = window.content_mask().bounds;
+        dom_video::place(
+            &key,
+            &src,
+            poster.as_deref(),
+            mode,
+            crate::overlay::Rect::from_bounds(bounds),
+            crate::overlay::Rect::from_bounds(clip),
+        );
+    })
 }
 
 /// Where the original bytes live (video/audio open this in a new tab).
@@ -148,51 +144,37 @@ fn plate_color(m: Option<&Media>, ctx: &Ctx) -> Rgba {
         .unwrap_or_else(|| alpha(ctx.theme.rule, 0.55))
 }
 
+enum Kind {
+    Still,
+    Video,
+    Audio,
+}
+
+fn kind(m: Option<&Media>) -> Kind {
+    match m {
+        Some(m) if m.is_audio() => Kind::Audio,
+        Some(m) if m.is_video() => Kind::Video,
+        _ => Kind::Still,
+    }
+}
+
+const AUDIO_ASPECT: f32 = 4.;
+
+const NARROW_COLUMN_W: f32 = 600.;
+
 /// An image (or a video/audio stand-in) at `width`, height from the blob's aspect.
 pub fn figure(src: &MediaSrc, alt: &str, width: f32, caption: bool, ctx: &Ctx) -> AnyElement {
     let m = meta(src, ctx);
-    if m.is_some_and(|m| m.is_video() || m.is_audio()) {
-        return moving(src, alt, width, ctx);
-    }
-    let aspect = m.map(Media::aspect).unwrap_or(4. / 3.);
-    let height = (width / aspect).round();
-    let bg = plate_color(m, ctx);
-    let url = chosen_url(ctx, &original_url(src), || {
-        still_url(src, m, width, ctx.scale)
-    });
-    let probe_key = format!("{}:{}", ctx.key, original_url(src));
-    let shown = Some(url.clone()).filter(|_| super::near::near(&probe_key));
-    // every image opens in the lightbox, stepping through the payload's others
-    let index = {
-        let mut g = ctx.gallery.borrow_mut();
-        g.push(lightbox::Item {
-            large: large_url(src, m, ctx.scale, ctx.width < 600.),
-            thumb: url,
-            alt: alt.trim().to_string(),
-            aspect,
-        });
-        g.len() - 1
+    let plate = match kind(m) {
+        Kind::Still => still(src, alt, width, m, ctx),
+        Kind::Video => video(src, width, m, ctx),
+        Kind::Audio => audio(src, width, m, ctx),
     };
-    let gallery = ctx.gallery.clone();
     div()
         .flex()
         .flex_col()
         .gap(px(8.))
-        .child(
-            div()
-                .id(ctx.id("zoom"))
-                .cursor_pointer()
-                .w(px(width))
-                .h(px(height))
-                .bg(bg)
-                .overflow_hidden()
-                .relative()
-                .child(super::near::probe(probe_key))
-                .when_some(shown, |d, url| {
-                    d.child(picture(url, |i| i.size_full().object_fit(ObjectFit::Cover)))
-                })
-                .on_click(move |_, window, cx| lightbox::open(&gallery, index, window, cx)),
-        )
+        .child(plate)
         .when(caption && !alt.trim().is_empty(), |d| {
             d.child(
                 div()
@@ -208,168 +190,124 @@ pub fn figure(src: &MediaSrc, alt: &str, width: f32, caption: bool, ctx: &Ctx) -
         .into_any_element()
 }
 
-/// Moving media. Video plays as a DOM `<video>` laid over the canvas (`video`, and
-/// `dom_video`); audio can't play on the canvas yet: its poster (or the dominant colour) with a
-/// lettered "play" that opens the original in a new tab.
-pub fn moving(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
-    let theme = ctx.theme;
-    let m = meta(src, ctx);
-    let audio = m.is_some_and(Media::is_audio);
-    if !audio {
-        return video(src, alt, width, ctx);
-    }
-    let aspect = if audio {
-        4.
-    } else {
-        m.map(Media::aspect).unwrap_or(16. / 9.)
-    };
-    let height = (width / aspect).round();
-    let poster = m.and_then(|m| m.thumb_cid.as_deref()).map(|cid| {
+fn frame(id: ElementId, width: f32, height: f32, m: Option<&Media>, ctx: &Ctx) -> Stateful<Div> {
+    div()
+        .id(id)
+        .cursor_pointer()
+        .w(px(width))
+        .h(px(height))
+        .bg(plate_color(m, ctx))
+        .relative()
+        .overflow_hidden()
+}
+
+fn poster(m: Option<&Media>, width: f32, ctx: &Ctx) -> Option<String> {
+    m.and_then(|m| m.thumb_cid.as_deref()).map(|cid| {
         chosen_url(ctx, cid, || {
             api::img_url(cid, preset(width, ctx.scale), ctx.media.get(cid))
         })
-    });
-    let url = original_url(src);
-    let accent = theme.accent;
-    let what = if audio { "Sound" } else { "Moving picture" };
+    })
+}
+
+fn play_badge(what: &'static str, theme: &Theme) -> Div {
     div()
+        .absolute()
+        .bottom(px(12.))
+        .left(px(12.))
+        .px(px(10.))
+        .py(px(2.))
+        .bg(theme.veil(0.88))
         .flex()
-        .flex_col()
+        .items_baseline()
         .gap(px(8.))
+        .child(label(what, theme.muted))
         .child(
             div()
-                .id(ctx.id("play"))
-                .cursor_pointer()
-                .w(px(width))
-                .h(px(height))
-                .bg(plate_color(m, ctx))
-                .relative()
-                .overflow_hidden()
-                .when_some(poster, |d, p| {
-                    d.child(picture(p, |i| i.size_full().object_fit(ObjectFit::Cover)))
-                })
-                .child(
-                    div()
-                        .absolute()
-                        .bottom(px(12.))
-                        .left(px(12.))
-                        .px(px(10.))
-                        .py(px(2.))
-                        .bg(theme.veil(0.88))
-                        .flex()
-                        .items_baseline()
-                        .gap(px(8.))
-                        .child(label(what.to_uppercase(), theme.muted))
-                        .child(
-                            div()
-                                .font_family(theme::BODY)
-                                .italic()
-                                .text_size(px(17.))
-                                .text_color(theme.accent)
-                                .child("play →"),
-                        ),
-                )
-                .hover_style(move |s| s.border_1().border_color(accent))
-                .on_click(move |_, _, _| crate::route::open_external(&url)),
+                .font_family(theme::BODY)
+                .italic()
+                .text_size(px(17.))
+                .text_color(theme.accent)
+                .child("play →"),
         )
-        .when(!alt.trim().is_empty(), |d| {
-            d.child(
-                div()
-                    .w(px(width))
-                    .text_center()
-                    .italic()
-                    .text_size(px(15.))
-                    .line_height(px(22.))
-                    .text_color(theme.muted)
-                    .child(ctx.sel.text(alt.trim().to_string())),
-            )
+}
+
+fn still(src: &MediaSrc, alt: &str, width: f32, m: Option<&Media>, ctx: &Ctx) -> Stateful<Div> {
+    let aspect = m.map(Media::aspect).unwrap_or(4. / 3.);
+    let url = chosen_url(ctx, &original_url(src), || {
+        still_url(src, m, width, ctx.scale)
+    });
+    let probe_key = format!("{}:{}", ctx.key, original_url(src));
+    let shown = Some(url.clone()).filter(|_| super::near::near(&probe_key));
+    // every image opens in the lightbox, stepping through the payload's others
+    let index = {
+        let mut g = ctx.gallery.borrow_mut();
+        g.push(lightbox::Item {
+            large: large_url(src, m, ctx.scale, ctx.width < NARROW_COLUMN_W),
+            thumb: url,
+            alt: alt.trim().to_string(),
+            aspect,
+        });
+        g.len() - 1
+    };
+    let gallery = ctx.gallery.clone();
+    frame(ctx.id("zoom"), width, (width / aspect).round(), m, ctx)
+        .child(super::near::probe(probe_key))
+        .when_some(shown, |d, url| {
+            d.child(picture(url, |i| i.size_full().object_fit(ObjectFit::Cover)))
         })
-        .into_any_element()
+        .on_click(move |_, window, cx| lightbox::open(&gallery, index, window, cx))
+}
+
+/// Audio can't play on the canvas yet: its poster (or the dominant colour) with a lettered
+/// "play" that opens the original in a new tab.
+fn audio(src: &MediaSrc, width: f32, m: Option<&Media>, ctx: &Ctx) -> Stateful<Div> {
+    let url = original_url(src);
+    let accent = ctx.theme.accent;
+    frame(
+        ctx.id("play"),
+        width,
+        (width / AUDIO_ASPECT).round(),
+        m,
+        ctx,
+    )
+    .when_some(poster(m, width, ctx), |d, p| {
+        d.child(picture(p, |i| i.size_full().object_fit(ObjectFit::Cover)))
+    })
+    .child(play_badge("SOUND", ctx.theme))
+    .hover_style(move |s| s.border_1().border_color(accent))
+    .on_click(move |_, _, _| crate::route::open_external(&url))
 }
 
 /// A clip, playing in place: the poster (or the dominant colour) on the canvas, with a real
 /// `<video>` laid over it by `dom_video`. Muted and looping, it starts by itself unless the
 /// reader prefers reduced motion; then a lettered "play" starts it. A click plays or pauses.
-pub fn video(src: &MediaSrc, alt: &str, width: f32, ctx: &Ctx) -> AnyElement {
-    let theme = ctx.theme;
-    let m = meta(src, ctx);
+fn video(src: &MediaSrc, width: f32, m: Option<&Media>, ctx: &Ctx) -> Stateful<Div> {
     // the clip's own shape once its <video> has read it; until then blobs' size, or a guess
     let aspect = dom_video::aspect(&original_url(src))
         .or_else(|| m.and_then(Media::known_aspect))
         .unwrap_or(16. / 9.);
-    let height = (width / aspect).round();
-    let poster = m.and_then(|m| m.thumb_cid.as_deref()).map(|cid| {
-        chosen_url(ctx, cid, || {
-            api::img_url(cid, preset(width, ctx.scale), ctx.media.get(cid))
-        })
-    });
+    let poster = poster(m, width, ctx);
     let key = format!("{}:{}", ctx.key, original_url(src));
     let playing = dom_video::playing(&key);
     let toggle_key = key.clone();
-    div()
-        .flex()
-        .flex_col()
-        .gap(px(8.))
-        .child(
-            div()
-                .id(ctx.id("clip"))
-                .cursor_pointer()
-                .w(px(width))
-                .h(px(height))
-                .bg(plate_color(m, ctx))
-                .relative()
-                .overflow_hidden()
-                .when_some(poster.clone(), |d, p| {
-                    d.child(picture(p, |i| i.size_full().object_fit(ObjectFit::Contain)))
-                })
-                .child(clip_probe(
-                    key,
-                    original_url(src),
-                    poster,
-                    dom_video::Mode::Auto,
-                ))
-                // only seen while the clip isn't drawn over it: before it starts, or with motion reduced
-                .when(!playing, |d| {
-                    d.child(
-                        div()
-                            .absolute()
-                            .bottom(px(12.))
-                            .left(px(12.))
-                            .px(px(10.))
-                            .py(px(2.))
-                            .bg(theme.veil(0.88))
-                            .flex()
-                            .items_baseline()
-                            .gap(px(8.))
-                            .child(label("MOVING PICTURE", theme.muted))
-                            .child(
-                                div()
-                                    .font_family(theme::BODY)
-                                    .italic()
-                                    .text_size(px(17.))
-                                    .text_color(theme.accent)
-                                    .child("play →"),
-                            ),
-                    )
-                })
-                .on_click(move |_, window, _| {
-                    dom_video::toggle(&toggle_key);
-                    window.refresh();
-                }),
-        )
-        .when(!alt.trim().is_empty(), |d| {
-            d.child(
-                div()
-                    .w(px(width))
-                    .text_center()
-                    .italic()
-                    .text_size(px(15.))
-                    .line_height(px(22.))
-                    .text_color(theme.muted)
-                    .child(ctx.sel.text(alt.trim().to_string())),
-            )
+    frame(ctx.id("clip"), width, (width / aspect).round(), m, ctx)
+        .when_some(poster.clone(), |d, p| {
+            d.child(picture(p, |i| i.size_full().object_fit(ObjectFit::Contain)))
         })
-        .into_any_element()
+        .child(clip_probe(
+            key,
+            original_url(src),
+            poster,
+            dom_video::Mode::Auto,
+        ))
+        // only seen while the clip isn't drawn over it: before it starts, or with motion reduced
+        .when(!playing, |d| {
+            d.child(play_badge("MOVING PICTURE", ctx.theme))
+        })
+        .on_click(move |_, window, _| {
+            dom_video::toggle(&toggle_key);
+            window.refresh();
+        })
 }
 
 /// Two balanced columns of tiles (a masonry the way the old CSS columns read).
@@ -412,7 +350,13 @@ pub fn two_columns(items: Vec<(f32, AnyElement)>, width: f32, gap: f32) -> AnyEl
 
 pub fn aspect_of(src: &MediaSrc, ctx: &Ctx) -> f32 {
     meta(src, ctx)
-        .map(|m| if m.is_audio() { 4. } else { m.aspect() })
+        .map(|m| {
+            if m.is_audio() {
+                AUDIO_ASPECT
+            } else {
+                m.aspect()
+            }
+        })
         .unwrap_or(4. / 3.)
 }
 
