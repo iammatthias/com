@@ -21,6 +21,7 @@ for (const [engine, type, launch] of engines) {
         const page = await browser.newPage();
         const asked = {};
         await page.route(/\/diagrams\/\w+\.js(\?|$)/, (r) => {
+            if (r.request().method() === "HEAD") return r.continue();
             const name = new URL(r.request().url()).pathname.match(/(\w+)\.js$/)[1];
             asked[name] = (asked[name] ?? 0) + 1;
             return (!s.only || s.only === name) && asked[name] <= s.cut ? r.abort("connectionreset") : r.continue();

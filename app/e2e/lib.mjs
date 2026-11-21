@@ -33,6 +33,6 @@ export const path = (page) => new URL(page.url()).pathname;
 
 export async function cut(context, re, n, fail = (r) => r.abort("failed")) {
     const c = { n, asked: 0 };
-    await context.route(re, (r) => (++c.asked <= c.n ? fail(r) : r.continue()));
+    await context.route(re, (r) => (r.request().method() === "HEAD" ? r.continue() : ++c.asked <= c.n ? fail(r) : r.continue()));
     return c;
 }
