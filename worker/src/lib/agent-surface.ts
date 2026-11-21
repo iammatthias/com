@@ -54,7 +54,7 @@ export const MCP_SUPPORTED_PROTOCOL_VERSIONS = [
     "2024-11-05",
 ] as const;
 
-interface ApiOperation {
+export interface ApiOperation {
     path: string;
     operationId: string;
     summary: string;
@@ -75,6 +75,10 @@ interface ApiOperation {
         description: string;
     }>;
 }
+
+export const API_V1_PREFIX = "/api/v1";
+export const API_V1_ALIASES = ["search.json", "content.json"] as const;
+export type ApiV1Alias = (typeof API_V1_ALIASES)[number];
 
 export const API_OPERATIONS: ApiOperation[] = [
     {

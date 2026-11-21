@@ -1,7 +1,7 @@
 import type { Ctx, Route } from "./context";
 import { listContent, searchContent } from "../lib/agent-data";
 import { apiHeaders, jsonError } from "../lib/agent-http";
-import { API_OPERATIONS, MAX_SEARCH_LIMIT, SITE_ORIGIN } from "../lib/agent-surface";
+import { API_OPERATIONS, API_V1_PREFIX, MAX_SEARCH_LIMIT, SITE_ORIGIN, type ApiV1Alias } from "../lib/agent-surface";
 import { glassPick } from "../lib/glass";
 import { buildSearchCorpus, SEARCH_DIMS, SEARCH_MODEL } from "../lib/search-corpus";
 import { loadAllFeedEntries } from "../lib/farfield-loader";
@@ -164,19 +164,19 @@ async function revalidate({ request, exec }: Ctx): Promise<Response> {
     return revalidateReply(200, { purged: tags });
 }
 
-const V1: Record<string, (ctx: Ctx) => Promise<Response>> = {
+const V1: Record<ApiV1Alias, (ctx: Ctx) => Promise<Response>> = {
     "search.json": searchJson,
     "content.json": contentJson,
 };
 
 async function v1(ctx: Ctx): Promise<Response> {
     const endpoint = (ctx.params[0] ?? "").replace(/^\/+/, "");
-    const handler = V1[endpoint];
+    const handler = Object.hasOwn(V1, endpoint) ? V1[endpoint as ApiV1Alias] : undefined;
     if (!handler) {
         return jsonError(
             404,
             "endpoint_not_found",
-            `No v1 endpoint at /api/v1/${endpoint}.`,
+            `No v1 endpoint at ${API_V1_PREFIX}/${endpoint}.`,
             `v1 serves: ${Object.keys(V1).join(", ")}. Static datasets stay unversioned at ${API_OPERATIONS.map((o) => o.path).join(", ")}. Specification: ${SITE_ORIGIN}/openapi.json.`,
         );
     }

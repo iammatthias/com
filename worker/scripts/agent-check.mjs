@@ -347,7 +347,13 @@ for (const s of SECTION_SLUGS) {
     if (spec.status === 200) {
         try {
             const d = JSON.parse(spec.body);
-            for (const [p, ops] of Object.entries(d.paths ?? {})) {
+            const bases = (d.servers?.length ? d.servers : [{ url: "/" }]).map((server) =>
+                new URL(server.url, "https://spec.invalid").pathname.replace(/\/$/, ""),
+            );
+            const operations = bases.flatMap((base) =>
+                Object.entries(d.paths ?? {}).map(([path, ops]) => [base + path, ops]),
+            );
+            for (const [p, ops] of operations) {
                 if (ssrSkipped(p)) continue;
                 const required = (ops.get?.parameters ?? []).filter((x) => x.required);
                 const qs = new URLSearchParams();
@@ -538,7 +544,7 @@ if (ORIGIN) {
     else ok("shell sets no cookie");
     if (!/<main id="ssr">[\s\S]*<h1>/.test(html)) fail("shell SSR", "no <main id=\"ssr\"> with an <h1>");
     else ok("shell SSR content");
-    if (!/canvas\{position:fixed!important;inset:0;z-index:1/.test(html)) fail("shell canvas pin", "missing");
+    if (!/canvas\{position:absolute!important;top:0;left:0;z-index:1/.test(html)) fail("shell canvas pin", "missing");
     else ok("shell canvas pin");
     if (!/<script type="module">[\s\S]*_bg\.wasm/.test(html)) fail("shell app bundle", "no wasm bootstrap");
     else ok("shell app bundle");

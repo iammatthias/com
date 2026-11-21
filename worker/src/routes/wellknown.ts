@@ -1,6 +1,6 @@
 import type { Ctx, Route } from "./context";
 import { notFound } from "./context";
-import { AGENT_RESOURCES, AGENT_SKILLS, API_OPERATIONS, SITE_IDENTITY, SITE_ORIGIN, mcpServerCard } from "../lib/agent-surface";
+import { AGENT_RESOURCES, AGENT_SKILLS, API_OPERATIONS, API_V1_ALIASES, type ApiOperation, API_V1_PREFIX, SITE_IDENTITY, SITE_ORIGIN, mcpServerCard } from "../lib/agent-surface";
 import { markdownResponse } from "../lib/agent-http";
 import { assetResponse } from "../lib/http";
 
@@ -186,38 +186,52 @@ for the equivalent HTTP and GraphQL surfaces.
 `);
 }
 
+function operation(op: ApiOperation) {
+    return {
+        operationId: op.operationId,
+        summary: op.summary,
+        description: op.description,
+        tags: ["content"],
+        parameters: [
+            ...(op.params ?? []),
+            {
+                name: "API-Version",
+                in: "header",
+                required: false,
+                schema: { type: "string", enum: ["1"] },
+                description:
+                    "Pin the API version. Omit to use the current version; the response always names the version that served it.",
+            },
+        ],
+        responses: {
+            "200": {
+                description: "Success",
+                content: { [op.contentType]: { schema: { type: "object" } } },
+            },
+            "400": {
+                description: "Invalid request parameters",
+                content: {
+                    "application/problem+json": { schema: { $ref: "#/components/schemas/Problem" } },
+                },
+            },
+        },
+    };
+}
+
 export function openapiSpec(): Response {
     const paths: Record<string, unknown> = {};
     for (const op of API_OPERATIONS) {
-        paths[op.path] = {
+        paths[op.path] = { get: operation(op) };
+    }
+    for (const alias of API_V1_ALIASES) {
+        const op = API_OPERATIONS.find((o) => o.path === `/api/${alias}`);
+        if (!op) throw new Error(`v1 alias ${alias} has no operation`);
+        paths[`${API_V1_PREFIX}/${alias}`] = {
             get: {
-                operationId: op.operationId,
-                summary: op.summary,
-                description: op.description,
-                tags: ["content"],
-                parameters: [
-                    ...(op.params ?? []),
-                    {
-                        name: "API-Version",
-                        in: "header",
-                        required: false,
-                        schema: { type: "string", enum: ["1"] },
-                        description:
-                            "Pin the API version. Omit to use the current version; the response always names the version that served it.",
-                    },
-                ],
-                responses: {
-                    "200": {
-                        description: "Success",
-                        content: { [op.contentType]: { schema: { type: "object" } } },
-                    },
-                    "400": {
-                        description: "Invalid request parameters",
-                        content: {
-                            "application/problem+json": { schema: { $ref: "#/components/schemas/Problem" } },
-                        },
-                    },
-                },
+                ...operation(op),
+                operationId: `${op.operationId}V1`,
+                summary: `${op.summary} (v1)`,
+                description: `${op.description} Version-pinned alias of ${op.path}: same behaviour, guaranteed not to change shape within v1.`,
             },
         };
     }
@@ -232,14 +246,7 @@ export function openapiSpec(): Response {
             contact: { name: SITE_IDENTITY.owner, email: SITE_IDENTITY.email, url: `${SITE_ORIGIN}/contact` },
             license: { name: "All rights reserved", url: `${SITE_ORIGIN}/privacy` },
         },
-        servers: [
-            { url: SITE_ORIGIN, description: "Production (current version)" },
-            {
-                url: `${SITE_ORIGIN}/api/v1`,
-                description:
-                    "Version-pinned aliases of the query endpoints. Same behaviour as the unversioned paths; pin here if you need a surface guaranteed not to change shape.",
-            },
-        ],
+        servers: [{ url: SITE_ORIGIN, description: "Production" }],
         "x-api-version": "1",
         "x-deprecation-policy": {
             summary:
