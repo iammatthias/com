@@ -1,7 +1,15 @@
 import { base, open, check, done } from "./lib.mjs";
 
 const state = (page) =>
-    page.evaluate(() => ({ canvas: !!document.querySelector("canvas"), diag: document.getElementById("diag")?.style.display === "block" })).catch(() => ({}));
+    page
+        .evaluate(() => ({
+            canvas: !!document.querySelector("canvas"),
+            diag: document.getElementById("diag")?.style.display === "block",
+            plain: document.documentElement.classList.contains("no-gpu"),
+            failure: document.body.innerText.includes("Failed to initialize"),
+            text: document.body.innerText.length,
+        }))
+        .catch(() => ({}));
 
 async function run(kind, name, setup, expect) {
     const { browser, context, page } = await open(kind, { greeted: false });
@@ -57,6 +65,21 @@ for (const kind of ["desktop", "phone"]) {
                 );
             },
             (s, loads) => check(loads === 1 && s.canvas && !s.diag, `${kind}: another origin's ${what} doesn't reload or show (${loads} loads)`),
+        );
+    }
+    for (const [what, script] of [
+        ["no WebGPU", () => delete Navigator.prototype.gpu],
+        ["a WebGPU with no adapter", () => { if (self.GPU) GPU.prototype.requestAdapter = () => Promise.resolve(null); }],
+    ]) {
+        await run(
+            kind,
+            what,
+            (ctx) => ctx.addInitScript(script),
+            (s, loads) =>
+                check(
+                    loads === 1 && !s.canvas && !s.diag && s.plain && !s.failure && s.text > 200,
+                    `${kind}: ${what} reads the plain page with no failure note (${JSON.stringify({ loads, ...s })})`,
+                ),
         );
     }
 }

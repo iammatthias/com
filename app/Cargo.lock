@@ -891,6 +891,7 @@ dependencies = [
  "swash",
  "unicode-normalization",
  "wasm-bindgen",
+ "wasm-bindgen-futures",
  "web-sys",
  "web-time",
  "wgpu 29.0.4",

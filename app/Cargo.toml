@@ -39,6 +39,7 @@ gpui = { git = "https://github.com/gpui-ce/gpui-ce", rev = "5cac1478fea0a5f6f28a
 [target.'cfg(target_family = "wasm")'.dependencies]
 web-sys = { version = "0.3", features = ["console", "Window", "Location", "History", "Document", "HtmlDocument", "Navigator", "EventTarget", "Storage", "MediaQueryList", "Worker", "WorkerOptions", "WorkerType", "MessageEvent", "Event", "Element", "Node", "HtmlElement", "HtmlMediaElement", "HtmlVideoElement", "ClipboardEvent", "DataTransfer", "HtmlInputElement", "HtmlTextAreaElement"] }
 wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
 js-sys = "0.3"
 
 # The wasm ships to phones and must fit a Workers asset (25 MiB before wasm-opt): size first.

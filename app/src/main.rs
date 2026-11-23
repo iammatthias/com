@@ -40,8 +40,22 @@ pub fn wasm_memory_bytes() -> f64 {
 
 fn main() {
     #[cfg(target_family = "wasm")]
-    gpui_platform::web_init();
-    mark(&format!("wasm main (t=0), build {BUILD}"));
+    {
+        gpui_platform::web_init();
+        mark(&format!("wasm main (t=0), build {BUILD}"));
+        wasm_bindgen_futures::spawn_local(async {
+            if wgpu::util::is_browser_webgpu_supported().await {
+                launch();
+            } else {
+                crate::browser::plain_page();
+            }
+        });
+    }
+    #[cfg(not(target_family = "wasm"))]
+    launch();
+}
+
+fn launch() {
     let app = gpui_platform::application().run(|cx: &mut App| {
         #[cfg(target_family = "wasm")]
         {
